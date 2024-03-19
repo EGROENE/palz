@@ -5,14 +5,16 @@ const LoginForm = ({
   passwordIsHidden,
   toggleSignupLogin,
   toggleHidePassword,
+  linkToOtherFormColor,
 }: {
   passwordIsHidden: boolean;
   toggleSignupLogin: () => void;
   toggleHidePassword: () => void;
+  linkToOtherFormColor: string;
 }) => {
   return (
     <>
-      <form>
+      <form className="login-signup-form">
         <label>
           <p>Username or E-Mail Address:</p>
           <input type="text" placeholder="Enter username or e-mail address" />
@@ -31,7 +33,14 @@ const LoginForm = ({
         </label>
       </form>
       <p>
-        Don't have an account? <span onClick={() => toggleSignupLogin()}>Sign Up</span>
+        Don't have an account?{" "}
+        <span
+          style={{ color: linkToOtherFormColor }}
+          className="link-to-other-form"
+          onClick={() => toggleSignupLogin()}
+        >
+          Sign Up
+        </span>
       </p>
     </>
   );
