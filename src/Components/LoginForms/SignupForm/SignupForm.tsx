@@ -30,7 +30,7 @@ const SignupForm = ({
           <input type="text" placeholder="Enter a username" />
         </label>
         <label>
-          <p>Enter an E-Mail Address:</p>
+          <p>E-Mail Address:</p>
           <input type="email" placeholder="Enter your e-mail address" />
         </label>
         <label>
