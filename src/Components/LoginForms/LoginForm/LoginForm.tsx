@@ -3,17 +3,39 @@ import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
 import { useLoginContext } from "../../../Hooks/useLoginContext";
 
 const LoginForm = () => {
-  const { passwordIsHidden, toggleHidePassword, toggleSignupLogin } = useLoginContext();
+  const {
+    passwordIsHidden,
+    toggleHidePassword,
+    toggleSignupLogin,
+    username,
+    setUsername,
+    setEmailAddress,
+    password,
+    setPassword,
+  } = useLoginContext();
+
+  // const areNoErrors = <are all errors from context equal to ""
+
   return (
     <>
       <form className="login-signup-form">
         <label>
           <p>Username or E-Mail Address:</p>
-          <input type="text" placeholder="Enter username or e-mail address" />
+          <input
+            onChange={(e) => {
+              setEmailAddress(e.target.value);
+              setUsername(e.target.value);
+            }}
+            value={username}
+            type="text"
+            placeholder="Enter username or e-mail address"
+          />
         </label>
         <label>
           <p>Password:</p>
           <input
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
             type={passwordIsHidden ? "password" : "text"}
             placeholder="Enter password"
           />

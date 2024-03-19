@@ -3,7 +3,25 @@ import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
 import { useLoginContext } from "../../../Hooks/useLoginContext";
 
 const SignupForm = () => {
-  const { passwordIsHidden, toggleHidePassword, toggleSignupLogin } = useLoginContext();
+  const {
+    passwordIsHidden,
+    toggleHidePassword,
+    toggleSignupLogin,
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    username,
+    setUsername,
+    emailAddress,
+    setEmailAddress,
+    password,
+    setPassword,
+    confirmationPassword,
+    setConfirmationPassword,
+  } = useLoginContext();
+
+  // const areNoErrors = <are all errors from context equal to ""
 
   return (
     <>
@@ -11,24 +29,46 @@ const SignupForm = () => {
         <div>
           <label>
             <p>First Name:</p>
-            <input type="text" placeholder="Enter your first name" />
+            <input
+              onChange={(e) => setFirstName(e.target.value)}
+              value={firstName}
+              type="text"
+              placeholder="Enter your first name"
+            />
           </label>
           <label>
             <p>Last Name:</p>
-            <input type="text" placeholder="Enter your last name" />
+            <input
+              onChange={(e) => setLastName(e.target.value)}
+              value={lastName}
+              type="text"
+              placeholder="Enter your last name"
+            />
           </label>
         </div>
         <label>
           <p>Username:</p>
-          <input type="text" placeholder="Enter a username" />
+          <input
+            onChange={(e) => setUsername(e.target.value)}
+            value={username}
+            type="text"
+            placeholder="Enter a username"
+          />
         </label>
         <label>
           <p>E-Mail Address:</p>
-          <input type="email" placeholder="Enter your e-mail address" />
+          <input
+            onChange={(e) => setEmailAddress(e.target.value)}
+            value={emailAddress}
+            type="email"
+            placeholder="Enter your e-mail address"
+          />
         </label>
         <label>
           <p>Choose a Password:</p>
           <input
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
             type={passwordIsHidden ? "password" : "text"}
             placeholder="Enter password"
           />
@@ -41,6 +81,8 @@ const SignupForm = () => {
         <label>
           <p>Confirm Password:</p>
           <input
+            onChange={(e) => setConfirmationPassword(e.target.value)}
+            value={confirmationPassword}
             type={passwordIsHidden ? "password" : "text"}
             placeholder="Confirm password"
           />
