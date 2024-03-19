@@ -39,6 +39,11 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
   margin: 0.5rem auto;
+  color: var(--theme-yellow);
+}
+
+h2 {
+  color: var(--theme-red);
 }
 
 button {

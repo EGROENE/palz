@@ -13,6 +13,7 @@
 .login-options-container header {
   font-size: 1.25rem;
   padding: 0.25rem;
+  color: var(--theme-green);
 }
 
 .login-options-container header:hover {
@@ -40,6 +41,10 @@
 
 .eye:hover {
   cursor: pointer;
+}
+
+.link-to-other-form {
+  color: var(--theme-blue);
 }
 
 .link-to-other-form:hover {
