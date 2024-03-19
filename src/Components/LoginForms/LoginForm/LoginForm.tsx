@@ -1,17 +1,9 @@
 import OpenEye from "../../Eyecons/OpenEye/OpenEye";
 import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
+import { useLoginContext } from "../../../Hooks/useLoginContext";
 
-const LoginForm = ({
-  passwordIsHidden,
-  toggleSignupLogin,
-  toggleHidePassword,
-  linkToOtherFormColor,
-}: {
-  passwordIsHidden: boolean;
-  toggleSignupLogin: () => void;
-  toggleHidePassword: () => void;
-  linkToOtherFormColor: string;
-}) => {
+const LoginForm = () => {
+  const { passwordIsHidden, toggleHidePassword, toggleSignupLogin } = useLoginContext();
   return (
     <>
       <form className="login-signup-form">
@@ -34,11 +26,7 @@ const LoginForm = ({
       </form>
       <p>
         Don't have an account?{" "}
-        <span
-          style={{ color: linkToOtherFormColor }}
-          className="link-to-other-form"
-          onClick={() => toggleSignupLogin()}
-        >
+        <span className="link-to-other-form" onClick={() => toggleSignupLogin()}>
           Sign Up
         </span>
       </p>
