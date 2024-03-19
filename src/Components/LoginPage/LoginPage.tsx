@@ -1,40 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SignupForm from "../LoginForms/SignupForm/SignupForm";
 import LoginForm from "../LoginForms/LoginForm/LoginForm";
 
 const LoginPage = () => {
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(true);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
+  const [h1Color, setH1Color] = useState<string>("");
+  const [h2Color, setH2Color] = useState<string>("");
+  const [selectFormOptionsColor, setSelectFormOptionsColor] = useState<string>("");
+  const [linkToOtherFormColor, setLinkToOtherFormColor] = useState<string>("");
 
   const toggleSignupLogin = () => setSignupIsSelected(!signupIsSelected);
   const toggleHidePassword = () => setPasswordIsHidden(!passwordIsHidden);
 
-  // set colors of h1, h2, L/S options randomly
-  const themeColors = [
-    "var(--theme-blue)",
-    "var(--theme-red)",
-    "var(--theme-green)",
-    "var(--theme-yellow)",
-  ];
-  const h1Color = themeColors[Math.floor(Math.random() * themeColors.length)];
-
-  const themeColorsWithoutH1Color = themeColors.filter((color) => color !== h1Color);
-  const h2Color =
-    themeColorsWithoutH1Color[
-      Math.floor(Math.random() * themeColorsWithoutH1Color.length)
+  // Randomly set colors of various texts
+  useEffect(() => {
+    const themeColors = [
+      "var(--theme-blue)",
+      "var(--theme-red)",
+      "var(--theme-green)",
+      "var(--theme-yellow)",
     ];
 
-  const themeColorsWithoutH1ColorAndH2Color = themeColorsWithoutH1Color.filter(
-    (color) => color !== h2Color
-  );
-  const selectFormOptionsColor =
-    themeColorsWithoutH1ColorAndH2Color[
-      Math.floor(Math.random() * themeColorsWithoutH1ColorAndH2Color.length)
-    ];
+    setH1Color(themeColors[Math.floor(Math.random() * themeColors.length)]);
 
-  const linkToOtherFormColor = themeColorsWithoutH1ColorAndH2Color.filter(
-    (color) => color !== selectFormOptionsColor
-  )[0];
+    const themeColorsWithoutH1Color = themeColors.filter((color) => color !== h1Color);
+    setH2Color(
+      themeColorsWithoutH1Color[
+        Math.floor(Math.random() * themeColorsWithoutH1Color.length)
+      ]
+    );
+
+    const themeColorsWithoutH1ColorAndH2Color = themeColorsWithoutH1Color.filter(
+      (color) => color !== h2Color
+    );
+    setSelectFormOptionsColor(
+      themeColorsWithoutH1ColorAndH2Color[
+        Math.floor(Math.random() * themeColorsWithoutH1ColorAndH2Color.length)
+      ]
+    );
+
+    setLinkToOtherFormColor(
+      themeColorsWithoutH1ColorAndH2Color.filter(
+        (color) => color !== selectFormOptionsColor
+      )[0]
+    );
+  }, [h1Color, h2Color, selectFormOptionsColor, linkToOtherFormColor]);
 
   return (
     <>
