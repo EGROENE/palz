@@ -26,7 +26,7 @@ const SignupForm = ({
           </label>
         </div>
         <label>
-          <p>Choose a Username:</p>
+          <p>Username:</p>
           <input type="text" placeholder="Enter a username" />
         </label>
         <label>
