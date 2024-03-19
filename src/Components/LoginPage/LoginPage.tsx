@@ -59,7 +59,7 @@ const LoginPage = () => {
               : "none",
             color: selectFormOptionsColor,
           }}
-          onClick={() => toggleSignupLogin()}
+          onClick={!signupIsSelected ? () => toggleSignupLogin() : undefined}
         >
           Sign Up
         </header>
@@ -70,7 +70,7 @@ const LoginPage = () => {
               : "none",
             color: selectFormOptionsColor,
           }}
-          onClick={() => toggleSignupLogin()}
+          onClick={signupIsSelected ? () => toggleSignupLogin() : undefined}
         >
           Log In
         </header>
