@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useState } from "react";
 import { TLoginContext } from "../types";
+import { nameIsValid } from "../validations";
 
 export const LoginContext = createContext<TLoginContext | null>(null);
 
@@ -36,6 +37,28 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const toggleHidePassword = () => setPasswordIsHidden(!passwordIsHidden);
 
   // Input-handling methods:
+  // Put here, since used in two different components
+  const handleNameInput = (name: string, isFirstName: boolean) => {
+    if (isFirstName) {
+      setFirstName(name.trim());
+    } else {
+      setLastName(name.trim());
+    }
+    if (!nameIsValid(name) && name.length > 0) {
+      if (isFirstName) {
+        setFirstNameError("Only alphabetical characters & any hyphens allowed b/t names");
+      } else {
+        setLastNameError("Only alphabetical characters & any hyphens allowed b/t names");
+      }
+    } else if (nameIsValid(name) || name.length === 0) {
+      if (isFirstName) {
+        setFirstNameError("");
+      } else {
+        setLastNameError("");
+      }
+    }
+  };
+
   /* const handleUsernameInput = ({
     username,
     isOnSignup,
@@ -97,6 +120,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     setConfirmationPassword,
     confirmationPasswordError,
     setConfirmationPasswordError,
+    handleNameInput,
   };
 
   return (

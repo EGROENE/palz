@@ -8,9 +8,10 @@ const SignupForm = () => {
     toggleHidePassword,
     toggleSignupLogin,
     firstName,
-    setFirstName,
+    firstNameError,
+    handleNameInput,
     lastName,
-    setLastName,
+    lastNameError,
     username,
     setUsername,
     emailAddress,
@@ -30,20 +31,22 @@ const SignupForm = () => {
           <label>
             <p>First Name:</p>
             <input
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => handleNameInput(e.target.value, true)}
               value={firstName}
               type="text"
               placeholder="Enter your first name"
             />
+            {firstNameError !== "" && <p>{firstNameError}</p>}
           </label>
           <label>
             <p>Last Name:</p>
             <input
-              onChange={(e) => setLastName(e.target.value)}
+              onChange={(e) => handleNameInput(e.target.value, false)}
               value={lastName}
               type="text"
               placeholder="Enter your last name"
             />
+            {lastNameError !== "" && <p>{lastNameError}</p>}
           </label>
         </div>
         <label>
