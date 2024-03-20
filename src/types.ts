@@ -29,4 +29,5 @@ export type TLoginContext = {
   setConfirmationPassword: React.Dispatch<React.SetStateAction<string>>;
   confirmationPasswordError: string;
   setConfirmationPasswordError: React.Dispatch<React.SetStateAction<string>>;
+  handleNameInput: (name: string, isFirstName: boolean) => void;
 };
