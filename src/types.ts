@@ -1,3 +1,83 @@
+export type TMainContext = {
+  allUsers: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    username: string;
+    password: string;
+    city: string;
+    stateProvince: string;
+    country: string;
+    phoneNumber: string;
+    emailAddress: string;
+    instagram: string;
+    facebook: string;
+    x: string;
+    telegram: string;
+    whatsapp: string;
+    profileImage: string;
+    about: string;
+    subscriptionType: string;
+    hostingCredits: number;
+  }[];
+  allEvents: {
+    id: string;
+    title: string;
+    eventID: string;
+    organizerOneID: string;
+    organizerTwoID?: string;
+    organizerThreeID?: string;
+    description: string;
+    nextEventTime: number;
+    isPublic: boolean;
+    maxParticipants: number;
+    imageOne?: string;
+    imageTwo?: string;
+    imageThree?: string;
+    imageFour?: string;
+    imageFive?: string;
+    city: string;
+    stateProvince: string;
+    country: string;
+    address: string;
+    postalCode: string;
+    additionalInfo: string;
+  }[];
+  rsvpdEvents: {
+    id: string;
+    eventID: string;
+    eventName: string;
+    username: string;
+  }[];
+  favoritedEvents: {
+    id: string;
+    eventID: string;
+    eventName: string;
+    username: string;
+  }[];
+  attendedEvents: {
+    id: string;
+    eventID: string;
+    eventName: string;
+    username: string;
+  }[];
+  userInterests: {
+    id: string;
+    username: string;
+    interest: string;
+  }[];
+  eventsByTag: {
+    id: string;
+    eventID: string;
+    eventName: string;
+    tag: string;
+  }[];
+  allInterests: {
+    id: string;
+    interest: string;
+  }[];
+};
+
 export type TLoginContext = {
   signupIsSelected: boolean;
   setSignupIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
