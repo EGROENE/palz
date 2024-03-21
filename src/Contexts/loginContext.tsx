@@ -1,10 +1,13 @@
 import { createContext, ReactNode, useState } from "react";
 import { TLoginContext } from "../types";
-import { nameIsValid } from "../validations";
+import { nameIsValid, usernameIsValid } from "../validations";
+import { useMainContext } from "../Hooks/useMainContext";
 
 export const LoginContext = createContext<TLoginContext | null>(null);
 
 export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
+  const { allUsers } = useMainContext();
+
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(true);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
 
@@ -59,16 +62,36 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /* const handleUsernameInput = ({
-    username,
-    isOnSignup,
-  }: {
-    username: string;
-    isOnSignup: boolean;
-  }) => {
-    // on signup, set error to "un already exists. log in instead" if it exists
-    // not on signup, set error to "un not found" if it doesn't exist or "un must contain ...." if invalid
-  }; */
+  const handleUsernameInput = (username: string, isOnSignup: boolean): void => {
+    setUsername(username);
+
+    const usernameIsTaken: boolean =
+      allUsers.map((user) => user.username === username).length > 0;
+
+    // On signup form:
+    if (isOnSignup) {
+      if (!usernameIsValid(username)) {
+        setUsernameError(
+          'Username must be at least 4 characters long, contain at least one letter, & contain no spaces or "@"'
+        );
+      } else if (usernameIsTaken) {
+        setUsernameError("Username is already taken");
+      } else {
+        setUsernameError("");
+      }
+      // On login form:
+    } else {
+      if (!usernameIsValid(username)) {
+        setUsernameError(
+          'Username must be at least 4 characters long, contain at least one letter, & contain no spaces or "@"'
+        );
+      } else if (!usernameIsTaken) {
+        setUsernameError("Username doesn't match any accounts");
+      } else {
+        setUsernameError("");
+      }
+    }
+  };
 
   /*  const handleEmailAddressInput = ({
     email,
@@ -121,6 +144,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     confirmationPasswordError,
     setConfirmationPasswordError,
     handleNameInput,
+    handleUsernameInput,
   };
 
   return (

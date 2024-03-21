@@ -110,4 +110,5 @@ export type TLoginContext = {
   confirmationPasswordError: string;
   setConfirmationPasswordError: React.Dispatch<React.SetStateAction<string>>;
   handleNameInput: (name: string, isFirstName: boolean) => void;
+  handleUsernameInput: (username: string, isOnSignup: boolean) => void;
 };
