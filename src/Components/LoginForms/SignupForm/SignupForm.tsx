@@ -19,10 +19,11 @@ const SignupForm = () => {
     password,
     passwordError,
     confirmationPassword,
-    setConfirmationPassword,
     handleUsernameInput,
     handleEmailAddressInput,
     handlePasswordInput,
+    confirmationPasswordError,
+    handleConfirmationPasswordInput,
   } = useLoginContext();
 
   // const areNoErrors = <are all errors from context equal to ""
@@ -90,7 +91,7 @@ const SignupForm = () => {
         <label>
           <p>Confirm Password:</p>
           <input
-            onChange={(e) => setConfirmationPassword(e.target.value)}
+            onChange={(e) => handleConfirmationPasswordInput(e.target.value)}
             value={confirmationPassword}
             type={passwordIsHidden ? "password" : "text"}
             placeholder="Confirm password"
@@ -100,6 +101,7 @@ const SignupForm = () => {
           ) : (
             <ClosedEye toggleHidePassword={toggleHidePassword} />
           )}
+          {confirmationPasswordError !== "" && <p>{confirmationPasswordError}</p>}
         </label>
       </form>
       <p>

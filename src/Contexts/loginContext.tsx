@@ -139,6 +139,15 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleConfirmationPasswordInput = (inputConfirmationPassword: string) => {
+    setConfirmationPassword(inputConfirmationPassword);
+    if (confirmationPassword !== password) {
+      setConfirmationPasswordError("Passwords don't match");
+    } else {
+      setConfirmationPasswordError("");
+    }
+  };
+
   const loginContextValues: TLoginContext = {
     signupIsSelected,
     setSignupIsSelected,
@@ -174,6 +183,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     handleUsernameInput,
     handleEmailAddressInput,
     handlePasswordInput,
+    handleConfirmationPasswordInput,
   };
 
   return (
