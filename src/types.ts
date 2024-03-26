@@ -1,48 +1,52 @@
+export type TUser = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  password: string;
+  city: string;
+  stateProvince: string;
+  country: string;
+  phoneNumber: string;
+  emailAddress: string;
+  instagram: string;
+  facebook: string;
+  x: string;
+  telegram: string;
+  whatsapp: string;
+  profileImage: string;
+  about: string;
+  subscriptionType: string;
+  hostingCredits: number;
+};
+
+export type TEvent = {
+  id: string;
+  title: string;
+  eventID: string;
+  organizerOneID: string;
+  organizerTwoID?: string;
+  organizerThreeID?: string;
+  description: string;
+  nextEventTime: number;
+  isPublic: boolean;
+  maxParticipants: number;
+  imageOne?: string;
+  imageTwo?: string;
+  imageThree?: string;
+  imageFour?: string;
+  imageFive?: string;
+  city: string;
+  stateProvince: string;
+  country: string;
+  address: string;
+  postalCode: string;
+  additionalInfo: string;
+};
+
 export type TMainContext = {
-  allUsers: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    username: string;
-    password: string;
-    city: string;
-    stateProvince: string;
-    country: string;
-    phoneNumber: string;
-    emailAddress: string;
-    instagram: string;
-    facebook: string;
-    x: string;
-    telegram: string;
-    whatsapp: string;
-    profileImage: string;
-    about: string;
-    subscriptionType: string;
-    hostingCredits: number;
-  }[];
-  allEvents: {
-    id: string;
-    title: string;
-    eventID: string;
-    organizerOneID: string;
-    organizerTwoID?: string;
-    organizerThreeID?: string;
-    description: string;
-    nextEventTime: number;
-    isPublic: boolean;
-    maxParticipants: number;
-    imageOne?: string;
-    imageTwo?: string;
-    imageThree?: string;
-    imageFour?: string;
-    imageFive?: string;
-    city: string;
-    stateProvince: string;
-    country: string;
-    address: string;
-    postalCode: string;
-    additionalInfo: string;
-  }[];
+  allUsers: TUser[];
+  allEvents: TEvent[];
   rsvpdEvents: {
     id: string;
     eventID: string;
