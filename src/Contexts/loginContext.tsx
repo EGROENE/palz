@@ -70,8 +70,6 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const handleUsernameInput = (username: string, isOnSignup: boolean): void => {
     setUsername(username);
 
-    // check if username matches pw (if pw schon eingegeben)
-
     const usernameIsTaken: boolean =
       allUsers.map((user) => user.username === username).length > 0;
 
