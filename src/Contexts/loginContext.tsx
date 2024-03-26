@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useState } from "react";
 import { TLoginContext } from "../types";
-import { nameIsValid, usernameIsValid } from "../validations";
+import { emailIsValid, nameIsValid, usernameIsValid } from "../validations";
 import { useMainContext } from "../Hooks/useMainContext";
 
 export const LoginContext = createContext<TLoginContext | null>(null);
@@ -93,16 +93,26 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /*  const handleEmailAddressInput = ({
-    email,
-    isOnSignup,
-  }: {
-    email: string;
-    isOnSignup: boolean;
-  }) => {
-    // on signup, set error to "email is already associated w/ an account. log in instead" if it exists
-    // not on signup, set error to "email not found" if it doesn't exist or "email must contain ...." if invalid
-  }; */
+  const handleEmailAddressInput = (email: string, isOnSignup: boolean) => {
+    setEmailAddress(email);
+    const emailIsTaken: boolean =
+      allUsers.map((user) => user.emailAddress === email).length > 0;
+    if (isOnSignup) {
+      if (!emailIsValid(email)) {
+        setEmailError("Invalid e-mail address");
+      } else if (emailIsTaken) {
+        setEmailError("E-mail address is taken");
+      } else {
+        setEmailError("");
+      }
+    } else {
+      if (!emailIsTaken) {
+        setEmailError("E-mail address not recognized");
+      } else {
+        setEmailError("");
+      }
+    }
+  };
 
   /* const handlePasswordInput = ({
     password,
@@ -145,6 +155,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     setConfirmationPasswordError,
     handleNameInput,
     handleUsernameInput,
+    handleEmailAddressInput,
   };
 
   return (

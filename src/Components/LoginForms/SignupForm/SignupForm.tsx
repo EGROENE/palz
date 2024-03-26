@@ -15,12 +15,13 @@ const SignupForm = () => {
     username,
     usernameError,
     emailAddress,
-    setEmailAddress,
+    emailError,
     password,
     setPassword,
     confirmationPassword,
     setConfirmationPassword,
     handleUsernameInput,
+    handleEmailAddressInput,
   } = useLoginContext();
 
   // const areNoErrors = <are all errors from context equal to ""
@@ -63,11 +64,12 @@ const SignupForm = () => {
         <label>
           <p>E-Mail Address:</p>
           <input
-            onChange={(e) => setEmailAddress(e.target.value)}
+            onChange={(e) => handleEmailAddressInput(e.target.value, true)}
             value={emailAddress}
             type="email"
             placeholder="Enter your e-mail address"
           />
+          {emailError !== "" && <p>{emailError}</p>}
         </label>
         <label>
           <p>Choose a Password:</p>

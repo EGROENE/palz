@@ -111,4 +111,5 @@ export type TLoginContext = {
   setConfirmationPasswordError: React.Dispatch<React.SetStateAction<string>>;
   handleNameInput: (name: string, isFirstName: boolean) => void;
   handleUsernameInput: (username: string, isOnSignup: boolean) => void;
+  handleEmailAddressInput: (email: string, isOnSignup: boolean) => void;
 };
