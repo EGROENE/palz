@@ -116,4 +116,5 @@ export type TLoginContext = {
   handleNameInput: (name: string, isFirstName: boolean) => void;
   handleUsernameInput: (username: string, isOnSignup: boolean) => void;
   handleEmailAddressInput: (email: string, isOnSignup: boolean) => void;
+  handlePasswordInput: (inputPassword: string, isOnSignup: boolean) => void;
 };

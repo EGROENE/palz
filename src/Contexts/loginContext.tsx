@@ -1,6 +1,11 @@
 import { createContext, ReactNode, useState } from "react";
-import { TLoginContext } from "../types";
-import { emailIsValid, nameIsValid, usernameIsValid } from "../validations";
+import { TLoginContext, TUser } from "../types";
+import {
+  emailIsValid,
+  nameIsValid,
+  passwordIsValid,
+  usernameIsValid,
+} from "../validations";
 import { useMainContext } from "../Hooks/useMainContext";
 
 export const LoginContext = createContext<TLoginContext | null>(null);
@@ -65,6 +70,8 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const handleUsernameInput = (username: string, isOnSignup: boolean): void => {
     setUsername(username);
 
+    // check if username matches pw (if pw schon eingegeben)
+
     const usernameIsTaken: boolean =
       allUsers.map((user) => user.username === username).length > 0;
 
@@ -114,13 +121,25 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /* const handlePasswordInput = ({
-    password,
-    isOnSignup,
-  }: {
-    password: string;
-    isOnSignup: boolean;
-  }) => {}; */
+  const handlePasswordInput = (inputPassword: string, isOnSignup: boolean) => {
+    setPassword(inputPassword);
+
+    if (!isOnSignup) {
+      const currentUser: TUser = allUsers.filter((user) => user.username === username)[0];
+      const passwordMatchesCurrentUser: boolean = currentUser.password === password;
+      if (!passwordMatchesCurrentUser) {
+        setPasswordError("Password doesn't match user");
+      } else {
+        setPasswordError("");
+      }
+    } else {
+      if (!passwordIsValid(inputPassword)) {
+        setPasswordError("Invalid password");
+      } else {
+        setPasswordError("");
+      }
+    }
+  };
 
   const loginContextValues: TLoginContext = {
     signupIsSelected,
@@ -156,6 +175,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     handleNameInput,
     handleUsernameInput,
     handleEmailAddressInput,
+    handlePasswordInput,
   };
 
   return (
