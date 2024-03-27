@@ -83,6 +83,7 @@ export type TMainContext = {
 };
 
 export type TLoginContext = {
+  loginWithUsernameOrEmail: "username" | "email";
   signupIsSelected: boolean;
   setSignupIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   passwordIsHidden: boolean;
@@ -114,8 +115,9 @@ export type TLoginContext = {
   confirmationPasswordError: string;
   setConfirmationPasswordError: React.Dispatch<React.SetStateAction<string>>;
   handleNameInput: (name: string, isFirstName: boolean) => void;
-  handleUsernameInput: (username: string, isOnSignup: boolean) => void;
-  handleEmailAddressInput: (email: string, isOnSignup: boolean) => void;
+  handleUsernameInput: (username: string) => void;
+  handleEmailAddressInput: (email: string) => void;
   handlePasswordInput: (inputPassword: string, isOnSignup: boolean) => void;
   handleConfirmationPasswordInput: (inputConfirmationPassword: string) => void;
+  handleUsernameOrEmailInput: (input: string) => void;
 };

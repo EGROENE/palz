@@ -25,6 +25,9 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
 
   // Boolean values relating to input-field errors:
+  const [loginWithUsernameOrEmail, setLoginWithUsernameOrEmail] = useState<
+    "username" | "email"
+  >("username");
   const [firstNameError, setFirstNameError] = useState<string>("");
   const [lastNameError, setLastNameError] = useState<string>("");
   const [usernameError, setUsernameError] = useState<string>("");
@@ -67,55 +70,35 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleUsernameInput = (username: string, isOnSignup: boolean): void => {
+  const handleUsernameInput = (username: string): void => {
     setUsername(username);
 
     const usernameIsTaken: boolean =
-      allUsers.map((user) => user.username === username).length > 0;
+      allUsers.filter((user) => user.username === username).length > 0;
 
-    // On signup form:
-    if (isOnSignup) {
-      if (!usernameIsValid(username)) {
-        setUsernameError(
-          'Username must be at least 4 characters long, contain at least one letter, & contain no spaces or "@"'
-        );
-      } else if (usernameIsTaken) {
-        setUsernameError("Username is already taken");
-      } else {
-        setUsernameError("");
-      }
-      // On login form:
+    if (!usernameIsValid(username)) {
+      setUsernameError(
+        'Username must be at least 4 characters long, contain at least one letter, & contain no spaces or "@"'
+      );
+    } else if (usernameIsTaken) {
+      setUsernameError("Username is already taken");
     } else {
-      if (!usernameIsValid(username)) {
-        setUsernameError(
-          'Username must be at least 4 characters long, contain at least one letter, & contain no spaces or "@"'
-        );
-      } else if (!usernameIsTaken) {
-        setUsernameError("Username doesn't match any accounts");
-      } else {
-        setUsernameError("");
-      }
+      setUsernameError("");
     }
   };
 
-  const handleEmailAddressInput = (email: string, isOnSignup: boolean) => {
+  const handleEmailAddressInput = (email: string) => {
     setEmailAddress(email);
+
     const emailIsTaken: boolean =
-      allUsers.map((user) => user.emailAddress === email).length > 0;
-    if (isOnSignup) {
-      if (!emailIsValid(email)) {
-        setEmailError("Invalid e-mail address");
-      } else if (emailIsTaken) {
-        setEmailError("E-mail address is taken");
-      } else {
-        setEmailError("");
-      }
+      allUsers.filter((user) => user.emailAddress === email.trim()).length > 0;
+
+    if (!emailIsValid(email)) {
+      setEmailError("Invalid e-mail address");
+    } else if (emailIsTaken) {
+      setEmailError("E-mail address is taken");
     } else {
-      if (!emailIsTaken) {
-        setEmailError("E-mail address not recognized");
-      } else {
-        setEmailError("");
-      }
+      setEmailError("");
     }
   };
 
@@ -123,28 +106,59 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     setPassword(inputPassword);
 
     if (!isOnSignup) {
-      const currentUser: TUser = allUsers.filter((user) => user.username === username)[0];
-      const passwordMatchesCurrentUser: boolean = currentUser.password === password;
-      if (!passwordMatchesCurrentUser) {
-        setPasswordError("Password doesn't match user");
+      const currentUser: TUser =
+        loginWithUsernameOrEmail === "username"
+          ? allUsers.filter((user) => user.username === username)[0]
+          : allUsers.filter((user) => user.emailAddress === emailAddress)[0];
+
+      if (currentUser) {
+        const passwordMatchesCurrentUser: boolean =
+          currentUser.password === inputPassword.trim();
+        !passwordMatchesCurrentUser && inputPassword !== ""
+          ? setPasswordError("Password doesn't match user")
+          : setPasswordError("");
       } else {
-        setPasswordError("");
+        setPasswordError("Invalid password");
       }
     } else {
-      if (!passwordIsValid(inputPassword)) {
-        setPasswordError("Invalid password");
-      } else {
-        setPasswordError("");
-      }
+      !passwordIsValid(inputPassword)
+        ? setPasswordError("Invalid password")
+        : setPasswordError("");
     }
   };
 
   const handleConfirmationPasswordInput = (inputConfirmationPassword: string) => {
     setConfirmationPassword(inputConfirmationPassword);
-    if (confirmationPassword !== password) {
-      setConfirmationPasswordError("Passwords don't match");
+    inputConfirmationPassword !== password
+      ? setConfirmationPasswordError("Passwords don't match")
+      : setConfirmationPasswordError("");
+  };
+
+  const handleUsernameOrEmailInput = (input: string) => {
+    const usernameExists: boolean = allUsers
+      .map((user) => user.username)
+      .includes(input.trim());
+    const emailExists: boolean = allUsers
+      .map((user) => user.emailAddress)
+      .includes(input.trim());
+
+    // If input matches pattern for an email, set emailAddress to input:
+    if (emailIsValid(input)) {
+      setUsername("");
+      setUsernameError("");
+      setLoginWithUsernameOrEmail("email");
+      setEmailAddress(input);
+      !emailExists ? setEmailError("E-mail address not recognized") : setEmailError("");
+      // Else, ir input doesn't meet e-mail-address criteria, set username to input:
     } else {
-      setConfirmationPasswordError("");
+      setEmailAddress("");
+      setEmailError("");
+      setLoginWithUsernameOrEmail("username");
+      setUsername(input);
+      // If username doesn't exist and there is at least one char of input:
+      !usernameExists && input !== ""
+        ? setUsernameError("Input doesn't match any account")
+        : setUsernameError("");
     }
   };
 
@@ -184,6 +198,8 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     handleEmailAddressInput,
     handlePasswordInput,
     handleConfirmationPasswordInput,
+    handleUsernameOrEmailInput,
+    loginWithUsernameOrEmail,
   };
 
   return (

@@ -8,10 +8,14 @@ const LoginForm = () => {
     toggleHidePassword,
     toggleSignupLogin,
     username,
-    setUsername,
-    setEmailAddress,
+    usernameError,
+    emailAddress,
+    emailError,
     password,
-    setPassword,
+    passwordError,
+    handlePasswordInput,
+    handleUsernameOrEmailInput,
+    loginWithUsernameOrEmail,
   } = useLoginContext();
 
   // const areNoErrors = <are all errors from context equal to ""
@@ -22,19 +26,18 @@ const LoginForm = () => {
         <label>
           <p>Username or E-Mail Address:</p>
           <input
-            onChange={(e) => {
-              setEmailAddress(e.target.value);
-              setUsername(e.target.value);
-            }}
-            value={username}
+            onChange={(e) => handleUsernameOrEmailInput(e.target.value)}
+            value={loginWithUsernameOrEmail === "username" ? username : emailAddress}
             type="text"
             placeholder="Enter username or e-mail address"
           />
+          {usernameError && <p>{usernameError}</p>}
+          {emailError && usernameError === "" && <p>{emailError}</p>}
         </label>
         <label>
           <p>Password:</p>
           <input
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => handlePasswordInput(e.target.value, false)}
             value={password}
             type={passwordIsHidden ? "password" : "text"}
             placeholder="Enter password"
@@ -44,6 +47,7 @@ const LoginForm = () => {
           ) : (
             <ClosedEye toggleHidePassword={toggleHidePassword} />
           )}
+          {passwordError !== "" && <p>{passwordError}</p>}
         </label>
       </form>
       <p>

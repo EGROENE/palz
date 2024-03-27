@@ -56,7 +56,7 @@ const SignupForm = () => {
         <label>
           <p>Username:</p>
           <input
-            onChange={(e) => handleUsernameInput(e.target.value, true)}
+            onChange={(e) => handleUsernameInput(e.target.value)}
             value={username}
             type="text"
             placeholder="Enter a username"
@@ -66,7 +66,7 @@ const SignupForm = () => {
         <label>
           <p>E-Mail Address:</p>
           <input
-            onChange={(e) => handleEmailAddressInput(e.target.value, true)}
+            onChange={(e) => handleEmailAddressInput(e.target.value)}
             value={emailAddress}
             type="email"
             placeholder="Enter your e-mail address"
