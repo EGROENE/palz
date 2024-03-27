@@ -106,19 +106,20 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const handlePasswordInput = (inputPassword: string, isOnSignup: boolean): void => {
     setPassword(inputPassword);
 
+    // Handle input pw on login form:
     if (!isOnSignup) {
       // Get current user (if username/email has been entered) so that its password can be compared to input pw:
       const currentUser: TUser =
         loginWithUsernameOrEmail === "username"
           ? allUsers.filter((user) => user.username === username)[0]
           : allUsers.filter((user) => user.emailAddress === emailAddress)[0];
-      console.log(currentUser);
-      console.log(passwordIsValid(inputPassword));
 
       // If currentUser exists & there is non-whitespace input in password field:
       if (currentUser && inputPassword.replace(/\s/g, "").length) {
+        // If currentUser pw is not equal to inputPassword...
         if (currentUser.password !== inputPassword) {
           setPasswordError("Password doesn't match user");
+          // If input password is not valid...
         } else if (!passwordIsValid(inputPassword)) {
           setPasswordError("Invalid password1");
         } else {
@@ -128,15 +129,17 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
       // If user enters password w/o first having input username or email (can only check for validity):
       if (!currentUser && inputPassword.length) {
+        // If input pw isn't valid...
         if (!passwordIsValid(inputPassword)) {
-          setPasswordError("Invalid password2");
+          setPasswordError("Invalid password");
         } else {
           setPasswordError("");
         }
       }
+      // Handle input pw on signup form:
     } else {
       !passwordIsValid(inputPassword)
-        ? setPasswordError("Invalid password3")
+        ? setPasswordError("Invalid password")
         : setPasswordError("");
     }
   };
@@ -148,8 +151,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       : setConfirmationPasswordError("");
   };
 
-  // This is used on login form, where user can input either their username or email to log in
-  // Will need to handle case of user entering pw first before un/email. So, if pw field is not blank, check matching and validity of pw given the now-input un or email
+  // This method is used on login form, where user can input either their username or email to log in
   const handleUsernameOrEmailInput = (input: string): void => {
     const usernameExists: boolean = allUsers
       .map((user) => user.username)
@@ -165,25 +167,29 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setUsernameError("");
       setLoginWithUsernameOrEmail("email");
       setEmailAddress(input);
+      // If email address isn't in database & field contains at least one character:
       if (!emailExists && input.length) {
         setEmailError("E-mail address not recognized");
+        // If pw isn't valid...
         if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
         } else {
           setPasswordError("");
         }
+        // If email is recognized...
       } else {
         setEmailError("");
+        // If password is not valid...
         if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
+          // If currentUser exists, its pw isn't equal to input pw, and password field has at least one character...
         } else if (currentUser && currentUser.password !== password && password.length) {
           setPasswordError("Password doesn't match user");
         } else {
           setPasswordError("");
         }
       }
-      // When user input is not an email address (aka a username):
-      // Check that already-input pw, if one, matches user
+      // When user input is not an email address (aka, it's a username):
     } else {
       const currentUser = allUsers.filter((user) => user.username === input)[0];
       setEmailAddress("");
@@ -193,15 +199,18 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       // If username doesn't exist & its field contains at least 1 character:
       if (!usernameExists && input.length) {
         setUsernameError("Username not recognized");
+        // If pw isn't valid...
         if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
         } else {
           setPasswordError("");
         }
+        // If username is recognized & at least 1 character has been input...
       } else {
         setUsernameError("");
         if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
+          // If currentUser exists, its pw isn't equal to input pw, and pw field contains at least one character...
         } else if (currentUser && currentUser.password !== password && password.length) {
           setPasswordError("Password doesn't match user");
         } else {
