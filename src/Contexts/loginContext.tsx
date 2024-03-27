@@ -25,9 +25,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
 
   // Boolean values relating to input-field errors:
-  const [loginWithUsernameOrEmail, setLoginWithUsernameOrEmail] = useState<
-    "username" | "email"
-  >("username");
+  const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
   const [firstNameError, setFirstNameError] = useState<string>("");
   const [lastNameError, setLastNameError] = useState<string>("");
   const [usernameError, setUsernameError] = useState<string>("");
@@ -110,7 +108,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     if (!isOnSignup) {
       // Get current user (if username/email has been entered) so that its password can be compared to input pw:
       const currentUser: TUser =
-        loginWithUsernameOrEmail === "username"
+        loginMethod === "username"
           ? allUsers.filter((user) => user.username === username)[0]
           : allUsers.filter((user) => user.emailAddress === emailAddress)[0];
 
@@ -165,7 +163,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       const currentUser = allUsers.filter((user) => user.emailAddress === input)[0];
       setUsername("");
       setUsernameError("");
-      setLoginWithUsernameOrEmail("email");
+      setLoginMethod("email");
       setEmailAddress(input);
       // If email address isn't in database & field contains at least one character:
       if (!emailExists && input.length) {
@@ -194,7 +192,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       const currentUser = allUsers.filter((user) => user.username === input)[0];
       setEmailAddress("");
       setEmailError("");
-      setLoginWithUsernameOrEmail("username");
+      setLoginMethod("username");
       setUsername(input);
       // If username doesn't exist & its field contains at least 1 character:
       if (!usernameExists && input.length) {
@@ -257,7 +255,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     handlePasswordInput,
     handleConfirmationPasswordInput,
     handleUsernameOrEmailInput,
-    loginWithUsernameOrEmail,
+    loginMethod,
   };
 
   return (

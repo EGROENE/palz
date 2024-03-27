@@ -83,7 +83,7 @@ export type TMainContext = {
 };
 
 export type TLoginContext = {
-  loginWithUsernameOrEmail: "username" | "email";
+  loginMethod: "username" | "email";
   signupIsSelected: boolean;
   setSignupIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   passwordIsHidden: boolean;

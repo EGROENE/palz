@@ -15,7 +15,7 @@ const LoginForm = () => {
     passwordError,
     handlePasswordInput,
     handleUsernameOrEmailInput,
-    loginWithUsernameOrEmail,
+    loginMethod,
   } = useLoginContext();
 
   // const areNoErrors = <are all errors from context equal to ""
@@ -27,7 +27,7 @@ const LoginForm = () => {
           <p>Username or E-Mail Address:</p>
           <input
             onChange={(e) => handleUsernameOrEmailInput(e.target.value)}
-            value={loginWithUsernameOrEmail === "username" ? username : emailAddress}
+            value={loginMethod === "username" ? username : emailAddress}
             type="text"
             placeholder="Enter username or e-mail address"
           />
