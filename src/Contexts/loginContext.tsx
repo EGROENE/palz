@@ -35,7 +35,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const [passwordError, setPasswordError] = useState<string>("");
   const [confirmationPasswordError, setConfirmationPasswordError] = useState<string>("");
 
-  const toggleSignupLogin = () => {
+  const toggleSignupLogin = (): void => {
     setSignupIsSelected(!signupIsSelected);
     setFirstName("");
     setLastName("");
@@ -45,7 +45,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     setConfirmationPassword("");
   };
 
-  const toggleHidePassword = () => setPasswordIsHidden(!passwordIsHidden);
+  const toggleHidePassword = (): void => setPasswordIsHidden(!passwordIsHidden);
 
   // Input-handling methods:
   // Put here, since used in two different components
@@ -87,7 +87,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleEmailAddressInput = (email: string) => {
+  const handleEmailAddressInput = (email: string): void => {
     setEmailAddress(email);
 
     const emailIsTaken: boolean =
@@ -102,7 +102,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handlePasswordInput = (inputPassword: string, isOnSignup: boolean) => {
+  const handlePasswordInput = (inputPassword: string, isOnSignup: boolean): void => {
     setPassword(inputPassword);
 
     if (!isOnSignup) {
@@ -127,14 +127,15 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleConfirmationPasswordInput = (inputConfirmationPassword: string) => {
+  const handleConfirmationPasswordInput = (inputConfirmationPassword: string): void => {
     setConfirmationPassword(inputConfirmationPassword);
     inputConfirmationPassword !== password
       ? setConfirmationPasswordError("Passwords don't match")
       : setConfirmationPasswordError("");
   };
 
-  const handleUsernameOrEmailInput = (input: string) => {
+  // This is used on login form, where user can input either their username or email to log in
+  const handleUsernameOrEmailInput = (input: string): void => {
     const usernameExists: boolean = allUsers
       .map((user) => user.username)
       .includes(input.trim());
