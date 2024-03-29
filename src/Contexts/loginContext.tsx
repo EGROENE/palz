@@ -76,7 +76,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (usernameIsTaken) {
       setUsernameError("Username is already taken");
-    } else if (!usernameIsValid(username)) {
+    } else if (!usernameIsValid(username) && username !== "") {
       setUsernameError(
         "Username must be at least 4 characters long & consist of only alphanumeric characters"
       );
@@ -94,7 +94,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (emailIsTaken) {
       setEmailError("E-mail address is taken");
-    } else if (!emailIsValid(email)) {
+    } else if (!emailIsValid(email) && email !== "") {
       setEmailError("Invalid e-mail address");
     } else {
       setEmailError("");
