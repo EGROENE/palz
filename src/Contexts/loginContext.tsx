@@ -113,13 +113,17 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
           : allUsers.filter((user) => user.emailAddress === emailAddress)[0];
 
       // If currentUser exists & there is non-whitespace input in password field:
-      if (currentUser && inputPassword.replace(/\s/g, "").length) {
-        // If currentUser pw is not equal to inputPassword...
-        if (currentUser.password !== inputPassword) {
+      if (currentUser) {
+        // If input pw is empty string...
+        if (inputPassword === "") {
+          setPasswordError("");
+          // If input pw isn't empty string & is unequal to current user's pw...
+        } else if (currentUser.password !== inputPassword) {
           setPasswordError("Password doesn't match user");
-          // If input password is not valid...
+          // If input password is not empty string & is not valid...
         } else if (!passwordIsValid(inputPassword)) {
-          setPasswordError("Invalid password1");
+          setPasswordError("Invalid password");
+          // If no other error conditions are true, remove error message...
         } else {
           setPasswordError("");
         }
@@ -165,8 +169,8 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setUsernameError("");
       setLoginMethod("email");
       setEmailAddress(input);
-      // If email address isn't in database & field contains at least one character:
-      if (!emailExists && input.length) {
+      // If email address isn't in database & field isn't empty string:
+      if (!emailExists && input !== "") {
         setEmailError("E-mail address not recognized");
         // If pw isn't valid...
         if (!passwordIsValid(password)) {
@@ -178,10 +182,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       } else {
         setEmailError("");
         // If password is not valid...
-        if (!passwordIsValid(password)) {
+        if (!passwordIsValid(password) && password !== "") {
           setPasswordError("Invalid password");
-          // If currentUser exists, its pw isn't equal to input pw, and password field has at least one character...
-        } else if (currentUser && currentUser.password !== password && password.length) {
+          // If currentUser exists, its pw isn't equal to input pw, and password field isn't empty string...
+        } else if (currentUser && currentUser.password !== password && password !== "") {
           setPasswordError("Password doesn't match user");
         } else {
           setPasswordError("");
@@ -196,9 +200,9 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setUsername(input);
       // If username doesn't exist & its field contains at least 1 character:
       if (!usernameExists && input.length) {
-        setUsernameError("Username not recognized");
-        // If pw isn't valid...
-        if (!passwordIsValid(password)) {
+        setUsernameError("Data not recognized");
+        // If pw isn't valid & isn't empty string...
+        if (!passwordIsValid(password) && password !== "") {
           setPasswordError("Invalid password");
         } else {
           setPasswordError("");
@@ -206,10 +210,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
         // If username is recognized & at least 1 character has been input...
       } else {
         setUsernameError("");
-        if (!passwordIsValid(password)) {
+        if (!passwordIsValid(password) && password !== "") {
           setPasswordError("Invalid password");
-          // If currentUser exists, its pw isn't equal to input pw, and pw field contains at least one character...
-        } else if (currentUser && currentUser.password !== password && password.length) {
+          // If currentUser exists, its pw isn't equal to input pw, and pw field isn't empty string...
+        } else if (currentUser && currentUser.password !== password && password !== "") {
           setPasswordError("Password doesn't match user");
         } else {
           setPasswordError("");
