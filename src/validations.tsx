@@ -18,14 +18,9 @@ export const nameIsValid = (name: string): boolean => {
   return false;
 };
 
-// username can be any nonblank character (for now) & must be at least 4 chars long
+// username must consist of only alphanumeric characters & must be at least 4 chars long
 export const usernameIsValid = (username: string): boolean => {
-  if (
-    /^\S*$/.test(username) &&
-    /[a-zA-Z]/.test(username) &&
-    !username.includes("@") &&
-    username.length >= 4
-  ) {
+  if (/^[A-Za-z0-9]*$/.test(username) && username.length >= 4) {
     return true;
   }
   return false;
