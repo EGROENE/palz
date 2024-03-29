@@ -92,10 +92,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       allUsers.filter((user) => user.emailAddress === email.replace(/\s/g, "")).length >
       0;
 
-    if (!emailIsValid(email)) {
-      setEmailError("Invalid e-mail address");
-    } else if (emailIsTaken) {
+    if (emailIsTaken) {
       setEmailError("E-mail address is taken");
+    } else if (!emailIsValid(email)) {
+      setEmailError("Invalid e-mail address");
     } else {
       setEmailError("");
     }
