@@ -121,7 +121,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
         } else if (currentUser.password !== inputPassword) {
           setPasswordError("Password doesn't match user");
           // If input password is not empty string & is not valid...
-        } else if (!passwordIsValid(inputPassword)) {
+        } else if (!passwordIsValid(inputPassword) && inputPassword !== "") {
           setPasswordError("Invalid password");
           // If no other error conditions are true, remove error message...
         } else {
@@ -130,13 +130,15 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // If user enters password w/o first having input username or email (can only check for validity):
-      if (!currentUser && inputPassword.length) {
+      if (!currentUser && inputPassword !== "") {
         // If input pw isn't valid...
         if (!passwordIsValid(inputPassword)) {
           setPasswordError("Invalid password");
         } else {
           setPasswordError("");
         }
+      } else {
+        setPasswordError("");
       }
       // Handle input pw on signup form:
     } else {
