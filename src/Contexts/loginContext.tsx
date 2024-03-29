@@ -187,7 +187,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       if (!emailExists && input !== "") {
         setEmailError("E-mail address not recognized");
         // If pw isn't valid...
-        if (!passwordIsValid(password)) {
+        if (!passwordIsValid(password) && password !== "") {
           setPasswordError("Invalid password");
         } else {
           setPasswordError("");
@@ -211,7 +211,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setEmailAddress("");
       setEmailError("");
       setLoginMethod("username");
-      setUsername(input.replace(/[^a-zA-Z0-9 ]/g, ""));
+      setUsername(input.replace(/\s/g, ""));
       // If username doesn't exist & its field contains at least 1 character:
       if (!usernameExists && input.length) {
         setUsernameError("Data not recognized");
