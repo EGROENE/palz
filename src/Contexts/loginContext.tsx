@@ -69,7 +69,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleUsernameInput = (username: string): void => {
-    setUsername(username);
+    setUsername(username.replace(/\s/g, "").replace(/@/g, ""));
 
     const usernameIsTaken: boolean =
       allUsers.filter((user) => user.username === username).length > 0;
@@ -86,7 +86,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleEmailAddressInput = (email: string): void => {
-    setEmailAddress(email);
+    setEmailAddress(email.replace(/\s/g, ""));
 
     const emailIsTaken: boolean =
       allUsers.filter((user) => user.emailAddress === email.replace(/\s/g, "")).length >
@@ -168,7 +168,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setUsername("");
       setUsernameError("");
       setLoginMethod("email");
-      setEmailAddress(input);
+      setEmailAddress(input.replace(/\s/g, ""));
       // If email address isn't in database & field isn't empty string:
       if (!emailExists && input !== "") {
         setEmailError("E-mail address not recognized");
@@ -197,7 +197,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setEmailAddress("");
       setEmailError("");
       setLoginMethod("username");
-      setUsername(input);
+      setUsername(input.replace(/\s/g, "").replace(/@/g, ""));
       // If username doesn't exist & its field contains at least 1 character:
       if (!usernameExists && input.length) {
         setUsernameError("Data not recognized");
