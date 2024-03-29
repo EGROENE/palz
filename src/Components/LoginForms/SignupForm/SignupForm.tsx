@@ -39,6 +39,7 @@ const SignupForm = () => {
               value={firstName}
               type="text"
               placeholder="Enter your first name"
+              inputMode="text"
             />
             {firstNameError !== "" && <p>{firstNameError}</p>}
           </label>
@@ -49,6 +50,7 @@ const SignupForm = () => {
               value={lastName}
               type="text"
               placeholder="Enter your last name"
+              inputMode="text"
             />
             {lastNameError !== "" && <p>{lastNameError}</p>}
           </label>
@@ -60,6 +62,7 @@ const SignupForm = () => {
             value={username}
             type="text"
             placeholder="Enter a username"
+            inputMode="text"
           />
           {usernameError !== "" && <p>{usernameError}</p>}
         </label>
@@ -70,6 +73,7 @@ const SignupForm = () => {
             value={emailAddress}
             type="email"
             placeholder="Enter your e-mail address"
+            inputMode="email"
           />
           {emailError !== "" && <p>{emailError}</p>}
         </label>
@@ -80,6 +84,7 @@ const SignupForm = () => {
             value={password}
             type={passwordIsHidden ? "password" : "text"}
             placeholder="Enter password"
+            inputMode="text"
           />
           {!passwordIsHidden ? (
             <OpenEye toggleHidePassword={toggleHidePassword} />
@@ -95,6 +100,7 @@ const SignupForm = () => {
             value={confirmationPassword}
             type={passwordIsHidden ? "password" : "text"}
             placeholder="Confirm password"
+            inputMode="text"
           />
           {!passwordIsHidden ? (
             <OpenEye toggleHidePassword={toggleHidePassword} />

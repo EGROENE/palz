@@ -30,6 +30,7 @@ const LoginForm = () => {
             value={loginMethod === "username" ? username : emailAddress}
             type="text"
             placeholder="Enter username or e-mail address"
+            inputMode="text"
           />
           {usernameError && <p>{usernameError}</p>}
           {emailError && usernameError === "" && <p>{emailError}</p>}
@@ -41,6 +42,7 @@ const LoginForm = () => {
             value={password}
             type={passwordIsHidden ? "password" : "text"}
             placeholder="Enter password"
+            inputMode="text"
           />
           {!passwordIsHidden ? (
             <OpenEye toggleHidePassword={toggleHidePassword} />
