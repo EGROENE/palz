@@ -68,18 +68,19 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleUsernameInput = (username: string): void => {
-    setUsername(username.replace(/[^a-zA-Z0-9 ]/g, ""));
+  const handleUsernameInput = (inputUsername: string): void => {
+    setUsername(inputUsername.replace(/[^a-zA-Z0-9 ]/g, ""));
 
     const usernameIsTaken: boolean =
-      allUsers.filter((user) => user.username === username).length > 0;
+      allUsers.filter((user) => user.username === inputUsername).length > 0;
 
     if (usernameIsTaken) {
       setUsernameError("Username is already taken");
-    } else if (!usernameIsValid(username) && username !== "") {
-      setUsernameError(
-        "Username must be at least 4 characters long & consist of only alphanumeric characters"
-      );
+    } else if (
+      !usernameIsValid(inputUsername.replace(/[^a-zA-Z0-9 ]/g, "")) &&
+      inputUsername !== ""
+    ) {
+      setUsernameError("Username must be at least 4 characters long");
     } else {
       setUsernameError("");
     }
