@@ -76,7 +76,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (!usernameIsValid(username)) {
       setUsernameError(
-        "Username must be at least 4 characters long & contain at least one letter"
+        "Username must be at least 4 characters long & consist of only alphanumeric characters"
       );
     } else if (usernameIsTaken) {
       setUsernameError("Username is already taken");
