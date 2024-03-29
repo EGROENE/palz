@@ -69,14 +69,14 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleUsernameInput = (username: string): void => {
-    setUsername(username.replace(/\s/g, "").replace(/@/g, ""));
+    setUsername(username.replace(/[^a-zA-Z0-9 ]/g, ""));
 
     const usernameIsTaken: boolean =
       allUsers.filter((user) => user.username === username).length > 0;
 
     if (!usernameIsValid(username)) {
       setUsernameError(
-        'Username must be at least 4 characters long, contain at least one letter, & contain no spaces or "@"'
+        "Username must be at least 4 characters long & contain at least one letter"
       );
     } else if (usernameIsTaken) {
       setUsernameError("Username is already taken");
@@ -197,7 +197,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setEmailAddress("");
       setEmailError("");
       setLoginMethod("username");
-      setUsername(input.replace(/\s/g, "").replace(/@/g, ""));
+      setUsername(input.replace(/[^a-zA-Z0-9 ]/g, ""));
       // If username doesn't exist & its field contains at least 1 character:
       if (!usernameExists && input.length) {
         setUsernameError("Data not recognized");
