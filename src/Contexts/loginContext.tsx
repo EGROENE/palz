@@ -140,15 +140,29 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       }
       // Handle input pw on signup form:
     } else {
-      !passwordIsValid(inputPassword)
-        ? setPasswordError("Invalid password")
-        : setPasswordError("");
+      if (!passwordIsValid(inputPassword) && inputPassword !== "") {
+        setPasswordError("Invalid password");
+        if (confirmationPassword !== "" && inputPassword !== confirmationPassword) {
+          setConfirmationPasswordError("Passwords don't match");
+        } else if (
+          confirmationPassword !== "" &&
+          inputPassword === confirmationPassword
+        ) {
+          setPasswordError("");
+          setConfirmationPasswordError("");
+        }
+      } else {
+        setPasswordError("");
+        setConfirmationPasswordError("");
+      }
     }
   };
 
   const handleConfirmationPasswordInput = (inputConfirmationPassword: string): void => {
     setConfirmationPassword(inputConfirmationPassword);
-    inputConfirmationPassword !== password
+    inputConfirmationPassword !== password &&
+    inputConfirmationPassword !== "" &&
+    password !== ""
       ? setConfirmationPasswordError("Passwords don't match")
       : setConfirmationPasswordError("");
   };
