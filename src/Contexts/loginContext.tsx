@@ -60,15 +60,15 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   // Put here, since used in two different components
   const handleNameInput = (name: string, isFirstName: boolean) => {
     if (isFirstName) {
-      setFirstName(name.trim());
+      setFirstName(name);
     } else {
-      setLastName(name.trim());
+      setLastName(name);
     }
     if (!nameIsValid(name) && name.length > 0) {
       if (isFirstName) {
-        setFirstNameError("Only alphabetical characters & any hyphens allowed b/t names");
+        setFirstNameError("Only alphabetical characters & appropriate punctuation");
       } else {
-        setLastNameError("Only alphabetical characters & any hyphens allowed b/t names");
+        setLastNameError("Only alphabetical characters & appropriate punctuation");
       }
     } else if (nameIsValid(name) || name.length === 0) {
       if (isFirstName) {
@@ -271,18 +271,18 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleFormSubmission = (
     isOnSignup: boolean,
-    e: React.FormEvent<HTMLFormElement>
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
-    if (areNoErrors) {
-      if (isOnSignup) {
-        handleNewAccountCreation(userData);
-      } else {
-        setUserCreatedAccount(false);
-      }
-    } else {
-      setShowErrors(true);
-    }
+    isOnSignup ? handleNewAccountCreation(userData) : setUserCreatedAccount(false);
+  };
+
+  const handleFormRejection = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void => {
+    e.preventDefault();
+    window.alert("Please fix form errors, then try again");
+    setShowErrors(true);
   };
 
   const loginContextValues: TLoginContext = {
@@ -326,6 +326,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     handleUsernameOrEmailInput,
     loginMethod,
     handleFormSubmission,
+    handleFormRejection,
   };
 
   return (
