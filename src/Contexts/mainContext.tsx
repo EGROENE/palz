@@ -13,6 +13,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [userInterests, setUserInterests] = useState([]);
   const [eventsByTag, setEventsByTag] = useState([]);
   const [allInterests, setAllInterests] = useState([]);
+  const [userCreatedAccount, setUserCreatedAccount] = useState<null | boolean>(null);
 
   useEffect(() => {
     Requests.getAllUsers()
@@ -98,6 +99,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     userInterests,
     eventsByTag,
     allInterests,
+    userCreatedAccount,
+    setUserCreatedAccount,
   };
 
   return (

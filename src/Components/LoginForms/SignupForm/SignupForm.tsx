@@ -24,13 +24,13 @@ const SignupForm = () => {
     handlePasswordInput,
     confirmationPasswordError,
     handleConfirmationPasswordInput,
+    areNoErrors,
+    handleFormSubmission,
   } = useLoginContext();
-
-  // const areNoErrors = <are all errors from context equal to ""
 
   return (
     <>
-      <form className="login-signup-form">
+      <form onSubmit={(e) => handleFormSubmission(true, e)} className="login-signup-form">
         <div>
           <label>
             <p>First Name:</p>
@@ -41,7 +41,9 @@ const SignupForm = () => {
               placeholder="Enter your first name"
               inputMode="text"
             />
-            {firstNameError !== "" && <p>{firstNameError}</p>}
+            {firstNameError !== "" && (
+              <p className="input-error-message">{firstNameError}</p>
+            )}
           </label>
           <label>
             <p>Last Name:</p>
@@ -52,7 +54,9 @@ const SignupForm = () => {
               placeholder="Enter your last name"
               inputMode="text"
             />
-            {lastNameError !== "" && <p>{lastNameError}</p>}
+            {lastNameError !== "" && (
+              <p className="input-error-message">{lastNameError}</p>
+            )}
           </label>
         </div>
         <label>
@@ -64,7 +68,7 @@ const SignupForm = () => {
             placeholder="Enter a username"
             inputMode="text"
           />
-          {usernameError !== "" && <p>{usernameError}</p>}
+          {usernameError !== "" && <p className="input-error-message">{usernameError}</p>}
         </label>
         <label>
           <p>E-Mail Address:</p>
@@ -75,7 +79,7 @@ const SignupForm = () => {
             placeholder="Enter your e-mail address"
             inputMode="email"
           />
-          {emailError !== "" && <p>{emailError}</p>}
+          {emailError !== "" && <p className="input-error-message">{emailError}</p>}
         </label>
         <label>
           <p>Choose a Password:</p>
@@ -91,7 +95,7 @@ const SignupForm = () => {
           ) : (
             <ClosedEye toggleHidePassword={toggleHidePassword} />
           )}
-          {passwordError !== "" && <p>{passwordError}</p>}
+          {passwordError !== "" && <p className="input-error-message">{passwordError}</p>}
         </label>
         <label>
           <p>Confirm Password:</p>
@@ -107,8 +111,11 @@ const SignupForm = () => {
           ) : (
             <ClosedEye toggleHidePassword={toggleHidePassword} />
           )}
-          {confirmationPasswordError !== "" && <p>{confirmationPasswordError}</p>}
+          {confirmationPasswordError !== "" && (
+            <p className="input-error-message">{confirmationPasswordError}</p>
+          )}
         </label>
+        <button type={areNoErrors ? "submit" : "button"}>Sign Up</button>
       </form>
       <p>
         Already have an account?{" "}

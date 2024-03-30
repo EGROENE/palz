@@ -1,17 +1,19 @@
 import { createContext, ReactNode, useState } from "react";
-import { TLoginContext, TUser } from "../types";
+import { TLoginContext, TNewUser, TUser } from "../types";
 import {
   emailIsValid,
   nameIsValid,
   passwordIsValid,
   usernameIsValid,
 } from "../validations";
+import Requests from "../requests";
+import toast from "react-hot-toast";
 import { useMainContext } from "../Hooks/useMainContext";
 
 export const LoginContext = createContext<TLoginContext | null>(null);
 
 export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
-  const { allUsers } = useMainContext();
+  const { allUsers, setUserCreatedAccount } = useMainContext();
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(true);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
@@ -32,6 +34,15 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
   const [confirmationPasswordError, setConfirmationPasswordError] = useState<string>("");
+  const [showErrors, setShowErrors] = useState<boolean>(false);
+
+  const userData: TNewUser = {
+    firstName: firstName,
+    lastName: lastName,
+    username: username,
+    emailAddress: emailAddress,
+    password: password,
+  };
 
   const toggleSignupLogin = (): void => {
     setSignupIsSelected(!signupIsSelected);
@@ -131,15 +142,13 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // If user enters password w/o first having input username or email (can only check for validity):
-      if (!currentUser && inputPassword !== "") {
+      if (!currentUser) {
         // If input pw isn't valid...
-        if (!passwordIsValid(inputPassword)) {
+        if (!passwordIsValid(inputPassword) && inputPassword !== "") {
           setPasswordError("Invalid password");
         } else {
           setPasswordError("");
         }
-      } else {
-        setPasswordError("");
       }
       // Handle input pw on signup form:
     } else {
@@ -239,6 +248,43 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Handler for creating new user account. Should make request w/ object containing user data, then handle errors in case it fails. If it fails, notify user somehow.
+  const handleNewAccountCreation = (userData: TNewUser) => {
+    Requests.createUser(userData)
+      .then((response) => {
+        !response.ok ? setUserCreatedAccount(false) : setUserCreatedAccount(true);
+      })
+      .catch((error) => {
+        toast.error("Could not create account. Please try again later.");
+        console.log(error);
+      });
+  };
+
+  // submission handler should change state value userCreatedAccount (initialized to null, changed to boolean, depending on which form was submitted). once this value is a boolean, all err msgs (besides conf pw) should display, if there are, indeed errors.
+  const areNoErrors: boolean =
+    firstNameError === "" &&
+    lastNameError === "" &&
+    usernameError === "" &&
+    emailError === "" &&
+    passwordError === "" &&
+    confirmationPasswordError === "";
+
+  const handleFormSubmission = (
+    isOnSignup: boolean,
+    e: React.FormEvent<HTMLFormElement>
+  ): void => {
+    e.preventDefault();
+    if (areNoErrors) {
+      if (isOnSignup) {
+        handleNewAccountCreation(userData);
+      } else {
+        setUserCreatedAccount(false);
+      }
+    } else {
+      setShowErrors(true);
+    }
+  };
+
   const loginContextValues: TLoginContext = {
     signupIsSelected,
     setSignupIsSelected,
@@ -270,6 +316,8 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     setConfirmationPassword,
     confirmationPasswordError,
     setConfirmationPasswordError,
+    areNoErrors,
+    showErrors,
     handleNameInput,
     handleUsernameInput,
     handleEmailAddressInput,
@@ -277,6 +325,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     handleConfirmationPasswordInput,
     handleUsernameOrEmailInput,
     loginMethod,
+    handleFormSubmission,
   };
 
   return (

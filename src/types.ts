@@ -1,3 +1,11 @@
+export type TNewUser = {
+  firstName: string;
+  lastName: string;
+  username: string;
+  emailAddress: string;
+  password: string;
+};
+
 export type TUser = {
   id: string;
   firstName: string;
@@ -80,6 +88,8 @@ export type TMainContext = {
     id: string;
     interest: string;
   }[];
+  userCreatedAccount: null | boolean;
+  setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
 };
 
 export type TLoginContext = {
@@ -114,10 +124,16 @@ export type TLoginContext = {
   setConfirmationPassword: React.Dispatch<React.SetStateAction<string>>;
   confirmationPasswordError: string;
   setConfirmationPasswordError: React.Dispatch<React.SetStateAction<string>>;
+  areNoErrors: boolean;
+  showErrors: boolean;
   handleNameInput: (name: string, isFirstName: boolean) => void;
   handleUsernameInput: (username: string) => void;
   handleEmailAddressInput: (email: string) => void;
   handlePasswordInput: (inputPassword: string, isOnSignup: boolean) => void;
   handleConfirmationPasswordInput: (inputConfirmationPassword: string) => void;
   handleUsernameOrEmailInput: (input: string) => void;
+  handleFormSubmission: (
+    isOnSignup: boolean,
+    e: React.FormEvent<HTMLFormElement>
+  ) => void;
 };

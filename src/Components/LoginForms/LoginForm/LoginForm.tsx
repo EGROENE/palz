@@ -16,13 +16,16 @@ const LoginForm = () => {
     handlePasswordInput,
     handleUsernameOrEmailInput,
     loginMethod,
+    areNoErrors,
+    handleFormSubmission,
   } = useLoginContext();
-
-  // const areNoErrors = <are all errors from context equal to ""
 
   return (
     <>
-      <form className="login-signup-form">
+      <form
+        onSubmit={(e) => handleFormSubmission(false, e)}
+        className="login-signup-form"
+      >
         <label>
           <p>Username or E-Mail Address:</p>
           <input
@@ -32,8 +35,10 @@ const LoginForm = () => {
             placeholder="Enter username or e-mail address"
             inputMode="text"
           />
-          {usernameError && <p>{usernameError}</p>}
-          {emailError && usernameError === "" && <p>{emailError}</p>}
+          {usernameError && <p className="input-error-message">{usernameError}</p>}
+          {emailError && usernameError === "" && (
+            <p className="input-error-message">{emailError}</p>
+          )}
         </label>
         <label>
           <p>Password:</p>
@@ -49,8 +54,9 @@ const LoginForm = () => {
           ) : (
             <ClosedEye toggleHidePassword={toggleHidePassword} />
           )}
-          {passwordError !== "" && <p>{passwordError}</p>}
+          {passwordError !== "" && <p className="input-error-message">{passwordError}</p>}
         </label>
+        <button type={areNoErrors ? "submit" : "button"}>Log In</button>
       </form>
       <p>
         Don't have an account?{" "}
