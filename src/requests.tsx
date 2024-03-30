@@ -1,3 +1,5 @@
+import { TNewUser } from "./types";
+
 const getAllUsers = (): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json");
@@ -86,6 +88,26 @@ const getAllInterests = (): Promise<Response> => {
   });
 };
 
+const createUser = (newUserData: TNewUser): Promise<Response> => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const raw = JSON.stringify({
+    "firstName": newUserData.firstName,
+    "lastName": newUserData.lastName,
+    "username": newUserData.username,
+    "password": newUserData.password,
+    "emailAddress": newUserData.emailAddress,
+  });
+
+  return fetch("http://localhost:3000/users", {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
   getAllUsers,
   getAllEvents,
@@ -95,5 +117,6 @@ const Requests = {
   getUserInterests,
   getEventsbyTag,
   getAllInterests,
+  createUser,
 };
 export default Requests;
