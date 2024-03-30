@@ -17,7 +17,9 @@ const LoginForm = () => {
     handleUsernameOrEmailInput,
     loginMethod,
     areNoErrors,
+    showErrors,
     handleFormSubmission,
+    handleFormRejection,
   } = useLoginContext();
 
   return (
@@ -34,9 +36,12 @@ const LoginForm = () => {
             type="text"
             placeholder="Enter username or e-mail address"
             inputMode="text"
+            required
           />
-          {usernameError && <p className="input-error-message">{usernameError}</p>}
-          {emailError && usernameError === "" && (
+          {usernameError && showErrors && (
+            <p className="input-error-message">{usernameError}</p>
+          )}
+          {emailError && usernameError === "" && showErrors && (
             <p className="input-error-message">{emailError}</p>
           )}
         </label>
@@ -48,15 +53,23 @@ const LoginForm = () => {
             type={passwordIsHidden ? "password" : "text"}
             placeholder="Enter password"
             inputMode="text"
+            required
           />
           {!passwordIsHidden ? (
             <OpenEye toggleHidePassword={toggleHidePassword} />
           ) : (
             <ClosedEye toggleHidePassword={toggleHidePassword} />
           )}
-          {passwordError !== "" && <p className="input-error-message">{passwordError}</p>}
+          {passwordError !== "" && showErrors && (
+            <p className="input-error-message">{passwordError}</p>
+          )}
         </label>
-        <button type={areNoErrors ? "submit" : "button"}>Log In</button>
+        <button
+          type={areNoErrors ? "submit" : "button"}
+          onClick={(e) => (areNoErrors ? undefined : handleFormRejection(e))}
+        >
+          Log In
+        </button>
       </form>
       <p>
         Don't have an account?{" "}

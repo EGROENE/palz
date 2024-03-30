@@ -136,4 +136,5 @@ export type TLoginContext = {
     isOnSignup: boolean,
     e: React.FormEvent<HTMLFormElement>
   ) => void;
+  handleFormRejection: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
