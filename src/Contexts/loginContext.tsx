@@ -271,7 +271,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleFormSubmission = (
     isOnSignup: boolean,
-    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e: React.FormEvent<HTMLFormElement>
   ): void => {
     e.preventDefault();
     isOnSignup ? handleNewAccountCreation(userData) : setUserCreatedAccount(false);
