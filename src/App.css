@@ -5,6 +5,13 @@
   text-align: center;
 }
 
+.login-page-container {
+  display: flex;
+  align-items: center;
+  width: 80vw;
+  justify-content: space-around;
+}
+
 .login-options-container {
   display: flex;
   justify-content: space-around;
@@ -20,12 +27,21 @@
   cursor: pointer;
 }
 
+.form {
+  width: 50%;
+}
+
 .login-signup-form {
   margin-top: 1rem;
 }
 
-.login-signup-form p {
+.login-signup-form p,
+.input-error-message {
   margin: 0.1rem;
+}
+
+.input-error-message {
+  font-size: 0.75rem;
 }
 
 .login-signup-form input {

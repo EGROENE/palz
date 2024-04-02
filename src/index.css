@@ -1,5 +1,6 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  font-family: "Indie Flower", cursive;
   line-height: 1.5;
   font-weight: 400;
 
@@ -12,6 +13,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  --text-font: "Josefine Sans", monospace, sans-serif;
   --theme-blue: #004cff;
   --theme-green: rgb(8, 236, 8);
   --theme-red: red;
@@ -22,6 +24,7 @@ a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
+  font-family: var(--text-font);
 }
 a:hover {
   color: #535bf2;

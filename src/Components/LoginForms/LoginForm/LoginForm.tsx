@@ -7,6 +7,7 @@ const LoginForm = () => {
     passwordIsHidden,
     toggleHidePassword,
     toggleSignupLogin,
+    signupIsSelected,
     username,
     usernameError,
     emailAddress,
@@ -23,7 +24,25 @@ const LoginForm = () => {
   } = useLoginContext();
 
   return (
-    <>
+    <div className="form">
+      <div className="login-options-container">
+        <header
+          style={{
+            borderBottom: signupIsSelected ? `1px solid var(--theme-green)` : "none",
+          }}
+          onClick={!signupIsSelected ? () => toggleSignupLogin() : undefined}
+        >
+          Sign Up
+        </header>
+        <header
+          style={{
+            borderBottom: !signupIsSelected ? `1px solid var(--theme-green)` : "none",
+          }}
+          onClick={signupIsSelected ? () => toggleSignupLogin() : undefined}
+        >
+          Log In
+        </header>
+      </div>
       <form
         onSubmit={(e) => handleFormSubmission(false, e)}
         className="login-signup-form"
@@ -77,7 +96,7 @@ const LoginForm = () => {
           Sign Up
         </span>
       </p>
-    </>
+    </div>
   );
 };
 export default LoginForm;
