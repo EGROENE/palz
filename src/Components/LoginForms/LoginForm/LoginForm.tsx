@@ -27,22 +27,22 @@ const LoginForm = () => {
   return (
     <div className="form">
       <div className="login-options-container">
-        <header
-          style={{
-            borderBottom: signupIsSelected ? `1px solid var(--theme-green)` : "none",
-          }}
-          onClick={!signupIsSelected ? () => toggleSignupLogin() : undefined}
-        >
-          Sign Up
-        </header>
-        <header
-          style={{
-            borderBottom: !signupIsSelected ? `1px solid var(--theme-green)` : "none",
-          }}
-          onClick={signupIsSelected ? () => toggleSignupLogin() : undefined}
-        >
-          Log In
-        </header>
+        <div>
+          <header onClick={!signupIsSelected ? () => toggleSignupLogin() : undefined}>
+            Sign Up
+          </header>
+          {signupIsSelected && (
+            <div className="form-type-underline animate__animated animate__slideInRight"></div>
+          )}
+        </div>
+        <div>
+          <header onClick={signupIsSelected ? () => toggleSignupLogin() : undefined}>
+            Log In
+          </header>
+          {!signupIsSelected && (
+            <div className="form-type-underline animate__animated animate__slideInLeft"></div>
+          )}
+        </div>
       </div>
       <form
         onSubmit={(e) => handleFormSubmission(false, e)}
@@ -56,6 +56,11 @@ const LoginForm = () => {
             type="text"
             placeholder="Enter username or e-mail address"
             inputMode="text"
+            className={
+              (usernameError !== "" || passwordError !== "") && showErrors
+                ? "erroneous-field"
+                : undefined
+            }
           />
           {usernameError && showErrors && (
             <p className="input-error-message">{usernameError}</p>
@@ -73,6 +78,9 @@ const LoginForm = () => {
               type={passwordIsHidden ? "password" : "text"}
               placeholder="Enter password"
               inputMode="text"
+              className={
+                passwordError !== "" && showErrors ? "erroneous-field" : undefined
+              }
             />
             {!passwordIsHidden ? (
               <OpenEye toggleHidePassword={toggleHidePassword} />
@@ -85,6 +93,7 @@ const LoginForm = () => {
           )}
         </label>
         <button
+          className="login-button"
           type={areNoLoginErrors ? "submit" : "button"}
           onClick={(e) =>
             areNoLoginErrors && allLoginInputsFilled ? undefined : handleFormRejection(e)
