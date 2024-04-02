@@ -17,7 +17,8 @@ const LoginForm = () => {
     handlePasswordInput,
     handleUsernameOrEmailInput,
     loginMethod,
-    areNoErrors,
+    areNoLoginErrors,
+    allLoginInputsFilled,
     showErrors,
     handleFormSubmission,
     handleFormRejection,
@@ -55,7 +56,6 @@ const LoginForm = () => {
             type="text"
             placeholder="Enter username or e-mail address"
             inputMode="text"
-            required
           />
           {usernameError && showErrors && (
             <p className="input-error-message">{usernameError}</p>
@@ -66,26 +66,29 @@ const LoginForm = () => {
         </label>
         <label>
           <p>Password:</p>
-          <input
-            onChange={(e) => handlePasswordInput(e.target.value, false)}
-            value={password}
-            type={passwordIsHidden ? "password" : "text"}
-            placeholder="Enter password"
-            inputMode="text"
-            required
-          />
-          {!passwordIsHidden ? (
-            <OpenEye toggleHidePassword={toggleHidePassword} />
-          ) : (
-            <ClosedEye toggleHidePassword={toggleHidePassword} />
-          )}
+          <div className="password-input">
+            <input
+              onChange={(e) => handlePasswordInput(e.target.value, false)}
+              value={password}
+              type={passwordIsHidden ? "password" : "text"}
+              placeholder="Enter password"
+              inputMode="text"
+            />
+            {!passwordIsHidden ? (
+              <OpenEye toggleHidePassword={toggleHidePassword} />
+            ) : (
+              <ClosedEye toggleHidePassword={toggleHidePassword} />
+            )}
+          </div>
           {passwordError !== "" && showErrors && (
             <p className="input-error-message">{passwordError}</p>
           )}
         </label>
         <button
-          type={areNoErrors ? "submit" : "button"}
-          onClick={(e) => (areNoErrors ? undefined : handleFormRejection(e))}
+          type={areNoLoginErrors ? "submit" : "button"}
+          onClick={(e) =>
+            areNoLoginErrors && allLoginInputsFilled ? undefined : handleFormRejection(e)
+          }
         >
           Log In
         </button>
