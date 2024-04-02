@@ -310,7 +310,9 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
-    window.alert("Please fix form errors, then try again");
+    window.alert(
+      "Please ensure all fields have been filled out & fix any form errors, then try again"
+    );
     setShowErrors(true);
   };
 
