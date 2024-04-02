@@ -35,13 +35,17 @@
   margin-top: 1rem;
 }
 
+.login-signup-form p:first-child {
+  font-size: 1.5rem;
+}
+
 .login-signup-form p,
 .input-error-message {
   margin: 0.1rem;
 }
 
 .input-error-message {
-  font-size: 0.75rem;
+  font-size: 1rem;
 }
 
 .login-signup-form input {
@@ -49,9 +53,13 @@
   padding: 0.45rem;
 }
 
+.password-input {
+  width: 100%;
+}
+
 .eye {
   position: absolute;
-  top: 2.25rem;
+  top: 3rem;
   left: 94%;
 }
 
