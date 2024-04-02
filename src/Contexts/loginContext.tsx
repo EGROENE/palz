@@ -25,15 +25,25 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const [emailAddress, setEmailAddress] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
+  const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
 
   // Boolean values relating to input-field errors:
-  const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
-  const [firstNameError, setFirstNameError] = useState<string>("");
-  const [lastNameError, setLastNameError] = useState<string>("");
-  const [usernameError, setUsernameError] = useState<string>("");
-  const [emailError, setEmailError] = useState<string>("");
-  const [passwordError, setPasswordError] = useState<string>("");
-  const [confirmationPasswordError, setConfirmationPasswordError] = useState<string>("");
+  const [firstNameError, setFirstNameError] = useState<string>(
+    "Please fill out this field"
+  );
+  const [lastNameError, setLastNameError] = useState<string>(
+    "Please fill out this field"
+  );
+  const [usernameError, setUsernameError] = useState<string>(
+    "Please fill out this field"
+  );
+  const [emailError, setEmailError] = useState<string>("Please fill out this field");
+  const [passwordError, setPasswordError] = useState<string>(
+    "Please fill out this field"
+  );
+  const [confirmationPasswordError, setConfirmationPasswordError] = useState<string>(
+    "Please fill out this field"
+  );
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
   const userData: TNewUser = {
@@ -47,11 +57,17 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const toggleSignupLogin = (): void => {
     setSignupIsSelected(!signupIsSelected);
     setFirstName("");
+    setFirstNameError("Please fill out this field");
     setLastName("");
+    setLastNameError("Please fill out this field");
     setUsername("");
+    setUsernameError("Please fill out this field");
     setEmailAddress("");
+    setEmailError("Please fill out this field");
     setPassword("");
+    setPasswordError("Please fill out this field");
     setConfirmationPassword("");
+    setConfirmationPasswordError("Please fill out this field");
   };
 
   const toggleHidePassword = (): void => setPasswordIsHidden(!passwordIsHidden);
@@ -59,38 +75,31 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   // Input-handling methods:
   // Put here, since used in two different components
   const handleNameInput = (name: string, isFirstName: boolean) => {
-    if (isFirstName) {
-      setFirstName(name);
-    } else {
-      setLastName(name);
-    }
-    if (!nameIsValid(name) && name.length > 0) {
-      if (isFirstName) {
-        setFirstNameError("Only alphabetical characters & appropriate punctuation");
-      } else {
-        setLastNameError("Only alphabetical characters & appropriate punctuation");
-      }
-    } else if (nameIsValid(name) || name.length === 0) {
-      if (isFirstName) {
-        setFirstNameError("");
-      } else {
-        setLastNameError("");
-      }
+    isFirstName ? setFirstName(name) : setLastName(name);
+    if (name.replace(/\s/g, "") === "") {
+      isFirstName
+        ? setFirstNameError("Please fill out this field")
+        : setLastNameError("Please fill out this field");
+    } else if (!nameIsValid(name)) {
+      isFirstName
+        ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
+        : setLastNameError("Only alphabetical characters & appropriate punctuation");
+    } else if (nameIsValid(name)) {
+      isFirstName ? setFirstNameError("") : setLastNameError("");
     }
   };
 
   const handleUsernameInput = (inputUsername: string): void => {
-    setUsername(inputUsername.replace(/[^a-zA-Z0-9 ]/g, ""));
+    setUsername(inputUsername.replace(/[^a-zA-Z0-9 ]/g, "").toLowerCase());
 
     const usernameIsTaken: boolean =
       allUsers.filter((user) => user.username === inputUsername).length > 0;
+    console.log(allUsers.filter((user) => user.username === inputUsername));
+    console.log(usernameIsTaken);
 
     if (usernameIsTaken) {
       setUsernameError("Username is already taken");
-    } else if (
-      !usernameIsValid(inputUsername.replace(/[^a-zA-Z0-9 ]/g, "")) &&
-      inputUsername !== ""
-    ) {
+    } else if (!usernameIsValid(inputUsername)) {
       setUsernameError("Username must be at least 4 characters long");
     } else {
       setUsernameError("");
@@ -128,14 +137,13 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       if (currentUser) {
         // If input pw is empty string...
         if (inputPassword === "") {
-          setPasswordError("");
+          setPasswordError("Please fill out this field");
           // If input pw isn't empty string & is unequal to current user's pw...
         } else if (currentUser.password !== inputPassword) {
           setPasswordError("Password doesn't match user");
-          // If input password is not empty string & is not valid...
-        } else if (!passwordIsValid(inputPassword) && inputPassword !== "") {
-          setPasswordError("Invalid password");
           // If no other error conditions are true, remove error message...
+        } else if (!passwordIsValid(inputPassword)) {
+          setPasswordError("Invalid password");
         } else {
           setPasswordError("");
         }
@@ -144,7 +152,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       // If user enters password w/o first having input username or email (can only check for validity):
       if (!currentUser) {
         // If input pw isn't valid...
-        if (!passwordIsValid(inputPassword) && inputPassword !== "") {
+        if (!passwordIsValid(inputPassword)) {
           setPasswordError("Invalid password");
         } else {
           setPasswordError("");
@@ -152,20 +160,15 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       }
       // Handle input pw on signup form:
     } else {
-      if (!passwordIsValid(inputPassword) && inputPassword !== "") {
+      if (!passwordIsValid(inputPassword) && inputPassword.length) {
         setPasswordError("Invalid password");
         if (confirmationPassword !== "" && inputPassword !== confirmationPassword) {
           setConfirmationPasswordError("Passwords don't match");
-        } else if (
-          confirmationPassword !== "" &&
-          inputPassword === confirmationPassword
-        ) {
-          setPasswordError("");
-          setConfirmationPasswordError("");
         }
+      } else if (!inputPassword.length) {
+        setPasswordError("Please fill out this field");
       } else {
         setPasswordError("");
-        setConfirmationPasswordError("");
       }
     }
   };
@@ -194,12 +197,17 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setUsername("");
       setUsernameError("");
       setLoginMethod("email");
+      if (input === "") {
+        setEmailError("Please fill out this field");
+      }
       setEmailAddress(input.replace(/\s/g, ""));
       // If email address isn't in database & field isn't empty string:
       if (!emailExists && input !== "") {
         setEmailError("E-mail address not recognized");
         // If pw isn't valid...
-        if (!passwordIsValid(password) && password !== "") {
+        if (password === "") {
+          setPasswordError("Please fill out this field");
+        } else if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
         } else {
           setPasswordError("");
@@ -208,7 +216,9 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       } else {
         setEmailError("");
         // If password is not valid...
-        if (!passwordIsValid(password) && password !== "") {
+        if (password === "") {
+          setPasswordError("Please fill out this field");
+        } else if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
           // If currentUser exists, its pw isn't equal to input pw, and password field isn't empty string...
         } else if (currentUser && currentUser.password !== password && password !== "") {
@@ -224,11 +234,16 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setEmailError("");
       setLoginMethod("username");
       setUsername(input.replace(/\s/g, ""));
+      if (input === "") {
+        setEmailError("Please fill out this field");
+      }
       // If username doesn't exist & its field contains at least 1 character:
       if (!usernameExists && input.length) {
         setUsernameError("Data not recognized");
         // If pw isn't valid & isn't empty string...
-        if (!passwordIsValid(password) && password !== "") {
+        if (password === "") {
+          setPasswordError("Please fill out this field");
+        } else if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
         } else {
           setPasswordError("");
@@ -236,7 +251,9 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
         // If username is recognized & at least 1 character has been input...
       } else {
         setUsernameError("");
-        if (!passwordIsValid(password) && password !== "") {
+        if (password === "") {
+          setPasswordError("Please fill out this field");
+        } else if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
           // If currentUser exists, its pw isn't equal to input pw, and pw field isn't empty string...
         } else if (currentUser && currentUser.password !== password && password !== "") {
@@ -261,13 +278,27 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // submission handler should change state value userCreatedAccount (initialized to null, changed to boolean, depending on which form was submitted). once this value is a boolean, all err msgs (besides conf pw) should display, if there are, indeed errors.
-  const areNoErrors: boolean =
+  const areNoSignupErrors: boolean =
     firstNameError === "" &&
     lastNameError === "" &&
     usernameError === "" &&
     emailError === "" &&
     passwordError === "" &&
     confirmationPasswordError === "";
+
+  const allSignupInputsFilled: boolean =
+    firstName !== "" &&
+    lastName !== "" &&
+    username !== "" &&
+    emailAddress !== "" &&
+    password !== "" &&
+    confirmationPassword !== "";
+
+  const areNoLoginErrors: boolean =
+    (usernameError === "" || emailError === "") && passwordError === "";
+
+  const allLoginInputsFilled: boolean =
+    (username !== "" || emailAddress !== "") && password !== "";
 
   const handleFormSubmission = (
     isOnSignup: boolean,
@@ -316,7 +347,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     setConfirmationPassword,
     confirmationPasswordError,
     setConfirmationPasswordError,
-    areNoErrors,
+    areNoSignupErrors,
+    areNoLoginErrors,
+    allSignupInputsFilled,
+    allLoginInputsFilled,
     showErrors,
     handleNameInput,
     handleUsernameInput,
