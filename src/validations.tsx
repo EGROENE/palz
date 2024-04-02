@@ -11,7 +11,9 @@ export const nameIsValid = (name: string): boolean => {
     name.replace(/\)/g, "").length &&
     name.replace(/!/g, "").length &&
     name.replace(/@/g, "").length &&
-    name.replace(/-/g, "").length
+    name.replace(/-/g, "").length &&
+    name.replace(/\$/g, "").length &&
+    name.replace(/&/g, "").length
   ) {
     return true;
   }
@@ -31,5 +33,9 @@ export const emailIsValid = (value: string): boolean =>
     value.trim()
   );
 
-export const passwordIsValid = (value: string): boolean =>
-  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,20}$/.test(value);
+export const passwordIsValid = (value: string): boolean => {
+  if (/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,20}$/.test(value)) {
+    return true;
+  }
+  return false;
+};
