@@ -24,7 +24,8 @@ const SignupForm = () => {
     handlePasswordInput,
     confirmationPasswordError,
     handleConfirmationPasswordInput,
-    areNoErrors,
+    areNoSignupErrors,
+    allSignupInputsFilled,
     showErrors,
     handleFormSubmission,
     handleFormRejection,
@@ -61,13 +62,9 @@ const SignupForm = () => {
               type="text"
               placeholder="Enter your first name"
               inputMode="text"
-              required
             />
             {firstNameError !== "" && showErrors && (
               <p className="input-error-message">{firstNameError}</p>
-            )}
-            {!firstName.replace(/\s/g, "").length && showErrors && (
-              <p className="input-error-message">Please fill out this field</p>
             )}
           </label>
           <label>
@@ -78,7 +75,6 @@ const SignupForm = () => {
               type="text"
               placeholder="Enter your last name"
               inputMode="text"
-              required
             />
             {lastNameError !== "" && showErrors && (
               <p className="input-error-message">{lastNameError}</p>
@@ -93,7 +89,6 @@ const SignupForm = () => {
             type="text"
             placeholder="Enter a username"
             inputMode="text"
-            required
           />
           {usernameError !== "" && showErrors && (
             <p className="input-error-message">{usernameError}</p>
@@ -107,7 +102,6 @@ const SignupForm = () => {
             type="email"
             placeholder="Enter your e-mail address"
             inputMode="email"
-            required
           />
           {emailError !== "" && showErrors && (
             <p className="input-error-message">{emailError}</p>
@@ -115,45 +109,55 @@ const SignupForm = () => {
         </label>
         <label>
           <p>Choose a Password:</p>
-          <input
-            onChange={(e) => handlePasswordInput(e.target.value, true)}
-            value={password}
-            type={passwordIsHidden ? "password" : "text"}
-            placeholder="Enter password"
-            inputMode="text"
-            required
-          />
-          {!passwordIsHidden ? (
-            <OpenEye toggleHidePassword={toggleHidePassword} />
-          ) : (
-            <ClosedEye toggleHidePassword={toggleHidePassword} />
-          )}
+          <div className="password-input">
+            <input
+              onChange={(e) => handlePasswordInput(e.target.value, true)}
+              value={password}
+              type={passwordIsHidden ? "password" : "text"}
+              placeholder="Enter password"
+              inputMode="text"
+            />
+            {!passwordIsHidden ? (
+              <OpenEye toggleHidePassword={toggleHidePassword} />
+            ) : (
+              <ClosedEye toggleHidePassword={toggleHidePassword} />
+            )}
+          </div>
           {passwordError !== "" && showErrors && (
             <p className="input-error-message">{passwordError}</p>
           )}
         </label>
         <label>
           <p>Confirm Password:</p>
-          <input
-            onChange={(e) => handleConfirmationPasswordInput(e.target.value)}
-            value={confirmationPassword}
-            type={passwordIsHidden ? "password" : "text"}
-            placeholder="Confirm password"
-            inputMode="text"
-            required
-          />
-          {!passwordIsHidden ? (
-            <OpenEye toggleHidePassword={toggleHidePassword} />
-          ) : (
-            <ClosedEye toggleHidePassword={toggleHidePassword} />
-          )}
-          {confirmationPasswordError !== "" && (
+          <div className="password-input">
+            <input
+              onChange={(e) => handleConfirmationPasswordInput(e.target.value)}
+              value={confirmationPassword}
+              type={passwordIsHidden ? "password" : "text"}
+              placeholder="Confirm password"
+              inputMode="text"
+            />
+            {!passwordIsHidden ? (
+              <OpenEye toggleHidePassword={toggleHidePassword} />
+            ) : (
+              <ClosedEye toggleHidePassword={toggleHidePassword} />
+            )}
+          </div>
+          {confirmationPasswordError !== "" &&
+            confirmationPasswordError !== "Please fill out this field" && (
+              <p className="input-error-message">{confirmationPasswordError}</p>
+            )}
+          {confirmationPasswordError === "Please fill out this field" && showErrors && (
             <p className="input-error-message">{confirmationPasswordError}</p>
           )}
         </label>
         <button
-          type={areNoErrors ? "submit" : "button"}
-          onClick={(e) => (areNoErrors ? undefined : handleFormRejection(e))}
+          type={areNoSignupErrors ? "submit" : "button"}
+          onClick={(e) =>
+            areNoSignupErrors && allSignupInputsFilled
+              ? undefined
+              : handleFormRejection(e)
+          }
         >
           Sign Up
         </button>
