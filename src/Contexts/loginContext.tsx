@@ -94,8 +94,6 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
     const usernameIsTaken: boolean =
       allUsers.filter((user) => user.username === inputUsername).length > 0;
-    console.log(allUsers.filter((user) => user.username === inputUsername));
-    console.log(usernameIsTaken);
 
     if (usernameIsTaken) {
       setUsernameError("Username is already taken");
