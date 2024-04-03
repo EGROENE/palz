@@ -57,7 +57,7 @@ const LoginForm = () => {
             placeholder="Enter username or e-mail address"
             inputMode="text"
             className={
-              (usernameError !== "" || passwordError !== "") && showErrors
+              (usernameError !== "" || emailError !== "") && showErrors
                 ? "erroneous-field"
                 : undefined
             }
