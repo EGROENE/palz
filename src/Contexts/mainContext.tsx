@@ -13,7 +13,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     "theme",
     isDefaultDarkTheme ? "dark" : "light"
   );
-  const toggleDarkMode = (): void => {
+  const toggleTheme = (): void => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
   };
@@ -105,7 +105,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
 
   const mainContextValues: TMainContext = {
     theme,
-    toggleDarkMode,
+    toggleTheme,
     allUsers,
     allEvents,
     rsvpdEvents,

@@ -54,7 +54,7 @@ export type TEvent = {
 
 export type TMainContext = {
   theme: "dark" | "light";
-  toggleDarkMode: () => void;
+  toggleTheme: () => void;
   allUsers: TUser[];
   allEvents: TEvent[];
   rsvpdEvents: {

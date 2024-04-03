@@ -4,7 +4,7 @@ import SignupForm from "../LoginForms/SignupForm/SignupForm";
 import LoginForm from "../LoginForms/LoginForm/LoginForm";
 
 const LoginPage = () => {
-  const { theme, toggleDarkMode } = useMainContext();
+  const { theme, toggleTheme } = useMainContext();
   const { signupIsSelected } = useLoginContext();
 
   return (
@@ -18,7 +18,7 @@ const LoginPage = () => {
               ? { backgroundColor: "black", color: "white" }
               : { backgroundColor: "white", color: "black" }
           }
-          onClick={() => toggleDarkMode()}
+          onClick={() => toggleTheme()}
         >
           {theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
         </button>
