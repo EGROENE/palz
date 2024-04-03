@@ -62,10 +62,10 @@ const LoginForm = () => {
                 : undefined
             }
           />
-          {usernameError && showErrors && (
+          {usernameError !== "" && showErrors && (
             <p className="input-error-message">{usernameError}</p>
           )}
-          {emailError && usernameError === "" && showErrors && (
+          {emailError !== "" && usernameError === "" && showErrors && (
             <p className="input-error-message">{emailError}</p>
           )}
         </label>
