@@ -15,7 +15,7 @@ export const LoginContext = createContext<TLoginContext | null>(null);
 export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const { allUsers, setUserCreatedAccount } = useMainContext();
 
-  const [signupIsSelected, setSignupIsSelected] = useState<boolean>(true);
+  const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
 
   // Put state values for all inputs here. set these in handler functions.
