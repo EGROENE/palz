@@ -5,11 +5,23 @@
   text-align: center;
 }
 
+.app {
+  background-color: var(--background-color);
+}
+
 .login-page-container {
   display: flex;
   align-items: center;
   width: 80vw;
   justify-content: space-around;
+}
+
+.login-greeting-container button {
+  font-weight: 800;
+}
+
+.login-greeting-container button:focus {
+  outline: none;
 }
 
 .login-options-container {
@@ -20,7 +32,7 @@
 .form-type-underline {
   height: 2px;
   width: 100%;
-  background-color: var(--theme-green);
+  background-color: var(--theme-red);
   animation-duration: 500ms;
 }
 
@@ -32,7 +44,7 @@
 .login-options-container header {
   font-size: 2rem;
   padding: 0.25rem;
-  color: var(--theme-green);
+  color: var(--theme-red);
 }
 
 .login-options-container header:hover {
@@ -48,7 +60,8 @@
 }
 
 .login-signup-form p:first-child {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  font-family: var(--text-font);
 }
 
 .login-signup-form p,
@@ -62,7 +75,8 @@
 }
 
 .input-error-message {
-  font-size: 1.1rem;
+  font-size: 1rem;
+  font-family: var(--text-font);
 }
 
 .login-signup-form input {
@@ -76,8 +90,9 @@
 
 .eye {
   position: absolute;
-  top: 3.2rem;
+  top: 2.8rem;
   left: 94%;
+  color: white;
 }
 
 .eye:hover {
@@ -105,6 +120,7 @@
 
 .link-to-other-form {
   color: var(--theme-blue);
+  font-weight: 900;
 }
 
 .link-to-other-form:hover {

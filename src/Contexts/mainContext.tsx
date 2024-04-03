@@ -1,10 +1,23 @@
 import { useState, useEffect, createContext, ReactNode } from "react";
 import { TMainContext } from "../types";
 import Requests from "../requests";
+import useLocalStorage from "use-local-storage";
 
 export const MainContext = createContext<TMainContext | null>(null);
 
 export const MainContextProvider = ({ children }: { children: ReactNode }) => {
+  const isDefaultDarkTheme: boolean = window.matchMedia(
+    "(prefers-color-scheme: dark)"
+  ).matches;
+  const [theme, setTheme] = useLocalStorage<"dark" | "light">(
+    "theme",
+    isDefaultDarkTheme ? "dark" : "light"
+  );
+  const toggleDarkMode = (): void => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+  };
+
   const [allUsers, setAllUsers] = useState([]);
   const [allEvents, setAllEvents] = useState([]);
   const [rsvpdEvents, setRsvpdEventsByUser] = useState([]);
@@ -91,6 +104,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const mainContextValues: TMainContext = {
+    theme,
+    toggleDarkMode,
     allUsers,
     allEvents,
     rsvpdEvents,
