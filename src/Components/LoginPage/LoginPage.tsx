@@ -11,7 +11,7 @@ const LoginPage = () => {
     <div className="login-page-container">
       <div className="login-greeting-container">
         <h1>Welcome to Palz!</h1>
-        <h2>Do fun things, meet real friends</h2>
+        <h2>Do fun things, meet fun friends</h2>
         <button
           style={
             theme !== "dark"
