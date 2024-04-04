@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import "./responsive.css";
 import { Toaster } from "react-hot-toast";
 import { MainContextProvider } from "./Contexts/mainContext.tsx";
 import { LoginContextProvider } from "./Contexts/loginContext.tsx";

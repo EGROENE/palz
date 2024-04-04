@@ -1,0 +1,80 @@
+@media screen and (max-width: 1920px) and (min-width: 1601px) {
+  :root {
+    font-size: x-large;
+  }
+
+  .login-button {
+    width: 102%;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  :root {
+    font-size: x-large;
+  }
+
+  .login-page-container {
+    flex-direction: column;
+  }
+
+  .form {
+    width: 89%;
+    margin-top: 4rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .form {
+    margin-top: 1rem;
+  }
+}
+
+@media screen and (max-width: 540px) {
+  #root {
+    padding: 2rem 0;
+  }
+
+  .app {
+    width: 85vw;
+  }
+
+  .login-signup-form p:first-child {
+    font-size: 1rem;
+  }
+
+  .form {
+    width: 95%;
+  }
+
+  .eye {
+    top: 2.3rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  :root {
+    font-size: medium;
+  }
+
+  .eye {
+    top: 2.4rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .form {
+    margin-top: 4rem;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .form {
+    margin-top: 2rem;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  :root {
+    font-size: small;
+  }
+}
