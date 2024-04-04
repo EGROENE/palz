@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, ReactNode } from "react";
-import { TMainContext } from "../types";
+import { TMainContext, TUser } from "../types";
 import Requests from "../requests";
 import useLocalStorage from "use-local-storage";
 
@@ -19,6 +19,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const [allUsers, setAllUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState<TUser | undefined>(undefined);
   const [allEvents, setAllEvents] = useState([]);
   const [rsvpdEvents, setRsvpdEventsByUser] = useState([]);
   const [favoritedEvents, setFavoritedEventsByUser] = useState([]);
@@ -27,6 +28,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventsByTag, setEventsByTag] = useState([]);
   const [allInterests, setAllInterests] = useState([]);
   const [userCreatedAccount, setUserCreatedAccount] = useState<null | boolean>(null);
+  const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(true);
 
   useEffect(() => {
     Requests.getAllUsers()
@@ -107,6 +109,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     theme,
     toggleTheme,
     allUsers,
+    currentUser,
+    setCurrentUser,
     allEvents,
     rsvpdEvents,
     favoritedEvents,
@@ -116,6 +120,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     allInterests,
     userCreatedAccount,
     setUserCreatedAccount,
+    showWelcomeMessage,
+    setShowWelcomeMessage,
   };
 
   return (

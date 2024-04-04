@@ -1,13 +1,5 @@
-export type TNewUser = {
-  firstName: string;
-  lastName: string;
-  username: string;
-  emailAddress: string;
-  password: string;
-};
-
 export type TUser = {
-  id: string;
+  id?: string;
   firstName: string;
   lastName: string;
   username: string;
@@ -56,6 +48,8 @@ export type TMainContext = {
   theme: "dark" | "light";
   toggleTheme: () => void;
   allUsers: TUser[];
+  currentUser: TUser | undefined;
+  setCurrentUser: React.Dispatch<React.SetStateAction<TUser | undefined>>;
   allEvents: TEvent[];
   rsvpdEvents: {
     id: string;
@@ -92,6 +86,8 @@ export type TMainContext = {
   }[];
   userCreatedAccount: null | boolean;
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
+  showWelcomeMessage: boolean;
+  setShowWelcomeMessage: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type TLoginContext = {

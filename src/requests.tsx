@@ -1,4 +1,4 @@
-import { TNewUser } from "./types";
+import { TUser } from "./types";
 
 const getAllUsers = (): Promise<Response> => {
   const myHeaders = new Headers();
@@ -88,7 +88,7 @@ const getAllInterests = (): Promise<Response> => {
   });
 };
 
-const createUser = (newUserData: TNewUser): Promise<Response> => {
+const createUser = (newUserData: TUser): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -98,6 +98,19 @@ const createUser = (newUserData: TNewUser): Promise<Response> => {
     "username": newUserData.username,
     "password": newUserData.password,
     "emailAddress": newUserData.emailAddress,
+    "hostingCredits": 0,
+    "city": "",
+    "stateProvince": "",
+    "country": "",
+    "phoneNumber": "",
+    "instagram": "",
+    "facebook": "",
+    "x": "",
+    "telegram": "",
+    "whatsapp": "",
+    "profileImage": "",
+    "about": "",
+    "subscriptionType": "",
   });
 
   return fetch("http://localhost:3000/users", {

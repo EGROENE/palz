@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useState } from "react";
-import { TLoginContext, TNewUser, TUser } from "../types";
+import { TLoginContext, TUser } from "../types";
 import {
   emailIsValid,
   nameIsValid,
@@ -13,7 +13,7 @@ import { useMainContext } from "../Hooks/useMainContext";
 export const LoginContext = createContext<TLoginContext | null>(null);
 
 export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
-  const { allUsers, setUserCreatedAccount } = useMainContext();
+  const { allUsers, setUserCreatedAccount, setCurrentUser } = useMainContext();
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
@@ -48,12 +48,25 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   );
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
-  const userData: TNewUser = {
+  const userData: TUser = {
     firstName: firstName,
     lastName: lastName,
     username: username,
     emailAddress: emailAddress,
     password: password,
+    hostingCredits: 0,
+    city: "",
+    stateProvince: "",
+    country: "",
+    phoneNumber: "",
+    instagram: "",
+    facebook: "",
+    x: "",
+    telegram: "",
+    whatsapp: "",
+    profileImage: "",
+    about: "",
+    subscriptionType: "",
   };
 
   const toggleSignupLogin = (): void => {
@@ -266,10 +279,17 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Handler for creating new user account. Should make request w/ object containing user data, then handle errors in case it fails. If it fails, notify user somehow.
-  const handleNewAccountCreation = (userData: TNewUser) => {
+  const handleNewAccountCreation = (userData: TUser) => {
     Requests.createUser(userData)
       .then((response) => {
-        !response.ok ? setUserCreatedAccount(false) : setUserCreatedAccount(true);
+        if (!response.ok) {
+          setUserCreatedAccount(false);
+        } else {
+          setUserCreatedAccount(true);
+          setCurrentUser(
+            allUsers.filter((user) => user.username === userData.username)[0]
+          );
+        }
       })
       .catch((error) => {
         toast.error("Could not create account. Please try again later.");
@@ -305,7 +325,12 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.FormEvent<HTMLFormElement>
   ): void => {
     e.preventDefault();
-    isOnSignup ? handleNewAccountCreation(userData) : setUserCreatedAccount(false);
+    if (isOnSignup) {
+      handleNewAccountCreation(userData);
+    } else {
+      setUserCreatedAccount(false);
+      setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+    }
   };
 
   const handleFormRejection = (
