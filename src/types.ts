@@ -142,4 +142,8 @@ export type TLoginContext = {
     e: React.FormEvent<HTMLFormElement>
   ) => void;
   handleFormRejection: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  showPasswordCriteria: boolean;
+  setShowPasswordCriteria: React.Dispatch<React.SetStateAction<boolean>>;
+  showUsernameCriteria: boolean;
+  setShowUsernameCriteria: React.Dispatch<React.SetStateAction<boolean>>;
 };

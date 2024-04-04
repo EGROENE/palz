@@ -30,6 +30,10 @@ const SignupForm = () => {
     handleFormSubmission,
     handleFormRejection,
     signupIsSelected,
+    showPasswordCriteria,
+    setShowPasswordCriteria,
+    showUsernameCriteria,
+    setShowUsernameCriteria,
   } = useLoginContext();
 
   return (
@@ -88,8 +92,23 @@ const SignupForm = () => {
           </label>
         </div>
         <label>
-          <p>Username:</p>
+          <p>
+            Username:{" "}
+            <span>
+              <i
+                onClick={() => setShowUsernameCriteria(!showUsernameCriteria)}
+                className="fas fa-info-circle"
+                title="Must be 4-15 characters long & contain only alphanumeric characters"
+              ></i>
+            </span>
+          </p>
+          {showUsernameCriteria && (
+            <p className="input-criteria">
+              Must be 4-15 characters long & contain only alphanumeric characters
+            </p>
+          )}
           <input
+            title="Must be 4-15 characters long & contain only alphanumeric characters"
             onChange={(e) => handleUsernameInput(e.target.value)}
             value={username}
             type="text"
@@ -116,7 +135,22 @@ const SignupForm = () => {
           )}
         </label>
         <label>
-          <p>Choose a Password:</p>
+          <p>
+            Choose a Password:{" "}
+            <span>
+              <i
+                onClick={() => setShowPasswordCriteria(!showPasswordCriteria)}
+                className="fas fa-info-circle"
+                title="Must contain at least one uppercase & one lowercase English letter, at least one digit, at least one special character, & be 8-20 characters long"
+              ></i>
+            </span>
+            {showPasswordCriteria && (
+              <p className="input-criteria">
+                Must contain at least one uppercase & one lowercase English letter, at
+                least one digit, at least one special character, & be 8-20 characters long
+              </p>
+            )}
+          </p>
           <div className="password-input">
             <input
               onChange={(e) => handlePasswordInput(e.target.value, true)}
@@ -168,7 +202,7 @@ const SignupForm = () => {
           )}
         </label>
         <button
-        className="login-button"
+          className="login-button"
           type={areNoSignupErrors ? "submit" : "button"}
           onClick={(e) =>
             areNoSignupErrors && allSignupInputsFilled

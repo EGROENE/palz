@@ -9,9 +9,11 @@
   -moz-osx-font-smoothing: grayscale;
 
   --background-color: #242424;
+  --background-color-opposite: rgb(233, 231, 228);
   --header-one-color: var(--theme-yellow);
   --text-font: "Josefine Sans", monospace, sans-serif;
   --text-color: white;
+  --text-color-opposite: black;
   --theme-blue: #004cff;
   --theme-green: rgb(3, 173, 3);
   --theme-red: red;
@@ -75,17 +77,19 @@ button:focus-visible {
 
 [data-theme="light"] {
   --background-color: rgb(233, 231, 228);
+  --background-color-opposite: #242424;
   --header-one-color: var(--theme-brown);
   --text-color: black;
+  --text-color-opposite: white;
 }
 
 label {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  position: relative;
   margin: 0.25rem auto;
   color: var(--text-color);
+  text-align: left;
 }
 
 input {
@@ -95,4 +99,8 @@ input {
 
 input:focus {
   outline: 2px solid white;
+}
+
+i:hover {
+  cursor: pointer;
 }

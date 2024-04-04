@@ -87,11 +87,17 @@
 
 .password-input {
   width: 100%;
+  position: relative;
+}
+
+.input-criteria {
+  font-size: 0.85rem;
+  font-family: var(--text-font);
 }
 
 .eye {
   position: absolute;
-  top: 2.8rem;
+  top: 34%;
   left: 94%;
   color: white;
 }

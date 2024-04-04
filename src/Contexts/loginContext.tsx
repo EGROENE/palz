@@ -26,6 +26,8 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const [password, setPassword] = useState<string>("");
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
+  const [showPasswordCriteria, setShowPasswordCriteria] = useState<boolean>(false);
+  const [showUsernameCriteria, setShowUsernameCriteria] = useState<boolean>(false);
 
   // Boolean values relating to input-field errors:
   const [firstNameError, setFirstNameError] = useState<string>(
@@ -349,6 +351,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     setConfirmationPasswordError,
     areNoSignupErrors,
     areNoLoginErrors,
+    showPasswordCriteria,
+    setShowPasswordCriteria,
+    showUsernameCriteria,
+    setShowUsernameCriteria,
     allSignupInputsFilled,
     allLoginInputsFilled,
     showErrors,
