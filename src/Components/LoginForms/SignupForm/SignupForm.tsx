@@ -108,7 +108,7 @@ const SignupForm = () => {
             </p>
           )}
           <input
-            title="Must be 4-15 characters long & contain only alphanumeric characters"
+            title="Must be 4-20 characters long & contain only alphanumeric characters"
             onChange={(e) => handleUsernameInput(e.target.value)}
             value={username}
             type="text"
