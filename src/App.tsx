@@ -15,8 +15,7 @@ function App() {
     <div className="app" data-theme={theme}>
       {userCreatedAccount === null && <LoginPage />}
       {userCreatedAccount !== null && showWelcomeMessage && <Welcome />}
-      {(userCreatedAccount !== null || userCreatedAccount === true) &&
-        !showWelcomeMessage && <Homepage />}
+      {userCreatedAccount !== null && !showWelcomeMessage && <Homepage />}
     </div>
   );
 }
