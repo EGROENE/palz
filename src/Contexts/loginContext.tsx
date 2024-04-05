@@ -137,7 +137,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handlePasswordInput = (inputPassword: string, isOnSignup: boolean): void => {
-    setPassword(inputPassword);
+    setPassword(inputPassword.replace(/\s/g, ""));
 
     // Handle input pw on login form:
     if (!isOnSignup) {

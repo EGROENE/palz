@@ -141,16 +141,18 @@ const SignupForm = () => {
               <i
                 onClick={() => setShowPasswordCriteria(!showPasswordCriteria)}
                 className="fas fa-info-circle"
-                title="Must contain at least one uppercase & one lowercase English letter, at least one digit, at least one special character, & be 8-20 characters long"
+                title="Must contain at least one uppercase & one lowercase English letter, at least one digit, at least one special character, & be 8-20 characters long. No spaces allowed."
               ></i>
             </span>
-            {showPasswordCriteria && (
-              <p className="input-criteria">
-                Must contain at least one uppercase & one lowercase English letter, at
-                least one digit, at least one special character, & be 8-20 characters long
-              </p>
-            )}
           </p>
+          {showPasswordCriteria && (
+            <p className="input-criteria">
+              Must contain at least one uppercase & one lowercase English letter, at least
+              one digit, at least one special character, & be 8-20 characters long. No
+              spaces allowed.
+            </p>
+          )}
+
           <div className="password-input">
             <input
               onChange={(e) => handlePasswordInput(e.target.value, true)}
