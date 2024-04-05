@@ -106,7 +106,12 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleUsernameInput = (inputUsername: string): void => {
-    setUsername(inputUsername.replace(/[^a-zA-Z0-9 ]/g, "").toLowerCase());
+    setUsername(
+      inputUsername
+        .replace(/[^a-zA-Z0-9 ]/g, "")
+        .toLowerCase()
+        .trim()
+    );
 
     const usernameIsTaken: boolean =
       allUsers.filter((user) => user.username === inputUsername).length > 0;
@@ -120,16 +125,17 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleEmailAddressInput = (email: string): void => {
-    setEmailAddress(email.replace(/\s/g, ""));
+  const handleEmailAddressInput = (inputEmailAddress: string): void => {
+    setEmailAddress(inputEmailAddress.replace(/\s/g, ""));
 
     const emailIsTaken: boolean =
-      allUsers.filter((user) => user.emailAddress === email.replace(/\s/g, "")).length >
-      0;
+      allUsers.filter(
+        (user) => user.emailAddress === inputEmailAddress.replace(/\s/g, "")
+      ).length > 0;
 
     if (emailIsTaken) {
       setEmailError("E-mail address is taken");
-    } else if (!emailIsValid(email) && email !== "") {
+    } else if (!emailIsValid(inputEmailAddress) && inputEmailAddress !== "") {
       setEmailError("Invalid e-mail address");
     } else {
       setEmailError("");
@@ -137,7 +143,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handlePasswordInput = (inputPassword: string, isOnSignup: boolean): void => {
-    setPassword(inputPassword.replace(/\s/g, ""));
+    //setPassword(inputPassword.trim());
+    if (!inputPassword.includes(" ")) {
+      setPassword(inputPassword);
+    }
 
     // Handle input pw on login form:
     if (!isOnSignup) {
@@ -176,8 +185,13 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     } else {
       if (!passwordIsValid(inputPassword) && inputPassword.length) {
         setPasswordError("Invalid password");
-        if (confirmationPassword !== "" && inputPassword !== confirmationPassword) {
+        if (
+          confirmationPassword !== "" &&
+          inputPassword.trim() !== confirmationPassword
+        ) {
           setConfirmationPasswordError("Passwords don't match");
+        } else {
+          setConfirmationPasswordError("");
         }
       } else if (!inputPassword.length) {
         setPasswordError("Please fill out this field");
@@ -188,8 +202,8 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleConfirmationPasswordInput = (inputConfirmationPassword: string): void => {
-    setConfirmationPassword(inputConfirmationPassword);
-    inputConfirmationPassword !== password &&
+    setConfirmationPassword(inputConfirmationPassword.trim());
+    inputConfirmationPassword.trim() !== password &&
     inputConfirmationPassword !== "" &&
     password !== ""
       ? setConfirmationPasswordError("Passwords don't match")
