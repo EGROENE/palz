@@ -31,16 +31,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(true);
 
   useEffect(() => {
-    Requests.getAllUsers()
-      .then((response) => {
-        return response.text();
-      })
-      .then((result) => {
-        setAllUsers(JSON.parse(result));
-      })
-      .catch((error) => console.log(error));
-
-    // Get allEvents:
     Requests.getAllEvents()
       .then((response) => {
         return response.text();
@@ -49,7 +39,9 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
         setAllEvents(JSON.parse(result));
       })
       .catch((error) => console.log(error));
+  }, [allEvents]);
 
+  useEffect(() => {
     Requests.getRsvpdEventsByUser()
       .then((response) => {
         return response.text();
@@ -58,7 +50,9 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
         setRsvpdEventsByUser(JSON.parse(result));
       })
       .catch((error) => console.log(error));
+  }, [rsvpdEvents]);
 
+  useEffect(() => {
     Requests.getFavoritedEventsByUser()
       .then((response) => {
         return response.text();
@@ -67,7 +61,9 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
         setFavoritedEventsByUser(JSON.parse(result));
       })
       .catch((error) => console.log(error));
+  }, [favoritedEvents]);
 
+  useEffect(() => {
     Requests.getAttendedEventsByUser()
       .then((response) => {
         return response.text();
@@ -76,7 +72,9 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
         setAttendedEventsByUser(JSON.parse(result));
       })
       .catch((error) => console.log(error));
+  }, [attendedEvents]);
 
+  useEffect(() => {
     Requests.getUserInterests()
       .then((response) => {
         return response.text();
@@ -85,7 +83,9 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
         setUserInterests(JSON.parse(result));
       })
       .catch((error) => console.log(error));
+  }, [userInterests]);
 
+  useEffect(() => {
     Requests.getEventsbyTag()
       .then((response) => {
         return response.text();
@@ -94,7 +94,9 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
         setEventsByTag(JSON.parse(result));
       })
       .catch((error) => console.log(error));
+  }, [eventsByTag]);
 
+  useEffect(() => {
     Requests.getAllInterests()
       .then((response) => {
         return response.text();
@@ -103,18 +105,18 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
         setAllInterests(JSON.parse(result));
       })
       .catch((error) => console.log(error));
-  }, [
-    allUsers,
-    currentUser,
-    allEvents,
-    rsvpdEvents,
-    favoritedEvents,
-    attendedEvents,
-    userInterests,
-    eventsByTag,
-    allInterests,
-    eventsByTag,
-  ]);
+  }, [allInterests]);
+
+  useEffect(() => {
+    Requests.getAllUsers()
+      .then((response) => {
+        return response.text();
+      })
+      .then((result) => {
+        setAllUsers(JSON.parse(result));
+      })
+      .catch((error) => console.log(error));
+  }, [allUsers]);
 
   // Call on sub of login/signup forms. As a result, a welcome message appears for 3 secs after login/signup
   const handleWelcomeMessage = () => {
