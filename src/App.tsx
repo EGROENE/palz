@@ -1,10 +1,11 @@
 import "./App.css";
 import LoginPage from "./Components/LoginPage/LoginPage";
+import Welcome from "./Components/Welcome/Welcome";
 import Homepage from "./Components/Homepage/Homepage";
 import { useMainContext } from "./Hooks/useMainContext";
 
 function App() {
-  const { userCreatedAccount, theme } = useMainContext();
+  const { userCreatedAccount, theme, showWelcomeMessage } = useMainContext();
 
   theme === "dark"
     ? (document.body.style.backgroundColor = "#242424")
@@ -13,7 +14,9 @@ function App() {
   return (
     <div className="app" data-theme={theme}>
       {userCreatedAccount === null && <LoginPage />}
-      {(userCreatedAccount !== null || userCreatedAccount === true) && <Homepage />}
+      {userCreatedAccount !== null && showWelcomeMessage && <Welcome />}
+      {(userCreatedAccount !== null || userCreatedAccount === true) &&
+        !showWelcomeMessage && <Homepage />}
     </div>
   );
 }

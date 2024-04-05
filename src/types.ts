@@ -88,6 +88,7 @@ export type TMainContext = {
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
   showWelcomeMessage: boolean;
   setShowWelcomeMessage: React.Dispatch<React.SetStateAction<boolean>>;
+  handleWelcomeMessage: () => void;
 };
 
 export type TLoginContext = {

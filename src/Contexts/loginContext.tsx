@@ -13,7 +13,8 @@ import { useMainContext } from "../Hooks/useMainContext";
 export const LoginContext = createContext<TLoginContext | null>(null);
 
 export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
-  const { allUsers, setUserCreatedAccount, setCurrentUser } = useMainContext();
+  const { allUsers, setUserCreatedAccount, setCurrentUser, handleWelcomeMessage } =
+    useMainContext();
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
@@ -286,9 +287,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
           setUserCreatedAccount(false);
         } else {
           setUserCreatedAccount(true);
-          setCurrentUser(
-            allUsers.filter((user) => user.username === userData.username)[0]
-          );
+          setCurrentUser(userData);
         }
       })
       .catch((error) => {
@@ -331,6 +330,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setUserCreatedAccount(false);
       setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
     }
+    handleWelcomeMessage();
   };
 
   const handleFormRejection = (

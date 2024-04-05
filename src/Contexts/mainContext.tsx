@@ -105,6 +105,12 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
       .catch((error) => console.log(error));
   }, []);
 
+  // Call on sub of login/signup forms. As a result, a welcome message appears for 3 secs after login/signup
+  const handleWelcomeMessage = () => {
+    setShowWelcomeMessage(true);
+    setTimeout(() => setShowWelcomeMessage(false), 3000);
+  };
+
   const mainContextValues: TMainContext = {
     theme,
     toggleTheme,
@@ -122,6 +128,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setUserCreatedAccount,
     showWelcomeMessage,
     setShowWelcomeMessage,
+    handleWelcomeMessage,
   };
 
   return (
