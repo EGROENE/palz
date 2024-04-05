@@ -103,7 +103,18 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
         setAllInterests(JSON.parse(result));
       })
       .catch((error) => console.log(error));
-  }, []);
+  }, [
+    allUsers,
+    currentUser,
+    allEvents,
+    rsvpdEvents,
+    favoritedEvents,
+    attendedEvents,
+    userInterests,
+    eventsByTag,
+    allInterests,
+    eventsByTag,
+  ]);
 
   // Call on sub of login/signup forms. As a result, a welcome message appears for 3 secs after login/signup
   const handleWelcomeMessage = () => {
