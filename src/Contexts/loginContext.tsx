@@ -328,7 +328,11 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       handleNewAccountCreation(userData);
     } else {
       setUserCreatedAccount(false);
-      setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+      if (emailAddress !== "") {
+        setCurrentUser(allUsers.filter((user) => user.emailAddress === emailAddress)[0]);
+      } else if (username !== "") {
+        setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+      }
     }
     handleWelcomeMessage();
   };
