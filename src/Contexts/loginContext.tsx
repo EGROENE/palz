@@ -50,11 +50,11 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
   const userData: TUser = {
-    firstName: firstName,
-    lastName: lastName,
-    username: username,
-    emailAddress: emailAddress,
-    password: password,
+    firstName: firstName.trim(),
+    lastName: lastName.trim(),
+    username: username.trim(),
+    emailAddress: emailAddress.trim(),
+    password: password.trim(),
     hostingCredits: 0,
     city: "",
     stateProvince: "",
