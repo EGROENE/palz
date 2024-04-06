@@ -135,7 +135,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (emailIsTaken) {
       setEmailError("E-mail address is taken");
-    } else if (!emailIsValid(inputEmailAddress) && inputEmailAddress !== "") {
+    } else if (!emailIsValid(inputEmailAddress.trim()) && inputEmailAddress !== "") {
       setEmailError("Invalid e-mail address");
     } else {
       setEmailError("");
@@ -220,7 +220,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       .includes(input.replace(/\s/g, ""));
 
     // If input matches pattern for an email:
-    if (emailIsValid(input)) {
+    if (emailIsValid(input.trim())) {
       const currentUser = allUsers.filter((user) => user.emailAddress === input)[0];
       setUsername("");
       setUsernameError("");
