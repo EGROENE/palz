@@ -109,13 +109,13 @@ const SignupForm = () => {
               <i
                 onClick={() => setShowUsernameCriteria(!showUsernameCriteria)}
                 className="fas fa-info-circle"
-                title="Must be 4-15 characters long & contain only alphanumeric characters"
+                title="Must be 4-20 characters long & contain only alphanumeric characters"
               ></i>
             </span>
           </p>
           {showUsernameCriteria && (
             <p className="input-criteria">
-              Must be 4-15 characters long & contain only alphanumeric characters
+              Must be 4-20 characters long & contain only alphanumeric characters
             </p>
           )}
           <input
