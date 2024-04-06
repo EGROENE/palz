@@ -1,6 +1,7 @@
 import OpenEye from "../../Eyecons/OpenEye/OpenEye";
 import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
 import { useLoginContext } from "../../../Hooks/useLoginContext";
+import { useNavigate } from "react-router-dom";
 
 const SignupForm = () => {
   const {
@@ -36,6 +37,8 @@ const SignupForm = () => {
     setShowUsernameCriteria,
   } = useLoginContext();
 
+  const navigation = useNavigate();
+
   return (
     <div className="form">
       <div className="login-options-container">
@@ -56,7 +59,13 @@ const SignupForm = () => {
           )}
         </div>
       </div>
-      <form onSubmit={(e) => handleFormSubmission(true, e)} className="login-signup-form">
+      <form
+        onSubmit={(e) => {
+          handleFormSubmission(true, e);
+          navigation(`users/${username}`);
+        }}
+        className="login-signup-form"
+      >
         <div>
           <label>
             <p>First Name:</p>

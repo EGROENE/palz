@@ -1,6 +1,7 @@
 import OpenEye from "../../Eyecons/OpenEye/OpenEye";
 import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
 import { useLoginContext } from "../../../Hooks/useLoginContext";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const {
@@ -24,6 +25,8 @@ const LoginForm = () => {
     handleFormRejection,
   } = useLoginContext();
 
+  const navigation = useNavigate();
+
   return (
     <div className="form">
       <div className="login-options-container">
@@ -45,7 +48,10 @@ const LoginForm = () => {
         </div>
       </div>
       <form
-        onSubmit={(e) => handleFormSubmission(false, e)}
+        onSubmit={(e) => {
+          handleFormSubmission(false, e);
+          navigation(`users/${username}`);
+        }}
         className="login-signup-form"
       >
         <label>
