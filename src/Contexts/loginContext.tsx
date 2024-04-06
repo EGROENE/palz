@@ -91,7 +91,9 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   // Input-handling methods:
   // Put here, since used in two different components
   const handleNameInput = (name: string, isFirstName: boolean) => {
-    isFirstName ? setFirstName(name) : setLastName(name);
+    isFirstName
+      ? setFirstName(name.replace(/\s+/g, " "))
+      : setLastName(name.replace(/\s+/g, " "));
     if (name.replace(/\s/g, "") === "") {
       isFirstName
         ? setFirstNameError("Please fill out this field")
