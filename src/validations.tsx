@@ -22,7 +22,7 @@ export const nameIsValid = (name: string): boolean => {
 
 // username must consist of only alphanumeric characters & must be 4-20 chars long
 export const usernameIsValid = (username: string): boolean => {
-  if (/^[A-Za-z0-9]*$/.test(username) && username.length >= 4 && username.length <= 20) {
+  if (/^[A-Za-z0-9]*$/.test(username)) {
     return true;
   }
   return false;
