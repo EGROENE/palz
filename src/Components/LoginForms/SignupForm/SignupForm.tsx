@@ -2,8 +2,10 @@ import OpenEye from "../../Eyecons/OpenEye/OpenEye";
 import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
 import { useLoginContext } from "../../../Hooks/useLoginContext";
 import { useNavigate } from "react-router-dom";
+import { useMainContext } from "../../../Hooks/useMainContext";
 
 const SignupForm = () => {
+  const { currentUser } = useMainContext();
   const {
     passwordIsHidden,
     toggleHidePassword,
@@ -62,7 +64,7 @@ const SignupForm = () => {
       <form
         onSubmit={(e) => {
           handleFormSubmission(true, e);
-          navigation(`users/${username}`);
+          setTimeout(() => navigation(`users/${currentUser?.username}`), 3000);
         }}
         className="login-signup-form"
       >

@@ -94,6 +94,13 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     isFirstName
       ? setFirstName(name.replace(/\s+/g, " "))
       : setLastName(name.replace(/\s+/g, " "));
+
+    if (allSignupInputsFilled && areNoSignupErrors) {
+      setCurrentUser(userData);
+    } else {
+      setCurrentUser(undefined);
+    }
+
     if (name.replace(/\s/g, "") === "") {
       isFirstName
         ? setFirstNameError("Please fill out this field")
@@ -115,6 +122,12 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
         .trim()
     );
 
+    if (allSignupInputsFilled && areNoSignupErrors) {
+      setCurrentUser(userData);
+    } else {
+      setCurrentUser(undefined);
+    }
+
     const usernameIsTaken: boolean =
       allUsers.filter((user) => user.username === inputUsername).length > 0;
 
@@ -129,6 +142,12 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleEmailAddressInput = (inputEmailAddress: string): void => {
     setEmailAddress(inputEmailAddress.replace(/\s/g, ""));
+
+    if (allSignupInputsFilled && areNoSignupErrors) {
+      setCurrentUser(userData);
+    } else {
+      setCurrentUser(undefined);
+    }
 
     const emailIsTaken: boolean =
       allUsers.filter(
@@ -148,6 +167,12 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     //setPassword(inputPassword.trim());
     if (!inputPassword.includes(" ")) {
       setPassword(inputPassword);
+    }
+
+    if (allSignupInputsFilled && areNoSignupErrors) {
+      setCurrentUser(userData);
+    } else {
+      setCurrentUser(undefined);
     }
 
     // Handle input pw on login form:
@@ -205,6 +230,15 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleConfirmationPasswordInput = (inputConfirmationPassword: string): void => {
     setConfirmationPassword(inputConfirmationPassword.trim());
+
+    console.log(allSignupInputsFilled);
+    console.log(areNoSignupErrors);
+    if (allSignupInputsFilled && areNoSignupErrors) {
+      setCurrentUser(userData);
+    } else {
+      setCurrentUser(undefined);
+    }
+
     inputConfirmationPassword.trim() !== password &&
     inputConfirmationPassword !== "" &&
     password !== ""
