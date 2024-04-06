@@ -224,6 +224,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     // If input matches pattern for an email:
     if (emailIsValid(input.trim())) {
       const currentUser = allUsers.filter((user) => user.emailAddress === input)[0];
+      setCurrentUser(currentUser);
       setUsername("");
       setUsernameError("");
       setLoginMethod("email");
@@ -260,6 +261,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       // When user input is not an email address (aka, it's a username):
     } else {
       const currentUser = allUsers.filter((user) => user.username === input)[0];
+      setCurrentUser(currentUser);
       setEmailAddress("");
       setEmailError("");
       setLoginMethod("username");
@@ -340,6 +342,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.FormEvent<HTMLFormElement>
   ): void => {
     e.preventDefault();
+    handleWelcomeMessage();
     if (isOnSignup) {
       handleNewAccountCreation(userData);
     } else {
@@ -350,7 +353,6 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
         setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
       }
     }
-    handleWelcomeMessage();
   };
 
   const handleFormRejection = (

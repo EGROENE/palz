@@ -28,7 +28,12 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventsByTag, setEventsByTag] = useState([]);
   const [allInterests, setAllInterests] = useState([]);
   const [userCreatedAccount, setUserCreatedAccount] = useState<null | boolean>(null);
-  const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(true);
+  const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
+
+  const handleWelcomeMessage = () => {
+    setShowWelcomeMessage(true);
+    setTimeout(() => setShowWelcomeMessage(false), 3000);
+  };
 
   useEffect(() => {
     Requests.getAllEvents()
@@ -118,12 +123,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
       .catch((error) => console.log(error));
   }, [allUsers]);
 
-  // Call on sub of login/signup forms. As a result, a welcome message appears for 3 secs after login/signup
-  const handleWelcomeMessage = () => {
-    setShowWelcomeMessage(true);
-    setTimeout(() => setShowWelcomeMessage(false), 3000);
-  };
-
   const mainContextValues: TMainContext = {
     theme,
     toggleTheme,
@@ -139,9 +138,9 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     allInterests,
     userCreatedAccount,
     setUserCreatedAccount,
+    handleWelcomeMessage,
     showWelcomeMessage,
     setShowWelcomeMessage,
-    handleWelcomeMessage,
   };
 
   return (

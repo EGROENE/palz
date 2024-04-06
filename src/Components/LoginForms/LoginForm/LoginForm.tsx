@@ -1,9 +1,12 @@
 import OpenEye from "../../Eyecons/OpenEye/OpenEye";
 import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
+import { useMainContext } from "../../../Hooks/useMainContext";
 import { useLoginContext } from "../../../Hooks/useLoginContext";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
+  const { currentUser } = useMainContext();
+
   const {
     passwordIsHidden,
     toggleHidePassword,
@@ -50,7 +53,10 @@ const LoginForm = () => {
       <form
         onSubmit={(e) => {
           handleFormSubmission(false, e);
-          navigation(`users/${username}`);
+          {
+            /* Time in setTimeout below should match the amount of time the welcome message displays on login/signup */
+          }
+          setTimeout(() => navigation(`users/${currentUser?.username}`), 3000);
         }}
         className="login-signup-form"
       >
