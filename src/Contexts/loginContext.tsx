@@ -168,12 +168,6 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setPassword(inputPassword);
     }
 
-    if (allSignupInputsFilled && areNoSignupErrors) {
-      setCurrentUser(userData);
-    } else {
-      setCurrentUser(undefined);
-    }
-
     // Handle input pw on login form:
     if (!isOnSignup) {
       // Get current user (if username/email has been entered) so that its password can be compared to input pw:
@@ -209,6 +203,11 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       }
       // Handle input pw on signup form:
     } else {
+      if (allSignupInputsFilled && areNoSignupErrors) {
+        setCurrentUser(userData);
+      } else {
+        setCurrentUser(undefined);
+      }
       if (!passwordIsValid(inputPassword) && inputPassword.length) {
         setPasswordError("Invalid password");
         if (
