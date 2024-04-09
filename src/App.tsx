@@ -3,6 +3,7 @@ import LoginPage from "./Components/LoginPage/LoginPage";
 import Welcome from "./Components/Welcome/Welcome";
 import Homepage from "./Components/Homepage/Homepage";
 import { useMainContext } from "./Hooks/useMainContext";
+import { Route, Routes } from "react-router-dom";
 
 function App() {
   const { userCreatedAccount, theme, showWelcomeMessage } = useMainContext();
@@ -13,9 +14,19 @@ function App() {
 
   return (
     <div className="app" data-theme={theme}>
-      {userCreatedAccount === null && <LoginPage />}
-      {userCreatedAccount !== null && showWelcomeMessage && <Welcome />}
-      {userCreatedAccount !== null && !showWelcomeMessage && <Homepage />}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            userCreatedAccount !== null && showWelcomeMessage ? (
+              <Welcome />
+            ) : (
+              <LoginPage />
+            )
+          }
+        />
+        <Route path="/users/:username" element={<Homepage />} />
+      </Routes>
     </div>
   );
 }
