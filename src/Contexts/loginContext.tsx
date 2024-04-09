@@ -244,6 +244,8 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   // This method is used on login form, where user can input either their username or email to log in
   const handleUsernameOrEmailInput = (input: string): void => {
+    const inputNoWhitespaces = input.replace(/\s/g, "");
+
     const usernameExists: boolean = allUsers
       .map((user) => user.username)
       .includes(input.replace(/\s/g, ""));
@@ -252,20 +254,21 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       .includes(input.replace(/\s/g, ""));
 
     // If input matches pattern for an email:
-    if (emailIsValid(input.trim())) {
-      const currentUser = allUsers.filter((user) => user.emailAddress === input)[0];
+    if (emailIsValid(inputNoWhitespaces)) {
+      const currentUser = allUsers.filter(
+        (user) => user.emailAddress === inputNoWhitespaces
+      )[0];
       setCurrentUser(currentUser);
       setUsername("");
       setUsernameError("");
       setLoginMethod("email");
-      if (input === "") {
+      if (inputNoWhitespaces === "") {
         setEmailError("Please fill out this field");
       }
-      setEmailAddress(input.replace(/\s/g, ""));
+      setEmailAddress(inputNoWhitespaces);
       // If email address isn't in database & field isn't empty string:
-      if (!emailExists && input !== "") {
+      if (!emailExists && inputNoWhitespaces !== "") {
         setEmailError("E-mail address not recognized");
-        // If pw isn't valid...
         if (password === "") {
           setPasswordError("Please fill out this field");
         } else if (!passwordIsValid(password)) {
@@ -276,13 +279,12 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
         // If email is recognized...
       } else {
         setEmailError("");
-        // If password is not valid...
         if (password === "") {
           setPasswordError("Please fill out this field");
         } else if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
           // If currentUser exists, its pw isn't equal to input pw, and password field isn't empty string...
-        } else if (currentUser && currentUser.password !== password && password !== "") {
+        } else if (currentUser?.password !== password && password !== "") {
           setPasswordError("Password doesn't match user");
         } else {
           setPasswordError("");
@@ -295,12 +297,12 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setEmailAddress("");
       setEmailError("");
       setLoginMethod("username");
-      setUsername(input.replace(/\s/g, ""));
-      if (input === "") {
+      setUsername(inputNoWhitespaces);
+      if (inputNoWhitespaces === "") {
         setEmailError("Please fill out this field");
       }
       // If username doesn't exist & its field contains at least 1 character:
-      if (!usernameExists && input.length) {
+      if (!usernameExists && inputNoWhitespaces !== "") {
         setUsernameError("Data not recognized");
         // If pw isn't valid & isn't empty string...
         if (password === "") {
