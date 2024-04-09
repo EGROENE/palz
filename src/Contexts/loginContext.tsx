@@ -163,10 +163,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handlePasswordInput = (inputPassword: string, isOnSignup: boolean): void => {
-    //setPassword(inputPassword.trim());
-    if (!inputPassword.includes(" ")) {
-      setPassword(inputPassword);
-    }
+    setPassword(inputPassword.trim());
+
+    /* Use inputPassword w/ no whitespaces in logic checks below, as it is more current that the state value 'password', which may lag behind, causing logic checks to be inaccurate */
+    const inputPWNoWhitespaces = inputPassword.replace(/\s/g, "");
 
     // Handle input pw on login form:
     if (!isOnSignup) {
@@ -179,46 +179,46 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       // If currentUser exists & there is non-whitespace input in password field:
       if (currentUser) {
         // If input pw is empty string...
-        if (inputPassword === "") {
+        if (inputPWNoWhitespaces === "") {
           setPasswordError("Please fill out this field");
-          // If input pw isn't empty string & is unequal to current user's pw...
-        } else if (currentUser.password !== inputPassword) {
+          // If input pw isn't empty string & is unequal to current user's pw, and input pw isn't empty string...
+        } else if (
+          currentUser.password !== inputPWNoWhitespaces &&
+          inputPWNoWhitespaces !== ""
+        ) {
           setPasswordError("Password doesn't match user");
-          // If no other error conditions are true, remove error message...
-        } else if (!passwordIsValid(inputPassword)) {
+          // If input pw simply isn't valid...
+        } else if (!passwordIsValid(inputPWNoWhitespaces)) {
           setPasswordError("Invalid password");
+          // If no error conditions are true, remove error message...
         } else {
           setPasswordError("");
         }
       }
 
-      // If user enters password w/o first having input username or email (can only check for validity):
+      // If user enters password w/o first having input username or email (can only check for validity)...
       if (!currentUser) {
-        // If input pw isn't valid...
-        if (!passwordIsValid(inputPassword)) {
-          setPasswordError("Invalid password");
-        } else {
-          setPasswordError("");
-        }
+        !passwordIsValid(inputPWNoWhitespaces)
+          ? setPasswordError("Invalid password")
+          : setPasswordError("");
       }
       // Handle input pw on signup form:
     } else {
-      if (allSignupInputsFilled && areNoSignupErrors) {
-        setCurrentUser(userData);
-      } else {
-        setCurrentUser(undefined);
-      }
-      if (!passwordIsValid(inputPassword) && inputPassword.length) {
+      allSignupInputsFilled && areNoSignupErrors
+        ? setCurrentUser(userData)
+        : setCurrentUser(undefined);
+
+      if (!passwordIsValid(inputPWNoWhitespaces) && inputPWNoWhitespaces !== "") {
         setPasswordError("Invalid password");
         if (
           confirmationPassword !== "" &&
-          inputPassword.trim() !== confirmationPassword
+          inputPWNoWhitespaces !== confirmationPassword
         ) {
           setConfirmationPasswordError("Passwords don't match");
         } else {
           setConfirmationPasswordError("");
         }
-      } else if (!inputPassword.length) {
+      } else if (inputPWNoWhitespaces === "") {
         setPasswordError("Please fill out this field");
       } else {
         setPasswordError("");
@@ -229,16 +229,14 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const handleConfirmationPasswordInput = (inputConfirmationPassword: string): void => {
     setConfirmationPassword(inputConfirmationPassword.trim());
 
-    console.log(allSignupInputsFilled);
-    console.log(areNoSignupErrors);
-    if (allSignupInputsFilled && areNoSignupErrors) {
-      setCurrentUser(userData);
-    } else {
-      setCurrentUser(undefined);
-    }
+    const inputConfirmationPWNoWhitespaces = inputConfirmationPassword.replace(/\s/g, "");
 
-    inputConfirmationPassword.trim() !== password &&
-    inputConfirmationPassword !== "" &&
+    allSignupInputsFilled && areNoSignupErrors
+      ? setCurrentUser(userData)
+      : setCurrentUser(undefined);
+
+    inputConfirmationPWNoWhitespaces !== password &&
+    inputConfirmationPWNoWhitespaces !== "" &&
     password !== ""
       ? setConfirmationPasswordError("Passwords don't match")
       : setConfirmationPasswordError("");
