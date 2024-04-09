@@ -210,28 +210,39 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
         ? setCurrentUser(userData)
         : setCurrentUser(undefined);
 
-      if (!passwordIsValid(inputPWNoWhitespaces) && inputPWNoWhitespaces !== "") {
-        setPasswordError("Invalid password");
+      if (inputPWNoWhitespaces !== "") {
+        // If pw isn't/is valid...
+        if (!passwordIsValid(inputPWNoWhitespaces)) {
+          setPasswordError("Invalid password");
+        } else {
+          setPasswordError("");
+        }
+
+        // If confirmationPassword has at least 1 char & is not equal to pw input...
         if (
           confirmationPassword !== "" &&
           inputPWNoWhitespaces !== confirmationPassword
         ) {
           setConfirmationPasswordError("Passwords don't match");
-        } else {
+        }
+
+        // If input pw matches confirmation pw (which contains at least 1 char)...
+        if (
+          inputPWNoWhitespaces === confirmationPassword &&
+          confirmationPassword !== ""
+        ) {
           setConfirmationPasswordError("");
         }
-      } else if (inputPWNoWhitespaces === "") {
-        setPasswordError("Please fill out this field");
       } else {
-        setPasswordError("");
+        setPasswordError("Please fill out this field");
       }
     }
   };
 
   const handleConfirmationPasswordInput = (inputConfirmationPassword: string): void => {
-    setConfirmationPassword(inputConfirmationPassword.trim());
-
     const inputConfirmationPWNoWhitespaces = inputConfirmationPassword.replace(/\s/g, "");
+
+    setConfirmationPassword(inputConfirmationPWNoWhitespaces);
 
     allSignupInputsFilled && areNoSignupErrors
       ? setCurrentUser(userData)
