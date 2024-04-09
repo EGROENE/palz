@@ -53,9 +53,6 @@ const LoginForm = () => {
       <form
         onSubmit={(e) => {
           handleFormSubmission(false, e);
-          {
-            /* Time in setTimeout below should match the amount of time the welcome message displays on login/signup */
-          }
           setTimeout(
             () => navigation(`users/${currentUser?.username}`),
             welcomeMessageDisplayTime
