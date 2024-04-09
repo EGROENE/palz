@@ -16,7 +16,8 @@ function App() {
     ? (document.body.style.backgroundColor = "#242424")
     : (document.body.style.backgroundColor = "rgb(233, 231, 228)");
 
-  // Redirect to user homepage if currentUser exists, welcome message not shown (user not able to nav back to login once logged in)
+  /* Redirect to user homepage if user has logged in or created account, welcome message not shown (user not able to nav back to login once logged in) */
+  /* userCreatedAccount is checked for non-null values, since currentUser may be set before submission of login form, causing user's homepage to display before they actually log in */
   useEffect(() => {
     if (userCreatedAccount !== null && !showWelcomeMessage) {
       navigation(`users/${currentUser?.username}`);
