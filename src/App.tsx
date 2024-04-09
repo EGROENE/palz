@@ -4,6 +4,7 @@ import Welcome from "./Components/Welcome/Welcome";
 import UserHomepage from "./Components/UserHomepage/UserHomepage";
 import { useMainContext } from "./Hooks/useMainContext";
 import { Route, Routes } from "react-router-dom";
+import Error404 from "./Components/Error404/Error404";
 
 function App() {
   const { userCreatedAccount, theme, showWelcomeMessage } = useMainContext();
@@ -26,6 +27,7 @@ function App() {
           }
         />
         <Route path="/users/:username" element={<UserHomepage />} />
+        <Route path="*" element={<Error404 />} />
       </Routes>
     </div>
   );
