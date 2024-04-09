@@ -29,10 +29,11 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [allInterests, setAllInterests] = useState([]);
   const [userCreatedAccount, setUserCreatedAccount] = useState<null | boolean>(null);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
+  const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] = useState<number>(2500);
 
   const handleWelcomeMessage = () => {
     setShowWelcomeMessage(true);
-    setTimeout(() => setShowWelcomeMessage(false), 3000);
+    setTimeout(() => setShowWelcomeMessage(false), welcomeMessageDisplayTime);
   };
 
   useEffect(() => {
@@ -141,6 +142,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     handleWelcomeMessage,
     showWelcomeMessage,
     setShowWelcomeMessage,
+    welcomeMessageDisplayTime,
+    setWelcomeMessageDisplayTime
   };
 
   return (

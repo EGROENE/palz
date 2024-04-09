@@ -5,7 +5,7 @@ import { useLoginContext } from "../../../Hooks/useLoginContext";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
-  const { currentUser } = useMainContext();
+  const { currentUser, welcomeMessageDisplayTime } = useMainContext();
 
   const {
     passwordIsHidden,
@@ -56,7 +56,10 @@ const LoginForm = () => {
           {
             /* Time in setTimeout below should match the amount of time the welcome message displays on login/signup */
           }
-          setTimeout(() => navigation(`users/${currentUser?.username}`), 3000);
+          setTimeout(
+            () => navigation(`users/${currentUser?.username}`),
+            welcomeMessageDisplayTime
+          );
         }}
         className="login-signup-form"
       >
