@@ -155,7 +155,7 @@ const SignupForm = () => {
               <i
                 onClick={() => setShowPasswordCriteria(!showPasswordCriteria)}
                 className="fas fa-info-circle"
-                title="Must contain at least one uppercase & one lowercase English letter, at least one digit, at least one special character, & be 8-20 characters long. No spaces allowed."
+                title="Must contain at least one uppercase & one lowercase English letter, at least one digit, at least one special character, & be 8-50 characters long. No spaces allowed."
               ></i>
             </span>
           </p>
