@@ -1,7 +1,7 @@
 import "./App.css";
 import LoginPage from "./Components/LoginPage/LoginPage";
 import Welcome from "./Components/Welcome/Welcome";
-import Homepage from "./Components/Homepage/Homepage";
+import UserHomepage from "./Components/UserHomepage/UserHomepage";
 import { useMainContext } from "./Hooks/useMainContext";
 import { Route, Routes } from "react-router-dom";
 
@@ -25,7 +25,7 @@ function App() {
             )
           }
         />
-        <Route path="/users/:username" element={<Homepage />} />
+        <Route path="/users/:username" element={<UserHomepage />} />
       </Routes>
     </div>
   );
