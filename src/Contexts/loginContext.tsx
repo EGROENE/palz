@@ -140,22 +140,24 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleEmailAddressInput = (inputEmailAddress: string): void => {
-    setEmailAddress(inputEmailAddress.replace(/\s/g, ""));
+    const inputEmailAddressNoWhitespaces = inputEmailAddress.replace(/\s/g, "");
 
-    if (allSignupInputsFilled && areNoSignupErrors) {
-      setCurrentUser(userData);
-    } else {
-      setCurrentUser(undefined);
-    }
+    setEmailAddress(inputEmailAddressNoWhitespaces);
+
+    allSignupInputsFilled && areNoSignupErrors
+      ? setCurrentUser(userData)
+      : setCurrentUser(undefined);
 
     const emailIsTaken: boolean =
-      allUsers.filter(
-        (user) => user.emailAddress === inputEmailAddress.replace(/\s/g, "")
-      ).length > 0;
+      allUsers.filter((user) => user.emailAddress === inputEmailAddressNoWhitespaces)
+        .length > 0;
 
     if (emailIsTaken) {
       setEmailError("E-mail address is taken");
-    } else if (!emailIsValid(inputEmailAddress.trim()) && inputEmailAddress !== "") {
+    } else if (
+      !emailIsValid(inputEmailAddressNoWhitespaces) &&
+      inputEmailAddressNoWhitespaces !== ""
+    ) {
       setEmailError("Invalid e-mail address");
     } else {
       setEmailError("");
