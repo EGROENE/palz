@@ -16,6 +16,7 @@ export type TUser = {
   whatsapp: string;
   profileImage: string;
   about: string;
+  friends: string[];
   subscriptionType: string;
   hostingCredits: number;
 };

@@ -123,6 +123,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     telegram: "",
     whatsapp: "",
     profileImage: "",
+    friends: [],
     about: "",
     subscriptionType: "",
   };
