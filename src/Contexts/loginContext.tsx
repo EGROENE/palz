@@ -49,9 +49,49 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   );
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
+  const getCapitalizedWord = (word: string): string => {
+    const wordLetters = word.split("");
+    const firstLetterCapitalized: string = wordLetters[0]?.toUpperCase();
+    const otherLettersJoined: string = wordLetters.slice(1).join("").toLowerCase();
+    return firstLetterCapitalized + otherLettersJoined;
+  };
+
+  // Returns all words in a name capitalized, whether there is a single word or spaces and hyphens b/t words:
+  const formatName = (string: string): string => {
+    let formattedWordOrWords = "";
+    if (string !== "") {
+      if (string.includes("-")) {
+        const stringWords: string[] = string.split("-");
+        for (const word of stringWords) {
+          const capitalizedWord = getCapitalizedWord(word);
+          formattedWordOrWords =
+            formattedWordOrWords !== ""
+              ? formattedWordOrWords + "-" + capitalizedWord
+              : capitalizedWord;
+        }
+      } else if (string.includes(" ")) {
+        const stringWords: string[] = string.split(" ");
+        for (const word of stringWords) {
+          const capitalizedWord = getCapitalizedWord(word);
+          formattedWordOrWords =
+            formattedWordOrWords !== ""
+              ? formattedWordOrWords + " " + capitalizedWord
+              : capitalizedWord;
+        }
+      } else {
+        const capitalizedWord = getCapitalizedWord(string);
+        formattedWordOrWords =
+          formattedWordOrWords !== ""
+            ? formattedWordOrWords + " " + capitalizedWord
+            : capitalizedWord;
+      }
+    }
+    return formattedWordOrWords;
+  };
+
   const userData: TUser = {
-    firstName: firstName.trim(),
-    lastName: lastName.trim(),
+    firstName: formatName(firstName.trim()),
+    lastName: formatName(lastName.trim()),
     username: username.trim(),
     emailAddress: emailAddress.trim(),
     password: password.trim(),
@@ -91,9 +131,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   // Input-handling methods:
   // Put here, since used in two different components
   const handleNameInput = (name: string, isFirstName: boolean) => {
-    isFirstName
-      ? setFirstName(name.replace(/\s+/g, " "))
-      : setLastName(name.replace(/\s+/g, " "));
+    isFirstName ? setFirstName(name) : setLastName(name);
 
     if (allSignupInputsFilled && areNoSignupErrors) {
       setCurrentUser(userData);
@@ -101,15 +139,15 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setCurrentUser(undefined);
     }
 
-    if (name.replace(/\s/g, "") === "") {
+    if (name.trim() === "") {
       isFirstName
         ? setFirstNameError("Please fill out this field")
         : setLastNameError("Please fill out this field");
-    } else if (!nameIsValid(name)) {
+    } else if (!nameIsValid(name.trim())) {
       isFirstName
         ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
         : setLastNameError("Only alphabetical characters & appropriate punctuation");
-    } else if (nameIsValid(name)) {
+    } else if (nameIsValid(name.trim())) {
       isFirstName ? setFirstNameError("") : setLastNameError("");
     }
   };
