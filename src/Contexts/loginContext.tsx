@@ -62,13 +62,24 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (string !== "") {
       if (string.includes("-")) {
-        const stringWords: string[] = string.split("-");
+        const stringWords: string[] = string.split(/[\s-]+/);
         for (const word of stringWords) {
           const trimmedWord = word.trim();
           const capitalizedWord = getCapitalizedWord(trimmedWord);
+          // If char before/after word in original string is hyphen, separator should be "-"; else, " ":
+          const stringNoMultiSpacesSplitBySpaces = string.replace(/\s+/g, " ").split(" ");
+          const indexOfWordInStringNoMultiSpacesSplitBySpaces =
+            stringNoMultiSpacesSplitBySpaces.indexOf(word);
+          const prevItemIndex = indexOfWordInStringNoMultiSpacesSplitBySpaces - 1;
+          const nextItemIndex = indexOfWordInStringNoMultiSpacesSplitBySpaces + 1;
+          const separator =
+            stringNoMultiSpacesSplitBySpaces[prevItemIndex] === "-" ||
+            stringNoMultiSpacesSplitBySpaces[nextItemIndex] === "-"
+              ? "-"
+              : " ";
           formattedWordOrWords =
             formattedWordOrWords !== ""
-              ? formattedWordOrWords + "-" + capitalizedWord
+              ? formattedWordOrWords + separator + capitalizedWord
               : capitalizedWord;
         }
       } else if (string.includes(" ")) {
@@ -89,7 +100,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
             : capitalizedWord;
       }
     }
-    return formattedWordOrWords.replace(/\undefined/g, "").trim();
+    return formattedWordOrWords
+      .replace(/\undefined/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
   };
 
   const userData: TUser = {
