@@ -53,26 +53,29 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     const wordLetters = word.split("");
     const firstLetterCapitalized: string = wordLetters[0]?.toUpperCase();
     const otherLettersJoined: string = wordLetters.slice(1).join("").toLowerCase();
+
     return firstLetterCapitalized + otherLettersJoined;
   };
 
-  // Returns all words in a name capitalized, whether there is a single word or spaces and hyphens b/t words:
   const formatName = (string: string): string => {
     let formattedWordOrWords = "";
+
     if (string !== "") {
       if (string.includes("-")) {
         const stringWords: string[] = string.split("-");
         for (const word of stringWords) {
-          const capitalizedWord = getCapitalizedWord(word);
+          const trimmedWord = word.trim();
+          const capitalizedWord = getCapitalizedWord(trimmedWord);
           formattedWordOrWords =
             formattedWordOrWords !== ""
               ? formattedWordOrWords + "-" + capitalizedWord
               : capitalizedWord;
         }
       } else if (string.includes(" ")) {
-        const stringWords: string[] = string.split(" ");
+        const stringWords: string[] = string.replace(/\s+/g, " ").split(" ");
         for (const word of stringWords) {
-          const capitalizedWord = getCapitalizedWord(word);
+          const trimmedWord = word.trim();
+          const capitalizedWord = getCapitalizedWord(trimmedWord);
           formattedWordOrWords =
             formattedWordOrWords !== ""
               ? formattedWordOrWords + " " + capitalizedWord
@@ -86,12 +89,12 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
             : capitalizedWord;
       }
     }
-    return formattedWordOrWords;
+    return formattedWordOrWords.replace(/\undefined/g, "").trim();
   };
 
   const userData: TUser = {
-    firstName: formatName(firstName.trim()),
-    lastName: formatName(lastName.trim()),
+    firstName: formatName(firstName),
+    lastName: formatName(lastName),
     username: username.trim(),
     emailAddress: emailAddress.trim(),
     password: password.trim(),
