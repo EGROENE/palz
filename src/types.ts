@@ -48,6 +48,7 @@ export type TMainContext = {
   allUsers: TUser[];
   currentUser: TUser | undefined;
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser | undefined>>;
+  removeCurrentUser: () => void;
   allEvents: TEvent[];
   rsvpdEvents: {
     id: string;

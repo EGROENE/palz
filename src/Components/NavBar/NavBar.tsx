@@ -3,14 +3,14 @@ import { useMainContext } from "../../Hooks/useMainContext";
 import { useLoginContext } from "../../Hooks/useLoginContext";
 
 const NavBar = () => {
-  const { currentUser, setUserCreatedAccount, setCurrentUser } = useMainContext();
+  const { currentUser, setUserCreatedAccount, removeCurrentUser } = useMainContext();
   const { resetFormFieldsAndErrors } = useLoginContext();
   const navigation = useNavigate();
 
   const handleLogout = () => {
     navigation("/");
     setUserCreatedAccount(null);
-    setCurrentUser(undefined);
+    removeCurrentUser();
     resetFormFieldsAndErrors();
   };
 

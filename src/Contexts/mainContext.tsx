@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, ReactNode } from "react";
+import { useSessionStorage } from "usehooks-ts";
 import { TMainContext, TUser } from "../types";
 import Requests from "../requests";
 import useLocalStorage from "use-local-storage";
@@ -19,7 +20,9 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const [allUsers, setAllUsers] = useState([]);
-  const [currentUser, setCurrentUser] = useState<TUser | undefined>(undefined);
+  const [currentUser, setCurrentUser, removeCurrentUser] = useSessionStorage<
+    TUser | undefined
+  >("currentUser", undefined);
   const [allEvents, setAllEvents] = useState([]);
   const [rsvpdEvents, setRsvpdEventsByUser] = useState([]);
   const [favoritedEvents, setFavoritedEventsByUser] = useState([]);
@@ -29,7 +32,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [allInterests, setAllInterests] = useState([]);
   const [userCreatedAccount, setUserCreatedAccount] = useState<null | boolean>(null);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
-  const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] = useState<number>(2500);
+  const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
+    useState<number>(2500);
 
   const handleWelcomeMessage = () => {
     setShowWelcomeMessage(true);
@@ -130,6 +134,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     allUsers,
     currentUser,
     setCurrentUser,
+    removeCurrentUser,
     allEvents,
     rsvpdEvents,
     favoritedEvents,
@@ -143,7 +148,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     showWelcomeMessage,
     setShowWelcomeMessage,
     welcomeMessageDisplayTime,
-    setWelcomeMessageDisplayTime
+    setWelcomeMessageDisplayTime,
   };
 
   return (
