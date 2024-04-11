@@ -25,24 +25,21 @@ export type TEvent = {
   id: string;
   title: string;
   eventID: string;
-  organizerOneID: string;
-  organizerTwoID?: string;
-  organizerThreeID?: string;
+  organizers: string[];
   description: string;
   nextEventTime: number;
   isPublic: boolean;
   maxParticipants: number;
-  imageOne?: string;
-  imageTwo?: string;
-  imageThree?: string;
-  imageFour?: string;
-  imageFive?: string;
+  imageOne?: { src: string; altText: string };
+  imageTwo?: { src: string; altText: string };
+  imageThree?: { src: string; altText: string };
   city: string;
   stateProvince: string;
   country: string;
   address: string;
   postalCode: string;
   additionalInfo: string;
+  interestedUsers: string[];
 };
 
 export type TMainContext = {
@@ -146,4 +143,5 @@ export type TLoginContext = {
   setShowPasswordCriteria: React.Dispatch<React.SetStateAction<boolean>>;
   showUsernameCriteria: boolean;
   setShowUsernameCriteria: React.Dispatch<React.SetStateAction<boolean>>;
+  resetFormFieldsAndErrors: () => void;
 };

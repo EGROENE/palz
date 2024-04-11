@@ -128,8 +128,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     subscriptionType: "",
   };
 
-  const toggleSignupLogin = (): void => {
-    setSignupIsSelected(!signupIsSelected);
+  const resetFormFieldsAndErrors = (): void => {
     setFirstName("");
     setFirstNameError("Please fill out this field");
     setLastName("");
@@ -142,6 +141,15 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     setPasswordError("Please fill out this field");
     setConfirmationPassword("");
     setConfirmationPasswordError("Please fill out this field");
+    setShowErrors(false);
+    setShowUsernameCriteria(false);
+    setShowPasswordCriteria(false);
+    setLoginMethod("username");
+  };
+
+  const toggleSignupLogin = (): void => {
+    setSignupIsSelected(!signupIsSelected);
+    resetFormFieldsAndErrors();
   };
 
   const toggleHidePassword = (): void => setPasswordIsHidden(!passwordIsHidden);
@@ -515,6 +523,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     loginMethod,
     handleFormSubmission,
     handleFormRejection,
+    resetFormFieldsAndErrors,
   };
 
   return (
