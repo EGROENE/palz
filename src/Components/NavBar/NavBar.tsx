@@ -16,7 +16,7 @@ const NavBar = () => {
 
   return (
     <nav>
-      <ul>
+      <ul className="navbar">
         <li>
           <Link to={`users/${currentUser?.username}`}>
             PALZ IMAGE - LINK TO UserHomepage
