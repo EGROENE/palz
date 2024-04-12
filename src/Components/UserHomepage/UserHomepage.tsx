@@ -33,21 +33,21 @@ const UserHomepage = () => {
         <NavBar />
         {showSidebar && <Sidebar />}
         {userRSVPDEvents.length ? (
-          <>
+          <div className="upcoming-events-hero">
             <h1>Upcoming Events ({userRSVPDEvents.length})</h1>
             <div className="rsvpd-events-container">
               {userRSVPDEventsSoonestToLatest.map((event: TEvent) => (
                 <EventCard key={event.id} event={event} />
               ))}
             </div>
-          </>
+          </div>
         ) : (
-          <>
+          <div className="upcoming-events-hero">
             <h1>No upcoming events</h1>
             <p>
               Click <Link to={""}>here</Link> to find something fun to do
             </p>
-          </>
+          </div>
         )}
         <div className="site-links-container">
           <button>Create Event</button>
