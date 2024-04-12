@@ -145,3 +145,8 @@ export type TLoginContext = {
   setShowUsernameCriteria: React.Dispatch<React.SetStateAction<boolean>>;
   resetFormFieldsAndErrors: () => void;
 };
+
+export type TUserContext = {
+  showSidebar: boolean;
+  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+};

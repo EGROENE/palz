@@ -1,12 +1,15 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
+import { useUserContext } from "../../Hooks/useUserContext";
 import { useEffect } from "react";
 import NavBar from "../NavBar/NavBar";
+import Sidebar from "../Sidebar/Sidebar";
 import EventCard from "../EventCard/EventCard";
 import { TEvent } from "../../types";
 
 const UserHomepage = () => {
   const { currentUser, allEvents } = useMainContext();
+  const { showSidebar } = useUserContext();
 
   /* If currentUser is undefined, redirect to base URL (/). This prevents access to user account by simply pasting in their acct url. Forces login. Also, this component will only render if currentUser exists */
   const navigation = useNavigate();
@@ -28,6 +31,7 @@ const UserHomepage = () => {
     currentUser && (
       <div className="user-homepage-container">
         <NavBar />
+        {showSidebar && <Sidebar />}
         {userRSVPDEvents.length ? (
           <>
             <h1>Upcoming Events ({userRSVPDEvents.length})</h1>
