@@ -32,7 +32,7 @@ const NavBar = () => {
           Log Out<i className="fas fa-sign-out-alt"></i>
         </li>
         <li>
-          <Link to={""}>PUT PROFILE IMG HERE-LINKS TO PROFILE PAGE</Link>
+          <img className="profile-image-navbar" src={currentUser?.profileImage} />
         </li>
       </ul>
     </nav>
