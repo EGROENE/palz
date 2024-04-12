@@ -123,10 +123,15 @@ ul {
   list-style: none;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 li {
   color: var(--text-color);
+}
+
+nav li {
+  margin-left: 0.25rem;
 }
 
 input:-webkit-autofill,

@@ -134,28 +134,90 @@
   cursor: pointer;
 }
 
+.navbar {
+  width: 90vw;
+}
+
+.profile-image-navbar {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  border: 4px solid var(--header-one-color);
+}
+
 .user-homepage-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: fixed;
+  top: 5%;
+  right: 1rem;
+  z-index: 100;
+}
+
+.sidebar i {
+  position: absolute;
+  left: 1rem;
+  top: 0.5rem;
+  font-size: 1.5rem;
+  color: white;
+  padding: 0.25rem 0.5rem;
+}
+
+.sidebar-options {
+  font-weight: 700;
+}
+
+.sidebar-options:hover {
+  cursor: pointer;
+  background-color: var(--background-color-opposite);
+  color: var(--text-color-opposite);
+}
+
+.profile-image-sidebar {
+  width: 18rem;
+}
+
+.sidebar-names-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: -0.5rem;
+}
+
+.sidebar-names-container p {
+  color: white;
+  font-weight: 700;
+}
+
+.upcoming-events-hero {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .rsvpd-events-container {
   margin-top: 2rem;
   margin-bottom: 1rem;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  overflow-x: scroll;
+  width: 87vw;
 }
 
 .event-card {
-  position: relative;
   border: 2px solid;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 33%;
+  min-width: 33%;
   font-family: var(--text-font);
   color: var(--text-color);
   padding: 0.5rem;
-  margin: 0.5rem 3rem;
+  margin: 0.5rem;
 }
 
 .event-card header {
@@ -184,4 +246,17 @@
 .event-buttons-container button:nth-child(2) {
   background-color: var(--background-color-opposite);
   color: var(--text-color-opposite);
+}
+
+.site-links-container {
+  width: 81vw;
+  display: flex;
+  justify-content: space-evenly;
+  margin: 3rem auto;
+}
+
+.site-links-container button {
+  background-color: var(--background-color-opposite);
+  color: var(--text-color-opposite);
+  font-family: var(--text-font);
 }
