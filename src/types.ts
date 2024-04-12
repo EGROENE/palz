@@ -24,12 +24,11 @@ export type TUser = {
 export type TEvent = {
   id: string;
   title: string;
-  eventID: string;
   organizers: string[];
   description: string;
   nextEventTime: number;
   isPublic: boolean;
-  maxParticipants: number;
+  maxParticipants: number | undefined;
   imageOne?: { src: string; altText: string };
   imageTwo?: { src: string; altText: string };
   imageThree?: { src: string; altText: string };
