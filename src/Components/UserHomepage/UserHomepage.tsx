@@ -20,16 +20,26 @@ const UserHomepage = () => {
     return currentUser ? event.interestedUsers.includes(currentUser.username) : [];
   });
   // Sort userRSVPDEvents by earliest date:
+  const userRSVPDEventsSoonestToLatest = userRSVPDEvents.sort(
+    (a, b) => a.nextEventTime - b.nextEventTime
+  );
 
   return (
     currentUser && (
       <div className="user-homepage-container">
         <NavBar />
-        <h1>Upcoming Events</h1>
+        <h1>Upcoming Events ({userRSVPDEvents.length})</h1>
         <div className="rsvpd-events-container">
-          {userRSVPDEvents.map((event: TEvent) => (
+          {userRSVPDEventsSoonestToLatest.map((event: TEvent) => (
             <EventCard key={event.id} event={event} />
           ))}
+        </div>
+        <div className="site-links-container">
+          <button>Create Event</button>
+          <button>Find Palz</button>
+          <button>Explore Events</button>
+          <button>My Palz</button>
+          <button>Find Events</button>
         </div>
       </div>
     )
