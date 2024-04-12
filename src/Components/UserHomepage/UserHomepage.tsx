@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useEffect } from "react";
 import NavBar from "../NavBar/NavBar";
@@ -28,12 +28,23 @@ const UserHomepage = () => {
     currentUser && (
       <div className="user-homepage-container">
         <NavBar />
-        <h1>Upcoming Events ({userRSVPDEvents.length})</h1>
-        <div className="rsvpd-events-container">
-          {userRSVPDEventsSoonestToLatest.map((event: TEvent) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </div>
+        {userRSVPDEvents.length ? (
+          <>
+            <h1>Upcoming Events ({userRSVPDEvents.length})</h1>
+            <div className="rsvpd-events-container">
+              {userRSVPDEventsSoonestToLatest.map((event: TEvent) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            <h1>No upcoming events</h1>
+            <p>
+              Click <Link to={""}>here</Link> to find something fun to do
+            </p>
+          </>
+        )}
         <div className="site-links-container">
           <button>Create Event</button>
           <button>Find Palz</button>
