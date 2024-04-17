@@ -446,7 +446,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const allLoginInputsFilled: boolean =
     (username !== "" || emailAddress !== "") && password !== "";
 
-  const handleFormSubmission = (
+  const handleSignupOrLoginFormSubmission = (
     isOnSignup: boolean,
     e: React.FormEvent<HTMLFormElement>
   ): void => {
@@ -521,7 +521,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     handleConfirmationPasswordInput,
     handleUsernameOrEmailInput,
     loginMethod,
-    handleFormSubmission,
+    handleSignupOrLoginFormSubmission,
     handleFormRejection,
     resetFormFieldsAndErrors,
   };
