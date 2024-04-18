@@ -287,7 +287,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       }
       // Handle input pw on signup form:
     } else {
-      allSignupInputsFilled && areNoSignupErrors
+      allSignupInputsFilled && areNoSignupErrors && isOnSignup
         ? setCurrentUser(userData)
         : setCurrentUser(undefined);
 
