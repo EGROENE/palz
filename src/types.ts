@@ -1,14 +1,14 @@
 export type TUser = {
   id?: string;
-  firstName: string;
-  lastName: string;
-  username: string;
-  password: string;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  username: string | undefined;
+  password: string | undefined;
   city: string;
   stateProvince: string;
   country: string;
   phoneNumber: string;
-  emailAddress: string;
+  emailAddress: string | undefined;
   instagram: string;
   facebook: string;
   x: string;
@@ -92,6 +92,7 @@ export type TMainContext = {
 };
 
 export type TLoginContext = {
+  handleUpdateProfileInfo: () => void;
   loginMethod: "username" | "email";
   signupIsSelected: boolean;
   setSignupIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
@@ -99,24 +100,24 @@ export type TLoginContext = {
   setPasswordIsHidden: React.Dispatch<React.SetStateAction<boolean>>;
   toggleSignupLogin: () => void;
   toggleHidePassword: () => void;
-  firstName: string;
-  setFirstName: React.Dispatch<React.SetStateAction<string>>;
+  firstName: string | undefined;
+  setFirstName: React.Dispatch<React.SetStateAction<string | undefined>>;
   firstNameError: string;
   setFirstNameError: React.Dispatch<React.SetStateAction<string>>;
-  lastName: string;
-  setLastName: React.Dispatch<React.SetStateAction<string>>;
+  lastName: string | undefined;
+  setLastName: React.Dispatch<React.SetStateAction<string | undefined>>;
   lastNameError: string;
   setLastNameError: React.Dispatch<React.SetStateAction<string>>;
-  username: string;
-  setUsername: React.Dispatch<React.SetStateAction<string>>;
-  usernameError: string;
+  username: string | undefined;
+  setUsername: React.Dispatch<React.SetStateAction<string | undefined>>;
+  usernameError: string | undefined;
   setUsernameError: React.Dispatch<React.SetStateAction<string>>;
-  emailAddress: string;
-  setEmailAddress: React.Dispatch<React.SetStateAction<string>>;
+  emailAddress: string | undefined;
+  setEmailAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
   emailError: string;
   setEmailError: React.Dispatch<React.SetStateAction<string>>;
-  password: string;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
+  password: string | undefined;
+  setPassword: React.Dispatch<React.SetStateAction<string | undefined>>;
   passwordError: string;
   setPasswordError: React.Dispatch<React.SetStateAction<string>>;
   confirmationPassword: string;
@@ -128,9 +129,9 @@ export type TLoginContext = {
   allSignupInputsFilled: boolean;
   allLoginInputsFilled: boolean;
   showErrors: boolean;
-  handleNameInput: (name: string, isFirstName: boolean) => void;
-  handleUsernameInput: (username: string) => void;
-  handleEmailAddressInput: (email: string) => void;
+  handleNameInput: (name: string, isFirstName: boolean, isOnSignup: boolean) => void;
+  handleUsernameInput: (username: string, isOnSignup: boolean) => void;
+  handleEmailAddressInput: (email: string, isOnSignup: boolean) => void;
   handlePasswordInput: (inputPassword: string, isOnSignup: boolean) => void;
   handleConfirmationPasswordInput: (inputConfirmationPassword: string) => void;
   handleUsernameOrEmailInput: (input: string) => void;
