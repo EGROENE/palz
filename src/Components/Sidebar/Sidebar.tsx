@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 
@@ -45,7 +46,9 @@ const Sidebar = () => {
       <p className="sidebar-options">Explore Events</p>
       <p className="sidebar-options">My Palz</p>
       <p className="sidebar-options">Find Events</p>
-      <p className="sidebar-options">Settings</p>
+      <Link className="sidebar-options" to="/settings">
+        Settings
+      </Link>
     </div>
   );
 };

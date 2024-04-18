@@ -25,7 +25,7 @@ const NavBar = () => {
           </Link>
         </li>
         <li>
-          <Link to={""}>Settings</Link>
+          <Link to={"/settings"}>Settings</Link>
         </li>
         <li>
           <Link to={""}>Terms & Conditions</Link>
