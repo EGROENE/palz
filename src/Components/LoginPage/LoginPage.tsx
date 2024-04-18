@@ -23,7 +23,7 @@ const LoginPage = () => {
           {theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
         </button>
       </div>
-      <div className="form">
+      <div className="login-form">
         <div className="login-options-container">
           <div>
             <header onClick={!signupIsSelected ? () => toggleSignupLogin() : undefined}>
