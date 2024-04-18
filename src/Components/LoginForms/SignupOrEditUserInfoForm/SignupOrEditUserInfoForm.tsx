@@ -3,23 +3,30 @@ import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
 import { useLoginContext } from "../../../Hooks/useLoginContext";
 import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
+import { useEffect, useState } from "react";
 
 // should have isOnSignup param
 const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
   const { currentUser, welcomeMessageDisplayTime } = useMainContext();
   const {
+    handleUpdateProfileInfo,
     passwordIsHidden,
     toggleHidePassword,
     firstName,
+    setFirstName,
     firstNameError,
     handleNameInput,
     lastName,
+    setLastName,
     lastNameError,
     username,
+    setUsername,
     usernameError,
     emailAddress,
+    setEmailAddress,
     emailError,
     password,
+    setPassword,
     passwordError,
     confirmationPassword,
     handleUsernameInput,
@@ -40,6 +47,26 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
 
   const navigation = useNavigate();
 
+  const [randomColor, setRandomColor] = useState<string>("");
+
+  useEffect(() => {
+    const themeColors = [
+      "var(--theme-blue)",
+      "var(--theme-green)",
+      "var(--theme-red)",
+      "var(--theme-purple)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
+  }, []);
+
+  const userInfoEdited: boolean =
+    firstName !== currentUser?.firstName ||
+    lastName !== currentUser?.lastName ||
+    emailAddress !== currentUser?.emailAddress ||
+    username !== currentUser?.username ||
+    password !== currentUser?.password;
+
   const handleSignupFormSubmission = (e: React.FormEvent<HTMLFormElement>) => {
     handleSignupOrLoginFormSubmission(true, e);
     setTimeout(
@@ -48,8 +75,18 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     );
   };
 
-  // this should contain PATCH request to update user data obj with current / any changed infos on it
-  const handleUpdateProfileInfo = () => {};
+  // Function that resets form values to what they are in currentUser
+  // Called upon first render of this component or if user cancels changes they made to edit-user-info form
+  const handleEditUserInfoRevert = () => {
+    setFirstName(currentUser?.firstName);
+    setLastName(currentUser?.lastName);
+    setUsername(currentUser?.username);
+    setEmailAddress(currentUser?.emailAddress);
+    setPassword(currentUser?.password);
+  };
+  useEffect(() => {
+    handleEditUserInfoRevert();
+  }, []);
 
   const getFirstNameFieldClass = (): "erroneous-field" | undefined => {
     if (isOnSignup) {
@@ -152,10 +189,14 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
         <label>
           <p>First Name:</p>
           <input
-            onChange={(e) => handleNameInput(e.target.value, true)}
+            onChange={(e) =>
+              isOnSignup
+                ? handleNameInput(e.target.value, true, true)
+                : handleNameInput(e.target.value, true, false)
+            }
             value={firstName}
             type="text"
-            placeholder="Enter your first name"
+            placeholder={isOnSignup ? "Enter your first name" : "Change first name"}
             inputMode="text"
             className={firstNameFieldClass}
           />
@@ -164,10 +205,14 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
         <label>
           <p>Last Name:</p>
           <input
-            onChange={(e) => handleNameInput(e.target.value, false)}
-            value={lastName}
+            onChange={(e) =>
+              isOnSignup
+                ? handleNameInput(e.target.value, false, true)
+                : handleNameInput(e.target.value, false, false)
+            }
             type="text"
-            placeholder="Enter your last name"
+            value={lastName}
+            placeholder={isOnSignup ? "Enter your last name" : "Change last name"}
             inputMode="text"
             className={lastNameFieldClass}
           />
@@ -192,7 +237,11 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
         )}
         <input
           title="Must be 4-20 characters long & contain only alphanumeric characters"
-          onChange={(e) => handleUsernameInput(e.target.value)}
+          onChange={(e) =>
+            isOnSignup
+              ? handleUsernameInput(e.target.value, true)
+              : handleUsernameInput(e.target.value, false)
+          }
           value={username}
           type="text"
           placeholder="Enter a username"
@@ -204,7 +253,11 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
       <label>
         <p>E-Mail Address:</p>
         <input
-          onChange={(e) => handleEmailAddressInput(e.target.value)}
+          onChange={(e) =>
+            isOnSignup
+              ? handleEmailAddressInput(e.target.value, true)
+              : handleEmailAddressInput(e.target.value, false)
+          }
           value={emailAddress}
           type="email"
           placeholder="Enter your e-mail address"
@@ -274,15 +327,32 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
           <p className="input-error-message">{confirmationPasswordError}</p>
         )}
       </label>
-      <button
-        className="login-button"
-        type={areNoSignupErrors ? "submit" : "button"}
-        onClick={(e) =>
-          areNoSignupErrors && allSignupInputsFilled ? undefined : handleFormRejection(e)
-        }
-      >
-        Sign Up
-      </button>
+      {isOnSignup ? (
+        <button
+          className="login-button"
+          type={areNoSignupErrors ? "submit" : "button"}
+          onClick={(e) =>
+            areNoSignupErrors && allSignupInputsFilled
+              ? undefined
+              : handleFormRejection(e)
+          }
+        >
+          Sign Up
+        </button>
+      ) : (
+        <div className="edit-user-info-form-options">
+          <button disabled={!userInfoEdited} onClick={() => handleEditUserInfoRevert()}>
+            Revert Changes
+          </button>
+          <button
+            disabled={!userInfoEdited}
+            style={{ backgroundColor: randomColor }}
+            onClick={() => handleUpdateProfileInfo()}
+          >
+            Save Changes
+          </button>
+        </div>
+      )}
     </form>
   );
 };
