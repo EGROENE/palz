@@ -9,22 +9,34 @@ import {
 import Requests from "../requests";
 import toast from "react-hot-toast";
 import { useMainContext } from "../Hooks/useMainContext";
+import { useSessionStorage } from "usehooks-ts";
 
 export const LoginContext = createContext<TLoginContext | null>(null);
 
 export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
-  const { allUsers, setUserCreatedAccount, setCurrentUser, handleWelcomeMessage } =
-    useMainContext();
+  const {
+    allUsers,
+    setUserCreatedAccount,
+    currentUser,
+    setCurrentUser,
+    handleWelcomeMessage,
+  } = useMainContext();
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
 
-  // Put state values for all inputs here. set these in handler functions.
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
-  const [emailAddress, setEmailAddress] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  /* Some values kept in session storage so that they can be used to autofill fields on edit-user-info form. Due to input handler functions setting these & not currentUser._____, currentUser.______ isn't used to do so, but will rather be set when user saves changes to their data object in the DB by submitting the edit-user-info form & allUsers is refetched. */
+  const [firstName, setFirstName] = useSessionStorage<string | undefined>(
+    "firstName",
+    ""
+  );
+  const [lastName, setLastName] = useSessionStorage<string | undefined>("lastName", "");
+  const [username, setUsername] = useSessionStorage<string | undefined>("username", "");
+  const [emailAddress, setEmailAddress] = useSessionStorage<string | undefined>(
+    "emailAddress",
+    ""
+  );
+  const [password, setPassword] = useSessionStorage<string | undefined>("password", "");
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
   const [showPasswordCriteria, setShowPasswordCriteria] = useState<boolean>(false);
@@ -49,19 +61,19 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   );
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
-  const getCapitalizedWord = (word: string): string => {
-    const wordLetters = word.split("");
-    const firstLetterCapitalized: string = wordLetters[0]?.toUpperCase();
-    const otherLettersJoined: string = wordLetters.slice(1).join("").toLowerCase();
+  const getCapitalizedWord = (word: string | undefined): string => {
+    const wordLetters = word?.split("");
+    const firstLetterCapitalized = wordLetters ? wordLetters[0]?.toUpperCase() : "";
+    const otherLettersJoined = wordLetters?.slice(1).join("").toLowerCase();
 
     return firstLetterCapitalized + otherLettersJoined;
   };
 
-  const formatName = (string: string): string => {
+  const formatName = (string: string | undefined): string => {
     let formattedWordOrWords = "";
 
     if (string !== "") {
-      if (string.includes("-")) {
+      if (string?.includes("-")) {
         const stringWords: string[] = string.split(/[\s-]+/);
         for (const word of stringWords) {
           const trimmedWord = word.trim();
@@ -82,7 +94,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
               ? formattedWordOrWords + separator + capitalizedWord
               : capitalizedWord;
         }
-      } else if (string.includes(" ")) {
+      } else if (string?.includes(" ")) {
         const stringWords: string[] = string.replace(/\s+/g, " ").split(" ");
         for (const word of stringWords) {
           const trimmedWord = word.trim();
@@ -109,9 +121,9 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const userData: TUser = {
     firstName: formatName(firstName),
     lastName: formatName(lastName),
-    username: username.trim(),
-    emailAddress: emailAddress.trim(),
-    password: password.trim(),
+    username: username?.trim(),
+    emailAddress: emailAddress?.trim(),
+    password: password?.trim(),
     hostingCredits: 0,
     city: "",
     stateProvince: "",
@@ -156,12 +168,12 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Input-handling methods:
   // Put here, since used in two different components
-  const handleNameInput = (name: string, isFirstName: boolean) => {
+  const handleNameInput = (name: string, isFirstName: boolean, isOnSignup: boolean) => {
     isFirstName ? setFirstName(name) : setLastName(name);
 
-    if (allSignupInputsFilled && areNoSignupErrors) {
+    if (allSignupInputsFilled && areNoSignupErrors && isOnSignup) {
       setCurrentUser(userData);
-    } else {
+    } else if (!allSignupInputsFilled && !areNoSignupErrors && isOnSignup) {
       setCurrentUser(undefined);
     }
 
@@ -178,14 +190,14 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleUsernameInput = (inputUsername: string): void => {
+  const handleUsernameInput = (inputUsername: string, isOnSignup: boolean): void => {
     if (inputUsername.length <= 20 && usernameIsValid(inputUsername)) {
       setUsername(inputUsername);
     }
 
-    if (allSignupInputsFilled && areNoSignupErrors) {
+    if (allSignupInputsFilled && areNoSignupErrors && isOnSignup) {
       setCurrentUser(userData);
-    } else {
+    } else if (!allSignupInputsFilled && !areNoSignupErrors && isOnSignup) {
       setCurrentUser(undefined);
     }
 
@@ -203,14 +215,19 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleEmailAddressInput = (inputEmailAddress: string): void => {
+  const handleEmailAddressInput = (
+    inputEmailAddress: string,
+    isOnSignup: boolean
+  ): void => {
     const inputEmailAddressNoWhitespaces = inputEmailAddress.replace(/\s/g, "");
 
     setEmailAddress(inputEmailAddressNoWhitespaces);
 
-    allSignupInputsFilled && areNoSignupErrors
-      ? setCurrentUser(userData)
-      : setCurrentUser(undefined);
+    if (allSignupInputsFilled && areNoSignupErrors && isOnSignup) {
+      setCurrentUser(userData);
+    } else if (!allSignupInputsFilled && !areNoSignupErrors && isOnSignup) {
+      setCurrentUser(undefined);
+    }
 
     const emailIsTaken: boolean =
       allUsers.filter((user) => user.emailAddress === inputEmailAddressNoWhitespaces)
@@ -414,7 +431,6 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
           setUserCreatedAccount(false);
         } else {
           setUserCreatedAccount(true);
-          setCurrentUser(userData);
         }
       })
       .catch((error) => {
@@ -454,6 +470,11 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     handleWelcomeMessage();
     if (isOnSignup) {
       handleNewAccountCreation(userData);
+      setCurrentUser(userData);
+      setFirstName(userData.firstName);
+      setLastName(userData.lastName);
+      setEmailAddress(userData.emailAddress);
+      setPassword(userData.password);
     } else {
       setUserCreatedAccount(false);
       if (emailAddress !== "") {
@@ -461,6 +482,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       } else if (username !== "") {
         setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
       }
+      setFirstName(currentUser?.firstName);
+      setLastName(currentUser?.lastName);
+      setEmailAddress(currentUser?.emailAddress);
+      setPassword(currentUser?.password);
     }
   };
 
@@ -474,7 +499,13 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     setShowErrors(true);
   };
 
+  // this should contain PATCH request to update user data obj with current / any changed infos on it (firstName to current value of firstName, etc.)
+  // like handleSignup...FormSubmission above, clear firstName, etc. after patching these to user data object
+  // refetch allUsers (create method that includes what's in useEffect for this in mainContext). call that here and in that useEffect
+  const handleUpdateProfileInfo = (): void => {};
+
   const loginContextValues: TLoginContext = {
+    handleUpdateProfileInfo,
     signupIsSelected,
     setSignupIsSelected,
     passwordIsHidden,
