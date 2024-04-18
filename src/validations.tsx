@@ -33,9 +33,11 @@ export const emailIsValid = (value: string): boolean =>
     value.trim()
   );
 
-export const passwordIsValid = (value: string): boolean => {
-  if (/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,50}$/.test(value)) {
-    return true;
+export const passwordIsValid = (value: string | undefined): boolean => {
+  if (value) {
+    if (/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,50}$/.test(value)) {
+      return true;
+    }
   }
   return false;
 };
