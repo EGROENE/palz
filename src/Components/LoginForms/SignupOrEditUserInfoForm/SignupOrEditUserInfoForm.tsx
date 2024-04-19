@@ -7,9 +7,9 @@ import { useEffect, useState } from "react";
 
 // should have isOnSignup param
 const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
-  const { currentUser, welcomeMessageDisplayTime } = useMainContext();
+  const { currentUser, welcomeMessageDisplayTime, refetchAllUsers, allUsers } =
+    useMainContext();
   const {
-    handleUpdateProfileInfo,
     passwordIsHidden,
     toggleHidePassword,
     firstName,
@@ -22,9 +22,11 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     username,
     setUsername,
     usernameError,
+    setUsernameError,
     emailAddress,
     setEmailAddress,
     emailError,
+    setEmailError,
     password,
     setPassword,
     passwordError,
@@ -84,9 +86,32 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     setEmailAddress(currentUser?.emailAddress);
     setPassword(currentUser?.password);
   };
+  // If form used not on signup (iow, used to edit user info), reset field values to corresponding point in currentUser
+  // Only happens on edit-user-info form. On signup, fields are cleared when switching b/t login & signup forms
   useEffect(() => {
-    handleEditUserInfoRevert();
+    if (!isOnSignup) {
+      handleEditUserInfoRevert();
+    }
   }, []);
+
+  // handleUpdateProfileInfo should contain PATCH request to update user data obj with current / any changed infos on it (firstName to current value of firstName, etc.)
+  // like handleSignup...FormSubmission above, clear firstName, etc. after patching these to user data object
+  const handleUpdateProfileInfo = (): void => {
+    refetchAllUsers();
+    // If un or email address already exists, set error for that field saying as much. if not make patch request w/ updated infos
+    const usernameExists = allUsers.map((user) => user.username).includes(username);
+    const emailAddressExists = allUsers
+      .map((user) => user.emailAddress)
+      .includes(emailAddress);
+    if (usernameExists) {
+      setUsernameError("Username already exists");
+    }
+    if (emailAddressExists) {
+      setEmailError("E-mail address already exists");
+    }
+
+    // Only if there are no errors, patch changes to user data object
+  };
 
   const getFirstNameFieldClass = (): "erroneous-field" | undefined => {
     if (isOnSignup) {
@@ -310,7 +335,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
       {isOnSignup ||
         (!isOnSignup && password !== currentUser?.password && (
           <label>
-            <p>{isOnSignup ? "Confirm Password:" : "Confirm New Password"}</p>
+            <p>{isOnSignup ? "Confirm Password:" : "Confirm New Password:"}</p>
             <div className="password-input">
               <input
                 onChange={(e) => handleConfirmationPasswordInput(e.target.value)}
