@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext, ReactNode } from "react";
 import { useSessionStorage } from "usehooks-ts";
-import { TMainContext, TUser } from "../types";
+import { TMainContext, TUser, TEvent } from "../types";
 import Requests from "../requests";
 import useLocalStorage from "use-local-storage";
 
@@ -19,11 +19,11 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setTheme(newTheme);
   };
 
-  const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState<TUser[]>([]);
   const [currentUser, setCurrentUser, removeCurrentUser] = useSessionStorage<
     TUser | undefined
   >("currentUser", undefined);
-  const [allEvents, setAllEvents] = useState([]);
+  const [allEvents, setAllEvents] = useState<TEvent[]>([]);
   const [rsvpdEvents, setRsvpdEventsByUser] = useState([]);
   const [favoritedEvents, setFavoritedEventsByUser] = useState([]);
   const [attendedEvents, setAttendedEventsByUser] = useState([]);
@@ -118,17 +118,14 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   }, [allInterests]);
 
   useEffect(() => {
-    Requests.getAllUsers()
-      .then((response) => {
-        return response.text();
-      })
-      .then((result) => {
-        setAllUsers(JSON.parse(result));
-      })
-      .catch((error) => console.log(error));
+    Requests.getAllUsers().then(setAllUsers);
   }, [allUsers]);
 
+  // REFETCH METHODS
+  const refetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
+
   const mainContextValues: TMainContext = {
+    refetchAllUsers,
     theme,
     toggleTheme,
     allUsers,
