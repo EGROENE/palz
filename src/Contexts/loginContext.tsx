@@ -177,16 +177,26 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setCurrentUser(undefined);
     }
 
-    if (name.trim() === "") {
-      isFirstName
-        ? setFirstNameError("Please fill out this field")
-        : setLastNameError("Please fill out this field");
-    } else if (!nameIsValid(name.trim())) {
-      isFirstName
-        ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
-        : setLastNameError("Only alphabetical characters & appropriate punctuation");
-    } else if (nameIsValid(name.trim())) {
-      isFirstName ? setFirstNameError("") : setLastNameError("");
+    if (isOnSignup) {
+      if (name.trim() === "") {
+        isFirstName
+          ? setFirstNameError("Please fill out this field")
+          : setLastNameError("Please fill out this field");
+      } else if (!nameIsValid(name.trim())) {
+        isFirstName
+          ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
+          : setLastNameError("Only alphabetical characters & appropriate punctuation");
+      } else if (nameIsValid(name.trim())) {
+        isFirstName ? setFirstNameError("") : setLastNameError("");
+      }
+    } else {
+      if (!nameIsValid(name.trim())) {
+        isFirstName
+          ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
+          : setLastNameError("Only alphabetical characters & appropriate punctuation");
+      } else if (nameIsValid(name.trim())) {
+        isFirstName ? setFirstNameError("") : setLastNameError("");
+      }
     }
   };
 
@@ -487,6 +497,12 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setEmailAddress(currentUser?.emailAddress);
       setPassword(currentUser?.password);
     }
+    setFirstNameError("");
+    setLastNameError("");
+    setUsernameError("");
+    setEmailError("");
+    setPasswordError("");
+    setConfirmationPasswordError("");
   };
 
   const handleFormRejection = (
