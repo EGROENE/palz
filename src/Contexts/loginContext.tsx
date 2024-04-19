@@ -197,11 +197,11 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
         isFirstName ? setFirstNameError("") : setLastNameError("");
       }
     } else {
-      if (!nameIsValid(name.trim())) {
+      if (!nameIsValid(name.trim()) && name.trim() !== "") {
         isFirstName
           ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
           : setLastNameError("Only alphabetical characters & appropriate punctuation");
-      } else if (nameIsValid(name.trim())) {
+      } else {
         isFirstName ? setFirstNameError("") : setLastNameError("");
       }
     }
