@@ -223,6 +223,8 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (usernameIsTaken) {
       setUsernameError("Username is already taken");
+    } else if (!inputUsername.length) {
+      setUsernameError("Please fill out this field");
     } else if (inputUsername.length < 4) {
       setUsernameError(
         "Username must be 4-20 characters long & may only contain alphanumeric characters"
