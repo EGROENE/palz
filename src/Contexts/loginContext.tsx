@@ -175,7 +175,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Input-handling methods:
   // Put here, since used in two different components
-  const handleNameInput = (name: string, isFirstName: boolean, isOnSignup?: boolean) => {
+  const handleNameInput = (name: string, isFirstName: boolean, isOnSignup: boolean) => {
     isFirstName ? setFirstName(name) : setLastName(name);
 
     if (allSignupInputsFilled && areNoSignupErrors && isOnSignup) {
