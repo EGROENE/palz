@@ -26,17 +26,24 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
 
   /* Some values kept in session storage so that they can be used to autofill fields on edit-user-info form. Due to input handler functions setting these & not currentUser._____, currentUser.______ isn't used to do so, but will rather be set when user saves changes to their data object in the DB by submitting the edit-user-info form & allUsers is refetched. */
-  const [firstName, setFirstName] = useSessionStorage<string | undefined>(
-    "firstName",
+  const [firstName, setFirstName, removeFirstName] = useSessionStorage<
+    string | undefined
+  >("firstName", "");
+  const [lastName, setLastName, removeLastName] = useSessionStorage<string | undefined>(
+    "lastName",
     ""
   );
-  const [lastName, setLastName] = useSessionStorage<string | undefined>("lastName", "");
-  const [username, setUsername] = useSessionStorage<string | undefined>("username", "");
-  const [emailAddress, setEmailAddress] = useSessionStorage<string | undefined>(
-    "emailAddress",
+  const [username, setUsername, removeUsername] = useSessionStorage<string | undefined>(
+    "username",
     ""
   );
-  const [password, setPassword] = useSessionStorage<string | undefined>("password", "");
+  const [emailAddress, setEmailAddress, removeEmailAddress] = useSessionStorage<
+    string | undefined
+  >("emailAddress", "");
+  const [password, setPassword, removePassword] = useSessionStorage<string | undefined>(
+    "password",
+    ""
+  );
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
   const [showPasswordCriteria, setShowPasswordCriteria] = useState<boolean>(false);
@@ -141,15 +148,15 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetFormFieldsAndErrors = (): void => {
-    setFirstName("");
+    removeFirstName();
     setFirstNameError("Please fill out this field");
-    setLastName("");
+    removeLastName();
     setLastNameError("Please fill out this field");
-    setUsername("");
+    removeUsername();
     setUsernameError("Please fill out this field");
-    setEmailAddress("");
+    removeEmailAddress();
     setEmailError("Please fill out this field");
-    setPassword("");
+    removePassword();
     setPasswordError("Please fill out this field");
     setConfirmationPassword("");
     setConfirmationPasswordError("Please fill out this field");
@@ -168,7 +175,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Input-handling methods:
   // Put here, since used in two different components
-  const handleNameInput = (name: string, isFirstName: boolean, isOnSignup: boolean) => {
+  const handleNameInput = (name: string, isFirstName: boolean, isOnSignup?: boolean) => {
     isFirstName ? setFirstName(name) : setLastName(name);
 
     if (allSignupInputsFilled && areNoSignupErrors && isOnSignup) {
@@ -478,6 +485,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     e.preventDefault();
     handleWelcomeMessage();
+    // If user had pw visible when logging in/signing up, hide it again, so it's hidden by default on edit-user-info form in Settings
+    if (!passwordIsHidden) {
+      toggleHidePassword();
+    }
     if (isOnSignup) {
       handleNewAccountCreation(userData);
       setCurrentUser(userData);
@@ -515,13 +526,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     setShowErrors(true);
   };
 
-  // this should contain PATCH request to update user data obj with current / any changed infos on it (firstName to current value of firstName, etc.)
-  // like handleSignup...FormSubmission above, clear firstName, etc. after patching these to user data object
-  // refetch allUsers (create method that includes what's in useEffect for this in mainContext). call that here and in that useEffect
-  const handleUpdateProfileInfo = (): void => {};
-
   const loginContextValues: TLoginContext = {
-    handleUpdateProfileInfo,
     signupIsSelected,
     setSignupIsSelected,
     passwordIsHidden,
