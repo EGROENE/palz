@@ -15,10 +15,12 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     firstName,
     setFirstName,
     firstNameError,
+    setFirstNameError,
     handleNameInput,
     lastName,
     setLastName,
     lastNameError,
+    setLastNameError,
     username,
     setUsername,
     usernameError,
@@ -30,6 +32,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     password,
     setPassword,
     passwordError,
+    setPasswordError,
     confirmationPassword,
     handleUsernameInput,
     handleEmailAddressInput,
@@ -81,10 +84,15 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
   // Called upon first render of this component or if user cancels changes they made to edit-user-info form
   const handleEditUserInfoRevert = () => {
     setFirstName(currentUser?.firstName);
+    setFirstNameError("");
     setLastName(currentUser?.lastName);
+    setLastNameError("");
     setUsername(currentUser?.username);
+    setUsernameError("");
     setEmailAddress(currentUser?.emailAddress);
+    setEmailError("");
     setPassword(currentUser?.password);
+    setPasswordError("");
   };
   // If form used not on signup (iow, used to edit user info), reset field values to corresponding point in currentUser
   // Only happens on edit-user-info form. On signup, fields are cleared when switching b/t login & signup forms
