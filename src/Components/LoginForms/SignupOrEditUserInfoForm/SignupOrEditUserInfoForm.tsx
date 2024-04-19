@@ -61,8 +61,8 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
   }, []);
 
   const userInfoEdited: boolean =
-    firstName !== currentUser?.firstName ||
-    lastName !== currentUser?.lastName ||
+    firstName?.trim() !== currentUser?.firstName ||
+    lastName?.trim() !== currentUser?.lastName ||
     emailAddress !== currentUser?.emailAddress ||
     username !== currentUser?.username ||
     password !== currentUser?.password;
