@@ -340,8 +340,8 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
         {showPasswordError && <p className="input-error-message">{passwordError}</p>}
       </label>
       {/* Render 'confirm pw' field only if form is on signup or if it's form to edit user info, & pw has been changed */}
-      {isOnSignup ||
-        (!isOnSignup && password !== currentUser?.password && (
+      {(!isOnSignup && password !== currentUser?.password) ||
+        (isOnSignup && (
           <label>
             <p>{isOnSignup ? "Confirm Password:" : "Confirm New Password:"}</p>
             <div className="password-input">
