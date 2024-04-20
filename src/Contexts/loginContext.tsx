@@ -221,16 +221,28 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     const usernameIsTaken: boolean =
       allUsers.filter((user) => user.username === inputUsername).length > 0;
 
-    if (usernameIsTaken) {
-      setUsernameError("Username is already taken");
-    } else if (!inputUsername.length) {
-      setUsernameError("Please fill out this field");
-    } else if (inputUsername.length < 4) {
-      setUsernameError(
-        "Username must be 4-20 characters long & may only contain alphanumeric characters"
-      );
+    if (isOnSignup) {
+      if (usernameIsTaken) {
+        setUsernameError("Username is already taken");
+      } else if (!inputUsername.length) {
+        setUsernameError("Please fill out this field");
+      } else if (inputUsername.length < 4) {
+        setUsernameError(
+          "Username must be 4-20 characters long & may only contain alphanumeric characters"
+        );
+      } else {
+        setUsernameError("");
+      }
     } else {
-      setUsernameError("");
+      if (usernameIsTaken && inputUsername !== currentUser?.username) {
+        setUsernameError("Username is already taken");
+      } else if (inputUsername.length < 4 && inputUsername.length) {
+        setUsernameError(
+          "Username must be 4-20 characters long & may only contain alphanumeric characters"
+        );
+      } else {
+        setUsernameError("");
+      }
     }
   };
 
