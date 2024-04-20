@@ -264,15 +264,30 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       allUsers.filter((user) => user.emailAddress === inputEmailAddressNoWhitespaces)
         .length > 0;
 
-    if (emailIsTaken) {
-      setEmailError("E-mail address is taken");
-    } else if (
-      !emailIsValid(inputEmailAddressNoWhitespaces) &&
-      inputEmailAddressNoWhitespaces !== ""
-    ) {
-      setEmailError("Invalid e-mail address");
+    if (isOnSignup) {
+      if (emailIsTaken) {
+        setEmailError("E-mail address is taken");
+      } else if (!inputEmailAddressNoWhitespaces.length) {
+        setEmailError("Please fill out this field");
+      } else if (
+        !emailIsValid(inputEmailAddressNoWhitespaces) &&
+        inputEmailAddressNoWhitespaces !== ""
+      ) {
+        setEmailError("Invalid e-mail address");
+      } else {
+        setEmailError("");
+      }
     } else {
-      setEmailError("");
+      if (emailIsTaken && inputEmailAddressNoWhitespaces !== currentUser?.emailAddress) {
+        setEmailError("E-mail address is taken");
+      } else if (
+        !emailIsValid(inputEmailAddressNoWhitespaces) &&
+        inputEmailAddressNoWhitespaces !== ""
+      ) {
+        setEmailError("Invalid e-mail address");
+      } else {
+        setEmailError("");
+      }
     }
   };
 
