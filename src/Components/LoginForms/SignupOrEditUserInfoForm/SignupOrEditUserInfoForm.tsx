@@ -301,7 +301,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
       </label>
       <label>
         <p>
-          {isOnSignup ? "Choose a Password:" : "Password:"}
+          {isOnSignup ? "Choose a Password: " : "Password: "}
           <span>
             <i
               onClick={() => setShowPasswordCriteria(!showPasswordCriteria)}
@@ -327,7 +327,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
             }
             value={password}
             type={passwordIsHidden ? "password" : "text"}
-            placeholder="Enter password"
+            placeholder={isOnSignup === false ? "Enter new password" : "Enter password"}
             inputMode="text"
             className={passwordFieldClass}
           />
@@ -340,7 +340,8 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
         {showPasswordError && <p className="input-error-message">{passwordError}</p>}
       </label>
       {/* Render 'confirm pw' field only if form is on signup or if it's form to edit user info, & pw has been changed */}
-      {((!isOnSignup && password !== currentUser?.password) || isOnSignup) && (
+      {((isOnSignup === false && password !== currentUser?.password && password !== "") ||
+        isOnSignup === true) && (
         <label>
           <p>{isOnSignup ? "Confirm Password:" : "Confirm New Password:"}</p>
           <div className="password-input">
