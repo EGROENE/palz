@@ -301,7 +301,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
       </label>
       <label>
         <p>
-          Choose a Password:{" "}
+          {isOnSignup ? "Choose a Password:" : "Password:"}
           <span>
             <i
               onClick={() => setShowPasswordCriteria(!showPasswordCriteria)}
