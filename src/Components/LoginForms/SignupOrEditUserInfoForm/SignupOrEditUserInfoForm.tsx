@@ -340,34 +340,33 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
         {showPasswordError && <p className="input-error-message">{passwordError}</p>}
       </label>
       {/* Render 'confirm pw' field only if form is on signup or if it's form to edit user info, & pw has been changed */}
-      {(!isOnSignup && password !== currentUser?.password) ||
-        (isOnSignup && (
-          <label>
-            <p>{isOnSignup ? "Confirm Password:" : "Confirm New Password:"}</p>
-            <div className="password-input">
-              <input
-                onChange={(e) => handleConfirmationPasswordInput(e.target.value)}
-                value={confirmationPassword}
-                type={passwordIsHidden ? "password" : "text"}
-                placeholder="Confirm password"
-                inputMode="text"
-                className={confirmPasswordFieldClass}
-              />
-              {!passwordIsHidden ? (
-                <OpenEye toggleHidePassword={toggleHidePassword} />
-              ) : (
-                <ClosedEye toggleHidePassword={toggleHidePassword} />
-              )}
-            </div>
-            {confirmationPasswordError !== "" &&
-              confirmationPasswordError !== "Please fill out this field" && (
-                <p className="input-error-message">{confirmationPasswordError}</p>
-              )}
-            {confirmationPasswordError === "Please fill out this field" && showErrors && (
+      {((!isOnSignup && password !== currentUser?.password) || isOnSignup) && (
+        <label>
+          <p>{isOnSignup ? "Confirm Password:" : "Confirm New Password:"}</p>
+          <div className="password-input">
+            <input
+              onChange={(e) => handleConfirmationPasswordInput(e.target.value)}
+              value={confirmationPassword}
+              type={passwordIsHidden ? "password" : "text"}
+              placeholder="Confirm password"
+              inputMode="text"
+              className={confirmPasswordFieldClass}
+            />
+            {!passwordIsHidden ? (
+              <OpenEye toggleHidePassword={toggleHidePassword} />
+            ) : (
+              <ClosedEye toggleHidePassword={toggleHidePassword} />
+            )}
+          </div>
+          {confirmationPasswordError !== "" &&
+            confirmationPasswordError !== "Please fill out this field" && (
               <p className="input-error-message">{confirmationPasswordError}</p>
             )}
-          </label>
-        ))}
+          {confirmationPasswordError === "Please fill out this field" && showErrors && (
+            <p className="input-error-message">{confirmationPasswordError}</p>
+          )}
+        </label>
+      )}
       {isOnSignup ? (
         <button
           className="login-button"
