@@ -291,14 +291,17 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handlePasswordInput = (inputPassword: string, isOnSignup: boolean): void => {
+  const handlePasswordInput = (
+    inputPassword: string,
+    formType: "login" | "signup" | "edit-user-info"
+  ): void => {
     setPassword(inputPassword.trim());
 
     /* Use inputPassword w/ no whitespaces in logic checks below, as it is more current that the state value 'password', which may lag behind, causing logic checks to be inaccurate */
     const inputPWNoWhitespaces = inputPassword.replace(/\s/g, "");
 
     // Handle input pw on login form:
-    if (!isOnSignup) {
+    if (formType === "login") {
       // Get current user (if username/email has been entered) so that its password can be compared to input pw:
       const currentUser: TUser =
         loginMethod === "username"
@@ -331,9 +334,37 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
           ? setPasswordError("Invalid password")
           : setPasswordError("");
       }
-      // Handle input pw on signup form:
-    } else {
-      allSignupInputsFilled && areNoSignupErrors && isOnSignup
+      // Handle input pw on edit-user-info form:
+    } else if (formType === "edit-user-info") {
+      if (inputPWNoWhitespaces !== "") {
+        // If pw isn't/is valid...
+        if (!passwordIsValid(inputPWNoWhitespaces)) {
+          setPasswordError("Invalid password");
+        } else {
+          setPasswordError("");
+        }
+
+        // If confirmationPassword has at least 1 char & is not equal to pw input...
+        if (
+          confirmationPassword !== "" &&
+          inputPWNoWhitespaces !== confirmationPassword
+        ) {
+          setConfirmationPasswordError("Passwords don't match");
+        }
+
+        // If input pw matches confirmation pw (which contains at least 1 char)...
+        if (
+          inputPWNoWhitespaces === confirmationPassword &&
+          confirmationPassword !== ""
+        ) {
+          setConfirmationPasswordError("");
+        }
+      } else {
+        setPasswordError("");
+      }
+      // If used on signup form:
+    } else if (formType === "signup") {
+      allSignupInputsFilled && areNoSignupErrors
         ? setCurrentUser(userData)
         : setCurrentUser(undefined);
 
@@ -366,14 +397,19 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleConfirmationPasswordInput = (inputConfirmationPassword: string): void => {
+  const handleConfirmationPasswordInput = (
+    inputConfirmationPassword: string,
+    isOnSignup?: boolean
+  ): void => {
     const inputConfirmationPWNoWhitespaces = inputConfirmationPassword.replace(/\s/g, "");
 
     setConfirmationPassword(inputConfirmationPWNoWhitespaces);
 
-    allSignupInputsFilled && areNoSignupErrors
-      ? setCurrentUser(userData)
-      : setCurrentUser(undefined);
+    if (isOnSignup) {
+      allSignupInputsFilled && areNoSignupErrors
+        ? setCurrentUser(userData)
+        : setCurrentUser(undefined);
+    }
 
     inputConfirmationPWNoWhitespaces !== password &&
     inputConfirmationPWNoWhitespaces !== "" &&
