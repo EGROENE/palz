@@ -12,12 +12,13 @@ const UserSettings = () => {
   const { currentUser } = useMainContext();
 
   // If no current user or whatever, redirect to login, just like in UserHomepage
+  // Maybe don't use currentUser to determine if user is logged in
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser) {
       navigation("/");
     }
-  }, [currentUser, navigation]);
+  }, []);
 
   return (
     <>
