@@ -66,11 +66,11 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
   }, []);
 
   const userInfoEdited: boolean =
-    firstName?.trim() !== currentUser?.firstName ||
-    lastName?.trim() !== currentUser?.lastName ||
-    emailAddress !== currentUser?.emailAddress ||
-    username !== currentUser?.username ||
-    password !== currentUser?.password;
+    (firstName?.trim() !== "" && firstName?.trim() !== currentUser?.firstName) ||
+    (lastName?.trim() !== "" && lastName?.trim() !== currentUser?.lastName) ||
+    (emailAddress !== "" && emailAddress !== currentUser?.emailAddress) ||
+    (username !== "" && username !== currentUser?.username) ||
+    (password !== "" && password !== currentUser?.password);
 
   const handleSignupFormSubmission = (e: React.FormEvent<HTMLFormElement>) => {
     handleSignupOrLoginFormSubmission(true, e);
