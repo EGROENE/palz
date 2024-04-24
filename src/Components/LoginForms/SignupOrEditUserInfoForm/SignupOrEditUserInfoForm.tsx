@@ -4,11 +4,18 @@ import { useLoginContext } from "../../../Hooks/useLoginContext";
 import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useEffect, useState } from "react";
+import Requests from "../../../requests";
+import toast from "react-hot-toast";
 
 // should have isOnSignup param
 const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
-  const { currentUser, welcomeMessageDisplayTime, fetchAllUsers, allUsers } =
-    useMainContext();
+  const {
+    currentUser,
+    setCurrentUser,
+    welcomeMessageDisplayTime,
+    fetchAllUsers,
+    allUsers,
+  } = useMainContext();
   const {
     passwordIsHidden,
     toggleHidePassword,
@@ -34,6 +41,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     passwordError,
     setPasswordError,
     confirmationPassword,
+    setConfirmationPasswordError,
     handleUsernameInput,
     handleEmailAddressInput,
     handlePasswordInput,
@@ -49,6 +57,39 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     showUsernameCriteria,
     setShowUsernameCriteria,
   } = useLoginContext();
+
+  // Clear all form errors if !onSignup. Else, set them all to "Please fill out this field"
+  useEffect(() => {
+    if (isOnSignup) {
+      setFirstNameError("Please fill out this field");
+      setLastNameError("Please fill out this field");
+      setEmailError("Please fill out this field");
+      setUsernameError("Please fill out this field");
+      setPasswordError("Please fill out this field");
+      setConfirmationPasswordError("Please fill out this field");
+    } else {
+      setFirstNameError("");
+      setLastNameError("");
+      setEmailError("");
+      setUsernameError("");
+      setPasswordError("");
+      setConfirmationPasswordError("");
+    }
+  }, []);
+
+  // If user data has changed, setCurrentUser:
+  useEffect(() => {
+    setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+  }, [
+    setCurrentUser,
+    allUsers,
+    username,
+    currentUser?.firstName,
+    currentUser?.lastName,
+    currentUser?.emailAddress,
+    currentUser?.username,
+    currentUser?.password,
+  ]);
 
   const navigation = useNavigate();
 
@@ -102,15 +143,33 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     }
   }, []);
 
+  const valuesToUpdate = {
+    ...(firstName?.trim() !== "" &&
+      firstName !== currentUser?.firstName && { "firstName": firstName }),
+    /* ...(lastName?.trim() !== "" &&
+      lastName !== currentUser?.lastName && { lastName: lastName }),
+    ...(username !== "" && username !== currentUser?.username && { username: username }),
+    ...(emailAddress !== "" &&
+      emailAddress !== currentUser?.emailAddress && { emailAddress: emailAddress }),
+    ...(password !== "" && password !== currentUser?.password && { password: password }), */
+  };
+  console.log(valuesToUpdate);
+
   // handleUpdateProfileInfo should contain PATCH request to update user data obj with current / any changed infos on it (firstName to current value of firstName, etc.)
   // like handleSignup...FormSubmission above, clear firstName, etc. after patching these to user data object
-  const handleUpdateProfileInfo = (): void => {
+  const handleUpdateProfileInfo = (
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void => {
+    e.preventDefault();
+    /* Get most-current allUsers (in case other users have updated their un or email after current user logged in & before they submitted changes to their info).*/
     fetchAllUsers();
-    // If un or email address already exists, set error for that field saying as much. if not make patch request w/ updated infos
-    const usernameExists = allUsers.map((user) => user.username).includes(username);
-    const emailAddressExists = allUsers
-      .map((user) => user.emailAddress)
-      .includes(emailAddress);
+    /* If un or email address already exists & doesn't belong to current user, set error for that field saying as much. if not make patch request w/ updated infos */
+    const usernameExists =
+      allUsers.map((user) => user.username).includes(username) &&
+      currentUser?.username !== username;
+    const emailAddressExists =
+      allUsers.map((user) => user.emailAddress).includes(emailAddress) &&
+      currentUser?.emailAddress !== emailAddress;
     if (usernameExists) {
       setUsernameError("Username already exists");
     }
@@ -118,7 +177,22 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
       setEmailError("E-mail address already exists");
     }
 
-    // Only if there are no errors, patch changes to user data object
+    // Only if there are no errors, patch changes to user data object:
+    if (areNoSignupErrors) {
+      Requests.patchUpdatedUserInfo(currentUser, valuesToUpdate)
+        .then((response) => {
+          if (!response.ok) {
+            toast.error("Could not update profile info. Please try again.");
+          } else {
+            toast.success("Profile info updated");
+            // Reset allUsers after patch successfully made:
+            fetchAllUsers();
+          }
+        })
+        .catch((error) => console.log(error));
+    } else {
+      window.alert("Please fix any form errors, then try again");
+    }
   };
 
   const getFirstNameFieldClass = (): "erroneous-field" | undefined => {
@@ -214,7 +288,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
   return (
     <form
       onSubmit={(e) => {
-        isOnSignup ? handleSignupFormSubmission(e) : handleUpdateProfileInfo();
+        isOnSignup ? handleSignupFormSubmission(e) : handleUpdateProfileInfo(e);
       }}
       className="login-signup-form"
     >
@@ -386,9 +460,10 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
             Revert Changes
           </button>
           <button
+            type="submit"
             disabled={!userInfoEdited}
             style={{ backgroundColor: randomColor }}
-            onClick={() => handleUpdateProfileInfo()}
+            onClick={(e) => handleUpdateProfileInfo(e)}
           >
             Save Changes
           </button>
