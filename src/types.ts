@@ -89,10 +89,10 @@ export type TMainContext = {
   welcomeMessageDisplayTime: number;
   setWelcomeMessageDisplayTime: React.Dispatch<React.SetStateAction<number>>;
   handleWelcomeMessage: () => void;
+  refetchAllUsers: () => Promise<void>;
 };
 
 export type TLoginContext = {
-  handleUpdateProfileInfo: () => void;
   loginMethod: "username" | "email";
   signupIsSelected: boolean;
   setSignupIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
@@ -132,7 +132,10 @@ export type TLoginContext = {
   handleNameInput: (name: string, isFirstName: boolean, isOnSignup: boolean) => void;
   handleUsernameInput: (username: string, isOnSignup: boolean) => void;
   handleEmailAddressInput: (email: string, isOnSignup: boolean) => void;
-  handlePasswordInput: (inputPassword: string, isOnSignup: boolean) => void;
+  handlePasswordInput: (
+    inputPassword: string,
+    formType: "login" | "signup" | "edit-user-info"
+  ) => void;
   handleConfirmationPasswordInput: (inputConfirmationPassword: string) => void;
   handleUsernameOrEmailInput: (input: string) => void;
   handleSignupOrLoginFormSubmission: (
