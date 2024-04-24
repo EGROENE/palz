@@ -322,8 +322,8 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
           <input
             onChange={(e) =>
               isOnSignup
-                ? handlePasswordInput(e.target.value, true)
-                : handlePasswordInput(e.target.value, false)
+                ? handlePasswordInput(e.target.value, "signup")
+                : handlePasswordInput(e.target.value, "edit-user-info")
             }
             value={password}
             type={passwordIsHidden ? "password" : "text"}
