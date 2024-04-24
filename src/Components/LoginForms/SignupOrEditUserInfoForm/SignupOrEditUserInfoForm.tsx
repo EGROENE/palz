@@ -156,9 +156,8 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     ...(username !== "" && username !== currentUser?.username && { username: username }),
     ...(emailAddress !== "" &&
       emailAddress !== currentUser?.emailAddress && { emailAddress: emailAddress }),
-    //...(password !== "" && password !== currentUser?.password && { password: password }),
+    ...(password !== "" && password !== currentUser?.password && { password: password }),
   };
-  console.log(valuesToUpdate);
 
   // handleUpdateProfileInfo should contain PATCH request to update user data obj with current / any changed infos on it (firstName to current value of firstName, etc.)
   // like handleSignup...FormSubmission above, clear firstName, etc. after patching these to user data object
