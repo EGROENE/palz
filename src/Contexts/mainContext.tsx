@@ -118,14 +118,14 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   }, [allInterests]);
 
   useEffect(() => {
-    refetchAllUsers();
+    fetchAllUsers();
   }, [allUsers]);
 
   // REFETCH METHODS
-  const refetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
+  const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
 
   const mainContextValues: TMainContext = {
-    refetchAllUsers,
+    fetchAllUsers,
     theme,
     toggleTheme,
     allUsers,

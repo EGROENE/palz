@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 // should have isOnSignup param
 const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
-  const { currentUser, welcomeMessageDisplayTime, refetchAllUsers, allUsers } =
+  const { currentUser, welcomeMessageDisplayTime, fetchAllUsers, allUsers } =
     useMainContext();
   const {
     passwordIsHidden,
@@ -105,7 +105,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
   // handleUpdateProfileInfo should contain PATCH request to update user data obj with current / any changed infos on it (firstName to current value of firstName, etc.)
   // like handleSignup...FormSubmission above, clear firstName, etc. after patching these to user data object
   const handleUpdateProfileInfo = (): void => {
-    refetchAllUsers();
+    fetchAllUsers();
     // If un or email address already exists, set error for that field saying as much. if not make patch request w/ updated infos
     const usernameExists = allUsers.map((user) => user.username).includes(username);
     const emailAddressExists = allUsers

@@ -89,7 +89,7 @@ export type TMainContext = {
   welcomeMessageDisplayTime: number;
   setWelcomeMessageDisplayTime: React.Dispatch<React.SetStateAction<number>>;
   handleWelcomeMessage: () => void;
-  refetchAllUsers: () => Promise<void>;
+  fetchAllUsers: () => Promise<void>;
 };
 
 export type TLoginContext = {
