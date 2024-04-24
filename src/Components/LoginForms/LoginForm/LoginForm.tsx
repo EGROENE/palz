@@ -64,7 +64,7 @@ const LoginForm = () => {
         <p>Password:</p>
         <div className="password-input">
           <input
-            onChange={(e) => handlePasswordInput(e.target.value, false)}
+            onChange={(e) => handlePasswordInput(e.target.value, "login")}
             value={password}
             type={passwordIsHidden ? "password" : "text"}
             placeholder="Enter password"
