@@ -117,6 +117,29 @@ const createUser = (newUserData: TUser): Promise<Response> => {
   });
 };
 
+const patchUpdatedUserInfo = (
+  user: TUser | undefined,
+  valuesToUpdate: {
+    "firstName"?: string | undefined;
+    "lastName"?: string | undefined;
+    "username"?: string | undefined;
+    "emailAddress"?: string | undefined;
+    "password"?: string | undefined;
+  }
+): Promise<Response> => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const raw = JSON.stringify(valuesToUpdate);
+
+  return fetch(`http://localhost:3000/users/${user?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
   getAllUsers,
   getAllEvents,
@@ -127,5 +150,6 @@ const Requests = {
   getEventsbyTag,
   getAllInterests,
   createUser,
+  patchUpdatedUserInfo,
 };
 export default Requests;
