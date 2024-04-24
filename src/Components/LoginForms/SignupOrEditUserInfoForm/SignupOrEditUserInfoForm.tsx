@@ -79,11 +79,16 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
 
   // If user data has changed, setCurrentUser:
   useEffect(() => {
-    setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+    if (username === currentUser?.username) {
+      setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+    } else {
+      setCurrentUser(allUsers.filter((user) => user.emailAddress === emailAddress)[0]);
+    }
   }, [
     setCurrentUser,
     allUsers,
     username,
+    emailAddress,
     currentUser?.firstName,
     currentUser?.lastName,
     currentUser?.emailAddress,
@@ -148,8 +153,8 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
       firstName !== currentUser?.firstName && { "firstName": firstName }),
     ...(lastName?.trim() !== "" &&
       lastName !== currentUser?.lastName && { lastName: lastName }),
-    /* ...(username !== "" && username !== currentUser?.username && { username: username }),
-    ...(emailAddress !== "" &&
+    ...(username !== "" && username !== currentUser?.username && { username: username }),
+    /* ...(emailAddress !== "" &&
       emailAddress !== currentUser?.emailAddress && { emailAddress: emailAddress }),
     ...(password !== "" && password !== currentUser?.password && { password: password }), */
   };
