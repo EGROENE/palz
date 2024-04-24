@@ -1,14 +1,10 @@
 import { TUser } from "./types";
 
-const getAllUsers = (): Promise<Response> => {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-type", "application/json");
-
+const getAllUsers = (): Promise<TUser[]> => {
   return fetch("http://localhost:3000/users", {
     method: "GET",
-    headers: myHeaders,
     redirect: "follow",
-  });
+  }).then((response) => response.json() as Promise<TUser[]>);
 };
 
 const getAllEvents = (): Promise<Response> => {
