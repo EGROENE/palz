@@ -118,7 +118,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   }, [allInterests]);
 
   useEffect(() => {
-    Requests.getAllUsers().then(setAllUsers);
+    refetchAllUsers();
   }, [allUsers]);
 
   // REFETCH METHODS
