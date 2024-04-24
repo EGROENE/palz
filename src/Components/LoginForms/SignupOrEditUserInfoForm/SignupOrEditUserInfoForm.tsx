@@ -191,6 +191,9 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
             toast.success("Profile info updated");
             // Reset allUsers after patch successfully made:
             fetchAllUsers();
+            if (!passwordIsHidden) {
+              toggleHidePassword();
+            }
           }
         })
         .catch((error) => console.log(error));
