@@ -235,6 +235,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       if (usernameIsTaken && inputUsername !== currentUser?.username) {
+        console.log(currentUser?.username);
         setUsernameError("Username is already taken");
       } else if (inputUsername.length < 4 && inputUsername.length) {
         setUsernameError(
@@ -337,6 +338,13 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       // Handle input pw on edit-user-info form:
     } else if (formType === "edit-user-info") {
       if (inputPWNoWhitespaces !== "") {
+        if (
+          confirmationPassword === "" &&
+          inputPWNoWhitespaces !== currentUser?.password
+        ) {
+          setConfirmationPasswordError("Please confirm new password");
+        }
+
         // If pw isn't/is valid...
         if (!passwordIsValid(inputPWNoWhitespaces)) {
           setPasswordError("Invalid password");
