@@ -154,9 +154,9 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     ...(lastName?.trim() !== "" &&
       lastName !== currentUser?.lastName && { lastName: lastName }),
     ...(username !== "" && username !== currentUser?.username && { username: username }),
-    /* ...(emailAddress !== "" &&
+    ...(emailAddress !== "" &&
       emailAddress !== currentUser?.emailAddress && { emailAddress: emailAddress }),
-    ...(password !== "" && password !== currentUser?.password && { password: password }), */
+    //...(password !== "" && password !== currentUser?.password && { password: password }),
   };
   console.log(valuesToUpdate);
 
