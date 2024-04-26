@@ -27,6 +27,7 @@ const LoginPage = () => {
         <h1>Welcome to Palz!</h1>
         <h2>Do fun things, meet fun friends</h2>
         <button
+          className="theme-toggle-button"
           style={
             theme !== "dark"
               ? { backgroundColor: "black", color: "white" }
@@ -34,7 +35,15 @@ const LoginPage = () => {
           }
           onClick={() => toggleTheme()}
         >
-          {theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          {theme === "light" ? (
+            <span>
+              Switch to dark mode <i className="theme-toggle-icon fas fa-moon"></i>
+            </span>
+          ) : (
+            <span>
+              Switch to light mode <i className="theme-toggle-icon fas fa-sun"></i>
+            </span>
+          )}
         </button>
       </div>
       <div className="login-form">
