@@ -159,15 +159,13 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     ...(password !== "" && password !== currentUser?.password && { password: password }),
   };
 
-  // handleUpdateProfileInfo should contain PATCH request to update user data obj with current / any changed infos on it (firstName to current value of firstName, etc.)
-  // like handleSignup...FormSubmission above, clear firstName, etc. after patching these to user data object
   const handleUpdateProfileInfo = (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
     /* Get most-current allUsers (in case other users have updated their un or email after current user logged in & before they submitted changes to their info).*/
     fetchAllUsers();
-    /* If un or email address already exists & doesn't belong to current user, set error for that field saying as much. if not make patch request w/ updated infos */
+    /* If un or email address already exists & doesn't belong to current user, set error for that field saying as much. If not, make patch request w/ updated infos (done below) */
     const usernameExists =
       allUsers.map((user) => user.username).includes(username) &&
       currentUser?.username !== username;
