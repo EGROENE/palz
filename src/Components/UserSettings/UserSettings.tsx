@@ -7,11 +7,6 @@ import NavBar from "../NavBar/NavBar";
 import Sidebar from "../Sidebar/Sidebar";
 
 const UserSettings = () => {
-  // on submit of form below, PATCH all form values to user data object in DB.
-  // have 'cancel' btn, along w/ 'save' btn. if 'cancel' is clicked, reset values to what they were previously (if prev state can't be used, have state values here (newFirstName, etc.))
-  // PW fields should be 'new pw' and 'confirm new pw'. patch these appropriately
-  // outside the form, have theme toggler, list of blocked users
-
   const { currentUser } = useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
 
