@@ -2,10 +2,17 @@ import { useMainContext } from "../../Hooks/useMainContext";
 import { useLoginContext } from "../../Hooks/useLoginContext";
 import SignupOrEditUserInfoForm from "../LoginForms/SignupOrEditUserInfoForm/SignupOrEditUserInfoForm";
 import LoginForm from "../LoginForms/LoginForm/LoginForm";
+import { useEffect } from "react";
 
 const LoginPage = () => {
   const { theme, toggleTheme } = useMainContext();
   const { signupIsSelected, toggleSignupLogin } = useLoginContext();
+
+  useEffect(() => {
+    if (signupIsSelected) {
+      toggleSignupLogin();
+    }
+  }, []);
 
   return (
     <div className="login-page-container">
