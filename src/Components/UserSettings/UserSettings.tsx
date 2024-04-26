@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
+import { useLoginContext } from "../../Hooks/useLoginContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import SignupOrEditUserInfoForm from "../LoginForms/SignupOrEditUserInfoForm/SignupOrEditUserInfoForm";
 import NavBar from "../NavBar/NavBar";
@@ -8,11 +9,15 @@ import Sidebar from "../Sidebar/Sidebar";
 
 const UserSettings = () => {
   const { currentUser } = useMainContext();
+  const { passwordIsHidden, setPasswordIsHidden } = useLoginContext();
   const { showSidebar, setShowSidebar } = useUserContext();
 
   useEffect(() => {
     if (showSidebar) {
       setShowSidebar(false);
+    }
+    if (!passwordIsHidden) {
+      setPasswordIsHidden(true);
     }
   }, []);
 
