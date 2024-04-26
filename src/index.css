@@ -74,7 +74,7 @@ button {
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
+  font-family: var(--text-font);
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
@@ -86,6 +86,14 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+button:disabled {
+  opacity: 0.4;
+}
+
+button:disabled:hover {
+  cursor: not-allowed;
 }
 
 [data-theme="light"] {
