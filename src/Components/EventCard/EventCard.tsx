@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { TEvent } from "../../types";
 
 const EventCard = ({ event }: { event: TEvent }) => {
-  const [borderColor, setBorderColor] = useState<string>("");
+  const [randomColor, setRandomColor] = useState<string>("");
 
   const nextEventDateTime: Date = new Date(event.nextEventTime);
 
@@ -15,18 +15,18 @@ const EventCard = ({ event }: { event: TEvent }) => {
       "var(--theme-purple)",
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
-    setBorderColor(themeColors[randomNumber]);
+    setRandomColor(themeColors[randomNumber]);
   }, []);
 
   return (
-    <div className="event-card" style={{ borderColor: borderColor }}>
+    <div className="event-card" style={{ borderColor: randomColor }}>
       <div className="event-info-container">
         <header>{event.title}</header>
         <p>
           {nextEventDateTime.toDateString()} at {nextEventDateTime.toLocaleTimeString()}
         </p>
         <div className="event-buttons-container">
-          <button style={{ backgroundColor: borderColor }}>See Event</button>
+          <button style={{ backgroundColor: randomColor }}>See Event</button>
           <button>Remove RSVP</button>
         </div>
       </div>

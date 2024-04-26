@@ -6,7 +6,7 @@ import { useUserContext } from "../../Hooks/useUserContext";
 const Sidebar = () => {
   const { currentUser, theme } = useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
-  const [borderColor, setBorderColor] = useState<string>("");
+  const [randomColor, setRandomColor] = useState<string>("");
 
   useEffect(() => {
     const themeColors = [
@@ -16,7 +16,7 @@ const Sidebar = () => {
       "var(--theme-purple)",
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
-    setBorderColor(themeColors[randomNumber]);
+    setRandomColor(themeColors[randomNumber]);
   }, []);
 
   return (
@@ -25,19 +25,19 @@ const Sidebar = () => {
       style={
         theme === "dark"
           ? {
-              border: `2px solid ${borderColor}`,
+              border: `2px solid ${randomColor}`,
               backgroundColor: "black",
             }
-          : { border: `2px solid ${borderColor}`, backgroundColor: "white" }
+          : { border: `2px solid ${randomColor}`, backgroundColor: "white" }
       }
     >
       <i
         onClick={() => setShowSidebar(!showSidebar)}
-        style={{ backgroundColor: borderColor }}
+        style={{ backgroundColor: randomColor }}
         className="fas fa-times"
       ></i>
       <img className="profile-image-sidebar" src={currentUser?.profileImage} />
-      <div style={{ backgroundColor: borderColor }} className="sidebar-names-container">
+      <div style={{ backgroundColor: randomColor }} className="sidebar-names-container">
         <p>{`${currentUser?.firstName} ${currentUser?.lastName}`}</p>
         <p>{currentUser?.username}</p>
       </div>
