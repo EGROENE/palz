@@ -123,9 +123,9 @@ export type TLoginContext = {
   setConfirmationPassword: React.Dispatch<React.SetStateAction<string>>;
   confirmationPasswordError: string;
   setConfirmationPasswordError: React.Dispatch<React.SetStateAction<string>>;
-  areNoSignupErrors: boolean;
+  areNoSignupOrEditFormErrors: boolean;
   areNoLoginErrors: boolean;
-  allSignupInputsFilled: boolean;
+  allSignupOrEditFormFieldsFilled: boolean;
   allLoginInputsFilled: boolean;
   showErrors: boolean;
   handleNameInput: (name: string, isFirstName: boolean, isOnSignup: boolean) => void;

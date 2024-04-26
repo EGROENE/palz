@@ -178,9 +178,13 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   const handleNameInput = (name: string, isFirstName: boolean, isOnSignup: boolean) => {
     isFirstName ? setFirstName(name) : setLastName(name);
 
-    if (allSignupInputsFilled && areNoSignupErrors && isOnSignup) {
+    if (allSignupOrEditFormFieldsFilled && areNoSignupOrEditFormErrors && isOnSignup) {
       setCurrentUser(userData);
-    } else if (!allSignupInputsFilled && !areNoSignupErrors && isOnSignup) {
+    } else if (
+      !allSignupOrEditFormFieldsFilled &&
+      !areNoSignupOrEditFormErrors &&
+      isOnSignup
+    ) {
       setCurrentUser(undefined);
     }
 
@@ -212,9 +216,13 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       setUsername(inputUsername);
     }
 
-    if (allSignupInputsFilled && areNoSignupErrors && isOnSignup) {
+    if (allSignupOrEditFormFieldsFilled && areNoSignupOrEditFormErrors && isOnSignup) {
       setCurrentUser(userData);
-    } else if (!allSignupInputsFilled && !areNoSignupErrors && isOnSignup) {
+    } else if (
+      !allSignupOrEditFormFieldsFilled &&
+      !areNoSignupOrEditFormErrors &&
+      isOnSignup
+    ) {
       setCurrentUser(undefined);
     }
 
@@ -255,9 +263,13 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
     setEmailAddress(inputEmailAddressNoWhitespaces);
 
-    if (allSignupInputsFilled && areNoSignupErrors && isOnSignup) {
+    if (allSignupOrEditFormFieldsFilled && areNoSignupOrEditFormErrors && isOnSignup) {
       setCurrentUser(userData);
-    } else if (!allSignupInputsFilled && !areNoSignupErrors && isOnSignup) {
+    } else if (
+      !allSignupOrEditFormFieldsFilled &&
+      !areNoSignupOrEditFormErrors &&
+      isOnSignup
+    ) {
       setCurrentUser(undefined);
     }
 
@@ -376,7 +388,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       }
       // If used on signup form:
     } else if (formType === "signup") {
-      allSignupInputsFilled && areNoSignupErrors
+      allSignupOrEditFormFieldsFilled && areNoSignupOrEditFormErrors
         ? setCurrentUser(userData)
         : setCurrentUser(undefined);
 
@@ -417,10 +429,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
     setConfirmationPassword(inputConfirmationPWNoWhitespaces);
 
-    /* Condition to set currentUser should be all other errors === "" && allSignupInputsFilled && (confirmationPasswordError === "Passwords don't match" | confirmationPasswordError === ""), b/c, in this handler, setting of this error state value lags. */
+    /* Condition to set currentUser should be all other errors === "" && allSignupOrEditFormFieldsFilled && (confirmationPasswordError === "Passwords don't match" | confirmationPasswordError === ""), b/c, in this handler, setting of this error state value lags. */
     if (isOnSignup) {
       if (
-        allSignupInputsFilled &&
+        allSignupOrEditFormFieldsFilled &&
         firstNameError === "" &&
         lastNameError === "" &&
         usernameError === "" &&
@@ -546,7 +558,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // submission handler should change state value userCreatedAccount (initialized to null, changed to boolean, depending on which form was submitted). once this value is a boolean, all err msgs (besides conf pw) should display, if there are, indeed errors.
-  const areNoSignupErrors: boolean =
+  const areNoSignupOrEditFormErrors: boolean =
     firstNameError === "" &&
     lastNameError === "" &&
     usernameError === "" &&
@@ -554,7 +566,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     passwordError === "" &&
     confirmationPasswordError === "";
 
-  const allSignupInputsFilled: boolean =
+  const allSignupOrEditFormFieldsFilled: boolean =
     firstName !== "" &&
     lastName !== "" &&
     username !== "" &&
@@ -646,13 +658,13 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     setConfirmationPassword,
     confirmationPasswordError,
     setConfirmationPasswordError,
-    areNoSignupErrors,
+    areNoSignupOrEditFormErrors,
     areNoLoginErrors,
     showPasswordCriteria,
     setShowPasswordCriteria,
     showUsernameCriteria,
     setShowUsernameCriteria,
-    allSignupInputsFilled,
+    allSignupOrEditFormFieldsFilled,
     allLoginInputsFilled,
     showErrors,
     handleNameInput,

@@ -47,8 +47,8 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     handlePasswordInput,
     confirmationPasswordError,
     handleConfirmationPasswordInput,
-    areNoSignupErrors,
-    allSignupInputsFilled,
+    areNoSignupOrEditFormErrors,
+    allSignupOrEditFormFieldsFilled,
     showErrors,
     handleSignupOrLoginFormSubmission,
     handleFormRejection,
@@ -183,7 +183,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
     }
 
     // Only if there are no errors, patch changes to user data object:
-    if (areNoSignupErrors) {
+    if (areNoSignupOrEditFormErrors) {
       Requests.patchUpdatedUserInfo(currentUser, valuesToUpdate)
         .then((response) => {
           if (!response.ok) {
@@ -455,9 +455,9 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
       {isOnSignup ? (
         <button
           className="login-button"
-          type={areNoSignupErrors ? "submit" : "button"}
+          type={areNoSignupOrEditFormErrors ? "submit" : "button"}
           onClick={(e) =>
-            areNoSignupErrors && allSignupInputsFilled
+            areNoSignupOrEditFormErrors && allSignupOrEditFormFieldsFilled
               ? undefined
               : handleFormRejection(e)
           }
