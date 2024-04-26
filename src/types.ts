@@ -1,5 +1,4 @@
 export type TUser = {
-  id?: string;
   firstName: string | undefined;
   lastName: string | undefined;
   username: string | undefined;
@@ -136,7 +135,10 @@ export type TLoginContext = {
     inputPassword: string,
     formType: "login" | "signup" | "edit-user-info"
   ) => void;
-  handleConfirmationPasswordInput: (inputConfirmationPassword: string) => void;
+  handleConfirmationPasswordInput: (
+    inputConfirmationPassword: string,
+    isOnSignup: boolean
+  ) => void;
   handleUsernameOrEmailInput: (input: string) => void;
   handleSignupOrLoginFormSubmission: (
     isOnSignup: boolean,
