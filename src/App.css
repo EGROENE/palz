@@ -52,7 +52,7 @@
   cursor: pointer;
 }
 
-.form {
+.login-form {
   width: 50%;
 }
 
@@ -259,4 +259,17 @@
   background-color: var(--background-color-opposite);
   color: var(--text-color-opposite);
   font-family: var(--text-font);
+}
+
+.edit-user-info-form-options {
+  margin-top: 1rem;
+}
+
+.edit-user-info-form-options button {
+  color: white;
+}
+
+.edit-user-info-form-options button:first-child {
+  background-color: var(--background-color-opposite);
+  color: var(--text-color-opposite);
 }
