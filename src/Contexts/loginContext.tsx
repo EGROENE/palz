@@ -563,7 +563,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     confirmationPassword !== "";
 
   const areNoLoginErrors: boolean =
-    (usernameError === "" || emailError === "") && passwordError === "";
+    usernameError === "" && emailError === "" && passwordError === "";
 
   const allLoginInputsFilled: boolean =
     (username !== "" || emailAddress !== "") && password !== "";
