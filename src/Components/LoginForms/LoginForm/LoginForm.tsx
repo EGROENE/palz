@@ -31,7 +31,6 @@ const LoginForm = () => {
   return (
     <form
       onSubmit={(e) => {
-        handleSignupOrLoginFormSubmission(false, e);
         setTimeout(
           () => navigation(`users/${currentUser?.username}`),
           welcomeMessageDisplayTime
@@ -85,7 +84,9 @@ const LoginForm = () => {
         className="login-button"
         type={areNoLoginErrors ? "submit" : "button"}
         onClick={(e) =>
-          areNoLoginErrors && allLoginInputsFilled ? undefined : handleFormRejection(e)
+          areNoLoginErrors && allLoginInputsFilled
+            ? handleSignupOrLoginFormSubmission(false, e)
+            : handleFormRejection(e)
         }
       >
         Log In
