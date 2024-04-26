@@ -570,7 +570,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleSignupOrLoginFormSubmission = (
     isOnSignup: boolean,
-    e: React.FormEvent<HTMLFormElement>
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
     handleWelcomeMessage();
