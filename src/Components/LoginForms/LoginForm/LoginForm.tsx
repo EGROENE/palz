@@ -30,7 +30,7 @@ const LoginForm = () => {
 
   return (
     <form
-      onSubmit={(e) => {
+      onSubmit={() => {
         setTimeout(
           () => navigation(`users/${currentUser?.username}`),
           welcomeMessageDisplayTime
