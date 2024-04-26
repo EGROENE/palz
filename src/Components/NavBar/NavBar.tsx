@@ -20,7 +20,7 @@ const NavBar = () => {
     <nav>
       <ul className="navbar">
         <li>
-          <Link to={`users/${currentUser?.username}`}>
+          <Link to={`/users/${currentUser?.username}`}>
             PALZ IMAGE - LINK TO UserHomepage
           </Link>
         </li>
