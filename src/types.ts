@@ -142,7 +142,7 @@ export type TLoginContext = {
   handleUsernameOrEmailInput: (input: string) => void;
   handleSignupOrLoginFormSubmission: (
     isOnSignup: boolean,
-    e: React.FormEvent<HTMLFormElement>
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   handleFormRejection: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   showPasswordCriteria: boolean;
