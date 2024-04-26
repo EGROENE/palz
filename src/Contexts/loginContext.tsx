@@ -407,16 +407,28 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleConfirmationPasswordInput = (
     inputConfirmationPassword: string,
-    isOnSignup?: boolean
+    isOnSignup: boolean
   ): void => {
     const inputConfirmationPWNoWhitespaces = inputConfirmationPassword.replace(/\s/g, "");
 
     setConfirmationPassword(inputConfirmationPWNoWhitespaces);
 
+    /* Condition to set currentUser should be all other errors === "" && allSignupInputsFilled && (confirmationPasswordError === "Passwords don't match" | confirmationPasswordError === ""), b/c, in this handler, setting of this error state value lags. */
     if (isOnSignup) {
-      allSignupInputsFilled && areNoSignupErrors
-        ? setCurrentUser(userData)
-        : setCurrentUser(undefined);
+      if (
+        allSignupInputsFilled &&
+        firstNameError === "" &&
+        lastNameError === "" &&
+        usernameError === "" &&
+        emailError === "" &&
+        passwordError === "" &&
+        (confirmationPasswordError === "Passwords don't match" ||
+          confirmationPasswordError === "")
+      ) {
+        setCurrentUser(userData);
+      } else {
+        setCurrentUser(undefined);
+      }
     }
 
     inputConfirmationPWNoWhitespaces !== password &&
