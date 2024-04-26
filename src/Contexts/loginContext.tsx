@@ -129,7 +129,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     firstName: formatName(firstName),
     lastName: formatName(lastName),
     username: username?.trim(),
-    emailAddress: emailAddress?.trim(),
+    emailAddress: emailAddress?.trim().toLowerCase(),
     password: password?.trim(),
     hostingCredits: 0,
     city: "",
@@ -262,8 +262,9 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const emailIsTaken: boolean =
-      allUsers.filter((user) => user.emailAddress === inputEmailAddressNoWhitespaces)
-        .length > 0;
+      allUsers.filter(
+        (user) => user.emailAddress === inputEmailAddressNoWhitespaces.toLowerCase()
+      ).length > 0;
 
     if (isOnSignup) {
       if (emailIsTaken) {
@@ -271,7 +272,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       } else if (!inputEmailAddressNoWhitespaces.length) {
         setEmailError("Please fill out this field");
       } else if (
-        !emailIsValid(inputEmailAddressNoWhitespaces) &&
+        !emailIsValid(inputEmailAddressNoWhitespaces.toLowerCase()) &&
         inputEmailAddressNoWhitespaces !== ""
       ) {
         setEmailError("Invalid e-mail address");
@@ -279,10 +280,13 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
         setEmailError("");
       }
     } else {
-      if (emailIsTaken && inputEmailAddressNoWhitespaces !== currentUser?.emailAddress) {
+      if (
+        emailIsTaken &&
+        inputEmailAddressNoWhitespaces.toLowerCase() !== currentUser?.emailAddress
+      ) {
         setEmailError("E-mail address is taken");
       } else if (
-        !emailIsValid(inputEmailAddressNoWhitespaces) &&
+        !emailIsValid(inputEmailAddressNoWhitespaces.toLowerCase()) &&
         inputEmailAddressNoWhitespaces !== ""
       ) {
         setEmailError("Invalid e-mail address");
@@ -447,10 +451,10 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
       .includes(input.replace(/\s/g, ""));
     const emailExists: boolean = allUsers
       .map((user) => user.emailAddress)
-      .includes(input.replace(/\s/g, ""));
+      .includes(input.replace(/\s/g, "").toLowerCase());
 
     // If input matches pattern for an email:
-    if (emailIsValid(inputNoWhitespaces)) {
+    if (emailIsValid(inputNoWhitespaces.toLowerCase())) {
       const currentUser = allUsers.filter(
         (user) => user.emailAddress === inputNoWhitespaces
       )[0];
