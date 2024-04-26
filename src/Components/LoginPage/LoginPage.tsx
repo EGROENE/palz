@@ -1,16 +1,23 @@
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useLoginContext } from "../../Hooks/useLoginContext";
+import { useNavigate } from "react-router-dom";
 import SignupOrEditUserInfoForm from "../LoginForms/SignupOrEditUserInfoForm/SignupOrEditUserInfoForm";
 import LoginForm from "../LoginForms/LoginForm/LoginForm";
 import { useEffect } from "react";
 
 const LoginPage = () => {
-  const { theme, toggleTheme } = useMainContext();
+  const { theme, toggleTheme, currentUser } = useMainContext();
   const { signupIsSelected, toggleSignupLogin } = useLoginContext();
+  const navigation = useNavigate();
 
   useEffect(() => {
+    // Display login form by default
     if (signupIsSelected) {
       toggleSignupLogin();
+    }
+    // If user logs in, then pastes base URL in same tab, redirect to user homepage:
+    if (currentUser) {
+      navigation(`users/${currentUser?.username}`);
     }
   }, []);
 
