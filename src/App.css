@@ -9,6 +9,25 @@
   background-color: var(--background-color);
 }
 
+.theme-toggle-button {
+  padding: 0.5rem;
+  background-color: gray;
+  border: none;
+  font-size: 0.75rem;
+}
+
+.theme-toggle-button:focus {
+  border: none;
+  outline: none;
+}
+
+.theme-toggle-icon {
+  position: relative;
+  top: 0;
+  left: 0;
+  padding: 0;
+}
+
 .login-page-container {
   display: flex;
   align-items: center;
@@ -159,7 +178,7 @@
   z-index: 100;
 }
 
-.sidebar i {
+.sidebar-close {
   position: absolute;
   left: 1rem;
   top: 0.5rem;
@@ -170,6 +189,9 @@
 
 .sidebar-options {
   font-weight: 700;
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  width: 100%;
 }
 
 .sidebar-options:hover {
@@ -191,6 +213,15 @@
 .sidebar-names-container p {
   color: white;
   font-weight: 700;
+}
+
+.sidebar-options-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 1rem;
+  height: 16rem;
+  overflow-y: scroll;
 }
 
 .upcoming-events-hero {
