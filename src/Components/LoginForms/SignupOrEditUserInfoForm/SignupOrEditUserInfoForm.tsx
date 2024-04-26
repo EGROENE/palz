@@ -79,10 +79,13 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
 
   // If user data has changed, setCurrentUser:
   useEffect(() => {
-    if (username === currentUser?.username) {
-      setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
-    } else {
-      setCurrentUser(allUsers.filter((user) => user.emailAddress === emailAddress)[0]);
+    // Ensure logic only runs not on signup form (only other option is edit-user-info form)
+    if (!isOnSignup) {
+      if (username === currentUser?.username) {
+        setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+      } else {
+        setCurrentUser(allUsers.filter((user) => user.emailAddress === emailAddress)[0]);
+      }
     }
   }, [
     setCurrentUser,
@@ -425,7 +428,9 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
           <p>{isOnSignup ? "Confirm Password:" : "Confirm New Password:"}</p>
           <div className="password-input">
             <input
-              onChange={(e) => handleConfirmationPasswordInput(e.target.value)}
+              onChange={(e) =>
+                handleConfirmationPasswordInput(e.target.value, isOnSignup)
+              }
               value={confirmationPassword}
               type={passwordIsHidden ? "password" : "text"}
               placeholder="Confirm password"
