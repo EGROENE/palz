@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useLoginContext } from "../../Hooks/useLoginContext";
 import { useUserContext } from "../../Hooks/useUserContext";
-import SignupOrEditUserInfoForm from "../LoginForms/SignupOrEditUserInfoForm/SignupOrEditUserInfoForm";
 import NavBar from "../NavBar/NavBar";
 import Sidebar from "../Sidebar/Sidebar";
+import EditUserInfoForm from "../EditUserInfoForm/EditUserInfoForm";
 import Requests from "../../requests";
 import toast from "react-hot-toast";
 
@@ -51,7 +51,7 @@ const UserSettings = () => {
       <NavBar />
       {showSidebar && <Sidebar />}
       <h1>Settings</h1>
-      <SignupOrEditUserInfoForm isOnSignup={false} />
+      <EditUserInfoForm />
       <div className="settings-theme-and-delete-account-container">
         <div>
           <h3>Delete Account</h3>

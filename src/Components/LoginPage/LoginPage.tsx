@@ -1,7 +1,7 @@
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useLoginContext } from "../../Hooks/useLoginContext";
 import { useNavigate } from "react-router-dom";
-import SignupOrEditUserInfoForm from "../LoginForms/SignupOrEditUserInfoForm/SignupOrEditUserInfoForm";
+import SignupForm from "../LoginForms/SignupForm/SignupForm";
 import LoginForm from "../LoginForms/LoginForm/LoginForm";
 import { useEffect } from "react";
 
@@ -65,11 +65,7 @@ const LoginPage = () => {
             )}
           </div>
         </div>
-        {signupIsSelected ? (
-          <SignupOrEditUserInfoForm isOnSignup={true} />
-        ) : (
-          <LoginForm />
-        )}
+        {signupIsSelected ? <SignupForm /> : <LoginForm />}
         <p>
           {!signupIsSelected ? "Don't have an account?" : "Already have an account?"}
           <span className="link-to-other-form" onClick={() => toggleSignupLogin()}>
