@@ -13,6 +13,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
       "var(--theme-green)",
       "var(--theme-red)",
       "var(--theme-purple)",
+      "var(--theme-orange)",
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);

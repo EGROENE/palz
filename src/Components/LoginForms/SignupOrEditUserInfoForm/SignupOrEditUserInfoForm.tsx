@@ -109,6 +109,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
       "var(--theme-green)",
       "var(--theme-red)",
       "var(--theme-purple)",
+      "var(--theme-orange)",
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
@@ -311,7 +312,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
           <label>
             <p>First Name:</p>
             <input
-            autoComplete="given-name"
+              autoComplete="given-name"
               onChange={(e) =>
                 isOnSignup
                   ? handleNameInput(e.target.value, true, true)
@@ -330,7 +331,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
           <label>
             <p>Last Name:</p>
             <input
-            autoComplete="family-name"
+              autoComplete="family-name"
               onChange={(e) =>
                 isOnSignup
                   ? handleNameInput(e.target.value, false, true)
@@ -362,7 +363,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
             </p>
           )}
           <input
-          autoComplete="username"
+            autoComplete="username"
             title="Must be 4-20 characters long & contain only alphanumeric characters"
             onChange={(e) =>
               isOnSignup
@@ -380,7 +381,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
         <label>
           <p>E-Mail Address:</p>
           <input
-          autoComplete="email"
+            autoComplete="email"
             onChange={(e) =>
               isOnSignup
                 ? handleEmailAddressInput(e.target.value, true)
@@ -415,7 +416,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
 
           <div className="password-input">
             <input
-            autoComplete="off"
+              autoComplete="off"
               onChange={(e) =>
                 isOnSignup
                   ? handlePasswordInput(e.target.value, "signup")
@@ -444,7 +445,7 @@ const SignupOrEditUserInfoForm = ({ isOnSignup }: { isOnSignup: boolean }) => {
             <p>{isOnSignup ? "Confirm Password:" : "Confirm New Password:"}</p>
             <div className="password-input">
               <input
-              autoComplete="off"
+                autoComplete="off"
                 onChange={(e) =>
                   handleConfirmationPasswordInput(e.target.value, isOnSignup)
                 }
