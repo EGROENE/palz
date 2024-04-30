@@ -72,7 +72,7 @@ const SignupForm = () => {
           <p>First Name:</p>
           <input
             autoComplete="given-name"
-            onChange={(e) => handleNameInput(e.target.value, true, true)}
+            onChange={(e) => handleNameInput(e.target.value, true, "signup")}
             value={firstName}
             type="text"
             placeholder="Enter your first name"
@@ -89,7 +89,7 @@ const SignupForm = () => {
           <p>Last Name:</p>
           <input
             autoComplete="family-name"
-            onChange={(e) => handleNameInput(e.target.value, false, true)}
+            onChange={(e) => handleNameInput(e.target.value, false, "signup")}
             type="text"
             value={lastName}
             placeholder="Enter your last name"
@@ -120,7 +120,7 @@ const SignupForm = () => {
         <input
           autoComplete="username"
           title="Must be 4-20 characters long & contain only alphanumeric characters"
-          onChange={(e) => handleUsernameInput(e.target.value, true)}
+          onChange={(e) => handleUsernameInput(e.target.value, "signup")}
           value={username}
           type="text"
           placeholder="Enter a username"
@@ -135,7 +135,7 @@ const SignupForm = () => {
         <p>E-Mail Address:</p>
         <input
           autoComplete="email"
-          onChange={(e) => handleEmailAddressInput(e.target.value, true)}
+          onChange={(e) => handleEmailAddressInput(e.target.value, "signup")}
           value={emailAddress}
           type="email"
           placeholder="Enter your e-mail address"

@@ -200,7 +200,7 @@ const EditUserInfoForm = () => {
             <p>First Name:</p>
             <input
               autoComplete="given-name"
-              onChange={(e) => handleNameInput(e.target.value, true, false)}
+              onChange={(e) => handleNameInput(e.target.value, true, "edit-user-info")}
               value={firstName}
               type="text"
               placeholder="Change first name"
@@ -215,7 +215,7 @@ const EditUserInfoForm = () => {
             <p>Last Name:</p>
             <input
               autoComplete="family-name"
-              onChange={(e) => handleNameInput(e.target.value, false, false)}
+              onChange={(e) => handleNameInput(e.target.value, false, "edit-user-info")}
               type="text"
               value={lastName}
               placeholder="Change last name"
@@ -246,7 +246,7 @@ const EditUserInfoForm = () => {
           <input
             autoComplete="username"
             title="Must be 4-20 characters long & contain only alphanumeric characters"
-            onChange={(e) => handleUsernameInput(e.target.value, false)}
+            onChange={(e) => handleUsernameInput(e.target.value, "edit-user-info")}
             value={username}
             type="text"
             placeholder="Change username"
@@ -259,7 +259,7 @@ const EditUserInfoForm = () => {
           <p>E-Mail Address:</p>
           <input
             autoComplete="email"
-            onChange={(e) => handleEmailAddressInput(e.target.value, false)}
+            onChange={(e) => handleEmailAddressInput(e.target.value, "edit-user-info")}
             value={emailAddress}
             type="email"
             placeholder="Change your e-mail address"

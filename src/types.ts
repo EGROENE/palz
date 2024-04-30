@@ -130,16 +130,20 @@ export type TLoginContext = {
   allSignupOrEditFormFieldsFilled: boolean;
   allLoginInputsFilled: boolean;
   showErrors: boolean;
-  handleNameInput: (name: string, isFirstName: boolean, isOnSignup: boolean) => void;
-  handleUsernameInput: (username: string, isOnSignup: boolean) => void;
-  handleEmailAddressInput: (email: string, isOnSignup: boolean) => void;
+  handleNameInput: (
+    name: string,
+    isFirstName: boolean,
+    formType: "signup" | "edit-user-info"
+  ) => void;
+  handleUsernameInput: (username: string, formType: "signup" | "edit-user-info") => void;
+  handleEmailAddressInput: (email: string, formType: "signup" | "edit-user-info") => void;
   handlePasswordInput: (
     inputPassword: string,
     formType: "login" | "signup" | "edit-user-info"
   ) => void;
   handleConfirmationPasswordInput: (
     inputConfirmationPassword: string,
-    isOnSignup: boolean
+    formType: "login" | "signup" | "edit-user-info"
   ) => void;
   handleUsernameOrEmailInput: (input: string) => void;
   handleSignupOrLoginFormSubmission: (

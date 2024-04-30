@@ -177,20 +177,28 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Input-handling methods:
   // Put here, since used in two different components
-  const handleNameInput = (name: string, isFirstName: boolean, isOnSignup: boolean) => {
+  const handleNameInput = (
+    name: string,
+    isFirstName: boolean,
+    formType: "signup" | "edit-user-info"
+  ) => {
     isFirstName ? setFirstName(name) : setLastName(name);
 
-    if (allSignupOrEditFormFieldsFilled && areNoSignupOrEditFormErrors && isOnSignup) {
+    if (
+      allSignupOrEditFormFieldsFilled &&
+      areNoSignupOrEditFormErrors &&
+      formType === "signup"
+    ) {
       setCurrentUser(userData);
     } else if (
       !allSignupOrEditFormFieldsFilled &&
       !areNoSignupOrEditFormErrors &&
-      isOnSignup
+      formType === "signup"
     ) {
       setCurrentUser(undefined);
     }
 
-    if (isOnSignup) {
+    if (formType === "signup") {
       if (name.trim() === "") {
         isFirstName
           ? setFirstNameError("Please fill out this field")
@@ -213,17 +221,24 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleUsernameInput = (inputUsername: string, isOnSignup: boolean): void => {
+  const handleUsernameInput = (
+    inputUsername: string,
+    formType: "signup" | "edit-user-info"
+  ): void => {
     if (inputUsername.length <= 20 && usernameIsValid(inputUsername)) {
       setUsername(inputUsername);
     }
 
-    if (allSignupOrEditFormFieldsFilled && areNoSignupOrEditFormErrors && isOnSignup) {
+    if (
+      allSignupOrEditFormFieldsFilled &&
+      areNoSignupOrEditFormErrors &&
+      formType === "signup"
+    ) {
       setCurrentUser(userData);
     } else if (
       !allSignupOrEditFormFieldsFilled &&
       !areNoSignupOrEditFormErrors &&
-      isOnSignup
+      formType === "signup"
     ) {
       setCurrentUser(undefined);
     }
@@ -231,7 +246,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     const usernameIsTaken: boolean =
       allUsers.filter((user) => user.username === inputUsername).length > 0;
 
-    if (isOnSignup) {
+    if (formType === "signup") {
       if (usernameIsTaken) {
         setUsernameError("Username is already taken");
       } else if (!inputUsername.length) {
@@ -259,18 +274,22 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleEmailAddressInput = (
     inputEmailAddress: string,
-    isOnSignup: boolean
+    formType: "signup" | "edit-user-info"
   ): void => {
     const inputEmailAddressNoWhitespaces = inputEmailAddress.replace(/\s/g, "");
 
     setEmailAddress(inputEmailAddressNoWhitespaces);
 
-    if (allSignupOrEditFormFieldsFilled && areNoSignupOrEditFormErrors && isOnSignup) {
+    if (
+      allSignupOrEditFormFieldsFilled &&
+      areNoSignupOrEditFormErrors &&
+      formType === "signup"
+    ) {
       setCurrentUser(userData);
     } else if (
       !allSignupOrEditFormFieldsFilled &&
       !areNoSignupOrEditFormErrors &&
-      isOnSignup
+      formType === "signup"
     ) {
       setCurrentUser(undefined);
     }
@@ -280,7 +299,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
         (user) => user.emailAddress === inputEmailAddressNoWhitespaces.toLowerCase()
       ).length > 0;
 
-    if (isOnSignup) {
+    if (formType === "signup") {
       if (emailIsTaken) {
         setEmailError("E-mail address is taken");
       } else if (!inputEmailAddressNoWhitespaces.length) {
@@ -425,14 +444,14 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleConfirmationPasswordInput = (
     inputConfirmationPassword: string,
-    isOnSignup: boolean
+    formType: "login" | "signup" | "edit-user-info"
   ): void => {
     const inputConfirmationPWNoWhitespaces = inputConfirmationPassword.replace(/\s/g, "");
 
     setConfirmationPassword(inputConfirmationPWNoWhitespaces);
 
     /* Condition to set currentUser should be all other errors === "" && allSignupOrEditFormFieldsFilled && (confirmationPasswordError === "Passwords don't match" | confirmationPasswordError === ""), b/c, in this handler, setting of this error state value lags. */
-    if (isOnSignup) {
+    if (formType === "signup") {
       if (
         allSignupOrEditFormFieldsFilled &&
         firstNameError === "" &&
