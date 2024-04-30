@@ -19,6 +19,7 @@ export type TUser = {
   friends: string[];
   subscriptionType: string;
   hostingCredits: number;
+  interests: string[];
 };
 
 export type TEvent = {

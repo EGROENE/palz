@@ -146,6 +146,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     friends: [],
     about: "",
     subscriptionType: "",
+    interests: [],
   };
 
   const resetFormFieldsAndErrors = (): void => {

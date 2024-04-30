@@ -107,6 +107,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "profileImage": newUserData.profileImage,
     "about": "",
     "subscriptionType": "",
+    "interests": [],
   });
 
   return fetch("http://localhost:3000/users", {
