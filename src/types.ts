@@ -156,4 +156,5 @@ export type TLoginContext = {
 export type TUserContext = {
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+  logout: () => void;
 };
