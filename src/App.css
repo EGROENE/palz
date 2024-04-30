@@ -202,6 +202,7 @@
   font-size: 1.1rem;
   margin: 0.5rem 0;
   width: 100%;
+  font-family: var(--text-font);
 }
 
 .sidebar-options:hover {
