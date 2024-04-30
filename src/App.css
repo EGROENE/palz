@@ -173,10 +173,13 @@
 
 .sidebar {
   position: fixed;
-  top: 5%;
+  top: 3%;
   right: 1rem;
   z-index: 100;
-  min-width: 18rem;
+  min-width: 24rem;
+  max-width: 24rem;
+  height: 83vh;
+  overflow-y: scroll;
 }
 
 .sidebar-close {
@@ -190,6 +193,8 @@
 
 .sidebar img {
   max-height: 15rem;
+  height: 15rem;
+  width: 15rem;
 }
 
 .sidebar-options {
@@ -211,6 +216,7 @@
 
 .sidebar-names-container {
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
   margin-top: -0.5rem;
 }
@@ -219,6 +225,8 @@
   color: white;
   font-weight: 700;
   letter-spacing: 3px;
+  margin: 0.25rem;
+  overflow-wrap: break-word;
 }
 
 .sidebar-options-container {
@@ -299,7 +307,9 @@
 }
 
 .edit-user-info-form-options {
-  margin-top: 1rem;
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 2rem;
 }
 
 .edit-user-info-form-options button {
@@ -309,4 +319,14 @@
 .edit-user-info-form-options button:first-child {
   background-color: var(--background-color-opposite);
   color: var(--text-color-opposite);
+}
+
+.settings-theme-and-delete-account-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 3rem;
+}
+
+.delete-button {
+  background-color: tomato;
 }
