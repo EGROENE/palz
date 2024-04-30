@@ -176,6 +176,7 @@
   top: 5%;
   right: 1rem;
   z-index: 100;
+  min-width: 18rem;
 }
 
 .sidebar-close {
@@ -185,6 +186,10 @@
   font-size: 1.5rem;
   color: white;
   padding: 0.25rem 0.5rem;
+}
+
+.sidebar img {
+  max-height: 15rem;
 }
 
 .sidebar-options {
@@ -213,6 +218,7 @@
 .sidebar-names-container p {
   color: white;
   font-weight: 700;
+  letter-spacing: 3px;
 }
 
 .sidebar-options-container {
