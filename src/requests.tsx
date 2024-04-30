@@ -140,6 +140,17 @@ const patchUpdatedUserInfo = (
   });
 };
 
+const deleteUser = (userID: number | string | undefined): Promise<Response> => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-type", "application/json");
+
+  return fetch(`http://localhost:3000/users/${userID}`, {
+    method: "DELETE",
+    headers: myHeaders,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
   getAllUsers,
   getAllEvents,
@@ -151,5 +162,6 @@ const Requests = {
   getAllInterests,
   createUser,
   patchUpdatedUserInfo,
+  deleteUser,
 };
 export default Requests;
