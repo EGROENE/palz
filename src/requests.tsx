@@ -104,7 +104,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "x": "",
     "telegram": "",
     "whatsapp": "",
-    "profileImage": "",
+    "profileImage": newUserData.profileImage,
     "about": "",
     "subscriptionType": "",
   });

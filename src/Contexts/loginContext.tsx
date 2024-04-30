@@ -141,7 +141,8 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     x: "",
     telegram: "",
     whatsapp: "",
-    profileImage: "",
+    profileImage:
+      "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.iC6w-uAguv7_8AQJvWl7kAHaHa%26pid%3DApi&f=1&ipt=e28f6633e3153114f06c264e9a038281b7f36831fc29639194ac586d588d75b2&ipo=images",
     friends: [],
     about: "",
     subscriptionType: "",
