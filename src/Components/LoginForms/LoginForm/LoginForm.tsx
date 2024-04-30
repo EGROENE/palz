@@ -41,6 +41,7 @@ const LoginForm = () => {
       <label>
         <p>Username or E-Mail Address:</p>
         <input
+          autoComplete="on"
           onChange={(e) => handleUsernameOrEmailInput(e.target.value)}
           value={loginMethod === "username" ? username : emailAddress}
           type="text"
@@ -63,6 +64,7 @@ const LoginForm = () => {
         <p>Password:</p>
         <div className="password-input">
           <input
+            autoComplete="current-password"
             onChange={(e) => handlePasswordInput(e.target.value, "login")}
             value={password}
             type={passwordIsHidden ? "password" : "text"}
