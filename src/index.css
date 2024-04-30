@@ -64,8 +64,16 @@ h2 {
   color: var(--theme-green);
 }
 
+h3 {
+  color: var(--text-color);
+  letter-spacing: 3px;
+  font-size: 2rem;
+  margin: 0;
+}
+
 p {
   color: var(--text-color);
+  font-family: var(--text-font);
 }
 
 button {
