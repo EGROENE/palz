@@ -10,7 +10,7 @@ import Requests from "../../requests";
 import toast from "react-hot-toast";
 
 const UserSettings = () => {
-  const { currentUser } = useMainContext();
+  const { currentUser, theme, toggleTheme } = useMainContext();
   const { passwordIsHidden, setPasswordIsHidden } = useLoginContext();
   const { showSidebar, setShowSidebar, logout } = useUserContext();
 
@@ -52,11 +52,25 @@ const UserSettings = () => {
       {showSidebar && <Sidebar />}
       <h1>Settings</h1>
       <SignupOrEditUserInfoForm isOnSignup={false} />
-      <h3>Delete Account</h3>
-      <p>Please understand that this action is irreversible</p>
-      <button onClick={() => handleAccountDeletion()} className="delete-button">
-        Delete Account
-      </button>
+      <div className="settings-theme-and-delete-account-container">
+        <div>
+          <h3>Delete Account</h3>
+          <p>Please understand that this action is irreversible</p>
+          <button onClick={() => handleAccountDeletion()} className="delete-button">
+            Delete Account
+          </button>
+        </div>
+        <div>
+          <h3>Change Site Theme</h3>
+          <p>{theme === "dark" ? "Theme is set to dark" : "Theme is set to light"}</p>
+          <button
+            style={{ backgroundColor: "rgb(97, 95, 95)" }}
+            onClick={() => toggleTheme()}
+          >
+            {theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+          </button>
+        </div>
+      </div>
     </>
   );
 };
