@@ -1,4 +1,5 @@
 export type TUser = {
+  id?: number | string;
   firstName: string | undefined;
   lastName: string | undefined;
   username: string | undefined;
