@@ -11,6 +11,7 @@
   --background-color: #242424;
   --background-color-opposite: rgb(233, 231, 228);
   --header-one-color: var(--theme-yellow);
+  --header-two-color: var(--theme-orange);
   --text-font: "Josefine Sans", monospace, sans-serif;
   --text-color: white;
   --text-color-opposite: black;
@@ -62,7 +63,7 @@ h1 {
 }
 
 h2 {
-  color: var(--theme-green);
+  color: var(--header-two-color);
 }
 
 h3 {
@@ -109,6 +110,7 @@ button:disabled:hover {
   --background-color: rgb(233, 231, 228);
   --background-color-opposite: #242424;
   --header-one-color: var(--theme-brown);
+  --header-two-color: var(--theme-green);
   --text-color: black;
   --text-color-opposite: white;
 }
