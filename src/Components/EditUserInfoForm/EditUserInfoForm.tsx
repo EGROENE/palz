@@ -188,7 +188,7 @@ const EditUserInfoForm = () => {
         emailAddress: emailAddress?.trim(),
       }),
     ...(password !== "" &&
-      password !== currentUser?.password && { password: password?.trim() }),
+      password !== currentUser?.password && { password: password?.replace(/\s+/g, "") }),
   };
 
   return (
