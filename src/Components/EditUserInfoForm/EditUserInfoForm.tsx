@@ -179,13 +179,16 @@ const EditUserInfoForm = () => {
 
   const valuesToUpdate = {
     ...(firstName?.trim() !== "" &&
-      firstName !== currentUser?.firstName && { "firstName": firstName }),
+      firstName !== currentUser?.firstName && { "firstName": firstName?.trim() }),
     ...(lastName?.trim() !== "" &&
-      lastName !== currentUser?.lastName && { lastName: lastName }),
+      lastName !== currentUser?.lastName && { lastName: lastName?.trim() }),
     ...(username !== "" && username !== currentUser?.username && { username: username }),
     ...(emailAddress !== "" &&
-      emailAddress !== currentUser?.emailAddress && { emailAddress: emailAddress }),
-    ...(password !== "" && password !== currentUser?.password && { password: password }),
+      emailAddress !== currentUser?.emailAddress && {
+        emailAddress: emailAddress?.trim(),
+      }),
+    ...(password !== "" &&
+      password !== currentUser?.password && { password: password?.trim() }),
   };
 
   return (
