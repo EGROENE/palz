@@ -1,19 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
-import { useLoginContext } from "../../Hooks/useLoginContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 
 const NavBar = () => {
-  const { currentUser, setUserCreatedAccount, removeCurrentUser } = useMainContext();
-  const { resetFormFieldsAndErrors } = useLoginContext();
-  const { showSidebar, setShowSidebar } = useUserContext();
+  const { currentUser } = useMainContext();
+  const { showSidebar, setShowSidebar, logout } = useUserContext();
   const navigation = useNavigate();
 
   const handleLogout = () => {
     navigation("/");
-    setUserCreatedAccount(null);
-    removeCurrentUser();
-    resetFormFieldsAndErrors();
+    logout();
   };
 
   return (
