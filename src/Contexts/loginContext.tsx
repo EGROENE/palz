@@ -333,7 +333,7 @@ export const LoginContextProvider = ({ children }: { children: ReactNode }) => {
     inputPassword: string,
     formType: "login" | "signup" | "edit-user-info"
   ): void => {
-    setPassword(inputPassword.trim());
+    setPassword(inputPassword.replace(/\s+/g, ""));
 
     /* Use inputPassword w/ no whitespaces in logic checks below, as it is more current that the state value 'password', which may lag behind, causing logic checks to be inaccurate */
     const inputPWNoWhitespaces = inputPassword.replace(/\s/g, "");
