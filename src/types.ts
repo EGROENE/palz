@@ -93,7 +93,7 @@ export type TMainContext = {
   fetchAllUsers: () => Promise<void>;
 };
 
-export type TLoginContext = {
+export type TUserContext = {
   loginMethod: "username" | "email";
   signupIsSelected: boolean;
   setSignupIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
@@ -156,9 +156,6 @@ export type TLoginContext = {
   showUsernameCriteria: boolean;
   setShowUsernameCriteria: React.Dispatch<React.SetStateAction<boolean>>;
   resetFormFieldsAndErrors: () => void;
-};
-
-export type TUserContext = {
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   logout: () => void;

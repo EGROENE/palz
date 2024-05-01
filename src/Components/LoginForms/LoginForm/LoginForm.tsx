@@ -1,7 +1,7 @@
 import OpenEye from "../../Eyecons/OpenEye/OpenEye";
 import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
 import { useMainContext } from "../../../Hooks/useMainContext";
-import { useLoginContext } from "../../../Hooks/useLoginContext";
+import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
@@ -24,7 +24,7 @@ const LoginForm = () => {
     showErrors,
     handleSignupOrLoginFormSubmission,
     handleFormRejection,
-  } = useLoginContext();
+  } = useUserContext();
 
   const navigation = useNavigate();
 

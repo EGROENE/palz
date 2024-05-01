@@ -1,6 +1,6 @@
 import OpenEye from "../Eyecons/OpenEye/OpenEye";
 import ClosedEye from "../Eyecons/ClosedEye/ClosedEye";
-import { useLoginContext } from "../../Hooks/useLoginContext";
+import { useUserContext } from "../../Hooks/useUserContext";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useEffect, useState } from "react";
 import Requests from "../../requests";
@@ -44,7 +44,7 @@ const EditUserInfoForm = () => {
     setShowPasswordCriteria,
     showUsernameCriteria,
     setShowUsernameCriteria,
-  } = useLoginContext();
+  } = useUserContext();
 
   /* Make sure all form errors are cleared, since they shouldn't have error "Please fill out this field" by default on EditUserInfoForm: */
   useEffect(() => {

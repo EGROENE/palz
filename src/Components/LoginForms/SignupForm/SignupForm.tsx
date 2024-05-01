@@ -1,6 +1,6 @@
 import OpenEye from "../../Eyecons/OpenEye/OpenEye";
 import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
-import { useLoginContext } from "../../../Hooks/useLoginContext";
+import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useEffect } from "react";
@@ -43,7 +43,7 @@ const SignupForm = () => {
     setShowPasswordCriteria,
     showUsernameCriteria,
     setShowUsernameCriteria,
-  } = useLoginContext();
+  } = useUserContext();
 
   // Ensure all errors are set by default to "Please fill out this field"
   useEffect(() => {

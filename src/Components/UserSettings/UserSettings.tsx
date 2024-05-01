@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
-import { useLoginContext } from "../../Hooks/useLoginContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
 import Sidebar from "../Sidebar/Sidebar";
@@ -11,8 +10,8 @@ import toast from "react-hot-toast";
 
 const UserSettings = () => {
   const { currentUser, theme, toggleTheme } = useMainContext();
-  const { passwordIsHidden, setPasswordIsHidden } = useLoginContext();
-  const { showSidebar, setShowSidebar, logout } = useUserContext();
+  const { showSidebar, setShowSidebar, logout, passwordIsHidden, setPasswordIsHidden } =
+    useUserContext();
 
   useEffect(() => {
     if (showSidebar) {

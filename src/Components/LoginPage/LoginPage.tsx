@@ -1,5 +1,5 @@
 import { useMainContext } from "../../Hooks/useMainContext";
-import { useLoginContext } from "../../Hooks/useLoginContext";
+import { useUserContext } from "../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import SignupForm from "../LoginForms/SignupForm/SignupForm";
 import LoginForm from "../LoginForms/LoginForm/LoginForm";
@@ -7,7 +7,7 @@ import { useEffect } from "react";
 
 const LoginPage = () => {
   const { theme, toggleTheme, currentUser } = useMainContext();
-  const { signupIsSelected, toggleSignupLogin } = useLoginContext();
+  const { signupIsSelected, toggleSignupLogin } = useUserContext();
   const navigation = useNavigate();
 
   useEffect(() => {
