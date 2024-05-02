@@ -43,6 +43,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [emailAddress, setEmailAddress, removeEmailAddress] = useSessionStorage<
     string | undefined
   >("emailAddress", "");
+  const [phoneCountryCode, setPhoneCountryCode] = useSessionStorage<string>(
+    "phoneCountryCode",
+    ""
+  );
+  const [phoneNumberWithoutCountryCode, setPhoneNumberWithoutCountryCode] =
+    useSessionStorage<string>("phoneNumberWithoutCountryCode", "");
+  const [phoneNumber, setPhoneNumber, removePhoneNumber] = useSessionStorage<
+    string | undefined
+  >("phoneNumber", phoneCountryCode + phoneNumberWithoutCountryCode);
   const [password, setPassword, removePassword] = useSessionStorage<string | undefined>(
     "password",
     ""
@@ -63,6 +72,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     "Please fill out this field"
   );
   const [emailError, setEmailError] = useState<string>("Please fill out this field");
+  const [phoneNumberError, setPhoneNumberError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>(
     "Please fill out this field"
   );
@@ -161,6 +171,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setUsernameError("Please fill out this field");
     removeEmailAddress();
     setEmailError("Please fill out this field");
+    removePhoneNumber();
+    setPhoneNumberError("");
     removePassword();
     setPasswordError("Please fill out this field");
     setConfirmationPassword("");
@@ -658,6 +670,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    phoneCountryCode,
+    setPhoneCountryCode,
+    phoneNumberWithoutCountryCode,
+    setPhoneNumberWithoutCountryCode,
+    phoneNumber,
+    setPhoneNumber,
+    phoneNumberError,
+    setPhoneNumberError,
     resetFormFieldsAndErrors,
     showSidebar,
     setShowSidebar,
