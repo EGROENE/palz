@@ -94,6 +94,14 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  phoneCountryCode: string;
+  setPhoneCountryCode: React.Dispatch<React.SetStateAction<string>>;
+  phoneNumberWithoutCountryCode: string;
+  setPhoneNumberWithoutCountryCode: React.Dispatch<React.SetStateAction<string>>;
+  phoneNumber: string | undefined;
+  setPhoneNumber: React.Dispatch<React.SetStateAction<string | undefined>>;
+  phoneNumberError: string;
+  setPhoneNumberError: React.Dispatch<React.SetStateAction<string>>;
   loginMethod: "username" | "email";
   signupIsSelected: boolean;
   setSignupIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
