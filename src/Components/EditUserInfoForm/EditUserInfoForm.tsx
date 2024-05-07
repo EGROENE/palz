@@ -787,7 +787,7 @@ const EditUserInfoForm = () => {
             autoComplete="off"
             onChange={(e) => handlePhoneNumberInput(e, "number-without-country-code")}
             value={phoneNumberWithoutCountryCode}
-            type="number"
+            type="text"
             placeholder="Edit your phone number"
             inputMode="tel"
             className={phoneNumberError !== "" ? "erroneous-field" : undefined}
