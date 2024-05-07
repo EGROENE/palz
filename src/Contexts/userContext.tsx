@@ -43,15 +43,19 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [emailAddress, setEmailAddress, removeEmailAddress] = useSessionStorage<
     string | undefined
   >("emailAddress", "");
-  const [phoneCountryCode, setPhoneCountryCode] = useSessionStorage<string>(
-    "phoneCountryCode",
-    ""
-  );
-  const [phoneNumberWithoutCountryCode, setPhoneNumberWithoutCountryCode] =
-    useSessionStorage<string>("phoneNumberWithoutCountryCode", "");
-  const [phoneNumber, setPhoneNumber, removePhoneNumber] = useSessionStorage<
+  const [phoneCountry, setPhoneCountry, removePhoneCountry] = useSessionStorage<
     string | undefined
-  >("phoneNumber", phoneCountryCode + phoneNumberWithoutCountryCode);
+  >("phoneCountry", "");
+  const [phoneCountryCode, setPhoneCountryCode, removePhoneCountryCode] =
+    useSessionStorage<string | undefined>("phoneCountryCode", "");
+  const [
+    phoneNumberWithoutCountryCode,
+    setPhoneNumberWithoutCountryCode,
+    removePhoneNumberWithoutCountryCode,
+  ] = useSessionStorage<string | undefined>("phoneNumberWithoutCountryCode", "");
+  /* const [phoneNumber, setPhoneNumber, removePhoneNumber] = useSessionStorage<
+    string | undefined
+  >("phoneNumber", phoneCountryCode + phoneNumberWithoutCountryCode); */
   const [password, setPassword, removePassword] = useSessionStorage<string | undefined>(
     "password",
     ""
@@ -148,7 +152,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     city: "",
     stateProvince: "",
     country: "",
-    phoneNumber: "",
+    phoneCountry: "",
+    phoneCountryCode: "",
+    phoneNumberWithoutCountryCode: "",
     instagram: "",
     facebook: "",
     x: "",
@@ -171,7 +177,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setUsernameError("Please fill out this field");
     removeEmailAddress();
     setEmailError("Please fill out this field");
-    removePhoneNumber();
+    removePhoneCountry();
+    removePhoneCountryCode();
+    removePhoneNumberWithoutCountryCode();
     setPhoneNumberError("");
     removePassword();
     setPasswordError("Please fill out this field");
@@ -600,7 +608,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     usernameError === "" &&
     emailError === "" &&
     passwordError === "" &&
-    confirmationPasswordError === "";
+    confirmationPasswordError === "" &&
+    phoneNumberError === "";
 
   const allSignupOrEditFormFieldsFilled: boolean =
     firstName !== "" &&
@@ -633,6 +642,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setLastName(userData.lastName);
       setEmailAddress(userData.emailAddress);
       setPassword(userData.password);
+      setPhoneCountry(userData.phoneCountry);
+      setPhoneCountryCode(userData.phoneCountryCode);
+      setPhoneNumberWithoutCountryCode(userData.phoneNumberWithoutCountryCode);
     } else {
       setUserCreatedAccount(false);
       if (emailAddress !== "") {
@@ -644,6 +656,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setLastName(currentUser?.lastName);
       setEmailAddress(currentUser?.emailAddress);
       setPassword(currentUser?.password);
+      setPhoneCountry(currentUser?.phoneCountry);
+      setPhoneCountryCode(currentUser?.phoneCountryCode);
+      setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
     }
     setFirstNameError("");
     setLastNameError("");
@@ -670,12 +685,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    phoneCountry,
+    setPhoneCountry,
     phoneCountryCode,
     setPhoneCountryCode,
     phoneNumberWithoutCountryCode,
     setPhoneNumberWithoutCountryCode,
-    phoneNumber,
-    setPhoneNumber,
     phoneNumberError,
     setPhoneNumberError,
     resetFormFieldsAndErrors,

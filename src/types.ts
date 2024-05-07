@@ -7,7 +7,9 @@ export type TUser = {
   city: string;
   stateProvince: string;
   country: string;
-  phoneNumber: string;
+  phoneCountry: string;
+  phoneCountryCode: string;
+  phoneNumberWithoutCountryCode: string;
   emailAddress: string | undefined;
   instagram: string;
   facebook: string;
@@ -94,12 +96,14 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
-  phoneCountryCode: string;
-  setPhoneCountryCode: React.Dispatch<React.SetStateAction<string>>;
-  phoneNumberWithoutCountryCode: string;
-  setPhoneNumberWithoutCountryCode: React.Dispatch<React.SetStateAction<string>>;
-  phoneNumber: string | undefined;
-  setPhoneNumber: React.Dispatch<React.SetStateAction<string | undefined>>;
+  phoneCountry: string | undefined;
+  setPhoneCountry: React.Dispatch<React.SetStateAction<string | undefined>>;
+  phoneCountryCode: string | undefined;
+  setPhoneCountryCode: React.Dispatch<React.SetStateAction<string | undefined>>;
+  phoneNumberWithoutCountryCode: string | undefined;
+  setPhoneNumberWithoutCountryCode: React.Dispatch<
+    React.SetStateAction<string | undefined>
+  >;
   phoneNumberError: string;
   setPhoneNumberError: React.Dispatch<React.SetStateAction<string>>;
   loginMethod: "username" | "email";
