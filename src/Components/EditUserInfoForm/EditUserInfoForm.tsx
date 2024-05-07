@@ -202,11 +202,7 @@ const EditUserInfoForm = () => {
   // Function sets min/max of phone field & any error, depending on countryCode
   // Call in handlePhoneNumberInput
   const handleChangeOfCountryPhoneCode = (countryCode: string): void => {
-    // Chinese country code
-    if (countryCode === "86") {
-      setPhoneNumberMinAndMaxLength(9, 11);
-      handlePhoneFieldError(9, 11, phoneNumberWithoutCountryCode);
-    } else if (
+    if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers3To8DigitsLong.includes(
         countryCode
       )

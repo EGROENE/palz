@@ -281,7 +281,7 @@ const countryPhoneCodesWithNumbers5To9DigitsLong = ["377", "595", "962", "233", 
 
 const countryPhoneCodesWithNumbers5To10DigitsLong = ["62", "263"];
 
-const countryPhoneCodesWithNumbers5To12DigitsLong = ["86", "358"];
+const countryPhoneCodesWithNumbers5To12DigitsLong = ["358"];
 
 const countryPhoneCodesWithNumbers5To13DigitsLong = ["81"];
 
@@ -446,7 +446,7 @@ const countryPhoneCodesWithNumbers9DigitsLong = [
 
 const countryPhoneCodesWithNumbers9To10DigitsLong = ["261", "375"];
 
-const countryPhoneCodesWithNumbers9To11DigitsLong = ["351"];
+const countryPhoneCodesWithNumbers9To11DigitsLong = ["351", "86"];
 
 const countryPhoneCodesWithNumbers10DigitsLong = [
   "58",
