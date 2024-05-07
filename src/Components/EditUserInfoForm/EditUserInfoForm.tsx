@@ -94,7 +94,7 @@ const EditUserInfoForm = () => {
   // Reset field values to corresponding point in currentUser
   useEffect(() => {
     if (currentUser && currentUser.phoneCountryCode !== "") {
-      handleSettingOfCountryCode(currentUser.phoneCountryCode);
+      handleChangeOfCountryPhoneCode(currentUser.phoneCountryCode);
     }
     handleEditUserInfoRevert();
   }, []);
@@ -173,7 +173,7 @@ const EditUserInfoForm = () => {
     setPhoneNumberError("");
   };
 
-  // Call this in every if, else...if statement in handleSettingOfCountryCode
+  // Call this in every if, else...if statement in handleChangeOfCountryPhoneCode
   const handlePhoneFieldError = (
     min: number,
     max: number,
@@ -201,7 +201,7 @@ const EditUserInfoForm = () => {
 
   // Function sets min/max of phone field & any error, depending on countryCode
   // Call in handlePhoneNumberInput
-  const handleSettingOfCountryCode = (countryCode: string): void => {
+  const handleChangeOfCountryPhoneCode = (countryCode: string): void => {
     // Chinese country code
     if (countryCode === "86") {
       setPhoneNumberMinAndMaxLength(9, 11);
@@ -648,7 +648,7 @@ const EditUserInfoForm = () => {
       const country = e.target.value.substring(0, e.target.value.indexOf("+") - 1);
       setPhoneCountry(country);
       setPhoneCountryCode(countryCode);
-      handleSettingOfCountryCode(countryCode);
+      handleChangeOfCountryPhoneCode(countryCode);
     }
   };
 
