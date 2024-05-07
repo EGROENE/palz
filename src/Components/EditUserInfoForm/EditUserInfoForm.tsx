@@ -93,6 +93,9 @@ const EditUserInfoForm = () => {
 
   // Reset field values to corresponding point in currentUser
   useEffect(() => {
+    if (currentUser && currentUser.phoneCountryCode !== "") {
+      handleSettingOfCountryCode(currentUser.phoneCountryCode);
+    }
     handleEditUserInfoRevert();
   }, []);
 
