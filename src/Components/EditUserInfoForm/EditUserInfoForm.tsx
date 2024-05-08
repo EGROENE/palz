@@ -649,15 +649,14 @@ const EditUserInfoForm = () => {
   };
 
   const userInfoEdited: boolean =
-    (firstName?.trim() !== "" && firstName?.trim() !== currentUser?.firstName) ||
-    (lastName?.trim() !== "" && lastName?.trim() !== currentUser?.lastName) ||
-    (emailAddress !== "" && emailAddress !== currentUser?.emailAddress) ||
-    (username !== "" && username !== currentUser?.username) ||
-    (password !== "" && password !== currentUser?.password) ||
-    (phoneCountry !== "" && phoneCountry !== currentUser?.phoneCountry) ||
-    (phoneCountryCode !== "" && phoneCountryCode !== currentUser?.phoneCountryCode) ||
-    (phoneNumberWithoutCountryCode !== "" &&
-      phoneNumberWithoutCountryCode !== currentUser?.phoneNumberWithoutCountryCode);
+    firstName?.trim() !== currentUser?.firstName ||
+    lastName?.trim() !== currentUser?.lastName ||
+    emailAddress !== currentUser?.emailAddress ||
+    username !== currentUser?.username ||
+    password !== currentUser?.password ||
+    phoneCountry !== currentUser?.phoneCountry ||
+    phoneCountryCode !== currentUser?.phoneCountryCode ||
+    phoneNumberWithoutCountryCode !== currentUser?.phoneNumberWithoutCountryCode;
 
   const valuesToUpdate = {
     ...(firstName?.trim() !== "" &&

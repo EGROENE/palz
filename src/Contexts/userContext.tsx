@@ -234,7 +234,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         isFirstName ? setFirstNameError("") : setLastNameError("");
       }
     } else {
-      if (!nameIsValid(name.trim()) && name.trim() !== "") {
+      if (name.trim() === "") {
+        isFirstName
+          ? setFirstNameError("Please fill out this field")
+          : setLastNameError("Please fill out this field");
+      } else if (!nameIsValid(name.trim()) && name.trim() !== "") {
         isFirstName
           ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
           : setLastNameError("Only alphabetical characters & appropriate punctuation");
@@ -285,7 +289,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       if (usernameIsTaken && inputUsername !== currentUser?.username) {
         console.log(currentUser?.username);
         setUsernameError("Username is already taken");
-      } else if (inputUsername.length < 4 && inputUsername.length) {
+      } else if (inputUsername.length < 4) {
         setUsernameError(
           "Username must be 4-20 characters long & may only contain alphanumeric characters"
         );
@@ -336,7 +340,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         setEmailError("");
       }
     } else {
-      if (
+      if (inputEmailAddressNoWhitespaces === "") {
+        setEmailError("Please fill out this field");
+      } else if (
         emailIsTaken &&
         inputEmailAddressNoWhitespaces.toLowerCase() !== currentUser?.emailAddress
       ) {
@@ -428,7 +434,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           setConfirmationPasswordError("");
         }
       } else {
-        setPasswordError("");
+        setPasswordError("Please fill out this field");
       }
       // If used on signup form:
     } else if (formType === "signup") {
