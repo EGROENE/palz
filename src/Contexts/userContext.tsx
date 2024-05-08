@@ -53,9 +53,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setPhoneNumberWithoutCountryCode,
     removePhoneNumberWithoutCountryCode,
   ] = useSessionStorage<string | undefined>("phoneNumberWithoutCountryCode", "");
-  /* const [phoneNumber, setPhoneNumber, removePhoneNumber] = useSessionStorage<
-    string | undefined
-  >("phoneNumber", phoneCountryCode + phoneNumberWithoutCountryCode); */
   const [password, setPassword, removePassword] = useSessionStorage<string | undefined>(
     "password",
     ""
