@@ -94,7 +94,9 @@ const EditUserInfoForm = () => {
   // Reset field values to corresponding point in currentUser
   useEffect(() => {
     if (currentUser && currentUser.phoneCountryCode !== "") {
-      handleChangeOfCountryPhoneCode(currentUser.phoneCountryCode);
+      handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
+        currentUser.phoneCountryCode
+      );
     }
     handleEditUserInfoRevert();
   }, []);
@@ -115,7 +117,7 @@ const EditUserInfoForm = () => {
   const handleUpdateProfileInfo = (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
-    e.preventDefault();
+    e.preventDefault(); // prevent page from auto-reloading after submitting edit form
     /* Get most-current allUsers (in case other users have updated their un or email after current user logged in & before they submitted changes to their info).*/
     fetchAllUsers();
     /* If un or email address already exists & doesn't belong to current user, set error for that field saying as much. If not, make patch request w/ updated infos (done below) */
@@ -173,21 +175,20 @@ const EditUserInfoForm = () => {
     setPhoneNumberError("");
   };
 
-  // Call this in every if, else...if statement in handleChangeOfCountryPhoneCode
+  // Call this in every if, else...if statement in handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode
   const handlePhoneFieldError = (
     min: number,
     max: number,
     value: string | undefined
   ): void => {
-    if (
-      value?.trim().length &&
-      !(value?.trim().length >= min && value?.trim().length <= max)
-    ) {
+    if (value?.trim().length) {
       if (min === max) {
         setPhoneNumberError(`Phone number must be ${min} digits long`);
       } else {
         setPhoneNumberError(`Phone number must be ${min}-${max} digits long`);
       }
+    } else if (value?.trim() === "") {
+      setPhoneNumberError("Please select a country");
     } else {
       setPhoneNumberError("");
     }
@@ -201,7 +202,14 @@ const EditUserInfoForm = () => {
 
   // Function sets min/max of phone field & any error, depending on countryCode
   // Call in handlePhoneNumberInput
-  const handleChangeOfCountryPhoneCode = (countryCode: string): void => {
+  const handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode = (
+    countryCode: string
+  ): void => {
+    // If user resets phoneCountryCode to "":
+    if (phoneCountryCode === "") {
+      setPhoneNumberMinAndMaxLength(1, 13);
+      handlePhoneFieldError(1, 13, phoneNumberWithoutCountryCode);
+    }
     if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers3To8DigitsLong.includes(
         countryCode
@@ -622,7 +630,7 @@ const EditUserInfoForm = () => {
       e.target.value.trim().length <= phoneFieldMaxLength;
 
     if (phoneNumberField === "number-without-country-code") {
-      // Set PNWOCC only if it contains only numbers (disallow all other chars)
+      // Set phoneNumberWithoutCountryCode only if it contains only numbers (disallow all other chars)
       if (/^[0-9]*$/.test(e.target.value)) {
         setPhoneNumberWithoutCountryCode(e.target.value);
       }
@@ -637,14 +645,33 @@ const EditUserInfoForm = () => {
       } else {
         setPhoneNumberError("");
       }
+
+      if (phoneCountryCode === "") {
+        setPhoneNumberError("Please select a country");
+      }
+      // Run onChange of country-code field:
     } else {
-      setPhoneNumberError(""); // clear any existing phone-num. error when setting new country code
-      // Remember, e.target.value will be something like: Mexico +52
-      const countryCode = e.target.value.substring(e.target.value.indexOf("+") + 1);
-      const country = e.target.value.substring(0, e.target.value.indexOf("+") - 1);
-      setPhoneCountry(country);
-      setPhoneCountryCode(countryCode);
-      handleChangeOfCountryPhoneCode(countryCode);
+      if (e.target.value === "") {
+        setPhoneNumberError("Please select a country");
+        setPhoneCountry("");
+        setPhoneCountryCode("");
+        if (phoneNumberWithoutCountryCode === "") {
+          setPhoneNumberError("");
+        } else {
+          handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode("");
+        }
+      } else {
+        setPhoneNumberError(""); // clear any existing phone-num. error when setting new country code
+        // Remember, e.target.value will be something like: Mexico +52
+        const countryCode = e.target.value.substring(e.target.value.indexOf("+") + 1);
+        const country = e.target.value.substring(0, e.target.value.indexOf("+") - 1);
+        setPhoneCountry(country);
+        setPhoneCountryCode(countryCode);
+        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(countryCode);
+        if (!phoneNumberWithoutCountryCode?.trim().length) {
+          setPhoneNumberError("Please fill out this field");
+        }
+      }
     }
   };
 
@@ -767,11 +794,9 @@ const EditUserInfoForm = () => {
           <select
             onChange={(e) => handlePhoneNumberInput(e, "country-code")}
             className="form-select"
-            value={`${phoneCountry} +${phoneCountryCode}`}
+            value={phoneCountryCode !== "" ? `${phoneCountry} +${phoneCountryCode}` : ""}
           >
-            <option value="" disabled>
-              Select Country:
-            </option>
+            <option value="">Select Country:</option>
             {countriesAndTheirPhoneCodes.map((country) => (
               <option
                 key={country.country}
