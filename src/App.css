@@ -322,6 +322,50 @@
   color: var(--text-color-opposite);
 }
 
+.country-code-dropdown-button {
+  display: flex;
+  align-items: center;
+  width: 9rem;
+  justify-content: space-around;
+  padding: 0.5rem;
+}
+
+.flag-and-code-container {
+  display: flex;
+  align-items: center;
+}
+
+.country-code-dropdown-button img {
+  width: 1.5rem;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+}
+
+.country-code-dropdown {
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: gray;
+  max-height: 50vh;
+  overflow-y: scroll;
+}
+
+.country-code-dropdown li {
+  display: flex;
+  padding: 0.5rem;
+  font-family: var(--text-font);
+}
+
+.country-code-dropdown li span {
+  margin-left: 0.5rem;
+}
+
+.country-code-dropdown li img {
+  aspect-ratio: 1;
+  width: 1.5rem;
+  border-radius: 4px;
+}
+
 .settings-theme-and-delete-account-container {
   display: flex;
   justify-content: space-around;

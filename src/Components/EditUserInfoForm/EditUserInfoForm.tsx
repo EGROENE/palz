@@ -59,6 +59,8 @@ const EditUserInfoForm = () => {
   const [phoneFieldMinLength, setPhoneFieldMinLength] = useState<number>(1);
   const [phoneFieldMaxLength, setPhoneFieldMaxLength] = useState<number>(13);
 
+  const [showCountryPhoneCodes, setShowCountryPhoneCodes] = useState<boolean>(false);
+
   /* Make sure all login/signup-form errors are cleared, since they shouldn't have error "Please fill out this field" by default on EditUserInfoForm: */
   useEffect(() => {
     setFirstNameError("");
@@ -181,7 +183,10 @@ const EditUserInfoForm = () => {
     max: number,
     value: string | undefined
   ): void => {
-    if (value?.trim().length) {
+    if (
+      value?.trim().length &&
+      !(value?.trim().length >= min && value?.trim().length <= max)
+    ) {
       if (min === max) {
         setPhoneNumberError(`Phone number must be ${min} digits long`);
       } else {
@@ -622,14 +627,17 @@ const EditUserInfoForm = () => {
 
   // Keep this here, as it's only used in this component
   const handlePhoneNumberInput = (
-    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
-    phoneNumberField: "country-code" | "number-without-country-code"
+    phoneNumberField: "country-code" | "number-without-country-code",
+    e?: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
+    dataCountry?: string
   ): void => {
+    console.log(dataCountry);
     const phoneNumberLengthIsWithinRange =
+      e &&
       e.target.value.trim().length >= phoneFieldMinLength &&
       e.target.value.trim().length <= phoneFieldMaxLength;
 
-    if (phoneNumberField === "number-without-country-code") {
+    if (phoneNumberField === "number-without-country-code" && e) {
       // Set phoneNumberWithoutCountryCode only if it contains only numbers (disallow all other chars)
       if (/^[0-9]*$/.test(e.target.value)) {
         setPhoneNumberWithoutCountryCode(e.target.value);
@@ -651,7 +659,8 @@ const EditUserInfoForm = () => {
       }
       // Run onChange of country-code field:
     } else {
-      if (e.target.value === "") {
+      console.log(dataCountry);
+      if (dataCountry === "") {
         setPhoneNumberError("Please select a country");
         setPhoneCountry("");
         setPhoneCountryCode("");
@@ -663,11 +672,15 @@ const EditUserInfoForm = () => {
       } else {
         setPhoneNumberError(""); // clear any existing phone-num. error when setting new country code
         // Remember, e.target.value will be something like: Mexico +52
-        const countryCode = e.target.value.substring(e.target.value.indexOf("+") + 1);
-        const country = e.target.value.substring(0, e.target.value.indexOf("+") - 1);
+        const countryCode = dataCountry?.substring(dataCountry?.indexOf("+") + 1);
+        const country = dataCountry?.substring(0, dataCountry?.indexOf("+") - 1);
         setPhoneCountry(country);
         setPhoneCountryCode(countryCode);
-        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(countryCode);
+        if (countryCode) {
+          handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
+            countryCode
+          );
+        }
         if (!phoneNumberWithoutCountryCode?.trim().length) {
           setPhoneNumberError("Please fill out this field");
         }
@@ -715,7 +728,7 @@ const EditUserInfoForm = () => {
         Feel free to change any of your profile info in the form below. Make sure to save
         changes, else they won't apply
       </h2>
-      <form onSubmit={(e) => handleUpdateProfileInfo(e)} className="login-signup-form">
+      <form className="login-signup-form">
         <div>
           <label>
             <p>First Name:</p>
@@ -791,24 +804,62 @@ const EditUserInfoForm = () => {
         </label>
         <label>
           <p>Phone Number:</p>
-          <select
-            onChange={(e) => handlePhoneNumberInput(e, "country-code")}
-            className="form-select"
-            value={phoneCountryCode !== "" ? `${phoneCountry} +${phoneCountryCode}` : ""}
+          <button
+            className="country-code-dropdown-button"
+            type="button"
+            onClick={() => setShowCountryPhoneCodes(!showCountryPhoneCodes)}
           >
-            <option value="">Select Country:</option>
-            {countriesAndTheirPhoneCodes.map((country) => (
-              <option
-                key={country.country}
-                value={`${country.country} +${country.phoneCode}`}
+            {phoneCountryCode === "" ? (
+              "Select country:"
+            ) : (
+              <div className="flag-and-code-container">
+                <img
+                  src={`/flags/1x1/${
+                    countriesAndTheirPhoneCodes.filter(
+                      (country) => country.country === phoneCountry
+                    )[0].abbreviation
+                  }.svg`}
+                />
+                <span>{`+${
+                  countriesAndTheirPhoneCodes.filter(
+                    (country) => country.country === phoneCountry
+                  )[0].phoneCode
+                }`}</span>
+              </div>
+            )}
+            <i className="fas fa-chevron-down"></i>
+          </button>
+          {showCountryPhoneCodes && (
+            <ul className="country-code-dropdown">
+              {/* 
+              <li
+                data-country=""
+                onClick={() => handlePhoneNumberInput("country-code", undefined, "")}
+                className="form-select"
               >
-                {`${country.country} +${country.phoneCode}`}
-              </option>
-            ))}
-          </select>
+                Select Country:
+              </li> */}
+              {countriesAndTheirPhoneCodes.map((country) => (
+                <li
+                  key={country.country}
+                  onClick={() =>
+                    handlePhoneNumberInput(
+                      "country-code",
+                      undefined,
+                      `${country.country} +${country.phoneCode}`
+                    )
+                  }
+                  data-country={`${country.country} +${country.phoneCode}`}
+                >
+                  <img src={`/flags/1x1/${country.abbreviation}.svg`} />
+                  <span>{`${country.country} +${country.phoneCode}`}</span>
+                </li>
+              ))}
+            </ul>
+          )}
           <input
             autoComplete="off"
-            onChange={(e) => handlePhoneNumberInput(e, "number-without-country-code")}
+            onChange={(e) => handlePhoneNumberInput("number-without-country-code", e)}
             value={phoneNumberWithoutCountryCode}
             type="text"
             placeholder="Edit your phone number"
