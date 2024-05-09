@@ -340,6 +340,7 @@
   width: 1.5rem;
   border-radius: 4px;
   margin-right: 0.5rem;
+  aspect-ratio: 1;
 }
 
 .country-code-dropdown {
