@@ -183,17 +183,12 @@ const EditUserInfoForm = () => {
     max: number,
     value: string | undefined
   ): void => {
-    if (
-      value?.trim().length &&
-      !(value?.trim().length >= min && value?.trim().length <= max)
-    ) {
+    if (!(typeof value === "string" && value?.length >= min && value?.length <= max)) {
       if (min === max) {
         setPhoneNumberError(`Phone number must be ${min} digits long`);
       } else {
         setPhoneNumberError(`Phone number must be ${min}-${max} digits long`);
       }
-    } else if (value?.trim() === "") {
-      setPhoneNumberError("Please select a country");
     } else {
       setPhoneNumberError("");
     }
@@ -208,12 +203,14 @@ const EditUserInfoForm = () => {
   // Function sets min/max of phone field & any error, depending on countryCode
   // Call in handlePhoneNumberInput
   const handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode = (
-    countryCode: string
+    countryCode: string,
+    /* numberWithoutCode used to ensure most-current value is used (this functionality was running 1 step behind phoneNumberWithoutCountryCode state value) */
+    numberWithoutCode?: string
   ): void => {
-    // If user resets phoneCountryCode to "":
+    // If user resets phoneCountryCode to "" (happens when deleting phone number)
     if (phoneCountryCode === "") {
       setPhoneNumberMinAndMaxLength(1, 13);
-      handlePhoneFieldError(1, 13, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(1, 13, numberWithoutCode);
     }
     if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers3To8DigitsLong.includes(
@@ -221,28 +218,28 @@ const EditUserInfoForm = () => {
       )
     ) {
       setPhoneNumberMinAndMaxLength(3, 8);
-      handlePhoneFieldError(3, 8, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(3, 8, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers3To9DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(3, 9);
-      handlePhoneFieldError(3, 9, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(3, 9, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers3To10DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(3, 10);
-      handlePhoneFieldError(3, 10, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(3, 10, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers4DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(4, 4);
-      handlePhoneFieldError(4, 4, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(4, 4, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers4To7DigitsLong.includes(
         countryCode
@@ -251,16 +248,13 @@ const EditUserInfoForm = () => {
       setPhoneNumberMinAndMaxLength(4, 7);
       // Nauru numbers w/o country code can only be 4 or 7 digits long
       if (countryCode === "674") {
-        if (
-          phoneNumberWithoutCountryCode?.length !== 4 &&
-          phoneNumberWithoutCountryCode?.length !== 7
-        ) {
+        if (numberWithoutCode?.length !== 4 && numberWithoutCode?.length !== 7) {
           setPhoneNumberError("Phone number must be 4 or 7 digits long");
         } else {
           setPhoneNumberError("");
         }
       } else {
-        handlePhoneFieldError(4, 7, phoneNumberWithoutCountryCode);
+        handlePhoneFieldError(4, 7, numberWithoutCode);
       }
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers4To9DigitsLong.includes(
@@ -271,16 +265,16 @@ const EditUserInfoForm = () => {
       // Hong Kong numbers w/o country code must be 4, 8, or 9 digits long
       if (countryCode === "852") {
         if (
-          phoneNumberWithoutCountryCode?.length !== 4 &&
-          phoneNumberWithoutCountryCode?.length !== 8 &&
-          phoneNumberWithoutCountryCode?.length !== 9
+          numberWithoutCode?.length !== 4 &&
+          numberWithoutCode?.length !== 8 &&
+          numberWithoutCode?.length !== 9
         ) {
           setPhoneNumberError("Phone number must be 4, 8, or 9 digits long");
         } else {
           setPhoneNumberError("");
         }
       } else {
-        handlePhoneFieldError(4, 9, phoneNumberWithoutCountryCode);
+        handlePhoneFieldError(4, 9, numberWithoutCode);
       }
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers4To11DigitsLong.includes(
@@ -288,35 +282,35 @@ const EditUserInfoForm = () => {
       )
     ) {
       setPhoneNumberMinAndMaxLength(4, 11);
-      handlePhoneFieldError(4, 11, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(4, 11, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers4To12DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(4, 12);
-      handlePhoneFieldError(4, 12, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(4, 12, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers4To13DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(4, 13);
-      handlePhoneFieldError(4, 13, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(4, 13, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers5DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(5, 5);
-      handlePhoneFieldError(5, 5, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(5, 5, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers5To6DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(5, 6);
-      handlePhoneFieldError(5, 6, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(5, 6, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers5To7DigitsLong.includes(
         countryCode
@@ -325,16 +319,13 @@ const EditUserInfoForm = () => {
       setPhoneNumberMinAndMaxLength(5, 7);
       // Vanuatu & Tonga phone numbers w/o country code must be 5 or 7 digits long
       if (countryCode === "676" || countryCode === "678") {
-        if (
-          phoneNumberWithoutCountryCode?.length !== 5 &&
-          phoneNumberWithoutCountryCode?.length !== 7
-        ) {
+        if (numberWithoutCode?.length !== 5 && numberWithoutCode?.length !== 7) {
           setPhoneNumberError("Phone number must be 5 or 7 digits long");
         } else {
           setPhoneNumberError("");
         }
       } else {
-        handlePhoneFieldError(5, 7, phoneNumberWithoutCountryCode);
+        handlePhoneFieldError(5, 7, numberWithoutCode);
       }
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers5To8DigitsLong.includes(
@@ -343,16 +334,13 @@ const EditUserInfoForm = () => {
     ) {
       setPhoneNumberMinAndMaxLength(5, 8);
       if (countryCode === "47") {
-        if (
-          phoneNumberWithoutCountryCode?.length !== 5 &&
-          phoneNumberWithoutCountryCode?.length !== 8
-        ) {
+        if (numberWithoutCode?.length !== 5 && numberWithoutCode?.length !== 8) {
           setPhoneNumberError("Phone number must be 5 or 8 digits long");
         } else {
           setPhoneNumberError("");
         }
       } else {
-        handlePhoneFieldError(5, 8, phoneNumberWithoutCountryCode);
+        handlePhoneFieldError(5, 8, numberWithoutCode);
       }
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers5To9DigitsLong.includes(
@@ -360,56 +348,56 @@ const EditUserInfoForm = () => {
       )
     ) {
       setPhoneNumberMinAndMaxLength(5, 9);
-      handlePhoneFieldError(5, 9, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(5, 9, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers5To10DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(5, 10);
-      handlePhoneFieldError(5, 10, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(5, 10, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers5To12DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(5, 12);
-      handlePhoneFieldError(5, 12, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(5, 12, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers5To13DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(5, 13);
-      handlePhoneFieldError(5, 13, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(5, 13, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers5To15DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(5, 15);
-      handlePhoneFieldError(5, 15, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(5, 15, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers6DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(6, 6);
-      handlePhoneFieldError(6, 6, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(6, 6, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers6To7DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(6, 7);
-      handlePhoneFieldError(6, 7, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(6, 7, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers6To8DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(6, 8);
-      handlePhoneFieldError(6, 8, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(6, 8, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers6To9DigitsLong.includes(
         countryCode
@@ -419,16 +407,16 @@ const EditUserInfoForm = () => {
       // Andorran phone numbers must be 6, 8, or 9 digits long
       if (countryCode === "376") {
         if (
-          phoneNumberWithoutCountryCode?.length !== 6 &&
-          phoneNumberWithoutCountryCode?.length !== 8 &&
-          phoneNumberWithoutCountryCode?.length !== 9
+          numberWithoutCode?.length !== 6 &&
+          numberWithoutCode?.length !== 8 &&
+          numberWithoutCode?.length !== 9
         ) {
           setPhoneNumberError("Phone number must be 6, 8, or 9 digits long");
         } else {
           setPhoneNumberError("");
         }
       } else {
-        handlePhoneFieldError(6, 9, phoneNumberWithoutCountryCode);
+        handlePhoneFieldError(6, 9, numberWithoutCode);
       }
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers6To10DigitsLong.includes(
@@ -436,35 +424,35 @@ const EditUserInfoForm = () => {
       )
     ) {
       setPhoneNumberMinAndMaxLength(6, 10);
-      handlePhoneFieldError(6, 10, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(6, 10, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers6To13DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(6, 13);
-      handlePhoneFieldError(6, 13, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(6, 13, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers6To17DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(6, 17);
-      handlePhoneFieldError(6, 17, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(6, 17, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers7DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(7, 7);
-      handlePhoneFieldError(7, 7, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(7, 7, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers7To8DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(7, 8);
-      handlePhoneFieldError(7, 8, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(7, 8, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers7To9DigitsLong.includes(
         countryCode
@@ -473,16 +461,13 @@ const EditUserInfoForm = () => {
       setPhoneNumberMinAndMaxLength(7, 9);
       // Iceland phone numbers must be 7 or 9 digits long
       if (countryCode === "354") {
-        if (
-          phoneNumberWithoutCountryCode?.length !== 7 &&
-          phoneNumberWithoutCountryCode?.length !== 9
-        ) {
+        if (numberWithoutCode?.length !== 7 && numberWithoutCode?.length !== 9) {
           setPhoneNumberError("Phone number must be 7 or 9 digits long");
         } else {
           setPhoneNumberError("");
         }
       } else {
-        handlePhoneFieldError(7, 9, phoneNumberWithoutCountryCode);
+        handlePhoneFieldError(7, 9, numberWithoutCode);
       }
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers7To10DigitsLong.includes(
@@ -490,7 +475,7 @@ const EditUserInfoForm = () => {
       )
     ) {
       setPhoneNumberMinAndMaxLength(7, 10);
-      handlePhoneFieldError(7, 10, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(7, 10, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers7To11DigitsLong.includes(
         countryCode
@@ -500,16 +485,16 @@ const EditUserInfoForm = () => {
       // El Salvadorean numbers w/o country code can only be 7, 8, or 11 digits long
       if (countryCode === "503") {
         if (
-          phoneNumberWithoutCountryCode?.length !== 7 &&
-          phoneNumberWithoutCountryCode?.length !== 8 &&
-          phoneNumberWithoutCountryCode?.length !== 11
+          numberWithoutCode?.length !== 7 &&
+          numberWithoutCode?.length !== 8 &&
+          numberWithoutCode?.length !== 11
         ) {
           setPhoneNumberError("Number must be 7, 8, or 11 digits long");
         } else {
           setPhoneNumberError("");
         }
       } else {
-        handlePhoneFieldError(7, 11, phoneNumberWithoutCountryCode);
+        handlePhoneFieldError(7, 11, numberWithoutCode);
       }
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers7To13DigitsLong.includes(
@@ -517,21 +502,21 @@ const EditUserInfoForm = () => {
       )
     ) {
       setPhoneNumberMinAndMaxLength(7, 13);
-      handlePhoneFieldError(7, 13, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(7, 13, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers8DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(8, 8);
-      handlePhoneFieldError(8, 8, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(8, 8, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers8To9DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(8, 9);
-      handlePhoneFieldError(8, 9, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(8, 9, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers8To10DigitsLong.includes(
         countryCode
@@ -540,16 +525,13 @@ const EditUserInfoForm = () => {
       setPhoneNumberMinAndMaxLength(8, 10);
       // Colombian numbers w/o country code can only be 8 or 10 digits long
       if (countryCode === "57") {
-        if (
-          phoneNumberWithoutCountryCode?.length !== 8 &&
-          phoneNumberWithoutCountryCode?.length !== 10
-        ) {
+        if (numberWithoutCode?.length !== 8 && numberWithoutCode?.length !== 10) {
           setPhoneNumberError("Phone number must be 8 or 10 digits long");
         } else {
           setPhoneNumberError("");
         }
       } else {
-        handlePhoneFieldError(8, 10, phoneNumberWithoutCountryCode);
+        handlePhoneFieldError(8, 10, numberWithoutCode);
       }
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers8To11DigitsLong.includes(
@@ -559,16 +541,13 @@ const EditUserInfoForm = () => {
       setPhoneNumberMinAndMaxLength(8, 11);
       // Cyprus numbers w/o country code can only be 8 or 11 digits long
       if (countryCode === "357") {
-        if (
-          phoneNumberWithoutCountryCode?.length !== 8 &&
-          phoneNumberWithoutCountryCode?.length !== 11
-        ) {
+        if (numberWithoutCode?.length !== 8 && numberWithoutCode?.length !== 11) {
           setPhoneNumberError("Number must be 8 or 11 digits long");
         } else {
           setPhoneNumberError("");
         }
       } else {
-        handlePhoneFieldError(8, 11, phoneNumberWithoutCountryCode);
+        handlePhoneFieldError(8, 11, numberWithoutCode);
       }
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers8To12DigitsLong.includes(
@@ -576,21 +555,21 @@ const EditUserInfoForm = () => {
       )
     ) {
       setPhoneNumberMinAndMaxLength(8, 12);
-      handlePhoneFieldError(8, 12, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(8, 12, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers9DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(9, 9);
-      handlePhoneFieldError(9, 9, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(9, 9, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers9To10DigitsLong.includes(
         countryCode
       )
     ) {
       setPhoneNumberMinAndMaxLength(9, 10);
-      handlePhoneFieldError(9, 10, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(9, 10, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers9To11DigitsLong.includes(
         countryCode
@@ -599,16 +578,13 @@ const EditUserInfoForm = () => {
       setPhoneNumberMinAndMaxLength(9, 11);
       // Portuguese numbers w/o country code can only be 9 or 11 digits long
       if (countryCode === "351") {
-        if (
-          phoneNumberWithoutCountryCode?.length !== 9 &&
-          phoneNumberWithoutCountryCode?.length !== 11
-        ) {
+        if (numberWithoutCode?.length !== 9 && numberWithoutCode?.length !== 11) {
           setPhoneNumberError("Number must be 9 or 11 digits long");
         } else {
           setPhoneNumberError("");
         }
       } else {
-        handlePhoneFieldError(9, 11, phoneNumberWithoutCountryCode);
+        handlePhoneFieldError(9, 11, numberWithoutCode);
       }
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesWithNumbers10DigitsLong.includes(
@@ -616,12 +592,12 @@ const EditUserInfoForm = () => {
       )
     ) {
       setPhoneNumberMinAndMaxLength(10, 10);
-      handlePhoneFieldError(10, 10, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(10, 10, numberWithoutCode);
     } else if (
       phoneNumberLengthRanges.countryPhoneCodesUpTo11DigitsLong.includes(countryCode)
     ) {
       setPhoneNumberMinAndMaxLength(1, 11);
-      handlePhoneFieldError(1, 11, phoneNumberWithoutCountryCode);
+      handlePhoneFieldError(1, 11, numberWithoutCode);
     }
   };
 
@@ -631,59 +607,36 @@ const EditUserInfoForm = () => {
     e?: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
     dataCountry?: string
   ): void => {
-    console.log(dataCountry);
-    const phoneNumberLengthIsWithinRange =
-      e &&
-      e.target.value.trim().length >= phoneFieldMinLength &&
-      e.target.value.trim().length <= phoneFieldMaxLength;
-
     if (phoneNumberField === "number-without-country-code" && e) {
-      // Set phoneNumberWithoutCountryCode only if it contains only numbers (disallow all other chars)
+      // Set phoneNumberWithoutCountryCode only if input contains only numbers (disallow all other chars)
       if (/^[0-9]*$/.test(e.target.value)) {
         setPhoneNumberWithoutCountryCode(e.target.value);
       }
-      if (!phoneNumberLengthIsWithinRange) {
-        if (phoneFieldMinLength === phoneFieldMaxLength) {
-          setPhoneNumberError(`Phone number must be ${phoneFieldMinLength} digits long`);
-        } else {
-          setPhoneNumberError(
-            `Phone number must be ${phoneFieldMinLength}-${phoneFieldMaxLength} digits long`
-          );
-        }
-      } else {
-        setPhoneNumberError("");
-      }
 
-      if (phoneCountryCode === "") {
-        setPhoneNumberError("Please select a country");
+      handlePhoneFieldError(phoneFieldMinLength, phoneFieldMaxLength, e.target.value);
+
+      if (phoneCountryCode) {
+        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
+          phoneCountryCode,
+          e.target.value
+        );
       }
       // Run onChange of country-code field:
     } else {
-      console.log(dataCountry);
-      if (dataCountry === "") {
-        setPhoneNumberError("Please select a country");
-        setPhoneCountry("");
-        setPhoneCountryCode("");
-        if (phoneNumberWithoutCountryCode === "") {
-          setPhoneNumberError("");
-        } else {
-          handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode("");
-        }
-      } else {
-        setPhoneNumberError(""); // clear any existing phone-num. error when setting new country code
-        // Remember, e.target.value will be something like: Mexico +52
-        const countryCode = dataCountry?.substring(dataCountry?.indexOf("+") + 1);
-        const country = dataCountry?.substring(0, dataCountry?.indexOf("+") - 1);
-        setPhoneCountry(country);
-        setPhoneCountryCode(countryCode);
-        if (countryCode) {
-          handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
-            countryCode
-          );
-        }
-        if (!phoneNumberWithoutCountryCode?.trim().length) {
-          setPhoneNumberError("Please fill out this field");
-        }
+      // Clear phone-without-code field:
+      setPhoneNumberWithoutCountryCode("");
+
+      // Set phoneCountry & phoneCountryCode:
+      // Remember, e.target.value will be something like: Mexico +52
+      const country = dataCountry?.substring(0, dataCountry?.indexOf("+") - 1);
+      const countryCode = dataCountry?.substring(dataCountry?.indexOf("+") + 1);
+      setPhoneCountry(country);
+      setPhoneCountryCode(countryCode);
+      if (countryCode) {
+        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
+          countryCode,
+          ""
+        );
       }
     }
   };
@@ -831,14 +784,6 @@ const EditUserInfoForm = () => {
           </button>
           {showCountryPhoneCodes && (
             <ul className="country-code-dropdown">
-              {/* 
-              <li
-                data-country=""
-                onClick={() => handlePhoneNumberInput("country-code", undefined, "")}
-                className="form-select"
-              >
-                Select Country:
-              </li> */}
               {countriesAndTheirPhoneCodes.map((country) => (
                 <li
                   key={country.country}
