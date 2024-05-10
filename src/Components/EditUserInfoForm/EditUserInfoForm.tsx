@@ -180,6 +180,21 @@ const EditUserInfoForm = () => {
     }
   };
 
+  const handleDeletePhoneNumber = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    e.preventDefault();
+    Requests.deletePhoneNumber(currentUser)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not delete phone number. Please try again.");
+        } else {
+          handleEditUserInfoRevert();
+          toast.success("Phone number deleted");
+          fetchAllUsers();
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   // Function that resets form values to what they are in currentUser
   // Called upon first render of this component or if user cancels changes they made to edit-user-info form
   const handleEditUserInfoRevert = () => {
@@ -778,7 +793,16 @@ const EditUserInfoForm = () => {
           {emailError !== "" && <p className="input-error-message">{emailError}</p>}
         </label>
         <label>
-          <p>Phone Number:</p>
+          <p>
+            Phone Number:{" "}
+            {(phoneCountry !== "" ||
+              phoneCountryCode !== "" ||
+              phoneNumberWithoutCountryCode !== "") && (
+              <span onClick={(e) => handleDeletePhoneNumber(e)} className="remove-data">
+                Remove
+              </span>
+            )}
+          </p>
           <div className="phone-input-elements">
             <div className="country-code-element">
               <button
@@ -847,7 +871,7 @@ const EditUserInfoForm = () => {
         </label>
         <label>
           <p>
-            Password:
+            Password:{" "}
             <span>
               <i
                 onClick={() => setShowPasswordCriteria(!showPasswordCriteria)}
