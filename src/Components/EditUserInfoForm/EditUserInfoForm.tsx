@@ -69,6 +69,7 @@ const EditUserInfoForm = () => {
     setUsernameError("");
     setPasswordError("");
     setConfirmationPasswordError("");
+    setPhoneNumberError("");
   }, []);
 
   // If user data has changed, setCurrentUser:
@@ -93,7 +94,6 @@ const EditUserInfoForm = () => {
     currentUser?.phoneNumberWithoutCountryCode,
   ]);
 
-  // Reset field values to corresponding point in currentUser
   useEffect(() => {
     if (currentUser && currentUser.phoneCountryCode !== "") {
       handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
@@ -187,9 +187,14 @@ const EditUserInfoForm = () => {
         if (!response.ok) {
           toast.error("Could not delete phone number. Please try again.");
         } else {
-          handleEditUserInfoRevert();
+          //handleEditUserInfoRevert();
           toast.success("Phone number deleted");
           fetchAllUsers();
+          setPhoneCountry("");
+          setPhoneCountryCode("");
+          setPhoneNumberWithoutCountryCode("");
+          setShowCountryPhoneCodes(false);
+          setPhoneNumberMinAndMaxLength(1, 13);
         }
       })
       .catch((error) => console.log(error));
@@ -220,7 +225,10 @@ const EditUserInfoForm = () => {
     max: number,
     value: string | undefined
   ): void => {
-    if (!(typeof value === "string" && value?.length >= min && value?.length <= max)) {
+    if (
+      !(typeof value === "string" && value?.length >= min && value?.length <= max) ||
+      phoneCountryCode === ""
+    ) {
       if (min === max) {
         setPhoneNumberError(`Phone number must be ${min} digits long`);
       } else {
@@ -235,6 +243,45 @@ const EditUserInfoForm = () => {
   const setPhoneNumberMinAndMaxLength = (min: number, max: number): void => {
     setPhoneFieldMinLength(min);
     setPhoneFieldMaxLength(max);
+  };
+
+  // Keep this here, as it's only used in this component
+  const handlePhoneNumberInput = (
+    phoneNumberField: "country-code" | "number-without-country-code",
+    e?: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
+    dataCountry?: string
+  ): void => {
+    if (phoneNumberField === "number-without-country-code" && e) {
+      // Set phoneNumberWithoutCountryCode only if input contains only numbers (disallow all other chars)
+      if (/^[0-9]*$/.test(e.target.value)) {
+        setPhoneNumberWithoutCountryCode(e.target.value);
+      }
+
+      handlePhoneFieldError(phoneFieldMinLength, phoneFieldMaxLength, e.target.value);
+
+      if (phoneCountryCode) {
+        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
+          phoneCountryCode,
+          e.target.value
+        );
+      }
+      // Run onChange of country-code field:
+    } else {
+      // Set phoneCountry & phoneCountryCode:
+      // Remember, dataCountry will be something like: Mexico +52
+      const country = dataCountry?.substring(0, dataCountry?.indexOf("+") - 1);
+      const countryCode = dataCountry?.substring(dataCountry?.indexOf("+") + 1);
+      setPhoneCountry(country);
+      setPhoneCountryCode(countryCode);
+
+      // Handle setting of min/max length & error
+      if (countryCode) {
+        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
+          countryCode,
+          phoneNumberWithoutCountryCode
+        );
+      }
+    }
   };
 
   // Function sets min/max of phone field & any error, depending on countryCode
@@ -635,46 +682,6 @@ const EditUserInfoForm = () => {
     ) {
       setPhoneNumberMinAndMaxLength(1, 11);
       handlePhoneFieldError(1, 11, numberWithoutCode);
-    }
-  };
-
-  // Keep this here, as it's only used in this component
-  const handlePhoneNumberInput = (
-    phoneNumberField: "country-code" | "number-without-country-code",
-    e?: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
-    dataCountry?: string
-  ): void => {
-    if (phoneNumberField === "number-without-country-code" && e) {
-      // Set phoneNumberWithoutCountryCode only if input contains only numbers (disallow all other chars)
-      if (/^[0-9]*$/.test(e.target.value)) {
-        setPhoneNumberWithoutCountryCode(e.target.value);
-      }
-
-      handlePhoneFieldError(phoneFieldMinLength, phoneFieldMaxLength, e.target.value);
-
-      if (phoneCountryCode) {
-        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
-          phoneCountryCode,
-          e.target.value
-        );
-      }
-      // Run onChange of country-code field:
-    } else {
-      // Clear phone-without-code field:
-      setPhoneNumberWithoutCountryCode("");
-
-      // Set phoneCountry & phoneCountryCode:
-      // Remember, e.target.value will be something like: Mexico +52
-      const country = dataCountry?.substring(0, dataCountry?.indexOf("+") - 1);
-      const countryCode = dataCountry?.substring(dataCountry?.indexOf("+") + 1);
-      setPhoneCountry(country);
-      setPhoneCountryCode(countryCode);
-      if (countryCode) {
-        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
-          countryCode,
-          ""
-        );
-      }
     }
   };
 
