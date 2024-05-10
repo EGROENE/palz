@@ -808,9 +808,9 @@ const EditUserInfoForm = () => {
         <label>
           <p>
             Phone Number:{" "}
-            {(phoneCountry !== "" ||
-              phoneCountryCode !== "" ||
-              phoneNumberWithoutCountryCode !== "") && (
+            {(currentUser?.phoneCountry !== "" ||
+              currentUser?.phoneCountryCode !== "" ||
+              currentUser?.phoneNumberWithoutCountryCode !== "") && (
               <span onClick={(e) => handleDeletePhoneNumber(e)} className="remove-data">
                 Remove
               </span>
