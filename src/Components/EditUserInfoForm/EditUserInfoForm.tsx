@@ -96,7 +96,7 @@ const EditUserInfoForm = () => {
 
   useEffect(() => {
     if (currentUser && currentUser.phoneCountryCode !== "") {
-      handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
+      handlePhoneFieldMinMaxSettingAndPhoneErrorAfterChangeOfCountryCode(
         currentUser.phoneCountryCode
       );
     }
@@ -219,7 +219,7 @@ const EditUserInfoForm = () => {
     setPhoneNumberError("");
   };
 
-  // Call this in every if, else...if statement in handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode
+  // Call this in every if, else...if statement in handlePhoneFieldMinMaxSettingAndPhoneErrorAfterChangeOfCountryCode
   const handlePhoneFieldError = (
     min: number,
     max: number,
@@ -255,7 +255,7 @@ const EditUserInfoForm = () => {
   const handlePhoneNumberInput = (
     phoneNumberField: "country-code" | "number-without-country-code",
     e?: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
-    dataCountry?: string
+    countryNameAndCode?: string
   ): void => {
     if (phoneNumberField === "number-without-country-code" && e) {
       // Set phoneNumberWithoutCountryCode only if input contains only numbers (disallow all other chars)
@@ -266,7 +266,7 @@ const EditUserInfoForm = () => {
       handlePhoneFieldError(phoneFieldMinLength, phoneFieldMaxLength, e.target.value, "");
 
       if (phoneCountryCode) {
-        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
+        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterChangeOfCountryCode(
           phoneCountryCode,
           e.target.value
         );
@@ -274,15 +274,20 @@ const EditUserInfoForm = () => {
       // Run onChange of country-code field:
     } else {
       // Set phoneCountry & phoneCountryCode:
-      // Remember, dataCountry will be something like: Mexico +52
-      const country = dataCountry?.substring(0, dataCountry?.indexOf("+") - 1);
-      const countryCode = dataCountry?.substring(dataCountry?.indexOf("+") + 1);
+      // Remember, countryNameAndCode will be something like: Mexico +52
+      const country = countryNameAndCode?.substring(
+        0,
+        countryNameAndCode?.indexOf("+") - 1
+      );
+      const countryCode = countryNameAndCode?.substring(
+        countryNameAndCode?.indexOf("+") + 1
+      );
       setPhoneCountry(country);
       setPhoneCountryCode(countryCode);
 
       // Handle setting of min/max length & error
       if (countryCode) {
-        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode(
+        handlePhoneFieldMinMaxSettingAndPhoneErrorAfterChangeOfCountryCode(
           countryCode,
           phoneNumberWithoutCountryCode
         );
@@ -292,7 +297,7 @@ const EditUserInfoForm = () => {
 
   // Function sets min/max of phone field & any error, depending on countryCode
   // Call in handlePhoneNumberInput
-  const handlePhoneFieldMinMaxSettingAndPhoneErrorAfterOnChangeOfCountryCode = (
+  const handlePhoneFieldMinMaxSettingAndPhoneErrorAfterChangeOfCountryCode = (
     countryCode: string,
     /* numberWithoutCode used to ensure most-current value is used (this functionality was running 1 step behind phoneNumberWithoutCountryCode state value) */
     numberWithoutCode?: string
