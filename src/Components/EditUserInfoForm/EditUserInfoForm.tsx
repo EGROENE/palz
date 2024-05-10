@@ -120,15 +120,34 @@ const EditUserInfoForm = () => {
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault(); // prevent page from auto-reloading after submitting edit form
+
     /* Get most-current allUsers (in case other users have updated their un or email after current user logged in & before they submitted changes to their info).*/
     fetchAllUsers();
+
     /* If un or email address already exists & doesn't belong to current user, set error for that field saying as much. If not, make patch request w/ updated infos (done below) */
     const usernameExists =
       allUsers.map((user) => user.username).includes(username) &&
       currentUser?.username !== username;
+
     const emailAddressExists =
       allUsers.map((user) => user.emailAddress).includes(emailAddress) &&
       currentUser?.emailAddress !== emailAddress;
+
+    const fullPhoneNumber =
+      phoneCountryCode && phoneNumberWithoutCountryCode
+        ? phoneCountryCode + phoneNumberWithoutCountryCode
+        : undefined;
+    const phoneNumberExists = fullPhoneNumber
+      ? allUsers
+          .map((user) => {
+            return user.phoneCountryCode + user.phoneNumberWithoutCountryCode;
+          })
+          .includes(fullPhoneNumber) &&
+        currentUser?.phoneCountryCode &&
+        currentUser.phoneNumberWithoutCountryCode &&
+        currentUser?.phoneCountryCode + currentUser?.phoneNumberWithoutCountryCode !==
+          fullPhoneNumber
+      : undefined;
 
     if (usernameExists) {
       setUsernameError("Username already exists");
@@ -136,9 +155,12 @@ const EditUserInfoForm = () => {
     if (emailAddressExists) {
       setEmailError("E-mail address already exists");
     }
+    if (phoneNumberExists) {
+      setPhoneNumberError("Phone number is already in use");
+    }
 
-    // Only if there are no errors, patch changes to user data object:
-    if (areNoSignupOrEditFormErrors) {
+    // Only if there are no errors & infos that must be unique aren't already in use, patch changes to user data object:
+    if (areNoSignupOrEditFormErrors && !phoneNumberExists) {
       Requests.patchUpdatedUserInfo(currentUser, valuesToUpdate)
         .then((response) => {
           if (!response.ok) {
