@@ -878,7 +878,6 @@ const EditUserInfoForm = () => {
                       `${country.country} +${country.phoneCode}`
                     )
                   }
-                  data-country={`${country.country} +${country.phoneCode}`}
                 >
                   <img src={`/flags/1x1/${country.abbreviation}.svg`} />
                   <span>{`${country.country} +${country.phoneCode}`}</span>
