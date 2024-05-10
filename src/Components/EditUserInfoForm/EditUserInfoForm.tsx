@@ -779,31 +779,51 @@ const EditUserInfoForm = () => {
         </label>
         <label>
           <p>Phone Number:</p>
-          <button
-            className="country-code-dropdown-button"
-            type="button"
-            onClick={() => setShowCountryPhoneCodes(!showCountryPhoneCodes)}
-          >
-            {phoneCountryCode === "" ? (
-              "Select country:"
-            ) : (
-              <div className="flag-and-code-container">
-                <img
-                  src={`/flags/1x1/${
-                    countriesAndTheirPhoneCodes.filter(
-                      (country) => country.country === phoneCountry
-                    )[0].abbreviation
-                  }.svg`}
-                />
-                <span>{`+${
-                  countriesAndTheirPhoneCodes.filter(
-                    (country) => country.country === phoneCountry
-                  )[0].phoneCode
-                }`}</span>
-              </div>
-            )}
-            <i className="fas fa-chevron-down"></i>
-          </button>
+          <div className="phone-input-elements">
+            <div className="country-code-element">
+              <button
+                className="country-code-dropdown-button"
+                type="button"
+                onClick={() => setShowCountryPhoneCodes(!showCountryPhoneCodes)}
+              >
+                {phoneCountryCode === "" ? (
+                  "Select country:"
+                ) : (
+                  <div className="flag-and-code-container">
+                    <img
+                      src={`/flags/1x1/${
+                        countriesAndTheirPhoneCodes.filter(
+                          (country) => country.country === phoneCountry
+                        )[0].abbreviation
+                      }.svg`}
+                    />
+                    <span>{`+${
+                      countriesAndTheirPhoneCodes.filter(
+                        (country) => country.country === phoneCountry
+                      )[0].phoneCode
+                    }`}</span>
+                  </div>
+                )}
+                <i className="fas fa-chevron-down"></i>
+              </button>
+            </div>
+            <div className="phone-without-country-code-element">
+              <input
+                autoComplete="off"
+                onChange={(e) => handlePhoneNumberInput("number-without-country-code", e)}
+                value={phoneNumberWithoutCountryCode}
+                type="text"
+                placeholder="Edit your phone number"
+                inputMode="tel"
+                className={phoneNumberError !== "" ? "erroneous-field" : undefined}
+                minLength={phoneFieldMinLength}
+                maxLength={phoneFieldMaxLength}
+              />
+              {phoneNumberError !== "" && (
+                <p className="input-error-message">{phoneNumberError}</p>
+              )}
+            </div>
+          </div>
           {showCountryPhoneCodes && (
             <ul className="country-code-dropdown">
               {countriesAndTheirPhoneCodes.map((country) => (
@@ -823,20 +843,6 @@ const EditUserInfoForm = () => {
                 </li>
               ))}
             </ul>
-          )}
-          <input
-            autoComplete="off"
-            onChange={(e) => handlePhoneNumberInput("number-without-country-code", e)}
-            value={phoneNumberWithoutCountryCode}
-            type="text"
-            placeholder="Edit your phone number"
-            inputMode="tel"
-            className={phoneNumberError !== "" ? "erroneous-field" : undefined}
-            minLength={phoneFieldMinLength}
-            maxLength={phoneFieldMaxLength}
-          />
-          {phoneNumberError !== "" && (
-            <p className="input-error-message">{phoneNumberError}</p>
           )}
         </label>
         <label>

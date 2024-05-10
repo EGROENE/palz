@@ -322,13 +322,31 @@
   color: var(--text-color-opposite);
 }
 
+.phone-input-elements {
+  display: flex;
+}
+
+.country-code-element {
+  display: flex;
+  flex-direction: column;
+  margin-right: 2rem;
+}
+
 .country-code-dropdown-button {
   display: flex;
   align-items: center;
   width: 9rem;
   justify-content: space-around;
   padding: 0.5rem;
-  background-color: gray;
+  background-color: rgb(75, 75, 75);
+}
+
+.phone-without-country-code-element input {
+  width: 17rem;
+}
+
+.phone-without-country-code-element p {
+  margin-left: -2px;
 }
 
 .flag-and-code-container {
@@ -353,9 +371,16 @@
 
 .country-code-dropdown li {
   display: flex;
-  padding: 0.5rem;
+  padding: 0.5rem 0 0.5rem 0.5rem;
   font-family: var(--text-font);
   color: white;
+  width: calc(100% - 0.5rem);
+}
+
+.country-code-dropdown li:hover {
+  cursor: pointer;
+  background-color: rgb(75, 75, 75);
+  opacity: 0.8;
 }
 
 .country-code-dropdown li span {
