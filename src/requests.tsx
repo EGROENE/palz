@@ -126,12 +126,33 @@ const patchUpdatedUserInfo = (
     "username"?: string | undefined;
     "emailAddress"?: string | undefined;
     "password"?: string | undefined;
+    "phoneCountry"?: string | undefined;
+    "phoneCountryCode"?: string | undefined;
+    "phoneNumberWithoutCountryCode"?: string | undefined;
   }
 ): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
   const raw = JSON.stringify(valuesToUpdate);
+
+  return fetch(`http://localhost:3000/users/${user?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
+const deletePhoneNumber = (user: TUser | undefined): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-type", "application/json");
+
+  const raw = JSON.stringify({
+    "phoneCountry": "",
+    "phoneCountryCode": "",
+    "phoneNumberWithoutCountryCode": "",
+  });
 
   return fetch(`http://localhost:3000/users/${user?.id}`, {
     method: "PATCH",
@@ -163,6 +184,7 @@ const Requests = {
   getAllInterests,
   createUser,
   patchUpdatedUserInfo,
+  deletePhoneNumber,
   deleteUser,
 };
 export default Requests;
