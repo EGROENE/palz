@@ -146,7 +146,7 @@ const patchUpdatedUserInfo = (
 
 const deletePhoneNumber = (user: TUser | undefined): Promise<Response> => {
   var myHeaders = new Headers();
-  myHeaders.append("Content-type", "application/json");
+  myHeaders.append("Content-Type", "application/json");
 
   const raw = JSON.stringify({
     "phoneCountry": "",
