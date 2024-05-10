@@ -21,6 +21,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     currentUser,
     setCurrentUser,
     handleWelcomeMessage,
+    fetchAllUsers,
   } = useMainContext();
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
@@ -267,6 +268,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setCurrentUser(undefined);
     }
 
+    /* Get most-current version of allUsers (in case another user has changed their username, so username user inputs may become available or in available. Fetching allUsers onChange of username field ensures most-current data on users exists. This is also checked onSubmit of EditUserInfoForm.) */
+    fetchAllUsers();
+
     const usernameIsTaken: boolean =
       allUsers.filter((user) => user.username === inputUsername).length > 0;
 
@@ -316,6 +320,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     ) {
       setCurrentUser(undefined);
     }
+
+    /* Get most-current version of allUsers (in case another user has changed their email, so email user inputs may become available or in available. Fetching allUsers onChange of email field ensures most-current data on users exists. This is also checked onSubmit of EditUserInfoForm.) */
+    fetchAllUsers();
 
     const emailIsTaken: boolean =
       allUsers.filter(
