@@ -284,7 +284,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       if (usernameIsTaken && inputUsername !== currentUser?.username) {
-        console.log(currentUser?.username);
         setUsernameError("Username is already taken");
       } else if (inputUsername.length < 4) {
         setUsernameError(
