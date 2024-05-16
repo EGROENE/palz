@@ -305,7 +305,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     const inputEmailAddressNoWhitespaces = inputEmailAddress.replace(/\s/g, "");
 
-    setEmailAddress(inputEmailAddressNoWhitespaces);
+    setEmailAddress(inputEmailAddressNoWhitespaces.toLowerCase());
 
     if (
       allSignupOrEditFormFieldsFilled &&
@@ -694,6 +694,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    formatName,
     phoneCountry,
     setPhoneCountry,
     phoneCountryCode,
