@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 const EditUserInfoForm = () => {
   const { currentUser, setCurrentUser, fetchAllUsers, allUsers } = useMainContext();
   const {
+    formatName,
     phoneCountry,
     setPhoneCountry,
     phoneCountryCode,
@@ -71,6 +72,16 @@ const EditUserInfoForm = () => {
     setConfirmationPasswordError("");
     setPhoneNumberError("");
   }, []);
+
+  /* useEffect(() => {
+    setFirstName(currentUser?.firstName);
+    setLastName(currentUser?.lastName);
+    setEmailAddress(currentUser?.emailAddress);
+    setPassword(currentUser?.password);
+    setPhoneCountry(currentUser?.phoneCountry);
+    setPhoneCountryCode(currentUser?.phoneCountryCode);
+    setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
+  }, [currentUser?.firstName, currentUser?.lastName]); */
 
   // If user data has changed, setCurrentUser:
   useEffect(() => {
@@ -161,6 +172,7 @@ const EditUserInfoForm = () => {
 
     // Only if there are no errors & infos that must be unique aren't already in use, patch changes to user data object:
     if (areNoSignupOrEditFormErrors && !phoneNumberExists) {
+      console.log(valuesToUpdate);
       Requests.patchUpdatedUserInfo(currentUser, valuesToUpdate)
         .then((response) => {
           if (!response.ok) {
@@ -169,6 +181,32 @@ const EditUserInfoForm = () => {
             toast.success("Profile info updated");
             // Reset allUsers after patch successfully made:
             fetchAllUsers();
+
+            // Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first)
+            if (valuesToUpdate.firstName) {
+              setFirstName(valuesToUpdate.firstName);
+            }
+            if (valuesToUpdate.lastName) {
+              setLastName(valuesToUpdate.lastName);
+            }
+            if (valuesToUpdate.emailAddress) {
+              setEmailAddress(valuesToUpdate.emailAddress);
+            }
+            if (valuesToUpdate.password) {
+              setPassword(valuesToUpdate.password);
+            }
+            if (valuesToUpdate.phoneCountry) {
+              setPhoneCountry(valuesToUpdate.phoneCountry);
+            }
+            if (valuesToUpdate.phoneCountryCode) {
+              setPhoneCountryCode(valuesToUpdate.phoneCountryCode);
+            }
+            if (valuesToUpdate.phoneNumberWithoutCountryCode) {
+              setPhoneNumberWithoutCountryCode(
+                valuesToUpdate.phoneNumberWithoutCountryCode
+              );
+            }
+
             if (!passwordIsHidden) {
               toggleHidePassword();
             }
@@ -708,9 +746,11 @@ const EditUserInfoForm = () => {
 
   const valuesToUpdate = {
     ...(firstName?.trim() !== "" &&
-      firstName !== currentUser?.firstName && { "firstName": firstName?.trim() }),
+      firstName !== currentUser?.firstName && {
+        firstName: formatName(firstName?.trim()),
+      }),
     ...(lastName?.trim() !== "" &&
-      lastName !== currentUser?.lastName && { lastName: lastName?.trim() }),
+      lastName !== currentUser?.lastName && { lastName: formatName(lastName?.trim()) }),
     ...(username !== "" && username !== currentUser?.username && { username: username }),
     ...(emailAddress !== "" &&
       emailAddress !== currentUser?.emailAddress && {
