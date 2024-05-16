@@ -3,7 +3,6 @@ import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import { useEffect } from "react";
 import NavBar from "../NavBar/NavBar";
-import Sidebar from "../Sidebar/Sidebar";
 import EventCard from "../EventCard/EventCard";
 import { TEvent } from "../../types";
 
@@ -39,9 +38,11 @@ const UserHomepage = () => {
 
   return (
     currentUser && (
-      <div className="user-homepage-container">
+      <div
+        onClick={() => showSidebar && setShowSidebar(false)}
+        className="user-homepage-container"
+      >
         <NavBar />
-        {showSidebar && <Sidebar />}
         {userRSVPDEvents.length ? (
           <div className="upcoming-events-hero">
             <h1>Upcoming Events ({userRSVPDEvents.length})</h1>

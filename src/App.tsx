@@ -2,14 +2,17 @@ import "./App.css";
 import { useEffect } from "react";
 import LoginPage from "./Components/LoginPage/LoginPage";
 import Welcome from "./Components/Welcome/Welcome";
+import Sidebar from "./Components/Sidebar/Sidebar";
 import UserHomepage from "./Components/UserHomepage/UserHomepage";
 import { useMainContext } from "./Hooks/useMainContext";
+import { useUserContext } from "./Hooks/useUserContext";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import Error404 from "./Components/Error404/Error404";
 import UserSettings from "./Components/UserSettings/UserSettings";
 
 function App() {
   const { userCreatedAccount, theme, showWelcomeMessage, currentUser } = useMainContext();
+  const { showSidebar } = useUserContext();
 
   const navigation = useNavigate();
   const currentURL = useLocation().pathname;
@@ -48,6 +51,7 @@ function App() {
 
   return (
     <div className="app" data-theme={theme}>
+      {showSidebar && <Sidebar />}
       <Routes>
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />

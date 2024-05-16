@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
-import Sidebar from "../Sidebar/Sidebar";
 import EditUserInfoForm from "../EditUserInfoForm/EditUserInfoForm";
 import Requests from "../../requests";
 import toast from "react-hot-toast";
@@ -46,9 +45,8 @@ const UserSettings = () => {
   };
 
   return (
-    <>
+    <div onClick={() => showSidebar && setShowSidebar(false)}>
       <NavBar />
-      {showSidebar && <Sidebar />}
       <h1>Settings</h1>
       <EditUserInfoForm />
       <div className="settings-theme-and-delete-account-container">
@@ -70,7 +68,7 @@ const UserSettings = () => {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
