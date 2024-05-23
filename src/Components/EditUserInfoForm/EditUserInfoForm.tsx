@@ -61,6 +61,7 @@ const EditUserInfoForm = () => {
   const [phoneFieldMaxLength, setPhoneFieldMaxLength] = useState<number>(13);
 
   const [showCountryPhoneCodes, setShowCountryPhoneCodes] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   /* Make sure all login/signup-form errors are cleared, since they shouldn't have error "Please fill out this field" by default on EditUserInfoForm: */
   useEffect(() => {
@@ -132,6 +133,8 @@ const EditUserInfoForm = () => {
   ): void => {
     e.preventDefault(); // prevent page from auto-reloading after submitting edit form
 
+    setIsLoading(true);
+
     /* Get most-current allUsers (in case other users have updated their un or email after current user logged in & before they submitted changes to their info).*/
     fetchAllUsers();
 
@@ -172,12 +175,12 @@ const EditUserInfoForm = () => {
 
     // Only if there are no errors & infos that must be unique aren't already in use, patch changes to user data object:
     if (areNoSignupOrEditFormErrors && !phoneNumberExists) {
-      console.log(valuesToUpdate);
       Requests.patchUpdatedUserInfo(currentUser, valuesToUpdate)
         .then((response) => {
           if (!response.ok) {
             toast.error("Could not update profile info. Please try again.");
           } else {
+            setIsLoading(false);
             toast.success("Profile info updated");
             // Reset allUsers after patch successfully made:
             fetchAllUsers();
@@ -781,6 +784,7 @@ const EditUserInfoForm = () => {
           <label>
             <p>First Name:</p>
             <input
+              disabled={isLoading}
               autoComplete="given-name"
               onChange={(e) => handleNameInput(e.target.value, true, "edit-user-info")}
               value={firstName}
@@ -796,6 +800,7 @@ const EditUserInfoForm = () => {
           <label>
             <p>Last Name:</p>
             <input
+              disabled={isLoading}
               autoComplete="family-name"
               onChange={(e) => handleNameInput(e.target.value, false, "edit-user-info")}
               type="text"
@@ -826,6 +831,7 @@ const EditUserInfoForm = () => {
             </p>
           )}
           <input
+            disabled={isLoading}
             autoComplete="username"
             title="Must be 4-20 characters long & contain only alphanumeric characters"
             onChange={(e) => handleUsernameInput(e.target.value, "edit-user-info")}
@@ -840,6 +846,7 @@ const EditUserInfoForm = () => {
         <label>
           <p>E-Mail Address:</p>
           <input
+            disabled={isLoading}
             autoComplete="email"
             onChange={(e) => handleEmailAddressInput(e.target.value, "edit-user-info")}
             value={emailAddress}
@@ -891,6 +898,7 @@ const EditUserInfoForm = () => {
             </div>
             <div className="phone-without-country-code-element">
               <input
+                disabled={isLoading}
                 autoComplete="off"
                 onChange={(e) => handlePhoneNumberInput("number-without-country-code", e)}
                 value={phoneNumberWithoutCountryCode}
@@ -947,6 +955,7 @@ const EditUserInfoForm = () => {
 
           <div className="password-input">
             <input
+              disabled={isLoading}
               autoComplete="off"
               onChange={(e) => handlePasswordInput(e.target.value, "edit-user-info")}
               value={password}
@@ -969,6 +978,7 @@ const EditUserInfoForm = () => {
             <p>Confirm New Password:</p>
             <div className="password-input">
               <input
+                disabled={isLoading}
                 autoComplete="off"
                 onChange={(e) =>
                   handleConfirmationPasswordInput(e.target.value, "edit-user-info")
