@@ -934,11 +934,12 @@ const EditUserInfoForm = () => {
             <ul className="country-code-dropdown">
               {resortedCountries.map((country) => (
                 <li
-                {/* Put border on bottom of last option of preferred countries (US for now) */}
                   style={
-                    country.country === "United States" ? {
-                      "borderBottom": "1px dotted white",
-                    } : undefined
+                    country.country === "United States"
+                      ? {
+                          "borderBottom": "1px dotted white",
+                        }
+                      : undefined
                   }
                   key={country.country}
                   onClick={() =>
