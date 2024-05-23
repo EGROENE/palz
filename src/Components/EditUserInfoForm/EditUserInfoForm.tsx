@@ -74,16 +74,6 @@ const EditUserInfoForm = () => {
     setPhoneNumberError("");
   }, []);
 
-  /* useEffect(() => {
-    setFirstName(currentUser?.firstName);
-    setLastName(currentUser?.lastName);
-    setEmailAddress(currentUser?.emailAddress);
-    setPassword(currentUser?.password);
-    setPhoneCountry(currentUser?.phoneCountry);
-    setPhoneCountryCode(currentUser?.phoneCountryCode);
-    setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
-  }, [currentUser?.firstName, currentUser?.lastName]); */
-
   // If user data has changed, setCurrentUser:
   useEffect(() => {
     if (username === currentUser?.username) {
