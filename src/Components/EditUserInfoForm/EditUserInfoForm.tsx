@@ -773,6 +773,22 @@ const EditUserInfoForm = () => {
       }),
   };
 
+  const getResortedCountries = (): {
+    country: string;
+    abbreviation: string;
+    phoneCode: string;
+  }[] => {
+    const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
+    const preferredCountries = countriesAndTheirPhoneCodes.filter((country) =>
+      topCountryNames.includes(country.country)
+    );
+    const restOfCountries = countriesAndTheirPhoneCodes.filter(
+      (country) => !topCountryNames.includes(country.country)
+    );
+    return preferredCountries.concat(restOfCountries);
+  };
+  const resortedCountries = getResortedCountries();
+
   return (
     <>
       <h2>
@@ -916,8 +932,14 @@ const EditUserInfoForm = () => {
           </div>
           {showCountryPhoneCodes && (
             <ul className="country-code-dropdown">
-              {countriesAndTheirPhoneCodes.map((country) => (
+              {resortedCountries.map((country) => (
                 <li
+                {/* Put border on bottom of last option of preferred countries (US for now) */}
+                  style={
+                    country.country === "United States" ? {
+                      "borderBottom": "1px dotted white",
+                    } : undefined
+                  }
                   key={country.country}
                   onClick={() =>
                     handlePhoneNumberInput(
