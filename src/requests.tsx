@@ -98,12 +98,12 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "city": "",
     "stateProvince": "",
     "country": "",
-    "phoneNumber": "",
+    "phoneCountry": "",
+    "phoneCountryCode": "",
+    "phoneNumberWithoutCountryCode": "",
     "instagram": "",
     "facebook": "",
     "x": "",
-    "telegram": "",
-    "whatsapp": "",
     "profileImage": newUserData.profileImage,
     "about": "",
     "subscriptionType": "",
@@ -204,6 +204,6 @@ const Requests = {
   patchUpdatedUserInfo,
   deletePhoneNumber,
   deleteUser,
-  deleteLocation
+  deleteLocation,
 };
 export default Requests;
