@@ -14,8 +14,6 @@ export type TUser = {
   instagram: string;
   facebook: string;
   x: string;
-  telegram: string;
-  whatsapp: string;
   profileImage: string;
   about: string;
   friends: string[];
@@ -180,4 +178,16 @@ export type TUserContext = {
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   logout: () => void;
+  facebook: string | undefined;
+  setFacebook: React.Dispatch<React.SetStateAction<string | undefined>>;
+  facebookError: string;
+  setFacebookError: React.Dispatch<React.SetStateAction<string>>;
+  instagram: string | undefined;
+  setInstagram: React.Dispatch<React.SetStateAction<string | undefined>>;
+  instagramError: string;
+  setInstagramError: React.Dispatch<React.SetStateAction<string>>;
+  x: string | undefined;
+  setX: React.Dispatch<React.SetStateAction<string | undefined>>;
+  xError: string;
+  setXError: React.Dispatch<React.SetStateAction<string>>;
 };

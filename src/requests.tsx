@@ -186,6 +186,33 @@ const deleteLocation = (user: TUser | undefined): Promise<Response> => {
   });
 };
 
+const deleteSocialMedium = (
+  user: TUser | undefined,
+  medium: "facebook" | "instagram" | "x"
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const getRaw = () => {
+    if (medium === "facebook") {
+      return JSON.stringify({ "facebook": "" });
+    } else if (medium === "instagram") {
+      return JSON.stringify({ "instagram": "" });
+    } else if (medium === "x") {
+      return JSON.stringify({ "x": "" });
+    }
+  };
+
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/users/${user?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const deleteUser = (userID: number | string | undefined): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json");
@@ -211,5 +238,6 @@ const Requests = {
   deletePhoneNumber,
   deleteUser,
   deleteLocation,
+  deleteSocialMedium,
 };
 export default Requests;

@@ -63,6 +63,18 @@ const EditUserInfoForm = () => {
     setShowPasswordCriteria,
     showUsernameCriteria,
     setShowUsernameCriteria,
+    facebook,
+    setFacebook,
+    facebookError,
+    setFacebookError,
+    instagram,
+    setInstagram,
+    instagramError,
+    setInstagramError,
+    x,
+    setX,
+    xError,
+    setXError,
   } = useUserContext();
 
   const [phoneFieldMinLength, setPhoneFieldMinLength] = useState<number>(1);
@@ -107,6 +119,9 @@ const EditUserInfoForm = () => {
     currentUser?.city,
     currentUser?.stateProvince,
     currentUser?.country,
+    /* currentUser?.facebook,
+    currentUser?.instagram,
+    currentUser?.x, */
   ]);
 
   useEffect(() => {
@@ -221,6 +236,16 @@ const EditUserInfoForm = () => {
             if (valuesToUpdate.country) {
               setUserCountry(valuesToUpdate.country);
             }
+            if (valuesToUpdate.facebook) {
+              setFacebook(valuesToUpdate.facebook);
+            }
+            if (valuesToUpdate.instagram) {
+              console.log(valuesToUpdate);
+              setInstagram(valuesToUpdate.instagram);
+            }
+            if (valuesToUpdate.x) {
+              setX(valuesToUpdate.x);
+            }
 
             if (!passwordIsHidden) {
               toggleHidePassword();
@@ -233,25 +258,7 @@ const EditUserInfoForm = () => {
     }
   };
 
-  const handleDeletePhoneNumber = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    e.preventDefault();
-    Requests.deletePhoneNumber(currentUser)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not delete phone number. Please try again.");
-        } else {
-          toast.success("Phone number deleted");
-          fetchAllUsers();
-          setPhoneCountry("");
-          setPhoneCountryCode("");
-          setPhoneNumberWithoutCountryCode("");
-          setShowCountryPhoneCodes(false);
-          setPhoneNumberMinAndMaxLength(1, 13);
-        }
-      })
-      .catch((error) => console.log(error));
-  };
-
+  // INPUT HANDLERS (and methods used in them):
   // Function that resets form values to what they are in currentUser
   // Called upon first render of this component or if user cancels changes they made to edit-user-info form
   const handleEditUserInfoRevert = () => {
@@ -273,6 +280,12 @@ const EditUserInfoForm = () => {
     setPhoneCountryCode(currentUser?.phoneCountryCode);
     setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
     setPhoneNumberError("");
+    setFacebook(currentUser?.facebook);
+    setFacebookError("");
+    setInstagram(currentUser?.instagram);
+    setInstagramError("");
+    setX(currentUser?.x);
+    setXError("");
   };
 
   // Call this in every if, else...if statement in handlePhoneFieldMinMaxSettingAndPhoneErrorAfterChangeOfCountryCode
@@ -796,6 +809,39 @@ const EditUserInfoForm = () => {
     }
   };
 
+  const handleSocialsInput = (
+    medium: "fb" | "insta" | "x",
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (medium === "fb") {
+      setFacebook(e.target.value.replace(/\s/g, "").toLowerCase());
+    } else if (medium === "insta") {
+      setInstagram(e.target.value.replace(/\s/g, "").toLowerCase());
+    } else if (medium === "x") {
+      setX(e.target.value.replace(/\s/g, "").toLowerCase());
+    }
+  };
+
+  // METHODS TO DELETE THINGS:
+  const handleDeletePhoneNumber = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    e.preventDefault();
+    Requests.deletePhoneNumber(currentUser)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not delete phone number. Please try again.");
+        } else {
+          toast.success("Phone number deleted");
+          fetchAllUsers();
+          setPhoneCountry("");
+          setPhoneCountryCode("");
+          setPhoneNumberWithoutCountryCode("");
+          setShowCountryPhoneCodes(false);
+          setPhoneNumberMinAndMaxLength(1, 13);
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   const handleDeleteLocation = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     e.preventDefault();
     Requests.deleteLocation(currentUser)
@@ -813,6 +859,30 @@ const EditUserInfoForm = () => {
       .catch((error) => console.log(error));
   };
 
+  const handleDeleteSocialMedium = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    medium: "facebook" | "instagram" | "x"
+  ) => {
+    e.preventDefault();
+    Requests.deleteSocialMedium(currentUser, medium)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error(`Could not delete ${medium.toUpperCase()} link. Please try again.`);
+        } else {
+          toast.success(`${medium.toUpperCase()} link deleted`);
+          fetchAllUsers();
+          if (medium === "facebook") {
+            setFacebook("");
+          } else if (medium === "instagram") {
+            setInstagram("");
+          } else if (medium === "x") {
+            setX("");
+          }
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   const userInfoEdited: boolean =
     firstName?.trim() !== currentUser?.firstName ||
     lastName?.trim() !== currentUser?.lastName ||
@@ -824,7 +894,10 @@ const EditUserInfoForm = () => {
     phoneNumberWithoutCountryCode !== currentUser?.phoneNumberWithoutCountryCode ||
     userCity !== currentUser?.city ||
     userState !== currentUser?.stateProvince ||
-    userCountry !== currentUser?.country;
+    userCountry !== currentUser?.country ||
+    facebook !== currentUser?.facebook ||
+    instagram !== currentUser?.instagram ||
+    x !== currentUser?.x;
 
   const valuesToUpdate = {
     ...(firstName?.trim() !== "" &&
@@ -858,6 +931,10 @@ const EditUserInfoForm = () => {
       }),
     ...(userCountry !== "" &&
       userCountry !== currentUser?.country && { country: userCountry }),
+    ...(facebook !== "" && facebook !== currentUser?.facebook && { facebook: facebook }),
+    ...(instagram !== "" &&
+      instagram !== currentUser?.instagram && { instagram: instagram }),
+    ...(x !== "" && x !== currentUser?.x && { x: x }),
   };
 
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
@@ -983,7 +1060,7 @@ const EditUserInfoForm = () => {
               type="button"
               onClick={() => setShowCountryPhoneCodes(!showCountryPhoneCodes)}
             >
-              {phoneCountryCode === "" ? (
+              {phoneCountryCode === "" && phoneCountry === "" ? (
                 "Select country:"
               ) : (
                 <div className="flag-and-code-container">
@@ -1151,6 +1228,65 @@ const EditUserInfoForm = () => {
               )}
           </div>
         </label>
+        <div className="socials-inputs-container">
+          <label>
+            <p>
+              Facebook:{" "}
+              {currentUser?.facebook !== "" && (
+                <span
+                  onClick={(e) => handleDeleteSocialMedium(e, "facebook")}
+                  className="remove-data"
+                >
+                  Remove
+                </span>
+              )}
+            </p>
+            <input
+              type="url"
+              value={facebook}
+              onChange={(e) => handleSocialsInput("fb", e)}
+              placeholder="Link to Facebook account"
+            ></input>
+          </label>
+          <label>
+            <p>
+              Instagram:{" "}
+              {currentUser?.instagram !== "" && (
+                <span
+                  onClick={(e) => handleDeleteSocialMedium(e, "instagram")}
+                  className="remove-data"
+                >
+                  Remove
+                </span>
+              )}
+            </p>
+            <input
+              type="url"
+              value={instagram}
+              onChange={(e) => handleSocialsInput("insta", e)}
+              placeholder="Link to Instagram account"
+            ></input>
+          </label>
+          <label>
+            <p>
+              X:{" "}
+              {currentUser?.x !== "" && (
+                <span
+                  onClick={(e) => handleDeleteSocialMedium(e, "x")}
+                  className="remove-data"
+                >
+                  Remove
+                </span>
+              )}
+            </p>
+            <input
+              type="url"
+              value={x}
+              onChange={(e) => handleSocialsInput("x", e)}
+              placeholder="Link to X account"
+            ></input>
+          </label>
+        </div>
         <label>
           <p>
             Password:{" "}

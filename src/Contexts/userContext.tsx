@@ -30,6 +30,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
 
   /* Some values kept in session storage so that they can be used to autofill fields on edit-user-info form. Due to input handler functions setting these & not currentUser._____, currentUser.______ isn't used to do so, but will rather be set when user saves changes to their data object in the DB by submitting the edit-user-info form & allUsers is refetched. */
+
+  /* USAGE: Each of these will need to:
+  1. be set to existing currentUser data in handleSignupOrLoginFormSubmission, whether logging in or signing up
+  2. exported in values from this context; set in handleUpdateProfileInfo if value changed on edit form 
+  3. in handleEditUserInfoRevert, set to corresponding currentUser data point, and its error message reset, if applicable 
+  4. reckoned with inside userInfoEdited
+  5. added to valuesToUpdate
+  6. be used in any appropriate handler functions
+  7. added to body inside patchUpdatedUserInfo */
   const [firstName, setFirstName, removeFirstName] = useSessionStorage<
     string | undefined
   >("firstName", "");
@@ -58,6 +67,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     "password",
     ""
   );
+  const [confirmationPassword, setConfirmationPassword] = useState<string>("");
   const [userCity, setUserCity, removeUserCity] = useSessionStorage<string | undefined>(
     "city",
     ""
@@ -68,8 +78,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [userCountry, setUserCountry, removeUserCountry] = useSessionStorage<
     string | undefined
   >("country", "");
-  const [locationError, setLocationError] = useState<string>("");
-  const [confirmationPassword, setConfirmationPassword] = useState<string>("");
+  const [facebook, setFacebook, removeFacebook] = useSessionStorage<string | undefined>(
+    "facebook",
+    ""
+  );
+  const [instagram, setInstagram, removeInstagram] = useSessionStorage<
+    string | undefined
+  >("instagram", "");
+  const [x, setX, removeX] = useSessionStorage<string | undefined>("x", "");
+
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
   const [showPasswordCriteria, setShowPasswordCriteria] = useState<boolean>(false);
   const [showUsernameCriteria, setShowUsernameCriteria] = useState<boolean>(false);
@@ -89,9 +106,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [passwordError, setPasswordError] = useState<string>(
     "Please fill out this field"
   );
+  const [locationError, setLocationError] = useState<string>("");
   const [confirmationPasswordError, setConfirmationPasswordError] = useState<string>(
     "Please fill out this field"
   );
+  const [facebookError, setFacebookError] = useState<string>("");
+  const [instagramError, setInstagramError] = useState<string>("");
+  const [xError, setXError] = useState<string>("");
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
   const getCapitalizedWord = (word: string | undefined): string => {
@@ -167,8 +188,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     instagram: "",
     facebook: "",
     x: "",
-    telegram: "",
-    whatsapp: "",
     profileImage:
       "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.iC6w-uAguv7_8AQJvWl7kAHaHa%26pid%3DApi&f=1&ipt=e28f6633e3153114f06c264e9a038281b7f36831fc29639194ac586d588d75b2&ipo=images",
     friends: [],
@@ -197,6 +216,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     removeUserCity();
     removeUserState();
     removeUserCountry();
+    removeFacebook();
+    removeInstagram();
+    removeX();
     setShowErrors(false);
     setShowUsernameCriteria(false);
     setShowPasswordCriteria(false);
@@ -669,6 +691,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setPhoneCountry(userData.phoneCountry);
       setPhoneCountryCode(userData.phoneCountryCode);
       setPhoneNumberWithoutCountryCode(userData.phoneNumberWithoutCountryCode);
+      setUserCity(userData.city);
+      setUserState(userData.stateProvince);
+      setUserCountry(userData.country);
+      setFacebook(userData.facebook);
+      setInstagram(userData.instagram);
+      setX(userData.x);
     } else {
       setUserCreatedAccount(false);
       if (emailAddress !== "") {
@@ -686,6 +714,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setUserCity(currentUser?.city);
       setUserState(currentUser?.stateProvince);
       setUserCountry(currentUser?.country);
+      setFacebook(currentUser?.facebook);
+      setInstagram(currentUser?.instagram);
+      setX(currentUser?.x);
     }
     setFirstNameError("");
     setLastNameError("");
@@ -712,6 +743,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    facebook,
+    setFacebook,
+    facebookError,
+    setFacebookError,
+    instagram,
+    setInstagram,
+    instagramError,
+    setInstagramError,
+    x,
+    setX,
+    xError,
+    setXError,
     formatName,
     phoneCountry,
     setPhoneCountry,

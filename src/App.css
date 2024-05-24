@@ -414,7 +414,8 @@
   display: flex;
 }
 
-.location-input:first-child ~ * {
+.location-input:first-child ~ *,
+.socials-inputs-container label:first-child ~ * {
   margin-left: 2rem;
 }
 
@@ -431,6 +432,16 @@
 
 .location-countries-dropdown .country-dropdown-button {
   width: 12rem;
+}
+
+.socials-inputs-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.socials-inputs-container label {
+  margin: 0;
+  width: 20rem;
 }
 
 .settings-theme-and-delete-account-container {
