@@ -310,6 +310,7 @@
 .remove-data {
   color: red;
   font-size: 0.75rem;
+  font-family: var(--text-font);
 }
 
 .remove-data:hover {
