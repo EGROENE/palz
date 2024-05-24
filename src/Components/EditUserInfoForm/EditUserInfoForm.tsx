@@ -288,7 +288,9 @@ const EditUserInfoForm = () => {
       (countryCode === "" &&
         !(typeof value === "string" && value?.length >= min && value?.length <= max))
     ) {
-      if (min === max) {
+      if (!value?.length && countryCode === "") {
+        setPhoneNumberError("");
+      } else if (min === max) {
         setPhoneNumberError(`Phone number must be ${min} digits long`);
       } else {
         setPhoneNumberError(`Phone number must be ${min}-${max} digits long`);
