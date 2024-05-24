@@ -162,6 +162,24 @@ const deletePhoneNumber = (user: TUser | undefined): Promise<Response> => {
   });
 };
 
+const deleteLocation = (user: TUser | undefined): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const raw = JSON.stringify({
+    "city": "",
+    "stateProvince": "",
+    "country": "",
+  });
+
+  return fetch(`http://localhost:3000/users/${user?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const deleteUser = (userID: number | string | undefined): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json");
@@ -186,5 +204,6 @@ const Requests = {
   patchUpdatedUserInfo,
   deletePhoneNumber,
   deleteUser,
+  deleteLocation
 };
 export default Requests;

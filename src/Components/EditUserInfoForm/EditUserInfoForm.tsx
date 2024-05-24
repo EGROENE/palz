@@ -240,7 +240,6 @@ const EditUserInfoForm = () => {
         if (!response.ok) {
           toast.error("Could not delete phone number. Please try again.");
         } else {
-          //handleEditUserInfoRevert();
           toast.success("Phone number deleted");
           fetchAllUsers();
           setPhoneCountry("");
@@ -349,39 +348,6 @@ const EditUserInfoForm = () => {
           phoneNumberWithoutCountryCode
         );
       }
-    }
-  };
-
-  const handleCityStateCountryInput = (
-    locationType: "city" | "state" | "country",
-    country?: string,
-    e?: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    // Error handling; if one field is filled out, but at least one other isn't, set error:
-    if (
-      (e?.target.value &&
-        e?.target.value !== "" &&
-        (userState === "" || userCountry === "")) ||
-      (e?.target.value &&
-        e?.target.value !== "" &&
-        (userCity === "" || userCountry === "")) ||
-      (country !== "" && (userCity === "" || userState === ""))
-    ) {
-      setLocationError("Please fill out all 3 location fields");
-    } else {
-      setLocationError("");
-    }
-
-    // Set appropriate state values based on field in question:
-    if (e) {
-      if (locationType === "city") {
-        setUserCity(e.target.value);
-      } else if (locationType === "state") {
-        setUserState(e.target.value);
-      }
-    } else {
-      setShowUserLocationCountries(false); // Hide countries dropdown once one is selected
-      setUserCountry(country);
     }
   };
 
@@ -786,6 +752,56 @@ const EditUserInfoForm = () => {
     }
   };
 
+  const handleCityStateCountryInput = (
+    locationType: "city" | "state" | "country",
+    country?: string,
+    e?: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    // Error handling; if one field is filled out, but at least one other isn't, set error:
+    if (
+      (e?.target.value &&
+        e?.target.value !== "" &&
+        (userState === "" || userCountry === "")) ||
+      (e?.target.value &&
+        e?.target.value !== "" &&
+        (userCity === "" || userCountry === "")) ||
+      (country !== "" && (userCity === "" || userState === ""))
+    ) {
+      setLocationError("Please fill out all 3 location fields");
+    } else {
+      setLocationError("");
+    }
+
+    // Set appropriate state values based on field in question:
+    if (e) {
+      if (locationType === "city") {
+        setUserCity(e.target.value);
+      } else if (locationType === "state") {
+        setUserState(e.target.value);
+      }
+    } else {
+      setShowUserLocationCountries(false); // Hide countries dropdown once one is selected
+      setUserCountry(country);
+    }
+  };
+
+  const handleDeleteLocation = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    e.preventDefault();
+    Requests.deleteLocation(currentUser)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not delete location. Please try again.");
+        } else {
+          toast.success("Location deleted");
+          fetchAllUsers();
+          setUserCity("");
+          setUserState("");
+          setUserCountry("");
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   const userInfoEdited: boolean =
     firstName?.trim() !== currentUser?.firstName ||
     lastName?.trim() !== currentUser?.lastName ||
@@ -1095,6 +1111,30 @@ const EditUserInfoForm = () => {
                 </ul>
               )}
             </div>
+            {currentUser?.city !== "" &&
+              currentUser?.stateProvince !== "" &&
+              currentUser?.country !== "" && (
+                <span
+                  style={
+                    !showUserLocationCountries
+                      ? {
+                          "maxHeight": "73.56",
+                          "display": "flex",
+                          "alignItems": "flex-end",
+                        }
+                      : {
+                          "maxHeight": "73.56",
+                          "display": "flex",
+                          "alignItems": "flex-end",
+                          "marginLeft": "-11rem",
+                        }
+                  }
+                  onClick={(e) => handleDeleteLocation(e)}
+                  className="remove-data"
+                >
+                  Remove
+                </span>
+              )}
           </div>
           {locationError !== "" && <p>{locationError}</p>}
         </label>
