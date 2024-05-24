@@ -810,12 +810,12 @@ const EditUserInfoForm = () => {
   };
 
   const handleSocialsInput = (
-    medium: "fb" | "insta" | "x",
+    medium: "facebook" | "instagram" | "x",
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (medium === "fb") {
+    if (medium === "facebook") {
       setFacebook(e.target.value.replace(/\s/g, "").toLowerCase());
-    } else if (medium === "insta") {
+    } else if (medium === "instagram") {
       setInstagram(e.target.value.replace(/\s/g, "").toLowerCase());
     } else if (medium === "x") {
       setX(e.target.value.replace(/\s/g, "").toLowerCase());
@@ -1244,7 +1244,7 @@ const EditUserInfoForm = () => {
             <input
               type="url"
               value={facebook}
-              onChange={(e) => handleSocialsInput("fb", e)}
+              onChange={(e) => handleSocialsInput("facebook", e)}
               placeholder="Link to Facebook account"
             ></input>
           </label>
@@ -1263,7 +1263,7 @@ const EditUserInfoForm = () => {
             <input
               type="url"
               value={instagram}
-              onChange={(e) => handleSocialsInput("insta", e)}
+              onChange={(e) => handleSocialsInput("instagram", e)}
               placeholder="Link to Instagram account"
             ></input>
           </label>
