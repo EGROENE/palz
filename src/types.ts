@@ -136,6 +136,14 @@ export type TUserContext = {
   setPasswordError: React.Dispatch<React.SetStateAction<string>>;
   confirmationPassword: string;
   setConfirmationPassword: React.Dispatch<React.SetStateAction<string>>;
+  userCity: string | undefined;
+  setUserCity: React.Dispatch<React.SetStateAction<string | undefined>>;
+  userState: string | undefined;
+  setUserState: React.Dispatch<React.SetStateAction<string | undefined>>;
+  userCountry: string | undefined;
+  setUserCountry: React.Dispatch<React.SetStateAction<string | undefined>>;
+  locationError: string;
+  setLocationError: React.Dispatch<React.SetStateAction<string>>;
   confirmationPasswordError: string;
   setConfirmationPasswordError: React.Dispatch<React.SetStateAction<string>>;
   areNoSignupOrEditFormErrors: boolean;

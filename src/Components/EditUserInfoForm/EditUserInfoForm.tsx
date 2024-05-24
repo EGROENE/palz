@@ -11,6 +11,14 @@ import toast from "react-hot-toast";
 const EditUserInfoForm = () => {
   const { currentUser, setCurrentUser, fetchAllUsers, allUsers } = useMainContext();
   const {
+    userCity,
+    setUserCity,
+    userState,
+    setUserState,
+    userCountry,
+    setUserCountry,
+    locationError,
+    setLocationError,
     formatName,
     phoneCountry,
     setPhoneCountry,
@@ -61,6 +69,8 @@ const EditUserInfoForm = () => {
   const [phoneFieldMaxLength, setPhoneFieldMaxLength] = useState<number>(13);
 
   const [showCountryPhoneCodes, setShowCountryPhoneCodes] = useState<boolean>(false);
+  const [showUserLocationCountries, setShowUserLocationCountries] =
+    useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   /* Make sure all login/signup-form errors are cleared, since they shouldn't have error "Please fill out this field" by default on EditUserInfoForm: */
@@ -94,6 +104,9 @@ const EditUserInfoForm = () => {
     currentUser?.phoneCountry,
     currentUser?.phoneCountryCode,
     currentUser?.phoneNumberWithoutCountryCode,
+    currentUser?.city,
+    currentUser?.stateProvince,
+    currentUser?.country,
   ]);
 
   useEffect(() => {
@@ -199,6 +212,15 @@ const EditUserInfoForm = () => {
                 valuesToUpdate.phoneNumberWithoutCountryCode
               );
             }
+            if (valuesToUpdate.city) {
+              setUserCity(valuesToUpdate.city);
+            }
+            if (valuesToUpdate.stateProvince) {
+              setUserState(valuesToUpdate.stateProvince);
+            }
+            if (valuesToUpdate.country) {
+              setUserCountry(valuesToUpdate.country);
+            }
 
             if (!passwordIsHidden) {
               toggleHidePassword();
@@ -244,6 +266,10 @@ const EditUserInfoForm = () => {
     setEmailError("");
     setPassword(currentUser?.password);
     setPasswordError("");
+    setUserCity(currentUser?.city);
+    setUserState(currentUser?.stateProvince);
+    setUserCountry(currentUser?.country);
+    setLocationError("");
     setPhoneCountry(currentUser?.phoneCountry);
     setPhoneCountryCode(currentUser?.phoneCountryCode);
     setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
@@ -285,7 +311,7 @@ const EditUserInfoForm = () => {
   // Keep this here, as it's only used in this component
   const handlePhoneNumberInput = (
     phoneNumberField: "country-code" | "number-without-country-code",
-    e?: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
+    e?: React.ChangeEvent<HTMLInputElement>,
     countryNameAndCode?: string
   ): void => {
     if (phoneNumberField === "number-without-country-code" && e) {
@@ -323,6 +349,39 @@ const EditUserInfoForm = () => {
           phoneNumberWithoutCountryCode
         );
       }
+    }
+  };
+
+  const handleCityStateCountryInput = (
+    locationType: "city" | "state" | "country",
+    country?: string,
+    e?: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    // Error handling; if one field is filled out, but at least one other isn't, set error:
+    if (
+      (e?.target.value &&
+        e?.target.value !== "" &&
+        (userState === "" || userCountry === "")) ||
+      (e?.target.value &&
+        e?.target.value !== "" &&
+        (userCity === "" || userCountry === "")) ||
+      (country !== "" && (userCity === "" || userState === ""))
+    ) {
+      setLocationError("Please fill out all 3 location fields");
+    } else {
+      setLocationError("");
+    }
+
+    // Set appropriate state values based on field in question:
+    if (e) {
+      if (locationType === "city") {
+        setUserCity(e.target.value);
+      } else if (locationType === "state") {
+        setUserState(e.target.value);
+      }
+    } else {
+      setShowUserLocationCountries(false); // Hide countries dropdown once one is selected
+      setUserCountry(country);
     }
   };
 
@@ -735,7 +794,10 @@ const EditUserInfoForm = () => {
     password !== currentUser?.password ||
     phoneCountry !== currentUser?.phoneCountry ||
     phoneCountryCode !== currentUser?.phoneCountryCode ||
-    phoneNumberWithoutCountryCode !== currentUser?.phoneNumberWithoutCountryCode;
+    phoneNumberWithoutCountryCode !== currentUser?.phoneNumberWithoutCountryCode ||
+    userCity !== currentUser?.city ||
+    userState !== currentUser?.stateProvince ||
+    userCountry !== currentUser?.country;
 
   const valuesToUpdate = {
     ...(firstName?.trim() !== "" &&
@@ -761,23 +823,37 @@ const EditUserInfoForm = () => {
       phoneNumberWithoutCountryCode !== currentUser?.phoneNumberWithoutCountryCode && {
         phoneNumberWithoutCountryCode: phoneNumberWithoutCountryCode,
       }),
+    ...(userCity !== "" &&
+      userCity !== currentUser?.city && { city: formatName(userCity?.trim()) }),
+    ...(userState !== "" &&
+      userState !== currentUser?.stateProvince && {
+        stateProvince: formatName(userState?.trim()),
+      }),
+    ...(userCountry !== "" &&
+      userCountry !== currentUser?.country && { country: userCountry }),
   };
+
+  const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
+  const preferredCountries = countriesAndTheirPhoneCodes.filter((country) =>
+    topCountryNames.includes(country.country)
+  );
+  const restOfCountries = countriesAndTheirPhoneCodes.filter(
+    (country) => !topCountryNames.includes(country.country)
+  );
 
   const getResortedCountries = (): {
     country: string;
     abbreviation: string;
     phoneCode: string;
   }[] => {
-    const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
-    const preferredCountries = countriesAndTheirPhoneCodes.filter((country) =>
-      topCountryNames.includes(country.country)
-    );
-    const restOfCountries = countriesAndTheirPhoneCodes.filter(
-      (country) => !topCountryNames.includes(country.country)
-    );
     return preferredCountries.concat(restOfCountries);
   };
   const resortedCountries = getResortedCountries();
+
+  const isLocationError: boolean =
+    (userCity === "" && (userState !== "" || userCountry !== "")) ||
+    (userState === "" && (userCity !== "" || userCountry !== "")) ||
+    (userCountry === "" && (userCity !== "" || userState !== ""));
 
   return (
     <>
@@ -875,33 +951,31 @@ const EditUserInfoForm = () => {
             )}
           </p>
           <div className="phone-input-elements">
-            <div className="country-code-element">
-              <button
-                className="country-code-dropdown-button"
-                type="button"
-                onClick={() => setShowCountryPhoneCodes(!showCountryPhoneCodes)}
-              >
-                {phoneCountryCode === "" ? (
-                  "Select country:"
-                ) : (
-                  <div className="flag-and-code-container">
-                    <img
-                      src={`/flags/1x1/${
-                        countriesAndTheirPhoneCodes.filter(
-                          (country) => country.country === phoneCountry
-                        )[0].abbreviation
-                      }.svg`}
-                    />
-                    <span>{`+${
+            <button
+              className="country-dropdown-button"
+              type="button"
+              onClick={() => setShowCountryPhoneCodes(!showCountryPhoneCodes)}
+            >
+              {phoneCountryCode === "" ? (
+                "Select country:"
+              ) : (
+                <div className="flag-and-code-container">
+                  <img
+                    src={`/flags/1x1/${
                       countriesAndTheirPhoneCodes.filter(
                         (country) => country.country === phoneCountry
-                      )[0].phoneCode
-                    }`}</span>
-                  </div>
-                )}
-                <i className="fas fa-chevron-down"></i>
-              </button>
-            </div>
+                      )[0].abbreviation
+                    }.svg`}
+                  />
+                  <span>{`+${
+                    countriesAndTheirPhoneCodes.filter(
+                      (country) => country.country === phoneCountry
+                    )[0].phoneCode
+                  }`}</span>
+                </div>
+              )}
+              <i className="fas fa-chevron-down"></i>
+            </button>
             <div className="phone-without-country-code-element">
               <input
                 disabled={isLoading}
@@ -946,6 +1020,83 @@ const EditUserInfoForm = () => {
               ))}
             </ul>
           )}
+        </label>
+        <label>
+          <div className="location-inputs">
+            <div className="location-input">
+              <p>City:</p>
+              <input
+                inputMode="numeric"
+                className={isLocationError ? "erroneous-field" : undefined}
+                onChange={(e) => handleCityStateCountryInput("city", undefined, e)}
+                disabled={isLoading}
+                placeholder="Enter a city"
+                value={userCity}
+              ></input>
+            </div>
+            <div className="location-input">
+              <p>State/Province:</p>
+              <input
+                inputMode="numeric"
+                className={isLocationError ? "erroneous-field" : undefined}
+                onChange={(e) => handleCityStateCountryInput("state", undefined, e)}
+                disabled={isLoading}
+                placeholder="Enter a state/province"
+                value={userState}
+              ></input>
+            </div>
+            <div className="location-countries-dropdown">
+              <p>Country:</p>
+              <button
+                className="country-dropdown-button"
+                type="button"
+                onClick={() => setShowUserLocationCountries(!showUserLocationCountries)}
+              >
+                {userCountry === "" ? (
+                  "Select country:"
+                ) : (
+                  <div className="flag-and-code-container">
+                    <img
+                      src={`/flags/1x1/${
+                        countriesAndTheirPhoneCodes.filter(
+                          (country) => country.country === userCountry
+                        )[0].abbreviation
+                      }.svg`}
+                    />
+                    <span>{`${
+                      countriesAndTheirPhoneCodes.filter(
+                        (country) => country.country === userCountry
+                      )[0].country
+                    }`}</span>
+                  </div>
+                )}
+                <i className="fas fa-chevron-down"></i>
+              </button>
+              {showUserLocationCountries && (
+                <ul className="country-code-dropdown">
+                  {resortedCountries.map((country) => (
+                    <li
+                      style={
+                        country.country === "United States"
+                          ? {
+                              "borderBottom": "1px dotted white",
+                            }
+                          : undefined
+                      }
+                      key={country.country}
+                      onClick={() =>
+                        handleCityStateCountryInput("country", country.country, undefined)
+                      }
+                    >
+                      <img src={`/flags/1x1/${country.abbreviation}.svg`} />
+                      <span>{`${country.country}`}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+          {locationError !== "" && <p>{locationError}</p>}
         </label>
         <label>
           <p>

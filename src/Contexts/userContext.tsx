@@ -58,6 +58,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     "password",
     ""
   );
+  const [userCity, setUserCity, removeUserCity] = useSessionStorage<string | undefined>(
+    "city",
+    ""
+  );
+  const [userState, setUserState, removeUserState] = useSessionStorage<
+    string | undefined
+  >("state", "");
+  const [userCountry, setUserCountry, removeUserCountry] = useSessionStorage<
+    string | undefined
+  >("country", "");
+  const [locationError, setLocationError] = useState<string>("");
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
   const [showPasswordCriteria, setShowPasswordCriteria] = useState<boolean>(false);
@@ -183,6 +194,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setPasswordError("Please fill out this field");
     setConfirmationPassword("");
     setConfirmationPasswordError("Please fill out this field");
+    removeUserCity();
+    removeUserState();
+    removeUserCountry();
     setShowErrors(false);
     setShowUsernameCriteria(false);
     setShowPasswordCriteria(false);
@@ -618,7 +632,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     emailError === "" &&
     passwordError === "" &&
     confirmationPasswordError === "" &&
-    phoneNumberError === "";
+    phoneNumberError === "" &&
+    locationError === "";
 
   const allSignupOrEditFormFieldsFilled: boolean =
     firstName !== "" &&
@@ -668,6 +683,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setPhoneCountry(currentUser?.phoneCountry);
       setPhoneCountryCode(currentUser?.phoneCountryCode);
       setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
+      setUserCity(currentUser?.city);
+      setUserState(currentUser?.stateProvince);
+      setUserCountry(currentUser?.country);
     }
     setFirstNameError("");
     setLastNameError("");
@@ -738,6 +756,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setConfirmationPassword,
     confirmationPasswordError,
     setConfirmationPasswordError,
+    userCity,
+    setUserCity,
+    userState,
+    setUserState,
+    userCountry,
+    setUserCountry,
     areNoSignupOrEditFormErrors,
     areNoLoginErrors,
     allSignupOrEditFormFieldsFilled,
@@ -755,6 +779,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setShowPasswordCriteria,
     showUsernameCriteria,
     setShowUsernameCriteria,
+    locationError,
+    setLocationError,
   };
 
   return (
