@@ -87,6 +87,7 @@
 .login-signup-form p,
 .input-error-message {
   margin: 0.1rem;
+  letter-spacing: 0.5px;
 }
 
 .erroneous-field {
