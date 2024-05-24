@@ -307,6 +307,16 @@
   font-family: var(--text-font);
 }
 
+.remove-data {
+  color: red;
+  font-size: 0.75rem;
+}
+
+.remove-data:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
 .edit-user-info-form-options {
   display: flex;
   justify-content: space-evenly;
@@ -326,19 +336,24 @@
   display: flex;
 }
 
+.phone-input-elements button ~ div {
+  margin-left: 2rem;
+}
+
 .country-code-element {
   display: flex;
   flex-direction: column;
   margin-right: 2rem;
 }
 
-.country-code-dropdown-button {
+.country-dropdown-button {
   display: flex;
   align-items: center;
   width: 9rem;
   justify-content: space-around;
   padding: 0.5rem;
   background-color: rgb(75, 75, 75);
+  max-height: 40.38px;
 }
 
 .phone-without-country-code-element input {
@@ -354,7 +369,7 @@
   align-items: center;
 }
 
-.country-code-dropdown-button img {
+.country-dropdown-button img {
   width: 1.5rem;
   border-radius: 4px;
   margin-right: 0.5rem;
@@ -391,6 +406,29 @@
   aspect-ratio: 1;
   width: 1.5rem;
   border-radius: 4px;
+}
+
+.location-inputs {
+  display: flex;
+}
+
+.location-input:first-child ~ * {
+  margin-left: 2rem;
+}
+
+.location-input {
+  display: flex;
+  flex-direction: column;
+}
+
+.location-countries-dropdown {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.location-countries-dropdown .country-dropdown-button {
+  width: 12rem;
 }
 
 .settings-theme-and-delete-account-container {
