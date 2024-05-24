@@ -119,9 +119,9 @@ const EditUserInfoForm = () => {
     currentUser?.city,
     currentUser?.stateProvince,
     currentUser?.country,
-    /* currentUser?.facebook,
+    currentUser?.facebook,
     currentUser?.instagram,
-    currentUser?.x, */
+    currentUser?.x,
   ]);
 
   useEffect(() => {
@@ -809,16 +809,31 @@ const EditUserInfoForm = () => {
     }
   };
 
+  // Function to check if URL is valid
+  const isValidUrl = (url: string): boolean => {
+    try {
+      new URL(url);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  };
+
   const handleSocialsInput = (
     medium: "facebook" | "instagram" | "x",
     e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  ): void => {
+    const inputNoWhitespaces = e.target.value.replace(/\s/g, "").toLowerCase();
+    const isValidLink = isValidUrl(inputNoWhitespaces.toLowerCase());
     if (medium === "facebook") {
-      setFacebook(e.target.value.replace(/\s/g, "").toLowerCase());
+      setFacebook(inputNoWhitespaces.toLowerCase());
+      isValidLink ? setFacebookError("") : setFacebookError("Invalid link");
     } else if (medium === "instagram") {
-      setInstagram(e.target.value.replace(/\s/g, "").toLowerCase());
+      setInstagram(inputNoWhitespaces.toLowerCase());
+      isValidLink ? setInstagramError("") : setInstagramError("Invalid link");
     } else if (medium === "x") {
-      setX(e.target.value.replace(/\s/g, "").toLowerCase());
+      setX(inputNoWhitespaces.toLowerCase());
+      isValidLink ? setXError("") : setXError("Invalid link");
     }
   };
 
@@ -1246,7 +1261,9 @@ const EditUserInfoForm = () => {
               value={facebook}
               onChange={(e) => handleSocialsInput("facebook", e)}
               placeholder="Link to Facebook account"
+              className={facebookError !== "" ? "erroneous-field" : undefined}
             ></input>
+            {facebookError !== "" && <p>{facebookError}</p>}
           </label>
           <label>
             <p>
@@ -1265,7 +1282,9 @@ const EditUserInfoForm = () => {
               value={instagram}
               onChange={(e) => handleSocialsInput("instagram", e)}
               placeholder="Link to Instagram account"
+              className={instagramError !== "" ? "erroneous-field" : undefined}
             ></input>
+            {instagramError !== "" && <p>{instagramError}</p>}
           </label>
           <label>
             <p>
@@ -1284,7 +1303,9 @@ const EditUserInfoForm = () => {
               value={x}
               onChange={(e) => handleSocialsInput("x", e)}
               placeholder="Link to X account"
+              className={xError !== "" ? "erroneous-field" : undefined}
             ></input>
+            {xError !== "" && <p>{xError}</p>}
           </label>
         </div>
         <label>
