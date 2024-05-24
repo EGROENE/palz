@@ -761,11 +761,11 @@ const EditUserInfoForm = () => {
   ) => {
     const inputTrimmed = e?.target.value.trim();
 
-    // Set appropriate state values based on field in question:
-    // Throw error when a field is filled out and at least one other is not. Otherwise, no error thrown.
+    // Set appropriate state values based on field in question
+    // Throw error when a location field is filled out and at least one other is not. Otherwise, no error thrown.
     if (e) {
       if (locationType === "city") {
-        setUserCity(e.target.value);
+        setUserCity(e.target.value.replace(/[0-9]/g, ""));
         if (
           (inputTrimmed !== "" && (userState === "" || userCountry === "")) ||
           (inputTrimmed === "" && (userState !== "" || userCountry !== ""))
@@ -775,7 +775,7 @@ const EditUserInfoForm = () => {
           setLocationError("");
         }
       } else if (locationType === "state") {
-        setUserState(e.target.value);
+        setUserState(e.target.value.replace(/[0-9]/g, ""));
         if (
           (inputTrimmed !== "" && (userCity === "" || userCountry === "")) ||
           (inputTrimmed === "" && (userCity !== "" || userCountry !== ""))
