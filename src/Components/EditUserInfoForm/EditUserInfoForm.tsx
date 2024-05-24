@@ -5,7 +5,7 @@ import { useUserContext } from "../../Hooks/useUserContext";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useEffect, useState } from "react";
 import Requests from "../../requests";
-import { countriesAndTheirPhoneCodes, phoneNumberLengthRanges } from "../../constants";
+import { countries, phoneNumberLengthRanges } from "../../constants";
 import toast from "react-hot-toast";
 
 const EditUserInfoForm = () => {
@@ -852,10 +852,10 @@ const EditUserInfoForm = () => {
   };
 
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
-  const preferredCountries = countriesAndTheirPhoneCodes.filter((country) =>
+  const preferredCountries = countries.filter((country) =>
     topCountryNames.includes(country.country)
   );
-  const restOfCountries = countriesAndTheirPhoneCodes.filter(
+  const restOfCountries = countries.filter(
     (country) => !topCountryNames.includes(country.country)
   );
 
@@ -980,19 +980,20 @@ const EditUserInfoForm = () => {
                 <div className="flag-and-code-container">
                   <img
                     src={`/flags/1x1/${
-                      countriesAndTheirPhoneCodes.filter(
-                        (country) => country.country === phoneCountry
-                      )[0].abbreviation
+                      countries.filter((country) => country.country === phoneCountry)[0]
+                        .abbreviation
                     }.svg`}
                   />
                   <span>{`+${
-                    countriesAndTheirPhoneCodes.filter(
-                      (country) => country.country === phoneCountry
-                    )[0].phoneCode
+                    countries.filter((country) => country.country === phoneCountry)[0]
+                      .phoneCode
                   }`}</span>
                 </div>
               )}
-              <i className="fas fa-chevron-down"></i>
+              <i
+                style={showCountryPhoneCodes ? { "rotate": "180deg" } : undefined}
+                className="fas fa-chevron-down"
+              ></i>
             </button>
             <div className="phone-without-country-code-element">
               <input
@@ -1077,19 +1078,20 @@ const EditUserInfoForm = () => {
                   <div className="flag-and-code-container">
                     <img
                       src={`/flags/1x1/${
-                        countriesAndTheirPhoneCodes.filter(
-                          (country) => country.country === userCountry
-                        )[0].abbreviation
+                        countries.filter((country) => country.country === userCountry)[0]
+                          .abbreviation
                       }.svg`}
                     />
                     <span>{`${
-                      countriesAndTheirPhoneCodes.filter(
-                        (country) => country.country === userCountry
-                      )[0].country
+                      countries.filter((country) => country.country === userCountry)[0]
+                        .country
                     }`}</span>
                   </div>
                 )}
-                <i className="fas fa-chevron-down"></i>
+                <i
+                  style={showUserLocationCountries ? { "rotate": "180deg" } : undefined}
+                  className="fas fa-chevron-down"
+                ></i>
               </button>
               {showUserLocationCountries && (
                 <ul className="country-code-dropdown">

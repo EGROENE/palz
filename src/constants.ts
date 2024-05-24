@@ -1,5 +1,5 @@
 // export this to EditUserInfoForm and map through for the options in select
-export const countriesAndTheirPhoneCodes = [
+export const countries = [
   { country: "Afghanistan", abbreviation: "af", phoneCode: "93" },
   { country: "Aland Islands", abbreviation: "ax", phoneCode: "358" },
   { country: "Albania", abbreviation: "al", phoneCode: "355" },
