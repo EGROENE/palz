@@ -129,6 +129,12 @@ const patchUpdatedUserInfo = (
     "phoneCountry"?: string | undefined;
     "phoneCountryCode"?: string | undefined;
     "phoneNumberWithoutCountryCode"?: string | undefined;
+    "city"?: string | undefined;
+    "stateProvince"?: string | undefined;
+    "country"?: string | undefined;
+    "facebook"?: string | undefined;
+    "instagram"?: string | undefined;
+    "x"?: string | undefined;
   }
 ): Promise<Response> => {
   const myHeaders = new Headers();
