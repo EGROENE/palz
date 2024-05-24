@@ -759,31 +759,40 @@ const EditUserInfoForm = () => {
     country?: string,
     e?: React.ChangeEvent<HTMLInputElement>
   ) => {
-    // Error handling; if one field is filled out, but at least one other isn't, set error:
-    if (
-      (e?.target.value &&
-        e?.target.value !== "" &&
-        (userState === "" || userCountry === "")) ||
-      (e?.target.value &&
-        e?.target.value !== "" &&
-        (userCity === "" || userCountry === "")) ||
-      (country !== "" && (userCity === "" || userState === ""))
-    ) {
-      setLocationError("Please fill out all 3 location fields");
-    } else {
-      setLocationError("");
-    }
+    const inputTrimmed = e?.target.value.trim();
 
     // Set appropriate state values based on field in question:
+    // Throw error when a field is filled out and at least one other is not. Otherwise, no error thrown.
     if (e) {
       if (locationType === "city") {
         setUserCity(e.target.value);
+        if (
+          (inputTrimmed !== "" && (userState === "" || userCountry === "")) ||
+          (inputTrimmed === "" && (userState !== "" || userCountry !== ""))
+        ) {
+          setLocationError("Please fill out all 3 location fields");
+        } else {
+          setLocationError("");
+        }
       } else if (locationType === "state") {
         setUserState(e.target.value);
+        if (
+          (inputTrimmed !== "" && (userCity === "" || userCountry === "")) ||
+          (inputTrimmed === "" && (userCity !== "" || userCountry !== ""))
+        ) {
+          setLocationError("Please fill out all 3 location fields");
+        } else {
+          setLocationError("");
+        }
       }
     } else {
       setShowUserLocationCountries(false); // Hide countries dropdown once one is selected
       setUserCountry(country);
+      if (country && country !== "" && (userCity === "" || userState === "")) {
+        setLocationError("Please fill out all 3 location fields");
+      } else {
+        setLocationError("");
+      }
     }
   };
 
