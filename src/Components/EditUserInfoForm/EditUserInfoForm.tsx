@@ -1051,6 +1051,7 @@ const EditUserInfoForm = () => {
                 placeholder="Enter a city"
                 value={userCity}
               ></input>
+              {locationError !== "" && <p>{locationError}</p>}
             </div>
             <div className="location-input">
               <p>State/Province:</p>
@@ -1120,15 +1121,15 @@ const EditUserInfoForm = () => {
                   style={
                     !showUserLocationCountries
                       ? {
-                          "maxHeight": "73.56",
+                          "maxHeight": "73.56px",
                           "display": "flex",
                           "alignItems": "flex-end",
                         }
                       : {
-                          "maxHeight": "73.56",
+                          "maxHeight": "73.56px",
                           "display": "flex",
                           "alignItems": "flex-end",
-                          "marginLeft": "-11rem",
+                          "marginLeft": "-10rem",
                         }
                   }
                   onClick={(e) => handleDeleteLocation(e)}
@@ -1138,7 +1139,6 @@ const EditUserInfoForm = () => {
                 </span>
               )}
           </div>
-          {locationError !== "" && <p>{locationError}</p>}
         </label>
         <label>
           <p>
