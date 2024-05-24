@@ -1054,7 +1054,7 @@ const EditUserInfoForm = () => {
             <div className="location-input">
               <p>City:</p>
               <input
-                inputMode="numeric"
+                inputMode="text"
                 className={isLocationError ? "erroneous-field" : undefined}
                 onChange={(e) => handleCityStateCountryInput("city", undefined, e)}
                 disabled={isLoading}
@@ -1066,7 +1066,7 @@ const EditUserInfoForm = () => {
             <div className="location-input">
               <p>State/Province:</p>
               <input
-                inputMode="numeric"
+                inputMode="text"
                 className={isLocationError ? "erroneous-field" : undefined}
                 onChange={(e) => handleCityStateCountryInput("state", undefined, e)}
                 disabled={isLoading}
