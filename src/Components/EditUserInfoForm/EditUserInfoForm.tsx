@@ -74,6 +74,10 @@ const EditUserInfoForm = () => {
     setX,
     xError,
     setXError,
+    userAbout,
+    setUserAbout,
+    userAboutError,
+    setUserAboutError,
   } = useUserContext();
 
   const [phoneFieldMinLength, setPhoneFieldMinLength] = useState<number>(1);
@@ -110,6 +114,7 @@ const EditUserInfoForm = () => {
     currentUser?.facebook,
     currentUser?.instagram,
     currentUser?.x,
+    currentUser?.about,
   ]);
 
   // Function that resets form values to what they are in currentUser
@@ -140,6 +145,8 @@ const EditUserInfoForm = () => {
     setInstagramError("");
     setX(currentUser?.x);
     setXError("");
+    setUserAbout(currentUser?.about);
+    setUserAboutError("");
   };
 
   // If currentUser has given a phone code, set limits for length of rest of number based on that
@@ -266,6 +273,9 @@ const EditUserInfoForm = () => {
             }
             if (valuesToUpdate.x) {
               setX(valuesToUpdate.x);
+            }
+            if (valuesToUpdate.about) {
+              setUserAbout(valuesToUpdate.about);
             }
 
             // Hide PW again if unhidden on submit of edit-user-info form
@@ -830,6 +840,19 @@ const EditUserInfoForm = () => {
     }
   };
 
+  const handleUserAboutInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const charLimit = 200;
+    const input = e.target.value.replace(/\s+/g, " ");
+    setUserAbout(input);
+    if (input.trim().length <= charLimit) {
+      setUserAboutError("");
+    } else {
+      setUserAboutError(
+        `Maximum ${charLimit} characters allowed (${input.length} characters input)`
+      );
+    }
+  };
+
   // METHODS TO DELETE THINGS:
   const handleDeletePhoneNumber = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     e.preventDefault();
@@ -924,7 +947,8 @@ const EditUserInfoForm = () => {
     locationError === "" &&
     facebookError === "" &&
     instagramError === "" &&
-    xError === "";
+    xError === "" &&
+    userAboutError === "";
 
   const userInfoEdited: boolean =
     firstName?.trim() !== currentUser?.firstName ||
@@ -940,7 +964,8 @@ const EditUserInfoForm = () => {
     userCountry !== currentUser?.country ||
     facebook !== currentUser?.facebook ||
     instagram !== currentUser?.instagram ||
-    x !== currentUser?.x;
+    x !== currentUser?.x ||
+    userAbout !== currentUser?.about;
 
   // If a data point is updated, it is used in PATCH request to update its part of the user's data object in DB
   const valuesToUpdate = {
@@ -979,6 +1004,8 @@ const EditUserInfoForm = () => {
     ...(instagram !== "" &&
       instagram !== currentUser?.instagram && { instagram: instagram }),
     ...(x !== "" && x !== currentUser?.x && { x: x }),
+    ...(userAbout !== "" &&
+      userAbout !== currentUser?.about && { about: userAbout?.trim() }),
   };
 
   return (
@@ -1316,6 +1343,16 @@ const EditUserInfoForm = () => {
             {xError !== "" && <p>{xError}</p>}
           </label>
         </div>
+        <label>
+          <p>About:</p>
+          <textarea
+            value={userAbout}
+            className={userAboutError !== "" ? "erroneous-field" : undefined}
+            onChange={(e) => handleUserAboutInput(e)}
+            placeholder="Tell the world a bit about yourself (max 100 characters)"
+          ></textarea>
+          {userAboutError !== "" && <p>{userAboutError}</p>}
+        </label>
         <label>
           <p>
             Password:{" "}

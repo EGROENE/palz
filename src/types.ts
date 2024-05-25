@@ -190,4 +190,8 @@ export type TUserContext = {
   setX: React.Dispatch<React.SetStateAction<string | undefined>>;
   xError: string;
   setXError: React.Dispatch<React.SetStateAction<string>>;
+  userAbout: string | undefined;
+  setUserAbout: React.Dispatch<React.SetStateAction<string | undefined>>;
+  userAboutError: string;
+  setUserAboutError: React.Dispatch<React.SetStateAction<string>>;
 };

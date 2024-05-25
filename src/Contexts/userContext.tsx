@@ -86,6 +86,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     string | undefined
   >("instagram", "");
   const [x, setX, removeX] = useSessionStorage<string | undefined>("x", "");
+  const [userAbout, setUserAbout, removeUserAbout] = useSessionStorage<
+    string | undefined
+  >("userAbout", "");
 
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
   const [showPasswordCriteria, setShowPasswordCriteria] = useState<boolean>(false);
@@ -113,6 +116,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [facebookError, setFacebookError] = useState<string>("");
   const [instagramError, setInstagramError] = useState<string>("");
   const [xError, setXError] = useState<string>("");
+  const [userAboutError, setUserAboutError] = useState<string>("");
+
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
   const getCapitalizedWord = (word: string | undefined): string => {
@@ -196,6 +201,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     interests: [],
   };
 
+  // Called when user switches b/t login & signup forms & when user logs out
+  // Only necessary to reset errors for fields on login and/or signup form
   const resetFormFieldsAndErrors = (): void => {
     removeFirstName();
     setFirstNameError("Please fill out this field");
@@ -219,6 +226,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     removeFacebook();
     removeInstagram();
     removeX();
+    removeUserAbout();
     setShowErrors(false);
     setShowUsernameCriteria(false);
     setShowPasswordCriteria(false);
@@ -684,6 +692,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setFacebook(userData.facebook);
       setInstagram(userData.instagram);
       setX(userData.x);
+      setUserAbout(userData.about);
     } else {
       setUserCreatedAccount(false);
       if (emailAddress !== "") {
@@ -704,6 +713,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setFacebook(currentUser?.facebook);
       setInstagram(currentUser?.instagram);
       setX(currentUser?.x);
+      setUserAbout(currentUser?.about);
     }
     setFirstNameError("");
     setLastNameError("");
@@ -811,6 +821,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setShowUsernameCriteria,
     locationError,
     setLocationError,
+    userAbout,
+    setUserAbout,
+    userAboutError,
+    setUserAboutError,
   };
 
   return (

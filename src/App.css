@@ -451,6 +451,13 @@
   width: 20rem;
 }
 
+.login-signup-form textarea {
+  width: 43%;
+  height: 5rem;
+  letter-spacing: 1.5px;
+  padding: 0.5rem;
+}
+
 .settings-theme-and-delete-account-container {
   display: flex;
   justify-content: space-around;
