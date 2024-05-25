@@ -202,7 +202,7 @@ const EditUserInfoForm = () => {
             // Reset allUsers after patch successfully made:
             fetchAllUsers();
 
-            // Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first)
+            /* Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first, which won't happen) */
             if (valuesToUpdate.firstName) {
               setFirstName(valuesToUpdate.firstName);
             }
@@ -246,6 +246,7 @@ const EditUserInfoForm = () => {
               setX(valuesToUpdate.x);
             }
 
+            // Hide PW again if unhidden on submit of edit-user-info form
             if (!passwordIsHidden) {
               toggleHidePassword();
             }
@@ -897,6 +898,28 @@ const EditUserInfoForm = () => {
       .catch((error) => console.log(error));
   };
 
+  // Create array in which certain countries from countries array will be placed on top
+  const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
+  const preferredCountries = countries.filter((country) =>
+    topCountryNames.includes(country.country)
+  );
+  const restOfCountries = countries.filter(
+    (country) => !topCountryNames.includes(country.country)
+  );
+  const getResortedCountries = (): {
+    country: string;
+    abbreviation: string;
+    phoneCode: string;
+  }[] => {
+    return preferredCountries.concat(restOfCountries);
+  };
+  const resortedCountries = getResortedCountries();
+
+  const isLocationError: boolean =
+    (userCity === "" && (userState !== "" || userCountry !== "")) ||
+    (userState === "" && (userCity !== "" || userCountry !== "")) ||
+    (userCountry === "" && (userCity !== "" || userState !== ""));
+
   const areNoEditFormErrors: boolean =
     firstNameError === "" &&
     lastNameError === "" &&
@@ -926,6 +949,7 @@ const EditUserInfoForm = () => {
     instagram !== currentUser?.instagram ||
     x !== currentUser?.x;
 
+  // If a data point is updated, it is used in PATCH request to update its part of the user's data object in DB
   const valuesToUpdate = {
     ...(firstName?.trim() !== "" &&
       firstName !== currentUser?.firstName && {
@@ -963,28 +987,6 @@ const EditUserInfoForm = () => {
       instagram !== currentUser?.instagram && { instagram: instagram }),
     ...(x !== "" && x !== currentUser?.x && { x: x }),
   };
-
-  const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
-  const preferredCountries = countries.filter((country) =>
-    topCountryNames.includes(country.country)
-  );
-  const restOfCountries = countries.filter(
-    (country) => !topCountryNames.includes(country.country)
-  );
-
-  const getResortedCountries = (): {
-    country: string;
-    abbreviation: string;
-    phoneCode: string;
-  }[] => {
-    return preferredCountries.concat(restOfCountries);
-  };
-  const resortedCountries = getResortedCountries();
-
-  const isLocationError: boolean =
-    (userCity === "" && (userState !== "" || userCountry !== "")) ||
-    (userState === "" && (userCity !== "" || userCountry !== "")) ||
-    (userCountry === "" && (userCity !== "" || userState !== ""));
 
   return (
     <>
