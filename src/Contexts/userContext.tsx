@@ -655,7 +655,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     passwordError === "" &&
     confirmationPasswordError === "" &&
     phoneNumberError === "" &&
-    locationError === "";
+    locationError === "" &&
+    facebookError === "" &&
+    instagramError === "" &&
+    xError === "";
 
   const allSignupOrEditFormFieldsFilled: boolean =
     firstName !== "" &&
