@@ -144,7 +144,7 @@ export type TUserContext = {
   setLocationError: React.Dispatch<React.SetStateAction<string>>;
   confirmationPasswordError: string;
   setConfirmationPasswordError: React.Dispatch<React.SetStateAction<string>>;
-  areNoSignupOrEditFormErrors: boolean;
+  areNoSignupFormErrors: boolean;
   areNoLoginErrors: boolean;
   allSignupOrEditFormFieldsFilled: boolean;
   allLoginInputsFilled: boolean;

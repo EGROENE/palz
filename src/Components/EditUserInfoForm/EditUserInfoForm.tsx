@@ -53,7 +53,6 @@ const EditUserInfoForm = () => {
     setPasswordError,
     confirmationPassword,
     setConfirmationPasswordError,
-    areNoSignupOrEditFormErrors,
     handleUsernameInput,
     handleEmailAddressInput,
     handlePasswordInput,
@@ -192,7 +191,7 @@ const EditUserInfoForm = () => {
     }
 
     // Only if there are no errors & infos that must be unique aren't already in use, patch changes to user data object:
-    if (areNoSignupOrEditFormErrors && !phoneNumberExists) {
+    if (areNoEditFormErrors && !phoneNumberExists) {
       Requests.patchUpdatedUserInfo(currentUser, valuesToUpdate)
         .then((response) => {
           if (!response.ok) {
@@ -898,6 +897,19 @@ const EditUserInfoForm = () => {
       .catch((error) => console.log(error));
   };
 
+  const areNoEditFormErrors: boolean =
+    firstNameError === "" &&
+    lastNameError === "" &&
+    usernameError === "" &&
+    emailError === "" &&
+    passwordError === "" &&
+    confirmationPasswordError === "" &&
+    phoneNumberError === "" &&
+    locationError === "" &&
+    facebookError === "" &&
+    instagramError === "" &&
+    xError === "";
+
   const userInfoEdited: boolean =
     firstName?.trim() !== currentUser?.firstName ||
     lastName?.trim() !== currentUser?.lastName ||
@@ -1386,7 +1398,7 @@ const EditUserInfoForm = () => {
           </button>
           <button
             type="submit"
-            disabled={!(userInfoEdited && areNoSignupOrEditFormErrors)}
+            disabled={!(userInfoEdited && areNoEditFormErrors)}
             style={{ backgroundColor: randomColor }}
             onClick={(e) => handleUpdateProfileInfo(e)}
           >

@@ -232,6 +232,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const toggleHidePassword = (): void => setPasswordIsHidden(!passwordIsHidden);
 
+  // Defined here, not in SignupForm, as it's used in some handlers that are used in multiple components
+  const areNoSignupFormErrors: boolean =
+    firstNameError === "" &&
+    lastNameError === "" &&
+    usernameError === "" &&
+    emailError === "" &&
+    passwordError === "" &&
+    confirmationPasswordError === "";
+
   // Input-handling methods:
   // Put here, since used in two different components
   const handleNameInput = (
@@ -243,13 +252,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (
       allSignupOrEditFormFieldsFilled &&
-      areNoSignupOrEditFormErrors &&
+      areNoSignupFormErrors &&
       formType === "signup"
     ) {
       setCurrentUser(userData);
     } else if (
       !allSignupOrEditFormFieldsFilled &&
-      !areNoSignupOrEditFormErrors &&
+      !areNoSignupFormErrors &&
       formType === "signup"
     ) {
       setCurrentUser(undefined);
@@ -292,13 +301,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (
       allSignupOrEditFormFieldsFilled &&
-      areNoSignupOrEditFormErrors &&
+      areNoSignupFormErrors &&
       formType === "signup"
     ) {
       setCurrentUser(userData);
     } else if (
       !allSignupOrEditFormFieldsFilled &&
-      !areNoSignupOrEditFormErrors &&
+      !areNoSignupFormErrors &&
       formType === "signup"
     ) {
       setCurrentUser(undefined);
@@ -345,13 +354,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (
       allSignupOrEditFormFieldsFilled &&
-      areNoSignupOrEditFormErrors &&
+      areNoSignupFormErrors &&
       formType === "signup"
     ) {
       setCurrentUser(userData);
     } else if (
       !allSignupOrEditFormFieldsFilled &&
-      !areNoSignupOrEditFormErrors &&
+      !areNoSignupFormErrors &&
       formType === "signup"
     ) {
       setCurrentUser(undefined);
@@ -477,7 +486,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
       // If used on signup form:
     } else if (formType === "signup") {
-      allSignupOrEditFormFieldsFilled && areNoSignupOrEditFormErrors
+      allSignupOrEditFormFieldsFilled && areNoSignupFormErrors
         ? setCurrentUser(userData)
         : setCurrentUser(undefined);
 
@@ -646,20 +655,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       });
   };
 
-  // submission handler should change state value userCreatedAccount (initialized to null, changed to boolean, depending on which form was submitted). once this value is a boolean, all err msgs (besides conf pw) should display, if there are, indeed errors.
-  const areNoSignupOrEditFormErrors: boolean =
-    firstNameError === "" &&
-    lastNameError === "" &&
-    usernameError === "" &&
-    emailError === "" &&
-    passwordError === "" &&
-    confirmationPasswordError === "" &&
-    phoneNumberError === "" &&
-    locationError === "" &&
-    facebookError === "" &&
-    instagramError === "" &&
-    xError === "";
-
   const allSignupOrEditFormFieldsFilled: boolean =
     firstName !== "" &&
     lastName !== "" &&
@@ -808,7 +803,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setUserState,
     userCountry,
     setUserCountry,
-    areNoSignupOrEditFormErrors,
+    areNoSignupFormErrors,
     areNoLoginErrors,
     allSignupOrEditFormFieldsFilled,
     allLoginInputsFilled,

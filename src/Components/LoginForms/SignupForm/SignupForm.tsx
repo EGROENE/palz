@@ -9,6 +9,7 @@ import { useEffect } from "react";
 const SignupForm = () => {
   const { currentUser, welcomeMessageDisplayTime } = useMainContext();
   const {
+    areNoSignupFormErrors,
     passwordIsHidden,
     toggleHidePassword,
     firstName,
@@ -34,7 +35,6 @@ const SignupForm = () => {
     handlePasswordInput,
     confirmationPasswordError,
     handleConfirmationPasswordInput,
-    areNoSignupOrEditFormErrors,
     allSignupOrEditFormFieldsFilled,
     showErrors,
     handleSignupOrLoginFormSubmission,
@@ -214,9 +214,9 @@ const SignupForm = () => {
       </label>
       <button
         className="login-button"
-        type={areNoSignupOrEditFormErrors ? "submit" : "button"}
+        type={areNoSignupFormErrors ? "submit" : "button"}
         onClick={(e) =>
-          areNoSignupOrEditFormErrors && allSignupOrEditFormFieldsFilled
+          areNoSignupFormErrors && allSignupOrEditFormFieldsFilled
             ? undefined
             : handleFormRejection(e)
         }
