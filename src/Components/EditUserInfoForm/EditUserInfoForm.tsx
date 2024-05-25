@@ -84,17 +84,6 @@ const EditUserInfoForm = () => {
     useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  /* Make sure all login/signup-form errors are cleared, since they shouldn't have error "Please fill out this field" by default on EditUserInfoForm: */
-  useEffect(() => {
-    setFirstNameError("");
-    setLastNameError("");
-    setEmailError("");
-    setUsernameError("");
-    setPasswordError("");
-    setConfirmationPasswordError("");
-    setPhoneNumberError("");
-  }, []);
-
   // If user data has changed, setCurrentUser:
   useEffect(() => {
     if (username === currentUser?.username) {
@@ -123,6 +112,38 @@ const EditUserInfoForm = () => {
     currentUser?.x,
   ]);
 
+  // Function that resets form values to what they are in currentUser
+  // Called upon first render of this component or if user cancels changes they made to edit-user-info form
+  const handleEditUserInfoRevert = () => {
+    setFirstName(currentUser?.firstName);
+    setFirstNameError("");
+    setLastName(currentUser?.lastName);
+    setLastNameError("");
+    setUsername(currentUser?.username);
+    setUsernameError("");
+    setEmailAddress(currentUser?.emailAddress);
+    setEmailError("");
+    setPassword(currentUser?.password);
+    setPasswordError("");
+    setConfirmationPasswordError("");
+    setUserCity(currentUser?.city);
+    setUserState(currentUser?.stateProvince);
+    setUserCountry(currentUser?.country);
+    setLocationError("");
+    setPhoneCountry(currentUser?.phoneCountry);
+    setPhoneCountryCode(currentUser?.phoneCountryCode);
+    setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
+    setPhoneNumberError("");
+    setFacebook(currentUser?.facebook);
+    setFacebookError("");
+    setInstagram(currentUser?.instagram);
+    setInstagramError("");
+    setX(currentUser?.x);
+    setXError("");
+  };
+
+  // If currentUser has given a phone code, set limits for length of rest of number based on that
+  // Also, ensure all error messages are cleared & input values originally set to what they are in currentUser
   useEffect(() => {
     if (currentUser && currentUser.phoneCountryCode !== "") {
       handlePhoneFieldMinMaxSettingAndPhoneErrorAfterChangeOfCountryCode(
@@ -132,6 +153,7 @@ const EditUserInfoForm = () => {
     handleEditUserInfoRevert();
   }, []);
 
+  // Set random color:
   const [randomColor, setRandomColor] = useState<string>("");
   useEffect(() => {
     const themeColors = [
@@ -259,35 +281,6 @@ const EditUserInfoForm = () => {
   };
 
   // INPUT HANDLERS (and methods used in them):
-  // Function that resets form values to what they are in currentUser
-  // Called upon first render of this component or if user cancels changes they made to edit-user-info form
-  const handleEditUserInfoRevert = () => {
-    setFirstName(currentUser?.firstName);
-    setFirstNameError("");
-    setLastName(currentUser?.lastName);
-    setLastNameError("");
-    setUsername(currentUser?.username);
-    setUsernameError("");
-    setEmailAddress(currentUser?.emailAddress);
-    setEmailError("");
-    setPassword(currentUser?.password);
-    setPasswordError("");
-    setUserCity(currentUser?.city);
-    setUserState(currentUser?.stateProvince);
-    setUserCountry(currentUser?.country);
-    setLocationError("");
-    setPhoneCountry(currentUser?.phoneCountry);
-    setPhoneCountryCode(currentUser?.phoneCountryCode);
-    setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
-    setPhoneNumberError("");
-    setFacebook(currentUser?.facebook);
-    setFacebookError("");
-    setInstagram(currentUser?.instagram);
-    setInstagramError("");
-    setX(currentUser?.x);
-    setXError("");
-  };
-
   // Call this in every if, else...if statement in handlePhoneFieldMinMaxSettingAndPhoneErrorAfterChangeOfCountryCode
   const handlePhoneFieldError = (
     min: number,
