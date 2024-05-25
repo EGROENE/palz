@@ -792,7 +792,7 @@ const EditUserInfoForm = () => {
         }
       }
     } else {
-      setShowUserLocationCountries(false); // Hide countries dropdown once one is selected
+      setShowUserLocationCountries(true); // Hide countries dropdown once one is selected (not sure why true is necessary)
       setUserCountry(country);
       if (country && country !== "" && (userCity === "" || userState === "")) {
         setLocationError("Please fill out all 3 location fields");
