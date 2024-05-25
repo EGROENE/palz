@@ -35,7 +35,7 @@ const SignupForm = () => {
     handlePasswordInput,
     confirmationPasswordError,
     handleConfirmationPasswordInput,
-    allSignupOrEditFormFieldsFilled,
+    allSignupFormFieldsFilled,
     showErrors,
     handleSignupOrLoginFormSubmission,
     handleFormRejection,
@@ -216,7 +216,7 @@ const SignupForm = () => {
         className="login-button"
         type={areNoSignupFormErrors ? "submit" : "button"}
         onClick={(e) =>
-          areNoSignupFormErrors && allSignupOrEditFormFieldsFilled
+          areNoSignupFormErrors && allSignupFormFieldsFilled
             ? undefined
             : handleFormRejection(e)
         }

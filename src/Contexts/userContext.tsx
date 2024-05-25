@@ -250,14 +250,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     isFirstName ? setFirstName(name) : setLastName(name);
 
-    if (
-      allSignupOrEditFormFieldsFilled &&
-      areNoSignupFormErrors &&
-      formType === "signup"
-    ) {
+    if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
       setCurrentUser(userData);
     } else if (
-      !allSignupOrEditFormFieldsFilled &&
+      !allSignupFormFieldsFilled &&
       !areNoSignupFormErrors &&
       formType === "signup"
     ) {
@@ -299,14 +295,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setUsername(inputUsername);
     }
 
-    if (
-      allSignupOrEditFormFieldsFilled &&
-      areNoSignupFormErrors &&
-      formType === "signup"
-    ) {
+    if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
       setCurrentUser(userData);
     } else if (
-      !allSignupOrEditFormFieldsFilled &&
+      !allSignupFormFieldsFilled &&
       !areNoSignupFormErrors &&
       formType === "signup"
     ) {
@@ -352,14 +344,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     setEmailAddress(inputEmailAddressNoWhitespaces.toLowerCase());
 
-    if (
-      allSignupOrEditFormFieldsFilled &&
-      areNoSignupFormErrors &&
-      formType === "signup"
-    ) {
+    if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
       setCurrentUser(userData);
     } else if (
-      !allSignupOrEditFormFieldsFilled &&
+      !allSignupFormFieldsFilled &&
       !areNoSignupFormErrors &&
       formType === "signup"
     ) {
@@ -486,7 +474,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
       // If used on signup form:
     } else if (formType === "signup") {
-      allSignupOrEditFormFieldsFilled && areNoSignupFormErrors
+      allSignupFormFieldsFilled && areNoSignupFormErrors
         ? setCurrentUser(userData)
         : setCurrentUser(undefined);
 
@@ -527,10 +515,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     setConfirmationPassword(inputConfirmationPWNoWhitespaces);
 
-    /* Condition to set currentUser should be all other errors === "" && allSignupOrEditFormFieldsFilled && (confirmationPasswordError === "Passwords don't match" | confirmationPasswordError === ""), b/c, in this handler, setting of this error state value lags. */
+    /* Condition to set currentUser should be all other errors === "" && allSignupFormFieldsFilled && (confirmationPasswordError === "Passwords don't match" | confirmationPasswordError === ""), b/c, in this handler, setting of this error state value lags. */
     if (formType === "signup") {
       if (
-        allSignupOrEditFormFieldsFilled &&
+        allSignupFormFieldsFilled &&
         firstNameError === "" &&
         lastNameError === "" &&
         usernameError === "" &&
@@ -655,7 +643,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       });
   };
 
-  const allSignupOrEditFormFieldsFilled: boolean =
+  // Defined here, as it's used in methods that are used in multiple components
+  const allSignupFormFieldsFilled: boolean =
     firstName !== "" &&
     lastName !== "" &&
     username !== "" &&
@@ -805,7 +794,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setUserCountry,
     areNoSignupFormErrors,
     areNoLoginErrors,
-    allSignupOrEditFormFieldsFilled,
+    allSignupFormFieldsFilled,
     allLoginInputsFilled,
     showErrors,
     handleNameInput,
