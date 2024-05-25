@@ -414,7 +414,14 @@
   display: flex;
 }
 
-.location-input:first-child ~ *,
+.location-input:first-child {
+  margin: 0.25rem 0;
+}
+
+.location-input:first-child ~ * {
+  margin: 0.25rem 0 0.25rem 2rem;
+}
+
 .socials-inputs-container label:first-child ~ * {
   margin-left: 2rem;
 }
