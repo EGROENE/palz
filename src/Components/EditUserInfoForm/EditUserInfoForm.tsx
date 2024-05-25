@@ -1267,6 +1267,7 @@ const EditUserInfoForm = () => {
               )}
             </p>
             <input
+              disabled={isLoading}
               type="url"
               value={facebook}
               onChange={(e) => handleSocialsInput("facebook", e)}
@@ -1288,6 +1289,7 @@ const EditUserInfoForm = () => {
               )}
             </p>
             <input
+              disabled={isLoading}
               type="url"
               value={instagram}
               onChange={(e) => handleSocialsInput("instagram", e)}
@@ -1309,6 +1311,7 @@ const EditUserInfoForm = () => {
               )}
             </p>
             <input
+              disabled={isLoading}
               type="url"
               value={x}
               onChange={(e) => handleSocialsInput("x", e)}
