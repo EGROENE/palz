@@ -1153,108 +1153,106 @@ const EditUserInfoForm = () => {
             </ul>
           )}
         </label>
-        <label>
-          <div className="location-inputs">
-            <div className="location-input">
-              <p>City:</p>
-              <input
-                inputMode="text"
-                className={isLocationError ? "erroneous-field" : undefined}
-                onChange={(e) => handleCityStateCountryInput("city", undefined, e)}
-                disabled={isLoading}
-                placeholder="Enter a city"
-                value={userCity}
-              ></input>
-              {locationError !== "" && <p>{locationError}</p>}
-            </div>
-            <div className="location-input">
-              <p>State/Province:</p>
-              <input
-                inputMode="text"
-                className={isLocationError ? "erroneous-field" : undefined}
-                onChange={(e) => handleCityStateCountryInput("state", undefined, e)}
-                disabled={isLoading}
-                placeholder="Enter a state/province"
-                value={userState}
-              ></input>
-            </div>
-            <div className="location-countries-dropdown">
-              <p>Country:</p>
-              <button
-                className="country-dropdown-button"
-                type="button"
-                onClick={() => setShowUserLocationCountries(!showUserLocationCountries)}
-              >
-                {userCountry === "" ? (
-                  "Select country:"
-                ) : (
-                  <div className="flag-and-code-container">
-                    <img
-                      src={`/flags/1x1/${
-                        countries.filter((country) => country.country === userCountry)[0]
-                          .abbreviation
-                      }.svg`}
-                    />
-                    <span>{`${
+        <div className="location-inputs">
+          <label className="location-input">
+            <p>City:</p>
+            <input
+              inputMode="text"
+              className={isLocationError ? "erroneous-field" : undefined}
+              onChange={(e) => handleCityStateCountryInput("city", undefined, e)}
+              disabled={isLoading}
+              placeholder="Enter a city"
+              value={userCity}
+            ></input>
+            {locationError !== "" && <p>{locationError}</p>}
+          </label>
+          <label className="location-input">
+            <p>State/Province:</p>
+            <input
+              inputMode="text"
+              className={isLocationError ? "erroneous-field" : undefined}
+              onChange={(e) => handleCityStateCountryInput("state", undefined, e)}
+              disabled={isLoading}
+              placeholder="Enter a state/province"
+              value={userState}
+            ></input>
+          </label>
+          <label className="location-countries-dropdown">
+            <p>Country:</p>
+            <button
+              className="country-dropdown-button"
+              type="button"
+              onClick={() => setShowUserLocationCountries(!showUserLocationCountries)}
+            >
+              {userCountry === "" ? (
+                "Select country:"
+              ) : (
+                <div className="flag-and-code-container">
+                  <img
+                    src={`/flags/1x1/${
                       countries.filter((country) => country.country === userCountry)[0]
-                        .country
-                    }`}</span>
-                  </div>
-                )}
-                <i
-                  style={showUserLocationCountries ? { "rotate": "180deg" } : undefined}
-                  className="fas fa-chevron-down"
-                ></i>
-              </button>
-              {showUserLocationCountries && (
-                <ul className="country-code-dropdown">
-                  {resortedCountries.map((country) => (
-                    <li
-                      style={
-                        country.country === "United States"
-                          ? {
-                              "borderBottom": "1px dotted white",
-                            }
-                          : undefined
-                      }
-                      key={country.country}
-                      onClick={() =>
-                        handleCityStateCountryInput("country", country.country, undefined)
-                      }
-                    >
-                      <img src={`/flags/1x1/${country.abbreviation}.svg`} />
-                      <span>{`${country.country}`}</span>
-                    </li>
-                  ))}
-                </ul>
+                        .abbreviation
+                    }.svg`}
+                  />
+                  <span>{`${
+                    countries.filter((country) => country.country === userCountry)[0]
+                      .country
+                  }`}</span>
+                </div>
               )}
-            </div>
-            {currentUser?.city !== "" &&
-              currentUser?.stateProvince !== "" &&
-              currentUser?.country !== "" && (
-                <span
-                  style={
-                    !showUserLocationCountries
-                      ? {
-                          "maxHeight": "73.56px",
-                          "display": "flex",
-                          "alignItems": "flex-end",
-                        }
-                      : {
-                          "maxHeight": "73.56px",
-                          "display": "flex",
-                          "alignItems": "flex-end",
-                          "marginLeft": "-10rem",
-                        }
-                  }
-                  onClick={(e) => handleDeleteLocation(e)}
-                  className="remove-data"
-                >
-                  Remove
-                </span>
-              )}
-          </div>
-        </label>
+              <i
+                style={showUserLocationCountries ? { "rotate": "180deg" } : undefined}
+                className="fas fa-chevron-down"
+              ></i>
+            </button>
+            {showUserLocationCountries && (
+              <ul className="country-code-dropdown">
+                {resortedCountries.map((country) => (
+                  <li
+                    style={
+                      country.country === "United States"
+                        ? {
+                            "borderBottom": "1px dotted white",
+                          }
+                        : undefined
+                    }
+                    key={country.country}
+                    onClick={() =>
+                      handleCityStateCountryInput("country", country.country, undefined)
+                    }
+                  >
+                    <img src={`/flags/1x1/${country.abbreviation}.svg`} />
+                    <span>{`${country.country}`}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </label>
+          {currentUser?.city !== "" &&
+            currentUser?.stateProvince !== "" &&
+            currentUser?.country !== "" && (
+              <span
+                style={
+                  !showUserLocationCountries
+                    ? {
+                        "maxHeight": "73.56px",
+                        "display": "flex",
+                        "alignItems": "flex-end",
+                      }
+                    : {
+                        "maxHeight": "73.56px",
+                        "display": "flex",
+                        "alignItems": "flex-end",
+                        "marginLeft": "-10rem",
+                      }
+                }
+                onClick={(e) => handleDeleteLocation(e)}
+                className="remove-data"
+              >
+                Remove
+              </span>
+            )}
+        </div>
         <div className="socials-inputs-container">
           <label>
             <p>
