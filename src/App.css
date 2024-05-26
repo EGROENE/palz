@@ -75,16 +75,16 @@
   width: 50%;
 }
 
-.login-signup-form {
+.login-signup-edit-form {
   margin-top: 1rem;
 }
 
-.login-signup-form p:first-child {
+.login-signup-edit-form p:first-child {
   font-size: 1.25rem;
   font-family: var(--text-font);
 }
 
-.login-signup-form p,
+.login-signup-edit-form p,
 .input-error-message {
   margin: 0.1rem;
   letter-spacing: 0.5px;
@@ -100,7 +100,7 @@
   font-family: var(--text-font);
 }
 
-.login-signup-form input {
+.login-signup-edit-form input {
   width: 100%;
   padding: 0.45rem;
 }
@@ -451,7 +451,7 @@
   width: 20rem;
 }
 
-.login-signup-form textarea {
+.login-signup-edit-form textarea {
   width: 43%;
   height: 5rem;
   letter-spacing: 1.5px;

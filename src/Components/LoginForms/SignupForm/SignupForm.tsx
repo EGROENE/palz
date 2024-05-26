@@ -66,7 +66,10 @@ const SignupForm = () => {
   };
 
   return (
-    <form onSubmit={(e) => handleSignupFormSubmission(e)} className="login-signup-form">
+    <form
+      onSubmit={(e) => handleSignupFormSubmission(e)}
+      className="login-signup-edit-form"
+    >
       <div>
         <label>
           <p>First Name:</p>

@@ -1033,7 +1033,7 @@ const EditUserInfoForm = () => {
         Feel free to change any of your profile info in the form below. Make sure to save
         changes, else they won't apply
       </h2>
-      <form className="login-signup-form">
+      <form className="login-signup-edit-form">
         <div>
           <label>
             <p>First Name:</p>

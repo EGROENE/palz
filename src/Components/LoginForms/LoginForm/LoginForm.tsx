@@ -36,7 +36,7 @@ const LoginForm = () => {
           welcomeMessageDisplayTime
         );
       }}
-      className="login-signup-form"
+      className="login-signup-edit-form"
     >
       <label>
         <p>Username or E-Mail Address:</p>
