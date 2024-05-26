@@ -830,13 +830,19 @@ const EditUserInfoForm = () => {
     const isValidLink = isValidUrl(inputNoWhitespaces.toLowerCase());
     if (medium === "facebook") {
       setFacebook(inputNoWhitespaces.toLowerCase());
-      isValidLink ? setFacebookError("") : setFacebookError("Invalid link");
+      isValidLink || inputNoWhitespaces === ""
+        ? setFacebookError("")
+        : setFacebookError("Invalid link");
     } else if (medium === "instagram") {
       setInstagram(inputNoWhitespaces.toLowerCase());
-      isValidLink ? setInstagramError("") : setInstagramError("Invalid link");
+      isValidLink || inputNoWhitespaces === ""
+        ? setInstagramError("")
+        : setInstagramError("Invalid link");
     } else if (medium === "x") {
       setX(inputNoWhitespaces.toLowerCase());
-      isValidLink ? setXError("") : setXError("Invalid link");
+      isValidLink || inputNoWhitespaces === ""
+        ? setXError("")
+        : setXError("Invalid link");
     }
   };
 
@@ -909,6 +915,21 @@ const EditUserInfoForm = () => {
           } else if (medium === "x") {
             setX("");
           }
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleDeleteUserAbout = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    e.preventDefault();
+    Requests.deleteUserAbout(currentUser)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error(`Could not delete 'About' section. Please try again.`);
+        } else {
+          toast.success(`'About' section deleted`);
+          fetchAllUsers();
+          setUserAbout("");
         }
       })
       .catch((error) => console.log(error));
@@ -1000,12 +1021,10 @@ const EditUserInfoForm = () => {
       }),
     ...(userCountry !== "" &&
       userCountry !== currentUser?.country && { country: userCountry }),
-    ...(facebook !== "" && facebook !== currentUser?.facebook && { facebook: facebook }),
-    ...(instagram !== "" &&
-      instagram !== currentUser?.instagram && { instagram: instagram }),
-    ...(x !== "" && x !== currentUser?.x && { x: x }),
-    ...(userAbout !== "" &&
-      userAbout !== currentUser?.about && { about: userAbout?.trim() }),
+    ...(facebook !== currentUser?.facebook && { facebook: facebook }),
+    ...(instagram !== currentUser?.instagram && { instagram: instagram }),
+    ...(x !== currentUser?.x && { x: x }),
+    ...(userAbout !== currentUser?.about && { about: userAbout?.trim() }),
   };
 
   return (
@@ -1344,8 +1363,16 @@ const EditUserInfoForm = () => {
           </label>
         </div>
         <label>
-          <p>About:</p>
+          <p>
+            About:{" "}
+            {currentUser?.about !== "" && (
+              <span onClick={(e) => handleDeleteUserAbout(e)} className="remove-data">
+                Remove
+              </span>
+            )}
+          </p>
           <textarea
+            disabled={isLoading}
             value={userAbout}
             className={userAboutError !== "" ? "erroneous-field" : undefined}
             onChange={(e) => handleUserAboutInput(e)}
