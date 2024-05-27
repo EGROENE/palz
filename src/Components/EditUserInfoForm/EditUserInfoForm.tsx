@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import Requests from "../../requests";
 import { countries, phoneNumberLengthRanges } from "../../constants";
 import toast from "react-hot-toast";
+import Methods from "../../methods";
 
 const EditUserInfoForm = () => {
   const { currentUser, setCurrentUser, fetchAllUsers, allUsers } = useMainContext();
@@ -775,26 +776,26 @@ const EditUserInfoForm = () => {
     country?: string,
     e?: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const inputTrimmed = e?.target.value.trim();
+    const nameCleaned = e ? Methods.cleanName(e.target.value) : undefined;
 
     // Set appropriate state values based on field in question
     // Throw error when a location field is filled out and at least one other is not. Otherwise, no error thrown.
     if (e) {
       if (locationType === "city") {
-        setUserCity(e.target.value.replace(/[0-9]/g, ""));
+        setUserCity(nameCleaned?.replace(/[0-9]/g, ""));
         if (
-          (inputTrimmed !== "" && (userState === "" || userCountry === "")) ||
-          (inputTrimmed === "" && (userState !== "" || userCountry !== ""))
+          (nameCleaned !== "" && (userState === "" || userCountry === "")) ||
+          (nameCleaned === "" && (userState !== "" || userCountry !== ""))
         ) {
           setLocationError("Please fill out all 3 location fields");
         } else {
           setLocationError("");
         }
       } else if (locationType === "state") {
-        setUserState(e.target.value.replace(/[0-9]/g, ""));
+        setUserState(nameCleaned?.replace(/[0-9]/g, ""));
         if (
-          (inputTrimmed !== "" && (userCity === "" || userCountry === "")) ||
-          (inputTrimmed === "" && (userCity !== "" || userCountry !== ""))
+          (nameCleaned !== "" && (userCity === "" || userCountry === "")) ||
+          (nameCleaned === "" && (userCity !== "" || userCountry !== ""))
         ) {
           setLocationError("Please fill out all 3 location fields");
         } else {
@@ -891,6 +892,7 @@ const EditUserInfoForm = () => {
           setUserCity("");
           setUserState("");
           setUserCountry("");
+          setLocationError("");
         }
       })
       .catch((error) => console.log(error));
@@ -995,7 +997,9 @@ const EditUserInfoForm = () => {
         firstName: formatName(firstName?.trim()),
       }),
     ...(lastName?.trim() !== "" &&
-      lastName !== currentUser?.lastName && { lastName: formatName(lastName?.trim()) }),
+      lastName !== currentUser?.lastName && {
+        lastName: formatName(lastName?.trim()),
+      }),
     ...(username !== "" && username !== currentUser?.username && { username: username }),
     ...(emailAddress !== "" &&
       emailAddress !== currentUser?.emailAddress && {

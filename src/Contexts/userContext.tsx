@@ -10,6 +10,7 @@ import {
 } from "../validations";
 import Requests from "../requests";
 import toast from "react-hot-toast";
+import Methods from "../methods";
 
 export const UserContext = createContext<TUserContext | null>(null);
 
@@ -138,7 +139,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           const trimmedWord = word.trim();
           const capitalizedWord = getCapitalizedWord(trimmedWord);
           // If char before/after word in original string is hyphen, separator should be "-"; else, " ":
-          const stringNoMultiSpacesSplitBySpaces = string.replace(/\s+/g, " ").split(" ");
+          const stringNoMultiSpacesSplitBySpaces = string
+            .replace(/\s+/g, " ")
+            .split(" ")[0];
           const indexOfWordInStringNoMultiSpacesSplitBySpaces =
             stringNoMultiSpacesSplitBySpaces.indexOf(word);
           const prevItemIndex = indexOfWordInStringNoMultiSpacesSplitBySpaces - 1;
@@ -256,7 +259,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     isFirstName: boolean,
     formType: "signup" | "edit-user-info"
   ) => {
-    isFirstName ? setFirstName(name) : setLastName(name);
+    // Disallow spaces before and after hyphens, as well as consecutive spaces
+    const nameCleaned = Methods.cleanName(name);
+
+    isFirstName ? setFirstName(nameCleaned) : setLastName(nameCleaned);
 
     if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
       setCurrentUser(userData);
