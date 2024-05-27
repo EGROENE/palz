@@ -775,13 +775,11 @@ const EditUserInfoForm = () => {
     country?: string,
     e?: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const nameCleaned = e ? Methods.cleanName(e.target.value) : undefined;
-
     // Set appropriate state values based on field in question
     // Throw error when a location field is filled out and at least one other is not. Otherwise, no error thrown.
     if (e) {
       if (locationType === "city") {
-        setUserCity(nameCleaned?.replace(/[0-9]/g, ""));
+        setUserCity(e.target.value?.replace(/[0-9]/g, ""));
         if (
           (e.target.value !== "" && (userState === "" || userCountry === "")) ||
           (e.target.value === "" && (userState !== "" || userCountry !== ""))
@@ -791,7 +789,7 @@ const EditUserInfoForm = () => {
           setLocationError("");
         }
       } else if (locationType === "state") {
-        setUserState(nameCleaned?.replace(/[0-9]/g, ""));
+        setUserState(e.target.value?.replace(/[0-9]/g, ""));
         if (
           (e.target.value !== "" && (userCity === "" || userCountry === "")) ||
           (e.target.value === "" && (userCity !== "" || userCountry !== ""))
