@@ -94,7 +94,6 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
-  formatName: (string: string | undefined) => string;
   phoneCountry: string | undefined;
   setPhoneCountry: React.Dispatch<React.SetStateAction<string | undefined>>;
   phoneCountryCode: string | undefined;

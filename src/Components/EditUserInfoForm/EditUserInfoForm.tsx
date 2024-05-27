@@ -20,7 +20,6 @@ const EditUserInfoForm = () => {
     setUserCountry,
     locationError,
     setLocationError,
-    formatName,
     phoneCountry,
     setPhoneCountry,
     phoneCountryCode,
@@ -994,11 +993,11 @@ const EditUserInfoForm = () => {
   const valuesToUpdate = {
     ...(firstName?.trim() !== "" &&
       firstName !== currentUser?.firstName && {
-        firstName: formatName(firstName?.trim()),
+        firstName: Methods.formatName(firstName?.trim()),
       }),
     ...(lastName?.trim() !== "" &&
       lastName !== currentUser?.lastName && {
-        lastName: formatName(lastName?.trim()),
+        lastName: Methods.formatName(lastName?.trim()),
       }),
     ...(username !== "" && username !== currentUser?.username && { username: username }),
     ...(emailAddress !== "" &&
@@ -1018,10 +1017,10 @@ const EditUserInfoForm = () => {
         phoneNumberWithoutCountryCode: phoneNumberWithoutCountryCode,
       }),
     ...(userCity !== "" &&
-      userCity !== currentUser?.city && { city: formatName(userCity?.trim()) }),
+      userCity !== currentUser?.city && { city: Methods.formatName(userCity?.trim()) }),
     ...(userState !== "" &&
       userState !== currentUser?.stateProvince && {
-        stateProvince: formatName(userState?.trim()),
+        stateProvince: Methods.formatName(userState?.trim()),
       }),
     ...(userCountry !== "" &&
       userCountry !== currentUser?.country && { country: userCountry }),
