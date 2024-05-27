@@ -6,7 +6,7 @@ const getCapitalizedWord = (word: string | undefined): string => {
   return firstLetterCapitalized + otherLettersJoined;
 };
 
-const formatName = (string: string | undefined): string => {
+const formatCapitalizedName = (string: string | undefined): string => {
   let formattedWordOrWords = "";
 
   if (string !== "") {
@@ -57,7 +57,7 @@ const formatName = (string: string | undefined): string => {
     .trim();
 };
 
-const cleanName = (name: string): string => {
+const formatHyphensAndSpacesInString = (name: string): string => {
   let finalChars = [];
   for (let i = 0; i < name.split("").length; i++) {
     const currentChar = name[i];
@@ -86,7 +86,7 @@ const cleanName = (name: string): string => {
 
 const Methods = {
   getCapitalizedWord,
-  formatName,
-  cleanName,
+  formatCapitalizedName,
+  formatHyphensAndSpacesInString,
 };
 export default Methods;

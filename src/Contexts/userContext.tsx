@@ -122,8 +122,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
   const userData: TUser = {
-    firstName: Methods.cleanName(Methods.formatName(firstName)),
-    lastName: Methods.cleanName(Methods.formatName(lastName)),
+    firstName: Methods.formatHyphensAndSpacesInString(
+      Methods.formatCapitalizedName(firstName)
+    ),
+    lastName: Methods.formatHyphensAndSpacesInString(
+      Methods.formatCapitalizedName(lastName)
+    ),
     username: username?.trim(),
     emailAddress: emailAddress?.trim().toLowerCase(),
     password: password?.trim(),

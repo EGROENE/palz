@@ -991,11 +991,15 @@ const EditUserInfoForm = () => {
   const valuesToUpdate = {
     ...(firstName?.trim() !== "" &&
       firstName !== currentUser?.firstName && {
-        firstName: Methods.cleanName(Methods.formatName(firstName?.trim())),
+        firstName: Methods.formatHyphensAndSpacesInString(
+          Methods.formatCapitalizedName(firstName?.trim())
+        ),
       }),
     ...(lastName?.trim() !== "" &&
       lastName !== currentUser?.lastName && {
-        lastName: Methods.cleanName(Methods.formatName(lastName?.trim())),
+        lastName: Methods.formatHyphensAndSpacesInString(
+          Methods.formatCapitalizedName(lastName?.trim())
+        ),
       }),
     ...(username !== "" && username !== currentUser?.username && { username: username }),
     ...(emailAddress !== "" &&
@@ -1016,11 +1020,15 @@ const EditUserInfoForm = () => {
       }),
     ...(userCity !== "" &&
       userCity !== currentUser?.city && {
-        city: Methods.cleanName(Methods.formatName(userCity?.trim())),
+        city: Methods.formatHyphensAndSpacesInString(
+          Methods.formatCapitalizedName(userCity?.trim())
+        ),
       }),
     ...(userState !== "" &&
       userState !== currentUser?.stateProvince && {
-        stateProvince: Methods.cleanName(Methods.formatName(userState?.trim())),
+        stateProvince: Methods.formatHyphensAndSpacesInString(
+          Methods.formatCapitalizedName(userState?.trim())
+        ),
       }),
     ...(userCountry !== "" &&
       userCountry !== currentUser?.country && { country: userCountry }),
