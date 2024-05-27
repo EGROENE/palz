@@ -71,6 +71,16 @@ const cleanName = (name: string): string => {
       finalChars.push(currentChar);
     }
   }
+  // Exlude first or last character if it's a hyphen or space
+  if (finalChars[0] === " " || finalChars[0] === "-") {
+    finalChars = finalChars.slice(1);
+  }
+  if (
+    finalChars[finalChars.length - 1] === " " ||
+    finalChars[finalChars.length - 1] === "-"
+  ) {
+    finalChars = finalChars.slice(0, finalChars.length - 1);
+  }
   return finalChars.join("");
 };
 
