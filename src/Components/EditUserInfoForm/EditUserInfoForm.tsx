@@ -783,8 +783,8 @@ const EditUserInfoForm = () => {
       if (locationType === "city") {
         setUserCity(nameCleaned?.replace(/[0-9]/g, ""));
         if (
-          (nameCleaned !== "" && (userState === "" || userCountry === "")) ||
-          (nameCleaned === "" && (userState !== "" || userCountry !== ""))
+          (e.target.value !== "" && (userState === "" || userCountry === "")) ||
+          (e.target.value === "" && (userState !== "" || userCountry !== ""))
         ) {
           setLocationError("Please fill out all 3 location fields");
         } else {
@@ -793,8 +793,8 @@ const EditUserInfoForm = () => {
       } else if (locationType === "state") {
         setUserState(nameCleaned?.replace(/[0-9]/g, ""));
         if (
-          (nameCleaned !== "" && (userCity === "" || userCountry === "")) ||
-          (nameCleaned === "" && (userCity !== "" || userCountry !== ""))
+          (e.target.value !== "" && (userCity === "" || userCountry === "")) ||
+          (e.target.value === "" && (userCity !== "" || userCountry !== ""))
         ) {
           setLocationError("Please fill out all 3 location fields");
         } else {
@@ -993,11 +993,11 @@ const EditUserInfoForm = () => {
   const valuesToUpdate = {
     ...(firstName?.trim() !== "" &&
       firstName !== currentUser?.firstName && {
-        firstName: Methods.formatName(firstName?.trim()),
+        firstName: Methods.cleanName(Methods.formatName(firstName?.trim())),
       }),
     ...(lastName?.trim() !== "" &&
       lastName !== currentUser?.lastName && {
-        lastName: Methods.formatName(lastName?.trim()),
+        lastName: Methods.cleanName(Methods.formatName(lastName?.trim())),
       }),
     ...(username !== "" && username !== currentUser?.username && { username: username }),
     ...(emailAddress !== "" &&
@@ -1017,10 +1017,12 @@ const EditUserInfoForm = () => {
         phoneNumberWithoutCountryCode: phoneNumberWithoutCountryCode,
       }),
     ...(userCity !== "" &&
-      userCity !== currentUser?.city && { city: Methods.formatName(userCity?.trim()) }),
+      userCity !== currentUser?.city && {
+        city: Methods.cleanName(Methods.formatName(userCity?.trim())),
+      }),
     ...(userState !== "" &&
       userState !== currentUser?.stateProvince && {
-        stateProvince: Methods.formatName(userState?.trim()),
+        stateProvince: Methods.cleanName(Methods.formatName(userState?.trim())),
       }),
     ...(userCountry !== "" &&
       userCountry !== currentUser?.country && { country: userCountry }),

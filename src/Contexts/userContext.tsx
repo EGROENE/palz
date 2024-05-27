@@ -122,8 +122,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
   const userData: TUser = {
-    firstName: Methods.formatName(firstName),
-    lastName: Methods.formatName(lastName),
+    firstName: Methods.cleanName(Methods.formatName(firstName)),
+    lastName: Methods.cleanName(Methods.formatName(lastName)),
     username: username?.trim(),
     emailAddress: emailAddress?.trim().toLowerCase(),
     password: password?.trim(),
@@ -200,10 +200,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     isFirstName: boolean,
     formType: "signup" | "edit-user-info"
   ) => {
-    // Disallow spaces before and after hyphens, as well as consecutive spaces
-    const nameCleaned = Methods.cleanName(name);
-
-    isFirstName ? setFirstName(nameCleaned) : setLastName(nameCleaned);
+    isFirstName ? setFirstName(name) : setLastName(name);
 
     if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
       setCurrentUser(userData);
