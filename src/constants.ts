@@ -1,3 +1,5 @@
+export const baseURL = "http://localhost:5173/";
+
 // export this to EditUserInfoForm and map through for the options in select
 export const countries = [
   { country: "Afghanistan", abbreviation: "af", phoneCode: "93" },
