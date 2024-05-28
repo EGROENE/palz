@@ -29,7 +29,9 @@ const UserHomepage = () => {
   }, [currentUser, navigation]);
 
   const userRSVPDEvents: TEvent[] = allEvents.filter((event) => {
-    return currentUser ? event.interestedUsers.includes(currentUser.username) : [];
+    return currentUser?.username
+      ? event.interestedUsers.includes(currentUser.username)
+      : [];
   });
   // Sort userRSVPDEvents by earliest date:
   const userRSVPDEventsSoonestToLatest = userRSVPDEvents.sort(
