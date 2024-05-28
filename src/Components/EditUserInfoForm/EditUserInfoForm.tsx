@@ -1246,7 +1246,13 @@ const EditUserInfoForm = () => {
                         .abbreviation
                     }.svg`}
                   />
-                  <span>{`${
+                  <span
+                    style={
+                      userCountry && userCountry.length >= 19
+                        ? { fontSize: "0.75rem" }
+                        : undefined
+                    }
+                  >{`${
                     countries.filter((country) => country.country === userCountry)[0]
                       .country
                   }`}</span>
