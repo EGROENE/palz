@@ -168,3 +168,24 @@ select:-webkit-autofill:focus {
   background-color: rgb(230, 12, 12) !important;
   color: black !important;
 }
+
+.error-boundary-container {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4rem;
+}
+
+.error-boundary-container h1 {
+  color: var(--theme-orange);
+}
+
+.error-boundary-container button {
+  background-color: var(--background-color-opposite);
+  color: var(--text-color-opposite);
+  font-family: var(--text-font);
+  border-radius: 10px;
+  margin: 0 1rem;
+}
+
+.error-boundary-container a {
+  color: white;
+}

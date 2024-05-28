@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { MainContextProvider } from "./Contexts/mainContext.tsx";
 import { UserContextProvider } from "./Contexts/userContext.tsx";
+import ErrorBoundary from "./Components/ErrorBoundary/ErrorBoundary.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <MainContextProvider>
       <UserContextProvider>
         <BrowserRouter>
-          <App />
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
         </BrowserRouter>
       </UserContextProvider>
     </MainContextProvider>
