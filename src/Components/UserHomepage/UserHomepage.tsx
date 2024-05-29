@@ -7,7 +7,7 @@ import EventCard from "../EventCard/EventCard";
 import { TEvent } from "../../types";
 
 const UserHomepage = () => {
-  const { currentUser, allEvents } = useMainContext();
+  const { currentUser, allEvents, userCreatedAccount } = useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
 
   // On init rendering, hide sidebar, if displayed (better ux when returning to user homepage from Settings, etc.)
@@ -21,12 +21,12 @@ const UserHomepage = () => {
   /* If currentUser is undefined, redirect to base URL (/). This prevents access to user account by simply pasting in their acct url. Forces login. Also, this component will only render if currentUser exists. If currentUser is defined, ensure url is set to include their username (after editing user info, then returning to user homepage, 'undefined' was sometimes taking the place of currentUser.username in path). */
   const navigation = useNavigate();
   useEffect(() => {
-    if (!currentUser) {
+    if (!currentUser || userCreatedAccount === null) {
       navigation("/");
     } else {
       navigation(`/users/${currentUser?.username}`);
     }
-  }, [currentUser, navigation]);
+  }, [currentUser, navigation, userCreatedAccount]);
 
   const userRSVPDEvents: TEvent[] = allEvents.filter((event) => {
     return currentUser?.username

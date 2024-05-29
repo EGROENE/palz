@@ -1,28 +1,22 @@
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
-import { useNavigate } from "react-router-dom";
 import SignupForm from "../LoginForms/SignupForm/SignupForm";
 import LoginForm from "../LoginForms/LoginForm/LoginForm";
 import { useEffect } from "react";
 
 const LoginPage = () => {
-  const { theme, toggleTheme, currentUser } = useMainContext();
+  const { theme, toggleTheme } = useMainContext();
   const { signupIsSelected, toggleSignupLogin } = useUserContext();
-  const navigation = useNavigate();
 
   useEffect(() => {
     // Display login form by default
     if (signupIsSelected) {
       toggleSignupLogin();
     }
-    // If user logs in, then pastes base URL in same tab, redirect to user homepage:
-    if (currentUser) {
-      navigation(`users/${currentUser?.username}`);
-    }
   }, []);
 
   return (
-    <div className="login-page-container">
+    <div className="page-hero login-page-container">
       <div className="login-greeting-container">
         <h1>Welcome to Palz!</h1>
         <h2>Do fun things, meet fun friends</h2>
