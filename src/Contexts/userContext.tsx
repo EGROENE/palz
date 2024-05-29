@@ -498,13 +498,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   // This method is used on login form, where user can input either their username or email to log in
   const handleUsernameOrEmailInput = (input: string): void => {
     const inputNoWhitespaces = input.replace(/\s/g, "");
+    fetchAllUsers();
 
     const usernameExists: boolean = allUsers
       .map((user) => user.username)
-      .includes(input.replace(/\s/g, ""));
+      .includes(inputNoWhitespaces);
     const emailExists: boolean = allUsers
       .map((user) => user.emailAddress)
-      .includes(input.replace(/\s/g, "").toLowerCase());
+      .includes(inputNoWhitespaces.toLowerCase());
 
     // If input matches pattern for an email:
     if (emailIsValid(inputNoWhitespaces.toLowerCase())) {
