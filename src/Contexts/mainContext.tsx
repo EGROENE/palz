@@ -19,7 +19,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setTheme(newTheme);
   };
 
-  const [allUsers, setAllUsers] = useState<TUser[]>([]);
+  const [allUsers, setAllUsers] = useSessionStorage<TUser[]>("allUsers", []);
   const [currentUser, setCurrentUser, removeCurrentUser] = useSessionStorage<
     TUser | undefined
   >("currentUser", undefined);
