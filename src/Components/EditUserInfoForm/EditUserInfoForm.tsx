@@ -87,7 +87,10 @@ const EditUserInfoForm = () => {
   const [showUserLocationCountries, setShowUserLocationCountries] =
     useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showAllUserInterests, setShowAllUserInterests] = useState<boolean>(false);
+  const [
+    showExistingInterestsNotOnCurrentUser,
+    setShowExistingInterestsNotOnCurrentUser,
+  ] = useState<boolean>(false);
 
   const allOtherUserInterests = allUsers
     .filter((user) => user.username !== currentUser?.username)
@@ -791,7 +794,7 @@ const EditUserInfoForm = () => {
     // Throw error when a location field is filled out and at least one other is not. Otherwise, no error thrown.
     if (e) {
       if (locationType === "city") {
-        setUserCity(e.target.value?.replace(/[0-9]/g, ""));
+        setUserCity(Methods.nameNoSpecialChars(e.target.value));
         if (
           (e.target.value !== "" && (userState === "" || userCountry === "")) ||
           (e.target.value === "" && (userState !== "" || userCountry !== ""))
@@ -801,7 +804,7 @@ const EditUserInfoForm = () => {
           setLocationError("");
         }
       } else if (locationType === "state") {
-        setUserState(e.target.value?.replace(/[0-9]/g, ""));
+        setUserState(Methods.nameNoSpecialChars(e.target.value));
         if (
           (e.target.value !== "" && (userCity === "" || userCountry === "")) ||
           (e.target.value === "" && (userCity !== "" || userCountry !== ""))
@@ -1514,7 +1517,15 @@ const EditUserInfoForm = () => {
         <div className="interests-section">
           <p>
             Interests:{" "}
-            <span onClick={() => setShowAllUserInterests(!showAllUserInterests)}>
+            <span
+              style={{ "color": randomColor }}
+              className="show-module"
+              onClick={() =>
+                setShowExistingInterestsNotOnCurrentUser(
+                  !showExistingInterestsNotOnCurrentUser
+                )
+              }
+            >
               Browse
             </span>
           </p>
@@ -1537,11 +1548,11 @@ const EditUserInfoForm = () => {
               </span>
             ))}
           </div>
-          {showAllUserInterests && (
+          {showExistingInterestsNotOnCurrentUser && (
             <div className="all-user-interests-module-background">
               <i
                 title="Close"
-                onClick={() => setShowAllUserInterests(false)}
+                onClick={() => setShowExistingInterestsNotOnCurrentUser(false)}
                 className="fas fa-times close-interests-module-icon"
               ></i>
               <div className="all-user-interests-module">
