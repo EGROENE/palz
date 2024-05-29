@@ -229,6 +229,29 @@ const deleteSocialMedium = (
   });
 };
 
+const deleteUserInterest = (
+  user: TUser | undefined,
+  interest: string
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "interests": user?.interests.filter((int) => int !== interest),
+    });
+  };
+  console.log(getRaw());
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/users/${user?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const deleteUser = (userID: number | string | undefined): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json");
@@ -256,5 +279,6 @@ const Requests = {
   deleteLocation,
   deleteSocialMedium,
   deleteUserAbout,
+  deleteUserInterest,
 };
 export default Requests;

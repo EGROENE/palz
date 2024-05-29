@@ -934,6 +934,23 @@ const EditUserInfoForm = () => {
       .catch((error) => console.log(error));
   };
 
+  const handleDeleteUserInterest = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    interest: string
+  ) => {
+    e.preventDefault();
+    Requests.deleteUserInterest(currentUser, interest)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not delete interest. Please try again.");
+        } else {
+          toast.success(`'${interest}' removed from interests`);
+          fetchAllUsers();
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   // Create array in which certain countries from countries array will be placed on top
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
   const preferredCountries = countries.filter((country) =>
@@ -1465,6 +1482,25 @@ const EditUserInfoForm = () => {
             )}
           </label>
         )}
+        <div className="interests-section">
+          <p>Interests:</p>
+          {/* Click 'browse' to show module that contains a bunch of interest tags (array of all existing interests (occurring once) from all users if over a certain length; else, use a predetermined array) which user can click to add to their interests array */}
+          {/* User can also add their own interests by typing it in */}
+          <div className="interests-container">
+            {currentUser?.interests.map((interest) => (
+              <span key={interest} style={{ backgroundColor: randomColor }}>
+                {interest}
+
+                <i
+                  onClick={(e) => handleDeleteUserInterest(e, interest)}
+                  className="fas fa-times"
+                ></i>
+              </span>
+            ))}
+          </div>
+          <input type="text" placeholder="Type an interest"></input>
+          <button>Add</button>
+        </div>
         <div className="edit-user-info-form-options">
           <button
             type="reset"
