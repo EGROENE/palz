@@ -1,3 +1,4 @@
+// Don't use nameIsValid
 export const nameIsValid = (name: string): boolean => {
   if (
     /^[a-zA-ZÄäÖöÜüßÉéÍíóÓÑñ -.]*$/i.test(name) &&
