@@ -2,12 +2,7 @@ import { createContext, ReactNode, useState } from "react";
 import { TUserContext, TUser } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useSessionStorage } from "usehooks-ts";
-import {
-  nameIsValid,
-  usernameIsValid,
-  passwordIsValid,
-  emailIsValid,
-} from "../validations";
+import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
 import Requests from "../requests";
 import toast from "react-hot-toast";
 import Methods from "../methods";
@@ -204,7 +199,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     isFirstName: boolean,
     formType: "signup" | "edit-user-info"
   ) => {
-    isFirstName ? setFirstName(name) : setLastName(name);
+    isFirstName
+      ? setFirstName(Methods.nameNoSpecialChars(name))
+      : setLastName(Methods.nameNoSpecialChars(name));
 
     if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
       setCurrentUser(userData);
@@ -221,11 +218,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         isFirstName
           ? setFirstNameError("Please fill out this field")
           : setLastNameError("Please fill out this field");
-      } else if (!nameIsValid(name.trim())) {
+      } /* else if (!nameIsValid(name.trim())) {
         isFirstName
           ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
           : setLastNameError("Only alphabetical characters & appropriate punctuation");
       } else if (nameIsValid(name.trim())) {
+        isFirstName ? setFirstNameError("") : setLastNameError("");
+      } */ else {
         isFirstName ? setFirstNameError("") : setLastNameError("");
       }
     } else {
@@ -233,11 +232,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         isFirstName
           ? setFirstNameError("Please fill out this field")
           : setLastNameError("Please fill out this field");
-      } else if (!nameIsValid(name.trim()) && name.trim() !== "") {
+      } /* else if (!nameIsValid(name.trim()) && name.trim() !== "") {
         isFirstName
           ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
           : setLastNameError("Only alphabetical characters & appropriate punctuation");
-      } else {
+      } */ else {
         isFirstName ? setFirstNameError("") : setLastNameError("");
       }
     }

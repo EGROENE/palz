@@ -1,3 +1,6 @@
+const nameNoSpecialChars = (input: string) =>
+  input.replace(/[^a-zÄäÖöÜüÑñÉéóÓÍí -]/gi, "");
+
 const getCapitalizedWord = (word: string | undefined): string => {
   const wordLetters = word?.split("");
   const firstLetterCapitalized = wordLetters ? wordLetters[0]?.toUpperCase() : "";
@@ -85,6 +88,7 @@ const formatHyphensAndSpacesInString = (name: string): string => {
 };
 
 const Methods = {
+  nameNoSpecialChars,
   getCapitalizedWord,
   formatCapitalizedName,
   formatHyphensAndSpacesInString,
