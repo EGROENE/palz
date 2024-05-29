@@ -545,6 +545,8 @@
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
+  height: 7rem;
+  overflow-y: scroll;
 }
 
 .non-user-interests-container .interest-tab {
