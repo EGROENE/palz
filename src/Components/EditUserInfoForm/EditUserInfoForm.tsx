@@ -87,6 +87,18 @@ const EditUserInfoForm = () => {
   const [showUserLocationCountries, setShowUserLocationCountries] =
     useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showAllUserInterests, setShowAllUserInterests] = useState<boolean>(false);
+
+  const allOtherUserInterests = allUsers
+    .filter((user) => user.username !== currentUser?.username)
+    .map((user) => user.interests)
+    .filter(function (elem, index, self) {
+      return index === self.indexOf(elem);
+    })
+    .flat();
+  const existingInterestsNotOnCurrentUser = allOtherUserInterests.filter(
+    (int) => !currentUser?.interests.includes(int)
+  );
 
   // If user data has changed, setCurrentUser:
   useEffect(() => {
@@ -951,6 +963,23 @@ const EditUserInfoForm = () => {
       .catch((error) => console.log(error));
   };
 
+  const handleAddUserInterest = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    interest: string
+  ) => {
+    e.preventDefault();
+    Requests.addUserInterest(currentUser, interest)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not add interest. Please try again.");
+        } else {
+          toast.success(`'${interest}' added to interests`);
+          fetchAllUsers();
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   // Create array in which certain countries from countries array will be placed on top
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
   const preferredCountries = countries.filter((country) =>
@@ -1483,23 +1512,66 @@ const EditUserInfoForm = () => {
           </label>
         )}
         <div className="interests-section">
-          <p>Interests:</p>
+          <p>
+            Interests:{" "}
+            <span onClick={() => setShowAllUserInterests(!showAllUserInterests)}>
+              Browse
+            </span>
+          </p>
           {/* Click 'browse' to show module that contains a bunch of interest tags (array of all existing interests (occurring once) from all users if over a certain length; else, use a predetermined array) which user can click to add to their interests array */}
           {/* User can also add their own interests by typing it in */}
           <div className="interests-container">
             {currentUser?.interests.map((interest) => (
-              <span key={interest} style={{ backgroundColor: randomColor }}>
+              <span
+                className="interest-tab"
+                key={interest}
+                style={{ backgroundColor: randomColor }}
+              >
                 {interest}
 
                 <i
+                  title="Remove"
                   onClick={(e) => handleDeleteUserInterest(e, interest)}
                   className="fas fa-times"
                 ></i>
               </span>
             ))}
           </div>
-          <input type="text" placeholder="Type an interest"></input>
-          <button>Add</button>
+          {showAllUserInterests && (
+            <div className="all-user-interests-module-background">
+              <i
+                title="Close"
+                onClick={() => setShowAllUserInterests(false)}
+                className="fas fa-times close-interests-module-icon"
+              ></i>
+              <div className="all-user-interests-module">
+                <div>
+                  <p>Don't see an interest listed? Type it below & add it:</p>
+                  <div className="add-interests-bar">
+                    <input type="text" placeholder="Type an interest"></input>
+                    <button style={{ backgroundColor: randomColor }}>Add</button>
+                  </div>
+                </div>
+                <div className="non-user-interests-container">
+                  {existingInterestsNotOnCurrentUser.map((interest) => (
+                    <span
+                      className="interest-tab"
+                      key={interest}
+                      style={{ backgroundColor: randomColor }}
+                    >
+                      {interest}
+                      <i
+                        onClick={(e) => handleAddUserInterest(e, interest)}
+                        style={{ "rotate": "45deg" }}
+                        title="Add"
+                        className="fas fa-times"
+                      ></i>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         <div className="edit-user-info-form-options">
           <button

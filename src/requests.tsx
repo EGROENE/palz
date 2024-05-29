@@ -241,7 +241,36 @@ const deleteUserInterest = (
       "interests": user?.interests.filter((int) => int !== interest),
     });
   };
-  console.log(getRaw());
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/users/${user?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
+const addUserInterest = (
+  user: TUser | undefined,
+  interest: string
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedInterestsArray: string[] = [];
+  if (user?.interests) {
+    for (const int of user.interests) {
+      updatedInterestsArray.push(int);
+    }
+    updatedInterestsArray.push(interest);
+  }
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "interests": updatedInterestsArray,
+    });
+  };
   const raw = getRaw();
 
   return fetch(`http://localhost:3000/users/${user?.id}`, {
@@ -280,5 +309,6 @@ const Requests = {
   deleteSocialMedium,
   deleteUserAbout,
   deleteUserInterest,
+  addUserInterest,
 };
 export default Requests;
