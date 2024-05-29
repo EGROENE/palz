@@ -95,12 +95,9 @@ const EditUserInfoForm = () => {
   const allOtherUserInterests = allUsers
     .filter((user) => user.username !== currentUser?.username)
     .map((user) => user.interests)
-    .filter(function (elem, index, self) {
-      return index === self.indexOf(elem);
-    })
     .flat();
-  const existingInterestsNotOnCurrentUser = allOtherUserInterests.filter(
-    (int) => !currentUser?.interests.includes(int)
+  const existingInterestsNotOnCurrentUser: string[] = Methods.removeDuplicates(
+    allOtherUserInterests.filter((int) => !currentUser?.interests.includes(int))
   );
 
   // If user data has changed, setCurrentUser:

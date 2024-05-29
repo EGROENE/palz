@@ -87,10 +87,18 @@ const formatHyphensAndSpacesInString = (name: string): string => {
   return finalChars.join("");
 };
 
+// To avoid BS type errors & keep this method usable w/ arrays of all types, disable type checking
+// @ts-ignore
+function removeDuplicates(arr) {
+  // @ts-ignore
+  return arr.filter((item, index) => arr.indexOf(item) === index);
+}
+
 const Methods = {
   nameNoSpecialChars,
   getCapitalizedWord,
   formatCapitalizedName,
   formatHyphensAndSpacesInString,
+  removeDuplicates,
 };
 export default Methods;
