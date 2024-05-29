@@ -1,12 +1,21 @@
 #root {
   /* max-width: 1280px; */
-  margin: 0 auto;
-  padding: 2rem;
+  /* margin: 0 auto;
+  padding: 2rem; */
   text-align: center;
 }
 
 .app {
   background-color: var(--background-color);
+  /* width: 89vw;
+  padding: 2.5rem 3.5rem;
+  max-width: 100vw; */
+}
+
+.page-hero {
+  margin-left: 3rem;
+  margin-top: 2.5rem;
+  margin-bottom: 3rem;
 }
 
 .theme-toggle-button {
@@ -31,7 +40,7 @@
 .login-page-container {
   display: flex;
   align-items: center;
-  width: 80vw;
+  width: 89vw;
   justify-content: space-around;
 }
 
@@ -170,6 +179,7 @@
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
+  width: 93vw;
 }
 
 .sidebar {
@@ -456,6 +466,89 @@
   height: 5rem;
   letter-spacing: 1.5px;
   padding: 0.5rem;
+}
+
+.interests-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.show-module {
+  font-size: 0.75rem;
+}
+
+.show-module:hover {
+  cursor: pointer;
+}
+
+.interests-container {
+  width: 100%;
+  display: flex;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.interest-tab {
+  margin: 0.5rem 1rem;
+  padding: 0.25rem 0.5rem;
+  font-family: var(--text-font);
+  border-radius: 10px;
+}
+
+.interest-tab:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.interest-tab i {
+  margin: 0.5rem;
+}
+
+.all-user-interests-module-background {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  margin-left: -3rem;
+}
+
+.close-interests-module-icon {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  font-size: 2rem;
+}
+
+.all-user-interests-module {
+  background: rgba(255, 255, 255, 0.75);
+  padding: 3rem;
+  width: 75%;
+}
+
+.add-interests-bar {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.add-interests-bar button {
+  margin-left: 0.5rem;
+}
+
+.non-user-interests-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.non-user-interests-container .interest-tab {
+  font-size: 1.25rem;
 }
 
 .settings-theme-and-delete-account-container {
