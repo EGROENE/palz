@@ -45,7 +45,11 @@ const UserSettings = () => {
   };
 
   return (
-    <div onClick={() => showSidebar && setShowSidebar(false)}>
+    <div
+      style={{ "width": "unset" }}
+      className="page-hero"
+      onClick={() => showSidebar && setShowSidebar(false)}
+    >
       <NavBar />
       <h1>Settings</h1>
       <EditUserInfoForm />
