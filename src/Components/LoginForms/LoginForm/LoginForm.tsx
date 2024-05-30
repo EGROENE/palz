@@ -3,9 +3,10 @@ import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const LoginForm = () => {
-  const { currentUser, welcomeMessageDisplayTime } = useMainContext();
+  const { currentUser, welcomeMessageDisplayTime, fetchAllUsers } = useMainContext();
 
   const {
     passwordIsHidden,
@@ -27,6 +28,19 @@ const LoginForm = () => {
   } = useUserContext();
 
   const navigation = useNavigate();
+
+  useEffect(() => {
+    fetchAllUsers();
+    if (emailAddress && emailAddress !== "") {
+      handleUsernameOrEmailInput(emailAddress);
+    }
+    if (username && username !== "") {
+      handleUsernameOrEmailInput(username);
+    }
+    if (password && password !== "") {
+      handlePasswordInput(password, "login");
+    }
+  }, []);
 
   return (
     <form
