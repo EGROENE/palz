@@ -9,7 +9,7 @@ import { countries, phoneNumberLengthRanges } from "../../constants";
 import toast from "react-hot-toast";
 import Methods from "../../methods";
 
-const EditUserInfoForm = () => {
+const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
   const { currentUser, setCurrentUser, fetchAllUsers, allUsers } = useMainContext();
   const {
     userCity,
@@ -87,22 +87,6 @@ const EditUserInfoForm = () => {
   const [showUserLocationCountries, setShowUserLocationCountries] =
     useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [
-    showExistingInterestsNotOnCurrentUser,
-    setShowExistingInterestsNotOnCurrentUser,
-  ] = useState<boolean>(false);
-  const [displayedAdditionalInterests, setDisplayedAdditionalInterests] = useState<
-    string[]
-  >([]);
-  const [inputInterest, setInputInterest] = useState<string>("");
-
-  const allOtherUserInterests = allUsers
-    .filter((user) => user.username !== currentUser?.username)
-    .map((user) => user.interests)
-    .flat();
-  const allInterestsNotOnCurrentUser: string[] = Methods.removeDuplicates(
-    allOtherUserInterests.filter((int) => !currentUser?.interests.includes(int))
-  );
 
   // If user data has changed, setCurrentUser:
   useEffect(() => {
@@ -174,28 +158,6 @@ const EditUserInfoForm = () => {
       );
     }
     handleEditUserInfoRevert();
-    setDisplayedAdditionalInterests(allInterestsNotOnCurrentUser);
-  }, []);
-
-  useEffect(() => {
-    /* Somehow, if user inputs an interest, currentUser?.interests changes, so only set displayedAdditionalInterests to allInterestsNotOnCurrentUser if inputInterest === "". This ensures displayedAdditionalInterests updates as soon as user adds/deletes interest */
-    if (inputInterest === "") {
-      setDisplayedAdditionalInterests(allInterestsNotOnCurrentUser);
-    }
-  }, [currentUser?.interests]);
-
-  // Set random color:
-  const [randomColor, setRandomColor] = useState<string>("");
-  useEffect(() => {
-    const themeColors = [
-      "var(--theme-blue)",
-      "var(--theme-green)",
-      "var(--theme-red)",
-      "var(--theme-purple)",
-      "var(--theme-orange)",
-    ];
-    const randomNumber = Math.floor(Math.random() * themeColors.length);
-    setRandomColor(themeColors[randomNumber]);
   }, []);
 
   const handleUpdateProfileInfo = (
@@ -873,23 +835,6 @@ const EditUserInfoForm = () => {
     }
   };
 
-  const handleAddUserInterest = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    interest: string
-  ) => {
-    e.preventDefault();
-    Requests.addUserInterest(currentUser, interest.trim())
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not add interest. Please try again.");
-        } else {
-          toast.success(`'${interest}' added to interests`);
-          fetchAllUsers();
-        }
-      })
-      .catch((error) => console.log(error));
-  };
-
   const handleUserAboutInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const charLimit = 200;
     const input = e.target.value.replace(/\s+/g, " ");
@@ -900,38 +845,6 @@ const EditUserInfoForm = () => {
       setUserAboutError(
         `Maximum ${charLimit} characters allowed (${input.length} characters input)`
       );
-    }
-  };
-
-  const noAdditionalInterestsAndInputInterest =
-    displayedAdditionalInterests.length === 0 && inputInterest !== "";
-  const noAdditionalInterestsAndNoInputInterest =
-    displayedAdditionalInterests.length === 0 && inputInterest === "";
-  const disableAddInterestsButton =
-    displayedAdditionalInterests.length === 1 &&
-    inputInterest === displayedAdditionalInterests[0];
-
-  const handleInterestsInput = (input: string) => {
-    const inputNoWhitespacesCaseInsensitive = input.replace(/\s+/g, " ").toLowerCase();
-    setInputInterest(inputNoWhitespacesCaseInsensitive);
-    if (inputNoWhitespacesCaseInsensitive.trim() === "") {
-      setDisplayedAdditionalInterests(allInterestsNotOnCurrentUser);
-    } else {
-      for (const interest of allInterestsNotOnCurrentUser) {
-        if (interest === inputNoWhitespacesCaseInsensitive.trim()) {
-          setDisplayedAdditionalInterests(
-            allInterestsNotOnCurrentUser.filter(
-              (int) => int === inputNoWhitespacesCaseInsensitive.trim()
-            )
-          );
-        } else {
-          setDisplayedAdditionalInterests(
-            allInterestsNotOnCurrentUser.filter((int) =>
-              int.includes(inputNoWhitespacesCaseInsensitive.trim())
-            )
-          );
-        }
-      }
     }
   };
 
@@ -1007,23 +920,6 @@ const EditUserInfoForm = () => {
           toast.success(`'About' section deleted`);
           fetchAllUsers();
           setUserAbout("");
-        }
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleDeleteUserInterest = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    interest: string
-  ) => {
-    e.preventDefault();
-    Requests.deleteUserInterest(currentUser, interest)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not delete interest. Please try again.");
-        } else {
-          toast.success(`'${interest}' removed from interests`);
-          fetchAllUsers();
         }
       })
       .catch((error) => console.log(error));
@@ -1560,105 +1456,6 @@ const EditUserInfoForm = () => {
             )}
           </label>
         )}
-        <div className="interests-section">
-          <p>
-            Interests:{" "}
-            <span
-              style={{ "color": randomColor }}
-              className="show-module"
-              onClick={() =>
-                setShowExistingInterestsNotOnCurrentUser(
-                  !showExistingInterestsNotOnCurrentUser
-                )
-              }
-            >
-              Browse
-            </span>
-          </p>
-          {/* Click 'browse' to show module that contains a bunch of interest tags (array of all existing interests (occurring once) from all users if over a certain length; else, use a predetermined array) which user can click to add to their interests array */}
-          {/* User can also add their own interests by typing it in */}
-          <div className="interests-container">
-            {currentUser?.interests.map((interest) => (
-              <span
-                className="interest-tab"
-                key={interest}
-                style={{ backgroundColor: randomColor }}
-              >
-                {interest}
-
-                <i
-                  title="Remove"
-                  onClick={(e) => handleDeleteUserInterest(e, interest)}
-                  className="fas fa-times"
-                ></i>
-              </span>
-            ))}
-          </div>
-          {showExistingInterestsNotOnCurrentUser && (
-            <div className="all-user-interests-module-background">
-              <i
-                title="Close"
-                onClick={() => {
-                  setShowExistingInterestsNotOnCurrentUser(false);
-                  setInputInterest("");
-                }}
-                className="fas fa-times close-interests-module-icon"
-              ></i>
-              <div className="all-user-interests-module">
-                <div>
-                  <p>Don't see an interest listed? Type it below & add it:</p>
-                  <div className="add-interests-bar">
-                    <input
-                      value={inputInterest}
-                      onChange={(e) => handleInterestsInput(e.target.value.trim())}
-                      type="text"
-                      placeholder="Type an interest"
-                    ></input>
-                    {inputInterest !== "" && (
-                      <i
-                        title="Clear"
-                        onClick={() => setInputInterest("")}
-                        className="fas fa-times"
-                      ></i>
-                    )}
-                    <button
-                      onClick={(e) => handleAddUserInterest(e, inputInterest)}
-                      disabled={disableAddInterestsButton}
-                      style={{ backgroundColor: randomColor }}
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-                <div className="non-user-interests-container">
-                  {!noAdditionalInterestsAndNoInputInterest &&
-                    !noAdditionalInterestsAndInputInterest &&
-                    displayedAdditionalInterests.map((interest) => (
-                      <span
-                        className="interest-tab"
-                        key={interest}
-                        style={{ backgroundColor: randomColor }}
-                      >
-                        {interest}
-                        <i
-                          onClick={(e) => handleAddUserInterest(e, interest)}
-                          style={{ "rotate": "45deg" }}
-                          title="Add"
-                          className="fas fa-times"
-                        ></i>
-                      </span>
-                    ))}
-                  {noAdditionalInterestsAndNoInputInterest && (
-                    <p>Type in an interest of yours & add it!</p>
-                  )}
-                  {noAdditionalInterestsAndInputInterest && (
-                    <p>No matching existing interests, but you can add what you typed!</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
         <div className="edit-user-info-form-options">
           <button
             type="reset"
