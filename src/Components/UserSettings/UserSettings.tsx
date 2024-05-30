@@ -1,13 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
 import EditUserInfoForm from "../EditUserInfoForm/EditUserInfoForm";
+import UserInterestsSection from "../UserInterestsSection/UserInterestsSection";
 import Requests from "../../requests";
 import toast from "react-hot-toast";
 
 const UserSettings = () => {
+  // Set random color:
+  const [randomColor, setRandomColor] = useState<string>("");
+  useEffect(() => {
+    const themeColors = [
+      "var(--theme-blue)",
+      "var(--theme-green)",
+      "var(--theme-red)",
+      "var(--theme-purple)",
+      "var(--theme-orange)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
+  }, []);
+
   const { currentUser, theme, toggleTheme } = useMainContext();
   const { showSidebar, setShowSidebar, logout, passwordIsHidden, setPasswordIsHidden } =
     useUserContext();
@@ -30,6 +45,7 @@ const UserSettings = () => {
     }
   }, []);
 
+  // Defined here, and not in userContext, as useNavigate hook can only be used in <Router> component (navigation is changed)
   const handleAccountDeletion = () => {
     Requests.deleteUser(currentUser?.id)
       .then((response) => {
@@ -52,7 +68,8 @@ const UserSettings = () => {
     >
       <NavBar />
       <h1>Settings</h1>
-      <EditUserInfoForm />
+      <EditUserInfoForm randomColor={randomColor} />
+      <UserInterestsSection randomColor={randomColor} />
       <div className="settings-theme-and-delete-account-container">
         <div>
           <h3>Delete Account</h3>
