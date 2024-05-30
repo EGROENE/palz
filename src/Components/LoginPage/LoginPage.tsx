@@ -5,10 +5,13 @@ import LoginForm from "../LoginForms/LoginForm/LoginForm";
 import { useEffect } from "react";
 
 const LoginPage = () => {
-  const { theme, toggleTheme } = useMainContext();
-  const { signupIsSelected, toggleSignupLogin } = useUserContext();
+  const { theme, toggleTheme, fetchAllUsers } = useMainContext();
+  const { signupIsSelected, toggleSignupLogin, resetFormFieldsAndErrors } =
+    useUserContext();
 
   useEffect(() => {
+    fetchAllUsers(); // get most up-to-date allUsers
+    resetFormFieldsAndErrors();
     // Display login form by default
     if (signupIsSelected) {
       toggleSignupLogin();
