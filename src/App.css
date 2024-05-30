@@ -88,7 +88,8 @@
   margin-top: 1rem;
 }
 
-.login-signup-edit-form p:first-child {
+.login-signup-edit-form p:first-child,
+.interests-section p {
   font-size: 1.25rem;
   font-family: var(--text-font);
 }
@@ -531,6 +532,16 @@
   background: rgba(255, 255, 255, 0.75);
   padding: 3rem;
   width: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.all-user-interests-module .bar-and-description {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .all-user-interests-module p {
@@ -541,12 +552,17 @@
   display: flex;
   margin-bottom: 2rem;
   position: relative;
+  justify-content: center;
+}
+
+.add-interests-bar input {
+  width: 75%;
 }
 
 .add-interests-bar i {
   position: absolute;
   top: 18%;
-  right: 9%;
+  right: 18%;
   font-size: 1.5rem;
 }
 
