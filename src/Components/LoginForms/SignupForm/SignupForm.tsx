@@ -7,29 +7,24 @@ import { useEffect } from "react";
 
 // should have isOnSignup param
 const SignupForm = () => {
-  const { currentUser, welcomeMessageDisplayTime } = useMainContext();
+  const { currentUser, welcomeMessageDisplayTime, fetchAllUsers } = useMainContext();
   const {
+    resetFormFieldsAndErrors,
     areNoSignupFormErrors,
     passwordIsHidden,
     toggleHidePassword,
     firstName,
     firstNameError,
-    setFirstNameError,
     handleNameInput,
     lastName,
     lastNameError,
-    setLastNameError,
     username,
     usernameError,
-    setUsernameError,
     emailAddress,
     emailError,
-    setEmailError,
     password,
     passwordError,
-    setPasswordError,
     confirmationPassword,
-    setConfirmationPasswordError,
     handleUsernameInput,
     handleEmailAddressInput,
     handlePasswordInput,
@@ -45,16 +40,6 @@ const SignupForm = () => {
     setShowUsernameCriteria,
   } = useUserContext();
 
-  // Ensure all errors are set by default to "Please fill out this field"
-  useEffect(() => {
-    setFirstNameError("Please fill out this field");
-    setLastNameError("Please fill out this field");
-    setEmailError("Please fill out this field");
-    setUsernameError("Please fill out this field");
-    setPasswordError("Please fill out this field");
-    setConfirmationPasswordError("Please fill out this field");
-  }, []);
-
   // After a couple seconds after signup, change url to /users/*username*:
   const navigation = useNavigate();
   const handleSignupFormSubmission = (e: React.FormEvent<HTMLFormElement>) => {
@@ -64,6 +49,11 @@ const SignupForm = () => {
       welcomeMessageDisplayTime
     );
   };
+
+  useEffect(() => {
+    fetchAllUsers();
+    resetFormFieldsAndErrors();
+  }, []);
 
   return (
     <form
