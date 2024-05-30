@@ -540,6 +540,14 @@
 .add-interests-bar {
   display: flex;
   margin-bottom: 2rem;
+  position: relative;
+}
+
+.add-interests-bar i {
+  position: absolute;
+  top: 18%;
+  right: 9%;
+  font-size: 1.5rem;
 }
 
 .add-interests-bar button {
