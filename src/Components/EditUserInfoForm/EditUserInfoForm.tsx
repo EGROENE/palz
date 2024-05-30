@@ -310,6 +310,10 @@ const EditUserInfoForm = () => {
     value: string | undefined,
     countryCode: string // used instead of phoneCountryCode b/c it's more current
   ): void => {
+    fetchAllUsers();
+    const phoneNumberTaken: boolean = allUsers
+      .map((user) => user.phoneCountryCode + user.phoneNumberWithoutCountryCode)
+      .includes(countryCode + value);
     // If input doesn't meet length req or if it doesn't meet length req and countryCode is blank:
     if (
       !(typeof value === "string" && value?.length >= min && value?.length <= max) ||
@@ -326,6 +330,8 @@ const EditUserInfoForm = () => {
       // If input meets length req & countryCode still not selected:
     } else if (countryCode === "") {
       setPhoneNumberError("Please select a country");
+    } else if (phoneNumberTaken) {
+      setPhoneNumberError("Phone number already in use");
     } else {
       setPhoneNumberError("");
     }
