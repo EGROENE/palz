@@ -533,6 +533,10 @@
   width: 75%;
 }
 
+.all-user-interests-module p {
+  color: black;
+}
+
 .add-interests-bar {
   display: flex;
   margin-bottom: 2rem;
