@@ -529,7 +529,7 @@
 }
 
 .all-user-interests-module {
-  background: rgba(255, 255, 255, 0.75);
+  background: white;
   padding: 3rem;
   width: 75%;
   display: flex;
