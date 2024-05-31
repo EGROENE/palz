@@ -36,22 +36,25 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
 
   // HANDLERS
   const handleInterestsInput = (input: string): void => {
-    const inputNoWhitespacesCaseInsensitive = input.replace(/\s+/g, " ").toLowerCase();
-    setInputInterest(inputNoWhitespacesCaseInsensitive);
-    if (inputNoWhitespacesCaseInsensitive.trim() === "") {
+    const inputCaseInsensitive = input
+      .replace(/[^a-z0-9ÄäÖöÜüÑñÉéóÓÍí -]/gi, "")
+      .replace(/\s+/g, " ")
+      .toLowerCase();
+    setInputInterest(inputCaseInsensitive);
+    if (inputCaseInsensitive.trim() === "") {
       setDisplayedAdditionalInterests(allInterestsNotOnCurrentUser);
     } else {
       for (const interest of allInterestsNotOnCurrentUser) {
-        if (interest === inputNoWhitespacesCaseInsensitive.trim()) {
+        if (interest === inputCaseInsensitive.trim()) {
           setDisplayedAdditionalInterests(
             allInterestsNotOnCurrentUser.filter(
-              (int) => int === inputNoWhitespacesCaseInsensitive.trim()
+              (int) => int === inputCaseInsensitive.trim()
             )
           );
         } else {
           setDisplayedAdditionalInterests(
             allInterestsNotOnCurrentUser.filter((int) =>
-              int.includes(inputNoWhitespacesCaseInsensitive.trim())
+              int.includes(inputCaseInsensitive.trim())
             )
           );
         }
@@ -157,7 +160,7 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
               <div className="add-interests-bar">
                 <input
                   value={inputInterest}
-                  onChange={(e) => handleInterestsInput(e.target.value.trim())}
+                  onChange={(e) => handleInterestsInput(e.target.value)}
                   type="text"
                   placeholder="Type an interest"
                 ></input>
