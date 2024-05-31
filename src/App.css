@@ -508,7 +508,7 @@
   margin: 0.5rem;
 }
 
-.all-user-interests-module-background {
+.browse-interests-module-background {
   height: 100vh;
   width: 100vw;
   position: fixed;
@@ -528,7 +528,7 @@
   font-size: 2rem;
 }
 
-.all-user-interests-module {
+.browse-interests-module {
   background: white;
   padding: 3rem;
   width: 75%;
@@ -537,14 +537,14 @@
   align-items: center;
 }
 
-.all-user-interests-module .bar-and-description {
+.browse-interests-module .bar-and-description {
   width: 90%;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.all-user-interests-module p {
+.browse-interests-module p {
   color: black;
 }
 

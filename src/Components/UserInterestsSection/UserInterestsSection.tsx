@@ -145,7 +145,7 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
         )}
       </div>
       {showExistingInterestsNotOnCurrentUser && (
-        <div className="all-user-interests-module-background">
+        <div className="browse-interests-module-background">
           <i
             title="Close"
             onClick={() => {
@@ -154,7 +154,7 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
             }}
             className="fas fa-times close-interests-module-icon"
           ></i>
-          <div className="all-user-interests-module">
+          <div className="browse-interests-module">
             <div className="bar-and-description">
               <p>Don't see an interest listed? Type it below & add it:</p>
               <div className="add-interests-bar">
