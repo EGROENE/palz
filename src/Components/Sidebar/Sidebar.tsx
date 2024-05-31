@@ -47,7 +47,9 @@ const Sidebar = () => {
         <p className="sidebar-options">Find Palz</p>
         <p className="sidebar-options">Explore Events</p>
         <p className="sidebar-options">My Palz</p>
-        <p className="sidebar-options">Find Events</p>
+        <Link className="sidebar-options" to={"/events"}>
+          Explore Events
+        </Link>
         <Link className="sidebar-options" to="/settings">
           Settings
         </Link>

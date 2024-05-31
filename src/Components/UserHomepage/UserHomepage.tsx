@@ -58,16 +58,17 @@ const UserHomepage = () => {
           <div className="upcoming-events-hero">
             <h1>No upcoming events</h1>
             <p>
-              Click <Link to={""}>here</Link> to find something fun to do
+              Click <Link to={"/events"}>here</Link> to find something fun to do
             </p>
           </div>
         )}
         <div className="site-links-container">
           <button>Create Event</button>
           <button>Find Palz</button>
-          <button>Explore Events</button>
+          <Link to={"/events"}>
+            <button>Explore Events</button>
+          </Link>
           <button>My Palz</button>
-          <button>Find Events</button>
         </div>
       </div>
     )
