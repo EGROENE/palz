@@ -1,4 +1,4 @@
-import { TUser } from "./types";
+import { TUser, TEvent } from "./types";
 
 const getAllUsers = (): Promise<TUser[]> => {
   return fetch("http://localhost:3000/users", {
@@ -7,15 +7,11 @@ const getAllUsers = (): Promise<TUser[]> => {
   }).then((response) => response.json() as Promise<TUser[]>);
 };
 
-const getAllEvents = (): Promise<Response> => {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-type", "application/json");
-
+const getAllEvents = (): Promise<TEvent[]> => {
   return fetch("http://localhost:3000/events", {
     method: "GET",
-    headers: myHeaders,
     redirect: "follow",
-  });
+  }).then((response) => response.json() as Promise<TEvent[]>);
 };
 
 const getRsvpdEventsByUser = (): Promise<Response> => {
@@ -292,7 +288,54 @@ const deleteUser = (userID: number | string | undefined): Promise<Response> => {
   });
 };
 
+const addUserRSVP = (user: TUser | undefined, event: TEvent): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedInterestedUsersArray: string[] = [];
+  if (user?.username) {
+    updatedInterestedUsersArray.push(user.username);
+  }
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "interestedUsers": updatedInterestedUsersArray,
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/events/${event?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
+const deleteUserRSVP = (user: TUser | undefined, event: TEvent) => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "interestedUsers": event?.interestedUsers.filter(
+        (username) => username !== user?.username
+      ),
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/events/${event?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
+  addUserRSVP,
+  deleteUserRSVP,
   getAllUsers,
   getAllEvents,
   getRsvpdEventsByUser,

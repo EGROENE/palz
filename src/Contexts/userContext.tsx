@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useState } from "react";
-import { TUserContext, TUser } from "../types";
+import { TUserContext, TUser, TEvent } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -18,6 +18,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setCurrentUser,
     handleWelcomeMessage,
     fetchAllUsers,
+    fetchAllEvents,
   } = useMainContext();
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
@@ -599,6 +600,40 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       });
   };
 
+  const handleAddUserRSVP = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent
+  ): void => {
+    e.preventDefault();
+    Requests.addUserRSVP(currentUser, event)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not RSVP to event. Please try again.");
+          fetchAllEvents();
+        } else {
+          fetchAllEvents();
+          toast.success("RSVP added");
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleDeleteUserRSVP = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent
+  ): void => {
+    e.preventDefault();
+    Requests.deleteUserRSVP(currentUser, event).then((response) => {
+      if (!response.ok) {
+        toast.error("Could not remove RSVP. Please try again.");
+        fetchAllEvents();
+      } else {
+        toast.success("RSVP deleted");
+        fetchAllEvents();
+      }
+    });
+  };
+
   // Defined here, as it's used in methods that are used in multiple components
   const allSignupFormFieldsFilled: boolean =
     firstName !== "" &&
@@ -688,6 +723,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    handleDeleteUserRSVP,
+    handleAddUserRSVP,
     facebook,
     setFacebook,
     facebookError,

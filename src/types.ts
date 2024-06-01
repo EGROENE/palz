@@ -43,6 +43,7 @@ export type TEvent = {
 };
 
 export type TMainContext = {
+  fetchAllEvents: () => Promise<void>;
   theme: "dark" | "light";
   toggleTheme: () => void;
   allUsers: TUser[];
@@ -94,6 +95,14 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  handleAddUserRSVP: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent
+  ) => void;
+  handleDeleteUserRSVP: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent
+  ) => void;
   phoneCountry: string | undefined;
   setPhoneCountry: React.Dispatch<React.SetStateAction<string | undefined>>;
   phoneCountryCode: string | undefined;
