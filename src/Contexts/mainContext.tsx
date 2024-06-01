@@ -41,15 +41,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    Requests.getAllEvents()
-      .then((response) => {
-        return response.text();
-      })
-      .then((result) => {
-        setAllEvents(JSON.parse(result));
-      })
-      .catch((error) => console.log(error));
-  }, [allEvents]);
+    fetchAllUsers();
+  }, [allUsers]);
 
   useEffect(() => {
     Requests.getRsvpdEventsByUser()
@@ -117,15 +110,14 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
       .catch((error) => console.log(error));
   }, [allInterests]);
 
-  useEffect(() => {
-    fetchAllUsers();
-  }, [allUsers]);
-
   // REFETCH METHODS
   const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
 
+  const fetchAllEvents = (): Promise<void> => Requests.getAllEvents().then(setAllEvents);
+
   const mainContextValues: TMainContext = {
     fetchAllUsers,
+    fetchAllEvents,
     theme,
     toggleTheme,
     allUsers,

@@ -7,11 +7,12 @@ import EventCard from "../EventCard/EventCard";
 import { TEvent } from "../../types";
 
 const UserHomepage = () => {
-  const { currentUser, allEvents, userCreatedAccount } = useMainContext();
+  const { currentUser, allEvents, userCreatedAccount, fetchAllEvents } = useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
 
   // On init rendering, hide sidebar, if displayed (better ux when returning to user homepage from Settings, etc.)
   useEffect(() => {
+    fetchAllEvents();
     if (showSidebar) {
       setShowSidebar(false);
     }
