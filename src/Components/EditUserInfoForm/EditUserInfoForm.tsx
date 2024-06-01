@@ -211,6 +211,7 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
         .then((response) => {
           if (!response.ok) {
             toast.error("Could not update profile info. Please try again.");
+            fetchAllUsers();
           } else {
             setIsLoading(false);
             toast.success("Profile info updated");
@@ -855,6 +856,7 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not delete phone number. Please try again.");
+          fetchAllUsers();
         } else {
           toast.success("Phone number deleted");
           fetchAllUsers();
@@ -874,6 +876,7 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not delete location. Please try again.");
+          fetchAllUsers();
         } else {
           toast.success("Location deleted");
           fetchAllUsers();
@@ -895,6 +898,7 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
       .then((response) => {
         if (!response.ok) {
           toast.error(`Could not delete ${medium.toUpperCase()} link. Please try again.`);
+          fetchAllUsers();
         } else {
           toast.success(`${medium.toUpperCase()} link deleted`);
           fetchAllUsers();
@@ -916,6 +920,7 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
       .then((response) => {
         if (!response.ok) {
           toast.error(`Could not delete 'About' section. Please try again.`);
+          fetchAllUsers();
         } else {
           toast.success(`'About' section deleted`);
           fetchAllUsers();

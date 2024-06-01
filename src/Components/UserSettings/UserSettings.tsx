@@ -23,7 +23,7 @@ const UserSettings = () => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
-  const { currentUser, theme, toggleTheme } = useMainContext();
+  const { currentUser, theme, toggleTheme, fetchAllUsers } = useMainContext();
   const { showSidebar, setShowSidebar, logout, passwordIsHidden, setPasswordIsHidden } =
     useUserContext();
 
@@ -51,10 +51,12 @@ const UserSettings = () => {
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not delete your account. Please try again.");
+          fetchAllUsers();
         } else {
           toast.error("You have deleted your account. We're sorry to see you go!");
           logout();
           navigation("/");
+          fetchAllUsers();
         }
       })
       .catch((error) => console.log(error));

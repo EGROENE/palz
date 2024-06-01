@@ -71,6 +71,7 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not add interest. Please try again.");
+          fetchAllUsers();
         } else {
           toast.success(`'${interest}' added to interests`);
           fetchAllUsers();
@@ -88,6 +89,7 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not delete interest. Please try again.");
+          fetchAllUsers();
         } else {
           toast.success(`'${interest}' removed from interests`);
           fetchAllUsers();

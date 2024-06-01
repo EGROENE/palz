@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
+import { useMainContext } from "../../Hooks/useMainContext";
+import { useUserContext } from "../../Hooks/useUserContext";
 import { TEvent } from "../../types";
 
 const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<string>("");
+
+  const { currentUser } = useMainContext();
+  const { handleAddUserRSVP, handleDeleteUserRSVP } = useUserContext();
 
   const nextEventDateTime: Date = new Date(event.nextEventTime);
 
@@ -19,6 +24,11 @@ const EventCard = ({ event }: { event: TEvent }) => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
+  // Make sure that this updates after user de-RSVPs
+  const userRSVPd: boolean = currentUser?.username
+    ? event.interestedUsers.includes(currentUser.username)
+    : false;
+
   return (
     <div className="event-card" style={{ borderColor: randomColor }}>
       <div className="event-info-container">
@@ -28,7 +38,13 @@ const EventCard = ({ event }: { event: TEvent }) => {
         </p>
         <div className="event-buttons-container">
           <button style={{ backgroundColor: randomColor }}>See Event</button>
-          <button>Remove RSVP</button>
+          <button
+            onClick={(e) =>
+              userRSVPd ? handleDeleteUserRSVP(e, event) : handleAddUserRSVP(e, event)
+            }
+          >
+            {userRSVPd ? "Remove RSVP" : "RSVP"}
+          </button>
         </div>
       </div>
       <img src={event.imageOne?.src} alt={event.imageOne?.altText} />
