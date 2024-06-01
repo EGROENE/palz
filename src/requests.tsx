@@ -333,7 +333,19 @@ const deleteUserRSVP = (user: TUser | undefined, event: TEvent) => {
   });
 };
 
+const deletePastEvent = (event: TEvent): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  return fetch(`http://localhost:3000/events/${event.id}`, {
+    method: "DELETE",
+    headers: myHeaders,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
+  deletePastEvent,
   addUserRSVP,
   deleteUserRSVP,
   getAllUsers,

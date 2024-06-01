@@ -18,7 +18,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setCurrentUser,
     handleWelcomeMessage,
     fetchAllUsers,
-    fetchAllEvents,
+    getMostCurrentEvents,
   } = useMainContext();
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
@@ -609,9 +609,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not RSVP to event. Please try again.");
-          fetchAllEvents();
+          getMostCurrentEvents();
         } else {
-          fetchAllEvents();
+          getMostCurrentEvents();
           toast.success("RSVP added");
         }
       })
@@ -626,10 +626,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     Requests.deleteUserRSVP(currentUser, event).then((response) => {
       if (!response.ok) {
         toast.error("Could not remove RSVP. Please try again.");
-        fetchAllEvents();
+        getMostCurrentEvents();
       } else {
         toast.success("RSVP deleted");
-        fetchAllEvents();
+        getMostCurrentEvents();
       }
     });
   };

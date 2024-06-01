@@ -5,11 +5,11 @@ import NavBar from "../NavBar/NavBar";
 import EventCard from "../EventCard/EventCard";
 
 const EventsPage = () => {
-  const { fetchAllEvents, allEvents } = useMainContext();
+  const { allEvents, getMostCurrentEvents } = useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
 
   useEffect(() => {
-    fetchAllEvents();
+    getMostCurrentEvents();
   }, []);
 
   return (

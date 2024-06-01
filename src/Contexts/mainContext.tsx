@@ -45,6 +45,10 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   }, [allUsers]);
 
   useEffect(() => {
+    getMostCurrentEvents();
+  }, []);
+
+  useEffect(() => {
     Requests.getRsvpdEventsByUser()
       .then((response) => {
         return response.text();
@@ -115,7 +119,20 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchAllEvents = (): Promise<void> => Requests.getAllEvents().then(setAllEvents);
 
+  // call alongside fetchAllEvents wherever events are rendered
+  const getMostCurrentEvents = (): void => {
+    const now = Date.now();
+    fetchAllEvents();
+    for (const event of allEvents) {
+      if (event.nextEventTime < now) {
+        Requests.deletePastEvent(event);
+      }
+    }
+    fetchAllEvents();
+  };
+
   const mainContextValues: TMainContext = {
+    getMostCurrentEvents,
     fetchAllUsers,
     fetchAllEvents,
     theme,
@@ -125,6 +142,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setCurrentUser,
     removeCurrentUser,
     allEvents,
+    setAllEvents,
     rsvpdEvents,
     favoritedEvents,
     attendedEvents,

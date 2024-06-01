@@ -1,3 +1,5 @@
+import React from "react";
+
 export type TUser = {
   id?: number | string;
   firstName: string | undefined;
@@ -43,6 +45,7 @@ export type TEvent = {
 };
 
 export type TMainContext = {
+  getMostCurrentEvents: () => void;
   fetchAllEvents: () => Promise<void>;
   theme: "dark" | "light";
   toggleTheme: () => void;
@@ -51,6 +54,7 @@ export type TMainContext = {
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser | undefined>>;
   removeCurrentUser: () => void;
   allEvents: TEvent[];
+  setAllEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
   rsvpdEvents: {
     id: string;
     eventID: string;
