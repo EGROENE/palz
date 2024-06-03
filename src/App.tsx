@@ -10,6 +10,7 @@ import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import Error404 from "./Components/Error404/Error404";
 import UserSettings from "./Components/UserSettings/UserSettings";
 import EventsPage from "./Components/EventsPage/EventsPage";
+import EventPage from "./Components/EventPage/EventPage";
 
 function App() {
   const { userCreatedAccount, theme, showWelcomeMessage, currentUser } = useMainContext();
@@ -57,6 +58,7 @@ function App() {
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />
         <Route path="/events" element={<EventsPage />} />
+        <Route path="/events/:eventID" element={<EventPage />} />
         <Route path="/users/:username" element={<UserHomepage />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
