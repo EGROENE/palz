@@ -44,12 +44,11 @@ const Sidebar = () => {
       </div>
       <div className="sidebar-options-container">
         <p className="sidebar-options">Create Event</p>
-        <p className="sidebar-options">Find Palz</p>
-        <p className="sidebar-options">Explore Events</p>
-        <p className="sidebar-options">My Palz</p>
         <Link className="sidebar-options" to={"/events"}>
           Explore Events
         </Link>
+        <p className="sidebar-options">Find Palz</p>
+        <p className="sidebar-options">My Palz</p>
         <Link className="sidebar-options" to="/settings">
           Settings
         </Link>
