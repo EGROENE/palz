@@ -12,6 +12,12 @@ const EventsPage = () => {
     getMostCurrentEvents();
   }, []);
 
+  useEffect(() => {
+    if (showSidebar) {
+      setShowSidebar(false);
+    }
+  }, []);
+
   return (
     <div
       style={{ "width": "unset" }}
