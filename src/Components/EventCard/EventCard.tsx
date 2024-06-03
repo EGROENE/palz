@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import { TEvent } from "../../types";
+import { Link } from "react-router-dom";
 
 const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<string>("");
@@ -37,8 +38,15 @@ const EventCard = ({ event }: { event: TEvent }) => {
           {nextEventDateTime.toDateString()} at {nextEventDateTime.toLocaleTimeString()}
         </p>
         <div className="event-buttons-container">
-          <button style={{ backgroundColor: randomColor }}>See Event</button>
+          <Link
+            style={{ backgroundColor: randomColor }}
+            className="event-buttons-container-button"
+            to={`/events/${event.id}`}
+          >
+            <button>See Event</button>
+          </Link>
           <button
+            className="event-buttons-container-button"
             onClick={(e) =>
               userRSVPd ? handleDeleteUserRSVP(e, event) : handleAddUserRSVP(e, event)
             }
