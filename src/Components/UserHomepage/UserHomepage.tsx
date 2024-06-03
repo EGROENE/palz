@@ -23,7 +23,7 @@ const UserHomepage = () => {
   /* If currentUser is undefined, redirect to base URL (/). This prevents access to user account by simply pasting in their acct url. Forces login. Also, this component will only render if currentUser exists. If currentUser is defined, ensure url is set to include their username (after editing user info, then returning to user homepage, 'undefined' was sometimes taking the place of currentUser.username in path). */
   const navigation = useNavigate();
   useEffect(() => {
-    if (!currentUser || userCreatedAccount === null) {
+    if (!currentUser && userCreatedAccount === null) {
       navigation("/");
     } else {
       navigation(`/users/${currentUser?.username}`);
