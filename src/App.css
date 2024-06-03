@@ -295,10 +295,15 @@
   align-items: center;
 }
 
-.event-buttons-container button {
+.event-buttons-container-button {
   width: 75%;
   font-size: 0.75rem;
   margin: 0.4rem 0;
+  border-radius: 8px;
+}
+
+.event-buttons-container-button button {
+  background-color: unset;
 }
 
 .event-buttons-container button:nth-child(2) {
@@ -592,4 +597,19 @@
 
 .delete-button {
   background-color: tomato;
+}
+
+.events-page-hero nav {
+  margin: 2.5rem 0 3rem 3rem;
+}
+
+.all-events-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 2rem;
+  justify-content: space-between;
+}
+
+.all-events-container .event-card {
+  width: calc(50% - 4rem);
 }
