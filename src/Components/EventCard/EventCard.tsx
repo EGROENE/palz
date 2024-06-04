@@ -50,7 +50,18 @@ const EventCard = ({ event }: { event: TEvent }) => {
           >
             See Event
           </Link>
+          {/* Necessary to expressly return true or false in 'disabled' attr of button below, or a type error occurs */}
           <button
+            disabled={
+              currentUser?.username && event.organizers.includes(currentUser?.username)
+                ? true
+                : false
+            }
+            title={
+              currentUser?.username && event.organizers.includes(currentUser?.username)
+                ? "Cannot RSVP to an event you organized"
+                : undefined
+            }
             className="event-buttons-container-button"
             onClick={(e) =>
               userRSVPd ? handleDeleteUserRSVP(e, event) : handleAddUserRSVP(e, event)

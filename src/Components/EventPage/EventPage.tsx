@@ -113,7 +113,21 @@ const EventPage = () => {
               {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
             </div>
             <button
-              style={{ "backgroundColor": randomColor }}
+              disabled={
+                currentUser?.username && event.organizers.includes(currentUser?.username)
+                  ? true
+                  : false
+              }
+              title={
+                currentUser?.username && event.organizers.includes(currentUser?.username)
+                  ? "Cannot RSVP to an event you organized"
+                  : undefined
+              }
+              style={
+                currentUser?.username && !event.organizers.includes(currentUser?.username)
+                  ? { "backgroundColor": randomColor }
+                  : undefined
+              }
               onClick={(e) =>
                 userRSVPd ? handleDeleteUserRSVP(e, event) : handleAddUserRSVP(e, event)
               }
