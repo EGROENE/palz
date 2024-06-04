@@ -63,13 +63,21 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchAllEvents = (): Promise<void> => Requests.getAllEvents().then(setAllEvents);
 
-  // call alongside fetchAllEvents wherever events are rendered
+  // Deletes events that now-nonexistent users had made (if they are now the sole organizer), as well as past events
+  // If deleted user organized event w/ others, only filter out their name where applicable, but keep event
   const getMostCurrentEvents = (): void => {
     const now = Date.now();
     fetchAllEvents();
+    // Get array of event organizers who still exist. If length of this array is 0, delete event.
     for (const event of allEvents) {
-      if (event.nextEventTime < now) {
-        Requests.deletePastEvent(event);
+      const refinedOrganizers = [];
+      for (const organizer of event.organizers) {
+        if (allUsers.filter((user) => user.id === organizer).length > 0) {
+          refinedOrganizers.push(organizer);
+        }
+      }
+      if (event.nextEventTime < now || refinedOrganizers.length === 0) {
+        Requests.deleteEvent(event);
       }
     }
     fetchAllEvents();
