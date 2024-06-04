@@ -8,7 +8,7 @@ import ImageSlideshow from "../ImageSlideshow/ImageSlideshow";
 import NavBar from "../NavBar/NavBar";
 
 const EventPage = () => {
-  const { allEvents, getMostCurrentEvents, currentUser, userCreatedAccount } =
+  const { allUsers, allEvents, getMostCurrentEvents, currentUser, userCreatedAccount } =
     useMainContext();
   const { handleDeleteUserRSVP, handleAddUserRSVP, showSidebar, setShowSidebar } =
     useUserContext();
@@ -74,6 +74,18 @@ const EventPage = () => {
   };
   const eventImages = getImagesArray();
 
+  const getOrganizersUsernames = (): (string | undefined)[] => {
+    const usernameArray: Array<string | undefined> = [];
+    for (const organizerID of event.organizers) {
+      usernameArray.push(allUsers.filter((user) => user.id === organizerID)[0].username);
+    }
+    return usernameArray;
+  };
+  const organizerUsernames = getOrganizersUsernames();
+
+  const userIsOrganizer =
+    currentUser?.id && event.organizers.includes(currentUser?.id.toString());
+
   return (
     <div onClick={() => showSidebar && setShowSidebar(false)} className="event-page-hero">
       <NavBar />
@@ -97,10 +109,10 @@ const EventPage = () => {
                 <p>{`${event.city}, ${event.stateProvince}, ${event.country}`}</p>
               </div>
               <div>
-                {event?.organizers.length === 1 ? (
-                  <p>Organizer: {event.organizers[0]}</p>
+                {organizerUsernames.length === 1 ? (
+                  <p>Organizer: {organizerUsernames[0]}</p>
                 ) : (
-                  <p>Organizers: {event.organizers.join(", ")}</p>
+                  <p>Organizers: {organizerUsernames.join(", ")}</p>
                 )}
                 <p>{`RSVPs: ${event.interestedUsers.length}`}</p>
               </div>
@@ -113,21 +125,11 @@ const EventPage = () => {
               {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
             </div>
             <button
-              disabled={
-                currentUser?.username && event.organizers.includes(currentUser?.username)
-                  ? true
-                  : false
-              }
+              disabled={userIsOrganizer ? true : false}
               title={
-                currentUser?.username && event.organizers.includes(currentUser?.username)
-                  ? "Cannot RSVP to an event you organized"
-                  : undefined
+                userIsOrganizer ? "Cannot RSVP to an event you organized" : undefined
               }
-              style={
-                currentUser?.username && !event.organizers.includes(currentUser?.username)
-                  ? { "backgroundColor": randomColor }
-                  : undefined
-              }
+              style={userIsOrganizer ? { "backgroundColor": randomColor } : undefined}
               onClick={(e) =>
                 userRSVPd ? handleDeleteUserRSVP(e, event) : handleAddUserRSVP(e, event)
               }
