@@ -279,7 +279,7 @@ const deleteUserRSVP = (user: TUser | undefined, event: TEvent) => {
   });
 };
 
-const deletePastEvent = (event: TEvent): Promise<Response> => {
+const deleteEvent = (event: TEvent): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -291,7 +291,7 @@ const deletePastEvent = (event: TEvent): Promise<Response> => {
 };
 
 const Requests = {
-  deletePastEvent,
+  deleteEvent,
   addUserRSVP,
   deleteUserRSVP,
   getAllUsers,
