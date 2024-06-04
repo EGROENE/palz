@@ -50,7 +50,14 @@ const UserHomepage = () => {
         {userRSVPDEvents.length ? (
           <div className="upcoming-events-hero">
             <h1>Upcoming Events ({userRSVPDEvents.length})</h1>
-            <div className="rsvpd-events-container">
+            <div
+              style={
+                userRSVPDEventsSoonestToLatest.length === 1
+                  ? { justifyContent: "center" }
+                  : undefined
+              }
+              className="rsvpd-events-container"
+            >
               {userRSVPDEventsSoonestToLatest.map((event: TEvent) => (
                 <EventCard key={event.id} event={event} />
               ))}
