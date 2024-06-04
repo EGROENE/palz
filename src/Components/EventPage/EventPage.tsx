@@ -45,7 +45,7 @@ const EventPage = () => {
   const nextEventDateTime = event ? new Date(event.nextEventTime) : undefined;
 
   const userRSVPd =
-    currentUser?.username && event?.interestedUsers.includes(currentUser.username);
+    currentUser?.id && event?.interestedUsers.includes(currentUser.id.toString());
 
   const getImagesArray = ():
     | {
@@ -129,7 +129,7 @@ const EventPage = () => {
               title={
                 userIsOrganizer ? "Cannot RSVP to an event you organized" : undefined
               }
-              style={userIsOrganizer ? { "backgroundColor": randomColor } : undefined}
+              style={!userIsOrganizer ? { "backgroundColor": randomColor } : undefined}
               onClick={(e) =>
                 userRSVPd ? handleDeleteUserRSVP(e, event) : handleAddUserRSVP(e, event)
               }
