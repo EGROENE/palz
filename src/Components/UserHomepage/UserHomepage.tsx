@@ -50,8 +50,8 @@ const UserHomepage = () => {
             <h1>Upcoming Events ({userRSVPDEvents.length})</h1>
             <div
               style={
-                userRSVPDEventsSoonestToLatest.length === 1
-                  ? { justifyContent: "center" }
+                userRSVPDEventsSoonestToLatest.length < 3
+                  ? { justifyContent: "center", overflowX: "unset" }
                   : undefined
               }
               className="rsvpd-events-container"
