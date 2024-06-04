@@ -31,7 +31,12 @@ const EventCard = ({ event }: { event: TEvent }) => {
     : false;
 
   return (
-    <div className="event-card" style={{ borderColor: randomColor }}>
+    <div
+      className="event-card"
+      style={{
+        boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
+      }}
+    >
       <div className="event-info-container">
         <header>{event.title}</header>
         <p>
