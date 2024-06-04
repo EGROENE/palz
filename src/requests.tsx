@@ -292,12 +292,12 @@ const addUserRSVP = (user: TUser | undefined, event: TEvent): Promise<Response> 
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedInterestedUsersArray: string[] = [];
+  const updatedInterestedUsersArray: Array<string | number | undefined> = [];
   for (const intUser of event.interestedUsers) {
     updatedInterestedUsersArray.push(intUser);
   }
   if (user?.username) {
-    updatedInterestedUsersArray.push(user.username);
+    updatedInterestedUsersArray.push(user.id);
   }
 
   const getRaw = () => {
@@ -321,9 +321,7 @@ const deleteUserRSVP = (user: TUser | undefined, event: TEvent) => {
 
   const getRaw = () => {
     return JSON.stringify({
-      "interestedUsers": event?.interestedUsers.filter(
-        (username) => username !== user?.username
-      ),
+      "interestedUsers": event?.interestedUsers.filter((id) => id !== user?.id),
     });
   };
   const raw = getRaw();
