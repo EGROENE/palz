@@ -3,17 +3,26 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
+import { useNavigate } from "react-router-dom";
 import ImageSlideshow from "../ImageSlideshow/ImageSlideshow";
 import NavBar from "../NavBar/NavBar";
 
 const EventPage = () => {
-  const { allEvents, getMostCurrentEvents, currentUser } = useMainContext();
+  const { allEvents, getMostCurrentEvents, currentUser, userCreatedAccount } =
+    useMainContext();
   const { handleDeleteUserRSVP, handleAddUserRSVP, showSidebar, setShowSidebar } =
     useUserContext();
   const { eventID } = useParams();
   const [event, setEvent] = useState<TEvent>(
     allEvents.filter((ev) => ev.id === eventID)[0]
   );
+
+  const navigation = useNavigate();
+  useEffect(() => {
+    if (!currentUser && userCreatedAccount === null) {
+      navigation("/");
+    }
+  }, [currentUser, navigation, userCreatedAccount]);
 
   const [randomColor, setRandomColor] = useState<string>("");
   useEffect(() => {
@@ -73,7 +82,7 @@ const EventPage = () => {
           <div
             style={{
               border: `2px solid ${randomColor}`,
-              boxShadow: `${randomColor} 0px 30px 90px`,
+              boxShadow: `${randomColor} 0px 7px 90px`,
             }}
             className="event-main-info-container"
           >
@@ -96,6 +105,13 @@ const EventPage = () => {
                 <p>{`RSVPs: ${event.interestedUsers.length}`}</p>
               </div>
             </div>
+            {event.imageOne?.src !== "" && (
+              <ImageSlideshow randomColor={randomColor} images={eventImages} />
+            )}
+            <div>
+              <p>{event?.description}</p>
+              {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
+            </div>
             <button
               style={{ "backgroundColor": randomColor }}
               onClick={(e) =>
@@ -105,7 +121,7 @@ const EventPage = () => {
               {userRSVPd ? "Remove RSVP" : "RSVP"}
             </button>
           </div>
-          <div className="further-event-info-container">
+          {/* <div className="further-event-info-container">
             {event.imageOne?.src !== "" && (
               <ImageSlideshow randomColor={randomColor} images={eventImages} />
             )}
@@ -113,7 +129,7 @@ const EventPage = () => {
               <p>{event?.description}</p>
               {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
             </div>
-          </div>
+          </div> */}
         </>
       ) : (
         <>
