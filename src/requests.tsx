@@ -293,6 +293,9 @@ const addUserRSVP = (user: TUser | undefined, event: TEvent): Promise<Response> 
   myHeaders.append("Content-Type", "application/json");
 
   const updatedInterestedUsersArray: string[] = [];
+  for (const intUser of event.interestedUsers) {
+    updatedInterestedUsersArray.push(intUser);
+  }
   if (user?.username) {
     updatedInterestedUsersArray.push(user.username);
   }
