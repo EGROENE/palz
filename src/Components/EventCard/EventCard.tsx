@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<string>("");
 
-  const { currentUser } = useMainContext();
+  const { currentUser, allUsers } = useMainContext();
   const { handleAddUserRSVP, handleDeleteUserRSVP } = useUserContext();
 
   const nextEventDateTime: Date = new Date(event.nextEventTime);
@@ -30,6 +30,15 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ? event.interestedUsers.includes(currentUser.id.toString())
     : false;
 
+  const getOrganizersUsernames = (): (string | undefined)[] => {
+    const usernameArray: Array<string | undefined> = [];
+    for (const organizerID of event.organizers) {
+      usernameArray.push(allUsers.filter((user) => user.id === organizerID)[0].username);
+    }
+    return usernameArray;
+  };
+  const organizerUsernames = getOrganizersUsernames();
+
   const userIsOrganizer =
     currentUser?.id && event.organizers.includes(currentUser?.id.toString());
 
@@ -44,6 +53,12 @@ const EventCard = ({ event }: { event: TEvent }) => {
         <header>{event.title}</header>
         <p>
           {nextEventDateTime.toDateString()} at {nextEventDateTime.toLocaleTimeString()}
+        </p>
+        <p className="organizers-event-card">
+          <i className="fas fa-user-alt"></i>
+          {organizerUsernames.length === 1
+            ? organizerUsernames[0]
+            : `${organizerUsernames[0]}  +${organizerUsernames.length - 1}`}
         </p>
         <div className="event-buttons-container">
           <Link
