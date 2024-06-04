@@ -43,7 +43,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
             className="event-buttons-container-button"
             to={`/events/${event.id}`}
           >
-            <button>See Event</button>
+            See Event
           </Link>
           <button
             className="event-buttons-container-button"
