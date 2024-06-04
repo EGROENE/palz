@@ -26,9 +26,12 @@ const EventCard = ({ event }: { event: TEvent }) => {
   }, []);
 
   // Make sure that this updates after user de-RSVPs
-  const userRSVPd: boolean = currentUser?.username
-    ? event.interestedUsers.includes(currentUser.username)
+  const userRSVPd: boolean = currentUser?.id
+    ? event.interestedUsers.includes(currentUser.id.toString())
     : false;
+
+  const userIsOrganizer =
+    currentUser?.id && event.organizers.includes(currentUser?.id.toString());
 
   return (
     <div
@@ -52,16 +55,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
           </Link>
           {/* Necessary to expressly return true or false in 'disabled' attr of button below, or a type error occurs */}
           <button
-            disabled={
-              currentUser?.username && event.organizers.includes(currentUser?.username)
-                ? true
-                : false
-            }
-            title={
-              currentUser?.username && event.organizers.includes(currentUser?.username)
-                ? "Cannot RSVP to an event you organized"
-                : undefined
-            }
+            disabled={userIsOrganizer ? true : false}
+            title={userIsOrganizer ? "Cannot RSVP to an event you organized" : undefined}
             className="event-buttons-container-button"
             onClick={(e) =>
               userRSVPd ? handleDeleteUserRSVP(e, event) : handleAddUserRSVP(e, event)
