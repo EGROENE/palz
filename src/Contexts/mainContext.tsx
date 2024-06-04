@@ -19,13 +19,17 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setTheme(newTheme);
   };
 
+  /* Necessary to keep allUsers & allEvents in session storage instead of state b/c I couldn't figure out how to get these again when reloading some components, like LoginPage & EventPage. Probably something about async I'm missing. Wouldn't be necessary to do this in the case of a RESTful API, as one could likely get the required data w/ a search parameter. */
   const [allUsers, setAllUsers] = useSessionStorage<TUser[]>("allUsers", []);
   const [currentUser, setCurrentUser, removeCurrentUser] = useSessionStorage<
     TUser | undefined
   >("currentUser", undefined);
-  const [allEvents, setAllEvents] = useState<TEvent[]>([]);
+  const [allEvents, setAllEvents] = useSessionStorage<TEvent[]>("allEvents", []);
   const [attendedEvents, setAttendedEventsByUser] = useState([]);
-  const [userCreatedAccount, setUserCreatedAccount] = useState<null | boolean>(null);
+  const [userCreatedAccount, setUserCreatedAccount] = useSessionStorage<boolean | null>(
+    "userCreatedAccount",
+    null
+  );
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
     useState<number>(2500);
