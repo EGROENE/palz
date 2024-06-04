@@ -25,6 +25,8 @@ const UserHomepage = () => {
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
       navigation("/");
+    } else {
+      navigation(`/users/${currentUser?.username}`);
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
