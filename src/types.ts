@@ -55,38 +55,11 @@ export type TMainContext = {
   removeCurrentUser: () => void;
   allEvents: TEvent[];
   setAllEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
-  rsvpdEvents: {
-    id: string;
-    eventID: string;
-    eventName: string;
-    username: string;
-  }[];
-  favoritedEvents: {
-    id: string;
-    eventID: string;
-    eventName: string;
-    username: string;
-  }[];
   attendedEvents: {
     id: string;
     eventID: string;
     eventName: string;
     username: string;
-  }[];
-  userInterests: {
-    id: string;
-    username: string;
-    interest: string;
-  }[];
-  eventsByTag: {
-    id: string;
-    eventID: string;
-    eventName: string;
-    tag: string;
-  }[];
-  allInterests: {
-    id: string;
-    interest: string;
   }[];
   userCreatedAccount: null | boolean;
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;

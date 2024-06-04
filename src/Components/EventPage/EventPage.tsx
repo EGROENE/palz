@@ -137,15 +137,6 @@ const EventPage = () => {
               {userRSVPd ? "Remove RSVP" : "RSVP"}
             </button>
           </div>
-          {/* <div className="further-event-info-container">
-            {event.imageOne?.src !== "" && (
-              <ImageSlideshow randomColor={randomColor} images={eventImages} />
-            )}
-            <div>
-              <p>{event?.description}</p>
-              {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
-            </div>
-          </div> */}
         </>
       ) : (
         <>

@@ -24,12 +24,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     TUser | undefined
   >("currentUser", undefined);
   const [allEvents, setAllEvents] = useState<TEvent[]>([]);
-  const [rsvpdEvents, setRsvpdEventsByUser] = useState([]);
-  const [favoritedEvents, setFavoritedEventsByUser] = useState([]);
   const [attendedEvents, setAttendedEventsByUser] = useState([]);
-  const [userInterests, setUserInterests] = useState([]);
-  const [eventsByTag, setEventsByTag] = useState([]);
-  const [allInterests, setAllInterests] = useState([]);
   const [userCreatedAccount, setUserCreatedAccount] = useState<null | boolean>(null);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
@@ -49,28 +44,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    Requests.getRsvpdEventsByUser()
-      .then((response) => {
-        return response.text();
-      })
-      .then((result) => {
-        setRsvpdEventsByUser(JSON.parse(result));
-      })
-      .catch((error) => console.log(error));
-  }, [rsvpdEvents]);
-
-  useEffect(() => {
-    Requests.getFavoritedEventsByUser()
-      .then((response) => {
-        return response.text();
-      })
-      .then((result) => {
-        setFavoritedEventsByUser(JSON.parse(result));
-      })
-      .catch((error) => console.log(error));
-  }, [favoritedEvents]);
-
-  useEffect(() => {
     Requests.getAttendedEventsByUser()
       .then((response) => {
         return response.text();
@@ -80,39 +53,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
       })
       .catch((error) => console.log(error));
   }, [attendedEvents]);
-
-  useEffect(() => {
-    Requests.getUserInterests()
-      .then((response) => {
-        return response.text();
-      })
-      .then((result) => {
-        setUserInterests(JSON.parse(result));
-      })
-      .catch((error) => console.log(error));
-  }, [userInterests]);
-
-  useEffect(() => {
-    Requests.getEventsbyTag()
-      .then((response) => {
-        return response.text();
-      })
-      .then((result) => {
-        setEventsByTag(JSON.parse(result));
-      })
-      .catch((error) => console.log(error));
-  }, [eventsByTag]);
-
-  useEffect(() => {
-    Requests.getAllInterests()
-      .then((response) => {
-        return response.text();
-      })
-      .then((result) => {
-        setAllInterests(JSON.parse(result));
-      })
-      .catch((error) => console.log(error));
-  }, [allInterests]);
 
   // REFETCH METHODS
   const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
@@ -143,12 +83,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     removeCurrentUser,
     allEvents,
     setAllEvents,
-    rsvpdEvents,
-    favoritedEvents,
     attendedEvents,
-    userInterests,
-    eventsByTag,
-    allInterests,
     userCreatedAccount,
     setUserCreatedAccount,
     handleWelcomeMessage,
