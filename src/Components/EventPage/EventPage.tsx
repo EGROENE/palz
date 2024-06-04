@@ -16,6 +16,7 @@ const EventPage = () => {
   const [event, setEvent] = useState<TEvent>(
     allEvents.filter((ev) => ev.id === eventID)[0]
   );
+  const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<string[]>([]);
 
   const navigation = useNavigate();
   useEffect(() => {
@@ -41,6 +42,17 @@ const EventPage = () => {
   useEffect(() => {
     setEvent(allEvents.filter((ev) => ev.id === eventID)[0]);
   }, [allEvents]);
+
+  /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
+  useEffect(() => {
+    const refIntUsers = [];
+    for (const userID of event.interestedUsers) {
+      if (allUsers.filter((user) => user.id === userID).length) {
+        refIntUsers.push(userID);
+      }
+    }
+    setRefinedInterestedUsers(refIntUsers);
+  }, [allUsers]);
 
   const nextEventDateTime = event ? new Date(event.nextEventTime) : undefined;
 
@@ -114,7 +126,7 @@ const EventPage = () => {
                 ) : (
                   <p>Organizers: {organizerUsernames.join(", ")}</p>
                 )}
-                <p>{`RSVPs: ${event.interestedUsers.length}`}</p>
+                <p>{`RSVPs: ${refinedInterestedUsers.length}`}</p>
               </div>
             </div>
             {event.imageOne?.src !== "" && (
