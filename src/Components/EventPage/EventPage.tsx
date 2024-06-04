@@ -71,7 +71,10 @@ const EventPage = () => {
       {event ? (
         <>
           <div
-            style={{ "border": `2px solid ${randomColor}` }}
+            style={{
+              border: `2px solid ${randomColor}`,
+              boxShadow: `${randomColor} 0px 30px 90px`,
+            }}
             className="event-main-info-container"
           >
             <h1 style={{ "color": randomColor }}>{event.title}</h1>
