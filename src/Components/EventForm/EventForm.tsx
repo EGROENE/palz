@@ -27,13 +27,8 @@ const EventForm = () => {
   // INPUT HANDLERS
   //const handle;
 
-  const handlePublicPrivateBoxChecking = (option: "public" | "private") => {
-    if (option === "private") {
-      setPublicity("private");
-    } else if (option === "public") {
-      setPublicity("public");
-    }
-  };
+  const handlePublicPrivateBoxChecking = (option: "public" | "private"): void =>
+    setPublicity(option);
 
   // Create array in which certain countries from countries array will be placed on top
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
