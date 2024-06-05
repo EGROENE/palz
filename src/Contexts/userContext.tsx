@@ -194,7 +194,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     confirmationPasswordError === "";
 
   // Input-handling methods:
-  // Put here, since used in two different components
+  // Put here, since used in multiple components
   const handleNameInput = (
     name: string,
     isFirstName: boolean,
@@ -584,6 +584,61 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleCityStateCountryInput = (
+    setters: {
+      citySetter?: (value: React.SetStateAction<string | undefined>) => void;
+      stateSetter?: (value: React.SetStateAction<string | undefined>) => void;
+      countrySetter?: (value: React.SetStateAction<string | undefined>) => void;
+      errorSetter: (value: React.SetStateAction<string>) => void;
+      showCountriesSetter?: (value: React.SetStateAction<boolean>) => void;
+    },
+    locationType: "city" | "state" | "country",
+    country?: string,
+    e?: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    // Set appropriate state values based on field in question
+    // Throw error when a location field is filled out and at least one other is not. Otherwise, no error thrown.
+    if (e) {
+      if (locationType === "city") {
+        if (setters.citySetter) {
+          setters.citySetter(Methods.nameNoSpecialChars(e.target.value));
+        }
+        if (
+          (e.target.value !== "" && (userState === "" || userCountry === "")) ||
+          (e.target.value === "" && (userState !== "" || userCountry !== ""))
+        ) {
+          setters.errorSetter("Please fill out all 3 location fields");
+        } else {
+          setters.errorSetter("");
+        }
+      } else if (locationType === "state") {
+        if (setters.stateSetter) {
+          setters.stateSetter(Methods.nameNoSpecialChars(e.target.value));
+        }
+        if (
+          (e.target.value !== "" && (userCity === "" || userCountry === "")) ||
+          (e.target.value === "" && (userCity !== "" || userCountry !== ""))
+        ) {
+          setters.errorSetter("Please fill out all 3 location fields");
+        } else {
+          setters.errorSetter("");
+        }
+      }
+    } else {
+      if (setters.showCountriesSetter) {
+        setters.showCountriesSetter(true); // Hide countries dropdown once one is selected (not sure why true is necessary)
+      }
+      if (setters.countrySetter) {
+        setters.countrySetter(country);
+      }
+      if (country && country !== "" && (userCity === "" || userState === "")) {
+        setters.errorSetter("Please fill out all 3 location fields");
+      } else {
+        setters.errorSetter("");
+      }
+    }
+  };
+
   // Handler for creating new user account. Should make request w/ object containing user data, then handle errors in case it fails. If it fails, notify user somehow.
   const handleNewAccountCreation = (userData: TUser) => {
     Requests.createUser(userData)
@@ -723,6 +778,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    handleCityStateCountryInput,
     handleDeleteUserRSVP,
     handleAddUserRSVP,
     facebook,
