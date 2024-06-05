@@ -63,11 +63,11 @@
   padding: 0;
 }
 
-.login-page-container {
+.page-hero.login-page-container {
   display: flex;
   align-items: center;
-  width: 89vw;
   justify-content: space-around;
+  flex-direction: row;
 }
 
 .login-greeting-container button {
@@ -110,8 +110,9 @@
   width: 50%;
 }
 
-.login-signup-edit-form {
+.page-hero .login-signup-edit-form {
   margin-top: 1rem;
+  width: unset;
 }
 
 .login-signup-edit-form p:first-child,
