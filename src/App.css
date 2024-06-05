@@ -13,9 +13,35 @@
 }
 
 .page-hero {
-  margin-left: 3rem;
+  /* margin-left: 3rem;
   margin-top: 2.5rem;
+  margin-bottom: 3rem; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 98vw;
+}
+
+.page-hero nav {
+  margin-top: 2.5rem;
+  /* margin-left: 3rem;
+  margin-bottom: 3rem; */
+}
+
+.page-hero form {
+  width: 87vw;
   margin-bottom: 3rem;
+}
+
+.page-hero form input {
+  width: 100%;
+  padding: 0.45rem;
+}
+
+.page-hero form p,
+.input-error-message {
+  margin: 0.1rem;
+  letter-spacing: 0.5px;
 }
 
 .theme-toggle-button {
@@ -94,12 +120,6 @@
   font-family: var(--text-font);
 }
 
-.login-signup-edit-form p,
-.input-error-message {
-  margin: 0.1rem;
-  letter-spacing: 0.5px;
-}
-
 .erroneous-field {
   outline: 2px solid var(--theme-purple);
   border: none;
@@ -108,11 +128,6 @@
 .input-error-message {
   font-size: 1rem;
   font-family: var(--text-font);
-}
-
-.login-signup-edit-form input {
-  width: 100%;
-  padding: 0.45rem;
 }
 
 .password-input {
@@ -173,14 +188,6 @@
   height: 5rem;
   border-radius: 50%;
   border: 4px solid var(--header-one-color);
-}
-
-.user-homepage-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  width: 93vw;
 }
 
 .sidebar {
@@ -600,16 +607,16 @@
 
 .settings-theme-and-delete-account-container {
   display: flex;
-  justify-content: space-around;
   margin-top: 3rem;
+  width: 75%;
+}
+
+.settings-theme-and-delete-account-container div {
+  width: 50%;
 }
 
 .delete-button {
   background-color: tomato;
-}
-
-.events-page-hero nav {
-  margin: 2.5rem 0 3rem 3rem;
 }
 
 .event-page-hero {
@@ -647,6 +654,7 @@
   padding: 2rem;
   border-radius: 8px;
   margin-bottom: 5rem;
+  margin-top: 3rem;
 }
 
 .event-main-info-text-container {
