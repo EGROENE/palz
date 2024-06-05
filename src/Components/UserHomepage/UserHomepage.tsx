@@ -44,10 +44,7 @@ const UserHomepage = () => {
 
   return (
     currentUser && (
-      <div
-        onClick={() => showSidebar && setShowSidebar(false)}
-        className="page-hero user-homepage-container"
-      >
+      <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
         <NavBar />
         {userRSVPDEvents.length ? (
           <div className="upcoming-events-hero">

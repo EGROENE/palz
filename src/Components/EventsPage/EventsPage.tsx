@@ -30,7 +30,7 @@ const EventsPage = () => {
   return (
     <div
       style={{ "width": "unset" }}
-      className="events-page-hero"
+      className="page-hero"
       onClick={() => showSidebar && setShowSidebar(false)}
     >
       <NavBar />
