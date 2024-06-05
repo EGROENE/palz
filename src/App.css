@@ -282,6 +282,14 @@
   font-weight: 700;
 }
 
+.organizers-event-card {
+  font-size: 0.75rem;
+}
+
+.organizers-event-card i {
+  margin-right: 0.25rem;
+}
+
 .event-card img {
   float: left;
   width: 10rem;
