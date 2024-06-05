@@ -30,9 +30,16 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ? event.interestedUsers.includes(currentUser.id.toString())
     : false;
 
+  const refinedOrganizers: string[] = [];
+  for (const organizer of event.organizers) {
+    if (allUsers.map((user) => user.id).includes(organizer)) {
+      refinedOrganizers.push(organizer);
+    }
+  }
+
   const getOrganizersUsernames = (): (string | undefined)[] => {
     const usernameArray: Array<string | undefined> = [];
-    for (const organizerID of event.organizers) {
+    for (const organizerID of refinedOrganizers) {
       usernameArray.push(allUsers.filter((user) => user.id === organizerID)[0].username);
     }
     return usernameArray;
@@ -40,7 +47,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const organizerUsernames = getOrganizersUsernames();
 
   const userIsOrganizer =
-    currentUser?.id && event.organizers.includes(currentUser?.id.toString());
+    currentUser?.id && refinedOrganizers.includes(currentUser?.id.toString());
 
   return (
     <div
