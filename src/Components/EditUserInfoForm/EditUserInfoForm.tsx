@@ -12,6 +12,7 @@ import Methods from "../../methods";
 const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
   const { currentUser, setCurrentUser, fetchAllUsers, allUsers } = useMainContext();
   const {
+    handleCityStateCountryInput,
     userCity,
     setUserCity,
     userState,
@@ -762,46 +763,6 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
     }
   };
 
-  const handleCityStateCountryInput = (
-    locationType: "city" | "state" | "country",
-    country?: string,
-    e?: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    // Set appropriate state values based on field in question
-    // Throw error when a location field is filled out and at least one other is not. Otherwise, no error thrown.
-    if (e) {
-      if (locationType === "city") {
-        setUserCity(Methods.nameNoSpecialChars(e.target.value));
-        if (
-          (e.target.value !== "" && (userState === "" || userCountry === "")) ||
-          (e.target.value === "" && (userState !== "" || userCountry !== ""))
-        ) {
-          setLocationError("Please fill out all 3 location fields");
-        } else {
-          setLocationError("");
-        }
-      } else if (locationType === "state") {
-        setUserState(Methods.nameNoSpecialChars(e.target.value));
-        if (
-          (e.target.value !== "" && (userCity === "" || userCountry === "")) ||
-          (e.target.value === "" && (userCity !== "" || userCountry !== ""))
-        ) {
-          setLocationError("Please fill out all 3 location fields");
-        } else {
-          setLocationError("");
-        }
-      }
-    } else {
-      setShowUserLocationCountries(true); // Hide countries dropdown once one is selected (not sure why true is necessary)
-      setUserCountry(country);
-      if (country && country !== "" && (userCity === "" || userState === "")) {
-        setLocationError("Please fill out all 3 location fields");
-      } else {
-        setLocationError("");
-      }
-    }
-  };
-
   // Function to check if URL is valid
   const isValidUrl = (url: string): boolean => {
     try {
@@ -1207,7 +1168,19 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
             <input
               inputMode="text"
               className={isLocationError ? "erroneous-field" : undefined}
-              onChange={(e) => handleCityStateCountryInput("city", undefined, e)}
+              onChange={(e) =>
+                handleCityStateCountryInput(
+                  {
+                    citySetter: setUserCity,
+                    stateSetter: undefined,
+                    countrySetter: undefined,
+                    errorSetter: setLocationError,
+                  },
+                  "city",
+                  undefined,
+                  e
+                )
+              }
               disabled={isLoading}
               placeholder="Enter a city"
               value={userCity}
@@ -1219,7 +1192,19 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
             <input
               inputMode="text"
               className={isLocationError ? "erroneous-field" : undefined}
-              onChange={(e) => handleCityStateCountryInput("state", undefined, e)}
+              onChange={(e) =>
+                handleCityStateCountryInput(
+                  {
+                    citySetter: undefined,
+                    stateSetter: setUserState,
+                    countrySetter: undefined,
+                    errorSetter: setLocationError,
+                  },
+                  "state",
+                  undefined,
+                  e
+                )
+              }
               disabled={isLoading}
               placeholder="Enter a state/province"
               value={userState}
@@ -1272,7 +1257,18 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
                     }
                     key={country.country}
                     onClick={() =>
-                      handleCityStateCountryInput("country", country.country, undefined)
+                      handleCityStateCountryInput(
+                        {
+                          citySetter: undefined,
+                          stateSetter: undefined,
+                          countrySetter: setUserCountry,
+                          errorSetter: setLocationError,
+                          showCountriesSetter: setShowUserLocationCountries,
+                        },
+                        "country",
+                        country.country,
+                        undefined
+                      )
                     }
                   >
                     <img src={`/flags/1x1/${country.abbreviation}.svg`} />
