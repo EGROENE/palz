@@ -43,7 +43,9 @@ const Sidebar = () => {
         <p>{currentUser?.username}</p>
       </div>
       <div className="sidebar-options-container">
-        <p className="sidebar-options">Create Event</p>
+        <Link to={"/event-form"} className="sidebar-options">
+          Create Event
+        </Link>
         <Link className="sidebar-options" to={"/events"}>
           Explore Events
         </Link>

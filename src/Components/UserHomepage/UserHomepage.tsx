@@ -74,7 +74,9 @@ const UserHomepage = () => {
           </div>
         )}
         <div className="site-links-container">
-          <button>Create Event</button>
+          <Link to={"/event-form"}>
+            <button>Create Event</button>
+          </Link>
           <button>Find Palz</button>
           <Link to={"/events"}>
             <button>Explore Events</button>
