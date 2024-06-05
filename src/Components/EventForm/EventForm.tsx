@@ -6,14 +6,16 @@ import { countries } from "../../constants";
 const EventForm = () => {
   const privateCheckboxRef = useRef<HTMLInputElement | null>(null);
   const publicCheckboxRef = useRef<HTMLInputElement | null>(null);
-  const { showSidebar, setShowSidebar } = useUserContext();
+  const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
 
   const [showEventCountries, setShowEventCountries] = useState<boolean>(false);
   const [eventTitle, setEventTitle] = useState<string>("");
   const [eventDescription, setEventDescription] = useState<string>("");
-  const [eventCity, setEventCity] = useState<string>("");
-  const [eventState, setEventState] = useState<string>("");
-  const [eventCountry, setEventCountry] = useState<string>("");
+  const [eventAdditionalInfo, setEventAdditionalInfo] = useState<string>("");
+  const [eventCity, setEventCity] = useState<string | undefined>("");
+  const [eventState, setEventState] = useState<string | undefined>("");
+  const [eventCountry, setEventCountry] = useState<string | undefined>("");
+  const [eventLocationError, setEventLocationError] = useState<string>("");
   const [publicity, setPublicity] = useState<"public" | "private">("private");
 
   useEffect(() => {
@@ -21,6 +23,9 @@ const EventForm = () => {
       setShowSidebar(false);
     }
   }, []);
+
+  // INPUT HANDLERS
+  //const handle;
 
   const handlePublicPrivateBoxChecking = (option: "public" | "private") => {
     if (option === "private") {
@@ -54,24 +59,69 @@ const EventForm = () => {
       <form className="add-event-form">
         <label>
           <p>Title:</p>
-          <input placeholder="Name your event" />
+          <input
+            value={eventTitle}
+            onChange={(e) => setEventTitle(e.target.value.replace(/\s+/g, " "))}
+            placeholder="Name your event"
+          />
         </label>
         <label>
           <p>Description:</p>
-          <input placeholder="Describe your event" />
+          <textarea
+            value={eventDescription}
+            onChange={(e) => setEventDescription(e.target.value.replace(/\s+/g, " "))}
+            placeholder="Describe your event"
+          />
         </label>
         <label>
-          <p>Additional Info:</p>
-          <input placeholder="Cancelation, backup plans, anything else your guests should know" />
+          <p>Additional Info: (optional)</p>
+          <textarea
+            value={eventAdditionalInfo}
+            onChange={(e) => setEventAdditionalInfo(e.target.value.replace(/\s+/g, " "))}
+            placeholder="Cancelation, backup plans, anything else your guests should know"
+          />
         </label>
         <div className="location-inputs">
           <label className="location-input">
             <p>City:</p>
-            <input placeholder="Cancelation, backup plans, anything else your guests should know" />
+            <input
+              value={eventCity}
+              onChange={(e) =>
+                handleCityStateCountryInput(
+                  {
+                    citySetter: setEventCity,
+                    stateSetter: undefined,
+                    countrySetter: undefined,
+                    errorSetter: setEventLocationError,
+                    showCountriesSetter: undefined,
+                  },
+                  "city",
+                  undefined,
+                  e
+                )
+              }
+              placeholder="Cancelation, backup plans, anything else your guests should know"
+            />
           </label>
           <label className="location-input">
             <p>State/Province:</p>
-            <input placeholder="Cancelation, backup plans, special directions, anything else your guests should know" />
+            <input
+              value={eventState}
+              onChange={(e) =>
+                handleCityStateCountryInput(
+                  {
+                    citySetter: undefined,
+                    stateSetter: setEventState,
+                    countrySetter: undefined,
+                    errorSetter: setEventLocationError,
+                  },
+                  "state",
+                  undefined,
+                  e
+                )
+              }
+              placeholder="Cancelation, backup plans, special directions, anything else your guests should know"
+            />
           </label>
           <label className="location-countries-dropdown">
             <p>Country:</p>
@@ -119,7 +169,20 @@ const EventForm = () => {
                         : undefined
                     }
                     key={country.country}
-                    onClick={() => setEventCountry(country.country)}
+                    onClick={() =>
+                      handleCityStateCountryInput(
+                        {
+                          citySetter: undefined,
+                          stateSetter: undefined,
+                          countrySetter: setEventCountry,
+                          errorSetter: setEventLocationError,
+                          showCountriesSetter: setShowEventCountries,
+                        },
+                        "country",
+                        country.country,
+                        undefined
+                      )
+                    }
                   >
                     <img src={`/flags/1x1/${country.abbreviation}.svg`} />
                     <span>{`${country.country}`}</span>
