@@ -72,6 +72,18 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  handleCityStateCountryInput: (
+    setters: {
+      citySetter?: (value: React.SetStateAction<string | undefined>) => void;
+      stateSetter?: (value: React.SetStateAction<string | undefined>) => void;
+      countrySetter?: (value: React.SetStateAction<string | undefined>) => void;
+      errorSetter: (value: React.SetStateAction<string>) => void;
+      showCountriesSetter?: (value: React.SetStateAction<boolean>) => void;
+    },
+    locationType: "city" | "state" | "country",
+    country?: string,
+    e?: React.ChangeEvent<HTMLInputElement>
+  ) => void;
   handleAddUserRSVP: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent
