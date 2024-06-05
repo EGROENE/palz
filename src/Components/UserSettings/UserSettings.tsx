@@ -75,7 +75,11 @@ const UserSettings = () => {
       <div className="settings-theme-and-delete-account-container">
         <div>
           <h3>Delete Account</h3>
-          <p>Please understand that this action is irreversible</p>
+          <p>
+            Any events of which you are the sole organizer will be deleted & all your
+            account information will be lost. Please understand that this action is
+            irreversible.
+          </p>
           <button onClick={() => handleAccountDeletion()} className="delete-button">
             Delete Account
           </button>
