@@ -23,8 +23,8 @@ const EventForm = () => {
   const [eventAddress, setEventAddress] = useState<string | undefined>("");
   const [eventAddressError, setEventAddressError] = useState<string | undefined>("");
   const [maxParticipants, setMaxParticipants] = useState<number | undefined | string>(); // string is only a type b/c any non-integers are replaced w/ an empty string
-  const [imageOne, setImageOne] = useState<string>("");
-  const [imageOneError, setImageOneError] = useState<string>("");
+  const [imageOne, setImage1] = useState<string>("");
+  const [imageOneError, setImage1Error] = useState<string>("");
   const [imageTwo, setImageTwo] = useState<string>("");
   const [imageTwoError, setImageTwoError] = useState<string>("");
   const [imageThree, setImageThree] = useState<string>("");
@@ -36,6 +36,97 @@ const EventForm = () => {
       setShowSidebar(false);
     }
   }, []);
+
+  // INPUT HANDLERS
+  const handleEventTitleInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    e.preventDefault();
+    const inputCleaned = e.target.value.replace(/\s+/g, " ");
+    setEventTitle(inputCleaned);
+    if (inputCleaned.trim() === "") {
+      setEventTitleError("Please fill out this field");
+    } else if (inputCleaned.trim().length > 40) {
+      setEventTitleError(
+        `Too many characters (${e.target.value.replace(/\s+/g, " ").trim().length} / 40)`
+      );
+    } else {
+      setEventTitleError("");
+    }
+  };
+
+  const handleEventDescriptionInput = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ): void => {
+    e.preventDefault();
+    const inputCleaned = e.target.value.replace(/\s+/g, " ");
+    setEventDescription(e.target.value.replace(/\s+/g, " "));
+    if (inputCleaned.trim() === "") {
+      setEventDescriptionError("Please fill out this field");
+    } else if (inputCleaned.trim().length > 200) {
+      setEventDescriptionError(
+        `Too many characters (${inputCleaned.trim().length} / 200)`
+      );
+    } else {
+      setEventDescriptionError("");
+    }
+  };
+
+  const handleEventAdditionalInfo = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
+    e.preventDefault();
+    const inputCleaned = e.target.value.replace(/\s+/g, " ");
+    setEventAdditionalInfo(inputCleaned);
+    if (inputCleaned.trim().length > 100) {
+      setEventAdditionalInfoError(
+        `Too many characters (${inputCleaned.trim().length} / 100)`
+      );
+    } else {
+      setEventAdditionalInfoError("");
+    }
+  };
+
+  const handleEventAddressInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    e.preventDefault();
+    const inputCleaned = e.target.value.replace(/\s+/g, " ");
+    setEventAddress(inputCleaned);
+    if (inputCleaned.trim() === "") {
+      setEventAddressError("Please fill out this field");
+    } else {
+      setEventAddressError("");
+    }
+  };
+
+  const handleImageURLInput = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    imageNumber: number
+  ) => {
+    e.preventDefault();
+    // Handle setting of appropriate state value:
+    if (imageNumber === 1) {
+      setImage1(e.target.value.trim());
+    } else if (imageNumber === 2) {
+      setImageTwo(e.target.value.trim());
+    } else {
+      setImageThree(e.target.value.trim());
+    }
+
+    // Handle setting of appropriate error:
+    if (e.target.value.trim() !== "" && !Methods.isValidUrl(e.target.value.trim())) {
+      if (imageNumber === 1) {
+        setImage1Error("Invalid URL");
+      } else if (imageNumber === 2) {
+        setImageTwoError("Invalid URL");
+      } else {
+        setImageThreeError("Invalid URL");
+      }
+    } else {
+      if (imageNumber === 1) {
+        setImage1Error("");
+      } else if (imageNumber === 2) {
+        setImageTwoError("");
+      } else {
+        setImageThreeError("");
+      }
+    }
+  };
 
   const handlePublicPrivateBoxChecking = (option: "public" | "private"): void =>
     setPublicity(option);
@@ -67,20 +158,7 @@ const EventForm = () => {
           <input
             className={eventTitleError !== "" ? "erroneous-field" : undefined}
             value={eventTitle}
-            onChange={(e) => {
-              setEventTitle(e.target.value.replace(/\s+/g, " "));
-              if (e.target.value.replace(/\s+/g, " ").trim() === "") {
-                setEventTitleError("Please fill out this field");
-              } else if (e.target.value.replace(/\s+/g, " ").trim().length > 40) {
-                setEventTitleError(
-                  `Too many characters (${
-                    e.target.value.replace(/\s+/g, " ").trim().length
-                  } / 40)`
-                );
-              } else {
-                setEventTitleError("");
-              }
-            }}
+            onChange={(e) => handleEventTitleInput(e)}
             placeholder="Name your event"
           />
           {eventTitleError !== "" && <p>{eventTitleError}</p>}
@@ -90,20 +168,7 @@ const EventForm = () => {
           <textarea
             className={eventDescriptionError !== "" ? "erroneous-field" : undefined}
             value={eventDescription}
-            onChange={(e) => {
-              setEventDescription(e.target.value.replace(/\s+/g, " "));
-              if (e.target.value.replace(/\s+/g, " ").trim() === "") {
-                setEventDescriptionError("Please fill out this field");
-              } else if (e.target.value.replace(/\s+/g, " ").trim().length > 200) {
-                setEventDescriptionError(
-                  `Too many characters (${
-                    e.target.value.replace(/\s+/g, " ").trim().length
-                  } / 200)`
-                );
-              } else {
-                setEventDescriptionError("");
-              }
-            }}
+            onChange={(e) => handleEventDescriptionInput(e)}
             placeholder="Describe your event"
           />
           {eventDescriptionError !== "" && <p>{eventDescriptionError}</p>}
@@ -113,18 +178,7 @@ const EventForm = () => {
           <textarea
             className={eventAdditionalInfoError !== "" ? "erroneous-field" : undefined}
             value={eventAdditionalInfo}
-            onChange={(e) => {
-              setEventAdditionalInfo(e.target.value.replace(/\s+/g, " "));
-              if (e.target.value.replace(/\s+/g, " ").trim().length > 100) {
-                setEventAdditionalInfoError(
-                  `Too many characters (${
-                    e.target.value.replace(/\s+/g, " ").length
-                  } / 100)`
-                );
-              } else {
-                setEventAdditionalInfoError("");
-              }
-            }}
+            onChange={(e) => handleEventAdditionalInfo(e)}
             placeholder="Cancelation, backup plans, anything else your guests should know"
           />
           {eventAdditionalInfoError !== "" && <p>{eventAdditionalInfo}</p>}
@@ -255,14 +309,7 @@ const EventForm = () => {
           <input
             className={eventAddressError !== "" ? "erroneous-field" : undefined}
             value={eventAddress}
-            onChange={(e) => {
-              setEventAddress(e.target.value.replace(/\s+/g, " "));
-              if (e.target.value.replace(/\s+/g, " ").trim() === "") {
-                setEventAddressError("Please fill out this field");
-              } else {
-                setEventAddressError("");
-              }
-            }}
+            onChange={(e) => handleEventAddressInput(e)}
             placeholder="Number, street, postal code"
           />
           {eventAddressError !== "" && <p>{eventAddressError}</p>}
@@ -312,14 +359,7 @@ const EventForm = () => {
           <input
             className={imageOneError !== "" ? "erroneous-field" : undefined}
             value={imageOne}
-            onChange={(e) => {
-              setImageOne(e.target.value.trim());
-              if (!Methods.isValidUrl(e.target.value.trim())) {
-                setImageOneError("Invalid URL");
-              } else {
-                setImageOneError("");
-              }
-            }}
+            onChange={(e) => handleImageURLInput(e, 1)}
             placeholder="Link to image"
           />
           {imageOneError !== "" && <p>{imageOneError}</p>}
@@ -329,32 +369,20 @@ const EventForm = () => {
           <input
             className={imageTwoError !== "" ? "erroneous-field" : undefined}
             value={imageTwo}
-            onChange={(e) => {
-              setImageTwo(e.target.value.trim());
-              if (!Methods.isValidUrl(e.target.value.trim())) {
-                setImageTwoError("Invalid URL");
-              } else {
-                setImageTwoError("");
-              }
-            }}
+            onChange={(e) => handleImageURLInput(e, 2)}
             placeholder="Link to image"
           />
+          {imageTwoError !== "" && <p>{imageTwoError}</p>}
         </label>
         <label>
           <p>Image Three: (optional)</p>
           <input
             className={imageThreeError !== "" ? "erroneous-field" : undefined}
             value={imageThree}
-            onChange={(e) => {
-              setImageThree(e.target.value.trim());
-              if (!Methods.isValidUrl(e.target.value.trim())) {
-                setImageThreeError("Invalid URL");
-              } else {
-                setImageThreeError("");
-              }
-            }}
+            onChange={(e) => handleImageURLInput(e, 3)}
             placeholder="Link to image"
           />
+          {imageThreeError !== "" && <p>{imageThreeError}</p>}
         </label>
       </form>
     </div>
