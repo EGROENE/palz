@@ -1170,6 +1170,7 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
               className={isLocationError ? "erroneous-field" : undefined}
               onChange={(e) =>
                 handleCityStateCountryInput(
+                  { city: userCity, state: userState, country: userCountry },
                   {
                     citySetter: setUserCity,
                     stateSetter: undefined,
@@ -1194,6 +1195,7 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
               className={isLocationError ? "erroneous-field" : undefined}
               onChange={(e) =>
                 handleCityStateCountryInput(
+                  { city: userCity, state: userState, country: userCountry },
                   {
                     citySetter: undefined,
                     stateSetter: setUserState,
@@ -1258,6 +1260,7 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
                     key={country.country}
                     onClick={() =>
                       handleCityStateCountryInput(
+                        { city: userCity, state: userState, country: userCountry },
                         {
                           citySetter: undefined,
                           stateSetter: undefined,
