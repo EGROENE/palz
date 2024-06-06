@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
 import { countries } from "../../constants";
+import Methods from "../../methods";
 
 const EventForm = () => {
   const privateCheckboxRef = useRef<HTMLInputElement | null>(null);
@@ -23,8 +24,11 @@ const EventForm = () => {
   const [eventAddressError, setEventAddressError] = useState<string | undefined>("");
   const [maxParticipants, setMaxParticipants] = useState<number | undefined | string>(); // string is only a type b/c any non-integers are replaced w/ an empty string
   const [imageOne, setImageOne] = useState<string>("");
+  const [imageOneError, setImageOneError] = useState<string>("");
   const [imageTwo, setImageTwo] = useState<string>("");
+  const [imageTwoError, setImageTwoError] = useState<string>("");
   const [imageThree, setImageThree] = useState<string>("");
+  const [imageThreeError, setImageThreeError] = useState<string>("");
   const [publicity, setPublicity] = useState<"public" | "private">("public");
 
   useEffect(() => {
@@ -32,9 +36,6 @@ const EventForm = () => {
       setShowSidebar(false);
     }
   }, []);
-
-  // INPUT HANDLERS
-  //const handle;
 
   const handlePublicPrivateBoxChecking = (option: "public" | "private"): void =>
     setPublicity(option);
@@ -64,34 +65,79 @@ const EventForm = () => {
         <label>
           <p>Title:</p>
           <input
+            className={eventTitleError !== "" ? "erroneous-field" : undefined}
             value={eventTitle}
-            onChange={(e) => setEventTitle(e.target.value.replace(/\s+/g, " "))}
+            onChange={(e) => {
+              setEventTitle(e.target.value.replace(/\s+/g, " "));
+              if (e.target.value.replace(/\s+/g, " ").trim() === "") {
+                setEventTitleError("Please fill out this field");
+              } else if (e.target.value.replace(/\s+/g, " ").trim().length > 40) {
+                setEventTitleError(
+                  `Too many characters (${
+                    e.target.value.replace(/\s+/g, " ").trim().length
+                  } / 40)`
+                );
+              } else {
+                setEventTitleError("");
+              }
+            }}
             placeholder="Name your event"
           />
+          {eventTitleError !== "" && <p>{eventTitleError}</p>}
         </label>
         <label>
           <p>Description:</p>
           <textarea
+            className={eventDescriptionError !== "" ? "erroneous-field" : undefined}
             value={eventDescription}
-            onChange={(e) => setEventDescription(e.target.value.replace(/\s+/g, " "))}
+            onChange={(e) => {
+              setEventDescription(e.target.value.replace(/\s+/g, " "));
+              if (e.target.value.replace(/\s+/g, " ").trim() === "") {
+                setEventDescriptionError("Please fill out this field");
+              } else if (e.target.value.replace(/\s+/g, " ").trim().length > 200) {
+                setEventDescriptionError(
+                  `Too many characters (${
+                    e.target.value.replace(/\s+/g, " ").trim().length
+                  } / 200)`
+                );
+              } else {
+                setEventDescriptionError("");
+              }
+            }}
             placeholder="Describe your event"
           />
+          {eventDescriptionError !== "" && <p>{eventDescriptionError}</p>}
         </label>
         <label>
           <p>Additional Info: (optional)</p>
           <textarea
+            className={eventAdditionalInfoError !== "" ? "erroneous-field" : undefined}
             value={eventAdditionalInfo}
-            onChange={(e) => setEventAdditionalInfo(e.target.value.replace(/\s+/g, " "))}
+            onChange={(e) => {
+              setEventAdditionalInfo(e.target.value.replace(/\s+/g, " "));
+              if (e.target.value.replace(/\s+/g, " ").trim().length > 100) {
+                setEventAdditionalInfoError(
+                  `Too many characters (${
+                    e.target.value.replace(/\s+/g, " ").length
+                  } / 100)`
+                );
+              } else {
+                setEventAdditionalInfoError("");
+              }
+            }}
             placeholder="Cancelation, backup plans, anything else your guests should know"
           />
+          {eventAdditionalInfoError !== "" && <p>{eventAdditionalInfo}</p>}
         </label>
         <div className="location-inputs">
           <label className="location-input">
             <p>City:</p>
             <input
+              className={eventLocationError !== "" ? "erroneous-field" : undefined}
               value={eventCity}
               onChange={(e) =>
                 handleCityStateCountryInput(
+                  { city: eventCity, state: eventState, country: eventCountry },
                   {
                     citySetter: setEventCity,
                     stateSetter: undefined,
@@ -106,13 +152,16 @@ const EventForm = () => {
               }
               placeholder="Cancelation, backup plans, anything else your guests should know"
             />
+            {eventLocationError !== "" && <p>{eventLocationError}</p>}
           </label>
           <label className="location-input">
             <p>State/Province:</p>
             <input
+              className={eventLocationError !== "" ? "erroneous-field" : undefined}
               value={eventState}
               onChange={(e) =>
                 handleCityStateCountryInput(
+                  { city: eventCity, state: eventState, country: eventCountry },
                   {
                     citySetter: undefined,
                     stateSetter: setEventState,
@@ -130,7 +179,11 @@ const EventForm = () => {
           <label className="location-countries-dropdown">
             <p>Country:</p>
             <button
-              className="country-dropdown-button"
+              className={
+                eventLocationError !== ""
+                  ? "country-dropdown-button erroneous-field"
+                  : "country-dropdown-button"
+              }
               type="button"
               onClick={() => setShowEventCountries(!showEventCountries)}
             >
@@ -175,6 +228,7 @@ const EventForm = () => {
                     key={country.country}
                     onClick={() =>
                       handleCityStateCountryInput(
+                        { city: eventCity, state: eventState, country: eventCountry },
                         {
                           citySetter: undefined,
                           stateSetter: undefined,
@@ -199,20 +253,37 @@ const EventForm = () => {
         <label>
           <p>Address:</p>
           <input
+            className={eventAddressError !== "" ? "erroneous-field" : undefined}
             value={eventAddress}
-            onChange={(e) => setEventAddress(e.target.value.replace(/\s+/g, " "))}
+            onChange={(e) => {
+              setEventAddress(e.target.value.replace(/\s+/g, " "));
+              if (e.target.value.replace(/\s+/g, " ").trim() === "") {
+                setEventAddressError("Please fill out this field");
+              } else {
+                setEventAddressError("");
+              }
+            }}
             placeholder="Number, street, postal code"
           />
+          {eventAddressError !== "" && <p>{eventAddressError}</p>}
         </label>
         <label>
           <p>Maximum Participants: (optional)</p>
           <input
+            className={
+              maxParticipants && !(Number(maxParticipants) > 0)
+                ? "erroneous-field"
+                : undefined
+            }
             style={{ width: "25%" }}
             value={maxParticipants}
-            onChange={(e) => setMaxParticipants(e.target.value.replace(/^[0-9]*$/g, ""))}
+            onChange={(e) => setMaxParticipants(e.target.value.replace(/[^0-9]*$/g, ""))}
             inputMode="numeric"
             placeholder="Max number of participants"
           />
+          {maxParticipants && !(Number(maxParticipants) > 0) && (
+            <p>Number must be over 0</p>
+          )}
         </label>
         <div className="event-form-checkbox-container">
           <label>
@@ -239,24 +310,49 @@ const EventForm = () => {
         <label>
           <p>Image One: (optional)</p>
           <input
+            className={imageOneError !== "" ? "erroneous-field" : undefined}
             value={imageOne}
-            onChange={(e) => setImageOne(e.target.value.trim())}
+            onChange={(e) => {
+              setImageOne(e.target.value.trim());
+              if (!Methods.isValidUrl(e.target.value.trim())) {
+                setImageOneError("Invalid URL");
+              } else {
+                setImageOneError("");
+              }
+            }}
             placeholder="Link to image"
           />
+          {imageOneError !== "" && <p>{imageOneError}</p>}
         </label>
         <label>
           <p>Image Two: (optional)</p>
           <input
+            className={imageTwoError !== "" ? "erroneous-field" : undefined}
             value={imageTwo}
-            onChange={(e) => setImageTwo(e.target.value.trim())}
+            onChange={(e) => {
+              setImageTwo(e.target.value.trim());
+              if (!Methods.isValidUrl(e.target.value.trim())) {
+                setImageTwoError("Invalid URL");
+              } else {
+                setImageTwoError("");
+              }
+            }}
             placeholder="Link to image"
           />
         </label>
         <label>
           <p>Image Three: (optional)</p>
           <input
+            className={imageThreeError !== "" ? "erroneous-field" : undefined}
             value={imageThree}
-            onChange={(e) => setImageThree(e.target.value.trim())}
+            onChange={(e) => {
+              setImageThree(e.target.value.trim());
+              if (!Methods.isValidUrl(e.target.value.trim())) {
+                setImageThreeError("Invalid URL");
+              } else {
+                setImageThreeError("");
+              }
+            }}
             placeholder="Link to image"
           />
         </label>
