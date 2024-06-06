@@ -10,18 +10,22 @@ const EventForm = () => {
 
   const [showEventCountries, setShowEventCountries] = useState<boolean>(false);
   const [eventTitle, setEventTitle] = useState<string>("");
+  const [eventTitleError, setEventTitleError] = useState<string>("");
   const [eventDescription, setEventDescription] = useState<string>("");
+  const [eventDescriptionError, setEventDescriptionError] = useState<string>("");
   const [eventAdditionalInfo, setEventAdditionalInfo] = useState<string>("");
+  const [eventAdditionalInfoError, setEventAdditionalInfoError] = useState<string>("");
   const [eventCity, setEventCity] = useState<string | undefined>("");
   const [eventState, setEventState] = useState<string | undefined>("");
   const [eventCountry, setEventCountry] = useState<string | undefined>("");
   const [eventLocationError, setEventLocationError] = useState<string>("");
   const [eventAddress, setEventAddress] = useState<string | undefined>("");
-  const [maxParticipants, setMaxParticipants] = useState<number | undefined | string>();
+  const [eventAddressError, setEventAddressError] = useState<string | undefined>("");
+  const [maxParticipants, setMaxParticipants] = useState<number | undefined | string>(); // string is only a type b/c any non-integers are replaced w/ an empty string
   const [imageOne, setImageOne] = useState<string>("");
   const [imageTwo, setImageTwo] = useState<string>("");
   const [imageThree, setImageThree] = useState<string>("");
-  const [publicity, setPublicity] = useState<"public" | "private">("private");
+  const [publicity, setPublicity] = useState<"public" | "private">("public");
 
   useEffect(() => {
     if (showSidebar) {
@@ -203,6 +207,7 @@ const EventForm = () => {
         <label>
           <p>Maximum Participants: (optional)</p>
           <input
+            style={{ width: "25%" }}
             value={maxParticipants}
             onChange={(e) => setMaxParticipants(e.target.value.replace(/^[0-9]*$/g, ""))}
             inputMode="numeric"
@@ -213,6 +218,7 @@ const EventForm = () => {
           <label>
             <span>Public</span>
             <input
+              style={{ width: "unset" }}
               onChange={() => handlePublicPrivateBoxChecking("public")}
               ref={publicCheckboxRef}
               type="checkbox"
@@ -222,6 +228,7 @@ const EventForm = () => {
           <label>
             <span>Private</span>
             <input
+              style={{ width: "unset" }}
               onChange={() => handlePublicPrivateBoxChecking("private")}
               ref={privateCheckboxRef}
               type="checkbox"
@@ -230,7 +237,7 @@ const EventForm = () => {
           </label>
         </div>
         <label>
-          <p>Image One:</p>
+          <p>Image One: (optional)</p>
           <input
             value={imageOne}
             onChange={(e) => setImageOne(e.target.value.trim())}
@@ -238,7 +245,7 @@ const EventForm = () => {
           />
         </label>
         <label>
-          <p>Image Two:</p>
+          <p>Image Two: (optional)</p>
           <input
             value={imageTwo}
             onChange={(e) => setImageTwo(e.target.value.trim())}
@@ -246,7 +253,7 @@ const EventForm = () => {
           />
         </label>
         <label>
-          <p>Image Three:</p>
+          <p>Image Three: (optional)</p>
           <input
             value={imageThree}
             onChange={(e) => setImageThree(e.target.value.trim())}
