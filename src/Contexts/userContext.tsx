@@ -585,6 +585,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleCityStateCountryInput = (
+    stateValues: {
+      city: string | undefined;
+      state: string | undefined;
+      country: string | undefined;
+    },
     setters: {
       citySetter?: (value: React.SetStateAction<string | undefined>) => void;
       stateSetter?: (value: React.SetStateAction<string | undefined>) => void;
@@ -604,8 +609,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           setters.citySetter(Methods.nameNoSpecialChars(e.target.value));
         }
         if (
-          (e.target.value !== "" && (userState === "" || userCountry === "")) ||
-          (e.target.value === "" && (userState !== "" || userCountry !== ""))
+          (e.target.value !== "" &&
+            (stateValues.state === "" || stateValues.country === "")) ||
+          (e.target.value === "" &&
+            (stateValues.state !== "" || stateValues.country !== ""))
         ) {
           setters.errorSetter("Please fill out all 3 location fields");
         } else {
@@ -616,8 +623,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           setters.stateSetter(Methods.nameNoSpecialChars(e.target.value));
         }
         if (
-          (e.target.value !== "" && (userCity === "" || userCountry === "")) ||
-          (e.target.value === "" && (userCity !== "" || userCountry !== ""))
+          (e.target.value !== "" &&
+            (stateValues.city === "" || stateValues.country === "")) ||
+          (e.target.value === "" &&
+            (stateValues.city !== "" || stateValues.country !== ""))
         ) {
           setters.errorSetter("Please fill out all 3 location fields");
         } else {
@@ -631,7 +640,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       if (setters.countrySetter) {
         setters.countrySetter(country);
       }
-      if (country && country !== "" && (userCity === "" || userState === "")) {
+      if (
+        country &&
+        country !== "" &&
+        (stateValues.city === "" || stateValues.state === "")
+      ) {
         setters.errorSetter("Please fill out all 3 location fields");
       } else {
         setters.errorSetter("");
