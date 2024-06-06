@@ -16,6 +16,11 @@ const EventForm = () => {
   const [eventState, setEventState] = useState<string | undefined>("");
   const [eventCountry, setEventCountry] = useState<string | undefined>("");
   const [eventLocationError, setEventLocationError] = useState<string>("");
+  const [eventAddress, setEventAddress] = useState<string | undefined>("");
+  const [maxParticipants, setMaxParticipants] = useState<number | undefined | string>();
+  const [imageOne, setImageOne] = useState<string>("");
+  const [imageTwo, setImageTwo] = useState<string>("");
+  const [imageThree, setImageThree] = useState<string>("");
   const [publicity, setPublicity] = useState<"public" | "private">("private");
 
   useEffect(() => {
@@ -189,11 +194,20 @@ const EventForm = () => {
         </div>
         <label>
           <p>Address:</p>
-          <input placeholder="Number, street, postal code" />
+          <input
+            value={eventAddress}
+            onChange={(e) => setEventAddress(e.target.value.replace(/\s+/g, " "))}
+            placeholder="Number, street, postal code"
+          />
         </label>
         <label>
-          <p>Maximum Participants:</p>
-          <input inputMode="numeric" placeholder="Max number of participants" />
+          <p>Maximum Participants: (optional)</p>
+          <input
+            value={maxParticipants}
+            onChange={(e) => setMaxParticipants(e.target.value.replace(/^[0-9]*$/g, ""))}
+            inputMode="numeric"
+            placeholder="Max number of participants"
+          />
         </label>
         <div className="event-form-checkbox-container">
           <label>
@@ -217,15 +231,27 @@ const EventForm = () => {
         </div>
         <label>
           <p>Image One:</p>
-          <input placeholder="Link to image" />
+          <input
+            value={imageOne}
+            onChange={(e) => setImageOne(e.target.value.trim())}
+            placeholder="Link to image"
+          />
         </label>
         <label>
           <p>Image Two:</p>
-          <input placeholder="Link to image" />
+          <input
+            value={imageTwo}
+            onChange={(e) => setImageTwo(e.target.value.trim())}
+            placeholder="Link to image"
+          />
         </label>
         <label>
           <p>Image Three:</p>
-          <input placeholder="Link to image" />
+          <input
+            value={imageThree}
+            onChange={(e) => setImageThree(e.target.value.trim())}
+            placeholder="Link to image"
+          />
         </label>
       </form>
     </div>
