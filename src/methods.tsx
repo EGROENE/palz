@@ -1,3 +1,13 @@
+// Function to check if URL is valid
+const isValidUrl = (url: string): boolean => {
+  try {
+    new URL(url);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
 const nameNoSpecialChars = (input: string) =>
   input.replace(/[^a-zÄäÖöÜüÑñÉéóÓÍí -]/gi, "");
 
@@ -95,6 +105,7 @@ function removeDuplicates(arr) {
 }
 
 const Methods = {
+  isValidUrl,
   nameNoSpecialChars,
   getCapitalizedWord,
   formatCapitalizedName,
