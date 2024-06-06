@@ -73,6 +73,11 @@ export type TMainContext = {
 
 export type TUserContext = {
   handleCityStateCountryInput: (
+    stateValues: {
+      city: string | undefined;
+      state: string | undefined;
+      country: string | undefined;
+    },
     setters: {
       citySetter?: (value: React.SetStateAction<string | undefined>) => void;
       stateSetter?: (value: React.SetStateAction<string | undefined>) => void;
