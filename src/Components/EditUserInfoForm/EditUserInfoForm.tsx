@@ -763,22 +763,12 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
     }
   };
 
-  // Function to check if URL is valid
-  const isValidUrl = (url: string): boolean => {
-    try {
-      new URL(url);
-      return true;
-    } catch (err) {
-      return false;
-    }
-  };
-
   const handleSocialsInput = (
     medium: "facebook" | "instagram" | "x",
     e: React.ChangeEvent<HTMLInputElement>
   ): void => {
     const inputNoWhitespaces = e.target.value.replace(/\s/g, "").toLowerCase();
-    const isValidLink = isValidUrl(inputNoWhitespaces.toLowerCase());
+    const isValidLink = Methods.isValidUrl(inputNoWhitespaces.toLowerCase());
     if (medium === "facebook") {
       setFacebook(inputNoWhitespaces.toLowerCase());
       isValidLink || inputNoWhitespaces === ""
