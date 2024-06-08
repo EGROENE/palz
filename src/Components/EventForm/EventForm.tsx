@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
 import { countries } from "../../constants";
@@ -7,6 +8,8 @@ import Methods from "../../methods";
 const EventForm = () => {
   const privateCheckboxRef = useRef<HTMLInputElement | null>(null);
   const publicCheckboxRef = useRef<HTMLInputElement | null>(null);
+  const { allUsers, currentUser } = useMainContext();
+  const allOtherUsers = allUsers.filter((user) => user.id !== currentUser?.id);
   const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
 
   const [showEventCountries, setShowEventCountries] = useState<boolean>(false);
@@ -33,6 +36,9 @@ const EventForm = () => {
   const [imageThree, setImageThree] = useState<string>("");
   const [imageThreeError, setImageThreeError] = useState<string>("");
   const [publicity, setPublicity] = useState<"public" | "private">("public");
+  const [organizers, setOrganizers] = useState<string[]>([`${currentUser?.id}`]);
+  const [otherUsersSearchQuery, setOtherUsersSearchQuery] = useState<string>("");
+  const [showOtherUsers, setShowOtherUsers] = useState<boolean>(false);
 
   useEffect(() => {
     if (showSidebar) {
@@ -190,6 +196,15 @@ const EventForm = () => {
     return preferredCountries.concat(restOfCountries);
   };
   const resortedCountries = getResortedCountries();
+
+  const currentUserPalz = currentUser?.friends;
+  const firstOtherUsers = allOtherUsers.filter((user) =>
+    currentUserPalz?.includes(String(user?.id))
+  );
+  const restOfUsers = allOtherUsers.filter(
+    (user) => !currentUserPalz?.includes(String(user?.id))
+  );
+  const resortedOtherUsers = firstOtherUsers.concat(restOfUsers);
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
@@ -448,6 +463,34 @@ const EventForm = () => {
           />
           {imageThreeError !== "" && <p>{imageThreeError}</p>}
         </label>
+        <div className="co-organizers-container">
+          <p>Co-organizers: (optional)</p>
+          <div className="co-organizers-inputs">
+            <input type="text" placeholder="Search users by username, first/last names" />
+            <div className="co-organizers-dropdown">
+              <button type="button" onClick={() => setShowOtherUsers(!showOtherUsers)}>
+                Select user:
+                <i
+                  style={showOtherUsers ? { "rotate": "180deg" } : undefined}
+                  className="fas fa-chevron-down"
+                ></i>
+              </button>
+              {showOtherUsers && (
+                <ul className="country-code-dropdown">
+                  {resortedOtherUsers.map((user) => (
+                    <div key={user.id} className="other-user-option">
+                      <input type="checkbox" />
+                      <li>
+                        <img src={`${user.profileImage}`} />
+                        <span>{`${user.username}`}</span>
+                      </li>
+                    </div>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   );
