@@ -4,6 +4,7 @@ import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
 import { countries } from "../../constants";
 import Methods from "../../methods";
+import { TUser } from "../../types";
 
 const EventForm = () => {
   const privateCheckboxRef = useRef<HTMLInputElement | null>(null);
@@ -39,6 +40,20 @@ const EventForm = () => {
   const [organizers, setOrganizers] = useState<string[]>([`${currentUser?.id}`]);
   const [otherUsersSearchQuery, setOtherUsersSearchQuery] = useState<string>("");
   const [showOtherUsers, setShowOtherUsers] = useState<boolean>(false);
+
+  // Set random color:
+  const [randomColor, setRandomColor] = useState<string>("");
+  useEffect(() => {
+    const themeColors = [
+      "var(--theme-blue)",
+      "var(--theme-green)",
+      "var(--theme-red)",
+      "var(--theme-purple)",
+      "var(--theme-orange)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
+  }, []);
 
   useEffect(() => {
     if (showSidebar) {
@@ -180,6 +195,15 @@ const EventForm = () => {
   const handlePublicPrivateBoxChecking = (option: "public" | "private"): void =>
     setPublicity(option);
 
+  const handleAddRemoveUserAsOrganizer = (user: TUser) => {
+    if (organizers.includes(String(user.id))) {
+      setOrganizers(organizers.filter((organizer) => organizer !== user.id));
+    } else {
+      const updatedArray = organizers.concat(String(user.id));
+      setOrganizers(updatedArray);
+    }
+  };
+
   // Create array in which certain countries from countries array will be placed on top
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
   const preferredCountries = countries.filter((country) =>
@@ -205,6 +229,16 @@ const EventForm = () => {
     (user) => !currentUserPalz?.includes(String(user?.id))
   );
   const resortedOtherUsers = firstOtherUsers.concat(restOfUsers);
+
+  const getUsersWhoAreOrganizers = () => {
+    const usersWhoAreOrganizers: TUser[] = [];
+    for (const organizer of organizers) {
+      const user = allUsers.filter((user) => user.id === organizer)[0];
+      usersWhoAreOrganizers.push(user);
+    }
+    return usersWhoAreOrganizers;
+  };
+  const usersWhoAreOrganizers = getUsersWhoAreOrganizers();
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
@@ -463,8 +497,45 @@ const EventForm = () => {
           />
           {imageThreeError !== "" && <p>{imageThreeError}</p>}
         </label>
-        <div className="co-organizers-container">
-          <p>Co-organizers: (optional)</p>
+        <div className="co-organizers-area">
+          <p>
+            Co-organizers: (optional){" "}
+            {usersWhoAreOrganizers.filter(
+              (user) => user.username !== currentUser?.username
+            ).length > 0 && (
+              <span
+                style={{ color: randomColor }}
+                onClick={() => setOrganizers([`${currentUser?.id}`])}
+              >
+                Remove All
+              </span>
+            )}
+          </p>
+          <div className="co-organizers-container">
+            {usersWhoAreOrganizers.filter(
+              (user) => user.username !== currentUser?.username
+            ).length > 0 &&
+              usersWhoAreOrganizers
+                .filter((user) => user.username !== currentUser?.username)
+                .map((user) => (
+                  <div
+                    key={user.id}
+                    style={{ backgroundColor: randomColor }}
+                    className="tab co-organizer"
+                  >
+                    <img src={`${user.profileImage}`} alt="profile pic" />
+                    <span>{user.username}</span>
+                    <i
+                      onClick={() =>
+                        setOrganizers(
+                          organizers.filter((organizer) => organizer !== user.id)
+                        )
+                      }
+                      className="fas fa-times"
+                    ></i>
+                  </div>
+                ))}
+          </div>
           <div className="co-organizers-inputs">
             <input type="text" placeholder="Search users by username, first/last names" />
             <div className="co-organizers-dropdown">
@@ -478,8 +549,16 @@ const EventForm = () => {
               {showOtherUsers && (
                 <ul className="country-code-dropdown">
                   {resortedOtherUsers.map((user) => (
-                    <div key={user.id} className="other-user-option">
-                      <input type="checkbox" />
+                    <div
+                      key={user.id}
+                      onClick={() => handleAddRemoveUserAsOrganizer(user)}
+                      className="other-user-option"
+                    >
+                      <input
+                        onChange={() => handleAddRemoveUserAsOrganizer(user)}
+                        checked={organizers.includes(String(user.id))}
+                        type="checkbox"
+                      />
                       <li>
                         <img src={`${user.profileImage}`} />
                         <span>{`${user.username}`}</span>
