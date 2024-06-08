@@ -20,6 +20,9 @@ const EventForm = () => {
   const [eventState, setEventState] = useState<string | undefined>("");
   const [eventCountry, setEventCountry] = useState<string | undefined>("");
   const [eventLocationError, setEventLocationError] = useState<string>("");
+  const [eventDate, setEventDate] = useState(0); // epoch translates to certain day at midnight
+  const [eventTime, setEventTime] = useState(0); // number of ms
+  const [eventDateTimeError, setEventDateTimeError] = useState<string>("");
   const [eventAddress, setEventAddress] = useState<string | undefined>("");
   const [eventAddressError, setEventAddressError] = useState<string | undefined>("");
   const [maxParticipants, setMaxParticipants] = useState<number | undefined | string>(); // string is only a type b/c any non-integers are replaced w/ an empty string
@@ -91,6 +94,46 @@ const EventForm = () => {
       setEventAddressError("Please fill out this field");
     } else {
       setEventAddressError("");
+    }
+  };
+
+  // function should set date/time to utc times
+  // display these times in local, if possible
+  const handleDateTimeInput = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    input: "date" | "time"
+  ) => {
+    e.preventDefault();
+    const nowDate = new Date();
+    const nowPlusOneHourEpoch = nowDate.getTime() + 3600000;
+
+    if (input === "date") {
+      const inputDateLocal = new Date(e.target.value);
+      const timezoneOffsetinMS = inputDateLocal.getTimezoneOffset() * 60000;
+      const inputDateEpoch = e.target.valueAsNumber; // stored time value in ms since midnight, January 1, 1970 UTC to input date
+      const eventDateUTCinMS = timezoneOffsetinMS + inputDateEpoch;
+      setEventDate(eventDateUTCinMS);
+
+      // Show error if event isn't set at least one hour in advance:
+      if (eventDateUTCinMS + eventTime < nowPlusOneHourEpoch) {
+        setEventDateTimeError("Event can only be set at least 1 hour in advance");
+      } else {
+        setEventDateTimeError("");
+      }
+    } else {
+      const hours = e.target.value.substring(0, e.target.value.indexOf(":"));
+      const mins = e.target.value.substring(e.target.value.indexOf(":") + 1);
+      const hoursInMS = Number(hours) * 3600000;
+      const minsInMS = Number(mins) * 60000;
+      const hoursPlusMinutesInMS = hoursInMS + minsInMS;
+      setEventTime(hoursPlusMinutesInMS);
+
+      // Show error if event isn't set at least one hour in advance:
+      if (hoursPlusMinutesInMS + eventDate < nowPlusOneHourEpoch) {
+        setEventDateTimeError("Event can only be set at least 1 hour in advance");
+      } else {
+        setEventDateTimeError("");
+      }
     }
   };
 
@@ -314,6 +357,27 @@ const EventForm = () => {
           />
           {eventAddressError !== "" && <p>{eventAddressError}</p>}
         </label>
+        <div className="date-time-inputs-container">
+          <label>
+            <p>Date:</p>{" "}
+            <input
+              className={eventDateTimeError !== "" ? "erroneous-field" : undefined}
+              onChange={(e) => handleDateTimeInput(e, "date")}
+              type="date"
+            />
+          </label>
+          <label>
+            <p>Time:</p>
+            <input
+              className={eventDateTimeError !== "" ? "erroneous-field" : undefined}
+              onChange={(e) => handleDateTimeInput(e, "time")}
+              type="time"
+            />
+          </label>
+        </div>
+        {eventDateTimeError !== "" && (
+          <p style={{ display: "flex" }}>{eventDateTimeError}</p>
+        )}
         <label>
           <p>Maximum Participants: (optional)</p>
           <input
