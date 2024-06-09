@@ -9,11 +9,18 @@ import { TUser } from "../../types";
 const EventForm = () => {
   const privateCheckboxRef = useRef<HTMLInputElement | null>(null);
   const publicCheckboxRef = useRef<HTMLInputElement | null>(null);
+
   const { allUsers, currentUser } = useMainContext();
   const allOtherUsers = allUsers.filter((user) => user.id !== currentUser?.id);
+  /* otherUsers is eventually the resorted version of allOtherUsers (palz shown on top), followed by all others; used to display potential co-organizers in dropdown */
+  const [otherUsers, setOtherUsers] = useState<TUser[]>([]);
+  const [otherUsersSearchQuery, setOtherUsersSearchQuery] = useState<string>("");
+  const [showOtherUsers, setShowOtherUsers] = useState<boolean>(false);
+
   const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
 
   const [showEventCountries, setShowEventCountries] = useState<boolean>(false);
+
   const [eventTitle, setEventTitle] = useState<string>("");
   const [eventTitleError, setEventTitleError] = useState<string>("");
   const [eventDescription, setEventDescription] = useState<string>("");
@@ -38,8 +45,6 @@ const EventForm = () => {
   const [imageThreeError, setImageThreeError] = useState<string>("");
   const [publicity, setPublicity] = useState<"public" | "private">("public");
   const [organizers, setOrganizers] = useState<string[]>([`${currentUser?.id}`]);
-  const [otherUsersSearchQuery, setOtherUsersSearchQuery] = useState<string>("");
-  const [showOtherUsers, setShowOtherUsers] = useState<boolean>(false);
 
   // Set random color:
   const [randomColor, setRandomColor] = useState<string>("");
@@ -60,6 +65,19 @@ const EventForm = () => {
       setShowSidebar(false);
     }
   }, []);
+
+  // Function to reset otherUsers to its original value, w/o filters from otherUsersSearchQuery
+  const setOtherUsersToOriginalValue = () => {
+    const currentUserPalz = currentUser?.friends;
+    const firstOtherUsers = allOtherUsers.filter((user) =>
+      currentUserPalz?.includes(String(user?.id))
+    );
+    const restOfUsers = allOtherUsers.filter(
+      (user) => !currentUserPalz?.includes(String(user?.id))
+    );
+    setOtherUsers(firstOtherUsers.concat(restOfUsers));
+  };
+  useEffect(() => setOtherUsersToOriginalValue(), []);
 
   // INPUT HANDLERS
   const handleEventTitleInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -195,6 +213,31 @@ const EventForm = () => {
   const handlePublicPrivateBoxChecking = (option: "public" | "private"): void =>
     setPublicity(option);
 
+  const handleOtherUsersSearchQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const inputCleaned = e.target.value.replace(/\s+/g, " ");
+    setOtherUsersSearchQuery(inputCleaned);
+    if (inputCleaned.trim() !== "") {
+      setShowOtherUsers(true);
+      const matchingUsers: TUser[] = [];
+      for (const user of allOtherUsers) {
+        if (
+          user.firstName &&
+          user.lastName &&
+          user.username &&
+          (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+            user?.lastName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+            user?.username.includes(inputCleaned.toLowerCase()))
+        ) {
+          matchingUsers.push(user);
+        }
+      }
+      setOtherUsers(matchingUsers);
+    } else {
+      setOtherUsersToOriginalValue();
+    }
+  };
+
   const handleAddRemoveUserAsOrganizer = (user: TUser) => {
     if (organizers.includes(String(user.id))) {
       setOrganizers(organizers.filter((organizer) => organizer !== user.id));
@@ -220,15 +263,6 @@ const EventForm = () => {
     return preferredCountries.concat(restOfCountries);
   };
   const resortedCountries = getResortedCountries();
-
-  const currentUserPalz = currentUser?.friends;
-  const firstOtherUsers = allOtherUsers.filter((user) =>
-    currentUserPalz?.includes(String(user?.id))
-  );
-  const restOfUsers = allOtherUsers.filter(
-    (user) => !currentUserPalz?.includes(String(user?.id))
-  );
-  const resortedOtherUsers = firstOtherUsers.concat(restOfUsers);
 
   const getUsersWhoAreOrganizers = () => {
     const usersWhoAreOrganizers: TUser[] = [];
@@ -537,7 +571,21 @@ const EventForm = () => {
                 ))}
           </div>
           <div className="co-organizers-inputs">
-            <input type="text" placeholder="Search users by username, first/last names" />
+            <input
+              value={otherUsersSearchQuery}
+              onChange={(e) => handleOtherUsersSearchQuery(e)}
+              type="text"
+              placeholder="Search users by username, first/last names"
+            />
+            {otherUsersSearchQuery.trim() !== "" && (
+              <i
+                onClick={() => {
+                  setOtherUsersSearchQuery("");
+                  setOtherUsersToOriginalValue();
+                }}
+                className="clear-other-users-search-query fas fa-times"
+              ></i>
+            )}
             <div className="co-organizers-dropdown">
               <button type="button" onClick={() => setShowOtherUsers(!showOtherUsers)}>
                 Select user:
@@ -548,7 +596,7 @@ const EventForm = () => {
               </button>
               {showOtherUsers && (
                 <ul className="country-code-dropdown">
-                  {resortedOtherUsers.map((user) => (
+                  {otherUsers.map((user) => (
                     <div
                       key={user.id}
                       onClick={() => handleAddRemoveUserAsOrganizer(user)}
@@ -561,7 +609,7 @@ const EventForm = () => {
                       />
                       <li>
                         <img src={`${user.profileImage}`} />
-                        <span>{`${user.username}`}</span>
+                        <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
                       </li>
                     </div>
                   ))}
