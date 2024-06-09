@@ -128,11 +128,7 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
       <div className="interests-container">
         {currentUser?.interests.length ? (
           currentUser?.interests.map((interest) => (
-            <span
-              className="interest-tab"
-              key={interest}
-              style={{ backgroundColor: randomColor }}
-            >
+            <span className="tab" key={interest} style={{ backgroundColor: randomColor }}>
               {interest}
 
               <i
@@ -187,7 +183,7 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
                 !noAdditionalInterestsAndInputInterest &&
                 displayedAdditionalInterests.map((interest) => (
                   <span
-                    className="interest-tab"
+                    className="tab"
                     key={interest}
                     style={{ backgroundColor: randomColor }}
                   >
