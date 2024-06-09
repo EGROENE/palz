@@ -553,6 +553,7 @@ const EventForm = () => {
                 .filter((user) => user.username !== currentUser?.username)
                 .map((user) => (
                   <div
+                    title={`${user.firstName} ${user.lastName}`}
                     key={user.id}
                     style={{ backgroundColor: randomColor }}
                     className="tab co-organizer"
@@ -607,7 +608,7 @@ const EventForm = () => {
                         checked={organizers.includes(String(user.id))}
                         type="checkbox"
                       />
-                      <li>
+                      <li title={`${user.firstName} ${user.lastName}`}>
                         <img src={`${user.profileImage}`} />
                         <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
                       </li>
