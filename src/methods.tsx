@@ -1,3 +1,8 @@
+import { TEvent } from "./types";
+
+const sortEventsSoonestToLatest = (eventArray: TEvent[]): TEvent[] =>
+  eventArray.sort((a, b) => a.nextEventTime - b.nextEventTime);
+
 // Function to check if URL is valid
 const isValidUrl = (url: string): boolean => {
   try {
@@ -105,6 +110,7 @@ function removeDuplicates(arr) {
 }
 
 const Methods = {
+  sortEventsSoonestToLatest,
   isValidUrl,
   nameNoSpecialChars,
   getCapitalizedWord,
