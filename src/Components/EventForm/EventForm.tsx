@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
@@ -7,9 +7,6 @@ import Methods from "../../methods";
 import { TUser } from "../../types";
 
 const EventForm = () => {
-  const privateCheckboxRef = useRef<HTMLInputElement | null>(null);
-  const publicCheckboxRef = useRef<HTMLInputElement | null>(null);
-
   const { allUsers, currentUser } = useMainContext();
   const allOtherUsers = allUsers.filter((user) => user.id !== currentUser?.id);
   /* otherUsers is eventually the resorted version of allOtherUsers (palz shown on top), followed by all others; used to display potential co-organizers in dropdown */
@@ -485,7 +482,6 @@ const EventForm = () => {
             <input
               style={{ width: "unset" }}
               onChange={() => handlePublicPrivateBoxChecking("public")}
-              ref={publicCheckboxRef}
               type="checkbox"
               checked={publicity === "public"}
             />
@@ -495,7 +491,6 @@ const EventForm = () => {
             <input
               style={{ width: "unset" }}
               onChange={() => handlePublicPrivateBoxChecking("private")}
-              ref={privateCheckboxRef}
               type="checkbox"
               checked={publicity === "private"}
             />
