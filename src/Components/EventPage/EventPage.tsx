@@ -62,26 +62,18 @@ const EventPage = () => {
   const getImagesArray = ():
     | {
         url: string | undefined;
-        altText: string | undefined;
       }[]
     | undefined => {
-    if (
-      event?.imageOne?.src !== "" &&
-      event?.imageTwo?.src !== "" &&
-      event?.imageThree?.src !== ""
-    ) {
+    if (event?.imageOne !== "" && event?.imageTwo !== "" && event?.imageThree !== "") {
       return [
-        { url: event?.imageOne?.src, altText: event?.imageOne?.altText },
-        { url: event?.imageTwo?.src, altText: event?.imageTwo?.altText },
-        { url: event?.imageThree?.src, altText: event?.imageThree?.altText },
+        { url: event?.imageOne },
+        { url: event?.imageTwo },
+        { url: event?.imageThree },
       ];
-    } else if (event?.imageOne?.src !== "" && event?.imageTwo?.src !== "") {
-      return [
-        { url: event?.imageOne?.src, altText: event?.imageOne?.altText },
-        { url: event?.imageTwo?.src, altText: event?.imageTwo?.altText },
-      ];
-    } else if (event?.imageOne?.src !== "") {
-      return [{ url: event?.imageOne?.src, altText: event?.imageOne?.altText }];
+    } else if (event?.imageOne !== "" && event?.imageTwo !== "") {
+      return [{ url: event?.imageOne }, { url: event?.imageTwo }];
+    } else if (event?.imageOne !== "") {
+      return [{ url: event?.imageOne }];
     }
   };
   const eventImages = getImagesArray();
@@ -117,7 +109,7 @@ const EventPage = () => {
                   {nextEventDateTime?.toDateString()} at{" "}
                   {nextEventDateTime?.toLocaleTimeString()}
                 </p>
-                <p>{`${event.address} ${event.postalCode}`}</p>
+                <p>{`${event.address}`}</p>
                 <p>{`${event.city}, ${event.stateProvince}, ${event.country}`}</p>
               </div>
               <div>
@@ -129,7 +121,7 @@ const EventPage = () => {
                 <p>{`RSVPs: ${refinedInterestedUsers.length}`}</p>
               </div>
             </div>
-            {event.imageOne?.src !== "" && (
+            {event.imageOne !== "" && (
               <ImageSlideshow randomColor={randomColor} images={eventImages} />
             )}
             <div>

@@ -88,7 +88,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
           </button>
         </div>
       </div>
-      <img src={event.imageOne?.src} alt={event.imageOne?.altText} />
+      <img src={event.imageOne} />
     </div>
   );
 };

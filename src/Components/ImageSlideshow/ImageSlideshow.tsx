@@ -9,7 +9,6 @@ const ImageSlideshow = ({
   images:
     | {
         url: string | undefined;
-        altText: string | undefined;
       }[]
     | undefined;
   randomColor: string;
@@ -57,7 +56,6 @@ const ImageSlideshow = ({
           {imgIndex !== undefined && (
             <img
               src={images && images[imgIndex].url}
-              alt={images && images[imgIndex].altText}
               onError={() => changeImage(slideshowDirection)}
               style={{ "border": `2px solid ${randomColor}` }}
             />
