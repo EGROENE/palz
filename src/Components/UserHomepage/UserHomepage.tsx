@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import NavBar from "../NavBar/NavBar";
 import EventCard from "../EventCard/EventCard";
 import { TEvent } from "../../types";
+import Methods from "../../methods";
 
 const UserHomepage = () => {
   const { currentUser, allEvents, userCreatedAccount, getMostCurrentEvents } =
@@ -37,10 +38,6 @@ const UserHomepage = () => {
   const userRSVPDEvents: TEvent[] = allEvents.filter((ev) =>
     currentUser?.id ? ev.interestedUsers.includes(currentUser.id.toString()) : []
   );
-  // Sort userRSVPDEvents by earliest date:
-  const userRSVPDEventsSoonestToLatest = userRSVPDEvents.sort(
-    (a, b) => a.nextEventTime - b.nextEventTime
-  );
 
   return (
     currentUser && (
@@ -51,13 +48,13 @@ const UserHomepage = () => {
             <h1>Upcoming Events ({userRSVPDEvents.length})</h1>
             <div
               style={
-                userRSVPDEventsSoonestToLatest.length < 3
+                Methods.sortEventsSoonestToLatest(userRSVPDEvents).length < 3
                   ? { justifyContent: "center", overflowX: "unset" }
                   : undefined
               }
               className="rsvpd-events-container"
             >
-              {userRSVPDEventsSoonestToLatest.map((event: TEvent) => (
+              {Methods.sortEventsSoonestToLatest(userRSVPDEvents).map((event: TEvent) => (
                 <EventCard key={event.id} event={event} />
               ))}
             </div>
