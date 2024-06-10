@@ -38,25 +38,31 @@ const UserHomepage = () => {
   const userRSVPDEvents: TEvent[] = allEvents.filter((ev) =>
     currentUser?.id ? ev.interestedUsers.includes(currentUser.id.toString()) : []
   );
+  const userOrganizedEvents: TEvent[] = allEvents.filter((ev) =>
+    ev.organizers.includes(String(currentUser?.id))
+  );
+  const allCurrentUserEvents = userRSVPDEvents.concat(userOrganizedEvents);
 
   return (
     currentUser && (
       <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
         <NavBar />
-        {userRSVPDEvents.length ? (
+        {allCurrentUserEvents.length ? (
           <div className="upcoming-events-hero">
-            <h1>Upcoming Events ({userRSVPDEvents.length})</h1>
+            <h1>Upcoming Events ({allCurrentUserEvents.length})</h1>
             <div
               style={
-                Methods.sortEventsSoonestToLatest(userRSVPDEvents).length < 3
+                Methods.sortEventsSoonestToLatest(allCurrentUserEvents).length < 3
                   ? { justifyContent: "center", overflowX: "unset" }
                   : undefined
               }
               className="rsvpd-events-container"
             >
-              {Methods.sortEventsSoonestToLatest(userRSVPDEvents).map((event: TEvent) => (
-                <EventCard key={event.id} event={event} />
-              ))}
+              {Methods.sortEventsSoonestToLatest(allCurrentUserEvents).map(
+                (event: TEvent) => (
+                  <EventCard key={event.id} event={event} />
+                )
+              )}
             </div>
           </div>
         ) : (
