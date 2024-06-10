@@ -25,21 +25,20 @@ export type TUser = {
 };
 
 export type TEvent = {
-  id: string;
+  id?: string | number;
   title: string;
   organizers: string[];
   description: string;
   nextEventTime: number;
   isPublic: boolean;
   maxParticipants: number | undefined;
-  imageOne?: { src: string; altText: string };
-  imageTwo?: { src: string; altText: string };
-  imageThree?: { src: string; altText: string };
-  city: string;
-  stateProvince: string;
-  country: string;
-  address: string;
-  postalCode: string;
+  imageOne?: string;
+  imageTwo?: string;
+  imageThree?: string;
+  city: string | undefined;
+  stateProvince: string | undefined;
+  country: string | undefined;
+  address: string | undefined;
   additionalInfo: string;
   interestedUsers: string[];
 };
