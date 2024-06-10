@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
@@ -33,9 +33,11 @@ const EventForm = () => {
   const [eventDateTimeError, setEventDateTimeError] = useState<string>("");
   const [eventAddress, setEventAddress] = useState<string | undefined>("");
   const [eventAddressError, setEventAddressError] = useState<string | undefined>("");
-  const [maxParticipants, setMaxParticipants] = useState<number | undefined | string>(); // string is only a type b/c any non-integers are replaced w/ an empty string
-  const [imageOne, setImage1] = useState<string>("");
-  const [imageOneError, setImage1Error] = useState<string>("");
+  const [maxParticipants, setMaxParticipants] = useState<number | undefined | string>(
+    undefined
+  ); // string is only a type b/c any non-integers are replaced w/ an empty string
+  const [imageOne, setImageOne] = useState<string>("");
+  const [imageOneError, setImageOneError] = useState<string>("");
   const [imageTwo, setImageTwo] = useState<string>("");
   const [imageTwoError, setImageTwoError] = useState<string>("");
   const [imageThree, setImageThree] = useState<string>("");
@@ -75,6 +77,10 @@ const EventForm = () => {
     setOtherUsers(firstOtherUsers.concat(restOfUsers));
   };
   useEffect(() => setOtherUsersToOriginalValue(), []);
+
+  /* Get ref for these fields, since their values are not being set to their corresponding state values, which are epochs in MS & these are not controlled inputs */
+  const dateField = useRef<HTMLInputElement | null>(null);
+  const timeField = useRef<HTMLInputElement | null>(null);
 
   // INPUT HANDLERS
   const handleEventTitleInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -180,7 +186,7 @@ const EventForm = () => {
     e.preventDefault();
     // Handle setting of appropriate state value:
     if (imageNumber === 1) {
-      setImage1(e.target.value.trim());
+      setImageOne(e.target.value.trim());
     } else if (imageNumber === 2) {
       setImageTwo(e.target.value.trim());
     } else {
@@ -190,7 +196,7 @@ const EventForm = () => {
     // Handle setting of appropriate error:
     if (e.target.value.trim() !== "" && !Methods.isValidUrl(e.target.value.trim())) {
       if (imageNumber === 1) {
-        setImage1Error("Invalid URL");
+        setImageOneError("Invalid URL");
       } else if (imageNumber === 2) {
         setImageTwoError("Invalid URL");
       } else {
@@ -198,7 +204,7 @@ const EventForm = () => {
       }
     } else {
       if (imageNumber === 1) {
-        setImage1Error("");
+        setImageOneError("");
       } else if (imageNumber === 2) {
         setImageTwoError("");
       } else {
@@ -244,6 +250,38 @@ const EventForm = () => {
     }
   };
 
+  const handleRevert = (): void => {
+    // Reset date/time fields
+    if (dateField.current !== null && timeField.current !== null) {
+      dateField.current.value = "mm/dd/yyyy";
+      timeField.current.value = "--:--";
+    }
+    setEventTitle("");
+    setEventTitleError("");
+    setEventDescription("");
+    setEventDescriptionError("");
+    setEventAdditionalInfo("");
+    setEventAdditionalInfoError("");
+    setEventCity("");
+    setEventState("");
+    setEventCountry("");
+    setEventLocationError("");
+    setEventDate(0);
+    setEventTime(0);
+    setEventDateTimeError("");
+    setEventAddress("");
+    setEventAddressError("");
+    setMaxParticipants(undefined);
+    setImageOne("");
+    setImageOneError("");
+    setImageTwo("");
+    setImageTwoError("");
+    setImageThree("");
+    setImageThreeError("");
+    setPublicity("public");
+    setOrganizers([`${currentUser?.id}`]);
+  };
+
   // Create array in which certain countries from countries array will be placed on top
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
   const preferredCountries = countries.filter((country) =>
@@ -270,6 +308,23 @@ const EventForm = () => {
     return usersWhoAreOrganizers;
   };
   const usersWhoAreOrganizers = getUsersWhoAreOrganizers();
+
+  const changesMade =
+    eventTitle !== "" ||
+    eventDescription !== "" ||
+    eventAdditionalInfo !== "" ||
+    eventCity !== "" ||
+    eventState !== "" ||
+    eventCountry !== "" ||
+    eventDate !== 0 ||
+    eventTime !== 0 ||
+    eventAddress !== "" ||
+    maxParticipants !== undefined ||
+    imageOne !== "" ||
+    imageTwo !== "" ||
+    imageThree !== "" ||
+    publicity !== "public" ||
+    organizers.length > 1;
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
@@ -441,6 +496,7 @@ const EventForm = () => {
           <label>
             <p>Date:</p>{" "}
             <input
+              ref={dateField}
               className={eventDateTimeError !== "" ? "erroneous-field" : undefined}
               onChange={(e) => handleDateTimeInput(e, "date")}
               type="date"
@@ -449,6 +505,7 @@ const EventForm = () => {
           <label>
             <p>Time:</p>
             <input
+              ref={timeField}
               className={eventDateTimeError !== "" ? "erroneous-field" : undefined}
               onChange={(e) => handleDateTimeInput(e, "time")}
               type="time"
@@ -613,6 +670,12 @@ const EventForm = () => {
               )}
             </div>
           </div>
+        </div>
+        <div className="form-revert-submit-buttons-container">
+          <button disabled={!changesMade} type="reset" onClick={() => handleRevert()}>
+            Revert
+          </button>
+          <button type="submit">Add Event</button>
         </div>
       </form>
     </div>
