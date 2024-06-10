@@ -1450,7 +1450,7 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
             )}
           </label>
         )}
-        <div className="edit-user-info-form-options">
+        <div className="form-revert-submit-buttons-container">
           <button
             type="reset"
             disabled={!userInfoEdited}
