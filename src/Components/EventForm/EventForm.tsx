@@ -4,7 +4,9 @@ import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
 import { countries } from "../../constants";
 import Methods from "../../methods";
-import { TUser } from "../../types";
+import { TEvent, TUser } from "../../types";
+import Requests from "../../requests";
+import toast from "react-hot-toast";
 
 const EventForm = () => {
   const { allUsers, currentUser } = useMainContext();
@@ -21,21 +23,27 @@ const EventForm = () => {
   const [eventTitle, setEventTitle] = useState<string>("");
   const [eventTitleError, setEventTitleError] = useState<string>("");
   const [eventDescription, setEventDescription] = useState<string>("");
-  const [eventDescriptionError, setEventDescriptionError] = useState<string>("");
+  const [eventDescriptionError, setEventDescriptionError] = useState<string>(
+    "Please fill out this field"
+  );
   const [eventAdditionalInfo, setEventAdditionalInfo] = useState<string>("");
   const [eventAdditionalInfoError, setEventAdditionalInfoError] = useState<string>("");
   const [eventCity, setEventCity] = useState<string | undefined>("");
   const [eventState, setEventState] = useState<string | undefined>("");
   const [eventCountry, setEventCountry] = useState<string | undefined>("");
-  const [eventLocationError, setEventLocationError] = useState<string>("");
+  const [eventLocationError, setEventLocationError] = useState<string>(
+    "Please fill out all 3 location fields"
+  );
   const [eventDate, setEventDate] = useState(0); // epoch translates to certain day at midnight
   const [eventTime, setEventTime] = useState(0); // number of ms
-  const [eventDateTimeError, setEventDateTimeError] = useState<string>("");
+  const [eventDateTimeError, setEventDateTimeError] = useState<string>(
+    "Please fill out this field"
+  );
   const [eventAddress, setEventAddress] = useState<string | undefined>("");
-  const [eventAddressError, setEventAddressError] = useState<string | undefined>("");
-  const [maxParticipants, setMaxParticipants] = useState<number | undefined | string>(
-    undefined
-  ); // string is only a type b/c any non-integers are replaced w/ an empty string
+  const [eventAddressError, setEventAddressError] = useState<string | undefined>(
+    "Please fill out this field"
+  );
+  const [maxParticipants, setMaxParticipants] = useState<number | undefined>(undefined);
   const [imageOne, setImageOne] = useState<string>("");
   const [imageOneError, setImageOneError] = useState<string>("");
   const [imageTwo, setImageTwo] = useState<string>("");
@@ -44,6 +52,7 @@ const EventForm = () => {
   const [imageThreeError, setImageThreeError] = useState<string>("");
   const [publicity, setPublicity] = useState<"public" | "private">("public");
   const [organizers, setOrganizers] = useState<string[]>([`${currentUser?.id}`]);
+  const [showErrors, setShowErrors] = useState<boolean>(false);
 
   // Set random color:
   const [randomColor, setRandomColor] = useState<string>("");
@@ -282,6 +291,28 @@ const EventForm = () => {
     setOrganizers([`${currentUser?.id}`]);
   };
 
+  const handleEventFormSubmission = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    setShowErrors(true);
+    if (areNoErrors) {
+      Requests.createEvent(eventInfos)
+        .then((response) => {
+          if (!response.ok) {
+            toast.error("Could not create event. Please try again.");
+          } else {
+            toast.success("Event created!");
+          }
+        })
+        .catch((error) => console.log(error));
+    } else {
+      window.alert(
+        "Please make sure all fields are filled out & that there are no errors"
+      );
+    }
+  };
+
   // Create array in which certain countries from countries array will be placed on top
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
   const preferredCountries = countries.filter((country) =>
@@ -326,6 +357,49 @@ const EventForm = () => {
     publicity !== "public" ||
     organizers.length > 1;
 
+  const areNoErrors =
+    eventTitleError === "" &&
+    eventDescriptionError === "" &&
+    eventAdditionalInfoError === "" &&
+    eventLocationError === "" &&
+    eventDateTimeError === "" &&
+    eventAddressError === "" &&
+    imageOneError === "" &&
+    imageTwoError === "" &&
+    imageThreeError === "";
+
+  const allRequiredFieldsFilled =
+    eventTitle !== "" &&
+    eventDescription !== "" &&
+    eventCity !== "" &&
+    eventState !== "" &&
+    eventCountry !== "" &&
+    eventDate !== 0 &&
+    eventTime !== 0 &&
+    eventAddress !== "";
+
+  const eventInfos: TEvent = {
+    title: eventTitle.trim(),
+    organizers: organizers,
+    description: eventDescription.trim(),
+    additionalInfo: eventAdditionalInfo.trim(),
+    city: Methods.formatHyphensAndSpacesInString(
+      Methods.formatCapitalizedName(eventCity)
+    ),
+    stateProvince: Methods.formatHyphensAndSpacesInString(
+      Methods.formatCapitalizedName(eventState)
+    ),
+    country: eventCountry,
+    isPublic: publicity === "public",
+    nextEventTime: eventDate + eventTime,
+    maxParticipants: maxParticipants,
+    address: eventAddress?.trim(),
+    interestedUsers: [],
+    imageOne: imageOne,
+    imageTwo: imageTwo,
+    imageThree: imageThree,
+  };
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <NavBar />
@@ -334,27 +408,35 @@ const EventForm = () => {
         <label>
           <p>Title:</p>
           <input
-            className={eventTitleError !== "" ? "erroneous-field" : undefined}
+            className={
+              eventTitleError !== "" && showErrors ? "erroneous-field" : undefined
+            }
             value={eventTitle}
             onChange={(e) => handleEventTitleInput(e)}
             placeholder="Name your event"
           />
-          {eventTitleError !== "" && <p>{eventTitleError}</p>}
+          {eventTitleError !== "" && showErrors && <p>{eventTitleError}</p>}
         </label>
         <label>
           <p>Description:</p>
           <textarea
-            className={eventDescriptionError !== "" ? "erroneous-field" : undefined}
+            className={
+              eventDescriptionError !== "" && showErrors ? "erroneous-field" : undefined
+            }
             value={eventDescription}
             onChange={(e) => handleEventDescriptionInput(e)}
             placeholder="Describe your event"
           />
-          {eventDescriptionError !== "" && <p>{eventDescriptionError}</p>}
+          {eventDescriptionError !== "" && showErrors && <p>{eventDescriptionError}</p>}
         </label>
         <label>
           <p>Additional Info: (optional)</p>
           <textarea
-            className={eventAdditionalInfoError !== "" ? "erroneous-field" : undefined}
+            className={
+              eventAdditionalInfoError !== "" && showErrors
+                ? "erroneous-field"
+                : undefined
+            }
             value={eventAdditionalInfo}
             onChange={(e) => handleEventAdditionalInfo(e)}
             placeholder="Cancelation, backup plans, anything else your guests should know"
@@ -365,7 +447,9 @@ const EventForm = () => {
           <label className="location-input">
             <p>City:</p>
             <input
-              className={eventLocationError !== "" ? "erroneous-field" : undefined}
+              className={
+                eventLocationError !== "" && showErrors ? "erroneous-field" : undefined
+              }
               value={eventCity}
               onChange={(e) =>
                 handleCityStateCountryInput(
@@ -384,12 +468,14 @@ const EventForm = () => {
               }
               placeholder="Cancelation, backup plans, anything else your guests should know"
             />
-            {eventLocationError !== "" && <p>{eventLocationError}</p>}
+            {eventLocationError !== "" && showErrors && <p>{eventLocationError}</p>}
           </label>
           <label className="location-input">
             <p>State/Province:</p>
             <input
-              className={eventLocationError !== "" ? "erroneous-field" : undefined}
+              className={
+                eventLocationError !== "" && showErrors ? "erroneous-field" : undefined
+              }
               value={eventState}
               onChange={(e) =>
                 handleCityStateCountryInput(
@@ -412,7 +498,7 @@ const EventForm = () => {
             <p>Country:</p>
             <button
               className={
-                eventLocationError !== ""
+                eventLocationError !== "" && showErrors
                   ? "country-dropdown-button erroneous-field"
                   : "country-dropdown-button"
               }
@@ -485,19 +571,26 @@ const EventForm = () => {
         <label>
           <p>Address:</p>
           <input
-            className={eventAddressError !== "" ? "erroneous-field" : undefined}
+            className={
+              eventAddressError !== "" && showErrors ? "erroneous-field" : undefined
+            }
             value={eventAddress}
             onChange={(e) => handleEventAddressInput(e)}
             placeholder="Number, street, postal code"
           />
-          {eventAddressError !== "" && <p>{eventAddressError}</p>}
+          {eventAddressError !== "" && showErrors && <p>{eventAddressError}</p>}
         </label>
         <div className="date-time-inputs-container">
           <label>
             <p>Date:</p>{" "}
             <input
               ref={dateField}
-              className={eventDateTimeError !== "" ? "erroneous-field" : undefined}
+              className={
+                (eventDateTimeError === "Please fill out this field" && showErrors) ||
+                eventDateTimeError === "Event can only be set at least 1 hour in advance"
+                  ? "erroneous-field"
+                  : undefined
+              }
               onChange={(e) => handleDateTimeInput(e, "date")}
               type="date"
             />
@@ -506,13 +599,21 @@ const EventForm = () => {
             <p>Time:</p>
             <input
               ref={timeField}
-              className={eventDateTimeError !== "" ? "erroneous-field" : undefined}
+              className={
+                (eventDateTimeError === "Please fill out this field" && showErrors) ||
+                eventDateTimeError === "Event can only be set at least 1 hour in advance"
+                  ? "erroneous-field"
+                  : undefined
+              }
               onChange={(e) => handleDateTimeInput(e, "time")}
               type="time"
             />
           </label>
         </div>
-        {eventDateTimeError !== "" && (
+        {eventDateTimeError === "Please fill out this field" && showErrors && (
+          <p style={{ display: "flex" }}>{eventDateTimeError}</p>
+        )}
+        {eventDateTimeError === "Event can only be set at least 1 hour in advance" && (
           <p style={{ display: "flex" }}>{eventDateTimeError}</p>
         )}
         <label>
@@ -525,13 +626,13 @@ const EventForm = () => {
             }
             style={{ width: "25%" }}
             value={maxParticipants}
-            onChange={(e) => setMaxParticipants(e.target.value.replace(/[^0-9]*$/g, ""))}
+            onChange={(e) =>
+              setMaxParticipants(Number(e.target.value.replace(/[^0-9]*$/g, "")))
+            }
             inputMode="numeric"
             placeholder="Max number of participants"
           />
-          {maxParticipants && !(Number(maxParticipants) > 0) && (
-            <p>Number must be over 0</p>
-          )}
+          {maxParticipants && !(maxParticipants > 0) && <p>Number must be over 0</p>}
         </label>
         <div className="event-form-checkbox-container">
           <label>
@@ -675,7 +776,13 @@ const EventForm = () => {
           <button disabled={!changesMade} type="reset" onClick={() => handleRevert()}>
             Revert
           </button>
-          <button type="submit">Add Event</button>
+          <button
+            disabled={!(areNoErrors && allRequiredFieldsFilled)}
+            onClick={(e) => handleEventFormSubmission(e)}
+            type="submit"
+          >
+            Add Event
+          </button>
         </div>
       </form>
     </div>
