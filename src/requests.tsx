@@ -279,6 +279,36 @@ const deleteUserRSVP = (user: TUser | undefined, event: TEvent) => {
   });
 };
 
+const createEvent = (eventData: TEvent): Promise<Response> => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const raw = JSON.stringify({
+    "title": eventData.title,
+    "organizers": eventData.organizers,
+    "description": eventData.description,
+    "additionalInfo": eventData.additionalInfo,
+    "city": eventData.city,
+    "stateProvince": eventData.stateProvince,
+    "country": eventData.country,
+    "isPublic": eventData.isPublic,
+    "nextEventTime": eventData.nextEventTime,
+    "maxParticipants": eventData.maxParticipants,
+    "address": eventData.address,
+    "interestedUsers": [],
+    "imageOne": eventData.imageOne,
+    "imageTwo": eventData.imageTwo,
+    "imageThree": eventData.imageThree,
+  });
+
+  return fetch("http://localhost:3000/events", {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const deleteEvent = (event: TEvent): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -291,6 +321,7 @@ const deleteEvent = (event: TEvent): Promise<Response> => {
 };
 
 const Requests = {
+  createEvent,
   deleteEvent,
   addUserRSVP,
   deleteUserRSVP,
