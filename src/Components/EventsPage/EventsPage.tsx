@@ -4,6 +4,7 @@ import { useUserContext } from "../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../NavBar/NavBar";
 import EventCard from "../EventCard/EventCard";
+import Methods from "../../methods";
 
 const EventsPage = () => {
   const { allEvents, getMostCurrentEvents, currentUser, userCreatedAccount } =
@@ -36,7 +37,7 @@ const EventsPage = () => {
       <NavBar />
       <h1>Events</h1>
       <div className="all-events-container">
-        {allEvents.map((event) => (
+        {Methods.sortEventsSoonestToLatest(allEvents).map((event) => (
           <EventCard key={event.id} event={event} />
         ))}
       </div>
