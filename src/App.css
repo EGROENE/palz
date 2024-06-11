@@ -503,6 +503,7 @@ form textarea {
   flex-direction: column;
   align-items: flex-start;
   max-width: 87vw;
+  width: 76vw;
 }
 
 .show-module {
