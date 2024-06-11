@@ -20,9 +20,6 @@ const EventsPage = () => {
 
   useEffect(() => {
     getMostCurrentEvents();
-  }, []);
-
-  useEffect(() => {
     if (showSidebar) {
       setShowSidebar(false);
     }
