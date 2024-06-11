@@ -91,7 +91,7 @@ const EventPage = () => {
     currentUser?.id && event.organizers.includes(currentUser?.id.toString());
 
   return (
-    <div onClick={() => showSidebar && setShowSidebar(false)} className="event-page-hero">
+    <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
       <NavBar />
       {event ? (
         <>
