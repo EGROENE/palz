@@ -8,7 +8,7 @@ import { TEvent, TUser } from "../../types";
 import Requests from "../../requests";
 import toast from "react-hot-toast";
 
-const EventForm = () => {
+const AddEventForm = () => {
   const { allUsers, currentUser } = useMainContext();
   const allOtherUsers = allUsers.filter((user) => user.id !== currentUser?.id);
   /* otherUsers is eventually the resorted version of allOtherUsers (palz shown on top), followed by all others; used to display potential co-organizers in dropdown */
@@ -291,7 +291,7 @@ const EventForm = () => {
     setOrganizers([`${currentUser?.id}`]);
   };
 
-  const handleEventFormSubmission = (
+  const handleAddEventFormSubmission = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
@@ -778,7 +778,7 @@ const EventForm = () => {
           </button>
           <button
             disabled={!(areNoErrors && allRequiredFieldsFilled)}
-            onClick={(e) => handleEventFormSubmission(e)}
+            onClick={(e) => handleAddEventFormSubmission(e)}
             type="submit"
           >
             Add Event
@@ -789,4 +789,4 @@ const EventForm = () => {
   );
 };
 
-export default EventForm;
+export default AddEventForm;
