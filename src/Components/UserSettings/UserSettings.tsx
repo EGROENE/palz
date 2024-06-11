@@ -63,11 +63,7 @@ const UserSettings = () => {
   };
 
   return (
-    <div
-      style={{ "width": "unset" }}
-      className="page-hero"
-      onClick={() => showSidebar && setShowSidebar(false)}
-    >
+    <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <NavBar />
       <h1>Settings</h1>
       <EditUserInfoForm randomColor={randomColor} />

@@ -26,11 +26,7 @@ const EventsPage = () => {
   }, []);
 
   return (
-    <div
-      style={{ "width": "unset" }}
-      className="page-hero"
-      onClick={() => showSidebar && setShowSidebar(false)}
-    >
+    <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <NavBar />
       <h1>Events</h1>
       <div className="all-events-container">
