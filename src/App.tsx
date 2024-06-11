@@ -12,6 +12,7 @@ import UserSettings from "./Components/UserSettings/UserSettings";
 import EventForm from "./Components/EventForm/EventForm";
 import EventsPage from "./Components/EventsPage/EventsPage";
 import EventPage from "./Components/EventPage/EventPage";
+import UsersEvents from "./Components/UsersEvents/UsersEvents";
 
 function App() {
   const { userCreatedAccount, theme, showWelcomeMessage, currentUser } = useMainContext();
@@ -61,6 +62,7 @@ function App() {
         <Route path="/add-event" element={<EventForm />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:eventID" element={<EventPage />} />
+        <Route path="/:username/events" element={<UsersEvents />} />
         <Route path="/users/:username" element={<UserHomepage />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
