@@ -1,16 +1,30 @@
 #root {
   /* max-width: 1280px; */
-  /* margin: 0 auto;
-  padding: 2rem; */
   text-align: center;
+  width: 100vw;
+  /* height: 100vh; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  /* top: 1rem; */
+  min-height: 100vh;
 }
 
 .app {
   background-color: var(--background-color);
-  width: 95vw;
-  /* width: 89vw;
-  padding: 2.5rem 3.5rem;
-  max-width: 100vw; */
+  position: relative;
+  top: 0rem;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.welcome-header {
+  position: relative;
+  top: 44%;
 }
 
 .page-hero {
@@ -20,7 +34,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 98vw;
+  /* height: 100%; */
+  width: 100%;
 }
 
 .page-hero nav {
@@ -69,6 +84,7 @@
   align-items: center;
   justify-content: space-around;
   flex-direction: row;
+  width: 80%;
 }
 
 .login-greeting-container button {
@@ -617,7 +633,7 @@ form textarea {
 
 .settings-theme-and-delete-account-container {
   display: flex;
-  margin-top: 3rem;
+  margin: 3rem 0;
   width: 75%;
 }
 
@@ -629,23 +645,16 @@ form textarea {
   background-color: tomato;
 }
 
-.event-page-hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 98vw;
-}
-
 .all-events-container {
   display: flex;
   flex-wrap: wrap;
   margin: 0 2rem;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .all-events-container .event-card {
-  width: calc(50% - 4rem);
-  margin: 2rem 0;
+  /* width: calc(50% - 4rem); */
+  margin: 2rem 5rem;
 }
 
 .events-info-container .event-buttons-container {
