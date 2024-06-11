@@ -21,6 +21,7 @@ const EventPage = () => {
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
+      console.log("hi");
       navigation("/");
     }
   }, [currentUser, navigation, userCreatedAccount]);
@@ -46,9 +47,11 @@ const EventPage = () => {
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
   useEffect(() => {
     const refIntUsers = [];
-    for (const userID of event.interestedUsers) {
-      if (allUsers.filter((user) => user.id === userID).length) {
-        refIntUsers.push(userID);
+    if (event) {
+      for (const userID of event.interestedUsers) {
+        if (allUsers.filter((user) => user.id === userID).length) {
+          refIntUsers.push(userID);
+        }
       }
     }
     setRefinedInterestedUsers(refIntUsers);
@@ -80,8 +83,12 @@ const EventPage = () => {
 
   const getOrganizersUsernames = (): (string | undefined)[] => {
     const usernameArray: Array<string | undefined> = [];
-    for (const organizerID of event.organizers) {
-      usernameArray.push(allUsers.filter((user) => user.id === organizerID)[0].username);
+    if (event) {
+      for (const organizerID of event.organizers) {
+        usernameArray.push(
+          allUsers.filter((user) => user.id === organizerID)[0].username
+        );
+      }
     }
     return usernameArray;
   };
