@@ -46,6 +46,9 @@ const Sidebar = () => {
         <Link to={"/add-event"} className="sidebar-options">
           Create Event
         </Link>
+        <Link to={`/${currentUser?.username}/events`} className="sidebar-options">
+          My Events
+        </Link>
         <Link className="sidebar-options" to={"/events"}>
           Explore Events
         </Link>

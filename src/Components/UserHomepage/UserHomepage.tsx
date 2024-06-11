@@ -78,6 +78,9 @@ const UserHomepage = () => {
             <button>Create Event</button>
           </Link>
           <button>Find Palz</button>
+          <Link to={`/${currentUser.username}/events`}>
+            <button>My Events</button>
+          </Link>
           <Link to={"/events"}>
             <button>Explore Events</button>
           </Link>
