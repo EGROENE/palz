@@ -7,8 +7,10 @@ import Methods from "../../methods";
 import { TEvent, TUser } from "../../types";
 import Requests from "../../requests";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const AddEventForm = () => {
+  const navigation = useNavigate();
   const { allUsers, currentUser } = useMainContext();
   const allOtherUsers = allUsers.filter((user) => user.id !== currentUser?.id);
   /* otherUsers is eventually the resorted version of allOtherUsers (palz shown on top), followed by all others; used to display potential co-organizers in dropdown */
@@ -128,9 +130,9 @@ const AddEventForm = () => {
     e.preventDefault();
     const inputCleaned = e.target.value.replace(/\s+/g, " ");
     setEventAdditionalInfo(inputCleaned);
-    if (inputCleaned.trim().length > 100) {
+    if (inputCleaned.trim().length > 150) {
       setEventAdditionalInfoError(
-        `Too many characters (${inputCleaned.trim().length} / 100)`
+        `Too many characters (${inputCleaned.trim().length} / 150)`
       );
     } else {
       setEventAdditionalInfoError("");
@@ -303,6 +305,7 @@ const AddEventForm = () => {
             toast.error("Could not create event. Please try again.");
           } else {
             toast.success("Event created!");
+            navigation(`/${currentUser?.username}/events`);
           }
         })
         .catch((error) => console.log(error));
@@ -441,7 +444,7 @@ const AddEventForm = () => {
             onChange={(e) => handleEventAdditionalInfo(e)}
             placeholder="Cancelation, backup plans, anything else your guests should know"
           />
-          {eventAdditionalInfoError !== "" && <p>{eventAdditionalInfo}</p>}
+          {eventAdditionalInfoError !== "" && <p>{eventAdditionalInfoError}</p>}
         </label>
         <div className="location-inputs">
           <label className="location-input">
