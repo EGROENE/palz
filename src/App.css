@@ -22,7 +22,7 @@
   min-height: 100vh;
 }
 
-.welcome-header {
+.standalone-element {
   position: relative;
   top: 44%;
 }
@@ -36,6 +36,12 @@
   align-items: center;
   /* height: 100%; */
   width: 100%;
+}
+
+.page-hero.standalone-element {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
 }
 
 .page-hero nav {
