@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const AddEventForm = () => {
   const navigation = useNavigate();
-  const { allUsers, currentUser } = useMainContext();
+  const { allUsers, currentUser, userCreatedAccount } = useMainContext();
   const allOtherUsers = allUsers.filter((user) => user.id !== currentUser?.id);
   /* otherUsers is eventually the resorted version of allOtherUsers (palz shown on top), followed by all others; used to display potential co-organizers in dropdown */
   const [otherUsers, setOtherUsers] = useState<TUser[]>([]);
@@ -55,6 +55,12 @@ const AddEventForm = () => {
   const [publicity, setPublicity] = useState<"public" | "private">("public");
   const [organizers, setOrganizers] = useState<string[]>([`${currentUser?.id}`]);
   const [showErrors, setShowErrors] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!currentUser && userCreatedAccount === null) {
+      navigation("/");
+    }
+  }, [currentUser, navigation, userCreatedAccount]);
 
   // Set random color:
   const [randomColor, setRandomColor] = useState<string>("");
@@ -690,21 +696,23 @@ const AddEventForm = () => {
         <div className="co-organizers-area">
           <p>
             Co-organizers: (optional){" "}
-            {usersWhoAreOrganizers.filter(
-              (user) => user.username !== currentUser?.username
-            ).length > 0 && (
-              <span
-                style={{ color: randomColor }}
-                onClick={() => setOrganizers([`${currentUser?.id}`])}
-              >
-                Remove All
-              </span>
-            )}
+            {currentUser &&
+              usersWhoAreOrganizers.filter(
+                (user) => user.username !== currentUser?.username
+              ).length > 0 && (
+                <span
+                  style={{ color: randomColor }}
+                  onClick={() => setOrganizers([`${currentUser?.id}`])}
+                >
+                  Remove All
+                </span>
+              )}
           </p>
           <div className="co-organizers-container">
-            {usersWhoAreOrganizers.filter(
-              (user) => user.username !== currentUser?.username
-            ).length > 0 &&
+            {currentUser &&
+              usersWhoAreOrganizers.filter(
+                (user) => user.username !== currentUser?.username
+              ).length > 0 &&
               usersWhoAreOrganizers
                 .filter((user) => user.username !== currentUser?.username)
                 .map((user) => (
