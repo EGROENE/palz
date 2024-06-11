@@ -6,9 +6,9 @@ const Welcome = () => {
   return (
     <div className="page-hero">
       {userCreatedAccount ? (
-        <h1 className="welcome-header">{`Welcome to Palz, ${currentUser?.firstName}!`}</h1>
+        <h1 className="standalone-element">{`Welcome to Palz, ${currentUser?.firstName}!`}</h1>
       ) : (
-        <h1 className="welcome-header">{`Welcome back, ${currentUser?.firstName}!`}</h1>
+        <h1 className="standalone-element">{`Welcome back, ${currentUser?.firstName}!`}</h1>
       )}
     </div>
   );
