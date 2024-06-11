@@ -35,42 +35,34 @@ const ImageSlideshow = ({
 
   return (
     <div className="slideshow-container">
-      <div
-        className={
-          images && images.length > 1
-            ? "img-arrows-container"
-            : "img-arrows-container centered"
-        }
-      >
-        {images && images.length > 1 && (
-          <i
-            onClick={() => {
-              changeImage("prev");
-            }}
-            className="fas fa-angle-right"
-            title="Previous Image"
-          ></i>
-        )}
-        <div className="slideshow-img-container">
-          {/* If imgIndex is specifically not undefined (not just falsy), show image/alt text. imgIndex should never be falsy, as its value is set whenever this component renders, though it is initialized as undefined. It's not good practice to initialize it, then change it again as soon as component renders. */}
-          {imgIndex !== undefined && (
-            <img
-              src={images && images[imgIndex].url}
-              onError={() => changeImage(slideshowDirection)}
-              style={{ "border": `2px solid ${randomColor}` }}
-            />
-          )}
-        </div>
-        {images && images.length > 1 && (
-          <i
-            onClick={() => {
-              changeImage("next");
-            }}
-            className="fas fa-angle-right"
-            title="Next Image"
-          ></i>
+      {images && images.length > 1 && (
+        <i
+          onClick={() => {
+            changeImage("prev");
+          }}
+          className="fas fa-angle-right"
+          title="Previous Image"
+        ></i>
+      )}
+      <div className="slideshow-img-container">
+        {/* If imgIndex is specifically not undefined (not just falsy), show image/alt text. imgIndex should never be falsy, as its value is set whenever this component renders, though it is initialized as undefined. It's not good practice to initialize it, then change it again as soon as component renders. */}
+        {imgIndex !== undefined && (
+          <img
+            src={images && images[imgIndex].url}
+            onError={() => changeImage(slideshowDirection)}
+            style={{ "border": `2px solid ${randomColor}` }}
+          />
         )}
       </div>
+      {images && images.length > 1 && (
+        <i
+          onClick={() => {
+            changeImage("next");
+          }}
+          className="fas fa-angle-right"
+          title="Next Image"
+        ></i>
+      )}
     </div>
   );
 };
