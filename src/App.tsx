@@ -58,7 +58,7 @@ function App() {
       <Routes>
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />
-        <Route path="/event-form" element={<EventForm />} />
+        <Route path="/add-event" element={<EventForm />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:eventID" element={<EventPage />} />
         <Route path="/users/:username" element={<UserHomepage />} />
