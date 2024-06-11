@@ -17,7 +17,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }> {
       return (
         <div style={{ "width": " 100vw", "margin": "0" }} className="page-hero">
           <div className="error-boundary-container">
-            <h1>Something went wrong</h1>
+            <h1 className="standalone-element">Something went wrong</h1>
             <p>
               Please reload this page or navigate back to the homepage if the issue
               persists.
