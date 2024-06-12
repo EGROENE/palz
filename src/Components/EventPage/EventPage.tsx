@@ -1,4 +1,4 @@
-import { TEvent } from "../../types";
+import { TEvent, TUser } from "../../types";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
@@ -16,7 +16,8 @@ const EventPage = () => {
   const [event, setEvent] = useState<TEvent>(
     allEvents.filter((ev) => ev.id === eventID)[0]
   );
-  const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<string[]>([]);
+  const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
+  const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
 
   const navigation = useNavigate();
   useEffect(() => {
@@ -49,8 +50,10 @@ const EventPage = () => {
     const refIntUsers = [];
     if (event) {
       for (const userID of event.interestedUsers) {
-        if (allUsers.filter((user) => user.id === userID).length) {
-          refIntUsers.push(userID);
+        for (const user of allUsers) {
+          if (user.id === userID) {
+            refIntUsers.push(user);
+          }
         }
       }
     }
@@ -102,6 +105,38 @@ const EventPage = () => {
       <NavBar />
       {event ? (
         <>
+          {showRSVPs && (
+            <div className="modal-background">
+              <i
+                title="Close"
+                onClick={() => setShowRSVPs(false)}
+                className="fas fa-times close-interests-module-icon"
+              ></i>
+              <div className="rsvpd-users-container">
+                <h2>RSVP'd Users</h2>
+                {refinedInterestedUsers.map((user) => (
+                  <div key={user.id} className="rsvpd-user">
+                    <img
+                      style={{ border: `2px solid ${randomColor}` }}
+                      src={`${user.profileImage}`}
+                      alt="profile pic"
+                    />
+                    <div className="rsvpd-user-texts-container">
+                      <p>{`${user.firstName} ${user.lastName}`}</p>
+                      <p>{user.username}</p>
+                    </div>
+                    <button style={{ backgroundColor: randomColor }}>Message</button>
+                    <button
+                      onClick={(e) => handleDeleteUserRSVP(e, event, user)}
+                      style={{ backgroundColor: "tomato" }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <div
             style={{
               border: `2px solid ${randomColor}`,
@@ -125,7 +160,18 @@ const EventPage = () => {
                 ) : (
                   <p>Organizers: {organizerUsernames.join(", ")}</p>
                 )}
-                <p>{`RSVPs: ${refinedInterestedUsers.length}`}</p>
+
+                <p>
+                  RSVPs:{" "}
+                  <span
+                    onClick={() => setShowRSVPs(true)}
+                    className={
+                      event.organizers.includes(String(currentUser?.id))
+                        ? "show-rsvpd-users"
+                        : undefined
+                    }
+                  >{`${refinedInterestedUsers.length}`}</span>
+                </p>
               </div>
             </div>
             {event.imageOne !== "" && (
@@ -142,7 +188,9 @@ const EventPage = () => {
               }
               style={!userIsOrganizer ? { "backgroundColor": randomColor } : undefined}
               onClick={(e) =>
-                userRSVPd ? handleDeleteUserRSVP(e, event) : handleAddUserRSVP(e, event)
+                userRSVPd
+                  ? handleDeleteUserRSVP(e, event, currentUser)
+                  : handleAddUserRSVP(e, event)
               }
             >
               {userRSVPd ? "Remove RSVP" : "RSVP"}
