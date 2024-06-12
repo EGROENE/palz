@@ -62,9 +62,12 @@ const AddEventForm = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
-  // Set random color:
   const [randomColor, setRandomColor] = useState<string>("");
   useEffect(() => {
+    if (showSidebar) {
+      setShowSidebar(false);
+    }
+
     const themeColors = [
       "var(--theme-blue)",
       "var(--theme-green)",
@@ -74,12 +77,6 @@ const AddEventForm = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
-  }, []);
-
-  useEffect(() => {
-    if (showSidebar) {
-      setShowSidebar(false);
-    }
   }, []);
 
   // Function to reset otherUsers to its original value, w/o filters from otherUsersSearchQuery
