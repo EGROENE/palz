@@ -560,7 +560,7 @@ form textarea {
   margin: 0.5rem;
 }
 
-.browse-interests-module-background {
+.modal-background {
   height: 100vh;
   width: 100vw;
   position: fixed;
@@ -570,7 +570,7 @@ form textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 101;
   margin-left: -3rem;
 }
 
@@ -711,13 +711,13 @@ form textarea {
 .slideshow-container i:first-child {
   rotate: 180deg;
   position: absolute;
-  left: 14%;
+  left: 4%;
   top: 40%;
 }
 
 .slideshow-container i:nth-child(4) {
   position: absolute;
-  right: 14%;
+  right: 4%;
   top: 40%;
 }
 
@@ -752,7 +752,7 @@ form textarea {
   align-items: flex-start;
 }
 
-.tab.co-organizer {
+.tab.user {
   font-size: 0.75rem;
   max-width: 75%;
   text-align: left;
@@ -760,7 +760,7 @@ form textarea {
   align-items: center;
 }
 
-.co-organizer img {
+.tab.user img {
   aspect-ratio: 1;
   width: 1.5rem;
   border-radius: 4px;
@@ -836,10 +836,60 @@ form textarea {
   font-size: 0.75rem;
 }
 
-.tab.co-organizer span {
+.tab.user span {
   font-size: 1rem;
 }
 
-.tab.co-organizer i {
+.tab.user i {
   font-size: 1.25rem;
+}
+
+.show-rsvpd-users {
+  text-decoration: underline;
+}
+
+.show-rsvpd-users:hover {
+  cursor: pointer;
+}
+
+.rsvpd-users-container {
+  background-color: var(--background-color);
+  color: black;
+  height: 75%;
+  width: 60%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+
+.rsvpd-user {
+  color: var(--text-color);
+  padding: 1rem;
+  border-radius: 10px;
+  width: 74%;
+  border: 2px solid gray;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 1rem 0;
+}
+
+.rsvpd-user img {
+  float: left;
+  width: 5rem;
+  height: 5rem;
+  object-fit: cover;
+}
+
+.rsvpd-user-texts-container {
+  text-align: left;
+}
+
+.rsvpd-user-texts-container p {
+  margin: 0;
+}
+
+.rsvpd-user-texts-container p:first-child {
+  font-size: 1.5rem;
 }
