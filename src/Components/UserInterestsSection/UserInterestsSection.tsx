@@ -143,7 +143,7 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
         )}
       </div>
       {showExistingInterestsNotOnCurrentUser && (
-        <div className="browse-interests-module-background">
+        <div className="modal-background">
           <i
             title="Close"
             onClick={() => {
