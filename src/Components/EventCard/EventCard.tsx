@@ -81,7 +81,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
             title={userIsOrganizer ? "Cannot RSVP to an event you organized" : undefined}
             className="event-buttons-container-button"
             onClick={(e) =>
-              userRSVPd ? handleDeleteUserRSVP(e, event) : handleAddUserRSVP(e, event)
+              userRSVPd && currentUser
+                ? handleDeleteUserRSVP(e, event, currentUser)
+                : handleAddUserRSVP(e, event)
             }
           >
             {userRSVPd ? "Remove RSVP" : "RSVP"}
