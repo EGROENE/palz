@@ -720,7 +720,7 @@ const AddEventForm = () => {
                     title={`${user.firstName} ${user.lastName}`}
                     key={user.id}
                     style={{ backgroundColor: randomColor }}
-                    className="tab co-organizer"
+                    className="tab user"
                   >
                     <img src={`${user.profileImage}`} alt="profile pic" />
                     <span>{user.username}</span>
