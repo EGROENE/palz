@@ -688,10 +688,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleDeleteUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
+    event: TEvent,
+    user: TUser
   ): void => {
     e.preventDefault();
-    Requests.deleteUserRSVP(currentUser, event).then((response) => {
+    Requests.deleteUserRSVP(user, event).then((response) => {
       if (!response.ok) {
         toast.error("Could not remove RSVP. Please try again.");
         getMostCurrentEvents();
