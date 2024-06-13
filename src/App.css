@@ -499,7 +499,7 @@
 }
 
 .location-countries-dropdown .country-dropdown-button,
-.co-organizers-dropdown button {
+.co-organizers-invitees-dropdown button {
   width: 12rem;
 }
 
@@ -746,7 +746,7 @@ form textarea {
   align-items: center;
 }
 
-.co-organizers-area {
+.add-other-users-area {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -766,30 +766,30 @@ form textarea {
   border-radius: 4px;
 }
 
-.co-organizers-area span {
+.add-other-users-area span {
   font-size: 0.75rem;
   margin: 0 0.25rem;
 }
 
-.co-organizers-area span:hover {
+.add-other-users-area span:hover {
   cursor: pointer;
   opacity: 0.9;
 }
 
-.co-organizers-area {
+.add-other-users-area {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.co-organizers-container {
+.co-organizers-invitees-container {
   flex-wrap: wrap;
   width: 100%;
   max-width: 100%;
   display: flex;
 }
 
-.co-organizers-inputs {
+.co-organizers-invitees-inputs {
   display: flex;
   width: 100%;
   position: relative;
@@ -802,19 +802,19 @@ form textarea {
   font-size: 1.25rem;
 }
 
-.page-hero form .co-organizers-inputs input {
+.page-hero form .co-organizers-invitees-inputs input {
   width: 37%;
   height: calc(28px - 0.45rem);
   max-height: calc(28px - 0.45rem);
   margin-right: 4rem;
 }
 
-.co-organizers-dropdown {
+.co-organizers-invitees-dropdown {
   display: flex;
   flex-direction: column;
 }
 
-.co-organizers-dropdown i {
+.co-organizers-invitees-dropdown i {
   margin-left: 1rem;
 }
 
@@ -823,11 +823,11 @@ form textarea {
   align-items: center;
 }
 
-.page-hero form .co-organizers-inputs .other-user-option input {
+.page-hero form .co-organizers-invitees-inputs .other-user-option input {
   margin-right: 0.5rem;
 }
 
-.co-organizers-inputs .country-code-dropdown li:hover {
+.co-organizers-invitees-inputs .country-code-dropdown li:hover {
   background-color: unset;
   opacity: 1;
 }
