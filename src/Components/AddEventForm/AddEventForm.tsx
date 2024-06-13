@@ -62,8 +62,22 @@ const AddEventForm = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
+  // Function to reset otherUsers to its original value, w/o filters from otherUsersSearchQuery
+  const setOtherUsersToOriginalValue = () => {
+    const currentUserPalz = currentUser?.friends;
+    const firstOtherUsers = allOtherUsers.filter((user) =>
+      currentUserPalz?.includes(String(user?.id))
+    );
+    const restOfUsers = allOtherUsers.filter(
+      (user) => !currentUserPalz?.includes(String(user?.id))
+    );
+    setOtherUsers(firstOtherUsers.concat(restOfUsers));
+  };
+
   const [randomColor, setRandomColor] = useState<string>("");
   useEffect(() => {
+    setOtherUsersToOriginalValue();
+
     if (showSidebar) {
       setShowSidebar(false);
     }
@@ -78,19 +92,6 @@ const AddEventForm = () => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
   }, []);
-
-  // Function to reset otherUsers to its original value, w/o filters from otherUsersSearchQuery
-  const setOtherUsersToOriginalValue = () => {
-    const currentUserPalz = currentUser?.friends;
-    const firstOtherUsers = allOtherUsers.filter((user) =>
-      currentUserPalz?.includes(String(user?.id))
-    );
-    const restOfUsers = allOtherUsers.filter(
-      (user) => !currentUserPalz?.includes(String(user?.id))
-    );
-    setOtherUsers(firstOtherUsers.concat(restOfUsers));
-  };
-  useEffect(() => setOtherUsersToOriginalValue(), []);
 
   /* Get ref for these fields, since their values are not being set to their corresponding state values, which are epochs in MS & these are not controlled inputs */
   const dateField = useRef<HTMLInputElement | null>(null);
