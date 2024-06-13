@@ -28,6 +28,7 @@ export type TEvent = {
   id?: string | number;
   title: string;
   organizers: string[];
+  invitees: string[];
   description: string;
   nextEventTime: number;
   isPublic: boolean;
