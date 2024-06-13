@@ -14,9 +14,13 @@ const AddEventForm = () => {
   const { allUsers, currentUser, userCreatedAccount } = useMainContext();
   const allOtherUsers = allUsers.filter((user) => user.id !== currentUser?.id);
   /* otherUsers is eventually the resorted version of allOtherUsers (palz shown on top), followed by all others; used to display potential co-organizers in dropdown */
-  const [otherUsers, setOtherUsers] = useState<TUser[]>([]);
-  const [otherUsersSearchQuery, setOtherUsersSearchQuery] = useState<string>("");
-  const [showOtherUsers, setShowOtherUsers] = useState<boolean>(false);
+  const [potentialCoOrganizers, setPotentialCoOrganizers] = useState<TUser[]>([]);
+  const [potentialInvitees, setPotentialInvitees] = useState<TUser[]>([]);
+  const [coOrganizersSearchQuery, setCoOrganizersSearchQuery] = useState<string>("");
+  const [inviteesSearchQuery, setInviteesSearchQuery] = useState<string>("");
+  const [showPotentialCoOrganizers, setShowPotentialCoOrganizers] =
+    useState<boolean>(false);
+  const [showPotentialInvitees, setShowPotentialInvitees] = useState<boolean>(false);
 
   const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
 
@@ -54,6 +58,7 @@ const AddEventForm = () => {
   const [imageThreeError, setImageThreeError] = useState<string>("");
   const [publicity, setPublicity] = useState<"public" | "private">("public");
   const [organizers, setOrganizers] = useState<string[]>([`${currentUser?.id}`]);
+  const [invitees, setInvitees] = useState<string[]>([]);
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
   useEffect(() => {
@@ -62,8 +67,10 @@ const AddEventForm = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
-  // Function to reset otherUsers to its original value, w/o filters from otherUsersSearchQuery
-  const setOtherUsersToOriginalValue = () => {
+  // Function to reset otherUsers to its original value, w/o filters from coOrganizersSearchQuery
+  const setPotentialCoOrganizersAndOrInviteesToOriginalValue = (
+    field?: "co-organizers" | "invitees"
+  ) => {
     const currentUserPalz = currentUser?.friends;
     const firstOtherUsers = allOtherUsers.filter((user) =>
       currentUserPalz?.includes(String(user?.id))
@@ -71,12 +78,19 @@ const AddEventForm = () => {
     const restOfUsers = allOtherUsers.filter(
       (user) => !currentUserPalz?.includes(String(user?.id))
     );
-    setOtherUsers(firstOtherUsers.concat(restOfUsers));
+    if (field === "co-organizers") {
+      setPotentialCoOrganizers(firstOtherUsers.concat(restOfUsers));
+    } else if (field === "invitees") {
+      setPotentialInvitees(firstOtherUsers.concat(restOfUsers));
+    } else {
+      setPotentialCoOrganizers(firstOtherUsers.concat(restOfUsers));
+      setPotentialInvitees(firstOtherUsers.concat(restOfUsers));
+    }
   };
 
   const [randomColor, setRandomColor] = useState<string>("");
   useEffect(() => {
-    setOtherUsersToOriginalValue();
+    setPotentialCoOrganizersAndOrInviteesToOriginalValue();
 
     if (showSidebar) {
       setShowSidebar(false);
@@ -231,37 +245,77 @@ const AddEventForm = () => {
   const handlePublicPrivateBoxChecking = (option: "public" | "private"): void =>
     setPublicity(option);
 
-  const handleOtherUsersSearchQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePotentialCoOrganizersAndInviteesSearchQuery = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: "co-organizers" | "invitees"
+  ) => {
     e.preventDefault();
     const inputCleaned = e.target.value.replace(/\s+/g, " ");
-    setOtherUsersSearchQuery(inputCleaned);
+    setInviteesSearchQuery(inputCleaned);
     if (inputCleaned.trim() !== "") {
-      setShowOtherUsers(true);
-      const matchingUsers: TUser[] = [];
-      for (const user of allOtherUsers) {
-        if (
-          user.firstName &&
-          user.lastName &&
-          user.username &&
-          (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-            user?.lastName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-            user?.username.includes(inputCleaned.toLowerCase()))
-        ) {
-          matchingUsers.push(user);
+      if (field === "co-organizers") {
+        setShowPotentialCoOrganizers(true);
+        const matchingUsers: TUser[] = [];
+        for (const user of allOtherUsers) {
+          if (
+            user.firstName &&
+            user.lastName &&
+            user.username &&
+            (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+              user?.lastName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+              user?.username.includes(inputCleaned.toLowerCase()))
+          ) {
+            matchingUsers.push(user);
+          }
         }
+        setPotentialCoOrganizers(matchingUsers);
+      } else if (field === "invitees") {
+        setShowPotentialInvitees(true);
+        const matchingUsers: TUser[] = [];
+        for (const user of allOtherUsers) {
+          if (
+            user.firstName &&
+            user.lastName &&
+            user.username &&
+            (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+              user?.lastName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+              user?.username.includes(inputCleaned.toLowerCase()))
+          ) {
+            matchingUsers.push(user);
+          }
+        }
+        setPotentialInvitees(matchingUsers);
       }
-      setOtherUsers(matchingUsers);
     } else {
-      setOtherUsersToOriginalValue();
+      setPotentialCoOrganizersAndOrInviteesToOriginalValue();
     }
   };
 
   const handleAddRemoveUserAsOrganizer = (user: TUser) => {
     if (organizers.includes(String(user.id))) {
       setOrganizers(organizers.filter((organizer) => organizer !== user.id));
+      setPotentialCoOrganizersAndOrInviteesToOriginalValue("invitees");
     } else {
       const updatedArray = organizers.concat(String(user.id));
       setOrganizers(updatedArray);
+      setPotentialInvitees(
+        potentialInvitees.filter((potentialInvitee) => potentialInvitee.id !== user.id)
+      );
+    }
+  };
+
+  const handleAddRemoveUserAsInvitee = (user: TUser) => {
+    if (invitees.includes(String(user.id))) {
+      setInvitees(invitees.filter((invitee) => invitee !== user.id));
+      setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
+    } else {
+      const updatedArray = invitees.concat(String(user.id));
+      setInvitees(updatedArray);
+      setPotentialCoOrganizers(
+        potentialCoOrganizers.filter(
+          (potentialCoOrganizer) => potentialCoOrganizer.id !== user.id
+        )
+      );
     }
   };
 
@@ -347,6 +401,16 @@ const AddEventForm = () => {
   };
   const usersWhoAreOrganizers = getUsersWhoAreOrganizers();
 
+  const getUsersWhoAreInvitees = () => {
+    const usersWhoAreInvitees: TUser[] = [];
+    for (const invitee of invitees) {
+      const user = allUsers.filter((user) => user.id === invitee)[0];
+      usersWhoAreInvitees.push(user);
+    }
+    return usersWhoAreInvitees;
+  };
+  const usersWhoAreInvitees = getUsersWhoAreInvitees();
+
   const changesMade =
     eventTitle !== "" ||
     eventDescription !== "" ||
@@ -388,6 +452,7 @@ const AddEventForm = () => {
   const eventInfos: TEvent = {
     title: eventTitle.trim(),
     organizers: organizers,
+    invitees: invitees,
     description: eventDescription.trim(),
     additionalInfo: eventAdditionalInfo.trim(),
     city: Methods.formatHyphensAndSpacesInString(
@@ -691,7 +756,7 @@ const AddEventForm = () => {
           />
           {imageThreeError !== "" && <p>{imageThreeError}</p>}
         </label>
-        <div className="co-organizers-area">
+        <div className="add-other-users-area">
           <p>
             Co-organizers: (optional){" "}
             {currentUser &&
@@ -706,7 +771,7 @@ const AddEventForm = () => {
                 </span>
               )}
           </p>
-          <div className="co-organizers-container">
+          <div className="co-organizers-invitees-container">
             {currentUser &&
               usersWhoAreOrganizers.filter(
                 (user) => user.username !== currentUser?.username
@@ -723,43 +788,44 @@ const AddEventForm = () => {
                     <img src={`${user.profileImage}`} alt="profile pic" />
                     <span>{user.username}</span>
                     <i
-                      onClick={() =>
-                        setOrganizers(
-                          organizers.filter((organizer) => organizer !== user.id)
-                        )
-                      }
+                      onClick={() => handleAddRemoveUserAsOrganizer(user)}
                       className="fas fa-times"
                     ></i>
                   </div>
                 ))}
           </div>
-          <div className="co-organizers-inputs">
+          <div className="co-organizers-invitees-inputs">
             <input
-              value={otherUsersSearchQuery}
-              onChange={(e) => handleOtherUsersSearchQuery(e)}
+              value={inviteesSearchQuery}
+              onChange={(e) =>
+                handlePotentialCoOrganizersAndInviteesSearchQuery(e, "co-organizers")
+              }
               type="text"
               placeholder="Search users by username, first/last names"
             />
-            {otherUsersSearchQuery.trim() !== "" && (
+            {coOrganizersSearchQuery.trim() !== "" && (
               <i
                 onClick={() => {
-                  setOtherUsersSearchQuery("");
-                  setOtherUsersToOriginalValue();
+                  setCoOrganizersSearchQuery("");
+                  setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
                 }}
                 className="clear-other-users-search-query fas fa-times"
               ></i>
             )}
-            <div className="co-organizers-dropdown">
-              <button type="button" onClick={() => setShowOtherUsers(!showOtherUsers)}>
+            <div className="co-organizers-invitees-dropdown">
+              <button
+                type="button"
+                onClick={() => setShowPotentialCoOrganizers(!showPotentialCoOrganizers)}
+              >
                 Select user:
                 <i
-                  style={showOtherUsers ? { "rotate": "180deg" } : undefined}
+                  style={showPotentialCoOrganizers ? { "rotate": "180deg" } : undefined}
                   className="fas fa-chevron-down"
                 ></i>
               </button>
-              {showOtherUsers && (
+              {showPotentialCoOrganizers && (
                 <ul className="country-code-dropdown">
-                  {otherUsers.map((user) => (
+                  {potentialCoOrganizers.map((user) => (
                     <div
                       key={user.id}
                       onClick={() => handleAddRemoveUserAsOrganizer(user)}
@@ -768,6 +834,87 @@ const AddEventForm = () => {
                       <input
                         onChange={() => handleAddRemoveUserAsOrganizer(user)}
                         checked={organizers.includes(String(user.id))}
+                        type="checkbox"
+                      />
+                      <li title={`${user.firstName} ${user.lastName}`}>
+                        <img src={`${user.profileImage}`} />
+                        <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
+                      </li>
+                    </div>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="add-other-users-area">
+          <p>
+            Invitees: (especially recommended if event is private:){" "}
+            {currentUser && usersWhoAreInvitees.length > 0 && (
+              <span style={{ color: randomColor }} onClick={() => setInvitees([])}>
+                Remove All
+              </span>
+            )}
+          </p>
+          <div className="co-organizers-invitees-container">
+            {currentUser &&
+              usersWhoAreInvitees.length > 0 &&
+              usersWhoAreInvitees.map((user) => (
+                <div
+                  title={`${user.firstName} ${user.lastName}`}
+                  key={user.id}
+                  style={{ backgroundColor: randomColor }}
+                  className="tab user"
+                >
+                  <img src={`${user.profileImage}`} alt="profile pic" />
+                  <span>{user.username}</span>
+                  <i
+                    onClick={() => handleAddRemoveUserAsInvitee(user)}
+                    className="fas fa-times"
+                  ></i>
+                </div>
+              ))}
+          </div>
+          <div className="co-organizers-invitees-inputs">
+            <input
+              value={coOrganizersSearchQuery}
+              onChange={(e) =>
+                handlePotentialCoOrganizersAndInviteesSearchQuery(e, "invitees")
+              }
+              type="text"
+              placeholder="Search users by username, first/last names"
+            />
+            {coOrganizersSearchQuery.trim() !== "" && (
+              <i
+                onClick={() => {
+                  setInviteesSearchQuery("");
+                  setPotentialCoOrganizersAndOrInviteesToOriginalValue("invitees");
+                }}
+                className="clear-other-users-search-query fas fa-times"
+              ></i>
+            )}
+            <div className="co-organizers-invitees-dropdown">
+              <button
+                type="button"
+                onClick={() => setShowPotentialInvitees(!showPotentialInvitees)}
+              >
+                Select user:
+                <i
+                  style={showPotentialInvitees ? { "rotate": "180deg" } : undefined}
+                  className="fas fa-chevron-down"
+                ></i>
+              </button>
+              {showPotentialInvitees && (
+                <ul className="country-code-dropdown">
+                  {potentialInvitees.map((user) => (
+                    <div
+                      key={user.id}
+                      onClick={() => handleAddRemoveUserAsInvitee(user)}
+                      className="other-user-option"
+                    >
+                      <input
+                        onChange={() => handleAddRemoveUserAsInvitee(user)}
+                        checked={invitees.includes(String(user.id))}
                         type="checkbox"
                       />
                       <li title={`${user.firstName} ${user.lastName}`}>
