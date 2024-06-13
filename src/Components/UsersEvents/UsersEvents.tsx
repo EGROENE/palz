@@ -4,6 +4,7 @@ import { useUserContext } from "../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../NavBar/NavBar";
 import EventCard from "../EventCard/EventCard";
+import { Link } from "react-router-dom";
 import Methods from "../../methods";
 
 const UsersEvents = () => {
@@ -32,12 +33,29 @@ const UsersEvents = () => {
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <NavBar />
-      <h1>Events</h1>
-      <div className="all-events-container">
-        {Methods.sortEventsSoonestToLatest(usersEvents).map((event) => (
-          <EventCard key={event.id} event={event} />
-        ))}
-      </div>
+      <h1>Your Events</h1>
+      {usersEvents.length > 0 ? (
+        <div className="all-events-container">
+          {Methods.sortEventsSoonestToLatest(usersEvents).map((event) => (
+            <EventCard key={event.id} event={event} />
+          ))}
+        </div>
+      ) : (
+        <h2>
+          You haven't organized any events yet. Click{" "}
+          <Link
+            style={{
+              color: "var(--theme-orange)",
+              textDecoration: "underline",
+              fontWeight: "bold",
+            }}
+            to={"/add-event"}
+          >
+            here
+          </Link>{" "}
+          to add one!
+        </h2>
+      )}
     </div>
   );
 };
