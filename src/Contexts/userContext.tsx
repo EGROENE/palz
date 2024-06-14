@@ -697,10 +697,30 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         toast.error("Could not remove RSVP. Please try again.");
         getMostCurrentEvents();
       } else {
-        toast.success("RSVP deleted");
+        toast.error("RSVP deleted");
         getMostCurrentEvents();
       }
     });
+  };
+
+  // Handler for user to decline invitation. Should remove them from invitees array.
+  const handleDeclineInvitation = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent,
+    user: TUser | undefined
+  ): void => {
+    e.preventDefault();
+    Requests.removeInvitee(event, user)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not decline invitation. Please try again.");
+          getMostCurrentEvents();
+        } else {
+          toast.error("Invitation declined.");
+          getMostCurrentEvents();
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   // Defined here, as it's used in methods that are used in multiple components
@@ -792,6 +812,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    handleDeclineInvitation,
     handleCityStateCountryInput,
     handleDeleteUserRSVP,
     handleAddUserRSVP,

@@ -72,6 +72,11 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  handleDeclineInvitation: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent,
+    user: TUser | undefined
+  ) => void;
   handleCityStateCountryInput: (
     stateValues: {
       city: string | undefined;
