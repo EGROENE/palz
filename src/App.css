@@ -300,6 +300,7 @@
 .event-card {
   border-radius: 8px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-around;
   min-width: 33%;
@@ -309,8 +310,32 @@
   margin: 1.5rem;
 }
 
+.event-card-invitation {
+  display: flex;
+  width: 93%;
+  justify-content: space-around;
+  margin: 1rem 0;
+}
+
+.event-card-invitation p {
+  padding: 0.25rem 0.5rem;
+  color: white;
+  margin: 0;
+}
+
+.event-card-invitation button {
+  background-color: var(--background-color-opposite);
+  color: var(--text-color-opposite);
+  font-size: 0.75rem;
+}
+
 .event-card header {
   font-weight: 700;
+}
+
+.event-card-main-info {
+  display: flex;
+  align-items: center;
 }
 
 .organizers-event-card {
@@ -326,6 +351,7 @@
   width: 10rem;
   height: 7rem;
   object-fit: cover;
+  margin-left: 0.5rem;
 }
 
 .event-buttons-container {
