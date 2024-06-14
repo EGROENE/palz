@@ -21,10 +21,6 @@ const UserHomepage = () => {
     /* @ts-ignore: Condition must be checked & Sidebar hidden on init rendering of this component only. If any of the recommended dependencies are included, Sidebar will be hidden immediately after it is displayed. */
   }, []);
 
-  useEffect(() => {
-    getMostCurrentEvents();
-  }, [allEvents]);
-
   /* If currentUser is undefined, redirect to base URL (/). This prevents access to user account by simply pasting in their acct url. Forces login. Also, this component will only render if currentUser exists. If currentUser is defined, ensure url is set to include their username (after editing user info, then returning to user homepage, 'undefined' was sometimes taking the place of currentUser.username in path). */
   const navigation = useNavigate();
   useEffect(() => {
@@ -41,7 +37,12 @@ const UserHomepage = () => {
   const userOrganizedEvents: TEvent[] = allEvents.filter((ev) =>
     ev.organizers.includes(String(currentUser?.id))
   );
-  const allCurrentUserEvents = userRSVPDEvents.concat(userOrganizedEvents);
+  const eventsUserIsInvitedTo = allEvents.filter((ev) =>
+    ev.invitees.includes(String(currentUser?.id))
+  );
+  const allCurrentUserEvents = Methods.removeDuplicates(
+    userRSVPDEvents.concat(userOrganizedEvents).concat(eventsUserIsInvitedTo)
+  );
 
   return (
     currentUser && (
