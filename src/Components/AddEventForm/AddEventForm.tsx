@@ -426,7 +426,8 @@ const AddEventForm = () => {
     imageTwo !== "" ||
     imageThree !== "" ||
     publicity !== "public" ||
-    organizers.length > 1;
+    organizers.length > 1 ||
+    invitees.length > 0;
 
   const areNoErrors =
     eventTitleError === "" &&
