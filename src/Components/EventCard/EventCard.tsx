@@ -8,7 +8,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<string>("");
 
   const { currentUser, allUsers } = useMainContext();
-  const { handleAddUserRSVP, handleDeleteUserRSVP } = useUserContext();
+  const { handleAddUserRSVP, handleDeleteUserRSVP, handleDeclineInvitation } =
+    useUserContext();
 
   const nextEventDateTime: Date = new Date(event.nextEventTime);
 
@@ -28,6 +29,10 @@ const EventCard = ({ event }: { event: TEvent }) => {
   // Make sure that this updates after user de-RSVPs
   const userRSVPd: boolean = currentUser?.id
     ? event.interestedUsers.includes(currentUser.id.toString())
+    : false;
+
+  const userIsInvitee: boolean = currentUser?.id
+    ? event.invitees.includes(String(currentUser.id))
     : false;
 
   const refinedOrganizers: string[] = [];
@@ -56,30 +61,12 @@ const EventCard = ({ event }: { event: TEvent }) => {
         boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
       }}
     >
-      <div className="event-info-container">
-        <header>{event.title}</header>
-        <p>
-          {nextEventDateTime.toDateString()} at {nextEventDateTime.toLocaleTimeString()}
-        </p>
-        <p className="organizers-event-card">
-          <i className="fas fa-user-alt"></i>
-          {organizerUsernames.length === 1
-            ? organizerUsernames[0]
-            : `${organizerUsernames[0]}  +${organizerUsernames.length - 1}`}
-        </p>
-        <div className="event-buttons-container">
-          <Link
-            style={{ backgroundColor: randomColor }}
-            className="event-buttons-container-button"
-            to={`/events/${event.id}`}
-          >
-            See Event
-          </Link>
-          {/* Necessary to expressly return true or false in 'disabled' attr of button below, or a type error occurs */}
+      {userIsInvitee && !userRSVPd && (
+        <div className="event-card-invitation">
+          <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
           <button
             disabled={userIsOrganizer ? true : false}
             title={userIsOrganizer ? "Cannot RSVP to an event you organized" : undefined}
-            className="event-buttons-container-button"
             onClick={(e) =>
               userRSVPd && currentUser
                 ? handleDeleteUserRSVP(e, event, currentUser)
@@ -88,9 +75,52 @@ const EventCard = ({ event }: { event: TEvent }) => {
           >
             {userRSVPd ? "Remove RSVP" : "RSVP"}
           </button>
+          <button onClick={(e) => handleDeclineInvitation(e, event, currentUser)}>
+            Decline
+          </button>
         </div>
+      )}
+      <div className="event-card-main-info">
+        <div className="event-info-container">
+          <header>{event.title}</header>
+          <p>
+            {nextEventDateTime.toDateString()} at {nextEventDateTime.toLocaleTimeString()}
+          </p>
+          <p className="organizers-event-card">
+            <i className="fas fa-user-alt"></i>
+            {organizerUsernames.length === 1
+              ? organizerUsernames[0]
+              : `${organizerUsernames[0]}  +${organizerUsernames.length - 1}`}
+          </p>
+          <div className="event-buttons-container">
+            <Link
+              style={{ backgroundColor: randomColor }}
+              className="event-buttons-container-button"
+              to={`/events/${event.id}`}
+            >
+              See Event
+            </Link>
+            {/* Necessary to expressly return true or false in 'disabled' attr of button below, or a type error occurs */}
+            {!userIsOrganizer && (
+              <button
+                disabled={userIsOrganizer ? true : false}
+                title={
+                  userIsOrganizer ? "Cannot RSVP to an event you organized" : undefined
+                }
+                className="event-buttons-container-button"
+                onClick={(e) =>
+                  userRSVPd && currentUser
+                    ? handleDeleteUserRSVP(e, event, currentUser)
+                    : handleAddUserRSVP(e, event)
+                }
+              >
+                {userRSVPd ? "Remove RSVP" : "RSVP"}
+              </button>
+            )}
+          </div>
+        </div>
+        <img src={event.imageOne} />
       </div>
-      <img src={event.imageOne} />
     </div>
   );
 };
