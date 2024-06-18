@@ -704,7 +704,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Handler for user to decline invitation. Should remove them from invitees array.
-  const handleDeclineInvitation = (
+  const handleRemoveInvitee = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     user: TUser | undefined
@@ -812,7 +812,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
-    handleDeclineInvitation,
+    handleRemoveInvitee,
     handleCityStateCountryInput,
     handleDeleteUserRSVP,
     handleAddUserRSVP,

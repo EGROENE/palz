@@ -8,7 +8,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<string>("");
 
   const { currentUser, allUsers } = useMainContext();
-  const { handleAddUserRSVP, handleDeleteUserRSVP, handleDeclineInvitation } =
+  const { handleAddUserRSVP, handleDeleteUserRSVP, handleRemoveInvitee } =
     useUserContext();
 
   const nextEventDateTime: Date = new Date(event.nextEventTime);
@@ -75,7 +75,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
           >
             {userRSVPd ? "Remove RSVP" : "RSVP"}
           </button>
-          <button onClick={(e) => handleDeclineInvitation(e, event, currentUser)}>
+          <button onClick={(e) => handleRemoveInvitee(e, event, currentUser)}>
             Decline
           </button>
         </div>

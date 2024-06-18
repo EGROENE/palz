@@ -72,7 +72,7 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
-  handleDeclineInvitation: (
+  handleRemoveInvitee: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     user: TUser | undefined
