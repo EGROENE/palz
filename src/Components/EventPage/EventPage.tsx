@@ -10,14 +10,20 @@ import NavBar from "../NavBar/NavBar";
 const EventPage = () => {
   const { allUsers, allEvents, getMostCurrentEvents, currentUser, userCreatedAccount } =
     useMainContext();
-  const { handleDeleteUserRSVP, handleAddUserRSVP, showSidebar, setShowSidebar } =
-    useUserContext();
+  const {
+    handleDeleteUserRSVP,
+    handleAddUserRSVP,
+    showSidebar,
+    setShowSidebar,
+    handleRemoveInvitee,
+  } = useUserContext();
   const { eventID } = useParams();
   const [event, setEvent] = useState<TEvent>(
     allEvents.filter((ev) => ev.id === eventID)[0]
   );
   const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
   const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
+  const [showInvitees, setShowInvitees] = useState<boolean>(false);
 
   const navigation = useNavigate();
   useEffect(() => {
@@ -59,6 +65,12 @@ const EventPage = () => {
     }
     setRefinedInterestedUsers(refIntUsers);
   }, [allUsers]);
+
+  const invitees: TUser[] = [];
+  for (const userID of event.invitees) {
+    const matchingUser = allUsers.filter((user) => user.id === userID)[0];
+    invitees.push(matchingUser);
+  }
 
   const nextEventDateTime = event ? new Date(event.nextEventTime) : undefined;
 
@@ -105,23 +117,55 @@ const EventPage = () => {
       <NavBar />
       {event ? (
         <>
-          {showRSVPs && (
+          {showInvitees && (
             <div className="modal-background">
               <i
                 title="Close"
-                onClick={() => setShowRSVPs(false)}
-                className="fas fa-times close-interests-module-icon"
+                onClick={() => setShowInvitees(false)}
+                className="fas fa-times close-module-icon"
               ></i>
-              <div className="rsvpd-users-container">
-                <h2>RSVP'd Users</h2>
-                {refinedInterestedUsers.map((user) => (
-                  <div key={user.id} className="rsvpd-user">
+              <div className="user-list-container">
+                <h2>Invitees</h2>
+                {invitees.map((user) => (
+                  <div key={user.id} className="listed-user">
                     <img
                       style={{ border: `2px solid ${randomColor}` }}
                       src={`${user.profileImage}`}
                       alt="profile pic"
                     />
-                    <div className="rsvpd-user-texts-container">
+                    <div className="listed-user-texts-container">
+                      <p>{`${user.firstName} ${user.lastName}`}</p>
+                      <p>{user.username}</p>
+                    </div>
+                    <button style={{ backgroundColor: randomColor }}>Message</button>
+                    <button
+                      onClick={(e) => handleRemoveInvitee(e, event, user)}
+                      style={{ backgroundColor: "tomato" }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {showRSVPs && (
+            <div className="modal-background">
+              <i
+                title="Close"
+                onClick={() => setShowRSVPs(false)}
+                className="fas fa-times close-module-icon"
+              ></i>
+              <div className="user-list-container">
+                <h2>RSVP'd Users</h2>
+                {refinedInterestedUsers.map((user) => (
+                  <div key={user.id} className="listed-user">
+                    <img
+                      style={{ border: `2px solid ${randomColor}` }}
+                      src={`${user.profileImage}`}
+                      alt="profile pic"
+                    />
+                    <div className="listed-user-texts-container">
                       <p>{`${user.firstName} ${user.lastName}`}</p>
                       <p>{user.username}</p>
                     </div>
@@ -161,13 +205,38 @@ const EventPage = () => {
                   <p>Organizers: {organizerUsernames.join(", ")}</p>
                 )}
 
+                {event.invitees.length > 0 && (
+                  <p>
+                    Invitees:{" "}
+                    <span
+                      onClick={() =>
+                        event.organizers.includes(String(currentUser?.id)) &&
+                        event.invitees.length > 0
+                          ? setShowInvitees(true)
+                          : undefined
+                      }
+                      className={
+                        event.organizers.includes(String(currentUser?.id)) &&
+                        event.invitees.length > 0
+                          ? "show-listed-users-or-invitees"
+                          : undefined
+                      }
+                    >{`${event.invitees.length}`}</span>
+                  </p>
+                )}
                 <p>
                   RSVPs:{" "}
                   <span
-                    onClick={() => setShowRSVPs(true)}
+                    onClick={() =>
+                      event.organizers.includes(String(currentUser?.id)) &&
+                      refinedInterestedUsers.length > 0
+                        ? setShowRSVPs(true)
+                        : undefined
+                    }
                     className={
-                      event.organizers.includes(String(currentUser?.id))
-                        ? "show-rsvpd-users"
+                      event.organizers.includes(String(currentUser?.id)) &&
+                      refinedInterestedUsers.length > 0
+                        ? "show-listed-users-or-invitees"
                         : undefined
                     }
                   >{`${refinedInterestedUsers.length}`}</span>
