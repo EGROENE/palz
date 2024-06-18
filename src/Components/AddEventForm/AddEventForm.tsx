@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
+import UserTab from "../UserTab/UserTab";
 import { countries } from "../../constants";
 import Methods from "../../methods";
 import { TEvent, TUser } from "../../types";
@@ -780,19 +781,11 @@ const AddEventForm = () => {
               usersWhoAreOrganizers
                 .filter((user) => user.username !== currentUser?.username)
                 .map((user) => (
-                  <div
-                    title={`${user.firstName} ${user.lastName}`}
-                    key={user.id}
-                    style={{ backgroundColor: randomColor }}
-                    className="tab user"
-                  >
-                    <img src={`${user.profileImage}`} alt="profile pic" />
-                    <span>{user.username}</span>
-                    <i
-                      onClick={() => handleAddRemoveUserAsOrganizer(user)}
-                      className="fas fa-times"
-                    ></i>
-                  </div>
+                  <UserTab
+                    user={user}
+                    removeHandler={handleAddRemoveUserAsOrganizer}
+                    randomColor={randomColor}
+                  />
                 ))}
           </div>
           <div className="co-organizers-invitees-inputs">
@@ -861,19 +854,11 @@ const AddEventForm = () => {
             {currentUser &&
               usersWhoAreInvitees.length > 0 &&
               usersWhoAreInvitees.map((user) => (
-                <div
-                  title={`${user.firstName} ${user.lastName}`}
-                  key={user.id}
-                  style={{ backgroundColor: randomColor }}
-                  className="tab user"
-                >
-                  <img src={`${user.profileImage}`} alt="profile pic" />
-                  <span>{user.username}</span>
-                  <i
-                    onClick={() => handleAddRemoveUserAsInvitee(user)}
-                    className="fas fa-times"
-                  ></i>
-                </div>
+                <UserTab
+                  user={user}
+                  removeHandler={handleAddRemoveUserAsInvitee}
+                  randomColor={randomColor}
+                />
               ))}
           </div>
           <div className="co-organizers-invitees-inputs">
