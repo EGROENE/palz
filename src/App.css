@@ -600,7 +600,7 @@ form textarea {
   margin-left: -3rem;
 }
 
-.close-interests-module-icon {
+.close-module-icon {
   position: absolute;
   top: 5%;
   right: 5%;
@@ -870,15 +870,15 @@ form textarea {
   font-size: 1.25rem;
 }
 
-.show-rsvpd-users {
+.show-listed-users-or-invitees {
   text-decoration: underline;
 }
 
-.show-rsvpd-users:hover {
+.show-listed-users-or-invitees:hover {
   cursor: pointer;
 }
 
-.rsvpd-users-container {
+.user-list-container {
   background-color: var(--background-color);
   color: black;
   height: 75%;
@@ -889,7 +889,7 @@ form textarea {
   overflow-y: scroll;
 }
 
-.rsvpd-user {
+.listed-user {
   color: var(--text-color);
   padding: 1rem;
   border-radius: 10px;
@@ -901,21 +901,21 @@ form textarea {
   margin: 1rem 0;
 }
 
-.rsvpd-user img {
+.listed-user img {
   float: left;
   width: 5rem;
   height: 5rem;
   object-fit: cover;
 }
 
-.rsvpd-user-texts-container {
+.listed-user-texts-container {
   text-align: left;
 }
 
-.rsvpd-user-texts-container p {
+.listed-user-texts-container p {
   margin: 0;
 }
 
-.rsvpd-user-texts-container p:first-child {
+.listed-user-texts-container p:first-child {
   font-size: 1.5rem;
 }

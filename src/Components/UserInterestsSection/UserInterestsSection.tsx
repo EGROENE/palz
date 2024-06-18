@@ -150,7 +150,7 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
               setShowExistingInterestsNotOnCurrentUser(false);
               setInputInterest("");
             }}
-            className="fas fa-times close-interests-module-icon"
+            className="fas fa-times close-module-icon"
           ></i>
           <div className="browse-interests-module">
             <div className="bar-and-description">
