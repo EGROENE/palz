@@ -121,6 +121,7 @@ const EventPage = () => {
           {showInvitees && (
             <UserListModal
               closeModalMethod={setShowInvitees}
+              header="Invitees"
               handleUserRemoval={handleRemoveInvitee}
               userArray={invitees}
               event={event}
@@ -130,6 +131,7 @@ const EventPage = () => {
           {showRSVPs && (
             <UserListModal
               closeModalMethod={setShowRSVPs}
+              header="RSVPs"
               handleUserRemoval={handleDeleteUserRSVP}
               userArray={refinedInterestedUsers}
               event={event}
