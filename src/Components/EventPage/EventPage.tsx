@@ -6,6 +6,7 @@ import { useUserContext } from "../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import ImageSlideshow from "../ImageSlideshow/ImageSlideshow";
 import NavBar from "../NavBar/NavBar";
+import UserListModal from "../UserListModal/UserListModal";
 
 const EventPage = () => {
   const { allUsers, allEvents, getMostCurrentEvents, currentUser, userCreatedAccount } =
@@ -118,68 +119,22 @@ const EventPage = () => {
       {event ? (
         <>
           {showInvitees && (
-            <div className="modal-background">
-              <i
-                title="Close"
-                onClick={() => setShowInvitees(false)}
-                className="fas fa-times close-module-icon"
-              ></i>
-              <div className="user-list-container">
-                <h2>Invitees</h2>
-                {invitees.map((user) => (
-                  <div key={user.id} className="listed-user">
-                    <img
-                      style={{ border: `2px solid ${randomColor}` }}
-                      src={`${user.profileImage}`}
-                      alt="profile pic"
-                    />
-                    <div className="listed-user-texts-container">
-                      <p>{`${user.firstName} ${user.lastName}`}</p>
-                      <p>{user.username}</p>
-                    </div>
-                    <button style={{ backgroundColor: randomColor }}>Message</button>
-                    <button
-                      onClick={(e) => handleRemoveInvitee(e, event, user)}
-                      style={{ backgroundColor: "tomato" }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <UserListModal
+              closeModalMethod={setShowInvitees}
+              handleUserRemoval={handleRemoveInvitee}
+              userArray={invitees}
+              event={event}
+              randomColor={randomColor}
+            />
           )}
           {showRSVPs && (
-            <div className="modal-background">
-              <i
-                title="Close"
-                onClick={() => setShowRSVPs(false)}
-                className="fas fa-times close-module-icon"
-              ></i>
-              <div className="user-list-container">
-                <h2>RSVP'd Users</h2>
-                {refinedInterestedUsers.map((user) => (
-                  <div key={user.id} className="listed-user">
-                    <img
-                      style={{ border: `2px solid ${randomColor}` }}
-                      src={`${user.profileImage}`}
-                      alt="profile pic"
-                    />
-                    <div className="listed-user-texts-container">
-                      <p>{`${user.firstName} ${user.lastName}`}</p>
-                      <p>{user.username}</p>
-                    </div>
-                    <button style={{ backgroundColor: randomColor }}>Message</button>
-                    <button
-                      onClick={(e) => handleDeleteUserRSVP(e, event, user)}
-                      style={{ backgroundColor: "tomato" }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <UserListModal
+              closeModalMethod={setShowRSVPs}
+              handleUserRemoval={handleDeleteUserRSVP}
+              userArray={refinedInterestedUsers}
+              event={event}
+              randomColor={randomColor}
+            />
           )}
           <div
             style={{
