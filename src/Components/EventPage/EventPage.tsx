@@ -207,20 +207,18 @@ const EventPage = () => {
               <p>{event?.description}</p>
               {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
             </div>
-            <button
-              disabled={userIsOrganizer ? true : false}
-              title={
-                userIsOrganizer ? "Cannot RSVP to an event you organized" : undefined
-              }
-              style={!userIsOrganizer ? { "backgroundColor": randomColor } : undefined}
-              onClick={(e) =>
-                userRSVPd
-                  ? handleDeleteUserRSVP(e, event, currentUser)
-                  : handleAddUserRSVP(e, event)
-              }
-            >
-              {userRSVPd ? "Remove RSVP" : "RSVP"}
-            </button>
+            {!userIsOrganizer && (
+              <button
+                style={!userIsOrganizer ? { "backgroundColor": randomColor } : undefined}
+                onClick={(e) =>
+                  userRSVPd
+                    ? handleDeleteUserRSVP(e, event, currentUser)
+                    : handleAddUserRSVP(e, event)
+                }
+              >
+                {userRSVPd ? "Remove RSVP" : "RSVP"}
+              </button>
+            )}
           </div>
         </>
       ) : (
