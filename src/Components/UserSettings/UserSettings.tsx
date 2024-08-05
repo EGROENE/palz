@@ -67,7 +67,10 @@ const UserSettings = () => {
       <NavBar />
       <h1>Settings</h1>
       <EditUserInfoForm randomColor={randomColor} />
-      <UserInterestsSection randomColor={randomColor} />
+      <UserInterestsSection
+        randomColor={randomColor}
+        interestsRelation="user"
+      />
       <div className="settings-theme-and-delete-account-container">
         <div>
           <h3>Delete Account</h3>
