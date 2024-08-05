@@ -222,6 +222,36 @@ const addUserInterest = (
   });
 };
 
+const addEventInterest = (
+  event: TEvent | undefined,
+  interest: string
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedInterestsArray: string[] = [];
+  if (event?.relatedInterests) {
+    for (const int of event.relatedInterests) {
+      updatedInterestsArray.push(int);
+    }
+    updatedInterestsArray.push(interest);
+  }
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "relatedInterests": updatedInterestsArray,
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/events/${event?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const deleteUser = (userID: number | string | undefined): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json");
@@ -358,5 +388,6 @@ const Requests = {
   deleteUserAbout,
   deleteUserInterest,
   addUserInterest,
+  addEventInterest,
 };
 export default Requests;
