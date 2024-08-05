@@ -60,6 +60,7 @@ const AddEventForm = () => {
   const [publicity, setPublicity] = useState<"public" | "private">("public");
   const [organizers, setOrganizers] = useState<string[]>([`${currentUser?.id}`]);
   const [invitees, setInvitees] = useState<string[]>([]);
+  const [relatedInterests, setRelatedInterests] = useState<string[]>([]);
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
   useEffect(() => {
@@ -350,6 +351,8 @@ const AddEventForm = () => {
     setImageThreeError("");
     setPublicity("public");
     setOrganizers([`${currentUser?.id}`]);
+    setInvitees([]);
+    setRelatedInterests([]);
   };
 
   const handleAddEventFormSubmission = (
@@ -428,7 +431,8 @@ const AddEventForm = () => {
     imageThree !== "" ||
     publicity !== "public" ||
     organizers.length > 1 ||
-    invitees.length > 0;
+    invitees.length > 0 ||
+    relatedInterests.length > 0;
 
   const areNoErrors =
     eventTitleError === "" &&
@@ -472,6 +476,7 @@ const AddEventForm = () => {
     imageOne: imageOne,
     imageTwo: imageTwo,
     imageThree: imageThree,
+    relatedInterests: [],
   };
 
   return (
@@ -913,6 +918,14 @@ const AddEventForm = () => {
               )}
             </div>
           </div>
+        </div>
+        <div>
+          <p>
+            Related Interests:{" "}
+            <span style={{ "color": randomColor }} className="show-module">
+              Add
+            </span>
+          </p>
         </div>
         <div className="form-revert-submit-buttons-container">
           <button disabled={!changesMade} type="reset" onClick={() => handleRevert()}>
