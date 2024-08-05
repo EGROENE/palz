@@ -42,6 +42,7 @@ export type TEvent = {
   address: string | undefined;
   additionalInfo: string;
   interestedUsers: string[];
+  relatedInterests: string[];
 };
 
 export type TMainContext = {
