@@ -9,6 +9,7 @@ import { TEvent, TUser } from "../../types";
 import Requests from "../../requests";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import UserInterestsSection from "../UserInterestsSection/UserInterestsSection";
 
 const AddEventForm = () => {
   const navigation = useNavigate();
@@ -321,6 +322,15 @@ const AddEventForm = () => {
     }
   };
 
+  const handleAddEventInterest = (interest: string) => {
+    const updatedArray: string[] = relatedInterests;
+    updatedArray.push(interest);
+    setRelatedInterests(updatedArray);
+  };
+
+  const handleRemoveEventInterest = (interest: string) =>
+    setRelatedInterests(relatedInterests.filter((int) => int !== interest));
+
   const handleRevert = (): void => {
     // Reset date/time fields
     if (dateField.current !== null && timeField.current !== null) {
@@ -476,7 +486,7 @@ const AddEventForm = () => {
     imageOne: imageOne,
     imageTwo: imageTwo,
     imageThree: imageThree,
-    relatedInterests: [],
+    relatedInterests: relatedInterests,
   };
 
   return (
@@ -919,14 +929,13 @@ const AddEventForm = () => {
             </div>
           </div>
         </div>
-        <div>
-          <p>
-            Related Interests:{" "}
-            <span style={{ "color": randomColor }} className="show-module">
-              Add
-            </span>
-          </p>
-        </div>
+        <UserInterestsSection
+          randomColor={randomColor}
+          interestsRelation="event"
+          newEventInterests={relatedInterests}
+          handleAddInterest={handleAddEventInterest}
+          handleRemoveInterest={handleRemoveEventInterest}
+        />
         <div className="form-revert-submit-buttons-container">
           <button disabled={!changesMade} type="reset" onClick={() => handleRevert()}>
             Revert
