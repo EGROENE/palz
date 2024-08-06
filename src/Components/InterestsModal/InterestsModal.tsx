@@ -10,6 +10,7 @@ const InterestsModal = ({
   noAdditionalInterestsAndNoInputInterest,
   disableAddInterestsButton,
   randomColor,
+  interestsRelation,
 }: {
   displayedInterests: string[];
   setShowInterestsModal: (value: React.SetStateAction<boolean>) => void;
@@ -24,6 +25,7 @@ const InterestsModal = ({
   noAdditionalInterestsAndNoInputInterest: boolean;
   disableAddInterestsButton: boolean;
   randomColor?: string;
+  interestsRelation: "event" | "user";
 }) => {
   return (
     <div className="modal-background">
@@ -79,11 +81,15 @@ const InterestsModal = ({
                 ></i>
               </span>
             ))}
-          {noAdditionalInterestsAndNoInputInterest && (
+          {noAdditionalInterestsAndNoInputInterest && interestsRelation === "user" && (
             <p>Type in an interest of yours & add it!</p>
           )}
+          {noAdditionalInterestsAndNoInputInterest && interestsRelation === "event" && (
+            <p>Type in an interest relating to this event & add it!</p>
+          )}
+
           {noAdditionalInterestsAndInputInterest && (
-            <p>No matching existing interests, but you can add what you typed!</p>
+            <p>No matching interests exist, but you can add what you typed!</p>
           )}
         </div>
       </div>
