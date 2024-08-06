@@ -352,6 +352,7 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
     "imageOne": eventData.imageOne,
     "imageTwo": eventData.imageTwo,
     "imageThree": eventData.imageThree,
+    "relatedInterests": eventData.relatedInterests,
   });
 
   return fetch("http://localhost:3000/events", {
