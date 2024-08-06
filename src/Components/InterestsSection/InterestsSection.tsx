@@ -168,6 +168,7 @@ const InterestsSection = ({
           <p>Click 'browse' to add some interests!</p>
         )}
       </div>
+      {/* 2 possibilities for displayedInterests prop in InterestsModal below due to setting state of displayedAdditionalInterests in getAllOtherInterestsNotOnCurrentObject in the 3 possible conditions resulting in too many re-renders (more-flexible allOtherInterestsNotOnCurrentObject used instead in the case of event interests, while displayedAdditionalInterests is used in the case of user interests) */}
       {showInterestsModal && (
         <InterestsModal
           displayedInterests={
