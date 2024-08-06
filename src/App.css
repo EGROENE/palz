@@ -634,7 +634,7 @@ form textarea {
   justify-content: center;
 }
 
-.add-interests-bar input {
+.bar-and-description .add-interests-bar input {
   width: 75%;
 }
 
