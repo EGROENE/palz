@@ -57,7 +57,10 @@ const InterestsModal = ({
               ></i>
             )}
             <button
-              onClick={(e) => handleAddInterest(inputInterest, e)}
+              onClick={(e) => {
+                handleAddInterest(inputInterest, e);
+                handleClearAddInterestInput();
+              }}
               disabled={disableAddInterestsButton}
               style={{ backgroundColor: randomColor }}
             >
