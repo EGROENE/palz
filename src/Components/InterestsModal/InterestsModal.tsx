@@ -5,7 +5,7 @@ const InterestsModal = ({
   inputInterest,
   setInputInterest,
   inputInterestsHandler,
-  addInterestHandler,
+  handleAddInterest,
   noAdditionalInterestsAndInputInterest,
   noAdditionalInterestsAndNoInputInterest,
   disableAddInterestsButton,
@@ -16,9 +16,9 @@ const InterestsModal = ({
   inputInterest: string;
   setInputInterest: React.Dispatch<React.SetStateAction<string>>;
   inputInterestsHandler: (input: string) => void;
-  addInterestHandler: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    interest: string
+  handleAddInterest: (
+    interest: string,
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
   noAdditionalInterestsAndInputInterest: boolean;
   noAdditionalInterestsAndNoInputInterest: boolean;
@@ -53,7 +53,7 @@ const InterestsModal = ({
               ></i>
             )}
             <button
-              onClick={(e) => addInterestHandler(e, inputInterest)}
+              onClick={(e) => handleAddInterest(inputInterest, e)}
               disabled={disableAddInterestsButton}
               style={{ backgroundColor: randomColor }}
             >
@@ -72,7 +72,7 @@ const InterestsModal = ({
               >
                 {interest}
                 <i
-                  onClick={(e) => addInterestHandler(e, interest)}
+                  onClick={(e) => handleAddInterest(interest, e)}
                   style={{ "rotate": "45deg" }}
                   title="Add"
                   className="fas fa-times"
