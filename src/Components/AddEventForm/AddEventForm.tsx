@@ -9,7 +9,7 @@ import { TEvent, TUser } from "../../types";
 import Requests from "../../requests";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import UserInterestsSection from "../InterestsSection/InterestsSection";
+import InterestsSection from "../InterestsSection/InterestsSection";
 
 const AddEventForm = () => {
   const navigation = useNavigate();
@@ -322,13 +322,17 @@ const AddEventForm = () => {
     }
   };
 
-  const handleAddEventInterest = (interest: string) => {
+  const handleAddEventInterest = (
+    interest: string,
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ): void => {
+    e.preventDefault();
     const updatedArray: string[] = relatedInterests;
     updatedArray.push(interest);
     setRelatedInterests(updatedArray);
   };
 
-  const handleRemoveEventInterest = (interest: string) =>
+  const handleRemoveEventInterest = (interest: string): void =>
     setRelatedInterests(relatedInterests.filter((int) => int !== interest));
 
   const handleRevert = (): void => {
@@ -929,7 +933,7 @@ const AddEventForm = () => {
             </div>
           </div>
         </div>
-        <UserInterestsSection
+        <InterestsSection
           randomColor={randomColor}
           interestsRelation="event"
           newEventInterests={relatedInterests}
