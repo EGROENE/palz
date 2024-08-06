@@ -23,7 +23,8 @@ const UserSettings = () => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
-  const { currentUser, theme, toggleTheme, getMostCurrentEvents } = useMainContext();
+  const { currentUser, theme, toggleTheme, getMostCurrentEvents, fetchAllUsers } =
+    useMainContext();
   const { showSidebar, setShowSidebar, logout, passwordIsHidden, setPasswordIsHidden } =
     useUserContext();
 
@@ -44,6 +45,42 @@ const UserSettings = () => {
       navigation("/");
     }
   }, []);
+
+  const handleAddUserInterest = (
+    interest: string,
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ): void => {
+    e?.preventDefault();
+    Requests.addUserInterest(currentUser, interest.trim())
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not add interest. Please try again.");
+          fetchAllUsers();
+        } else {
+          toast.success(`'${interest}' added to interests`);
+          fetchAllUsers();
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleDeleteUserInterest = (
+    interest: string,
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ): void => {
+    e?.preventDefault();
+    Requests.deleteUserInterest(currentUser, interest)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not delete interest. Please try again.");
+          fetchAllUsers();
+        } else {
+          toast.success(`'${interest}' removed from interests`);
+          fetchAllUsers();
+        }
+      })
+      .catch((error) => console.log(error));
+  };
 
   // Defined here, and not in userContext, as useNavigate hook can only be used in <Router> component (navigation is changed)
   const handleAccountDeletion = () => {
@@ -70,6 +107,8 @@ const UserSettings = () => {
       <UserInterestsSection
         randomColor={randomColor}
         interestsRelation="user"
+        handleAddInterest={handleAddUserInterest}
+        handleRemoveInterest={handleDeleteUserInterest}
       />
       <div className="settings-theme-and-delete-account-container">
         <div>
