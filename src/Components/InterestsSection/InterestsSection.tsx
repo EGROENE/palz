@@ -42,8 +42,9 @@ const InterestsSection = ({
     displayedAdditionalInterests.length === 0 && inputInterest === "";
 
   const disableAddInterestsButton =
-    displayedAdditionalInterests.length === 1 &&
-    inputInterest === displayedAdditionalInterests[0];
+    (displayedAdditionalInterests.length === 1 &&
+      inputInterest === displayedAdditionalInterests[0]) ||
+    inputInterest === "";
 
   const { currentUser, allUsers, allEvents } = useMainContext();
 
@@ -134,11 +135,8 @@ const InterestsSection = ({
   }, [currentUser?.interests]);
 
   useEffect(() => {
-    /* Somehow, if user inputs an interest, currentUser?.interests changes, so only set displayedAdditionalInterests to allInterestsNotOnCurrentUser if inputInterest === "". This ensures displayedAdditionalInterests updates as soon as user adds/deletes interest */
-    if (inputInterest === "") {
-      setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
-    }
-  }, [currentEvent?.relatedInterests]);
+    setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
+  }, [inputInterest]);
 
   return (
     <div className="interests-section">
@@ -183,6 +181,7 @@ const InterestsSection = ({
           }
           disableAddInterestsButton={disableAddInterestsButton}
           randomColor={randomColor}
+          interestsRelation={interestsRelation}
         />
       )}
     </div>
