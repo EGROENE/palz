@@ -68,17 +68,16 @@ const InterestsSection = ({
           (int) => !currentEvent?.relatedInterests.includes(int)
         )
       );
-    } else {
-      // In the case of adding interests on a AddEventForm...
-      // cannot include interests user has already added to the new event
-      return Methods.removeDuplicates(
-        allEvents
-          .filter((ev) => ev.relatedInterests.length > 0)
-          .map((ev: TEvent) => ev.relatedInterests)
-          .flat()
-          .filter((int) => !newEventInterests?.includes(int))
-      );
     }
+    // In the case of adding interests on a AddEventForm...
+    // cannot include interests user has already added to the new event
+    return Methods.removeDuplicates(
+      allEvents
+        .filter((ev) => ev.relatedInterests.length > 0)
+        .map((ev: TEvent) => ev.relatedInterests)
+        .flat()
+        .filter((int) => !newEventInterests?.includes(int))
+    );
   };
   const allOtherInterestsNotOnCurrentObject = getAllOtherInterestsNotOnCurrentObject();
 
@@ -121,8 +120,6 @@ const InterestsSection = ({
     }
   };
 
-  // Define or get as prop updateEventInterests, including a Request to update in DB for when this comp is used on EditEventForm
-
   useEffect(() => {
     setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
   }, []);
@@ -133,10 +130,6 @@ const InterestsSection = ({
       setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
     }
   }, [currentUser?.interests]);
-
-  useEffect(() => {
-    setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
-  }, [inputInterest]);
 
   return (
     <div className="interests-section">
@@ -169,7 +162,7 @@ const InterestsSection = ({
       </div>
       {showInterestsModal && (
         <InterestsModal
-          displayedInterests={allOtherInterestsNotOnCurrentObject}
+          displayedInterests={displayedAdditionalInterests}
           setShowInterestsModal={setShowInterestsModal}
           inputInterest={inputInterest}
           setInputInterest={setInputInterest}
