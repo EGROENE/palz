@@ -21,7 +21,7 @@ const InterestsModal = ({
   inputInterestsHandler: (input: string) => void;
   handleAddInterest: (
     interest: string,
-    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
   noAdditionalInterestsAndInputInterest: boolean;
   noAdditionalInterestsAndNoInputInterest: boolean;
