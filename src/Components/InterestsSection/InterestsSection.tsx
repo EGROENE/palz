@@ -120,6 +120,11 @@ const InterestsSection = ({
     }
   };
 
+  const handleClearAddInterestInput = (): void => {
+    setInputInterest("");
+    setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
+  };
+
   useEffect(() => {
     setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
   }, []);
@@ -163,6 +168,7 @@ const InterestsSection = ({
       {showInterestsModal && (
         <InterestsModal
           displayedInterests={displayedAdditionalInterests}
+          handleClearAddInterestInput={handleClearAddInterestInput}
           setShowInterestsModal={setShowInterestsModal}
           inputInterest={inputInterest}
           setInputInterest={setInputInterest}
