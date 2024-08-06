@@ -11,7 +11,7 @@ type InterestsSectionProps = {
   newEventInterests?: string[];
   handleAddInterest: (
     interest: string,
-    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void | ((interest: string) => void);
   handleRemoveInterest: (
     interest: string,
