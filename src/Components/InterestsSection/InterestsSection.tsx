@@ -19,7 +19,7 @@ type InterestsSectionProps = {
   ) => void;
 };
 
-const UserInterestsSection = ({
+const InterestsSection = ({
   randomColor,
   interestsRelation,
   currentEvent,
@@ -188,4 +188,4 @@ const UserInterestsSection = ({
     </div>
   );
 };
-export default UserInterestsSection;
+export default InterestsSection;

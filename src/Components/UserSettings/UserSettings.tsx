@@ -4,7 +4,7 @@ import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
 import EditUserInfoForm from "../EditUserInfoForm/EditUserInfoForm";
-import UserInterestsSection from "../UserInterestsSection/UserInterestsSection";
+import UserInterestsSection from "../InterestsSection/InterestsSection";
 import Requests from "../../requests";
 import toast from "react-hot-toast";
 

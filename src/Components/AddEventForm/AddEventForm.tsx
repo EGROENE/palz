@@ -9,7 +9,7 @@ import { TEvent, TUser } from "../../types";
 import Requests from "../../requests";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import UserInterestsSection from "../UserInterestsSection/UserInterestsSection";
+import UserInterestsSection from "../InterestsSection/InterestsSection";
 
 const AddEventForm = () => {
   const navigation = useNavigate();
