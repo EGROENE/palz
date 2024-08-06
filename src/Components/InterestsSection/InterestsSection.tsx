@@ -50,33 +50,36 @@ const InterestsSection = ({
 
   // Get array of interests that are not present on user/event object
   const getAllOtherInterestsNotOnCurrentObject = (): string[] => {
-    if (interestsRelation === "user") {
-      const allOtherUserInterests = allUsers
-        .filter((user) => user.username !== currentUser?.username)
-        .map((user) => user.interests)
-        .flat();
-      return Methods.removeDuplicates(
-        allOtherUserInterests.filter((int) => !currentUser?.interests.includes(int))
-      );
-    } else if (currentEvent && interestsRelation === "event") {
+    if (interestsRelation === "event" && currentEvent) {
+      // In the case of editing an already-existing event:
       const allOtherEventInterests = allEvents
         .filter((ev) => ev.id !== currentEvent?.id)
         .map((ev) => ev.relatedInterests)
         .flat();
+
       return Methods.removeDuplicates(
         allOtherEventInterests.filter(
           (int) => !currentEvent?.relatedInterests.includes(int)
         )
       );
+    } else if (interestsRelation === "event") {
+      // In the case of adding interests on a AddEventForm...
+      // cannot include interests user has already added to the new event
+      return Methods.removeDuplicates(
+        allEvents
+          .filter((ev) => ev.relatedInterests.length > 0)
+          .map((ev: TEvent) => ev.relatedInterests)
+          .flat()
+          .filter((int) => !newEventInterests?.includes(int))
+      );
     }
-    // In the case of adding interests on a AddEventForm...
-    // cannot include interests user has already added to the new event
+    // Default case; if updating user interests:
+    const allOtherUserInterests = allUsers
+      .filter((user) => user.username !== currentUser?.username)
+      .map((user) => user.interests)
+      .flat();
     return Methods.removeDuplicates(
-      allEvents
-        .filter((ev) => ev.relatedInterests.length > 0)
-        .map((ev: TEvent) => ev.relatedInterests)
-        .flat()
-        .filter((int) => !newEventInterests?.includes(int))
+      allOtherUserInterests.filter((int) => !currentUser?.interests.includes(int))
     );
   };
   const allOtherInterestsNotOnCurrentObject = getAllOtherInterestsNotOnCurrentObject();
@@ -167,7 +170,11 @@ const InterestsSection = ({
       </div>
       {showInterestsModal && (
         <InterestsModal
-          displayedInterests={displayedAdditionalInterests}
+          displayedInterests={
+            interestsRelation === "user"
+              ? displayedAdditionalInterests
+              : allOtherInterestsNotOnCurrentObject
+          }
           handleClearAddInterestInput={handleClearAddInterestInput}
           setShowInterestsModal={setShowInterestsModal}
           inputInterest={inputInterest}
