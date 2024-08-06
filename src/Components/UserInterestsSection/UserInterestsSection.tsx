@@ -177,7 +177,6 @@ const UserInterestsSection = ({
           setInputInterest={setInputInterest}
           inputInterestsHandler={handleInterestsInput}
           handleAddInterest={handleAddInterest}
-          handleRemoveInterest={handleRemoveInterest}
           noAdditionalInterestsAndInputInterest={noAdditionalInterestsAndInputInterest}
           noAdditionalInterestsAndNoInputInterest={
             noAdditionalInterestsAndNoInputInterest
