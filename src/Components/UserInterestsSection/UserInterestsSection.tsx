@@ -1,36 +1,96 @@
 import { useState, useEffect } from "react";
 import { useMainContext } from "../../Hooks/useMainContext";
-import Requests from "../../requests";
+import { TEvent } from "../../types";
 import Methods from "../../methods";
-import toast from "react-hot-toast";
 import InterestsModal from "../InterestsModal/InterestsModal";
 
-const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
-  const [showInterestsModal, setShowInterestsModal] = useState<boolean>(false);
+type InterestsSectionProps = {
+  randomColor: string;
+  interestsRelation: "event" | "user";
+  currentEvent?: TEvent;
+  newEventInterests?: string[];
+  handleAddInterest: (
+    interest: string,
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ) => void | ((interest: string) => void);
+  handleRemoveInterest: (
+    interest: string,
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ) => void;
+};
 
-  const [inputInterest, setInputInterest] = useState<string>("");
+const UserInterestsSection = ({
+  randomColor,
+  interestsRelation,
+  currentEvent,
+  newEventInterests,
+  handleAddInterest,
+  handleRemoveInterest,
+}: InterestsSectionProps) => {
+  const [showInterestsModal, setShowInterestsModal] = useState<boolean>(false);
 
   const [displayedAdditionalInterests, setDisplayedAdditionalInterests] = useState<
     string[]
   >([]);
 
+  const [inputInterest, setInputInterest] = useState<string>("");
+
   const noAdditionalInterestsAndInputInterest =
     displayedAdditionalInterests.length === 0 && inputInterest !== "";
+
   const noAdditionalInterestsAndNoInputInterest =
     displayedAdditionalInterests.length === 0 && inputInterest === "";
+
   const disableAddInterestsButton =
     displayedAdditionalInterests.length === 1 &&
     inputInterest === displayedAdditionalInterests[0];
 
-  const { currentUser, fetchAllUsers, allUsers } = useMainContext();
+  const { currentUser, allUsers, allEvents } = useMainContext();
 
-  const allOtherUserInterests = allUsers
-    .filter((user) => user.username !== currentUser?.username)
-    .map((user) => user.interests)
-    .flat();
-  const allInterestsNotOnCurrentUser: string[] = Methods.removeDuplicates(
-    allOtherUserInterests.filter((int) => !currentUser?.interests.includes(int))
-  );
+  // Get array of interests that are not present on user/event object
+  const getAllOtherInterestsNotOnCurrentObject = (): string[] => {
+    if (interestsRelation === "user") {
+      const allOtherUserInterests = allUsers
+        .filter((user) => user.username !== currentUser?.username)
+        .map((user) => user.interests)
+        .flat();
+      return Methods.removeDuplicates(
+        allOtherUserInterests.filter((int) => !currentUser?.interests.includes(int))
+      );
+    } else if (currentEvent && interestsRelation === "event") {
+      const allOtherEventInterests = allEvents
+        .filter((ev) => ev.id !== currentEvent?.id)
+        .map((ev) => ev.relatedInterests)
+        .flat();
+      return Methods.removeDuplicates(
+        allOtherEventInterests.filter(
+          (int) => !currentEvent?.relatedInterests.includes(int)
+        )
+      );
+    } else {
+      // In the case of adding interests on a AddEventForm...
+      // cannot include interests user has already added to the new event
+      return Methods.removeDuplicates(
+        allEvents
+          .filter((ev) => ev.relatedInterests.length > 0)
+          .map((ev: TEvent) => ev.relatedInterests)
+          .flat()
+          .filter((int) => !newEventInterests?.includes(int))
+      );
+    }
+  };
+  const allOtherInterestsNotOnCurrentObject = getAllOtherInterestsNotOnCurrentObject();
+
+  // Get array of interests that exist on user/event object, whether event is being edited or added (interests on user obj are always edited)
+  const getSavedInterests = () => {
+    if (interestsRelation === "user") {
+      return currentUser?.interests;
+    } else if (currentEvent && interestsRelation === "event") {
+      return currentEvent.relatedInterests;
+    }
+    return newEventInterests;
+  };
+  const savedInterests = getSavedInterests();
 
   // HANDLERS
   const handleInterestsInput = (input: string): void => {
@@ -40,18 +100,18 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
       .toLowerCase();
     setInputInterest(inputCaseInsensitive);
     if (inputCaseInsensitive.trim() === "") {
-      setDisplayedAdditionalInterests(allInterestsNotOnCurrentUser);
+      setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
     } else {
-      for (const interest of allInterestsNotOnCurrentUser) {
+      for (const interest of allOtherInterestsNotOnCurrentObject) {
         if (interest === inputCaseInsensitive.trim()) {
           setDisplayedAdditionalInterests(
-            allInterestsNotOnCurrentUser.filter(
+            allOtherInterestsNotOnCurrentObject.filter(
               (int) => int === inputCaseInsensitive.trim()
             )
           );
         } else {
           setDisplayedAdditionalInterests(
-            allInterestsNotOnCurrentUser.filter((int) =>
+            allOtherInterestsNotOnCurrentObject.filter((int) =>
               int.includes(inputCaseInsensitive.trim())
             )
           );
@@ -60,57 +120,30 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
     }
   };
 
-  const handleAddUserInterest = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    interest: string
-  ): void => {
-    e.preventDefault();
-    Requests.addUserInterest(currentUser, interest.trim())
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not add interest. Please try again.");
-          fetchAllUsers();
-        } else {
-          toast.success(`'${interest}' added to interests`);
-          fetchAllUsers();
-        }
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleDeleteUserInterest = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    interest: string
-  ): void => {
-    e.preventDefault();
-    Requests.deleteUserInterest(currentUser, interest)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not delete interest. Please try again.");
-          fetchAllUsers();
-        } else {
-          toast.success(`'${interest}' removed from interests`);
-          fetchAllUsers();
-        }
-      })
-      .catch((error) => console.log(error));
-  };
+  // Define or get as prop updateEventInterests, including a Request to update in DB for when this comp is used on EditEventForm
 
   useEffect(() => {
-    setDisplayedAdditionalInterests(allInterestsNotOnCurrentUser);
+    setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
   }, []);
 
   useEffect(() => {
     /* Somehow, if user inputs an interest, currentUser?.interests changes, so only set displayedAdditionalInterests to allInterestsNotOnCurrentUser if inputInterest === "". This ensures displayedAdditionalInterests updates as soon as user adds/deletes interest */
     if (inputInterest === "") {
-      setDisplayedAdditionalInterests(allInterestsNotOnCurrentUser);
+      setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
     }
   }, [currentUser?.interests]);
+
+  useEffect(() => {
+    /* Somehow, if user inputs an interest, currentUser?.interests changes, so only set displayedAdditionalInterests to allInterestsNotOnCurrentUser if inputInterest === "". This ensures displayedAdditionalInterests updates as soon as user adds/deletes interest */
+    if (inputInterest === "") {
+      setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
+    }
+  }, [currentEvent?.relatedInterests]);
 
   return (
     <div className="interests-section">
       <p>
-        Interests:{" "}
+        {interestsRelation === "user" ? "Interests: " : "Related Interests: "}
         <span
           style={{ "color": randomColor }}
           className="show-module"
@@ -120,14 +153,14 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
         </span>
       </p>
       <div className="interests-container">
-        {currentUser?.interests.length ? (
-          currentUser?.interests.map((interest) => (
+        {savedInterests?.length ? (
+          savedInterests?.map((interest) => (
             <span className="tab" key={interest} style={{ backgroundColor: randomColor }}>
               {interest}
 
               <i
                 title="Remove"
-                onClick={(e) => handleDeleteUserInterest(e, interest)}
+                onClick={(e) => handleRemoveInterest(interest, e)}
                 className="fas fa-times"
               ></i>
             </span>
@@ -138,12 +171,13 @@ const UserInterestsSection = ({ randomColor }: { randomColor: string }) => {
       </div>
       {showInterestsModal && (
         <InterestsModal
-          displayedInterests={displayedAdditionalInterests}
+          displayedInterests={allOtherInterestsNotOnCurrentObject}
           setShowInterestsModal={setShowInterestsModal}
           inputInterest={inputInterest}
           setInputInterest={setInputInterest}
           inputInterestsHandler={handleInterestsInput}
-          addInterestHandler={handleAddUserInterest}
+          handleAddInterest={handleAddInterest}
+          handleRemoveInterest={handleRemoveInterest}
           noAdditionalInterestsAndInputInterest={noAdditionalInterestsAndInputInterest}
           noAdditionalInterestsAndNoInputInterest={
             noAdditionalInterestsAndNoInputInterest
