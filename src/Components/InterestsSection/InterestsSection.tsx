@@ -118,6 +118,7 @@ const InterestsSection = ({
     if (inputCaseInsensitive.trim() === "") {
       setDisplayedAdditionalInterests(addableInterests);
     } else {
+      const addableInterests = getAddableInterests(); // get updated addableInterests
       for (const interest of addableInterests) {
         if (interest === inputCaseInsensitive.trim()) {
           setDisplayedAdditionalInterests(
@@ -135,6 +136,18 @@ const InterestsSection = ({
   const handleClearAddInterestInput = (): void => {
     setInputInterest("");
     setDisplayedAdditionalInterests(addableInterests);
+  };
+
+  /* Create new add-interest handler that makes appropriate request in method passed to prop handleAddInterest, clears interest-input field if it's not empty (displaying all non-saved interests again), & updates all non-saved interests after user adds a particular interest */
+  const addInterestHandler = (
+    interest: string,
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ) => {
+    handleAddInterest(interest, e);
+    if (inputInterest.trim() !== "") {
+      handleClearAddInterestInput();
+    }
+    setDisplayedAdditionalInterests(getAddableInterests());
   };
 
   useEffect(() => {
@@ -177,18 +190,15 @@ const InterestsSection = ({
           <p>Click 'browse' to add some interests!</p>
         )}
       </div>
-      {/* 2 possibilities for addableInterests prop in InterestsModal below due to setting state of displayedAdditionalInterests in getAddableInterests in the 3 possible conditions resulting in too many re-renders (more-flexible addableInterests used in the case of event interests, while displayedAdditionalInterests is used in the case of user interests). Also, having a single state value for this would require several convoluted useEffects. In the end, displayed saved/addable interests should update as user add/deletes these from the saved interests, plus the addable interests should be filtered, based on what user inputs in InterestsModal; both of these things are possible now. */}
       {showInterestsModal && (
         <InterestsModal
-          addableInterests={
-            interestsRelation === "user" ? displayedAdditionalInterests : addableInterests
-          }
+          addableInterests={displayedAdditionalInterests}
           handleClearAddInterestInput={handleClearAddInterestInput}
           setShowInterestsModal={setShowInterestsModal}
           inputInterest={inputInterest}
           setInputInterest={setInputInterest}
           inputInterestsHandler={handleInterestsInput}
-          handleAddInterest={handleAddInterest}
+          handleAddInterest={addInterestHandler}
           noAdditionalInterestsAndInputInterest={noAdditionalInterestsAndInputInterest}
           noAdditionalInterestsAndNoInputInterest={
             noAdditionalInterestsAndNoInputInterest
