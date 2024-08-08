@@ -1,6 +1,6 @@
 /* Returns a modal wherein user can see a bunch of tabs, each of which represent an interest & a '+', which adds interest to certain array. There is also a search bar that can be used to find interests or type in a nonexistent interest to be added. */
 const InterestsModal = ({
-  displayedInterests,
+  addableInterests,
   handleClearAddInterestInput,
   setShowInterestsModal,
   inputInterest,
@@ -13,7 +13,7 @@ const InterestsModal = ({
   randomColor,
   interestsRelation,
 }: {
-  displayedInterests: string[];
+  addableInterests: string[];
   handleClearAddInterestInput: () => void;
   setShowInterestsModal: (value: React.SetStateAction<boolean>) => void;
   inputInterest: string;
@@ -71,7 +71,7 @@ const InterestsModal = ({
         <div className="non-user-interests-container">
           {!noAdditionalInterestsAndNoInputInterest &&
             !noAdditionalInterestsAndInputInterest &&
-            displayedInterests.map((interest) => (
+            addableInterests.map((interest) => (
               <span
                 className="tab"
                 key={interest}
