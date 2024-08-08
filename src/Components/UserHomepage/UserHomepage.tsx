@@ -40,7 +40,7 @@ const UserHomepage = () => {
   const eventsUserIsInvitedTo = allEvents.filter((ev) =>
     ev.invitees.includes(String(currentUser?.id))
   );
-  const allCurrentUserEvents = Methods.removeDuplicates(
+  const allCurrentUserEvents = Methods.removeDuplicatesFromArray(
     userRSVPDEvents.concat(userOrganizedEvents).concat(eventsUserIsInvitedTo)
   );
 

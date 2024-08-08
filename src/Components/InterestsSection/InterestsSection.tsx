@@ -52,34 +52,40 @@ const InterestsSection = ({
   // This will be passed to InterestsModal; for each item in array, an addable interest displays
   /* Users can add interests to an existing event (on EditEventForm), a new event (on AddEventForm), or to their own profile (on UserSettings). These conditions are handled respectively in function below. */
   const getAddableInterests = (): string[] => {
-    const allUserInterests: string[] = Methods.removeDuplicates(
+    const allUserInterests: string[] = Methods.removeDuplicatesFromArray(
       allUsers.map((user) => user.interests).flat()
     );
-    const allEventInterests: string[] = Methods.removeDuplicates(
+    const allEventInterests: string[] = Methods.removeDuplicatesFromArray(
       allEvents.map((event) => event.relatedInterests).flat()
     );
 
     if (interestsRelation === "event" && currentEvent) {
       // In the case of editing an already-existing event:
-      const allOtherEventInterests: string[] = Methods.removeDuplicates(
+      const allOtherEventInterests: string[] = Methods.removeDuplicatesFromArray(
         allEvents
           .filter((ev) => ev.id !== currentEvent?.id)
           .map((ev) => ev.relatedInterests)
           .flat()
       );
-      return Methods.removeDuplicates(allOtherEventInterests.concat(allUserInterests));
+      return Methods.removeDuplicatesFromArray(
+        allOtherEventInterests.concat(allUserInterests)
+      );
     } else if (interestsRelation === "event") {
       // In the case of adding interests to new event...
-      return Methods.removeDuplicates(allUserInterests.concat(allEventInterests));
+      return Methods.removeDuplicatesFromArray(
+        allUserInterests.concat(allEventInterests)
+      );
     }
     // Default case; if updating user interests:
-    const allOtherUserInterests: string[] = Methods.removeDuplicates(
+    const allOtherUserInterests: string[] = Methods.removeDuplicatesFromArray(
       allUsers
         .filter((user) => user.username !== currentUser?.username)
         .map((user) => user.interests)
         .flat()
     );
-    return Methods.removeDuplicates(allOtherUserInterests.concat(allEventInterests));
+    return Methods.removeDuplicatesFromArray(
+      allOtherUserInterests.concat(allEventInterests)
+    );
   };
   const addableInterests = getAddableInterests();
 
