@@ -1,3 +1,5 @@
+import Methods from "../../methods";
+
 /* Returns a modal wherein user can see a bunch of tabs, each of which represent an interest & a '+', which adds interest to certain array. There is also a search bar that can be used to find interests or type in a nonexistent interest to be added. */
 const InterestsModal = ({
   addableInterests,
@@ -71,21 +73,23 @@ const InterestsModal = ({
         <div className="non-user-interests-container">
           {!noAdditionalInterestsAndNoInputInterest &&
             !noAdditionalInterestsAndInputInterest &&
-            addableInterests.map((interest) => (
-              <span
-                className="tab"
-                key={interest}
-                style={{ backgroundColor: randomColor }}
-              >
-                {interest}
-                <i
-                  onClick={(e) => handleAddInterest(interest, e)}
-                  style={{ "rotate": "45deg" }}
-                  title="Add"
-                  className="fas fa-times"
-                ></i>
-              </span>
-            ))}
+            Methods.getStringArraySortedAlphabetically(addableInterests).map(
+              (interest) => (
+                <span
+                  className="tab"
+                  key={interest}
+                  style={{ backgroundColor: randomColor }}
+                >
+                  {interest}
+                  <i
+                    onClick={(e) => handleAddInterest(interest, e)}
+                    style={{ "rotate": "45deg" }}
+                    title="Add"
+                    className="fas fa-times"
+                  ></i>
+                </span>
+              )
+            )}
           {noAdditionalInterestsAndNoInputInterest && interestsRelation === "user" && (
             <p>Type in an interest of yours & add it!</p>
           )}

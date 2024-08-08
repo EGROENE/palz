@@ -154,7 +154,7 @@ const InterestsSection = ({
       </p>
       <div className="interests-container">
         {savedInterests?.length ? (
-          savedInterests?.map((interest) => (
+          Methods.getStringArraySortedAlphabetically(savedInterests)?.map((interest) => (
             <span className="tab" key={interest} style={{ backgroundColor: randomColor }}>
               {interest}
 
