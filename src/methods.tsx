@@ -69,10 +69,13 @@ const formatCapitalizedName = (string: string | undefined): string => {
           : capitalizedWord;
     }
   }
-  return formattedWordOrWords
-    .replace(/\undefined/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
+  return (
+    formattedWordOrWords
+      // .replace(/\undefined/g, "") // Formerly, this was used, but there was an error. So far, .replace(/undefined/g, "") seems to work.
+      .replace(/undefined/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+  );
 };
 
 const formatHyphensAndSpacesInString = (name: string): string => {
