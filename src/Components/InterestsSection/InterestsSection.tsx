@@ -49,40 +49,39 @@ const InterestsSection = ({
   const { currentUser, allUsers, allEvents } = useMainContext();
 
   // Get array of interests that are not present on user/event object
-  const getAllOtherInterestsNotOnCurrentObject = (): string[] => {
+  // This will be passed to InterestsModal; for each item in array, an addable interest displays
+  /* Users can add interests to an existing event (on EditEventForm), a new event (on AddEventForm), or to their own profile (on UserSettings). These conditions are handled respectively in function below. */
+  const getAddableInterests = (): string[] => {
+    const allUserInterests: string[] = Methods.removeDuplicates(
+      allUsers.map((user) => user.interests).flat()
+    );
+    const allEventInterests: string[] = Methods.removeDuplicates(
+      allEvents.map((event) => event.relatedInterests).flat()
+    );
+
     if (interestsRelation === "event" && currentEvent) {
       // In the case of editing an already-existing event:
-      const allOtherEventInterests = allEvents
-        .filter((ev) => ev.id !== currentEvent?.id)
-        .map((ev) => ev.relatedInterests)
-        .flat();
-
-      return Methods.removeDuplicates(
-        allOtherEventInterests.filter(
-          (int) => !currentEvent?.relatedInterests.includes(int)
-        )
-      );
-    } else if (interestsRelation === "event") {
-      // In the case of adding interests on a AddEventForm...
-      // cannot include interests user has already added to the new event
-      return Methods.removeDuplicates(
+      const allOtherEventInterests: string[] = Methods.removeDuplicates(
         allEvents
-          .filter((ev) => ev.relatedInterests.length > 0)
-          .map((ev: TEvent) => ev.relatedInterests)
+          .filter((ev) => ev.id !== currentEvent?.id)
+          .map((ev) => ev.relatedInterests)
           .flat()
-          .filter((int) => !newEventInterests?.includes(int))
       );
+      return Methods.removeDuplicates(allOtherEventInterests.concat(allUserInterests));
+    } else if (interestsRelation === "event") {
+      // In the case of adding interests to new event...
+      return Methods.removeDuplicates(allUserInterests.concat(allEventInterests));
     }
     // Default case; if updating user interests:
-    const allOtherUserInterests = allUsers
-      .filter((user) => user.username !== currentUser?.username)
-      .map((user) => user.interests)
-      .flat();
-    return Methods.removeDuplicates(
-      allOtherUserInterests.filter((int) => !currentUser?.interests.includes(int))
+    const allOtherUserInterests: string[] = Methods.removeDuplicates(
+      allUsers
+        .filter((user) => user.username !== currentUser?.username)
+        .map((user) => user.interests)
+        .flat()
     );
+    return Methods.removeDuplicates(allOtherUserInterests.concat(allEventInterests));
   };
-  const allOtherInterestsNotOnCurrentObject = getAllOtherInterestsNotOnCurrentObject();
+  const addableInterests = getAddableInterests();
 
   // Get array of interests that exist on user/event object, whether event is being edited or added (interests on user obj are always edited)
   const getSavedInterests = () => {
@@ -103,20 +102,16 @@ const InterestsSection = ({
       .toLowerCase();
     setInputInterest(inputCaseInsensitive);
     if (inputCaseInsensitive.trim() === "") {
-      setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
+      setDisplayedAdditionalInterests(addableInterests);
     } else {
-      for (const interest of allOtherInterestsNotOnCurrentObject) {
+      for (const interest of addableInterests) {
         if (interest === inputCaseInsensitive.trim()) {
           setDisplayedAdditionalInterests(
-            allOtherInterestsNotOnCurrentObject.filter(
-              (int) => int === inputCaseInsensitive.trim()
-            )
+            addableInterests.filter((int) => int === inputCaseInsensitive.trim())
           );
         } else {
           setDisplayedAdditionalInterests(
-            allOtherInterestsNotOnCurrentObject.filter((int) =>
-              int.includes(inputCaseInsensitive.trim())
-            )
+            addableInterests.filter((int) => int.includes(inputCaseInsensitive.trim()))
           );
         }
       }
@@ -125,17 +120,17 @@ const InterestsSection = ({
 
   const handleClearAddInterestInput = (): void => {
     setInputInterest("");
-    setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
+    setDisplayedAdditionalInterests(addableInterests);
   };
 
   useEffect(() => {
-    setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
+    setDisplayedAdditionalInterests(addableInterests);
   }, []);
 
   useEffect(() => {
     /* Somehow, if user inputs an interest, currentUser?.interests changes, so only set displayedAdditionalInterests to allInterestsNotOnCurrentUser if inputInterest === "". This ensures displayedAdditionalInterests updates as soon as user adds/deletes interest */
     if (inputInterest === "") {
-      setDisplayedAdditionalInterests(allOtherInterestsNotOnCurrentObject);
+      setDisplayedAdditionalInterests(addableInterests);
     }
   }, [currentUser?.interests]);
 
@@ -168,13 +163,11 @@ const InterestsSection = ({
           <p>Click 'browse' to add some interests!</p>
         )}
       </div>
-      {/* 2 possibilities for displayedInterests prop in InterestsModal below due to setting state of displayedAdditionalInterests in getAllOtherInterestsNotOnCurrentObject in the 3 possible conditions resulting in too many re-renders (more-flexible allOtherInterestsNotOnCurrentObject used instead in the case of event interests, while displayedAdditionalInterests is used in the case of user interests) */}
+      {/* 2 possibilities for addableInterests prop in InterestsModal below due to setting state of displayedAdditionalInterests in getAddableInterests in the 3 possible conditions resulting in too many re-renders (more-flexible addableInterests used instead in the case of event interests, while displayedAdditionalInterests is used in the case of user interests) */}
       {showInterestsModal && (
         <InterestsModal
-          displayedInterests={
-            interestsRelation === "user"
-              ? displayedAdditionalInterests
-              : allOtherInterestsNotOnCurrentObject
+          addableInterests={
+            interestsRelation === "user" ? displayedAdditionalInterests : addableInterests
           }
           handleClearAddInterestInput={handleClearAddInterestInput}
           setShowInterestsModal={setShowInterestsModal}
