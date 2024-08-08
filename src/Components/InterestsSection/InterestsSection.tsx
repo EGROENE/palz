@@ -163,7 +163,7 @@ const InterestsSection = ({
           <p>Click 'browse' to add some interests!</p>
         )}
       </div>
-      {/* 2 possibilities for addableInterests prop in InterestsModal below due to setting state of displayedAdditionalInterests in getAddableInterests in the 3 possible conditions resulting in too many re-renders (more-flexible addableInterests used instead in the case of event interests, while displayedAdditionalInterests is used in the case of user interests) */}
+      {/* 2 possibilities for addableInterests prop in InterestsModal below due to setting state of displayedAdditionalInterests in getAddableInterests in the 3 possible conditions resulting in too many re-renders (more-flexible addableInterests used in the case of event interests, while displayedAdditionalInterests is used in the case of user interests). Also, having a single state value for this would require several convoluted useEffects. In the end, displayed saved/addable interests should update as user add/deletes these from the saved interests, plus the addable interests should be filtered, based on what user inputs in InterestsModal; both of these things are possible now. */}
       {showInterestsModal && (
         <InterestsModal
           addableInterests={
