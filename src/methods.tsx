@@ -112,6 +112,18 @@ function removeDuplicatesFromArray(arr: any[]) {
   return arr.filter((item, index) => arr.indexOf(item) === index);
 }
 
+const getStringArraySortedAlphabetically = (array: string[]): string[] => {
+  return array.sort(function (a, b) {
+    if (a < b) {
+      return -1;
+    }
+    if (a > b) {
+      return 1;
+    }
+    return 0;
+  });
+};
+
 const Methods = {
   sortEventsSoonestToLatest,
   isValidUrl,
@@ -120,5 +132,6 @@ const Methods = {
   formatCapitalizedName,
   formatHyphensAndSpacesInString,
   removeDuplicatesFromArray,
+  getStringArraySortedAlphabetically,
 };
 export default Methods;
