@@ -61,22 +61,28 @@ const InterestsSection = ({
 
     if (interestsRelation === "event" && currentEvent) {
       // In the case of editing an already-existing event:
+      // Returns allOtherEventInterests + allUserInterests - interests that exist on currentEvent
       const allOtherEventInterests: string[] = Methods.removeDuplicatesFromArray(
         allEvents
           .filter((ev) => ev.id !== currentEvent?.id)
           .map((ev) => ev.relatedInterests)
           .flat()
+          .filter((int) => !currentEvent.relatedInterests.includes(int))
       );
       return Methods.removeDuplicatesFromArray(
         allOtherEventInterests.concat(allUserInterests)
       );
     } else if (interestsRelation === "event") {
       // In the case of adding interests to new event...
+      // returns allUserInterests + allEventInterests - events that exist on newEventInterests
       return Methods.removeDuplicatesFromArray(
-        allUserInterests.concat(allEventInterests)
+        allUserInterests
+          .concat(allEventInterests)
+          .filter((int) => !newEventInterests?.includes(int))
       );
     }
     // Default case; if updating user interests:
+    // Returns allOtherUserInterests + allEventInterests - interests that exist on currentUser
     const allOtherUserInterests: string[] = Methods.removeDuplicatesFromArray(
       allUsers
         .filter((user) => user.username !== currentUser?.username)
@@ -84,7 +90,9 @@ const InterestsSection = ({
         .flat()
     );
     return Methods.removeDuplicatesFromArray(
-      allOtherUserInterests.concat(allEventInterests)
+      allOtherUserInterests
+        .concat(allEventInterests)
+        .filter((int) => !currentUser?.interests.includes(int))
     );
   };
   const addableInterests = getAddableInterests();
