@@ -4,7 +4,7 @@ import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import NavBar from "../NavBar/NavBar";
 import EditUserInfoForm from "../EditUserInfoForm/EditUserInfoForm";
-import UserInterestsSection from "../InterestsSection/InterestsSection";
+import InterestsSection from "../InterestsSection/InterestsSection";
 import Requests from "../../requests";
 import toast from "react-hot-toast";
 
@@ -104,7 +104,7 @@ const UserSettings = () => {
       <NavBar />
       <h1>Settings</h1>
       <EditUserInfoForm randomColor={randomColor} />
-      <UserInterestsSection
+      <InterestsSection
         randomColor={randomColor}
         interestsRelation="user"
         handleAddInterest={handleAddUserInterest}
