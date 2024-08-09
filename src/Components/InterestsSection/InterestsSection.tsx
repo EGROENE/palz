@@ -192,7 +192,7 @@ const InterestsSection = ({
       </div>
       {showInterestsModal && (
         <InterestsModal
-          addableInterests={displayedAdditionalInterests}
+          displayedAdditionalInterests={displayedAdditionalInterests}
           handleClearAddInterestInput={handleClearAddInterestInput}
           setShowInterestsModal={setShowInterestsModal}
           inputInterest={inputInterest}
