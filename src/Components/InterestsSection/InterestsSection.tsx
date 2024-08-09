@@ -155,11 +155,11 @@ const InterestsSection = ({
   }, []);
 
   useEffect(() => {
-    /* Somehow, if user inputs an interest, currentUser?.interests changes, so only set displayedAdditionalInterests to allInterestsNotOnCurrentUser if inputInterest === "". This ensures displayedAdditionalInterests updates as soon as user adds/deletes interest */
+    /* Ensure that, whenever current-user/event interests or newEventInterests change, & inputInterest if empty string (which is always the case, whether b/c InterestModal isn't rendered, user hasn't input anything, or it was cleared after user input something & then added an interest), displayedAdditionalInterests is updated. */
     if (inputInterest === "") {
       setDisplayedAdditionalInterests(addableInterests);
     }
-  }, [currentUser?.interests]);
+  }, [currentUser?.interests, currentEvent?.relatedInterests, newEventInterests]);
 
   return (
     <div className="interests-section">
