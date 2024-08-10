@@ -29,7 +29,6 @@ const EventPage = () => {
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
-      console.log("hi");
       navigation("/");
     }
   }, [currentUser, navigation, userCreatedAccount]);
