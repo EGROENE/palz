@@ -50,7 +50,7 @@ const InterestsSection = ({
 
   // Get array of interests that are not present on user/event object
   // This will be passed to InterestsModal; for each item in array, an addable interest displays
-  /* Users can add interests to an existing event (on EditEventForm), a new event (on AddEventForm), or to their own profile (on UserSettings). These conditions are handled respectively in function below. */
+  /* Users can add interests to an existing event (on EditEventPage), a new event (on AddEventPage), or to their own profile (on UserSettings). These conditions are handled respectively in function below. */
   const getAddableInterests = (): string[] => {
     const allUserInterests: string[] = Methods.removeDuplicatesFromArray(
       allUsers.map((user) => user.interests).flat()
