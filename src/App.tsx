@@ -13,6 +13,7 @@ import AddEventForm from "./Components/AddEventForm/AddEventForm";
 import EventsPage from "./Components/EventsPage/EventsPage";
 import EventPage from "./Components/EventPage/EventPage";
 import UsersEvents from "./Components/UsersEvents/UsersEvents";
+import EditEventPage from "./Components/EditEventPage/EditEventPage";
 
 function App() {
   const { userCreatedAccount, theme, showWelcomeMessage, currentUser } = useMainContext();
@@ -60,6 +61,7 @@ function App() {
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />
         <Route path="/add-event" element={<AddEventForm />} />
+        <Route path="/edit-event/:eventID" element={<EditEventPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:eventID" element={<EventPage />} />
         <Route path="/:username/events" element={<UsersEvents />} />
