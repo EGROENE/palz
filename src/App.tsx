@@ -9,7 +9,7 @@ import { useUserContext } from "./Hooks/useUserContext";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import Error404 from "./Components/Error404/Error404";
 import UserSettings from "./Components/UserSettings/UserSettings";
-import AddEventForm from "./Components/AddEventPage/AddEventPage";
+import AddEventPage from "./Components/AddEventPage/AddEventPage";
 import EventsPage from "./Components/EventsPage/EventsPage";
 import EventPage from "./Components/EventPage/EventPage";
 import UsersEvents from "./Components/UsersEvents/UsersEvents";
@@ -60,7 +60,7 @@ function App() {
       <Routes>
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />
-        <Route path="/add-event" element={<AddEventForm />} />
+        <Route path="/add-event" element={<AddEventPage />} />
         <Route path="/edit-event/:eventID" element={<EditEventPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:eventID" element={<EventPage />} />
