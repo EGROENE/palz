@@ -5,7 +5,7 @@ import NavBar from "../NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
 import EventForm from "../EventForm/EventForm";
 
-const AddEventForm = () => {
+const AddEventPage = () => {
   const navigation = useNavigate();
   const { currentUser, userCreatedAccount } = useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
@@ -25,4 +25,4 @@ const AddEventForm = () => {
   );
 };
 
-export default AddEventForm;
+export default AddEventPage;

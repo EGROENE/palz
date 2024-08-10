@@ -9,7 +9,7 @@ import { useUserContext } from "./Hooks/useUserContext";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import Error404 from "./Components/Error404/Error404";
 import UserSettings from "./Components/UserSettings/UserSettings";
-import AddEventForm from "./Components/AddEventForm/AddEventForm";
+import AddEventForm from "./Components/AddEventPage/AddEventPage";
 import EventsPage from "./Components/EventsPage/EventsPage";
 import EventPage from "./Components/EventPage/EventPage";
 import UsersEvents from "./Components/UsersEvents/UsersEvents";
