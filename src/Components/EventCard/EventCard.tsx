@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<string>("");
 
-  const { currentUser, allUsers } = useMainContext();
+  const { currentUser, allUsers, setCurrentEvent } = useMainContext();
   const { handleAddUserRSVP, handleDeleteUserRSVP, handleRemoveInvitee } =
     useUserContext();
 
@@ -115,6 +115,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
               </button>
             ) : (
               <Link
+                onClick={() => setCurrentEvent(event)}
                 to={`/edit-event/${event.id}`}
                 className="event-buttons-container-button"
               >
