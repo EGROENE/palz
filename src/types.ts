@@ -46,6 +46,8 @@ export type TEvent = {
 };
 
 export type TMainContext = {
+  currentEvent: TEvent | undefined;
+  setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
   getMostCurrentEvents: () => void;
   fetchAllEvents: () => Promise<void>;
   theme: "dark" | "light";
