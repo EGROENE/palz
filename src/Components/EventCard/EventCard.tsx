@@ -101,12 +101,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
               See Event
             </Link>
             {/* Necessary to expressly return true or false in 'disabled' attr of button below, or a type error occurs */}
-            {!userIsOrganizer && (
+            {!userIsOrganizer ? (
               <button
                 disabled={userIsOrganizer ? true : false}
-                title={
-                  userIsOrganizer ? "Cannot RSVP to an event you organized" : undefined
-                }
                 className="event-buttons-container-button"
                 onClick={(e) =>
                   userRSVPd && currentUser
@@ -116,6 +113,13 @@ const EventCard = ({ event }: { event: TEvent }) => {
               >
                 {userRSVPd ? "Remove RSVP" : "RSVP"}
               </button>
+            ) : (
+              <Link
+                to={`/edit-event/${event.id}`}
+                className="event-buttons-container-button"
+              >
+                Edit Event
+              </Link>
             )}
           </div>
         </div>

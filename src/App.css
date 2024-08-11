@@ -368,11 +368,8 @@
   color: white;
 }
 
-.event-buttons-container-button button {
-  background-color: unset;
-}
-
-.event-buttons-container button:nth-child(2) {
+.event-buttons-container button:nth-child(2),
+.event-buttons-container a:nth-child(2) {
   background-color: var(--background-color-opposite);
   color: var(--text-color-opposite);
 }
