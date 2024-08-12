@@ -1,4 +1,4 @@
-import { TUser, TEvent } from "./types";
+import { TUser, TEvent, TEventValuesToUpdate } from "./types";
 
 const getAllUsers = (): Promise<TUser[]> => {
   return fetch("http://localhost:3000/users", {
@@ -363,6 +363,23 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
   });
 };
 
+const updateEvent = (
+  event: TEvent,
+  valuesToUpdate: TEventValuesToUpdate
+): Promise<Response> => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const raw = JSON.stringify(valuesToUpdate);
+
+  return fetch(`http://localhost:3000/users/${event.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const deleteEvent = (event: TEvent): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -394,6 +411,7 @@ const removeInvitee = (event: TEvent, user: TUser | undefined): Promise<Response
 };
 
 const Requests = {
+  updateEvent,
   removeInvitee,
   createEvent,
   deleteEvent,
