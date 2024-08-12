@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
-import { TUser, TEvent } from "../../types";
+import { TUser, TEvent, TEventValuesToUpdate } from "../../types";
 import Methods from "../../methods";
 import { countries } from "../../constants";
 import Requests from "../../requests";
@@ -427,6 +427,69 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
       );
     }
   };
+
+  const getValuesToUpdate = (): TEventValuesToUpdate | undefined => {
+    // interestedUsers omitted from type b/c that is not controllable with this form, rather changes depending on other users RSVPing or de-RSVPing.
+    if (currentEvent) {
+      return {
+        ...(eventTitle?.trim() !== "" &&
+          eventTitle.trim() !== currentEvent.title && {
+            title: eventTitle,
+          }),
+        ...(eventDate + eventTime !== currentEvent.nextEventTime && {
+          nextEventTime: eventDate + eventTime,
+        }),
+        ...(organizers !== currentEvent.organizers && {
+          organizers: organizers,
+        }),
+        ...(invitees !== currentEvent.invitees && { invitees: invitees }),
+        ...(eventDescription !== "" &&
+          eventDescription !== currentEvent.description && {
+            description: eventDescription.trim(),
+          }),
+        ...(eventAdditionalInfo !== currentEvent.additionalInfo && {
+          additionalInfo: eventAdditionalInfo.trim(),
+        }),
+        ...(eventCity !== "" &&
+          eventCity?.trim() !== currentEvent.city && {
+            city: Methods.formatHyphensAndSpacesInString(
+              Methods.formatCapitalizedName(eventCity)
+            ),
+          }),
+        ...(eventState !== "" &&
+          eventState?.trim() !== currentEvent.stateProvince && {
+            stateProvince: Methods.formatHyphensAndSpacesInString(
+              Methods.formatCapitalizedName(eventState)
+            ),
+          }),
+        ...(eventCountry !== "" &&
+          eventCountry !== currentEvent.country && {
+            country: eventCountry,
+          }),
+        ...(publicity !== currentEvent.publicity && {
+          publicity: publicity,
+        }),
+        ...(maxParticipants !== currentEvent.maxParticipants && {
+          maxParticipants: maxParticipants,
+        }),
+        ...(eventAddress?.trim() !== "" &&
+          eventAddress?.trim() !== currentEvent.address && {
+            address: eventAddress?.trim(),
+          }),
+        ...(imageOne !== "" &&
+          imageOne !== currentEvent.imageOne && { imageOne: imageOne }),
+        ...(imageTwo !== "" &&
+          imageTwo !== currentEvent.imageTwo && { imageTwo: imageTwo }),
+        ...(imageThree !== "" &&
+          imageThree !== currentEvent.imageThree && { imageThree: imageThree }),
+        ...(relatedInterests !== currentEvent.relatedInterests && {
+          relatedInterests: relatedInterests,
+        }),
+      };
+    }
+    return undefined;
+  };
+  const valuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   // Create array in which certain countries from countries array will be placed on top
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
