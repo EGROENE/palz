@@ -409,20 +409,35 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
+    setIsLoading(true);
     if (!showErrors) {
       setShowErrors(true);
     }
     if (areNoErrors) {
-      Requests.createEvent(eventInfos)
-        .then((response) => {
+      if (currentEvent) {
+        // When updating an existing event:
+        Requests.updateEvent(currentEvent, valuesToUpdate).then((response) => {
           if (!response.ok) {
-            toast.error("Could not create event. Please try again.");
+            toast.error("Could not update event. Please try again.");
           } else {
-            toast.success("Event created!");
-            navigation(`/${currentUser?.username}/events`);
+            setIsLoading(false);
+            toast.success("Event updated!");
           }
-        })
-        .catch((error) => console.log(error));
+        });
+      } else {
+        // When adding a newly created event:
+        Requests.createEvent(eventInfos)
+          .then((response) => {
+            if (!response.ok) {
+              toast.error("Could not create event. Please try again.");
+            } else {
+              setIsLoading(false);
+              toast.success("Event created!");
+              navigation(`/${currentUser?.username}/events`);
+            }
+          })
+          .catch((error) => console.log(error));
+      }
     } else {
       window.alert(
         "Please make sure all fields are filled out & that there are no errors"
