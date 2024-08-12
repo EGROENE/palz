@@ -100,7 +100,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   // Function to reset otherUsers to its original value, w/o filters from coOrganizersSearchQuery
   const setPotentialCoOrganizersAndOrInviteesToOriginalValue = (
     field?: "co-organizers" | "invitees"
-  ) => {
+  ): void => {
     const currentUserPalz = currentUser?.friends;
     const firstOtherUsers = allOtherUsers.filter((user) =>
       currentUserPalz?.includes(String(user?.id))
@@ -180,7 +180,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   const handleDateTimeInput = (
     e: React.ChangeEvent<HTMLInputElement>,
     input: "date" | "time"
-  ) => {
+  ): void => {
     e.preventDefault();
     const nowDate = new Date();
     const nowPlusOneHourEpoch = nowDate.getTime() + 3600000;
@@ -218,7 +218,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   const handleImageURLInput = (
     e: React.ChangeEvent<HTMLInputElement>,
     imageNumber: number
-  ) => {
+  ): void => {
     e.preventDefault();
     // Handle setting of appropriate state value:
     if (imageNumber === 1) {
@@ -255,7 +255,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   const handlePotentialCoOrganizersAndInviteesSearchQuery = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: "co-organizers" | "invitees"
-  ) => {
+  ): void => {
     e.preventDefault();
     const inputCleaned = e.target.value.replace(/\s+/g, " ");
     setInviteesSearchQuery(inputCleaned);
@@ -298,7 +298,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
     }
   };
 
-  const handleAddRemoveUserAsOrganizer = (user: TUser) => {
+  const handleAddRemoveUserAsOrganizer = (user: TUser): void => {
     if (organizers.includes(String(user.id))) {
       setOrganizers(organizers.filter((organizer) => organizer !== user.id));
       setPotentialCoOrganizersAndOrInviteesToOriginalValue("invitees");
@@ -311,7 +311,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
     }
   };
 
-  const handleAddRemoveUserAsInvitee = (user: TUser) => {
+  const handleAddRemoveUserAsInvitee = (user: TUser): void => {
     if (invitees.includes(String(user.id))) {
       setInvitees(invitees.filter((invitee) => invitee !== user.id));
       setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
@@ -375,7 +375,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
 
   const handleAddEventFormSubmission = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  ): void => {
     e.preventDefault();
     setShowErrors(true);
     if (areNoErrors) {
@@ -398,22 +398,23 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
 
   // Create array in which certain countries from countries array will be placed on top
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
-  const preferredCountries = countries.filter((country) =>
-    topCountryNames.includes(country.country)
-  );
-  const restOfCountries = countries.filter(
-    (country) => !topCountryNames.includes(country.country)
-  );
-  const getResortedCountries = (): {
+  type country = {
     country: string;
     abbreviation: string;
     phoneCode: string;
-  }[] => {
+  };
+  const preferredCountries: country[] = countries.filter((country) =>
+    topCountryNames.includes(country.country)
+  );
+  const restOfCountries: country[] = countries.filter(
+    (country) => !topCountryNames.includes(country.country)
+  );
+  const getResortedCountries = (): country[] => {
     return preferredCountries.concat(restOfCountries);
   };
   const resortedCountries = getResortedCountries();
 
-  const getUsersWhoAreOrganizers = () => {
+  const getUsersWhoAreOrganizers = (): TUser[] => {
     const usersWhoAreOrganizers: TUser[] = [];
     for (const organizer of organizers) {
       const user = allUsers.filter((user) => user.id === organizer)[0];
@@ -423,7 +424,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   };
   const usersWhoAreOrganizers = getUsersWhoAreOrganizers();
 
-  const getUsersWhoAreInvitees = () => {
+  const getUsersWhoAreInvitees = (): TUser[] => {
     const usersWhoAreInvitees: TUser[] = [];
     for (const invitee of invitees) {
       const user = allUsers.filter((user) => user.id === invitee)[0];
@@ -433,7 +434,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   };
   const usersWhoAreInvitees = getUsersWhoAreInvitees();
 
-  const changesMade =
+  const changesMade: boolean =
     eventTitle !== "" ||
     eventDescription !== "" ||
     eventAdditionalInfo !== "" ||
@@ -452,7 +453,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
     invitees.length > 0 ||
     relatedInterests.length > 0;
 
-  const areNoErrors =
+  const areNoErrors: boolean =
     eventTitleError === "" &&
     eventDescriptionError === "" &&
     eventAdditionalInfoError === "" &&
@@ -463,7 +464,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
     imageTwoError === "" &&
     imageThreeError === "";
 
-  const allRequiredFieldsFilled =
+  const allRequiredFieldsFilled: boolean =
     eventTitle !== "" &&
     eventDescription !== "" &&
     eventCity !== "" &&
@@ -498,6 +499,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   };
 
   const [randomColor, setRandomColor] = useState<string>("");
+
   useEffect(() => {
     setPotentialCoOrganizersAndOrInviteesToOriginalValue();
 
