@@ -493,18 +493,18 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
 
   // Create array in which certain countries from countries array will be placed on top
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
-  type country = {
+  type TCountry = {
     country: string;
     abbreviation: string;
     phoneCode: string;
   };
-  const preferredCountries: country[] = countries.filter((country) =>
+  const preferredCountries: TCountry[] = countries.filter((country) =>
     topCountryNames.includes(country.country)
   );
-  const restOfCountries: country[] = countries.filter(
+  const restOfCountries: TCountry[] = countries.filter(
     (country) => !topCountryNames.includes(country.country)
   );
-  const getResortedCountries = (): country[] => {
+  const getResortedCountries = (): TCountry[] => {
     return preferredCountries.concat(restOfCountries);
   };
   const resortedCountries = getResortedCountries();
