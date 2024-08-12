@@ -344,7 +344,7 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
     "city": eventData.city,
     "stateProvince": eventData.stateProvince,
     "country": eventData.country,
-    "isPublic": eventData.isPublic,
+    "publicity": eventData.publicity,
     "nextEventTime": eventData.nextEventTime,
     "maxParticipants": eventData.maxParticipants,
     "address": eventData.address,

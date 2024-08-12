@@ -31,7 +31,7 @@ export type TEvent = {
   invitees: string[];
   description: string;
   nextEventTime: number;
-  isPublic: boolean;
+  publicity: "public" | "private";
   maxParticipants: number | undefined;
   imageOne?: string;
   imageTwo?: string;
