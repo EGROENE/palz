@@ -345,32 +345,62 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
       dateField.current.value = "mm/dd/yyyy";
       timeField.current.value = "--:--";
     }
-    setEventTitle("");
-    setEventTitleError("");
-    setEventDescription("");
-    setEventDescriptionError("");
-    setEventAdditionalInfo("");
-    setEventAdditionalInfoError("");
-    setEventCity("");
-    setEventState("");
-    setEventCountry("");
-    setEventLocationError("");
-    setEventDate(0);
-    setEventTime(0);
-    setEventDateTimeError("");
-    setEventAddress("");
-    setEventAddressError("");
-    setMaxParticipants(undefined);
-    setImageOne("");
-    setImageOneError("");
-    setImageTwo("");
-    setImageTwoError("");
-    setImageThree("");
-    setImageThreeError("");
-    setPublicity("public");
-    setOrganizers([`${currentUser?.id}`]);
-    setInvitees([]);
-    setRelatedInterests([]);
+
+    if (currentEvent) {
+      setEventTitle(currentEvent.title);
+      setEventTitleError("");
+      setEventDescription(currentEvent.description);
+      setEventDescriptionError("");
+      setEventAdditionalInfo(currentEvent.additionalInfo);
+      setEventAdditionalInfoError("");
+      setEventCity(currentEvent.city);
+      setEventState(currentEvent.stateProvince);
+      setEventCountry(currentEvent.country);
+      setEventLocationError("");
+      setEventDate(0);
+      setEventTime(0);
+      setEventDateTimeError("");
+      setEventAddress(currentEvent.address);
+      setEventAddressError("");
+      setMaxParticipants(currentEvent.maxParticipants);
+      setImageOne(currentEvent.imageOne);
+      setImageOneError("");
+      setImageTwo(currentEvent.imageTwo);
+      setImageTwoError("");
+      setImageThree(currentEvent.imageThree);
+      setImageThreeError("");
+      setPublicity("public");
+      setOrganizers(currentEvent.organizers);
+      setInvitees(currentEvent.invitees);
+      setRelatedInterests(currentEvent.relatedInterests);
+    } else {
+      setEventTitle("");
+      setEventTitleError("");
+      setEventDescription("");
+      setEventDescriptionError("");
+      setEventAdditionalInfo("");
+      setEventAdditionalInfoError("");
+      setEventCity("");
+      setEventState("");
+      setEventCountry("");
+      setEventLocationError("");
+      setEventDate(0);
+      setEventTime(0);
+      setEventDateTimeError("");
+      setEventAddress("");
+      setEventAddressError("");
+      setMaxParticipants(undefined);
+      setImageOne("");
+      setImageOneError("");
+      setImageTwo("");
+      setImageTwoError("");
+      setImageThree("");
+      setImageThreeError("");
+      setPublicity("public");
+      setOrganizers([`${currentUser?.id}`]);
+      setInvitees([]);
+      setRelatedInterests([]);
+    }
   };
 
   const handleAddEventFormSubmission = (
