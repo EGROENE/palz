@@ -365,7 +365,7 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
 
 const updateEvent = (
   event: TEvent,
-  valuesToUpdate: TEventValuesToUpdate
+  valuesToUpdate: TEventValuesToUpdate | undefined
 ): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
