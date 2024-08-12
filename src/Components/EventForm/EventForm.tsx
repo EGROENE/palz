@@ -93,6 +93,8 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   );
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   /* Get ref for these fields, since their values are not being set to their corresponding state values, which are epochs in MS & these are not controlled inputs. If currentEvent, initialize to date/time of that; else, initialize to null. */
   const dateField = useRef<HTMLInputElement | null>(null);
   const timeField = useRef<HTMLInputElement | null>(null);
