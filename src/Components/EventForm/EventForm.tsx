@@ -506,7 +506,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
       relatedInterests.length > 0
     );
   };
-  const changesMade = getChangesMade();
+  const changesMade: boolean = getChangesMade();
 
   const areNoErrors: boolean =
     eventTitleError === "" &&
