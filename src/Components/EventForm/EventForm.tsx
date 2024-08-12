@@ -80,7 +80,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   );
   const [imageThreeError, setImageThreeError] = useState<string>("");
   const [publicity, setPublicity] = useState<"public" | "private">(
-    currentEvent ? (currentEvent.isPublic ? "public" : "private") : "public"
+    currentEvent ? currentEvent.publicity : "public"
   );
   const [organizers, setOrganizers] = useState<string[]>(
     currentEvent ? currentEvent.organizers : [`${currentUser?.id}`]
@@ -464,24 +464,49 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   };
   const usersWhoAreInvitees = getUsersWhoAreInvitees();
 
-  const changesMade: boolean =
-    eventTitle !== "" ||
-    eventDescription !== "" ||
-    eventAdditionalInfo !== "" ||
-    eventCity !== "" ||
-    eventState !== "" ||
-    eventCountry !== "" ||
-    eventDate !== 0 ||
-    eventTime !== 0 ||
-    eventAddress !== "" ||
-    maxParticipants !== undefined ||
-    imageOne !== "" ||
-    imageTwo !== "" ||
-    imageThree !== "" ||
-    publicity !== "public" ||
-    organizers.length > 1 ||
-    invitees.length > 0 ||
-    relatedInterests.length > 0;
+  const getChangesMade = (): boolean => {
+    if (currentEvent) {
+      return (
+        eventTitle !== currentEvent.title ||
+        eventDescription !== currentEvent.description ||
+        eventAdditionalInfo !== currentEvent.additionalInfo ||
+        eventCity !== currentEvent.city ||
+        eventState !== currentEvent.stateProvince ||
+        eventCountry !== currentEvent.country ||
+        eventDate !== 0 ||
+        eventTime !== 0 ||
+        eventAddress !== currentEvent.address ||
+        maxParticipants !== currentEvent.maxParticipants ||
+        imageOne !== currentEvent.imageOne ||
+        imageTwo !== currentEvent.imageTwo ||
+        imageThree !== currentEvent.imageThree ||
+        publicity !== currentEvent.publicity ||
+        organizers !== currentEvent.organizers ||
+        invitees !== currentEvent.invitees ||
+        relatedInterests !== currentEvent.relatedInterests
+      );
+    }
+    return (
+      eventTitle !== "" ||
+      eventDescription !== "" ||
+      eventAdditionalInfo !== "" ||
+      eventCity !== "" ||
+      eventState !== "" ||
+      eventCountry !== "" ||
+      eventDate !== 0 ||
+      eventTime !== 0 ||
+      eventAddress !== "" ||
+      maxParticipants !== undefined ||
+      imageOne !== "" ||
+      imageTwo !== "" ||
+      imageThree !== "" ||
+      publicity !== "public" ||
+      organizers.length > 1 ||
+      invitees.length > 0 ||
+      relatedInterests.length > 0
+    );
+  };
+  const changesMade = getChangesMade();
 
   const areNoErrors: boolean =
     eventTitleError === "" &&
@@ -517,7 +542,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
       Methods.formatCapitalizedName(eventState)
     ),
     country: eventCountry,
-    isPublic: publicity === "public",
+    publicity: "public",
     nextEventTime: eventDate + eventTime,
     maxParticipants: maxParticipants,
     address: eventAddress?.trim(),
