@@ -9,8 +9,14 @@ import NavBar from "../NavBar/NavBar";
 import UserListModal from "../UserListModal/UserListModal";
 
 const EventPage = () => {
-  const { allUsers, allEvents, getMostCurrentEvents, currentUser, userCreatedAccount } =
-    useMainContext();
+  const {
+    allUsers,
+    allEvents,
+    getMostCurrentEvents,
+    currentUser,
+    userCreatedAccount,
+    setCurrentEvent,
+  } = useMainContext();
   const {
     handleDeleteUserRSVP,
     handleAddUserRSVP,
@@ -206,9 +212,9 @@ const EventPage = () => {
               <p>{event?.description}</p>
               {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
             </div>
-            {!userIsOrganizer && (
+            {!userIsOrganizer ? (
               <button
-                style={!userIsOrganizer ? { "backgroundColor": randomColor } : undefined}
+                style={{ "backgroundColor": randomColor }}
                 onClick={(e) =>
                   userRSVPd
                     ? handleDeleteUserRSVP(e, event, currentUser)
@@ -217,6 +223,15 @@ const EventPage = () => {
               >
                 {userRSVPd ? "Remove RSVP" : "RSVP"}
               </button>
+            ) : (
+              <Link to={`/edit-event/${event.id}`}>
+                <button
+                  onClick={() => setCurrentEvent(event)}
+                  style={{ "backgroundColor": randomColor }}
+                >
+                  Edit Event
+                </button>
+              </Link>
             )}
           </div>
         </>
