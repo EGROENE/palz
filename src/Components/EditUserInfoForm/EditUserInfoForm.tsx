@@ -1453,14 +1453,14 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
         <div className="form-revert-submit-buttons-container">
           <button
             type="reset"
-            disabled={!userInfoEdited}
+            disabled={!userInfoEdited || isLoading}
             onClick={() => handleEditUserInfoRevert()}
           >
             Revert Changes
           </button>
           <button
             type="submit"
-            disabled={!(userInfoEdited && areNoEditFormErrors)}
+            disabled={!(userInfoEdited && areNoEditFormErrors) || isLoading}
             style={{ backgroundColor: randomColor }}
             onClick={(e) => handleUpdateProfileInfo(e)}
           >
