@@ -45,6 +45,25 @@ export type TEvent = {
   relatedInterests: string[];
 };
 
+export type TEventValuesToUpdate = {
+  relatedInterests?: string[] | undefined;
+  imageThree?: string | undefined;
+  imageTwo?: string | undefined;
+  imageOne?: string | undefined;
+  address?: string | undefined;
+  maxParticipants?: number | undefined;
+  nextEventTime?: number | undefined;
+  organizers?: string[] | undefined;
+  invitees?: string[] | undefined;
+  description?: string | undefined;
+  additionalInfo?: string | undefined;
+  city?: string | undefined;
+  stateProvince?: string | undefined;
+  country?: string | undefined;
+  publicity?: "public" | "private";
+  title?: string | undefined;
+};
+
 export type TMainContext = {
   currentEvent: TEvent | undefined;
   setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
