@@ -407,7 +407,9 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
-    setShowErrors(true);
+    if (!showErrors) {
+      setShowErrors(true);
+    }
     if (areNoErrors) {
       Requests.createEvent(eventInfos)
         .then((response) => {
