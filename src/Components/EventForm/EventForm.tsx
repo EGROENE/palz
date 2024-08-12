@@ -504,7 +504,6 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
         }),
       };
     }
-    return undefined;
   };
   const valuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
@@ -660,6 +659,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
       <label>
         <p>Title:</p>
         <input
+          disabled={isLoading}
           className={eventTitleError !== "" && showErrors ? "erroneous-field" : undefined}
           value={eventTitle}
           onChange={(e) => handleEventTitleInput(e)}
@@ -695,6 +695,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
         <label className="location-input">
           <p>City:</p>
           <input
+            disabled={isLoading}
             className={
               eventLocationError !== "" && showErrors ? "erroneous-field" : undefined
             }
@@ -721,6 +722,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
         <label className="location-input">
           <p>State/Province:</p>
           <input
+            disabled={isLoading}
             className={
               eventLocationError !== "" && showErrors ? "erroneous-field" : undefined
             }
@@ -819,6 +821,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
       <label>
         <p>Address:</p>
         <input
+          disabled={isLoading}
           className={
             eventAddressError !== "" && showErrors ? "erroneous-field" : undefined
           }
@@ -832,6 +835,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
         <label>
           <p>Date:</p>{" "}
           <input
+            disabled={isLoading}
             ref={dateField}
             className={
               (eventDateTimeError === "Please fill out this field" && showErrors) ||
@@ -846,6 +850,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
         <label>
           <p>Time:</p>
           <input
+            disabled={isLoading}
             ref={timeField}
             className={
               (eventDateTimeError === "Please fill out this field" && showErrors) ||
@@ -867,6 +872,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
       <label>
         <p>Maximum Participants: (optional)</p>
         <input
+          disabled={isLoading}
           className={
             maxParticipants && !(Number(maxParticipants) > 0)
               ? "erroneous-field"
@@ -886,6 +892,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
         <label>
           <span>Public</span>
           <input
+            disabled={isLoading}
             style={{ width: "unset" }}
             onChange={() => handlePublicPrivateBoxChecking("public")}
             type="checkbox"
@@ -895,6 +902,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
         <label>
           <span>Private</span>
           <input
+            disabled={isLoading}
             style={{ width: "unset" }}
             onChange={() => handlePublicPrivateBoxChecking("private")}
             type="checkbox"
@@ -905,6 +913,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
       <label>
         <p>Image One: (optional)</p>
         <input
+          disabled={isLoading}
           className={imageOneError !== "" ? "erroneous-field" : undefined}
           value={imageOne}
           onChange={(e) => handleImageURLInput(e, 1)}
@@ -915,6 +924,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
       <label>
         <p>Image Two: (optional)</p>
         <input
+          disabled={isLoading}
           className={imageTwoError !== "" ? "erroneous-field" : undefined}
           value={imageTwo}
           onChange={(e) => handleImageURLInput(e, 2)}
@@ -925,6 +935,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
       <label>
         <p>Image Three: (optional)</p>
         <input
+          disabled={isLoading}
           className={imageThreeError !== "" ? "erroneous-field" : undefined}
           value={imageThree}
           onChange={(e) => handleImageURLInput(e, 3)}
@@ -965,6 +976,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
         </div>
         <div className="co-organizers-invitees-inputs">
           <input
+            disabled={isLoading}
             value={inviteesSearchQuery}
             onChange={(e) =>
               handlePotentialCoOrganizersAndInviteesSearchQuery(e, "co-organizers")
@@ -1001,6 +1013,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
                     className="other-user-option"
                   >
                     <input
+                      disabled={isLoading}
                       onChange={() => handleAddRemoveUserAsOrganizer(user)}
                       checked={organizers.includes(String(user.id))}
                       type="checkbox"
@@ -1038,6 +1051,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
         </div>
         <div className="co-organizers-invitees-inputs">
           <input
+            disabled={isLoading}
             value={coOrganizersSearchQuery}
             onChange={(e) =>
               handlePotentialCoOrganizersAndInviteesSearchQuery(e, "invitees")
@@ -1074,6 +1088,7 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
                     className="other-user-option"
                   >
                     <input
+                      disabled={isLoading}
                       onChange={() => handleAddRemoveUserAsInvitee(user)}
                       checked={invitees.includes(String(user.id))}
                       type="checkbox"
@@ -1097,11 +1112,15 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
         handleRemoveInterest={handleRemoveEventInterest}
       />
       <div className="form-revert-submit-buttons-container">
-        <button disabled={!changesMade} type="reset" onClick={() => handleRevert()}>
+        <button
+          disabled={!changesMade || isLoading}
+          type="reset"
+          onClick={() => handleRevert()}
+        >
           Revert
         </button>
         <button
-          disabled={!(areNoErrors && allRequiredFieldsFilled)}
+          disabled={!(areNoErrors && allRequiredFieldsFilled) || isLoading}
           onClick={(e) => handleAddEventFormSubmission(e)}
           type="submit"
         >
