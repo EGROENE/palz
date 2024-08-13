@@ -17,6 +17,7 @@ type InterestsSectionProps = {
     interest: string,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
+  isDisabled: boolean;
 };
 
 const InterestsSection = ({
@@ -26,6 +27,7 @@ const InterestsSection = ({
   newEventInterests,
   handleAddInterest,
   handleRemoveInterest,
+  isDisabled,
 }: InterestsSectionProps) => {
   const [showInterestsModal, setShowInterestsModal] = useState<boolean>(false);
 
@@ -165,23 +167,35 @@ const InterestsSection = ({
     <div className="interests-section">
       <p>
         {interestsRelation === "user" ? "Interests: " : "Related Interests: "}
-        <span
-          style={{ "color": randomColor }}
-          className="show-module"
-          onClick={() => setShowInterestsModal(!showInterestsModal)}
-        >
-          Browse
-        </span>
+        {!isDisabled && (
+          <span
+            style={{ "color": randomColor }}
+            className="show-module"
+            onClick={() => setShowInterestsModal(!showInterestsModal)}
+          >
+            Browse
+          </span>
+        )}
       </p>
       <div className="interests-container">
         {savedInterests?.length ? (
           Methods.getStringArraySortedAlphabetically(savedInterests)?.map((interest) => (
-            <span className="tab" key={interest} style={{ backgroundColor: randomColor }}>
+            <span
+              className="tab"
+              key={interest}
+              style={
+                isDisabled
+                  ? { backgroundColor: randomColor, opacity: 0.8 }
+                  : { backgroundColor: randomColor }
+              }
+            >
               {interest}
 
               <i
                 title="Remove"
-                onClick={(e) => handleRemoveInterest(interest, e)}
+                onClick={(e) =>
+                  !isDisabled ? handleRemoveInterest(interest, e) : undefined
+                }
                 className="fas fa-times"
               ></i>
             </span>
