@@ -9,6 +9,7 @@ import Requests from "../../requests";
 import toast from "react-hot-toast";
 
 const UserSettings = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   // Set random color:
   const [randomColor, setRandomColor] = useState<string>("");
   useEffect(() => {
@@ -103,8 +104,13 @@ const UserSettings = () => {
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <NavBar />
       <h1>Settings</h1>
-      <EditUserInfoForm randomColor={randomColor} />
+      <EditUserInfoForm
+        randomColor={randomColor}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+      />
       <InterestsSection
+        isDisabled={isLoading}
         randomColor={randomColor}
         interestsRelation="user"
         handleAddInterest={handleAddUserInterest}
