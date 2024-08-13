@@ -15,15 +15,15 @@ const EventForm = ({ event }: { event?: TEvent }) => {
     allUsers,
     currentUser,
     allEvents,
-    fetchAllEvents,
     currentEvent,
     setCurrentEvent,
+    getMostCurrentEvents,
   } = useMainContext();
   const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
   const navigation = useNavigate();
 
   const allOtherUsers = allUsers.filter((user) => user.id !== currentUser?.id);
-  /* otherUsers is eventually the resorted version of allOtherUsers (palz shown on top), followed by all others; used to display potential co-organizers in dropdown */
+  /* otherUsers is eventually the resorted version of allOtherUsers (with user's palz shown on top), followed by all others; used to display potential co-organizers in dropdown */
   const [potentialCoOrganizers, setPotentialCoOrganizers] = useState<TUser[]>([]);
   const [potentialInvitees, setPotentialInvitees] = useState<TUser[]>([]);
   const [coOrganizersSearchQuery, setCoOrganizersSearchQuery] = useState<string>("");
@@ -33,11 +33,6 @@ const EventForm = ({ event }: { event?: TEvent }) => {
   const [showPotentialInvitees, setShowPotentialInvitees] = useState<boolean>(false);
 
   const [showEventCountries, setShowEventCountries] = useState<boolean>(false);
-
-  /* editedEvent is necessary so that the data that populates the form is up-to-date. It is initially an exact match of the prop 'event', but its values will be different from prop 'event' (whose values remain the same) once user saves any changes made to editable properties of the event in question. On initialization and upon saving changes made to the editable properties of mainContext's state value, currentEvent, this is set to updated version of the event from allEvents that shares the same id as the prop 'event' after fetchAllEvents runs. */
-  const [editedEvent, setEditedEvent] = useState<TEvent | undefined>(
-    allEvents.filter((ev) => ev.id === event?.id)[0]
-  );
 
   // STATE VALUES CORRESPONDING TO EDITABLE PROPERTIES OF TEvent, ALONG W/ CORRESPONDING FIELDS' ERROR STATES:
   const [eventTitle, setEventTitle] = useState<string>(event ? event.title : "");
@@ -419,7 +414,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
   ): void => {
     e.preventDefault();
     setIsLoading(true);
-    fetchAllEvents();
+    getMostCurrentEvents();
     if (!showErrors) {
       setShowErrors(true);
     }
@@ -429,11 +424,61 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         Requests.updateEvent(event, valuesToUpdate).then((response) => {
           if (!response.ok) {
             toast.error("Could not update event. Please try again.");
-            fetchAllEvents();
+            getMostCurrentEvents();
           } else {
             setIsLoading(false);
             toast.success("Event updated!");
-            fetchAllEvents();
+            getMostCurrentEvents();
+
+            /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
+            if (valuesToUpdate?.title) {
+              setEventTitle(valuesToUpdate.title);
+            }
+            /* if (valuesToUpdate?.nextEventTime) {
+              setEventTitle(valuesToUpdate.title)
+            } */
+            if (valuesToUpdate?.organizers) {
+              setOrganizers(valuesToUpdate.organizers);
+            }
+            if (valuesToUpdate?.invitees) {
+              setInvitees(valuesToUpdate.invitees);
+            }
+            if (valuesToUpdate?.description) {
+              setEventDescription(valuesToUpdate.description);
+            }
+            if (valuesToUpdate?.additionalInfo) {
+              setEventAdditionalInfo(valuesToUpdate.additionalInfo);
+            }
+            if (valuesToUpdate?.city) {
+              setEventCity(valuesToUpdate.city);
+            }
+            if (valuesToUpdate?.stateProvince) {
+              setEventState(valuesToUpdate.stateProvince);
+            }
+            if (valuesToUpdate?.country) {
+              setEventCountry(valuesToUpdate.country);
+            }
+            if (valuesToUpdate?.publicity) {
+              setPublicity(valuesToUpdate.publicity);
+            }
+            if (valuesToUpdate?.maxParticipants) {
+              setMaxParticipants(valuesToUpdate.maxParticipants);
+            }
+            if (valuesToUpdate?.address) {
+              setEventAddress(valuesToUpdate.address);
+            }
+            if (valuesToUpdate?.imageOne) {
+              setImageOne(valuesToUpdate.imageOne);
+            }
+            if (valuesToUpdate?.imageTwo) {
+              setImageTwo(valuesToUpdate.imageTwo);
+            }
+            if (valuesToUpdate?.imageThree) {
+              setImageThree(valuesToUpdate.imageThree);
+            }
+            if (valuesToUpdate?.relatedInterests) {
+              setRelatedInterests(valuesToUpdate.relatedInterests);
+            }
           }
         });
       } else {
@@ -442,9 +487,9 @@ const EventForm = ({ event }: { event?: TEvent }) => {
           .then((response) => {
             if (!response.ok) {
               toast.error("Could not create event. Please try again.");
-              fetchAllEvents();
+              getMostCurrentEvents();
             } else {
-              fetchAllEvents();
+              getMostCurrentEvents();
               setIsLoading(false);
               toast.success("Event created!");
               navigation(`/${currentUser?.username}/events`);
@@ -558,25 +603,25 @@ const EventForm = ({ event }: { event?: TEvent }) => {
   const usersWhoAreInvitees = getUsersWhoAreInvitees();
 
   const getChangesMade = (): boolean => {
-    if (editedEvent) {
+    if (event) {
       return (
-        eventTitle !== editedEvent.title ||
-        eventDescription !== editedEvent.description ||
-        eventAdditionalInfo !== editedEvent.additionalInfo ||
-        eventCity !== editedEvent.city ||
-        eventState !== editedEvent.stateProvince ||
-        eventCountry !== editedEvent.country ||
+        eventTitle !== currentEvent?.title ||
+        eventDescription !== currentEvent?.description ||
+        eventAdditionalInfo !== currentEvent?.additionalInfo ||
+        eventCity !== currentEvent?.city ||
+        eventState !== currentEvent?.stateProvince ||
+        eventCountry !== currentEvent?.country ||
         //eventDate !== 0 ||
         //eventTime !== 0 ||
-        eventAddress !== editedEvent.address ||
-        maxParticipants !== editedEvent.maxParticipants ||
-        imageOne !== editedEvent.imageOne ||
-        imageTwo !== editedEvent.imageTwo ||
-        imageThree !== editedEvent.imageThree ||
-        publicity !== editedEvent.publicity ||
-        !Methods.arraysAreIdentical(organizers, editedEvent.organizers) ||
-        !Methods.arraysAreIdentical(editedEvent.invitees, invitees) ||
-        !Methods.arraysAreIdentical(editedEvent.relatedInterests, relatedInterests)
+        eventAddress !== currentEvent?.address ||
+        maxParticipants !== currentEvent?.maxParticipants ||
+        imageOne !== currentEvent?.imageOne ||
+        imageTwo !== currentEvent?.imageTwo ||
+        imageThree !== currentEvent?.imageThree ||
+        publicity !== currentEvent?.publicity ||
+        !Methods.arraysAreIdentical(organizers, currentEvent?.organizers) ||
+        !Methods.arraysAreIdentical(currentEvent?.invitees, invitees) ||
+        !Methods.arraysAreIdentical(currentEvent?.relatedInterests, relatedInterests)
       );
     }
     return (
@@ -683,28 +728,8 @@ const EventForm = ({ event }: { event?: TEvent }) => {
   }, []);
 
   useEffect(() => {
-    fetchAllEvents();
-    setEditedEvent(allEvents.filter((ev) => ev.id === event?.id)[0]);
-  }, [
-    allEvents,
-    currentEvent?.additionalInfo,
-    currentEvent?.address,
-    currentEvent?.city,
-    currentEvent?.country,
-    currentEvent?.description,
-    currentEvent?.imageOne,
-    currentEvent?.imageTwo,
-    currentEvent?.imageThree,
-    currentEvent?.interestedUsers,
-    currentEvent?.invitees,
-    currentEvent?.maxParticipants,
-    currentEvent?.nextEventTime,
-    currentEvent?.organizers,
-    currentEvent?.publicity,
-    currentEvent?.relatedInterests,
-    currentEvent?.stateProvince,
-    currentEvent?.title,
-  ]);
+    setCurrentEvent(allEvents.filter((ev) => ev.id === event?.id)[0]);
+  }, [allEvents]);
 
   return (
     <form className="add-event-form">
