@@ -26,7 +26,7 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <NavBar />
       <h1>Edit Event</h1>
-      <EventForm currentEvent={currentEvent} />
+      <EventForm event={currentEvent} />
     </div>
   );
 };
