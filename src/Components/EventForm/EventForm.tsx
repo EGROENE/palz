@@ -1164,7 +1164,11 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         handleRemoveInterest={handleRemoveEventInterest}
       />
       <div className="form-revert-submit-buttons-container">
-        <button disabled={false} type="reset" onClick={() => handleRevert()}>
+        <button
+          disabled={!changesMade || isLoading}
+          type="reset"
+          onClick={() => handleRevert()}
+        >
           Revert
         </button>
         <button
