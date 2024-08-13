@@ -9,7 +9,7 @@ import { countries, phoneNumberLengthRanges } from "../../constants";
 import toast from "react-hot-toast";
 import Methods from "../../methods";
 
-const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
+const EditUserInfoForm = ({ randomColor, isLoading, setIsLoading }: { randomColor: string, isLoading: boolean, setIsLoading: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const { currentUser, setCurrentUser, fetchAllUsers, allUsers } = useMainContext();
   const {
     handleCityStateCountryInput,
@@ -87,7 +87,6 @@ const EditUserInfoForm = ({ randomColor }: { randomColor: string }) => {
   const [showCountryPhoneCodes, setShowCountryPhoneCodes] = useState<boolean>(false);
   const [showUserLocationCountries, setShowUserLocationCountries] =
     useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // If user data has changed, setCurrentUser:
   useEffect(() => {
