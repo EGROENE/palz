@@ -5,21 +5,30 @@ const UserTab = ({
   user,
   removeHandler,
   randomColor,
+  isDisabled,
 }: {
   user: TUser;
   removeHandler: (user: TUser) => void;
   randomColor?: string;
+  isDisabled: boolean;
 }) => {
   return (
     <div
       title={`${user.firstName} ${user.lastName}`}
       key={user.id}
-      style={{ backgroundColor: randomColor }}
+      style={
+        !isDisabled
+          ? { backgroundColor: randomColor }
+          : { opacity: 0.7, backgroundColor: randomColor }
+      }
       className="tab user"
     >
       <img src={`${user.profileImage}`} alt="profile pic" />
       <span>{user.username}</span>
-      <i onClick={() => removeHandler(user)} className="fas fa-times"></i>
+      <i
+        onClick={() => (!isDisabled ? removeHandler(user) : undefined)}
+        className="fas fa-times"
+      ></i>
     </div>
   );
 };
