@@ -10,8 +10,15 @@ import toast from "react-hot-toast";
 import UserTab from "../UserTab/UserTab";
 import InterestsSection from "../InterestsSection/InterestsSection";
 
-const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
-  const { allUsers, currentUser } = useMainContext();
+const EventForm = ({ event }: { event?: TEvent }) => {
+  const {
+    allUsers,
+    currentUser,
+    allEvents,
+    fetchAllEvents,
+    currentEvent,
+    setCurrentEvent,
+  } = useMainContext();
   const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
   const navigation = useNavigate();
 
@@ -27,75 +34,77 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
 
   const [showEventCountries, setShowEventCountries] = useState<boolean>(false);
 
-  const [eventTitle, setEventTitle] = useState<string>(
-    currentEvent ? currentEvent.title : ""
+  /* editedEvent is necessary so that the data that populates the form is up-to-date. It is initially an exact match of the prop 'event', but its values will be different from prop 'event' (whose values remain the same) once user saves any changes made to editable properties of the event in question. On initialization and upon saving changes made to the editable properties of mainContext's state value, currentEvent, this is set to updated version of the event from allEvents that shares the same id as the prop 'event' after fetchAllEvents runs. */
+  const [editedEvent, setEditedEvent] = useState<TEvent | undefined>(
+    allEvents.filter((ev) => ev.id === event?.id)[0]
   );
+
+  // STATE VALUES CORRESPONDING TO EDITABLE PROPERTIES OF TEvent, ALONG W/ CORRESPONDING FIELDS' ERROR STATES:
+  const [eventTitle, setEventTitle] = useState<string>(event ? event.title : "");
   const [eventTitleError, setEventTitleError] = useState<string>("");
   const [eventDescription, setEventDescription] = useState<string>(
-    currentEvent ? currentEvent.description : ""
+    event ? event.description : ""
   );
   const [eventDescriptionError, setEventDescriptionError] = useState<string>(
-    "Please fill out this field"
+    !event ? "Please fill out this field" : ""
   );
   const [eventAdditionalInfo, setEventAdditionalInfo] = useState<string>(
-    currentEvent ? currentEvent.additionalInfo : ""
+    event ? event.additionalInfo : ""
   );
   const [eventAdditionalInfoError, setEventAdditionalInfoError] = useState<string>("");
-  const [eventCity, setEventCity] = useState<string | undefined>(
-    currentEvent ? currentEvent.city : ""
-  );
+  const [eventCity, setEventCity] = useState<string | undefined>(event ? event.city : "");
   const [eventState, setEventState] = useState<string | undefined>(
-    currentEvent ? currentEvent.stateProvince : ""
+    event ? event.stateProvince : ""
   );
   const [eventCountry, setEventCountry] = useState<string | undefined>(
-    currentEvent ? currentEvent.country : ""
+    event ? event.country : ""
   );
   const [eventLocationError, setEventLocationError] = useState<string>(
-    "Please fill out all 3 location fields"
+    !event ? "Please fill out all 3 location fields" : ""
   );
   const [eventDate, setEventDate] = useState(0); // epoch translates to certain day at midnight
   const [eventTime, setEventTime] = useState(0); // number of ms
   const [eventDateTimeError, setEventDateTimeError] = useState<string>(
-    "Please fill out this field"
+    !event ? "Please fill out this field" : ""
   );
   const [eventAddress, setEventAddress] = useState<string | undefined>(
-    currentEvent ? currentEvent.address : ""
+    event ? event.address : ""
   );
   const [eventAddressError, setEventAddressError] = useState<string | undefined>(
-    "Please fill out this field"
+    !event ? "Please fill out this field" : ""
   );
   const [maxParticipants, setMaxParticipants] = useState<number | undefined>(
-    currentEvent ? currentEvent.maxParticipants : undefined
+    event ? event.maxParticipants : undefined
   );
   const [imageOne, setImageOne] = useState<string | undefined>(
-    currentEvent ? currentEvent.imageOne : ""
+    event ? event.imageOne : ""
   );
   const [imageOneError, setImageOneError] = useState<string>("");
   const [imageTwo, setImageTwo] = useState<string | undefined>(
-    currentEvent ? currentEvent.imageTwo : ""
+    event ? event.imageTwo : ""
   );
   const [imageTwoError, setImageTwoError] = useState<string>("");
   const [imageThree, setImageThree] = useState<string | undefined>(
-    currentEvent ? currentEvent.imageThree : ""
+    event ? event.imageThree : ""
   );
   const [imageThreeError, setImageThreeError] = useState<string>("");
   const [publicity, setPublicity] = useState<"public" | "private">(
-    currentEvent ? currentEvent.publicity : "public"
+    event ? event.publicity : "public"
   );
   const [organizers, setOrganizers] = useState<string[]>(
-    currentEvent ? currentEvent.organizers : [`${currentUser?.id}`]
+    event ? event.organizers : [`${currentUser?.id}`]
   );
-  const [invitees, setInvitees] = useState<string[]>(
-    currentEvent ? currentEvent.invitees : []
-  );
+  const [invitees, setInvitees] = useState<string[]>(event ? event.invitees : []);
   const [relatedInterests, setRelatedInterests] = useState<string[]>(
-    currentEvent ? currentEvent.relatedInterests : []
+    event ? event.relatedInterests : []
   );
+  //////////////////////////////////////////
+
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  /* Get ref for these fields, since their values are not being set to their corresponding state values, which are epochs in MS & these are not controlled inputs. If currentEvent, initialize to date/time of that; else, initialize to null. */
+  /* Get ref for these fields, since their values are not being set to their corresponding state values, which are epochs in MS & these are not controlled inputs. If event, initialize to date/time of that; else, initialize to null. */
   const dateField = useRef<HTMLInputElement | null>(null);
   const timeField = useRef<HTMLInputElement | null>(null);
 
@@ -348,33 +357,33 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
       timeField.current.value = "--:--";
     }
 
-    if (currentEvent) {
-      setEventTitle(currentEvent.title);
+    if (event) {
+      setEventTitle(event.title);
       setEventTitleError("");
-      setEventDescription(currentEvent.description);
+      setEventDescription(event.description);
       setEventDescriptionError("");
-      setEventAdditionalInfo(currentEvent.additionalInfo);
+      setEventAdditionalInfo(event.additionalInfo);
       setEventAdditionalInfoError("");
-      setEventCity(currentEvent.city);
-      setEventState(currentEvent.stateProvince);
-      setEventCountry(currentEvent.country);
+      setEventCity(event.city);
+      setEventState(event.stateProvince);
+      setEventCountry(event.country);
       setEventLocationError("");
       setEventDate(0);
       setEventTime(0);
       setEventDateTimeError("");
-      setEventAddress(currentEvent.address);
+      setEventAddress(event.address);
       setEventAddressError("");
-      setMaxParticipants(currentEvent.maxParticipants);
-      setImageOne(currentEvent.imageOne);
+      setMaxParticipants(event.maxParticipants);
+      setImageOne(event.imageOne);
       setImageOneError("");
-      setImageTwo(currentEvent.imageTwo);
+      setImageTwo(event.imageTwo);
       setImageTwoError("");
-      setImageThree(currentEvent.imageThree);
+      setImageThree(event.imageThree);
       setImageThreeError("");
       setPublicity("public");
-      setOrganizers(currentEvent.organizers);
-      setInvitees(currentEvent.invitees);
-      setRelatedInterests(currentEvent.relatedInterests);
+      setOrganizers(event.organizers);
+      setInvitees(event.invitees);
+      setRelatedInterests(event.relatedInterests);
     } else {
       setEventTitle("");
       setEventTitleError("");
@@ -410,18 +419,21 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   ): void => {
     e.preventDefault();
     setIsLoading(true);
+    fetchAllEvents();
     if (!showErrors) {
       setShowErrors(true);
     }
     if (areNoErrors) {
-      if (currentEvent) {
+      if (event) {
         // When updating an existing event:
-        Requests.updateEvent(currentEvent, valuesToUpdate).then((response) => {
+        Requests.updateEvent(event, valuesToUpdate).then((response) => {
           if (!response.ok) {
             toast.error("Could not update event. Please try again.");
+            fetchAllEvents();
           } else {
             setIsLoading(false);
             toast.success("Event updated!");
+            fetchAllEvents();
           }
         });
       } else {
@@ -430,7 +442,9 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
           .then((response) => {
             if (!response.ok) {
               toast.error("Could not create event. Please try again.");
+              fetchAllEvents();
             } else {
+              fetchAllEvents();
               setIsLoading(false);
               toast.success("Event created!");
               navigation(`/${currentUser?.username}/events`);
@@ -447,59 +461,57 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
 
   const getValuesToUpdate = (): TEventValuesToUpdate | undefined => {
     // interestedUsers omitted from type b/c that is not controllable with this form, rather changes depending on other users RSVPing or de-RSVPing.
-    if (currentEvent) {
+    if (event) {
       return {
         ...(eventTitle?.trim() !== "" &&
-          eventTitle.trim() !== currentEvent.title && {
+          eventTitle.trim() !== event.title && {
             title: eventTitle,
           }),
-        ...(eventDate + eventTime !== currentEvent.nextEventTime && {
+        ...(eventDate + eventTime !== event.nextEventTime && {
           nextEventTime: eventDate + eventTime,
         }),
-        ...(organizers !== currentEvent.organizers && {
+        ...(organizers !== event.organizers && {
           organizers: organizers,
         }),
-        ...(invitees !== currentEvent.invitees && { invitees: invitees }),
+        ...(invitees !== event.invitees && { invitees: invitees }),
         ...(eventDescription !== "" &&
-          eventDescription !== currentEvent.description && {
+          eventDescription !== event.description && {
             description: eventDescription.trim(),
           }),
-        ...(eventAdditionalInfo !== currentEvent.additionalInfo && {
+        ...(eventAdditionalInfo !== event.additionalInfo && {
           additionalInfo: eventAdditionalInfo.trim(),
         }),
         ...(eventCity !== "" &&
-          eventCity?.trim() !== currentEvent.city && {
+          eventCity?.trim() !== event.city && {
             city: Methods.formatHyphensAndSpacesInString(
               Methods.formatCapitalizedName(eventCity)
             ),
           }),
         ...(eventState !== "" &&
-          eventState?.trim() !== currentEvent.stateProvince && {
+          eventState?.trim() !== event.stateProvince && {
             stateProvince: Methods.formatHyphensAndSpacesInString(
               Methods.formatCapitalizedName(eventState)
             ),
           }),
         ...(eventCountry !== "" &&
-          eventCountry !== currentEvent.country && {
+          eventCountry !== event.country && {
             country: eventCountry,
           }),
-        ...(publicity !== currentEvent.publicity && {
+        ...(publicity !== event.publicity && {
           publicity: publicity,
         }),
-        ...(maxParticipants !== currentEvent.maxParticipants && {
+        ...(maxParticipants !== event.maxParticipants && {
           maxParticipants: maxParticipants,
         }),
         ...(eventAddress?.trim() !== "" &&
-          eventAddress?.trim() !== currentEvent.address && {
+          eventAddress?.trim() !== event.address && {
             address: eventAddress?.trim(),
           }),
-        ...(imageOne !== "" &&
-          imageOne !== currentEvent.imageOne && { imageOne: imageOne }),
-        ...(imageTwo !== "" &&
-          imageTwo !== currentEvent.imageTwo && { imageTwo: imageTwo }),
+        ...(imageOne !== "" && imageOne !== event.imageOne && { imageOne: imageOne }),
+        ...(imageTwo !== "" && imageTwo !== event.imageTwo && { imageTwo: imageTwo }),
         ...(imageThree !== "" &&
-          imageThree !== currentEvent.imageThree && { imageThree: imageThree }),
-        ...(relatedInterests !== currentEvent.relatedInterests && {
+          imageThree !== event.imageThree && { imageThree: imageThree }),
+        ...(relatedInterests !== event.relatedInterests && {
           relatedInterests: relatedInterests,
         }),
       };
@@ -546,25 +558,25 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
   const usersWhoAreInvitees = getUsersWhoAreInvitees();
 
   const getChangesMade = (): boolean => {
-    if (currentEvent) {
+    if (editedEvent) {
       return (
-        eventTitle !== currentEvent.title ||
-        eventDescription !== currentEvent.description ||
-        eventAdditionalInfo !== currentEvent.additionalInfo ||
-        eventCity !== currentEvent.city ||
-        eventState !== currentEvent.stateProvince ||
-        eventCountry !== currentEvent.country ||
-        eventDate !== 0 ||
-        eventTime !== 0 ||
-        eventAddress !== currentEvent.address ||
-        maxParticipants !== currentEvent.maxParticipants ||
-        imageOne !== currentEvent.imageOne ||
-        imageTwo !== currentEvent.imageTwo ||
-        imageThree !== currentEvent.imageThree ||
-        publicity !== currentEvent.publicity ||
-        organizers !== currentEvent.organizers ||
-        invitees !== currentEvent.invitees ||
-        relatedInterests !== currentEvent.relatedInterests
+        eventTitle !== editedEvent.title ||
+        eventDescription !== editedEvent.description ||
+        eventAdditionalInfo !== editedEvent.additionalInfo ||
+        eventCity !== editedEvent.city ||
+        eventState !== editedEvent.stateProvince ||
+        eventCountry !== editedEvent.country ||
+        //eventDate !== 0 ||
+        //eventTime !== 0 ||
+        eventAddress !== editedEvent.address ||
+        maxParticipants !== editedEvent.maxParticipants ||
+        imageOne !== editedEvent.imageOne ||
+        imageTwo !== editedEvent.imageTwo ||
+        imageThree !== editedEvent.imageThree ||
+        publicity !== editedEvent.publicity ||
+        !Methods.arraysAreIdentical(organizers, editedEvent.organizers) ||
+        !Methods.arraysAreIdentical(editedEvent.invitees, invitees) ||
+        !Methods.arraysAreIdentical(editedEvent.relatedInterests, relatedInterests)
       );
     }
     return (
@@ -606,9 +618,19 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
     eventCity !== "" &&
     eventState !== "" &&
     eventCountry !== "" &&
-    eventDate !== 0 &&
-    eventTime !== 0 &&
+    //eventDate !== 0 &&
+    //eventTime !== 0 &&
     eventAddress !== "";
+
+  const getSubmitButtonIsDisabled = (): boolean => {
+    if (isLoading) {
+      return true;
+    } else if (event) {
+      return !(changesMade && allRequiredFieldsFilled && areNoErrors);
+    }
+    return !(areNoErrors && allRequiredFieldsFilled);
+  };
+  const submitButtonIsDisabled = getSubmitButtonIsDisabled();
 
   const eventInfos: TEvent = {
     title: eventTitle.trim(),
@@ -653,6 +675,36 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
   }, []);
+
+  useEffect(() => {
+    if (event) {
+      setCurrentEvent(allEvents.filter((ev) => ev.id === event.id)[0]);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAllEvents();
+    setEditedEvent(allEvents.filter((ev) => ev.id === event?.id)[0]);
+  }, [
+    allEvents,
+    currentEvent?.additionalInfo,
+    currentEvent?.address,
+    currentEvent?.city,
+    currentEvent?.country,
+    currentEvent?.description,
+    currentEvent?.imageOne,
+    currentEvent?.imageTwo,
+    currentEvent?.imageThree,
+    currentEvent?.interestedUsers,
+    currentEvent?.invitees,
+    currentEvent?.maxParticipants,
+    currentEvent?.nextEventTime,
+    currentEvent?.organizers,
+    currentEvent?.publicity,
+    currentEvent?.relatedInterests,
+    currentEvent?.stateProvince,
+    currentEvent?.title,
+  ]);
 
   return (
     <form className="add-event-form">
@@ -1112,19 +1164,15 @@ const EventForm = ({ currentEvent }: { currentEvent?: TEvent }) => {
         handleRemoveInterest={handleRemoveEventInterest}
       />
       <div className="form-revert-submit-buttons-container">
-        <button
-          disabled={!changesMade || isLoading}
-          type="reset"
-          onClick={() => handleRevert()}
-        >
+        <button disabled={false} type="reset" onClick={() => handleRevert()}>
           Revert
         </button>
         <button
-          disabled={!(areNoErrors && allRequiredFieldsFilled) || isLoading}
+          disabled={submitButtonIsDisabled}
           onClick={(e) => handleAddEventFormSubmission(e)}
           type="submit"
         >
-          {currentEvent ? "Save Changes" : "Add Event"}
+          {event ? "Save Changes" : "Add Event"}
         </button>
       </div>
     </form>
