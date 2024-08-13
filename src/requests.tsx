@@ -372,7 +372,7 @@ const updateEvent = (
 
   const raw = JSON.stringify(valuesToUpdate);
 
-  return fetch(`http://localhost:3000/users/${event.id}`, {
+  return fetch(`http://localhost:3000/events/${event.id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
