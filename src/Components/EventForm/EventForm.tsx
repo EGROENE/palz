@@ -747,6 +747,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
       <label>
         <p>Description:</p>
         <textarea
+          disabled={isLoading}
           className={
             eventDescriptionError !== "" && showErrors ? "erroneous-field" : undefined
           }
@@ -759,6 +760,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
       <label>
         <p>Additional Info: (optional)</p>
         <textarea
+          disabled={isLoading}
           className={
             eventAdditionalInfoError !== "" && showErrors ? "erroneous-field" : undefined
           }
@@ -824,6 +826,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         <label className="location-countries-dropdown">
           <p>Country:</p>
           <button
+            disabled={isLoading}
             className={
               eventLocationError !== "" && showErrors
                 ? "country-dropdown-button erroneous-field"
@@ -1024,6 +1027,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         <p>
           Co-organizers: (optional){" "}
           {currentUser &&
+            !isLoading &&
             usersWhoAreOrganizers.filter(
               (user) => user.username !== currentUser?.username
             ).length > 0 && (
@@ -1048,6 +1052,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
                   user={user}
                   removeHandler={handleAddRemoveUserAsOrganizer}
                   randomColor={randomColor}
+                  isDisabled={isLoading}
                 />
               ))}
         </div>
@@ -1072,6 +1077,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
           )}
           <div className="co-organizers-invitees-dropdown">
             <button
+              disabled={isLoading}
               type="button"
               onClick={() => setShowPotentialCoOrganizers(!showPotentialCoOrganizers)}
             >
@@ -1123,6 +1129,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
                 user={user}
                 removeHandler={handleAddRemoveUserAsInvitee}
                 randomColor={randomColor}
+                isDisabled={isLoading}
               />
             ))}
         </div>
@@ -1147,6 +1154,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
           )}
           <div className="co-organizers-invitees-dropdown">
             <button
+              disabled={isLoading}
               type="button"
               onClick={() => setShowPotentialInvitees(!showPotentialInvitees)}
             >
@@ -1187,6 +1195,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         newEventInterests={relatedInterests}
         handleAddInterest={handleAddEventInterest}
         handleRemoveInterest={handleRemoveEventInterest}
+        isDisabled={isLoading}
       />
       <div className="form-revert-submit-buttons-container">
         <button
