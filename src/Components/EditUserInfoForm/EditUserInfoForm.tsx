@@ -221,7 +221,6 @@ const EditUserInfoForm = ({
             toast.error("Could not update profile info. Please try again.");
             fetchAllUsers();
           } else {
-            setIsLoading(false);
             toast.success("Profile info updated");
             // Reset allUsers after patch successfully made:
             fetchAllUsers();
@@ -278,7 +277,8 @@ const EditUserInfoForm = ({
             }
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
     } else {
       window.alert("Please fix any form errors, then try again");
     }

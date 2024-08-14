@@ -421,66 +421,68 @@ const EventForm = ({ event }: { event?: TEvent }) => {
     if (areNoErrors) {
       if (event) {
         // When updating an existing event:
-        Requests.updateEvent(event, valuesToUpdate).then((response) => {
-          if (!response.ok) {
-            toast.error("Could not update event. Please try again.");
-            getMostCurrentEvents();
-          } else {
-            setIsLoading(false);
-            toast.success("Event updated!");
-            getMostCurrentEvents();
+        Requests.updateEvent(event, valuesToUpdate)
+          .then((response) => {
+            if (!response.ok) {
+              toast.error("Could not update event. Please try again.");
+              getMostCurrentEvents();
+            } else {
+              toast.success("Event updated!");
+              getMostCurrentEvents();
 
-            /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
-            if (valuesToUpdate?.title) {
-              setEventTitle(valuesToUpdate.title);
-            }
-            /* if (valuesToUpdate?.nextEventTime) {
+              /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
+              if (valuesToUpdate?.title) {
+                setEventTitle(valuesToUpdate.title);
+              }
+              /* if (valuesToUpdate?.nextEventTime) {
               setEventTitle(valuesToUpdate.title)
             } */
-            if (valuesToUpdate?.organizers) {
-              setOrganizers(valuesToUpdate.organizers);
+              if (valuesToUpdate?.organizers) {
+                setOrganizers(valuesToUpdate.organizers);
+              }
+              if (valuesToUpdate?.invitees) {
+                setInvitees(valuesToUpdate.invitees);
+              }
+              if (valuesToUpdate?.description) {
+                setEventDescription(valuesToUpdate.description);
+              }
+              if (valuesToUpdate?.additionalInfo) {
+                setEventAdditionalInfo(valuesToUpdate.additionalInfo);
+              }
+              if (valuesToUpdate?.city) {
+                setEventCity(valuesToUpdate.city);
+              }
+              if (valuesToUpdate?.stateProvince) {
+                setEventState(valuesToUpdate.stateProvince);
+              }
+              if (valuesToUpdate?.country) {
+                setEventCountry(valuesToUpdate.country);
+              }
+              if (valuesToUpdate?.publicity) {
+                setPublicity(valuesToUpdate.publicity);
+              }
+              if (valuesToUpdate?.maxParticipants) {
+                setMaxParticipants(valuesToUpdate.maxParticipants);
+              }
+              if (valuesToUpdate?.address) {
+                setEventAddress(valuesToUpdate.address);
+              }
+              if (valuesToUpdate?.imageOne) {
+                setImageOne(valuesToUpdate.imageOne);
+              }
+              if (valuesToUpdate?.imageTwo) {
+                setImageTwo(valuesToUpdate.imageTwo);
+              }
+              if (valuesToUpdate?.imageThree) {
+                setImageThree(valuesToUpdate.imageThree);
+              }
+              if (valuesToUpdate?.relatedInterests) {
+                setRelatedInterests(valuesToUpdate.relatedInterests);
+              }
             }
-            if (valuesToUpdate?.invitees) {
-              setInvitees(valuesToUpdate.invitees);
-            }
-            if (valuesToUpdate?.description) {
-              setEventDescription(valuesToUpdate.description);
-            }
-            if (valuesToUpdate?.additionalInfo) {
-              setEventAdditionalInfo(valuesToUpdate.additionalInfo);
-            }
-            if (valuesToUpdate?.city) {
-              setEventCity(valuesToUpdate.city);
-            }
-            if (valuesToUpdate?.stateProvince) {
-              setEventState(valuesToUpdate.stateProvince);
-            }
-            if (valuesToUpdate?.country) {
-              setEventCountry(valuesToUpdate.country);
-            }
-            if (valuesToUpdate?.publicity) {
-              setPublicity(valuesToUpdate.publicity);
-            }
-            if (valuesToUpdate?.maxParticipants) {
-              setMaxParticipants(valuesToUpdate.maxParticipants);
-            }
-            if (valuesToUpdate?.address) {
-              setEventAddress(valuesToUpdate.address);
-            }
-            if (valuesToUpdate?.imageOne) {
-              setImageOne(valuesToUpdate.imageOne);
-            }
-            if (valuesToUpdate?.imageTwo) {
-              setImageTwo(valuesToUpdate.imageTwo);
-            }
-            if (valuesToUpdate?.imageThree) {
-              setImageThree(valuesToUpdate.imageThree);
-            }
-            if (valuesToUpdate?.relatedInterests) {
-              setRelatedInterests(valuesToUpdate.relatedInterests);
-            }
-          }
-        });
+          })
+          .catch((error) => console.log(error))
+          .finally(() => setIsLoading(false));
       } else {
         // When adding a newly created event:
         Requests.createEvent(eventInfos)
@@ -490,12 +492,12 @@ const EventForm = ({ event }: { event?: TEvent }) => {
               getMostCurrentEvents();
             } else {
               getMostCurrentEvents();
-              setIsLoading(false);
               toast.success("Event created!");
               navigation(`/${currentUser?.username}/events`);
             }
           })
-          .catch((error) => console.log(error));
+          .catch((error) => console.log(error))
+          .finally(() => setIsLoading(false));
       }
     } else {
       window.alert(
