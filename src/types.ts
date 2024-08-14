@@ -1,5 +1,12 @@
 import React from "react";
 
+export type TThemeColor =
+  | "var(--theme-blue)"
+  | "var(--theme-green)"
+  | "var(--theme-red)"
+  | "var(--theme-purple)"
+  | "var(--theme-orange)";
+
 export type TUser = {
   id?: number | string;
   firstName: string | undefined;
