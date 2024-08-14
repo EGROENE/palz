@@ -2,20 +2,36 @@ import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import SignupForm from "../LoginForms/SignupForm/SignupForm";
 import LoginForm from "../LoginForms/LoginForm/LoginForm";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { TThemeColor } from "../../types";
 
 const LoginPage = () => {
   const { theme, toggleTheme, fetchAllUsers } = useMainContext();
   const { signupIsSelected, toggleSignupLogin, resetFormFieldsAndErrors } =
     useUserContext();
 
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
   useEffect(() => {
     fetchAllUsers(); // get most up-to-date allUsers
+
     resetFormFieldsAndErrors();
+
     // Display login form by default
     if (signupIsSelected) {
       toggleSignupLogin();
     }
+
+    // Set random color:
+    const themeColors: TThemeColor[] = [
+      "var(--theme-blue)",
+      "var(--theme-green)",
+      "var(--theme-red)",
+      "var(--theme-purple)",
+      "var(--theme-orange)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
   }, []);
 
   return (
@@ -62,7 +78,11 @@ const LoginPage = () => {
             )}
           </div>
         </div>
-        {signupIsSelected ? <SignupForm /> : <LoginForm />}
+        {signupIsSelected ? (
+          <SignupForm randomColor={randomColor} />
+        ) : (
+          <LoginForm randomColor={randomColor} />
+        )}
         <p>
           {!signupIsSelected ? "Don't have an account?" : "Already have an account?"}
           <span className="link-to-other-form" onClick={() => toggleSignupLogin()}>
