@@ -181,13 +181,9 @@ const InterestsSection = ({
         {savedInterests?.length ? (
           Methods.getStringArraySortedAlphabetically(savedInterests)?.map((interest) => (
             <span
-              className="tab"
+              className={isDisabled ? "tab disabled" : "tab"}
               key={interest}
-              style={
-                isDisabled
-                  ? { backgroundColor: randomColor, opacity: 0.8 }
-                  : { backgroundColor: randomColor }
-              }
+              style={{ backgroundColor: randomColor }}
             >
               {interest}
 

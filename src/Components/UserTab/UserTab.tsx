@@ -16,12 +16,8 @@ const UserTab = ({
     <div
       title={`${user.firstName} ${user.lastName}`}
       key={user.id}
-      style={
-        !isDisabled
-          ? { backgroundColor: randomColor }
-          : { opacity: 0.7, backgroundColor: randomColor }
-      }
-      className="tab user"
+      style={{ backgroundColor: randomColor }}
+      className={isDisabled ? "tab user disabled" : "tab user"}
     >
       <img src={`${user.profileImage}`} alt="profile pic" />
       <span>{user.username}</span>
