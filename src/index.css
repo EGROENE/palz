@@ -99,7 +99,7 @@ button:focus-visible {
 }
 
 button:disabled {
-  opacity: 0.4;
+  opacity: 0.6;
 }
 
 button:disabled:hover {
@@ -131,6 +131,16 @@ input {
 
 input:focus {
   outline: 2px solid white;
+}
+
+input:disabled,
+textarea:disabled {
+  opacity: 0.6;
+}
+
+input:disabled:hover,
+textarea:disabled:hover {
+  cursor: not-allowed;
 }
 
 i:hover {
