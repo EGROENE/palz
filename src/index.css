@@ -129,8 +129,10 @@ input {
   font-size: 1.1rem;
 }
 
-input:focus {
-  outline: 2px solid white;
+input:focus,
+textarea:focus {
+  outline: none;
+  border: none;
 }
 
 input:disabled,
