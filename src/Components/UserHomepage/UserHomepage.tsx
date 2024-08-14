@@ -2,7 +2,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import { useEffect } from "react";
-import NavBar from "../NavBar/NavBar";
 import EventCard from "../EventCard/EventCard";
 import { TEvent } from "../../types";
 import Methods from "../../methods";
@@ -47,7 +46,6 @@ const UserHomepage = () => {
   return (
     currentUser && (
       <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
-        <NavBar />
         {allCurrentUserEvents.length ? (
           <div className="upcoming-events-hero">
             <h1>Upcoming Events ({allCurrentUserEvents.length})</h1>

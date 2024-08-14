@@ -5,7 +5,6 @@ import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import ImageSlideshow from "../ImageSlideshow/ImageSlideshow";
-import NavBar from "../NavBar/NavBar";
 import UserListModal from "../UserListModal/UserListModal";
 
 const EventPage = () => {
@@ -120,7 +119,6 @@ const EventPage = () => {
 
   return (
     <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
-      <NavBar />
       {event ? (
         <>
           {showInvitees && (

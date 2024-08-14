@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
-import NavBar from "../NavBar/NavBar";
 import EditUserInfoForm from "../EditUserInfoForm/EditUserInfoForm";
 import InterestsSection from "../InterestsSection/InterestsSection";
 import Requests from "../../requests";
@@ -102,7 +101,6 @@ const UserSettings = () => {
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
-      <NavBar />
       <h1>Settings</h1>
       <EditUserInfoForm
         randomColor={randomColor}

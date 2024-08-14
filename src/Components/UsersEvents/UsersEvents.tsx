@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
-import NavBar from "../NavBar/NavBar";
 import EventCard from "../EventCard/EventCard";
 import { Link } from "react-router-dom";
 import Methods from "../../methods";
@@ -32,7 +31,6 @@ const UsersEvents = () => {
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
-      <NavBar />
       <h1>Your Events</h1>
       {usersEvents.length > 0 ? (
         <div className="all-events-container">

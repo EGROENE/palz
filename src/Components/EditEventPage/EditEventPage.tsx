@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import { TEvent } from "../../types";
-import NavBar from "../NavBar/NavBar";
 import EventForm from "../EventForm/EventForm";
 
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
@@ -24,7 +23,6 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
-      <NavBar />
       <h1>Edit Event</h1>
       <EventForm event={currentEvent} />
     </div>
