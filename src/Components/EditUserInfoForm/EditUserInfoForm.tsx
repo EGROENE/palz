@@ -9,7 +9,15 @@ import { countries, phoneNumberLengthRanges } from "../../constants";
 import toast from "react-hot-toast";
 import Methods from "../../methods";
 
-const EditUserInfoForm = ({ randomColor, isLoading, setIsLoading }: { randomColor: string, isLoading: boolean, setIsLoading: React.Dispatch<React.SetStateAction<boolean>> }) => {
+const EditUserInfoForm = ({
+  randomColor,
+  isLoading,
+  setIsLoading,
+}: {
+  randomColor: string;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const { currentUser, setCurrentUser, fetchAllUsers, allUsers } = useMainContext();
   const {
     handleCityStateCountryInput,
@@ -1073,14 +1081,16 @@ const EditUserInfoForm = ({ randomColor, isLoading, setIsLoading }: { randomColo
             Phone Number:{" "}
             {(currentUser?.phoneCountry !== "" ||
               currentUser?.phoneCountryCode !== "" ||
-              currentUser?.phoneNumberWithoutCountryCode !== "") && (
-              <span onClick={(e) => handleDeletePhoneNumber(e)} className="remove-data">
-                Remove
-              </span>
-            )}
+              currentUser?.phoneNumberWithoutCountryCode !== "") &&
+              !isLoading && (
+                <span onClick={(e) => handleDeletePhoneNumber(e)} className="remove-data">
+                  Remove
+                </span>
+              )}
           </p>
           <div className="phone-input-elements">
             <button
+              disabled={isLoading}
               className="country-dropdown-button"
               type="button"
               onClick={() => setShowCountryPhoneCodes(!showCountryPhoneCodes)}
@@ -1204,6 +1214,7 @@ const EditUserInfoForm = ({ randomColor, isLoading, setIsLoading }: { randomColo
           <label className="location-countries-dropdown">
             <p>Country:</p>
             <button
+              disabled={isLoading}
               className="country-dropdown-button"
               type="button"
               onClick={() => setShowUserLocationCountries(!showUserLocationCountries)}
@@ -1272,7 +1283,8 @@ const EditUserInfoForm = ({ randomColor, isLoading, setIsLoading }: { randomColo
           </label>
           {currentUser?.city !== "" &&
             currentUser?.stateProvince !== "" &&
-            currentUser?.country !== "" && (
+            currentUser?.country !== "" &&
+            !isLoading && (
               <span
                 style={
                   !showUserLocationCountries
@@ -1299,7 +1311,7 @@ const EditUserInfoForm = ({ randomColor, isLoading, setIsLoading }: { randomColo
           <label>
             <p>
               Facebook:{" "}
-              {currentUser?.facebook !== "" && (
+              {currentUser?.facebook !== "" && !isLoading && (
                 <span
                   onClick={(e) => handleDeleteSocialMedium(e, "facebook")}
                   className="remove-data"
@@ -1321,7 +1333,7 @@ const EditUserInfoForm = ({ randomColor, isLoading, setIsLoading }: { randomColo
           <label>
             <p>
               Instagram:{" "}
-              {currentUser?.instagram !== "" && (
+              {currentUser?.instagram !== "" && !isLoading && (
                 <span
                   onClick={(e) => handleDeleteSocialMedium(e, "instagram")}
                   className="remove-data"
@@ -1343,7 +1355,7 @@ const EditUserInfoForm = ({ randomColor, isLoading, setIsLoading }: { randomColo
           <label>
             <p>
               X:{" "}
-              {currentUser?.x !== "" && (
+              {currentUser?.x !== "" && !isLoading && (
                 <span
                   onClick={(e) => handleDeleteSocialMedium(e, "x")}
                   className="remove-data"
@@ -1366,7 +1378,7 @@ const EditUserInfoForm = ({ randomColor, isLoading, setIsLoading }: { randomColo
         <label>
           <p>
             About:{" "}
-            {currentUser?.about !== "" && (
+            {currentUser?.about !== "" && !isLoading && (
               <span onClick={(e) => handleDeleteUserAbout(e)} className="remove-data">
                 Remove
               </span>
