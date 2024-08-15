@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
-import { TUser, TEvent, TEventValuesToUpdate } from "../../types";
+import { TUser, TEvent, TEventValuesToUpdate, TThemeColor } from "../../types";
 import Methods from "../../methods";
 import { countries } from "../../constants";
 import Requests from "../../requests";
@@ -10,7 +10,13 @@ import toast from "react-hot-toast";
 import UserTab from "../UserTab/UserTab";
 import InterestsSection from "../InterestsSection/InterestsSection";
 
-const EventForm = ({ event }: { event?: TEvent }) => {
+const EventForm = ({
+  randomColor,
+  event,
+}: {
+  randomColor: TThemeColor | undefined;
+  event?: TEvent;
+}) => {
   const {
     allUsers,
     currentUser,
@@ -21,6 +27,44 @@ const EventForm = ({ event }: { event?: TEvent }) => {
   } = useMainContext();
   const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
   const navigation = useNavigate();
+
+  const [focusedElement, setFocusedElement] = useState<
+    | "title"
+    | "description"
+    | "additionalInfo"
+    | "city"
+    | "state"
+    | "address"
+    | "date"
+    | "time"
+    | "maxParticipants"
+    | "public"
+    | "private"
+    | "imageOne"
+    | "imageTwo"
+    | "imageThree"
+    | "coOrganizers"
+    | "invitees"
+    | undefined
+  >();
+  // REFS:
+  const titleRef = useRef(null);
+  const descriptionRef = useRef(null);
+  const additionalInfoRef = useRef(null);
+  const cityRef = useRef(null);
+  const stateRef = useRef(null);
+  const addressRef = useRef(null);
+  const dateRef = useRef<HTMLInputElement | null>(null);
+  const timeRef = useRef<HTMLInputElement | null>(null);
+  const maxParticipantsRef = useRef(null);
+  const publicRef = useRef(null);
+  const privateRef = useRef(null);
+  const imageOneRef = useRef(null);
+  const imageTwoRef = useRef(null);
+  const imageThreeRef = useRef(null);
+  const coOrganizersRef = useRef(null);
+  const inviteesRef = useRef(null);
+  ///////
 
   const allOtherUsers = allUsers.filter((user) => user.id !== currentUser?.id);
   /* otherUsers is eventually the resorted version of allOtherUsers (with user's palz shown on top), followed by all others; used to display potential co-organizers in dropdown */
@@ -98,10 +142,6 @@ const EventForm = ({ event }: { event?: TEvent }) => {
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  /* Get ref for these fields, since their values are not being set to their corresponding state values, which are epochs in MS & these are not controlled inputs. If event, initialize to date/time of that; else, initialize to null. */
-  const dateField = useRef<HTMLInputElement | null>(null);
-  const timeField = useRef<HTMLInputElement | null>(null);
 
   // Function to reset otherUsers to its original value, w/o filters from coOrganizersSearchQuery
   const setPotentialCoOrganizersAndOrInviteesToOriginalValue = (
@@ -347,9 +387,9 @@ const EventForm = ({ event }: { event?: TEvent }) => {
 
   const handleRevert = (): void => {
     // Reset date/time fields
-    if (dateField.current !== null && timeField.current !== null) {
-      dateField.current.value = "mm/dd/yyyy";
-      timeField.current.value = "--:--";
+    if (dateRef.current !== null && timeRef.current !== null) {
+      dateRef.current.value = "mm/dd/yyyy";
+      timeRef.current.value = "--:--";
     }
 
     if (event) {
@@ -703,24 +743,12 @@ const EventForm = ({ event }: { event?: TEvent }) => {
     relatedInterests: relatedInterests,
   };
 
-  const [randomColor, setRandomColor] = useState<string>("");
-
   useEffect(() => {
     setPotentialCoOrganizersAndOrInviteesToOriginalValue();
 
     if (showSidebar) {
       setShowSidebar(false);
     }
-
-    const themeColors = [
-      "var(--theme-blue)",
-      "var(--theme-green)",
-      "var(--theme-red)",
-      "var(--theme-purple)",
-      "var(--theme-orange)",
-    ];
-    const randomNumber = Math.floor(Math.random() * themeColors.length);
-    setRandomColor(themeColors[randomNumber]);
   }, []);
 
   useEffect(() => {
@@ -738,6 +766,13 @@ const EventForm = ({ event }: { event?: TEvent }) => {
       <label>
         <p>Title:</p>
         <input
+          ref={titleRef}
+          onFocus={() => setFocusedElement("title")}
+          style={
+            focusedElement === "title"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
           disabled={isLoading}
           className={eventTitleError !== "" && showErrors ? "erroneous-field" : undefined}
           value={eventTitle}
@@ -749,6 +784,13 @@ const EventForm = ({ event }: { event?: TEvent }) => {
       <label>
         <p>Description:</p>
         <textarea
+          ref={descriptionRef}
+          onFocus={() => setFocusedElement("description")}
+          style={
+            focusedElement === "description"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
           disabled={isLoading}
           className={
             eventDescriptionError !== "" && showErrors ? "erroneous-field" : undefined
@@ -762,6 +804,13 @@ const EventForm = ({ event }: { event?: TEvent }) => {
       <label>
         <p>Additional Info: (optional)</p>
         <textarea
+          ref={additionalInfoRef}
+          onFocus={() => setFocusedElement("additionalInfo")}
+          style={
+            focusedElement === "additionalInfo"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
           disabled={isLoading}
           className={
             eventAdditionalInfoError !== "" && showErrors ? "erroneous-field" : undefined
@@ -776,6 +825,13 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         <label className="location-input">
           <p>City:</p>
           <input
+            ref={cityRef}
+            onFocus={() => setFocusedElement("city")}
+            style={
+              focusedElement === "city"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
             disabled={isLoading}
             className={
               eventLocationError !== "" && showErrors ? "erroneous-field" : undefined
@@ -803,6 +859,13 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         <label className="location-input">
           <p>State/Province:</p>
           <input
+            ref={stateRef}
+            onFocus={() => setFocusedElement("state")}
+            style={
+              focusedElement === "state"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
             disabled={isLoading}
             className={
               eventLocationError !== "" && showErrors ? "erroneous-field" : undefined
@@ -903,6 +966,13 @@ const EventForm = ({ event }: { event?: TEvent }) => {
       <label>
         <p>Address:</p>
         <input
+          ref={addressRef}
+          onFocus={() => setFocusedElement("address")}
+          style={
+            focusedElement === "address"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
           disabled={isLoading}
           className={
             eventAddressError !== "" && showErrors ? "erroneous-field" : undefined
@@ -917,8 +987,14 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         <label>
           <p>Date:</p>{" "}
           <input
+            ref={dateRef}
+            onFocus={() => setFocusedElement("date")}
+            style={
+              focusedElement === "date"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
             disabled={isLoading}
-            ref={dateField}
             className={
               (eventDateTimeError === "Please fill out this field" && showErrors) ||
               eventDateTimeError === "Event can only be set at least 1 hour in advance"
@@ -933,7 +1009,13 @@ const EventForm = ({ event }: { event?: TEvent }) => {
           <p>Time:</p>
           <input
             disabled={isLoading}
-            ref={timeField}
+            ref={timeRef}
+            onFocus={() => setFocusedElement("time")}
+            style={
+              focusedElement === "time"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
             className={
               (eventDateTimeError === "Please fill out this field" && showErrors) ||
               eventDateTimeError === "Event can only be set at least 1 hour in advance"
@@ -954,6 +1036,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
       <label>
         <p>Maximum Participants: (optional)</p>
         <input
+          ref={maxParticipantsRef}
           disabled={isLoading}
           className={
             maxParticipants && !(Number(maxParticipants) > 0)
@@ -974,6 +1057,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         <label>
           <span>Public</span>
           <input
+            ref={publicRef}
             disabled={isLoading}
             style={{ width: "unset" }}
             onChange={() => handlePublicPrivateBoxChecking("public")}
@@ -984,6 +1068,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         <label>
           <span>Private</span>
           <input
+            ref={privateRef}
             disabled={isLoading}
             style={{ width: "unset" }}
             onChange={() => handlePublicPrivateBoxChecking("private")}
@@ -995,6 +1080,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
       <label>
         <p>Image One: (optional)</p>
         <input
+          ref={imageOneRef}
           disabled={isLoading}
           className={imageOneError !== "" ? "erroneous-field" : undefined}
           value={imageOne}
@@ -1006,6 +1092,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
       <label>
         <p>Image Two: (optional)</p>
         <input
+          ref={imageTwoRef}
           disabled={isLoading}
           className={imageTwoError !== "" ? "erroneous-field" : undefined}
           value={imageTwo}
@@ -1017,6 +1104,7 @@ const EventForm = ({ event }: { event?: TEvent }) => {
       <label>
         <p>Image Three: (optional)</p>
         <input
+          ref={imageThreeRef}
           disabled={isLoading}
           className={imageThreeError !== "" ? "erroneous-field" : undefined}
           value={imageThree}
@@ -1060,8 +1148,9 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         </div>
         <div className="co-organizers-invitees-inputs">
           <input
+            ref={coOrganizersRef}
             disabled={isLoading}
-            value={inviteesSearchQuery}
+            value={coOrganizersSearchQuery}
             onChange={(e) =>
               handlePotentialCoOrganizersAndInviteesSearchQuery(e, "co-organizers")
             }
@@ -1137,8 +1226,9 @@ const EventForm = ({ event }: { event?: TEvent }) => {
         </div>
         <div className="co-organizers-invitees-inputs">
           <input
+            ref={inviteesRef}
             disabled={isLoading}
-            value={coOrganizersSearchQuery}
+            value={inviteesSearchQuery}
             onChange={(e) =>
               handlePotentialCoOrganizersAndInviteesSearchQuery(e, "invitees")
             }

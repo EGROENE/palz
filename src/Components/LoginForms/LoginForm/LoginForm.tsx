@@ -3,9 +3,10 @@ import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
+import { TThemeColor } from "../../../types";
 
-const LoginForm = () => {
+const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
   const { currentUser, welcomeMessageDisplayTime, fetchAllUsers } = useMainContext();
 
   const {
@@ -29,8 +30,17 @@ const LoginForm = () => {
 
   const navigation = useNavigate();
 
+  const [focusedElement, setFocusedElement] = useState<
+    "emailUsername" | "password" | undefined
+  >();
+
+  const emailUsernameRef = useRef(null);
+  const passwordRef = useRef(null);
+
   useEffect(() => {
-    fetchAllUsers();
+    fetchAllUsers(); // get most up-to-date allUsers
+
+    // Handle inputs that are autocompleted on initial render:
     if (emailAddress && emailAddress !== "") {
       handleUsernameOrEmailInput(emailAddress);
     }
@@ -55,6 +65,13 @@ const LoginForm = () => {
       <label>
         <p>Username or E-Mail Address:</p>
         <input
+          onFocus={() => setFocusedElement("emailUsername")}
+          ref={emailUsernameRef}
+          style={
+            focusedElement === "emailUsername"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
           autoComplete="on"
           onChange={(e) => handleUsernameOrEmailInput(e.target.value)}
           value={loginMethod === "username" ? username : emailAddress}
@@ -78,6 +95,13 @@ const LoginForm = () => {
         <p>Password:</p>
         <div className="password-input">
           <input
+            ref={passwordRef}
+            onFocus={() => setFocusedElement("password")}
+            style={
+              focusedElement === "password"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
             autoComplete="current-password"
             onChange={(e) => handlePasswordInput(e.target.value, "login")}
             value={password}

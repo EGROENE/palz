@@ -3,10 +3,11 @@ import ClosedEye from "../../Eyecons/ClosedEye/ClosedEye";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { TThemeColor } from "../../../types";
 
 // should have isOnSignup param
-const SignupForm = () => {
+const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
   const { currentUser, welcomeMessageDisplayTime, fetchAllUsers } = useMainContext();
   const {
     resetFormFieldsAndErrors,
@@ -50,6 +51,25 @@ const SignupForm = () => {
     );
   };
 
+  const [focusedElement, setFocusedElement] = useState<
+    | "firstName"
+    | "lastName"
+    | "username"
+    | "email"
+    | "password"
+    | "confirmPassword"
+    | undefined
+  >();
+
+  // REFS:
+  const firstNameRef = useRef(null);
+  const lastNameRef = useRef(null);
+  const usernameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
+  ////////
+
   useEffect(() => {
     fetchAllUsers();
     resetFormFieldsAndErrors();
@@ -64,6 +84,13 @@ const SignupForm = () => {
         <label>
           <p>First Name:</p>
           <input
+            ref={firstNameRef}
+            onFocus={() => setFocusedElement("firstName")}
+            style={
+              focusedElement === "firstName"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
             autoComplete="given-name"
             onChange={(e) => handleNameInput(e.target.value, true, "signup")}
             value={firstName}
@@ -81,6 +108,13 @@ const SignupForm = () => {
         <label>
           <p>Last Name:</p>
           <input
+            ref={lastNameRef}
+            onFocus={() => setFocusedElement("lastName")}
+            style={
+              focusedElement === "lastName"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
             autoComplete="family-name"
             onChange={(e) => handleNameInput(e.target.value, false, "signup")}
             type="text"
@@ -111,6 +145,13 @@ const SignupForm = () => {
           </p>
         )}
         <input
+          ref={usernameRef}
+          onFocus={() => setFocusedElement("username")}
+          style={
+            focusedElement === "username"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
           autoComplete="username"
           title="Must be 4-20 characters long & contain only alphanumeric characters"
           onChange={(e) => handleUsernameInput(e.target.value, "signup")}
@@ -127,6 +168,13 @@ const SignupForm = () => {
       <label>
         <p>E-Mail Address:</p>
         <input
+          ref={emailRef}
+          onFocus={() => setFocusedElement("email")}
+          style={
+            focusedElement === "email"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
           autoComplete="email"
           onChange={(e) => handleEmailAddressInput(e.target.value, "signup")}
           value={emailAddress}
@@ -160,6 +208,13 @@ const SignupForm = () => {
 
         <div className="password-input">
           <input
+            ref={passwordRef}
+            onFocus={() => setFocusedElement("password")}
+            style={
+              focusedElement === "password"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
             autoComplete="off"
             onChange={(e) => handlePasswordInput(e.target.value, "signup")}
             value={password}
@@ -183,6 +238,13 @@ const SignupForm = () => {
         <p>Confirm Password: </p>
         <div className="password-input">
           <input
+            ref={confirmPasswordRef}
+            onFocus={() => setFocusedElement("confirmPassword")}
+            style={
+              focusedElement === "confirmPassword"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
             autoComplete="off"
             onChange={(e) => handleConfirmationPasswordInput(e.target.value, "signup")}
             value={confirmationPassword}

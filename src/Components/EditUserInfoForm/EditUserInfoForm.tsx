@@ -1,4 +1,5 @@
 import React from "react";
+import { useRef } from "react";
 import OpenEye from "../Eyecons/OpenEye/OpenEye";
 import ClosedEye from "../Eyecons/ClosedEye/ClosedEye";
 import { useUserContext } from "../../Hooks/useUserContext";
@@ -8,13 +9,14 @@ import Requests from "../../requests";
 import { countries, phoneNumberLengthRanges } from "../../constants";
 import toast from "react-hot-toast";
 import Methods from "../../methods";
+import { TThemeColor } from "../../types";
 
 const EditUserInfoForm = ({
   randomColor,
   isLoading,
   setIsLoading,
 }: {
-  randomColor: string;
+  randomColor: TThemeColor | undefined;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
@@ -89,12 +91,44 @@ const EditUserInfoForm = ({
     setUserAboutError,
   } = useUserContext();
 
+  // REFS
+  const firstNameRef = useRef(null);
+  const lastNameRef = useRef(null);
+  const usernameRef = useRef(null);
+  const emailRef = useRef(null);
+  const phoneNumberRef = useRef(null);
+  const cityRef = useRef(null);
+  const stateRef = useRef(null);
+  const facebookRef = useRef(null);
+  const instagramRef = useRef(null);
+  const xRef = useRef(null);
+  const aboutRef = useRef(null);
+  const passwordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
+  /////////
+
   const [phoneFieldMinLength, setPhoneFieldMinLength] = useState<number>(1);
   const [phoneFieldMaxLength, setPhoneFieldMaxLength] = useState<number>(13);
 
   const [showCountryPhoneCodes, setShowCountryPhoneCodes] = useState<boolean>(false);
   const [showUserLocationCountries, setShowUserLocationCountries] =
     useState<boolean>(false);
+  const [focusedElement, setFocusedElement] = useState<
+    | "firstName"
+    | "lastName"
+    | "username"
+    | "email"
+    | "phoneNumber"
+    | "city"
+    | "state"
+    | "facebook"
+    | "instagram"
+    | "x"
+    | "about"
+    | "password"
+    | "confirmPassword"
+    | undefined
+  >();
 
   // If user data has changed, setCurrentUser:
   useEffect(() => {
@@ -1003,6 +1037,13 @@ const EditUserInfoForm = ({
           <label>
             <p>First Name:</p>
             <input
+              onFocus={() => setFocusedElement("firstName")}
+              style={
+                focusedElement === "firstName"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              ref={firstNameRef}
               disabled={isLoading}
               autoComplete="given-name"
               onChange={(e) => handleNameInput(e.target.value, true, "edit-user-info")}
@@ -1019,6 +1060,13 @@ const EditUserInfoForm = ({
           <label>
             <p>Last Name:</p>
             <input
+              onFocus={() => setFocusedElement("lastName")}
+              style={
+                focusedElement === "lastName"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              ref={lastNameRef}
               disabled={isLoading}
               autoComplete="family-name"
               onChange={(e) => handleNameInput(e.target.value, false, "edit-user-info")}
@@ -1050,6 +1098,13 @@ const EditUserInfoForm = ({
             </p>
           )}
           <input
+            onFocus={() => setFocusedElement("username")}
+            style={
+              focusedElement === "username"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
+            ref={usernameRef}
             disabled={isLoading}
             autoComplete="username"
             title="Must be 4-20 characters long & contain only alphanumeric characters"
@@ -1065,6 +1120,13 @@ const EditUserInfoForm = ({
         <label>
           <p>E-Mail Address:</p>
           <input
+            onFocus={() => setFocusedElement("email")}
+            style={
+              focusedElement === "email"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
+            ref={emailRef}
             disabled={isLoading}
             autoComplete="email"
             onChange={(e) => handleEmailAddressInput(e.target.value, "edit-user-info")}
@@ -1118,6 +1180,13 @@ const EditUserInfoForm = ({
             </button>
             <div className="phone-without-country-code-element">
               <input
+                onFocus={() => setFocusedElement("phoneNumber")}
+                style={
+                  focusedElement === "phoneNumber"
+                    ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                    : undefined
+                }
+                ref={phoneNumberRef}
                 disabled={isLoading}
                 autoComplete="off"
                 onChange={(e) => handlePhoneNumberInput("number-without-country-code", e)}
@@ -1165,6 +1234,13 @@ const EditUserInfoForm = ({
           <label className="location-input">
             <p>City:</p>
             <input
+              onFocus={() => setFocusedElement("city")}
+              style={
+                focusedElement === "city"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              ref={cityRef}
               inputMode="text"
               className={isLocationError ? "erroneous-field" : undefined}
               onChange={(e) =>
@@ -1190,6 +1266,13 @@ const EditUserInfoForm = ({
           <label className="location-input">
             <p>State/Province:</p>
             <input
+              onFocus={() => setFocusedElement("state")}
+              style={
+                focusedElement === "state"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              ref={stateRef}
               inputMode="text"
               className={isLocationError ? "erroneous-field" : undefined}
               onChange={(e) =>
@@ -1321,6 +1404,13 @@ const EditUserInfoForm = ({
               )}
             </p>
             <input
+              onFocus={() => setFocusedElement("facebook")}
+              style={
+                focusedElement === "facebook"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              ref={facebookRef}
               disabled={isLoading}
               type="url"
               value={facebook}
@@ -1343,6 +1433,13 @@ const EditUserInfoForm = ({
               )}
             </p>
             <input
+              onFocus={() => setFocusedElement("instagram")}
+              style={
+                focusedElement === "instagram"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              ref={instagramRef}
               disabled={isLoading}
               type="url"
               value={instagram}
@@ -1365,6 +1462,13 @@ const EditUserInfoForm = ({
               )}
             </p>
             <input
+              onFocus={() => setFocusedElement("x")}
+              style={
+                focusedElement === "x"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              ref={xRef}
               disabled={isLoading}
               type="url"
               value={x}
@@ -1385,6 +1489,13 @@ const EditUserInfoForm = ({
             )}
           </p>
           <textarea
+            onFocus={() => setFocusedElement("about")}
+            style={
+              focusedElement === "about"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
+            ref={aboutRef}
             disabled={isLoading}
             value={userAbout}
             className={userAboutError !== "" ? "erroneous-field" : undefined}
@@ -1414,6 +1525,13 @@ const EditUserInfoForm = ({
 
           <div className="password-input">
             <input
+              onFocus={() => setFocusedElement("password")}
+              style={
+                focusedElement === "password"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              ref={passwordRef}
               disabled={isLoading}
               autoComplete="off"
               onChange={(e) => handlePasswordInput(e.target.value, "edit-user-info")}
@@ -1437,6 +1555,13 @@ const EditUserInfoForm = ({
             <p>Confirm New Password:</p>
             <div className="password-input">
               <input
+                onFocus={() => setFocusedElement("confirmPassword")}
+                style={
+                  focusedElement === "confirmPassword" && confirmationPasswordError === ""
+                    ? { boxShadow: "0px 0px 10px 2px randomColor", outline: "none" }
+                    : undefined
+                }
+                ref={confirmPasswordRef}
                 disabled={isLoading}
                 autoComplete="off"
                 onChange={(e) =>
