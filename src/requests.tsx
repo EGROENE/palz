@@ -1,4 +1,4 @@
-import { TUser, TEvent, TEventValuesToUpdate } from "./types";
+import { TUser, TEvent, TEventValuesToUpdate, TUserValuesToUpdate } from "./types";
 
 const getAllUsers = (): Promise<TUser[]> => {
   return fetch("http://localhost:3000/users", {
@@ -61,22 +61,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
 
 const patchUpdatedUserInfo = (
   user: TUser | undefined,
-  valuesToUpdate: {
-    "firstName"?: string | undefined;
-    "lastName"?: string | undefined;
-    "username"?: string | undefined;
-    "emailAddress"?: string | undefined;
-    "password"?: string | undefined;
-    "phoneCountry"?: string | undefined;
-    "phoneCountryCode"?: string | undefined;
-    "phoneNumberWithoutCountryCode"?: string | undefined;
-    "city"?: string | undefined;
-    "stateProvince"?: string | undefined;
-    "country"?: string | undefined;
-    "facebook"?: string | undefined;
-    "instagram"?: string | undefined;
-    "x"?: string | undefined;
-  }
+  valuesToUpdate: TUserValuesToUpdate
 ): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
