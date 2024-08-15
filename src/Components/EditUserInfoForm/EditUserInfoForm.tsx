@@ -9,7 +9,7 @@ import Requests from "../../requests";
 import { countries, phoneNumberLengthRanges } from "../../constants";
 import toast from "react-hot-toast";
 import Methods from "../../methods";
-import { TThemeColor } from "../../types";
+import { TThemeColor, TUserValuesToUpdate } from "../../types";
 
 const EditUserInfoForm = ({
   randomColor,
@@ -977,7 +977,7 @@ const EditUserInfoForm = ({
     userAbout !== currentUser?.about;
 
   // If a data point is updated, it is used in PATCH request to update its part of the user's data object in DB
-  const valuesToUpdate = {
+  const valuesToUpdate: TUserValuesToUpdate = {
     ...(firstName?.trim() !== "" &&
       firstName !== currentUser?.firstName && {
         firstName: Methods.formatHyphensAndSpacesInString(
