@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useMainContext } from "../../Hooks/useMainContext";
-import { TEvent } from "../../types";
+import { TEvent, TThemeColor } from "../../types";
 import Methods from "../../methods";
 import InterestsModal from "../InterestsModal/InterestsModal";
 
 type InterestsSectionProps = {
-  randomColor: string;
+  randomColor: TThemeColor | undefined;
   interestsRelation: "event" | "user";
   currentEvent?: TEvent;
   newEventInterests?: string[];
