@@ -80,9 +80,12 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
           refinedOrganizers.push(organizer);
         }
       }
-      if (event.nextEventTime < now || refinedOrganizers.length === 0) {
+      if (refinedOrganizers.length === 0) {
         Requests.deleteEvent(event);
       }
+      /* if (event.nextEventTime < now || refinedOrganizers.length === 0) {
+        Requests.deleteEvent(event);
+      } */
     }
     fetchAllEvents();
   };
