@@ -6,13 +6,14 @@ import EditUserInfoForm from "../EditUserInfoForm/EditUserInfoForm";
 import InterestsSection from "../InterestsSection/InterestsSection";
 import Requests from "../../requests";
 import toast from "react-hot-toast";
+import { TThemeColor } from "../../types";
 
 const UserSettings = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // Set random color:
-  const [randomColor, setRandomColor] = useState<string>("");
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
-    const themeColors = [
+    const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
       "var(--theme-green)",
       "var(--theme-red)",
