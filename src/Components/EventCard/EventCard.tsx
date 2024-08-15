@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
-import { TEvent } from "../../types";
+import { TEvent, TThemeColor } from "../../types";
 import { Link } from "react-router-dom";
 
 const EventCard = ({ event }: { event: TEvent }) => {
-  const [randomColor, setRandomColor] = useState<string>("");
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   const { currentUser, allUsers, setCurrentEvent } = useMainContext();
   const { handleAddUserRSVP, handleDeleteUserRSVP, handleRemoveInvitee } =
@@ -15,7 +15,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   // Set color of event card's border randomly:
   useEffect(() => {
-    const themeColors = [
+    const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
       "var(--theme-green)",
       "var(--theme-red)",

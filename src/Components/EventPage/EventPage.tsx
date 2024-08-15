@@ -1,4 +1,4 @@
-import { TEvent, TUser } from "../../types";
+import { TEvent, TThemeColor, TUser } from "../../types";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
@@ -38,10 +38,10 @@ const EventPage = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
-  const [randomColor, setRandomColor] = useState<string>("");
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
     getMostCurrentEvents();
-    const themeColors = [
+    const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
       "var(--theme-green)",
       "var(--theme-red)",

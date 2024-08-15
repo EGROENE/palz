@@ -2,14 +2,15 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useMainContext } from "../../Hooks/useMainContext";
 import { useUserContext } from "../../Hooks/useUserContext";
+import { TThemeColor } from "../../types";
 
 const Sidebar = () => {
   const { currentUser, theme, toggleTheme } = useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
-  const [randomColor, setRandomColor] = useState<string>("");
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   useEffect(() => {
-    const themeColors = [
+    const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
       "var(--theme-green)",
       "var(--theme-red)",

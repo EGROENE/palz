@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { TThemeColor } from "../../types";
 
 type TDirection = "next" | "prev";
 
@@ -11,7 +12,7 @@ const ImageSlideshow = ({
         url: string | undefined;
       }[]
     | undefined;
-  randomColor: string;
+  randomColor: TThemeColor | undefined;
 }) => {
   const [imgIndex, setImgIndex] = useState<number>(0);
 
