@@ -52,6 +52,24 @@ export type TEvent = {
   relatedInterests: string[];
 };
 
+export type TUserValuesToUpdate = {
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  username?: string | undefined;
+  emailAddress?: string | undefined;
+  about?: string | undefined;
+  password?: string | undefined;
+  phoneCountry?: string | undefined;
+  phoneCountryCode?: string | undefined;
+  phoneNumberWithoutCountryCode?: string | undefined;
+  city?: string | undefined;
+  stateProvince?: string | undefined;
+  country?: string | undefined;
+  facebook?: string | undefined;
+  instagram?: string | undefined;
+  x?: string | undefined;
+};
+
 export type TEventValuesToUpdate = {
   relatedInterests?: string[] | undefined;
   imageThree?: string | undefined;
