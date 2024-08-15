@@ -1037,13 +1037,22 @@ const EventForm = ({
         <p>Maximum Participants: (optional)</p>
         <input
           ref={maxParticipantsRef}
+          onFocus={() => setFocusedElement("maxParticipants")}
+          style={
+            focusedElement === "maxParticipants"
+              ? {
+                  boxShadow: `0px 0px 10px 2px ${randomColor}`,
+                  outline: "none",
+                  width: "25%",
+                }
+              : { width: "25%" }
+          }
           disabled={isLoading}
           className={
             maxParticipants && !(Number(maxParticipants) > 0)
               ? "erroneous-field"
               : undefined
           }
-          style={{ width: "25%" }}
           value={maxParticipants}
           onChange={(e) =>
             setMaxParticipants(Number(e.target.value.replace(/[^0-9]*$/g, "")))
@@ -1058,8 +1067,17 @@ const EventForm = ({
           <span>Public</span>
           <input
             ref={publicRef}
+            onFocus={() => setFocusedElement("public")}
+            style={
+              focusedElement === "public"
+                ? {
+                    boxShadow: `0px 0px 10px 2px ${randomColor}`,
+                    outline: "none",
+                    width: "unset",
+                  }
+                : { width: "unset" }
+            }
             disabled={isLoading}
-            style={{ width: "unset" }}
             onChange={() => handlePublicPrivateBoxChecking("public")}
             type="checkbox"
             checked={publicity === "public"}
@@ -1069,8 +1087,17 @@ const EventForm = ({
           <span>Private</span>
           <input
             ref={privateRef}
+            onFocus={() => setFocusedElement("private")}
+            style={
+              focusedElement === "private"
+                ? {
+                    boxShadow: `0px 0px 10px 2px ${randomColor}`,
+                    outline: "none",
+                    width: "unset",
+                  }
+                : { width: "unset" }
+            }
             disabled={isLoading}
-            style={{ width: "unset" }}
             onChange={() => handlePublicPrivateBoxChecking("private")}
             type="checkbox"
             checked={publicity === "private"}
@@ -1081,6 +1108,12 @@ const EventForm = ({
         <p>Image One: (optional)</p>
         <input
           ref={imageOneRef}
+          onFocus={() => setFocusedElement("imageOne")}
+          style={
+            focusedElement === "imageOne"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
           disabled={isLoading}
           className={imageOneError !== "" ? "erroneous-field" : undefined}
           value={imageOne}
@@ -1093,6 +1126,12 @@ const EventForm = ({
         <p>Image Two: (optional)</p>
         <input
           ref={imageTwoRef}
+          onFocus={() => setFocusedElement("imageTwo")}
+          style={
+            focusedElement === "imageTwo"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
           disabled={isLoading}
           className={imageTwoError !== "" ? "erroneous-field" : undefined}
           value={imageTwo}
@@ -1105,6 +1144,12 @@ const EventForm = ({
         <p>Image Three: (optional)</p>
         <input
           ref={imageThreeRef}
+          onFocus={() => setFocusedElement("imageThree")}
+          style={
+            focusedElement === "imageThree"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
           disabled={isLoading}
           className={imageThreeError !== "" ? "erroneous-field" : undefined}
           value={imageThree}
@@ -1149,6 +1194,12 @@ const EventForm = ({
         <div className="co-organizers-invitees-inputs">
           <input
             ref={coOrganizersRef}
+            onFocus={() => setFocusedElement("coOrganizers")}
+            style={
+              focusedElement === "coOrganizers"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
             disabled={isLoading}
             value={coOrganizersSearchQuery}
             onChange={(e) =>
@@ -1227,6 +1278,12 @@ const EventForm = ({
         <div className="co-organizers-invitees-inputs">
           <input
             ref={inviteesRef}
+            onFocus={() => setFocusedElement("invitees")}
+            style={
+              focusedElement === "invitees"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
             disabled={isLoading}
             value={inviteesSearchQuery}
             onChange={(e) =>
