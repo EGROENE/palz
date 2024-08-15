@@ -1037,6 +1037,7 @@ const EventForm = ({
         <p>Maximum Participants: (optional)</p>
         <input
           ref={maxParticipantsRef}
+          type="number"
           onFocus={() => setFocusedElement("maxParticipants")}
           style={
             focusedElement === "maxParticipants"
@@ -1054,9 +1055,11 @@ const EventForm = ({
               : undefined
           }
           value={maxParticipants}
-          onChange={(e) =>
-            setMaxParticipants(Number(e.target.value.replace(/[^0-9]*$/g, "")))
-          }
+          onChange={(e) => {
+            if (/^[0-9]*$/.test(e.target.value)) {
+              setMaxParticipants(Number(e.target.value));
+            }
+          }}
           inputMode="numeric"
           placeholder="Max number of participants"
         />
