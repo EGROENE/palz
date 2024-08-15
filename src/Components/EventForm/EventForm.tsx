@@ -852,7 +852,7 @@ const EventForm = ({
                 e
               )
             }
-            placeholder="Cancelation, backup plans, anything else your guests should know"
+            placeholder="City"
           />
           {eventLocationError !== "" && showErrors && <p>{eventLocationError}</p>}
         </label>
@@ -885,7 +885,7 @@ const EventForm = ({
                 e
               )
             }
-            placeholder="Cancelation, backup plans, special directions, anything else your guests should know"
+            placeholder="State, province, etc."
           />
         </label>
         <label className="location-countries-dropdown">
