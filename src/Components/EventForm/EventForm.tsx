@@ -1271,6 +1271,7 @@ const EventForm = ({
             usersWhoAreInvitees.length > 0 &&
             usersWhoAreInvitees.map((user) => (
               <UserTab
+                key={user.id}
                 user={user}
                 removeHandler={handleAddRemoveUserAsInvitee}
                 randomColor={randomColor}
