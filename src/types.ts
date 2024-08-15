@@ -79,6 +79,8 @@ export type TEventValuesToUpdate = {
   imageOne?: string | undefined;
   address?: string | undefined;
   maxParticipants?: number | undefined;
+  eventDateMidnightUTC?: number | undefined;
+  eventMSAfterMidnightUTC?: number | undefined;
   eventDateTimeUnix?: number | undefined;
   organizers?: string[] | undefined;
   invitees?: string[] | undefined;
