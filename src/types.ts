@@ -34,8 +34,8 @@ export type TUser = {
 export type TEvent = {
   id?: string | number;
   title: string;
-  organizers: string[];
-  invitees: string[];
+  organizers: (string | number)[];
+  invitees: (string | number)[];
   description: string;
   eventDateMidnightUTCUnix: number;
   eventTimeAfterMidnightUTCUnix: number;
@@ -82,8 +82,8 @@ export type TEventValuesToUpdate = {
   eventDateMidnightUTCUnix?: number | undefined;
   eventTimeAfterMidnightUTCUnix?: number | undefined;
   eventDateTimeUnix?: number | undefined;
-  organizers?: string[] | undefined;
-  invitees?: string[] | undefined;
+  organizers?: (string | number)[] | undefined;
+  invitees?: (string | number)[] | undefined;
   description?: string | undefined;
   additionalInfo?: string | undefined;
   city?: string | undefined;
