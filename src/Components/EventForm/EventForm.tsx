@@ -104,8 +104,8 @@ const EventForm = ({
   const [eventDateMidnightUTCUnix, setEventDateMidnightUTCUnix] = useState(
     event ? event.eventDateMidnightUTCUnix : 0
   );
-  const [eventMSAfterMidnightUTC, setEventMSAfterMidnightUTC] = useState(
-    event ? event.eventMSAfterMidnightUTC : 0
+  const [eventTimeAfterMidnightUTCUnix, setEventTimeAfterMidnightUTCUnix] = useState(
+    event ? event.eventTimeAfterMidnightUTCUnix : 0
   );
   const [eventDateTimeError, setEventDateTimeError] = useState<string>(
     !event ? "Please fill out this field" : ""
@@ -239,9 +239,9 @@ const EventForm = ({
     return `${year}-${month}-${day}`;
   };
 
-  const getTimeFieldValue = (eventMSAfterMidnightUTC: number): string => {
-    const hoursSinceMidnight = eventMSAfterMidnightUTC / 3600000; // EX: 23.75
-    const hoursSinceMidnightString = String(eventMSAfterMidnightUTC / 3600000); // EX: "23.75"
+  const getTimeFieldValue = (eventTimeAfterMidnightUTCUnix: number): string => {
+    const hoursSinceMidnight = eventTimeAfterMidnightUTCUnix / 3600000; // EX: 23.75
+    const hoursSinceMidnightString = String(eventTimeAfterMidnightUTCUnix / 3600000); // EX: "23.75"
     const wholeHoursSinceMidnight = Math.floor(hoursSinceMidnight); // EX: 23
     const remainingMinutes = (
       Number(hoursSinceMidnightString.substring(hoursSinceMidnightString.indexOf("."))) *
@@ -268,7 +268,7 @@ const EventForm = ({
       setEventDateMidnightUTCUnix(eventDateUTCinMS);
 
       // Show error if event isn't set at least one hour in advance:
-      if (eventDateUTCinMS + eventMSAfterMidnightUTC < nowPlusOneHourEpoch) {
+      if (eventDateUTCinMS + eventTimeAfterMidnightUTCUnix < nowPlusOneHourEpoch) {
         setEventDateTimeError("Event can only be set at least 1 hour in advance");
       } else {
         setEventDateTimeError("");
@@ -279,7 +279,7 @@ const EventForm = ({
       const hoursInMS = Number(hours) * 3600000;
       const minsInMS = Number(mins) * 60000;
       const hoursPlusMinutesInMS = hoursInMS + minsInMS;
-      setEventMSAfterMidnightUTC(hoursPlusMinutesInMS);
+      setEventTimeAfterMidnightUTCUnix(hoursPlusMinutesInMS);
 
       // Show error if event isn't set at least one hour in advance:
       if (hoursPlusMinutesInMS + eventDateMidnightUTCUnix < nowPlusOneHourEpoch) {
@@ -427,7 +427,7 @@ const EventForm = ({
       setEventCountry(event.country);
       setEventLocationError("");
       setEventDateMidnightUTCUnix(event.eventDateMidnightUTCUnix);
-      setEventMSAfterMidnightUTC(event.eventMSAfterMidnightUTC);
+      setEventTimeAfterMidnightUTCUnix(event.eventTimeAfterMidnightUTCUnix);
       setEventDateTimeError("");
       setEventAddress(event.address);
       setEventAddressError("");
@@ -454,7 +454,7 @@ const EventForm = ({
       setEventCountry("");
       setEventLocationError("");
       setEventDateMidnightUTCUnix(0);
-      setEventMSAfterMidnightUTC(0);
+      setEventTimeAfterMidnightUTCUnix(0);
       setEventDateTimeError("");
       setEventAddress("");
       setEventAddressError("");
@@ -577,12 +577,12 @@ const EventForm = ({
         ...(eventDateMidnightUTCUnix !== event.eventDateMidnightUTCUnix && {
           eventDateMidnightUTCUnix: eventDateMidnightUTCUnix,
         }),
-        ...(eventMSAfterMidnightUTC !== event.eventMSAfterMidnightUTC && {
-          eventMSAfterMidnightUTC: eventMSAfterMidnightUTC,
+        ...(eventTimeAfterMidnightUTCUnix !== event.eventTimeAfterMidnightUTCUnix && {
+          eventTimeAfterMidnightUTCUnix: eventTimeAfterMidnightUTCUnix,
         }),
-        ...(eventDateMidnightUTCUnix + eventMSAfterMidnightUTC !==
+        ...(eventDateMidnightUTCUnix + eventTimeAfterMidnightUTCUnix !==
           event.eventDateTimeUnix && {
-          eventDateTimeUnix: eventDateMidnightUTCUnix + eventMSAfterMidnightUTC,
+          eventDateTimeUnix: eventDateMidnightUTCUnix + eventTimeAfterMidnightUTCUnix,
         }),
         ...(organizers !== event.organizers && {
           organizers: organizers,
@@ -681,7 +681,7 @@ const EventForm = ({
         eventState !== currentEvent?.stateProvince ||
         eventCountry !== currentEvent?.country ||
         eventDateMidnightUTCUnix !== event.eventDateMidnightUTCUnix ||
-        eventMSAfterMidnightUTC !== event.eventMSAfterMidnightUTC ||
+        eventTimeAfterMidnightUTCUnix !== event.eventTimeAfterMidnightUTCUnix ||
         eventAddress !== currentEvent?.address ||
         maxParticipants !== currentEvent?.maxParticipants ||
         imageOne !== currentEvent?.imageOne ||
@@ -701,7 +701,7 @@ const EventForm = ({
       eventState !== "" ||
       eventCountry !== "" ||
       eventDateMidnightUTCUnix !== 0 ||
-      eventMSAfterMidnightUTC !== 0 ||
+      eventTimeAfterMidnightUTCUnix !== 0 ||
       eventAddress !== "" ||
       maxParticipants !== undefined ||
       imageOne !== "" ||
@@ -733,7 +733,7 @@ const EventForm = ({
     eventState !== "" &&
     eventCountry !== "" &&
     eventDateMidnightUTCUnix !== 0 &&
-    eventMSAfterMidnightUTC !== 0 &&
+    eventTimeAfterMidnightUTCUnix !== 0 &&
     eventAddress !== "";
 
   const getSubmitButtonIsDisabled = (): boolean => {
@@ -761,8 +761,8 @@ const EventForm = ({
     country: eventCountry,
     publicity: "public",
     eventDateMidnightUTCUnix: eventDateMidnightUTCUnix,
-    eventMSAfterMidnightUTC: eventMSAfterMidnightUTC,
-    eventDateTimeUnix: eventDateMidnightUTCUnix + eventMSAfterMidnightUTC,
+    eventTimeAfterMidnightUTCUnix: eventTimeAfterMidnightUTCUnix,
+    eventDateTimeUnix: eventDateMidnightUTCUnix + eventTimeAfterMidnightUTCUnix,
     maxParticipants: maxParticipants,
     address: eventAddress?.trim(),
     interestedUsers: [],
@@ -1043,8 +1043,8 @@ const EventForm = ({
           <p>Time:</p>
           <input
             value={
-              eventMSAfterMidnightUTC > 0
-                ? getTimeFieldValue(eventMSAfterMidnightUTC)
+              eventTimeAfterMidnightUTCUnix > 0
+                ? getTimeFieldValue(eventTimeAfterMidnightUTCUnix)
                 : ""
             }
             step="600"
