@@ -333,10 +333,10 @@ const EventForm = ({
   ): void => {
     e.preventDefault();
     const inputCleaned = e.target.value.replace(/\s+/g, " ");
-    setInviteesSearchQuery(inputCleaned);
-    if (inputCleaned.trim() !== "") {
-      if (field === "co-organizers") {
-        setShowPotentialCoOrganizers(true);
+    if (field === "co-organizers") {
+      setCoOrganizersSearchQuery(inputCleaned);
+      setShowPotentialCoOrganizers(true);
+      if (inputCleaned.replace(/\s+/g, "") !== "") {
         const matchingUsers: TUser[] = [];
         for (const user of allOtherUsers) {
           if (
@@ -351,8 +351,14 @@ const EventForm = ({
           }
         }
         setPotentialCoOrganizers(matchingUsers);
-      } else if (field === "invitees") {
-        setShowPotentialInvitees(true);
+      } else {
+        // setPotentialCoOrganizers to original value
+        setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
+      }
+    } else {
+      setInviteesSearchQuery(inputCleaned);
+      setShowPotentialInvitees(true);
+      if (inputCleaned.replace(/\s+/g, "") !== "") {
         const matchingUsers: TUser[] = [];
         for (const user of allOtherUsers) {
           if (
@@ -367,16 +373,16 @@ const EventForm = ({
           }
         }
         setPotentialInvitees(matchingUsers);
+      } else {
+        setPotentialCoOrganizersAndOrInviteesToOriginalValue("invitees"); // make sep functions for each type
       }
-    } else {
-      setPotentialCoOrganizersAndOrInviteesToOriginalValue();
     }
   };
 
   const handleAddRemoveUserAsOrganizer = (user: TUser): void => {
     if (organizers.includes(String(user.id))) {
       setOrganizers(organizers.filter((organizer) => organizer !== user.id));
-      setPotentialCoOrganizersAndOrInviteesToOriginalValue("invitees");
+      setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
     } else {
       const updatedArray = organizers.concat(String(user.id));
       setOrganizers(updatedArray);
@@ -389,7 +395,7 @@ const EventForm = ({
   const handleAddRemoveUserAsInvitee = (user: TUser): void => {
     if (invitees.includes(String(user.id))) {
       setInvitees(invitees.filter((invitee) => invitee !== user.id));
-      setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
+      setPotentialCoOrganizersAndOrInviteesToOriginalValue("invitees");
     } else {
       const updatedArray = invitees.concat(String(user.id));
       setInvitees(updatedArray);
@@ -1253,7 +1259,7 @@ const EventForm = ({
             type="text"
             placeholder="Search users by username, first/last names"
           />
-          {coOrganizersSearchQuery.trim() !== "" && (
+          {coOrganizersSearchQuery.replace(/s\+/g, "") !== "" && (
             <i
               onClick={() => {
                 setCoOrganizersSearchQuery("");
@@ -1338,7 +1344,7 @@ const EventForm = ({
             type="text"
             placeholder="Search users by username, first/last names"
           />
-          {coOrganizersSearchQuery.trim() !== "" && (
+          {inviteesSearchQuery.replace(/s\+/g, "") !== "" && (
             <i
               onClick={() => {
                 setInviteesSearchQuery("");
