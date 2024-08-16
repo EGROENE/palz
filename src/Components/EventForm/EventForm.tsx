@@ -101,8 +101,12 @@ const EventForm = ({
   const [eventLocationError, setEventLocationError] = useState<string>(
     !event ? "Please fill out all 3 location fields" : ""
   );
-  const [eventDate, setEventDate] = useState(0); // epoch translates to certain day at midnight
-  const [eventTime, setEventTime] = useState(0); // number of ms
+  const [eventDateMidnightUTCUnix, seteventDateMidnightUTCUnix] = useState(
+    event ? event.eventDateMidnightUTCUnix : 0
+  );
+  const [eventMSAfterMidnightUTC, setEventMSAfterMidnightUTC] = useState(
+    event ? event.eventMSAfterMidnightUTC : 0
+  );
   const [eventDateTimeError, setEventDateTimeError] = useState<string>(
     !event ? "Please fill out this field" : ""
   );
@@ -221,6 +225,31 @@ const EventForm = ({
     }
   };
 
+  const getDateFieldValue = (eventDateMidnightUTCUnix: number): string => {
+    // yyyy-mm-dd
+    let month = String(new Date(eventDateMidnightUTCUnix).getMonth() + 1);
+    let day = String(new Date(eventDateMidnightUTCUnix).getDate());
+    const year = new Date(eventDateMidnightUTCUnix).getFullYear();
+    if (Number(month) < 10) {
+      month = `0${month}`;
+    }
+    if (Number(day) < 10) {
+      day = `0${day}`;
+    }
+    return `${year}-${month}-${day}`;
+  };
+
+  const getTimeFieldValue = (eventMSAfterMidnightUTC: number): string => {
+    const hoursSinceMidnight = eventMSAfterMidnightUTC / 3600000; // EX: 23.75
+    const hoursSinceMidnightString = String(eventMSAfterMidnightUTC / 3600000); // EX: "23.75"
+    const wholeHoursSinceMidnight = Math.floor(hoursSinceMidnight); // EX: 23
+    const remainingMinutes = (
+      Number(hoursSinceMidnightString.substring(hoursSinceMidnightString.indexOf("."))) *
+      60
+    ).toFixed(0); // EX: 45 (0.75 * 60)
+    return `${wholeHoursSinceMidnight}:${remainingMinutes}`; // EX: 23:45
+  };
+
   // function should set date/time to utc times
   // display these times in local, if possible
   const handleDateTimeInput = (
@@ -236,10 +265,10 @@ const EventForm = ({
       const timezoneOffsetinMS = inputDateLocal.getTimezoneOffset() * 60000;
       const inputDateEpoch = e.target.valueAsNumber; // stored time value in ms since midnight, January 1, 1970 UTC to input date
       const eventDateUTCinMS = timezoneOffsetinMS + inputDateEpoch;
-      setEventDate(eventDateUTCinMS);
+      seteventDateMidnightUTCUnix(eventDateUTCinMS);
 
       // Show error if event isn't set at least one hour in advance:
-      if (eventDateUTCinMS + eventTime < nowPlusOneHourEpoch) {
+      if (eventDateUTCinMS + eventMSAfterMidnightUTC < nowPlusOneHourEpoch) {
         setEventDateTimeError("Event can only be set at least 1 hour in advance");
       } else {
         setEventDateTimeError("");
@@ -250,10 +279,10 @@ const EventForm = ({
       const hoursInMS = Number(hours) * 3600000;
       const minsInMS = Number(mins) * 60000;
       const hoursPlusMinutesInMS = hoursInMS + minsInMS;
-      setEventTime(hoursPlusMinutesInMS);
+      setEventMSAfterMidnightUTC(hoursPlusMinutesInMS);
 
       // Show error if event isn't set at least one hour in advance:
-      if (hoursPlusMinutesInMS + eventDate < nowPlusOneHourEpoch) {
+      if (hoursPlusMinutesInMS + eventDateMidnightUTCUnix < nowPlusOneHourEpoch) {
         setEventDateTimeError("Event can only be set at least 1 hour in advance");
       } else {
         setEventDateTimeError("");
@@ -386,12 +415,6 @@ const EventForm = ({
     setRelatedInterests(relatedInterests.filter((int) => int !== interest));
 
   const handleRevert = (): void => {
-    // Reset date/time fields
-    if (dateRef.current !== null && timeRef.current !== null) {
-      dateRef.current.value = "mm/dd/yyyy";
-      timeRef.current.value = "--:--";
-    }
-
     if (event) {
       setEventTitle(event.title);
       setEventTitleError("");
@@ -403,8 +426,8 @@ const EventForm = ({
       setEventState(event.stateProvince);
       setEventCountry(event.country);
       setEventLocationError("");
-      setEventDate(0);
-      setEventTime(0);
+      seteventDateMidnightUTCUnix(event.eventDateMidnightUTCUnix);
+      setEventMSAfterMidnightUTC(event.eventMSAfterMidnightUTC);
       setEventDateTimeError("");
       setEventAddress(event.address);
       setEventAddressError("");
@@ -430,8 +453,8 @@ const EventForm = ({
       setEventState("");
       setEventCountry("");
       setEventLocationError("");
-      setEventDate(0);
-      setEventTime(0);
+      seteventDateMidnightUTCUnix(0);
+      setEventMSAfterMidnightUTC(0);
       setEventDateTimeError("");
       setEventAddress("");
       setEventAddressError("");
@@ -474,9 +497,6 @@ const EventForm = ({
               if (valuesToUpdate?.title) {
                 setEventTitle(valuesToUpdate.title);
               }
-              /* if (valuesToUpdate?.nextEventTime) {
-              setEventTitle(valuesToUpdate.title)
-            } */
               if (valuesToUpdate?.organizers) {
                 setOrganizers(valuesToUpdate.organizers);
               }
@@ -554,8 +574,15 @@ const EventForm = ({
           eventTitle.trim() !== event.title && {
             title: eventTitle,
           }),
-        ...(eventDate + eventTime !== event.nextEventTime && {
-          nextEventTime: eventDate + eventTime,
+        ...(eventDateMidnightUTCUnix !== event.eventDateMidnightUTCUnix && {
+          eventDateMidnightUTCUnix: eventDateMidnightUTCUnix,
+        }),
+        ...(eventMSAfterMidnightUTC !== event.eventMSAfterMidnightUTC && {
+          eventMSAfterMidnightUTC: eventMSAfterMidnightUTC,
+        }),
+        ...(eventDateMidnightUTCUnix + eventMSAfterMidnightUTC !==
+          event.eventDateTimeUnix && {
+          eventDateTimeUnix: eventDateMidnightUTCUnix + eventMSAfterMidnightUTC,
         }),
         ...(organizers !== event.organizers && {
           organizers: organizers,
@@ -653,8 +680,8 @@ const EventForm = ({
         eventCity !== currentEvent?.city ||
         eventState !== currentEvent?.stateProvince ||
         eventCountry !== currentEvent?.country ||
-        //eventDate !== 0 ||
-        //eventTime !== 0 ||
+        eventDateMidnightUTCUnix !== event.eventDateMidnightUTCUnix ||
+        eventMSAfterMidnightUTC !== event.eventMSAfterMidnightUTC ||
         eventAddress !== currentEvent?.address ||
         maxParticipants !== currentEvent?.maxParticipants ||
         imageOne !== currentEvent?.imageOne ||
@@ -673,8 +700,8 @@ const EventForm = ({
       eventCity !== "" ||
       eventState !== "" ||
       eventCountry !== "" ||
-      eventDate !== 0 ||
-      eventTime !== 0 ||
+      eventDateMidnightUTCUnix !== 0 ||
+      eventMSAfterMidnightUTC !== 0 ||
       eventAddress !== "" ||
       maxParticipants !== undefined ||
       imageOne !== "" ||
@@ -705,8 +732,8 @@ const EventForm = ({
     eventCity !== "" &&
     eventState !== "" &&
     eventCountry !== "" &&
-    //eventDate !== 0 &&
-    //eventTime !== 0 &&
+    eventDateMidnightUTCUnix !== 0 &&
+    eventMSAfterMidnightUTC !== 0 &&
     eventAddress !== "";
 
   const getSubmitButtonIsDisabled = (): boolean => {
@@ -733,7 +760,9 @@ const EventForm = ({
     ),
     country: eventCountry,
     publicity: "public",
-    nextEventTime: eventDate + eventTime,
+    eventDateMidnightUTCUnix: eventDateMidnightUTCUnix,
+    eventMSAfterMidnightUTC: eventMSAfterMidnightUTC,
+    eventDateTimeUnix: eventDateMidnightUTCUnix + eventMSAfterMidnightUTC,
     maxParticipants: maxParticipants,
     address: eventAddress?.trim(),
     interestedUsers: [],
@@ -987,6 +1016,11 @@ const EventForm = ({
         <label>
           <p>Date:</p>{" "}
           <input
+            value={
+              eventDateMidnightUTCUnix > 0
+                ? getDateFieldValue(eventDateMidnightUTCUnix)
+                : ""
+            }
             ref={dateRef}
             onFocus={() => setFocusedElement("date")}
             style={
@@ -1008,6 +1042,12 @@ const EventForm = ({
         <label>
           <p>Time:</p>
           <input
+            value={
+              eventMSAfterMidnightUTC > 0
+                ? getTimeFieldValue(eventMSAfterMidnightUTC)
+                : ""
+            }
+            step="600"
             disabled={isLoading}
             ref={timeRef}
             onFocus={() => setFocusedElement("time")}
