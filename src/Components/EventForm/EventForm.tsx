@@ -101,7 +101,7 @@ const EventForm = ({
   const [eventLocationError, setEventLocationError] = useState<string>(
     !event ? "Please fill out all 3 location fields" : ""
   );
-  const [eventDateMidnightUTCUnix, seteventDateMidnightUTCUnix] = useState(
+  const [eventDateMidnightUTCUnix, setEventDateMidnightUTCUnix] = useState(
     event ? event.eventDateMidnightUTCUnix : 0
   );
   const [eventMSAfterMidnightUTC, setEventMSAfterMidnightUTC] = useState(
@@ -265,7 +265,7 @@ const EventForm = ({
       const timezoneOffsetinMS = inputDateLocal.getTimezoneOffset() * 60000;
       const inputDateEpoch = e.target.valueAsNumber; // stored time value in ms since midnight, January 1, 1970 UTC to input date
       const eventDateUTCinMS = timezoneOffsetinMS + inputDateEpoch;
-      seteventDateMidnightUTCUnix(eventDateUTCinMS);
+      setEventDateMidnightUTCUnix(eventDateUTCinMS);
 
       // Show error if event isn't set at least one hour in advance:
       if (eventDateUTCinMS + eventMSAfterMidnightUTC < nowPlusOneHourEpoch) {
@@ -426,7 +426,7 @@ const EventForm = ({
       setEventState(event.stateProvince);
       setEventCountry(event.country);
       setEventLocationError("");
-      seteventDateMidnightUTCUnix(event.eventDateMidnightUTCUnix);
+      setEventDateMidnightUTCUnix(event.eventDateMidnightUTCUnix);
       setEventMSAfterMidnightUTC(event.eventMSAfterMidnightUTC);
       setEventDateTimeError("");
       setEventAddress(event.address);
@@ -453,7 +453,7 @@ const EventForm = ({
       setEventState("");
       setEventCountry("");
       setEventLocationError("");
-      seteventDateMidnightUTCUnix(0);
+      setEventDateMidnightUTCUnix(0);
       setEventMSAfterMidnightUTC(0);
       setEventDateTimeError("");
       setEventAddress("");
