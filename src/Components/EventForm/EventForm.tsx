@@ -134,10 +134,12 @@ const EventForm = ({
   const [publicity, setPublicity] = useState<"public" | "private">(
     event ? event.publicity : "public"
   );
-  const [organizers, setOrganizers] = useState<string[]>(
+  const [organizers, setOrganizers] = useState<(string | number)[]>(
     event ? event.organizers : [`${currentUser?.id}`]
   );
-  const [invitees, setInvitees] = useState<string[]>(event ? event.invitees : []);
+  const [invitees, setInvitees] = useState<(string | number)[]>(
+    event ? event.invitees : []
+  );
   const [relatedInterests, setRelatedInterests] = useState<string[]>(
     event ? event.relatedInterests : []
   );
@@ -380,15 +382,17 @@ const EventForm = ({
   };
 
   const handleAddRemoveUserAsOrganizer = (user: TUser): void => {
-    if (organizers.includes(String(user.id))) {
-      setOrganizers(organizers.filter((organizer) => organizer !== user.id));
-      setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
-    } else {
-      const updatedArray = organizers.concat(String(user.id));
-      setOrganizers(updatedArray);
-      setPotentialInvitees(
-        potentialInvitees.filter((potentialInvitee) => potentialInvitee.id !== user.id)
-      );
+    if (user.id) {
+      if (organizers.includes(user.id)) {
+        setOrganizers(organizers.filter((organizer) => organizer !== user.id));
+        setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
+      } else {
+        const updatedArray = organizers.concat(String(user.id));
+        setOrganizers(updatedArray);
+        setPotentialInvitees(
+          potentialInvitees.filter((potentialInvitee) => potentialInvitee.id !== user.id)
+        );
+      }
     }
   };
 
@@ -1282,24 +1286,26 @@ const EventForm = ({
             </button>
             {showPotentialCoOrganizers && (
               <ul className="country-code-dropdown">
-                {potentialCoOrganizers.map((user) => (
-                  <div
-                    key={user.id}
-                    onClick={() => handleAddRemoveUserAsOrganizer(user)}
-                    className="other-user-option"
-                  >
-                    <input
-                      disabled={isLoading}
-                      onChange={() => handleAddRemoveUserAsOrganizer(user)}
-                      checked={organizers.includes(String(user.id))}
-                      type="checkbox"
-                    />
-                    <li title={`${user.firstName} ${user.lastName}`}>
-                      <img src={`${user.profileImage}`} />
-                      <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
-                    </li>
-                  </div>
-                ))}
+                {potentialCoOrganizers
+                  .filter((user) => user.id && !invitees.includes(user.id))
+                  .map((user) => (
+                    <div
+                      key={user.id}
+                      onClick={() => handleAddRemoveUserAsOrganizer(user)}
+                      className="other-user-option"
+                    >
+                      <input
+                        disabled={isLoading}
+                        onChange={() => handleAddRemoveUserAsOrganizer(user)}
+                        checked={organizers.includes(String(user.id))}
+                        type="checkbox"
+                      />
+                      <li title={`${user.firstName} ${user.lastName}`}>
+                        <img src={`${user.profileImage}`} />
+                        <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
+                      </li>
+                    </div>
+                  ))}
               </ul>
             )}
           </div>
@@ -1367,24 +1373,26 @@ const EventForm = ({
             </button>
             {showPotentialInvitees && (
               <ul className="country-code-dropdown">
-                {potentialInvitees.map((user) => (
-                  <div
-                    key={user.id}
-                    onClick={() => handleAddRemoveUserAsInvitee(user)}
-                    className="other-user-option"
-                  >
-                    <input
-                      disabled={isLoading}
-                      onChange={() => handleAddRemoveUserAsInvitee(user)}
-                      checked={invitees.includes(String(user.id))}
-                      type="checkbox"
-                    />
-                    <li title={`${user.firstName} ${user.lastName}`}>
-                      <img src={`${user.profileImage}`} />
-                      <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
-                    </li>
-                  </div>
-                ))}
+                {potentialInvitees
+                  .filter((user) => user.id && !organizers.includes(user.id))
+                  .map((user) => (
+                    <div
+                      key={user.id}
+                      onClick={() => handleAddRemoveUserAsInvitee(user)}
+                      className="other-user-option"
+                    >
+                      <input
+                        disabled={isLoading}
+                        onChange={() => handleAddRemoveUserAsInvitee(user)}
+                        checked={invitees.includes(String(user.id))}
+                        type="checkbox"
+                      />
+                      <li title={`${user.firstName} ${user.lastName}`}>
+                        <img src={`${user.profileImage}`} />
+                        <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
+                      </li>
+                    </div>
+                  ))}
               </ul>
             )}
           </div>
