@@ -207,8 +207,6 @@ const EditUserInfoForm = ({
   ): void => {
     e.preventDefault(); // prevent page from auto-reloading after submitting edit form
 
-    setIsLoading(true);
-
     /* Get most-current allUsers (in case other users have updated their un or email after current user logged in & before they submitted changes to their info).*/
     fetchAllUsers();
 
@@ -249,6 +247,7 @@ const EditUserInfoForm = ({
 
     // Only if there are no errors & infos that must be unique aren't already in use, patch changes to user data object:
     if (areNoEditFormErrors && !phoneNumberExists) {
+      setIsLoading(true);
       Requests.patchUpdatedUserInfo(currentUser, valuesToUpdate)
         .then((response) => {
           if (!response.ok) {
@@ -1597,7 +1596,7 @@ const EditUserInfoForm = ({
           </button>
           <button
             type="submit"
-            disabled={!(userInfoEdited && areNoEditFormErrors) || isLoading}
+            disabled={!userInfoEdited || isLoading}
             style={{ backgroundColor: randomColor }}
             onClick={(e) => handleUpdateProfileInfo(e)}
           >
