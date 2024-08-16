@@ -476,12 +476,12 @@ const EventForm = ({
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
-    setIsLoading(true);
     getMostCurrentEvents();
     if (!showErrors) {
       setShowErrors(true);
     }
     if (areNoErrors) {
+      setIsLoading(true);
       if (event) {
         // When updating an existing event:
         Requests.updateEvent(event, valuesToUpdate)
@@ -726,7 +726,7 @@ const EventForm = ({
     imageTwoError === "" &&
     imageThreeError === "";
 
-  const allRequiredFieldsFilled: boolean =
+  /* const allRequiredFieldsFilled: boolean =
     eventTitle !== "" &&
     eventDescription !== "" &&
     eventCity !== "" &&
@@ -734,15 +734,17 @@ const EventForm = ({
     eventCountry !== "" &&
     eventDateMidnightUTCUnix !== 0 &&
     eventTimeAfterMidnightUTCUnix !== 0 &&
-    eventAddress !== "";
+    eventAddress !== ""; */
 
   const getSubmitButtonIsDisabled = (): boolean => {
     if (isLoading) {
       return true;
     } else if (event) {
-      return !(changesMade && allRequiredFieldsFilled && areNoErrors);
+      // return !(changesMade && allRequiredFieldsFilled && areNoErrors);
+      return !changesMade;
     }
-    return !(areNoErrors && allRequiredFieldsFilled);
+    //return !(areNoErrors && allRequiredFieldsFilled);
+    return false;
   };
   const submitButtonIsDisabled = getSubmitButtonIsDisabled();
 
