@@ -48,22 +48,22 @@ const EventForm = ({
     | undefined
   >();
   // REFS:
-  const titleRef = useRef(null);
+  const titleRef = useRef<HTMLInputElement | null>(null);
   const descriptionRef = useRef(null);
   const additionalInfoRef = useRef(null);
-  const cityRef = useRef(null);
-  const stateRef = useRef(null);
-  const addressRef = useRef(null);
+  const cityRef = useRef<HTMLInputElement | null>(null);
+  const stateRef = useRef<HTMLInputElement | null>(null);
+  const addressRef = useRef<HTMLInputElement | null>(null);
   const dateRef = useRef<HTMLInputElement | null>(null);
   const timeRef = useRef<HTMLInputElement | null>(null);
-  const maxParticipantsRef = useRef(null);
-  const publicRef = useRef(null);
-  const privateRef = useRef(null);
-  const imageOneRef = useRef(null);
-  const imageTwoRef = useRef(null);
-  const imageThreeRef = useRef(null);
-  const coOrganizersRef = useRef(null);
-  const inviteesRef = useRef(null);
+  const maxParticipantsRef = useRef<HTMLInputElement | null>(null);
+  const publicRef = useRef<HTMLInputElement | null>(null);
+  const privateRef = useRef<HTMLInputElement | null>(null);
+  const imageOneRef = useRef<HTMLInputElement | null>(null);
+  const imageTwoRef = useRef<HTMLInputElement | null>(null);
+  const imageThreeRef = useRef<HTMLInputElement | null>(null);
+  const coOrganizersRef = useRef<HTMLInputElement | null>(null);
+  const inviteesRef = useRef<HTMLInputElement | null>(null);
   ///////
 
   const allOtherUsers = allUsers.filter((user) => user.id !== currentUser?.id);

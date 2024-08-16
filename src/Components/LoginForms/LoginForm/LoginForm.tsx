@@ -34,8 +34,8 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
     "emailUsername" | "password" | undefined
   >();
 
-  const emailUsernameRef = useRef(null);
-  const passwordRef = useRef(null);
+  const emailUsernameRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     fetchAllUsers(); // get most up-to-date allUsers

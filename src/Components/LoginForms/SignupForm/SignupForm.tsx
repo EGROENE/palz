@@ -62,12 +62,12 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
   >();
 
   // REFS:
-  const firstNameRef = useRef(null);
-  const lastNameRef = useRef(null);
-  const usernameRef = useRef(null);
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
-  const confirmPasswordRef = useRef(null);
+  const firstNameRef = useRef<HTMLInputElement | null>(null);
+  const lastNameRef = useRef<HTMLInputElement | null>(null);
+  const usernameRef = useRef<HTMLInputElement | null>(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement | null>(null);
   ////////
 
   useEffect(() => {

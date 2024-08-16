@@ -92,19 +92,19 @@ const EditUserInfoForm = ({
   } = useUserContext();
 
   // REFS
-  const firstNameRef = useRef(null);
-  const lastNameRef = useRef(null);
-  const usernameRef = useRef(null);
-  const emailRef = useRef(null);
-  const phoneNumberRef = useRef(null);
-  const cityRef = useRef(null);
-  const stateRef = useRef(null);
-  const facebookRef = useRef(null);
-  const instagramRef = useRef(null);
-  const xRef = useRef(null);
+  const firstNameRef = useRef<HTMLInputElement | null>(null);
+  const lastNameRef = useRef<HTMLInputElement | null>(null);
+  const usernameRef = useRef<HTMLInputElement | null>(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const phoneNumberRef = useRef<HTMLInputElement | null>(null);
+  const cityRef = useRef<HTMLInputElement | null>(null);
+  const stateRef = useRef<HTMLInputElement | null>(null);
+  const facebookRef = useRef<HTMLInputElement | null>(null);
+  const instagramRef = useRef<HTMLInputElement | null>(null);
+  const xRef = useRef<HTMLInputElement | null>(null);
   const aboutRef = useRef(null);
-  const passwordRef = useRef(null);
-  const confirmPasswordRef = useRef(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement | null>(null);
   /////////
 
   const [phoneFieldMinLength, setPhoneFieldMinLength] = useState<number>(1);
