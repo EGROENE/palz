@@ -31,7 +31,7 @@ const UserHomepage = () => {
   }, [currentUser, navigation, userCreatedAccount]);
 
   const userRSVPDEvents: TEvent[] = allEvents.filter((ev) =>
-    currentUser?.id ? ev.interestedUsers.includes(currentUser.id.toString()) : []
+    currentUser && currentUser.id ? ev.interestedUsers.includes(currentUser.id) : []
   );
   const userOrganizedEvents: TEvent[] = allEvents.filter((ev) =>
     ev.organizers.includes(String(currentUser?.id))
