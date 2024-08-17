@@ -153,13 +153,21 @@ const EventForm = ({
   const setPotentialCoOrganizersAndOrInviteesToOriginalValue = (
     field?: "co-organizers" | "invitees"
   ): void => {
-    const currentUserPalz = currentUser?.friends;
-    const firstOtherUsers = allOtherUsers.filter((user) =>
-      currentUserPalz?.includes(String(user?.id))
-    );
-    const restOfUsers = allOtherUsers.filter(
-      (user) => !currentUserPalz?.includes(String(user?.id))
-    );
+    const currentUserPalz: (string | number)[] | undefined = currentUser?.friends;
+    // use for...of loop to avoid TS errors
+    const firstOtherUsers: TUser[] = [];
+    for (const user of allOtherUsers) {
+      if (user.id && currentUserPalz?.includes(user.id)) {
+        firstOtherUsers.push(user);
+      }
+    }
+    // use for...of loop to avoid TS errors
+    const restOfUsers: TUser[] = [];
+    for (const user of allOtherUsers) {
+      if (user.id && currentUserPalz?.includes(user.id)) {
+        restOfUsers.push(user);
+      }
+    }
     if (field === "co-organizers") {
       setPotentialCoOrganizers(firstOtherUsers.concat(restOfUsers));
     } else if (field === "invitees") {
