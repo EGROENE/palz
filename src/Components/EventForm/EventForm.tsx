@@ -155,7 +155,7 @@ const EventForm = ({
   ): void => {
     const currentUserPalz: (string | number)[] | undefined = currentUser?.friends;
     // use for...of loop to avoid TS errors
-    const firstOtherUsers: TUser[] = [];
+    let firstOtherUsers: TUser[] = [];
     for (const user of allOtherUsers) {
       if (user.id && currentUserPalz?.includes(user.id)) {
         firstOtherUsers.push(user);
@@ -164,7 +164,7 @@ const EventForm = ({
     // use for...of loop to avoid TS errors
     const restOfUsers: TUser[] = [];
     for (const user of allOtherUsers) {
-      if (user.id && currentUserPalz?.includes(user.id)) {
+      if (user.id && !currentUserPalz?.includes(user.id)) {
         restOfUsers.push(user);
       }
     }
@@ -764,7 +764,11 @@ const EventForm = ({
     //return !(areNoErrors && allRequiredFieldsFilled);
     return false;
   };
-  const submitButtonIsDisabled = getSubmitButtonIsDisabled();
+  const submitButtonIsDisabled: boolean = getSubmitButtonIsDisabled();
+
+  const maxParticipantsReached: boolean = maxParticipants
+    ? invitees.length > maxParticipants
+    : false;
 
   const eventInfos: TEvent = {
     title: eventTitle.trim(),
@@ -1094,7 +1098,7 @@ const EventForm = ({
         <p style={{ display: "flex" }}>{eventDateTimeError}</p>
       )}
       <label>
-        <p>Maximum Participants: (optional)</p>
+        <p>Maximum Participants: (optional, not including organizers)</p>
         <input
           ref={maxParticipantsRef}
           type="number"
@@ -1369,7 +1373,7 @@ const EventForm = ({
           )}
           <div className="co-organizers-invitees-dropdown">
             <button
-              disabled={isLoading}
+              disabled={isLoading || maxParticipantsReached}
               type="button"
               onClick={() => setShowPotentialInvitees(!showPotentialInvitees)}
             >
@@ -1379,7 +1383,7 @@ const EventForm = ({
                 className="fas fa-chevron-down"
               ></i>
             </button>
-            {showPotentialInvitees && (
+            {showPotentialInvitees && !maxParticipantsReached && (
               <ul className="country-code-dropdown">
                 {potentialInvitees
                   .filter((user) => user.id && !organizers.includes(user.id))
@@ -1404,6 +1408,7 @@ const EventForm = ({
               </ul>
             )}
           </div>
+          {maxParticipantsReached && <p>Max participants reached</p>}
         </div>
       </div>
       <InterestsSection
