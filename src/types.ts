@@ -25,7 +25,7 @@ export type TUser = {
   x: string;
   profileImage: string;
   about: string;
-  friends: string[];
+  friends: (string | number)[];
   subscriptionType: string;
   hostingCredits: number;
   interests: string[];
@@ -50,7 +50,7 @@ export type TEvent = {
   country: string | undefined;
   address: string | undefined;
   additionalInfo: string;
-  interestedUsers: string[];
+  interestedUsers: (string | number)[];
   relatedInterests: string[];
 };
 
