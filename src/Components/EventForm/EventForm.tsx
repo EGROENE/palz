@@ -80,7 +80,9 @@ const EventForm = ({
 
   // STATE VALUES CORRESPONDING TO EDITABLE PROPERTIES OF TEvent, ALONG W/ CORRESPONDING FIELDS' ERROR STATES:
   const [eventTitle, setEventTitle] = useState<string>(event ? event.title : "");
-  const [eventTitleError, setEventTitleError] = useState<string>("");
+  const [eventTitleError, setEventTitleError] = useState<string>(
+    !event ? "Please fill out this field" : ""
+  );
   const [eventDescription, setEventDescription] = useState<string>(
     event ? event.description : ""
   );
@@ -108,7 +110,7 @@ const EventForm = ({
     event ? event.eventTimeAfterMidnightUTCUnix : 0
   );
   const [eventDateTimeError, setEventDateTimeError] = useState<string>(
-    !event ? "Please fill out this field" : ""
+    !event ? "Please fill out date & time fields" : ""
   );
   const [eventAddress, setEventAddress] = useState<string | undefined>(
     event ? event.address : ""
