@@ -1429,6 +1429,7 @@ const EventForm = ({
         <button
           disabled={submitButtonIsDisabled}
           onClick={(e) => handleAddEventFormSubmission(e)}
+          style={{ backgroundColor: randomColor }}
           type="submit"
         >
           {event ? "Save Changes" : "Add Event"}
