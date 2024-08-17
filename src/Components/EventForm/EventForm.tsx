@@ -1170,60 +1170,6 @@ const EventForm = ({
           />
         </label>
       </div>
-      <label>
-        <p>Image One: (optional)</p>
-        <input
-          ref={imageOneRef}
-          onFocus={() => setFocusedElement("imageOne")}
-          style={
-            focusedElement === "imageOne"
-              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-              : undefined
-          }
-          disabled={isLoading}
-          className={imageOneError !== "" ? "erroneous-field" : undefined}
-          value={imageOne}
-          onChange={(e) => handleImageURLInput(e, 1)}
-          placeholder="Link to image"
-        />
-        {imageOneError !== "" && <p>{imageOneError}</p>}
-      </label>
-      <label>
-        <p>Image Two: (optional)</p>
-        <input
-          ref={imageTwoRef}
-          onFocus={() => setFocusedElement("imageTwo")}
-          style={
-            focusedElement === "imageTwo"
-              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-              : undefined
-          }
-          disabled={isLoading}
-          className={imageTwoError !== "" ? "erroneous-field" : undefined}
-          value={imageTwo}
-          onChange={(e) => handleImageURLInput(e, 2)}
-          placeholder="Link to image"
-        />
-        {imageTwoError !== "" && <p>{imageTwoError}</p>}
-      </label>
-      <label>
-        <p>Image Three: (optional)</p>
-        <input
-          ref={imageThreeRef}
-          onFocus={() => setFocusedElement("imageThree")}
-          style={
-            focusedElement === "imageThree"
-              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-              : undefined
-          }
-          disabled={isLoading}
-          className={imageThreeError !== "" ? "erroneous-field" : undefined}
-          value={imageThree}
-          onChange={(e) => handleImageURLInput(e, 3)}
-          placeholder="Link to image"
-        />
-        {imageThreeError !== "" && <p>{imageThreeError}</p>}
-      </label>
       <div className="add-other-users-area">
         <p>
           Co-organizers: (optional){" "}
@@ -1418,6 +1364,60 @@ const EventForm = ({
         handleRemoveInterest={handleRemoveEventInterest}
         isDisabled={isLoading}
       />
+      <label>
+        <p>Image One: (optional)</p>
+        <input
+          ref={imageOneRef}
+          onFocus={() => setFocusedElement("imageOne")}
+          style={
+            focusedElement === "imageOne"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
+          disabled={isLoading}
+          className={imageOneError !== "" ? "erroneous-field" : undefined}
+          value={imageOne}
+          onChange={(e) => handleImageURLInput(e, 1)}
+          placeholder="Link to image"
+        />
+        {imageOneError !== "" && <p>{imageOneError}</p>}
+      </label>
+      <label>
+        <p>Image Two: (optional)</p>
+        <input
+          ref={imageTwoRef}
+          onFocus={() => setFocusedElement("imageTwo")}
+          style={
+            focusedElement === "imageTwo"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
+          disabled={isLoading}
+          className={imageTwoError !== "" ? "erroneous-field" : undefined}
+          value={imageTwo}
+          onChange={(e) => handleImageURLInput(e, 2)}
+          placeholder="Link to image"
+        />
+        {imageTwoError !== "" && <p>{imageTwoError}</p>}
+      </label>
+      <label>
+        <p>Image Three: (optional)</p>
+        <input
+          ref={imageThreeRef}
+          onFocus={() => setFocusedElement("imageThree")}
+          style={
+            focusedElement === "imageThree"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
+          disabled={isLoading}
+          className={imageThreeError !== "" ? "erroneous-field" : undefined}
+          value={imageThree}
+          onChange={(e) => handleImageURLInput(e, 3)}
+          placeholder="Link to image"
+        />
+        {imageThreeError !== "" && <p>{imageThreeError}</p>}
+      </label>
       <div className="form-revert-submit-buttons-container">
         <button
           disabled={!changesMade || isLoading}
