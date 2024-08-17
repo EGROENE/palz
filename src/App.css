@@ -829,6 +829,7 @@ form textarea {
   display: flex;
   width: 100%;
   position: relative;
+  align-items: baseline;
 }
 
 .clear-other-users-search-query {
