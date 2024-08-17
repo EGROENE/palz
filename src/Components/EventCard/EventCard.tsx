@@ -27,9 +27,10 @@ const EventCard = ({ event }: { event: TEvent }) => {
   }, []);
 
   // Make sure that this updates after user de-RSVPs
-  const userRSVPd: boolean = currentUser?.id
-    ? event.interestedUsers.includes(currentUser.id.toString())
-    : false;
+  const userRSVPd: boolean =
+    currentUser && currentUser.id
+      ? event.interestedUsers.includes(currentUser.id)
+      : false;
 
   const userIsInvitee: boolean = currentUser?.id
     ? event.invitees.includes(String(currentUser.id))
@@ -52,7 +53,21 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const organizerUsernames = getOrganizersUsernames();
 
   const userIsOrganizer =
-    currentUser?.id && refinedOrganizers.includes(currentUser?.id.toString());
+    currentUser && currentUser.id && refinedOrganizers.includes(currentUser.id)
+      ? true
+      : false;
+
+  const maxParticipantsReached: boolean = event.invitees.length === event.maxParticipants;
+
+  const getRSVPButtonText = (): string => {
+    if (maxParticipantsReached) {
+      return "Max participants reached";
+    } else if (userRSVPd) {
+      return "Remove RSVP";
+    }
+    return "RSVP";
+  };
+  const rsvpButtonText = getRSVPButtonText();
 
   return (
     <div
@@ -61,20 +76,10 @@ const EventCard = ({ event }: { event: TEvent }) => {
         boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
       }}
     >
-      {userIsInvitee && !userRSVPd && (
+      {userIsInvitee && !userRSVPd && !maxParticipantsReached && (
         <div className="event-card-invitation">
           <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
-          <button
-            disabled={userIsOrganizer ? true : false}
-            title={userIsOrganizer ? "Cannot RSVP to an event you organized" : undefined}
-            onClick={(e) =>
-              userRSVPd && currentUser
-                ? handleDeleteUserRSVP(e, event, currentUser)
-                : handleAddUserRSVP(e, event)
-            }
-          >
-            {userRSVPd ? "Remove RSVP" : "RSVP"}
-          </button>
+          <button onClick={(e) => handleAddUserRSVP(e, event)}>{rsvpButtonText}</button>
           <button onClick={(e) => handleRemoveInvitee(e, event, currentUser)}>
             Decline
           </button>
@@ -100,18 +105,18 @@ const EventCard = ({ event }: { event: TEvent }) => {
             >
               See Event
             </Link>
-            {/* Necessary to expressly return true or false in 'disabled' attr of button below, or a type error occurs */}
             {!userIsOrganizer ? (
               <button
-                disabled={userIsOrganizer ? true : false}
+                disabled={maxParticipantsReached}
                 className="event-buttons-container-button"
                 onClick={(e) =>
-                  userRSVPd && currentUser
+                  currentUser &&
+                  (userRSVPd
                     ? handleDeleteUserRSVP(e, event, currentUser)
-                    : handleAddUserRSVP(e, event)
+                    : handleAddUserRSVP(e, event))
                 }
               >
-                {userRSVPd ? "Remove RSVP" : "RSVP"}
+                {rsvpButtonText}
               </button>
             ) : (
               <Link

@@ -80,7 +80,7 @@ const EventPage = () => {
   const nextEventDateTime = event ? new Date(event.eventDateTimeUnix) : undefined;
 
   const userRSVPd =
-    currentUser?.id && event?.interestedUsers.includes(currentUser.id.toString());
+    currentUser && currentUser.id && event?.interestedUsers.includes(currentUser.id);
 
   const getImagesArray = ():
     | {
@@ -114,8 +114,22 @@ const EventPage = () => {
   };
   const organizerUsernames = getOrganizersUsernames();
 
-  const userIsOrganizer =
-    currentUser?.id && event.organizers.includes(currentUser?.id.toString());
+  const userIsOrganizer: boolean =
+    currentUser && currentUser.id && event.organizers.includes(currentUser.id)
+      ? true
+      : false;
+
+  const maxParticipantsReached: boolean = event.invitees.length === event.maxParticipants;
+
+  const getRSVPButtonText = (): string => {
+    if (maxParticipantsReached) {
+      return "Max participants reached";
+    } else if (userRSVPd) {
+      return "Remove RSVP";
+    }
+    return "RSVP";
+  };
+  const rsvpButtonText = getRSVPButtonText();
 
   return (
     <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
@@ -212,14 +226,16 @@ const EventPage = () => {
             </div>
             {!userIsOrganizer ? (
               <button
+                disabled={maxParticipantsReached}
                 style={{ "backgroundColor": randomColor }}
                 onClick={(e) =>
-                  userRSVPd
+                  currentUser &&
+                  (userRSVPd
                     ? handleDeleteUserRSVP(e, event, currentUser)
-                    : handleAddUserRSVP(e, event)
+                    : handleAddUserRSVP(e, event))
                 }
               >
-                {userRSVPd ? "Remove RSVP" : "RSVP"}
+                {rsvpButtonText}
               </button>
             ) : (
               <Link to={`/edit-event/${event.id}`}>
