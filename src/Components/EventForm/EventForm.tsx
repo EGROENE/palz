@@ -300,6 +300,11 @@ const EventForm = ({
     }
   };
 
+  const handleMaxParticipantsInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const inputCleaned = Number(e.target.value.replace(/[^0-9]/g, ""));
+    inputCleaned > 0 ? setMaxParticipants(inputCleaned) : setMaxParticipants(undefined);
+  };
+
   const handleImageURLInput = (
     e: React.ChangeEvent<HTMLInputElement>,
     imageNumber: number
@@ -1101,7 +1106,6 @@ const EventForm = ({
         <p>Maximum Participants: (optional, not including organizers)</p>
         <input
           ref={maxParticipantsRef}
-          type="number"
           onFocus={() => setFocusedElement("maxParticipants")}
           style={
             focusedElement === "maxParticipants"
@@ -1118,16 +1122,11 @@ const EventForm = ({
               ? "erroneous-field"
               : undefined
           }
-          value={maxParticipants}
-          onChange={(e) => {
-            if (/^[0-9]*$/.test(e.target.value)) {
-              setMaxParticipants(Number(e.target.value));
-            }
-          }}
+          value={maxParticipants ? maxParticipants : ""}
+          onChange={(e) => handleMaxParticipantsInput(e)}
           inputMode="numeric"
           placeholder="Max number of participants"
         />
-        {maxParticipants && !(maxParticipants > 0) && <p>Number must be over 0</p>}
       </label>
       <div className="event-form-checkbox-container">
         <label>
