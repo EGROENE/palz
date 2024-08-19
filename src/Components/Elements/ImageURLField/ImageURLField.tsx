@@ -3,7 +3,7 @@ import { TThemeColor } from "../../../types";
 
 type TImageURLFieldProps = {
   imageNumber: "one" | "two" | "three";
-  ref: React.MutableRefObject<HTMLInputElement | null>;
+  imageFieldRef: React.MutableRefObject<HTMLInputElement | null>;
   onFocusHandler: (
     value: React.SetStateAction<
       | "title"
@@ -17,9 +17,7 @@ type TImageURLFieldProps = {
       | "maxParticipants"
       | "public"
       | "private"
-      | "imageOne"
-      | "imageTwo"
-      | "imageThree"
+      | `image${string}`
       | "coOrganizers"
       | "invitees"
       | undefined
@@ -37,9 +35,7 @@ type TImageURLFieldProps = {
     | "maxParticipants"
     | "public"
     | "private"
-    | "imageOne"
-    | "imageTwo"
-    | "imageThree"
+    | `image${string}`
     | "coOrganizers"
     | "invitees"
     | undefined;
@@ -55,7 +51,7 @@ type TImageURLFieldProps = {
 
 const ImageURLField = ({
   imageNumber,
-  ref,
+  imageFieldRef,
   onFocusHandler,
   focusedElement,
   randomColor,
@@ -68,8 +64,8 @@ const ImageURLField = ({
     <label>
       <p>{`Image ${Methods.getCapitalizedWord(imageNumber)} (optional)`}</p>
       <input
-        ref={ref}
-        onFocus={() => onFocusHandler}
+        ref={imageFieldRef}
+        onFocus={() => onFocusHandler(`image${Methods.getCapitalizedWord(imageNumber)}`)}
         style={
           focusedElement === `image${Methods.getCapitalizedWord(imageNumber)}`
             ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
