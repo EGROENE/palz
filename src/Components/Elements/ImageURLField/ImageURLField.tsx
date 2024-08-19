@@ -46,14 +46,14 @@ type TImageURLFieldProps = {
   randomColor: TThemeColor | undefined;
   isLoading: boolean;
   imageError: string;
-  imageURL: string;
+  imageURL: string | undefined;
   handleImageURLInput: (
     e: React.ChangeEvent<HTMLInputElement>,
     imageNumber: "one" | "two" | "three"
   ) => void;
 };
 
-const imageURLField = ({
+const ImageURLField = ({
   imageNumber,
   ref,
   onFocusHandler,
@@ -84,4 +84,4 @@ const imageURLField = ({
     </label>
   );
 };
-export default imageURLField;
+export default ImageURLField;
