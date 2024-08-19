@@ -12,7 +12,13 @@ const UserSettings = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // Set random color:
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+  const navigation = useNavigate();
   useEffect(() => {
+    // If no current user or whatever, redirect to login
+    if (!currentUser) {
+      navigation("/");
+    }
+
     const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
       "var(--theme-green)",
@@ -22,14 +28,7 @@ const UserSettings = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
-  }, []);
 
-  const { currentUser, theme, toggleTheme, getMostCurrentEvents, fetchAllUsers } =
-    useMainContext();
-  const { showSidebar, setShowSidebar, logout, passwordIsHidden, setPasswordIsHidden } =
-    useUserContext();
-
-  useEffect(() => {
     if (showSidebar) {
       setShowSidebar(false);
     }
@@ -38,14 +37,10 @@ const UserSettings = () => {
     }
   }, []);
 
-  // If no current user or whatever, redirect to login, just like in UserHomepage
-  // Maybe don't use currentUser to determine if user is logged in
-  const navigation = useNavigate();
-  useEffect(() => {
-    if (!currentUser) {
-      navigation("/");
-    }
-  }, []);
+  const { currentUser, theme, toggleTheme, getMostCurrentEvents, fetchAllUsers } =
+    useMainContext();
+  const { showSidebar, setShowSidebar, logout, passwordIsHidden, setPasswordIsHidden } =
+    useUserContext();
 
   const handleAddUserInterest = (
     interest: string,
