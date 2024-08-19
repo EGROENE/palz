@@ -1,20 +1,20 @@
 import "./App.css";
 import { useEffect } from "react";
-import LoginPage from "./Components/LoginPage/LoginPage";
-import Welcome from "./Components/Welcome/Welcome";
-import Sidebar from "./Components/Sidebar/Sidebar";
-import UserHomepage from "./Components/UserHomepage/UserHomepage";
+import LoginPage from "./Components/Pages/LoginPage/LoginPage";
+import Welcome from "./Components/Elements/Welcome/Welcome";
+import Sidebar from "./Components/Elements/Sidebar/Sidebar";
+import UserHomepage from "./Components/Pages/UserHomepage/UserHomepage";
 import { useMainContext } from "./Hooks/useMainContext";
 import { useUserContext } from "./Hooks/useUserContext";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
-import Error404 from "./Components/Error404/Error404";
-import NavBar from "./Components/NavBar/NavBar";
-import UserSettings from "./Components/UserSettings/UserSettings";
-import AddEventPage from "./Components/AddEventPage/AddEventPage";
-import EventsPage from "./Components/EventsPage/EventsPage";
-import EventPage from "./Components/EventPage/EventPage";
-import UsersEvents from "./Components/UsersEvents/UsersEvents";
-import EditEventPage from "./Components/EditEventPage/EditEventPage";
+import Error404 from "./Components/Pages/Error404/Error404";
+import NavBar from "./Components/Elements/NavBar/NavBar";
+import UserSettings from "./Components/Pages/UserSettings/UserSettings";
+import AddEventPage from "./Components/Pages/AddEventPage/AddEventPage";
+import EventsPage from "./Components/Pages/EventsPage/EventsPage";
+import EventPage from "./Components/Pages/EventPage/EventPage";
+import UsersEvents from "./Components/Pages/UsersEvents/UsersEvents";
+import EditEventPage from "./Components/Pages/EditEventPage/EditEventPage";
 
 function App() {
   const { userCreatedAccount, theme, showWelcomeMessage, currentUser, currentEvent } =
