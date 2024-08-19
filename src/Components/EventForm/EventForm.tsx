@@ -309,34 +309,43 @@ const EventForm = ({
 
   const handleImageURLInput = (
     e: React.ChangeEvent<HTMLInputElement>,
-    imageNumber: number
+    imageNumber: "one" | "two" | "three"
   ): void => {
     e.preventDefault();
     // Handle setting of appropriate state value:
-    if (imageNumber === 1) {
-      setImageOne(e.target.value.trim());
-    } else if (imageNumber === 2) {
-      setImageTwo(e.target.value.trim());
-    } else {
-      setImageThree(e.target.value.trim());
+    switch (imageNumber) {
+      case "one":
+        setImageOne(e.target.value.trim());
+        break;
+      case "two":
+        setImageTwo(e.target.value.trim());
+        break;
+      default:
+        setImageThree(e.target.value.trim());
     }
 
     // Handle setting of appropriate error:
     if (e.target.value.trim() !== "" && !Methods.isValidUrl(e.target.value.trim())) {
-      if (imageNumber === 1) {
-        setImageOneError("Invalid URL");
-      } else if (imageNumber === 2) {
-        setImageTwoError("Invalid URL");
-      } else {
-        setImageThreeError("Invalid URL");
+      switch (imageNumber) {
+        case "one":
+          setImageOneError("Invalid URL");
+          break;
+        case "two":
+          setImageTwoError("Invalid URL");
+          break;
+        default:
+          setImageThreeError("Invalid URL");
       }
     } else {
-      if (imageNumber === 1) {
-        setImageOneError("");
-      } else if (imageNumber === 2) {
-        setImageTwoError("");
-      } else {
-        setImageThreeError("");
+      switch (imageNumber) {
+        case "one":
+          setImageOneError("");
+          break;
+        case "two":
+          setImageTwoError("");
+          break;
+        default:
+          setImageThreeError("");
       }
     }
   };
@@ -1379,7 +1388,7 @@ const EventForm = ({
           disabled={isLoading}
           className={imageOneError !== "" ? "erroneous-field" : undefined}
           value={imageOne}
-          onChange={(e) => handleImageURLInput(e, 1)}
+          onChange={(e) => handleImageURLInput(e, "one")}
           placeholder="Link to image"
         />
         {imageOneError !== "" && <p>{imageOneError}</p>}
@@ -1397,7 +1406,7 @@ const EventForm = ({
           disabled={isLoading}
           className={imageTwoError !== "" ? "erroneous-field" : undefined}
           value={imageTwo}
-          onChange={(e) => handleImageURLInput(e, 2)}
+          onChange={(e) => handleImageURLInput(e, "two")}
           placeholder="Link to image"
         />
         {imageTwoError !== "" && <p>{imageTwoError}</p>}
@@ -1415,7 +1424,7 @@ const EventForm = ({
           disabled={isLoading}
           className={imageThreeError !== "" ? "erroneous-field" : undefined}
           value={imageThree}
-          onChange={(e) => handleImageURLInput(e, 3)}
+          onChange={(e) => handleImageURLInput(e, "three")}
           placeholder="Link to image"
         />
         {imageThreeError !== "" && <p>{imageThreeError}</p>}
