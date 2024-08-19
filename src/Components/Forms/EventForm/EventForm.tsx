@@ -830,7 +830,7 @@ const EventForm = ({
   }, [allEvents]);
 
   return (
-    <form className="add-event-form">
+    <form className="event-form">
       <label>
         <p>Title:</p>
         <input
@@ -1409,6 +1409,7 @@ const EventForm = ({
         imageURL={imageThree}
         handleImageURLInput={handleImageURLInput}
       />
+      {event && <button className="delete-button">Delete Button</button>}
       <div className="form-revert-submit-buttons-container">
         <button
           disabled={!changesMade || isLoading}
