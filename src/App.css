@@ -228,13 +228,20 @@
   overflow-y: scroll;
 }
 
-.sidebar-close {
+.sidebar-icon {
   position: absolute;
   left: 1rem;
-  top: 0.5rem;
   font-size: 1.5rem;
   color: white;
   padding: 0.25rem 0.5rem;
+}
+
+.sidebar-close {
+  top: 0.5rem;
+}
+
+.sidebar-toggle-theme {
+  top: 12.5rem;
 }
 
 .sidebar img {
@@ -282,7 +289,6 @@
   align-items: center;
   padding-bottom: 1rem;
   height: 16rem;
-  overflow-y: scroll;
 }
 
 .upcoming-events-hero {

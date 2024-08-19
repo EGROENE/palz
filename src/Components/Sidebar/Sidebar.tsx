@@ -36,7 +36,16 @@ const Sidebar = () => {
       <i
         onClick={() => setShowSidebar(!showSidebar)}
         style={{ backgroundColor: randomColor }}
-        className="sidebar-close fas fa-times"
+        className="sidebar-icon sidebar-close fas fa-times"
+      ></i>
+      <i
+        onClick={() => toggleTheme()}
+        className={
+          theme === "light"
+            ? "sidebar-icon sidebar-toggle-theme theme-toggle-icon fas fa-moon"
+            : "sidebar-icon sidebar-toggle-theme theme-toggle-icon fas fa-sun"
+        }
+        style={{ backgroundColor: randomColor }}
       ></i>
       <img className="profile-image-sidebar" src={currentUser?.profileImage} />
       <div style={{ backgroundColor: randomColor }} className="sidebar-names-container">
@@ -58,17 +67,6 @@ const Sidebar = () => {
         <Link className="sidebar-options" to="/settings">
           Settings
         </Link>
-        <button className="theme-toggle-button " onClick={() => toggleTheme()}>
-          {theme === "light" ? (
-            <span>
-              Switch to dark mode <i className="theme-toggle-icon fas fa-moon"></i>
-            </span>
-          ) : (
-            <span>
-              Switch to light mode <i className="theme-toggle-icon fas fa-sun"></i>
-            </span>
-          )}
-        </button>
       </div>
     </div>
   );
