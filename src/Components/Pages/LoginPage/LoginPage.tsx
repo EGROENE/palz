@@ -1,7 +1,7 @@
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import SignupForm from "../../LoginForms/SignupForm/SignupForm";
-import LoginForm from "../../LoginForms/LoginForm/LoginForm";
+import SignupForm from "../../Forms/LoginForms/SignupForm/SignupForm";
+import LoginForm from "../../Forms/LoginForms/LoginForm/LoginForm";
 import { useEffect, useState } from "react";
 import { TThemeColor } from "../../../types";
 
