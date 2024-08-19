@@ -1241,6 +1241,7 @@ const EventForm = ({
           )}
           <div className="co-organizers-invitees-dropdown">
             <button
+              style={{ backgroundColor: randomColor }}
               disabled={isLoading}
               type="button"
               onClick={() => setShowPotentialCoOrganizers(!showPotentialCoOrganizers)}
@@ -1328,6 +1329,7 @@ const EventForm = ({
           )}
           <div className="co-organizers-invitees-dropdown">
             <button
+              style={{ backgroundColor: randomColor }}
               disabled={isLoading || maxParticipantsReached}
               type="button"
               onClick={() => setShowPotentialInvitees(!showPotentialInvitees)}
