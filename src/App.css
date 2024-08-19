@@ -56,6 +56,7 @@
 .page-hero form {
   width: 87vw;
   margin-bottom: 3rem;
+  text-align: left;
 }
 
 .page-hero form input {
@@ -785,6 +786,10 @@ form textarea {
   display: flex;
   margin: 0 1rem 0 0;
   align-items: center;
+}
+
+.event-form .delete-button {
+  margin-top: 2rem;
 }
 
 .add-other-users-area {
