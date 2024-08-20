@@ -39,8 +39,14 @@ const UserSettings = () => {
     }
   }, []);
 
-  const { currentUser, theme, toggleTheme, getMostCurrentEvents, fetchAllUsers } =
-    useMainContext();
+  const {
+    currentUser,
+    theme,
+    toggleTheme,
+    getMostCurrentEvents,
+    fetchAllUsers,
+    allEvents,
+  } = useMainContext();
   const { showSidebar, setShowSidebar, logout, passwordIsHidden, setPasswordIsHidden } =
     useUserContext();
 
@@ -82,21 +88,69 @@ const UserSettings = () => {
 
   // Defined here, and not in userContext, as useNavigate hook can only be used in <Router> component (navigation is changed)
   const handleAccountDeletion = () => {
-    Requests.deleteUser(currentUser?.id)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not delete your account. Please try again.");
-          getMostCurrentEvents();
-          fetchAllUsers();
-        } else {
-          toast.error("You have deleted your account. We're sorry to see you go!");
-          logout();
-          navigation("/");
-          getMostCurrentEvents();
-          fetchAllUsers();
-        }
-      })
-      .catch((error) => console.log(error));
+    setShowAreYouSureInterface(false);
+
+    let requestToDeleteUserIDFromAllArraysIsOK: boolean = true; // if any request to del user from pertinent arrays in DB fails, this will be false
+
+    const promisesToAwait: Promise<Response>[] = [];
+
+    // Delete user from event invitees/organizers/RSVP arrays:
+    for (const event of allEvents) {
+      // Delete any user RSVPs:
+      promisesToAwait.push(Requests.deleteUserRSVP(currentUser, event));
+      Requests.deleteUserRSVP(currentUser, event)
+        .then((response) => {
+          if (!response.ok) {
+            requestToDeleteUserIDFromAllArraysIsOK = false;
+          }
+        })
+        .catch((error) => console.log(error));
+
+      // Delete user from events they've been invited to:
+      promisesToAwait.push(Requests.removeInvitee(event, currentUser));
+      Requests.removeInvitee(event, currentUser)
+        .then((response) => {
+          if (!response.ok) {
+            requestToDeleteUserIDFromAllArraysIsOK = false;
+          }
+        })
+        .catch((error) => console.log(error));
+
+      // Delete user from events they've organized:
+      promisesToAwait.push(Requests.removeOrganizer(event, currentUser));
+      Requests.removeOrganizer(event, currentUser)
+        .then((response) => {
+          if (!response.ok) {
+            requestToDeleteUserIDFromAllArraysIsOK = false;
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+
+    // Wait for user to be removed from all invitee/organizer/RSVP arrays, then delete user object in DB. Eventually, also wait for user to be removed from palz & messages arrays.
+    // in .finally(), hide deletionInProgress modal
+    Promise.all(promisesToAwait).then(() => {
+      // run after the others have finished
+      if (!requestToDeleteUserIDFromAllArraysIsOK) {
+        toast.error("Could not delete your account. Please try again.");
+      } else {
+        Requests.deleteUser(currentUser?.id)
+          .then((response) => {
+            if (!response.ok) {
+              toast.error("Could not delete your account. Please try again.");
+              getMostCurrentEvents();
+              fetchAllUsers();
+            } else {
+              toast.error("You have deleted your account. We're sorry to see you go!");
+              logout();
+              navigation("/");
+              getMostCurrentEvents();
+              fetchAllUsers();
+            }
+          })
+          .catch((error) => console.log(error));
+      }
+    });
   };
 
   return (
