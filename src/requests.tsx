@@ -49,6 +49,9 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "about": "",
     "subscriptionType": "",
     "interests": [],
+    "profileVisibleTo": newUserData.profileVisibleTo,
+    "whoCanAddUserAsOrganizer": newUserData.whoCanAddUserAsOrganizer,
+    "whoCanInviteUser": newUserData.whoCanInviteUser,
   });
 
   return fetch("http://localhost:3000/users", {
