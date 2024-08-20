@@ -657,6 +657,19 @@ form textarea {
   font-weight: 700;
 }
 
+.account-deletion-in-progress-modal {
+  background-color: black;
+  border-radius: 10px;
+  border: 1px solid white;
+  padding: 2rem;
+}
+
+.account-deletion-in-progress-modal header {
+  color: var(--theme-red);
+  font-weight: 700;
+  font-size: 2rem;
+}
+
 .add-interests-bar {
   display: flex;
   margin-bottom: 2rem;
@@ -954,3 +967,232 @@ form textarea {
 .listed-user-texts-container p:first-child {
   font-size: 1.5rem;
 }
+
+/* From Uiverse.io by lukepadiachy */
+.my-loader {
+  width: 200px;
+  height: 200px;
+  perspective: 1000px;
+  margin: 100px auto;
+}
+
+.rubiks-cube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: my-rotateCube 5s infinite linear;
+}
+
+.my-loader .face {
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 100%;
+}
+
+.my-loader .face.front {
+  transform: translateZ(100px);
+}
+.my-loader .face.back {
+  transform: rotateY(180deg) translateZ(100px);
+}
+.my-loader .face.left {
+  transform: rotateY(-90deg) translateZ(100px);
+}
+.my-loader .face.right {
+  transform: rotateY(90deg) translateZ(100px);
+}
+.my-loader .face.top {
+  transform: rotateX(90deg) translateZ(100px);
+}
+.my-loader .face.bottom {
+  transform: rotateX(-90deg) translateZ(100px);
+}
+
+.my-loader .cube {
+  width: calc(100% / 3);
+  height: calc(100% / 3);
+  box-sizing: border-box;
+  border: 1px solid #000;
+}
+
+@keyframes my-rotateCube {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  100% {
+    transform: rotateX(360deg) rotateY(360deg);
+  }
+}
+
+/* Pong Loader */
+/* From Uiverse.io by TemRevil */
+loading {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.loading-box {
+  width: 250px;
+  height: 100px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: relative;
+}
+
+.color {
+  background-color: #3395ff;
+}
+.WH {
+  width: 10px;
+  height: 70px;
+  position: absolute;
+}
+
+.l1 {
+  left: 0;
+  animation: l1 4s infinite linear;
+  background-color: var(--theme-blue);
+}
+.l2 {
+  right: 0;
+  animation: l2 4s infinite linear;
+  background-color: var(--theme-green);
+}
+.ball {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  position: absolute;
+  animation: ball 4s infinite linear;
+  background-color: var(--theme-yellow);
+}
+
+@keyframes l1 {
+  0% {
+    top: 0%;
+  }
+  10% {
+    top: -20%;
+  }
+  20% {
+    top: 0%;
+  }
+  30% {
+    top: 40%;
+  }
+  40% {
+    top: 0%;
+  }
+  50% {
+    top: 30%;
+  }
+  60% {
+    top: 40%;
+  }
+  70% {
+    top: 60%;
+  }
+  80% {
+    top: -10%;
+  }
+  90% {
+    top: 10%;
+  }
+  100% {
+    top: 0%;
+  }
+}
+@keyframes l2 {
+  0% {
+    bottom: 0%;
+  }
+  10% {
+    bottom: -20%;
+  }
+  20% {
+    bottom: 40%;
+  }
+  30% {
+    bottom: 60%;
+  }
+  40% {
+    bottom: 20%;
+  }
+  50% {
+    bottom: 30%;
+  }
+  60% {
+    bottom: 40%;
+  }
+  70% {
+    bottom: 60%;
+  }
+  80% {
+    bottom: -10%;
+  }
+  90% {
+    bottom: 10%;
+  }
+  100% {
+    bottom: 0%;
+  }
+}
+@keyframes ball {
+  0% {
+    top: 80%;
+    left: 96%;
+  }
+  10% {
+    top: 10%;
+    left: 3%;
+  }
+  20% {
+    top: 10%;
+    left: 90%;
+  }
+  30% {
+    top: 60%;
+    left: 3%;
+  }
+  40% {
+    top: 10%;
+    left: 90%;
+  }
+  50% {
+    top: 50%;
+    left: 3%;
+  }
+  60% {
+    top: 10%;
+    left: 90%;
+  }
+  70% {
+    top: 93%;
+    left: 3%;
+  }
+  80% {
+    top: 83%;
+    left: 90%;
+  }
+  90% {
+    top: 10%;
+    left: 3%;
+  }
+  100% {
+    top: 80%;
+    left: 90%;
+  }
+}
+
+.loading {
+  margin-top: 3rem;
+}
+
+/* .animate__pulse {
+  --animate-repeat: infinite;
+} */
