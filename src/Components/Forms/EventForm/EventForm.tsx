@@ -860,9 +860,7 @@ const EventForm = ({
     if (showSidebar) {
       setShowSidebar(false);
     }
-  }, []);
 
-  useEffect(() => {
     if (event) {
       setCurrentEvent(allEvents.filter((ev) => ev.id === event.id)[0]);
     }
