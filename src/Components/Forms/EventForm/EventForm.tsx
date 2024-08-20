@@ -152,6 +152,10 @@ const EventForm = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
+  const [
+    showAreYouSureRemoveCurrentUserAsOrganizer,
+    setShowAreYouSureRemoveCurrentUserAsOrganizer,
+  ] = useState<boolean>(false);
 
   // Function to reset otherUsers to its original value, w/o filters from coOrganizersSearchQuery
   const setPotentialCoOrganizersAndOrInviteesToOriginalValue = (
@@ -407,52 +411,62 @@ const EventForm = ({
     }
   };
 
-  const handleAddRemoveUserAsOrganizer = (user: TUser): void => {
-    if (user.id) {
+  const handleAddRemoveUserAsOrganizer = (
+    e?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    user?: TUser
+  ): void => {
+    /* If 'user' is passed, it refers to a user that is not the current user, so the logic to update the organizers that display on page is handled here (then updated in DB once form is submitted.). In else below, the removal of currentUser as an organizer is handled. They are removed from the event's 'organizers' array in DB & redirected to their homepage. */
+    if (user?.id) {
+      // Add/remove other users as organizers:
       if (organizers.includes(user.id)) {
         // Remove user as organizer:
-        if (user.id === currentUser?.id) {
-          // If removing self, currentUser.id is removed from event's 'organizers' array
-          // If request to do so is successful, user is redirected back to their homepage. Else, they can try again.
-          setIsLoading(true);
-          Requests.removeOrganizer(event, currentUser)
-            .then((response) => {
-              if (!response.ok) {
-                toast.error("Could not remove you as organizer. Please try again.");
-              } else {
-                toast.success(
-                  "You have been removed as an organizer. You can no longer make changes to this event."
-                );
-                navigation(`/users/${currentUser?.username}`);
-              }
-            })
-            .catch((error) => console.log(error))
-            .finally(() => setIsLoading(false));
-        } else {
-          setOrganizers(organizers.filter((organizer) => organizer !== user.id));
-          setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
-        }
+        setOrganizers(organizers.filter((organizer) => organizer !== user?.id));
+        setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
       } else {
         // Add user as organizer:
-        const updatedArray = organizers.concat(String(user.id));
+        const updatedArray = organizers.concat(String(user?.id));
         setOrganizers(updatedArray);
         setPotentialInvitees(
-          potentialInvitees.filter((potentialInvitee) => potentialInvitee.id !== user.id)
+          potentialInvitees.filter((potentialInvitee) => potentialInvitee.id !== user?.id)
         );
       }
+    } else {
+      // Remove currentUser as organizer:
+      e?.preventDefault();
+      // If removing self, currentUser.id is removed from event's 'organizers' array
+      // If request to do so is successful, user is redirected back to their homepage. Else, they can try again.
+      setIsLoading(true);
+      Requests.removeOrganizer(event, currentUser)
+        .then((response) => {
+          if (!response.ok) {
+            toast.error("Could not remove you as organizer. Please try again.");
+          } else {
+            toast.success(
+              "You have been removed as an organizer. You can no longer make changes to this event."
+            );
+            navigation(`/users/${currentUser?.username}`);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
     }
   };
 
-  const handleAddRemoveUserAsInvitee = (user: TUser): void => {
-    if (invitees.includes(String(user.id))) {
-      setInvitees(invitees.filter((invitee) => invitee !== user.id));
+  /* prop could be user: TUser only, but TS must be satisfied (this function, along w/ handleAddRemoveUserAsOrganizer, which has the props now included here, are both passed to UserTab as removeHandler) */
+  const handleAddRemoveUserAsInvitee = (
+    e?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    user?: TUser
+  ): void => {
+    e?.preventDefault();
+    if (invitees.includes(String(user?.id))) {
+      setInvitees(invitees.filter((invitee) => invitee !== user?.id));
       setPotentialCoOrganizersAndOrInviteesToOriginalValue("invitees");
     } else {
-      const updatedArray = invitees.concat(String(user.id));
+      const updatedArray = invitees.concat(String(user?.id));
       setInvitees(updatedArray);
       setPotentialCoOrganizers(
         potentialCoOrganizers.filter(
-          (potentialCoOrganizer) => potentialCoOrganizer.id !== user.id
+          (potentialCoOrganizer) => potentialCoOrganizer.id !== user?.id
         )
       );
     }
@@ -1237,12 +1251,20 @@ const EventForm = ({
             usersWhoAreOrganizers.filter(
               (user) => user.username !== currentUser?.username
             ).length > 0 && (
-              <span
-                style={{ color: randomColor }}
-                onClick={() => setOrganizers([`${currentUser?.id}`])}
-              >
-                Remove All
-              </span>
+              <>
+                <span
+                  style={{ color: randomColor }}
+                  onClick={() => setShowAreYouSureRemoveCurrentUserAsOrganizer(true)}
+                >
+                  Remove Yourself
+                </span>
+                <span
+                  style={{ color: randomColor }}
+                  onClick={() => setOrganizers([`${currentUser?.id}`])}
+                >
+                  Remove All
+                </span>
+              </>
             )}
         </p>
         <div className="co-organizers-invitees-container">
@@ -1308,12 +1330,12 @@ const EventForm = ({
                   .map((user) => (
                     <div
                       key={user.id}
-                      onClick={() => handleAddRemoveUserAsOrganizer(user)}
+                      onClick={() => handleAddRemoveUserAsOrganizer(undefined, user)}
                       className="other-user-option"
                     >
                       <input
                         disabled={isLoading}
-                        onChange={() => handleAddRemoveUserAsOrganizer(user)}
+                        onChange={() => handleAddRemoveUserAsOrganizer(undefined, user)}
                         checked={organizers.includes(String(user.id))}
                         type="checkbox"
                       />
@@ -1396,12 +1418,12 @@ const EventForm = ({
                   .map((user) => (
                     <div
                       key={user.id}
-                      onClick={() => handleAddRemoveUserAsInvitee(user)}
+                      onClick={() => handleAddRemoveUserAsInvitee(undefined, user)}
                       className="other-user-option"
                     >
                       <input
                         disabled={isLoading}
-                        onChange={() => handleAddRemoveUserAsInvitee(user)}
+                        onChange={() => handleAddRemoveUserAsInvitee(undefined, user)}
                         checked={invitees.includes(String(user.id))}
                         type="checkbox"
                       />
@@ -1474,6 +1496,17 @@ const EventForm = ({
           yesButtonText="Delete Event"
           setShowAreYouSureInterface={setShowAreYouSureInterface}
           executionHandler={handleDeleteEvent}
+          randomColor={randomColor}
+        />
+      )}
+      {showAreYouSureRemoveCurrentUserAsOrganizer && (
+        <AreYouSureInterface
+          message="Are you sure you want to remove yourself as an organizer?"
+          subheader="You will no longer be able to make changes to this event, unless another user adds you as a co-organizer."
+          noButtonText="Cancel"
+          yesButtonText="Remove Myself as Organizer"
+          setShowAreYouSureInterface={setShowAreYouSureRemoveCurrentUserAsOrganizer}
+          executionHandler={handleAddRemoveUserAsInvitee}
           randomColor={randomColor}
         />
       )}
