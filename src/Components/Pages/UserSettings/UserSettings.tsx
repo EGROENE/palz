@@ -7,9 +7,11 @@ import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import { TThemeColor } from "../../../types";
+import AreYouSureInterface from "../../Elements/AreYouSureInterface/AreYouSureInterface";
 
 const UserSettings = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
   // Set random color:
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   const navigation = useNavigate();
@@ -85,11 +87,13 @@ const UserSettings = () => {
         if (!response.ok) {
           toast.error("Could not delete your account. Please try again.");
           getMostCurrentEvents();
+          // call fetchAllUsers()
         } else {
           toast.error("You have deleted your account. We're sorry to see you go!");
           logout();
           navigation("/");
           getMostCurrentEvents();
+          // call fetchAllUsers()
         }
       })
       .catch((error) => console.log(error));
@@ -115,13 +119,16 @@ const UserSettings = () => {
           <h3>Delete Account</h3>
           <p>
             Any events of which you are the sole organizer will be deleted & all your
-            account information will be lost. Please understand that this action is
-            irreversible.
+            account information will be lost.
           </p>
-          <button onClick={() => handleAccountDeletion()} className="delete-button">
+          <button
+            onClick={() => setShowAreYouSureInterface(true)}
+            className="delete-button"
+          >
             Delete Account
           </button>
         </div>
+
         <div>
           <h3>Change Site Theme</h3>
           <p>{theme === "dark" ? "Theme is set to dark" : "Theme is set to light"}</p>
@@ -133,6 +140,18 @@ const UserSettings = () => {
           </button>
         </div>
       </div>
+      {showAreYouSureInterface && (
+        <AreYouSureInterface
+          message="Are you sure you want to permanently delete your account?"
+          subheader="Please understand that this action is
+            irreversible."
+          noButtonText="Cancel"
+          yesButtonText="Delete Account"
+          setShowAreYouSureInterface={setShowAreYouSureInterface}
+          executionHandler={handleAccountDeletion}
+          randomColor={randomColor}
+        />
+      )}
     </div>
   );
 };
