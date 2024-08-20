@@ -410,9 +410,30 @@ const EventForm = ({
   const handleAddRemoveUserAsOrganizer = (user: TUser): void => {
     if (user.id) {
       if (organizers.includes(user.id)) {
-        setOrganizers(organizers.filter((organizer) => organizer !== user.id));
-        setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
+        // Remove user as organizer:
+        if (user.id === currentUser?.id) {
+          // If removing self, currentUser.id is removed from event's 'organizers' array
+          // If request to do so is successful, user is redirected back to their homepage. Else, they can try again.
+          setIsLoading(true);
+          Requests.removeOrganizer(event, currentUser)
+            .then((response) => {
+              if (!response.ok) {
+                toast.error("Could not remove you as organizer. Please try again.");
+              } else {
+                toast.success(
+                  "You have been removed as an organizer. You can no longer make changes to this event."
+                );
+                navigation(`/users/${currentUser?.username}`);
+              }
+            })
+            .catch((error) => console.log(error))
+            .finally(() => setIsLoading(false));
+        } else {
+          setOrganizers(organizers.filter((organizer) => organizer !== user.id));
+          setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
+        }
       } else {
+        // Add user as organizer:
         const updatedArray = organizers.concat(String(user.id));
         setOrganizers(updatedArray);
         setPotentialInvitees(
