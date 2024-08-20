@@ -8,7 +8,10 @@ const UserTab = ({
   isDisabled,
 }: {
   user: TUser;
-  removeHandler: (user: TUser) => void;
+  removeHandler: (
+    e?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    user?: TUser
+  ) => void;
   randomColor?: string;
   isDisabled: boolean;
 }) => {
@@ -22,7 +25,7 @@ const UserTab = ({
       <img src={`${user.profileImage}`} alt="profile pic" />
       <span>{user.username}</span>
       <i
-        onClick={() => (!isDisabled ? removeHandler(user) : undefined)}
+        onClick={() => (!isDisabled ? removeHandler(undefined, user) : undefined)}
         className="fas fa-times"
       ></i>
     </div>
