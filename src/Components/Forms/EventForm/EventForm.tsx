@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import UserTab from "../../Elements/UserTab/UserTab";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import ImageURLField from "../../Elements/ImageURLField/ImageURLField";
+import AreYouSureInterface from "../../Elements/AreYouSureInterface/AreYouSureInterface";
 
 const EventForm = ({
   randomColor,
@@ -149,6 +150,8 @@ const EventForm = ({
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
 
   // Function to reset otherUsers to its original value, w/o filters from coOrganizersSearchQuery
   const setPotentialCoOrganizersAndOrInviteesToOriginalValue = (
@@ -597,6 +600,25 @@ const EventForm = ({
         "Please make sure all fields are filled out & that there are no errors"
       );
     }
+  };
+
+  const handleDeleteEvent = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void => {
+    e.preventDefault();
+    setIsLoading(true);
+    Requests.deleteEvent(event)
+      .then((response) => {
+        setShowAreYouSureInterface(false);
+        if (!response.ok) {
+          toast.error("Could not delete event. Please try again.");
+        } else {
+          toast.error("Event deleted");
+          navigation(`/users/${currentUser?.username}`); // redirect to user homepage after del event
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   const getValuesToUpdate = (): TEventValuesToUpdate | undefined => {
@@ -1409,8 +1431,26 @@ const EventForm = ({
         imageURL={imageThree}
         handleImageURLInput={handleImageURLInput}
       />
-      {event && <button className="delete-button">Delete Button</button>}
-      <div className="form-revert-submit-buttons-container">
+      {event && (
+        <button
+          type="button"
+          onClick={() => setShowAreYouSureInterface(true)}
+          className="delete-button"
+        >
+          Delete Button
+        </button>
+      )}
+      {showAreYouSureInterface && (
+        <AreYouSureInterface
+          message="Are you sure you want to delete this event?"
+          noButtonText="Cancel"
+          yesButtonText="Delete Event"
+          setShowAreYouSureInterface={setShowAreYouSureInterface}
+          executionHandler={handleDeleteEvent}
+          randomColor={randomColor}
+        />
+      )}
+      <div className="buttons-container">
         <button
           disabled={!changesMade || isLoading}
           type="reset"
