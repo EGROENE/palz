@@ -2,6 +2,7 @@ import { TThemeColor } from "../../../types";
 
 type TAreYouSureInterfaceProps = {
   message: string;
+  subheader?: string;
   noButtonText: string;
   yesButtonText: string;
   setShowAreYouSureInterface: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,6 +12,7 @@ type TAreYouSureInterfaceProps = {
 
 const AreYouSureInterface = ({
   message,
+  subheader,
   noButtonText,
   yesButtonText,
   setShowAreYouSureInterface,
@@ -21,6 +23,7 @@ const AreYouSureInterface = ({
     <div className="modal-background">
       <div className="are-you-sure-modal">
         <header style={{ color: randomColor }}>{message}</header>
+        <p>{subheader}</p>
         <div className="buttons-container">
           <button onClick={() => setShowAreYouSureInterface(false)}>
             {noButtonText}
