@@ -8,9 +8,12 @@ import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import { TThemeColor } from "../../../types";
 import AreYouSureInterface from "../../Elements/AreYouSureInterface/AreYouSureInterface";
+import AccountDeletionInProgressModal from "../../Elements/AccountDeletionInProgressModal/AccountDeletionInProgressModal";
 
 const UserSettings = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [accountDeletionInProgress, setAccountDeletionInProgress] =
+    useState<boolean>(false);
   const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
   // Set random color:
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -90,6 +93,8 @@ const UserSettings = () => {
   const handleAccountDeletion = () => {
     setShowAreYouSureInterface(false);
 
+    setAccountDeletionInProgress(true);
+
     let requestToDeleteUserIDFromAllArraysIsOK: boolean = true; // if any request to del user from pertinent arrays in DB fails, this will be false
 
     const promisesToAwait: Promise<Response>[] = [];
@@ -129,28 +134,31 @@ const UserSettings = () => {
 
     // Wait for user to be removed from all invitee/organizer/RSVP arrays, then delete user object in DB. Eventually, also wait for user to be removed from palz & messages arrays.
     // in .finally(), hide deletionInProgress modal
-    Promise.all(promisesToAwait).then(() => {
-      // run after the others have finished
-      if (!requestToDeleteUserIDFromAllArraysIsOK) {
-        toast.error("Could not delete your account. Please try again.");
-      } else {
-        Requests.deleteUser(currentUser?.id)
-          .then((response) => {
-            if (!response.ok) {
-              toast.error("Could not delete your account. Please try again.");
-              getMostCurrentEvents();
-              fetchAllUsers();
-            } else {
-              toast.error("You have deleted your account. We're sorry to see you go!");
-              logout();
-              navigation("/");
-              getMostCurrentEvents();
-              fetchAllUsers();
-            }
-          })
-          .catch((error) => console.log(error));
-      }
-    });
+    Promise.all(promisesToAwait)
+      .then(() => {
+        // run after the others have finished
+        if (!requestToDeleteUserIDFromAllArraysIsOK) {
+          toast.error("Could not delete your account. Please try again.");
+        } else {
+          Requests.deleteUser(currentUser?.id)
+            .then((response) => {
+              if (!response.ok) {
+                toast.error("Could not delete your account. Please try again.");
+                getMostCurrentEvents();
+                fetchAllUsers();
+              } else {
+                toast.error("You have deleted your account. We're sorry to see you go!");
+                logout();
+                navigation("/");
+                getMostCurrentEvents();
+                fetchAllUsers();
+              }
+            })
+            .catch((error) => console.log(error));
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setAccountDeletionInProgress(false));
   };
 
   return (
@@ -206,6 +214,7 @@ const UserSettings = () => {
           randomColor={randomColor}
         />
       )}
+      {accountDeletionInProgress && <AccountDeletionInProgressModal />}
     </div>
   );
 };
