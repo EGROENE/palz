@@ -1665,6 +1665,29 @@ const EditUserInfoForm = ({
             </div>
           </div>
         </label>
+        <label>
+          <p>People who can see your profile (besides profiles you block):</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setProfileVisibleTo("anyone")}
+                checked={profileVisibleTo === "anyone"}
+                name="who-can-see-profile"
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setProfileVisibleTo("friends")}
+                checked={profileVisibleTo === "friends"}
+                name="who-can-see-profile"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+          </div>
+        </label>
         <div className="buttons-container">
           <button
             type="reset"
