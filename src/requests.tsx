@@ -397,9 +397,29 @@ const removeInvitee = (event: TEvent, user: TUser | undefined): Promise<Response
   });
 };
 
+const removeOrganizer = (event: TEvent, user: TUser | undefined): Promise<Response> => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "organizers": event.organizers.filter((id) => id !== user?.id),
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/events/${event.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
   updateEvent,
   removeInvitee,
+  removeOrganizer,
   createEvent,
   deleteEvent,
   addUserRSVP,
