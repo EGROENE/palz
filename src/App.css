@@ -29,6 +29,11 @@
   top: 44%;
 }
 
+.standalone-element.welcome {
+  display: flex;
+  flex-direction: column;
+}
+
 .page-hero {
   display: flex;
   flex-direction: column;
