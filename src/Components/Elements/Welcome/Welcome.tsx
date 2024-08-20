@@ -5,11 +5,13 @@ const Welcome = () => {
 
   return (
     <div className="page-hero">
-      {userCreatedAccount ? (
-        <h1 className="standalone-element">{`Welcome to Palz, ${currentUser?.firstName}!`}</h1>
-      ) : (
-        <h1 className="standalone-element">{`Welcome back, ${currentUser?.firstName}!`}</h1>
-      )}
+      <div className="standalone-element welcome">
+        <h1 className="animate__animated animate__pulse">
+          {userCreatedAccount
+            ? `Welcome to Palz, ${currentUser?.firstName}!`
+            : `Welcome back, ${currentUser?.firstName}!`}
+        </h1>
+      </div>
     </div>
   );
 };
