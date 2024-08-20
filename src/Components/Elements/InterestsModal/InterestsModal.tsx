@@ -41,7 +41,7 @@ const InterestsModal = ({
         }}
         className="fas fa-times close-module-icon"
       ></i>
-      <div className="browse-interests-module">
+      <div className="browse-interests-modal">
         <div className="bar-and-description">
           <p>Don't see an interest listed? Type it below & add it:</p>
           <div className="add-interests-bar">

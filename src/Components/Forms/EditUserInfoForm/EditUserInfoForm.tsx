@@ -1586,7 +1586,7 @@ const EditUserInfoForm = ({
             )}
           </label>
         )}
-        <div className="form-revert-submit-buttons-container">
+        <div className="buttons-container">
           <button
             type="reset"
             disabled={!userInfoEdited || isLoading}
