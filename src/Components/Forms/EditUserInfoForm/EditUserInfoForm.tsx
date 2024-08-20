@@ -22,6 +22,12 @@ const EditUserInfoForm = ({
 }) => {
   const { currentUser, setCurrentUser, fetchAllUsers, allUsers } = useMainContext();
   const {
+    whoCanAddUserAsOrganizer,
+    setWhoCanAddUserAsOrganizer,
+    whoCanInviteUser,
+    setWhoCanInviteUser,
+    profileVisibleTo,
+    setProfileVisibleTo,
     handleCityStateCountryInput,
     userCity,
     setUserCity,
@@ -1024,6 +1030,15 @@ const EditUserInfoForm = ({
     ...(instagram !== currentUser?.instagram && { instagram: instagram }),
     ...(x !== currentUser?.x && { x: x }),
     ...(userAbout !== currentUser?.about && { about: userAbout?.trim() }),
+    ...(whoCanAddUserAsOrganizer !== currentUser?.whoCanAddUserAsOrganizer && {
+      whoCanAddUserAsOrganizer: whoCanAddUserAsOrganizer,
+    }),
+    ...(whoCanInviteUser !== currentUser?.whoCanInviteUser && {
+      whoCanInviteUser: whoCanInviteUser,
+    }),
+    ...(profileVisibleTo !== currentUser?.profileVisibleTo && {
+      profileVisibleTo: profileVisibleTo,
+    }),
   };
 
   return (
@@ -1586,6 +1601,38 @@ const EditUserInfoForm = ({
             )}
           </label>
         )}
+        <label>
+          <p>People who can add you as co-organizer of events:</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanAddUserAsOrganizer("anyone")}
+                checked={whoCanAddUserAsOrganizer === "anyone"}
+                name="who-can-add-as-co-organizer"
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanAddUserAsOrganizer("friends")}
+                checked={whoCanAddUserAsOrganizer === "friends"}
+                name="who-can-add-as-co-organizer"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanAddUserAsOrganizer("nobody")}
+                checked={whoCanAddUserAsOrganizer === "nobody"}
+                name="who-can-add-as-co-organizer"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
         <div className="buttons-container">
           <button
             type="reset"
