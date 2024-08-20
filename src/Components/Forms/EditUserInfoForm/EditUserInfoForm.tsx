@@ -1633,6 +1633,38 @@ const EditUserInfoForm = ({
             </div>
           </div>
         </label>
+        <label>
+          <p>People who can invite you to events:</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanInviteUser("anyone")}
+                checked={whoCanInviteUser === "anyone"}
+                name="who-can-invite"
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanInviteUser("friends")}
+                checked={whoCanInviteUser === "friends"}
+                name="who-can-invite"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanInviteUser("nobody")}
+                checked={whoCanInviteUser === "nobody"}
+                name="who-can-invite"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
         <div className="buttons-container">
           <button
             type="reset"
