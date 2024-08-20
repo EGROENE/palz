@@ -649,6 +649,7 @@ form textarea {
   padding: 1rem;
   border: 1px solid white;
   border-radius: 10px;
+  max-width: 37%;
 }
 
 .are-you-sure-modal header {
