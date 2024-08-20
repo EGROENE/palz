@@ -367,11 +367,11 @@ const updateEvent = (
   });
 };
 
-const deleteEvent = (event: TEvent): Promise<Response> => {
+const deleteEvent = (event: TEvent | undefined): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  return fetch(`http://localhost:3000/events/${event.id}`, {
+  return fetch(`http://localhost:3000/events/${event?.id}`, {
     method: "DELETE",
     headers: myHeaders,
     redirect: "follow",
