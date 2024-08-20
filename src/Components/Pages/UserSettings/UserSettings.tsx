@@ -87,13 +87,13 @@ const UserSettings = () => {
         if (!response.ok) {
           toast.error("Could not delete your account. Please try again.");
           getMostCurrentEvents();
-          // call fetchAllUsers()
+          fetchAllUsers();
         } else {
           toast.error("You have deleted your account. We're sorry to see you go!");
           logout();
           navigation("/");
           getMostCurrentEvents();
-          // call fetchAllUsers()
+          fetchAllUsers();
         }
       })
       .catch((error) => console.log(error));
