@@ -1327,7 +1327,13 @@ const EventForm = ({
             {showPotentialCoOrganizers && (
               <ul className="country-code-dropdown">
                 {potentialCoOrganizers
-                  .filter((user) => user.id && !invitees.includes(user.id))
+                  .filter(
+                    (user) =>
+                      user.id &&
+                      !invitees.includes(user.id) &&
+                      (user.whoCanAddUserAsOrganizer === "anyone" ||
+                        (user.id && currentUser?.friends.includes(user.id)))
+                  )
                   .map((user) => (
                     <div
                       key={user.id}
