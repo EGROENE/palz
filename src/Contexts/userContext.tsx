@@ -86,6 +86,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [userAbout, setUserAbout, removeUserAbout] = useSessionStorage<
     string | undefined
   >("userAbout", "");
+  const [whoCanAddUserAsOrganizer, setWhoCanAddUserAsOrganizer] = useSessionStorage<
+    "anyone" | "friends" | "nobody"
+  >("whoCanAddUserAsOrganizer", "anyone");
+  const [whoCanInviteUser, setWhoCanInviteUser] = useSessionStorage<
+    "anyone" | "friends" | "nobody"
+  >("whoCanInviteUser", "anyone");
+  const [profileVisibleTo, setProfileVisibleTo] = useSessionStorage<"anyone" | "friends">(
+    "profileVisibleTo",
+    "anyone"
+  );
 
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
   const [showPasswordCriteria, setShowPasswordCriteria] = useState<boolean>(false);
@@ -143,6 +153,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     about: "",
     subscriptionType: "",
     interests: [],
+    whoCanAddUserAsOrganizer: whoCanAddUserAsOrganizer,
+    whoCanInviteUser: whoCanInviteUser,
+    profileVisibleTo: profileVisibleTo,
   };
 
   // Called when user switches b/t login & signup forms & when user logs out
@@ -900,6 +913,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setUserAbout,
     userAboutError,
     setUserAboutError,
+    whoCanAddUserAsOrganizer,
+    setWhoCanAddUserAsOrganizer,
+    whoCanInviteUser,
+    setWhoCanInviteUser,
+    profileVisibleTo,
+    setProfileVisibleTo,
   };
 
   return (
