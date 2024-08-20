@@ -151,7 +151,8 @@ const EventForm = ({
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
+  const [showAreYouSureDeleteEvent, setShowAreYouSureDeleteEvent] =
+    useState<boolean>(false);
   const [
     showAreYouSureRemoveCurrentUserAsOrganizer,
     setShowAreYouSureRemoveCurrentUserAsOrganizer,
@@ -644,7 +645,7 @@ const EventForm = ({
     setIsLoading(true);
     Requests.deleteEvent(event)
       .then((response) => {
-        setShowAreYouSureInterface(false);
+        setShowAreYouSureDeleteEvent(false);
         if (!response.ok) {
           toast.error("Could not delete event. Please try again.");
         } else {
@@ -1483,18 +1484,18 @@ const EventForm = ({
       {event && (
         <button
           type="button"
-          onClick={() => setShowAreYouSureInterface(true)}
+          onClick={() => setShowAreYouSureDeleteEvent(true)}
           className="delete-button"
         >
           Delete Button
         </button>
       )}
-      {showAreYouSureInterface && (
+      {showAreYouSureDeleteEvent && (
         <AreYouSureInterface
           message="Are you sure you want to delete this event?"
           noButtonText="Cancel"
           yesButtonText="Delete Event"
-          setShowAreYouSureInterface={setShowAreYouSureInterface}
+          setShowAreYouSureInterface={setShowAreYouSureDeleteEvent}
           executionHandler={handleDeleteEvent}
           randomColor={randomColor}
         />
