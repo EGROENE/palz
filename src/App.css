@@ -408,17 +408,17 @@
   opacity: 0.8;
 }
 
-.form-revert-submit-buttons-container {
+.buttons-container {
   display: flex;
   justify-content: space-evenly;
   margin-top: 2rem;
 }
 
-.form-revert-submit-buttons-container button {
+.buttons-container button {
   color: white;
 }
 
-.form-revert-submit-buttons-container button:first-child {
+.buttons-container button:first-child {
   background-color: var(--background-color-opposite);
   color: var(--text-color-opposite);
 }
@@ -623,24 +623,37 @@ form textarea {
   font-size: 2rem;
 }
 
-.browse-interests-module {
+.browse-interests-modal {
   background: white;
   padding: 3rem;
   width: 75%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 
-.browse-interests-module .bar-and-description {
+.browse-interests-modal .bar-and-description {
   width: 90%;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.browse-interests-module p {
+.browse-interests-modal p {
   color: black;
+}
+
+.are-you-sure-modal {
+  background-color: black;
+  padding: 1rem;
+  border: 1px solid white;
+  border-radius: 10px;
+}
+
+.are-you-sure-modal header {
+  font-size: 2rem;
+  font-weight: 700;
 }
 
 .add-interests-bar {
