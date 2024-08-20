@@ -1337,7 +1337,10 @@ const EventForm = ({
                       <input
                         disabled={isLoading}
                         onChange={() => handleAddRemoveUserAsOrganizer(undefined, user)}
-                        checked={organizers.includes(String(user.id))}
+                        checked={
+                          (typeof user.id === "string" || typeof user.id === "number") &&
+                          organizers.includes(user.id)
+                        }
                         type="checkbox"
                       />
                       <li title={`${user.firstName} ${user.lastName}`}>
@@ -1425,7 +1428,10 @@ const EventForm = ({
                       <input
                         disabled={isLoading}
                         onChange={() => handleAddRemoveUserAsInvitee(undefined, user)}
-                        checked={invitees.includes(String(user.id))}
+                        checked={
+                          (typeof user.id === "string" || typeof user.id === "number") &&
+                          invitees.includes(user.id)
+                        }
                         type="checkbox"
                       />
                       <li title={`${user.firstName} ${user.lastName}`}>
