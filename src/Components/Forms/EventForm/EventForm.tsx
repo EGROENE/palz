@@ -162,28 +162,47 @@ const EventForm = ({
   const setPotentialCoOrganizersAndOrInviteesToOriginalValue = (
     field?: "co-organizers" | "invitees"
   ): void => {
-    const currentUserPalz: (string | number)[] | undefined = currentUser?.friends;
     // use for...of loop to avoid TS errors
-    let firstOtherUsers: TUser[] = [];
+    // friends will always be able to add friends as co-organizers
+    let currentUserFriends: TUser[] = [];
     for (const user of allOtherUsers) {
-      if (user.id && currentUserPalz?.includes(user.id)) {
-        firstOtherUsers.push(user);
+      if (user.id && currentUser?.friends.includes(user.id)) {
+        currentUserFriends.push(user);
       }
     }
     // use for...of loop to avoid TS errors
     const restOfUsers: TUser[] = [];
     for (const user of allOtherUsers) {
-      if (user.id && !currentUserPalz?.includes(user.id)) {
+      // For all users who are not friends w/ currentUser, only include users who are not invited to event & who can be added as a co-organizer by anyone.
+      if (user.id && !currentUser?.friends.includes(user.id)) {
         restOfUsers.push(user);
       }
     }
     if (field === "co-organizers") {
-      setPotentialCoOrganizers(firstOtherUsers.concat(restOfUsers));
+      setPotentialCoOrganizers(
+        currentUserFriends.concat(
+          restOfUsers.filter(
+            (user) =>
+              user.id &&
+              !invitees.includes(user.id) &&
+              user.whoCanAddUserAsOrganizer === "anyone"
+          )
+        )
+      );
     } else if (field === "invitees") {
-      setPotentialInvitees(firstOtherUsers.concat(restOfUsers));
+      setPotentialInvitees(currentUserFriends.concat(restOfUsers));
     } else {
-      setPotentialCoOrganizers(firstOtherUsers.concat(restOfUsers));
-      setPotentialInvitees(firstOtherUsers.concat(restOfUsers));
+      setPotentialCoOrganizers(
+        currentUserFriends.concat(
+          restOfUsers.filter(
+            (user) =>
+              user.id &&
+              !invitees.includes(user.id) &&
+              user.whoCanAddUserAsOrganizer === "anyone"
+          )
+        )
+      );
+      setPotentialInvitees(currentUserFriends.concat(restOfUsers));
     }
   };
 
@@ -871,6 +890,10 @@ const EventForm = ({
 
   useEffect(() => {
     setPotentialCoOrganizersAndOrInviteesToOriginalValue();
+  }, [invitees, organizers]);
+
+  useEffect(() => {
+    setPotentialCoOrganizersAndOrInviteesToOriginalValue();
 
     /* If user access event's edit page, but is not an organizer, redirect to their homepage & tell them they don't have permission to edit event */
     if (currentUser?.id && !event?.organizers.includes(currentUser.id)) {
@@ -1326,35 +1349,27 @@ const EventForm = ({
             </button>
             {showPotentialCoOrganizers && (
               <ul className="country-code-dropdown">
-                {potentialCoOrganizers
-                  .filter(
-                    (user) =>
-                      user.id &&
-                      !invitees.includes(user.id) &&
-                      (user.whoCanAddUserAsOrganizer === "anyone" ||
-                        (user.id && currentUser?.friends.includes(user.id)))
-                  )
-                  .map((user) => (
-                    <div
-                      key={user.id}
-                      onClick={() => handleAddRemoveUserAsOrganizer(undefined, user)}
-                      className="other-user-option"
-                    >
-                      <input
-                        disabled={isLoading}
-                        onChange={() => handleAddRemoveUserAsOrganizer(undefined, user)}
-                        checked={
-                          (typeof user.id === "string" || typeof user.id === "number") &&
-                          organizers.includes(user.id)
-                        }
-                        type="checkbox"
-                      />
-                      <li title={`${user.firstName} ${user.lastName}`}>
-                        <img src={`${user.profileImage}`} />
-                        <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
-                      </li>
-                    </div>
-                  ))}
+                {potentialCoOrganizers.map((user) => (
+                  <div
+                    key={user.id}
+                    onClick={() => handleAddRemoveUserAsOrganizer(undefined, user)}
+                    className="other-user-option"
+                  >
+                    <input
+                      disabled={isLoading}
+                      onChange={() => handleAddRemoveUserAsOrganizer(undefined, user)}
+                      checked={
+                        (typeof user.id === "string" || typeof user.id === "number") &&
+                        organizers.includes(user.id)
+                      }
+                      type="checkbox"
+                    />
+                    <li title={`${user.firstName} ${user.lastName}`}>
+                      <img src={`${user.profileImage}`} />
+                      <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
+                    </li>
+                  </div>
+                ))}
               </ul>
             )}
           </div>
