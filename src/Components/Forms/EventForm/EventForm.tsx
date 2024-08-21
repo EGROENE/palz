@@ -163,7 +163,7 @@ const EventForm = ({
     field?: "co-organizers" | "invitees"
   ): void => {
     // use for...of loop to avoid TS errors
-    // friends will always be able to add friends as co-organizers
+    // friends will always be able to add friends as co-organizers/invite them to events
     let currentUserFriends: TUser[] = [];
     for (const user of allOtherUsers) {
       if (user.id && currentUser?.friends.includes(user.id)) {
@@ -193,7 +193,16 @@ const EventForm = ({
       );
     } else if (field === "invitees") {
       // If only potentialInvitees should be reset (like when deleting inviteesSearchQuery)
-      setPotentialInvitees(currentUserFriends.concat(restOfUsers));
+      setPotentialInvitees(
+        currentUserFriends.concat(
+          restOfUsers.filter(
+            (user) =>
+              user.id &&
+              !organizers.includes(user.id) &&
+              user.whoCanInviteUser === "anyone"
+          )
+        )
+      );
     } else {
       // When both potentialCoOrganizers & potentialInvitees should be reset (like when adding/removing as co-organizer/invitee):
       setPotentialCoOrganizers(
@@ -206,7 +215,16 @@ const EventForm = ({
           )
         )
       );
-      setPotentialInvitees(currentUserFriends.concat(restOfUsers));
+      setPotentialInvitees(
+        currentUserFriends.concat(
+          restOfUsers.filter(
+            (user) =>
+              user.id &&
+              !organizers.includes(user.id) &&
+              user.whoCanInviteUser === "anyone"
+          )
+        )
+      );
     }
   };
 
@@ -1443,29 +1461,27 @@ const EventForm = ({
             </button>
             {showPotentialInvitees && !maxParticipantsReached && (
               <ul className="country-code-dropdown">
-                {potentialInvitees
-                  .filter((user) => user.id && !organizers.includes(user.id))
-                  .map((user) => (
-                    <div
-                      key={user.id}
-                      onClick={() => handleAddRemoveUserAsInvitee(undefined, user)}
-                      className="other-user-option"
-                    >
-                      <input
-                        disabled={isLoading}
-                        onChange={() => handleAddRemoveUserAsInvitee(undefined, user)}
-                        checked={
-                          (typeof user.id === "string" || typeof user.id === "number") &&
-                          invitees.includes(user.id)
-                        }
-                        type="checkbox"
-                      />
-                      <li title={`${user.firstName} ${user.lastName}`}>
-                        <img src={`${user.profileImage}`} />
-                        <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
-                      </li>
-                    </div>
-                  ))}
+                {potentialInvitees.map((user) => (
+                  <div
+                    key={user.id}
+                    onClick={() => handleAddRemoveUserAsInvitee(undefined, user)}
+                    className="other-user-option"
+                  >
+                    <input
+                      disabled={isLoading}
+                      onChange={() => handleAddRemoveUserAsInvitee(undefined, user)}
+                      checked={
+                        (typeof user.id === "string" || typeof user.id === "number") &&
+                        invitees.includes(user.id)
+                      }
+                      type="checkbox"
+                    />
+                    <li title={`${user.firstName} ${user.lastName}`}>
+                      <img src={`${user.profileImage}`} />
+                      <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
+                    </li>
+                  </div>
+                ))}
               </ul>
             )}
           </div>
