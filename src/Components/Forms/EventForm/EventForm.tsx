@@ -103,15 +103,20 @@ const EventForm = ({
   const [eventLocationError, setEventLocationError] = useState<string>(
     !event ? "Please fill out all 3 location fields" : ""
   );
-  const [eventStartDateMidnightUTCInMS, setEventDateMidnightUTCInMS] = useState(
+  const [eventStartDateMidnightUTCInMS, setStartEventDateMidnightUTCInMS] = useState(
     event ? event.eventStartDateMidnightUTCInMS : 0
   );
-  const [eventStartTimeAfterMidnightUTCInMS, setEventTimeAfterMidnightUTCInMS] = useState(
-    event ? event.eventStartTimeAfterMidnightUTCInMS : 0
-  );
-  const [eventDateTimeError, setEventDateTimeError] = useState<string>(
+  const [eventStartTimeAfterMidnightUTCInMS, setEventStartTimeAfterMidnightUTCInMS] =
+    useState(event ? event.eventStartTimeAfterMidnightUTCInMS : 0);
+  const [eventStartDateTimeError, setEventStartDateTimeError] = useState<string>(
     !event ? "Please fill out date & time fields" : ""
   );
+  const [eventEndDateMidnightUTCInMS, setEventEndDateMidnightUTCInMS] = useState(
+    event ? event.eventEndDateMidnightUTCInMS : 0
+  );
+  const [eventEndTimeAfterMidnightUTCInMS, setEventEndTimeAfterMidnightUTCInMS] =
+    useState(event ? event.eventEndTimeAfterMidnightUTCInMS : 0);
+  const [eventEndDateTimeError, setEventEndDateTimeError] = useState<string>("");
   const [eventAddress, setEventAddress] = useState<string | undefined>(
     event ? event.address : ""
   );
@@ -299,14 +304,20 @@ const EventForm = ({
     return `${year}-${month}-${day}`;
   };
 
-  const getTimeFieldValue = (eventStartTimeAfterMidnightUTCInMS: number): string => {
-    const hoursSinceMidnight = eventStartTimeAfterMidnightUTCInMS / 3600000; // EX: 23.75
+  const getTimeFieldValue = (timeAfterMidnightUTCInMS: number): string => {
+    const hoursSinceMidnight = timeAfterMidnightUTCInMS / 3600000; // EX: 23.75
     const hoursSinceMidnightString = String(hoursSinceMidnight); // EX: "23.75"
-    const wholeHoursSinceMidnight = Math.floor(hoursSinceMidnight); // EX: 23
-    const remainingMinutes = (
+    let wholeHoursSinceMidnight: number | string = Math.floor(hoursSinceMidnight); // EX: 23
+    let remainingMinutes: string = (
       Number(hoursSinceMidnightString.substring(hoursSinceMidnightString.indexOf("."))) *
       60
     ).toFixed(0); // EX: 45 (0.75 * 60)
+    if (wholeHoursSinceMidnight < 10) {
+      wholeHoursSinceMidnight = `0${wholeHoursSinceMidnight}`;
+    }
+    if (Number(remainingMinutes) < 10) {
+      remainingMinutes = `0${remainingMinutes}`;
+    }
     return `${wholeHoursSinceMidnight}:${remainingMinutes}`; // EX: 23:45
   };
 
@@ -314,38 +325,69 @@ const EventForm = ({
   // display these times in local, if possible
   const handleDateTimeInput = (
     e: React.ChangeEvent<HTMLInputElement>,
-    input: "date" | "time"
+    input: "start-date" | "start-time" | "end-date" | "end-time"
   ): void => {
     e.preventDefault();
     const nowDate = new Date();
     const nowPlusOneHourMS = nowDate.getTime() + 3600000;
 
-    if (input === "date") {
+    if (input === "start-date" || input === "end-date") {
       const inputDateLocal = new Date(e.target.value);
       const timezoneOffsetinMS = inputDateLocal.getTimezoneOffset() * 60000;
       const inputDateMS = e.target.valueAsNumber; // stored time value in ms since midnight, January 1, 1970 UTC to input date
       const eventDateUTCinMS = timezoneOffsetinMS + inputDateMS;
-      setEventDateMidnightUTCInMS(eventDateUTCinMS);
 
-      // Show error if event isn't set at least one hour in advance:
-      if (eventDateUTCinMS + eventStartTimeAfterMidnightUTCInMS < nowPlusOneHourMS) {
-        setEventDateTimeError("Event can only be set at least 1 hour in advance");
+      if (input === "start-date") {
+        setStartEventDateMidnightUTCInMS(eventDateUTCinMS);
+
+        // Show error if event isn't set at least one hour in advance:
+        if (eventDateUTCinMS + eventStartTimeAfterMidnightUTCInMS < nowPlusOneHourMS) {
+          setEventStartDateTimeError("Event can only be set at least 1 hour in advance");
+        } else {
+          setEventStartDateTimeError("");
+        }
       } else {
-        setEventDateTimeError("");
+        setEventEndDateMidnightUTCInMS(eventDateUTCinMS);
+        if (
+          !(
+            eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS <
+            eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS
+          )
+        ) {
+          setEventEndDateTimeError("Event end must be after its start");
+        } else {
+          setEventEndDateTimeError("");
+        }
       }
-    } else {
+    }
+    if (input === "start-time" || input === "end-time") {
       const hours = e.target.value.substring(0, e.target.value.indexOf(":"));
       const mins = e.target.value.substring(e.target.value.indexOf(":") + 1);
       const hoursInMS = Number(hours) * 3600000;
       const minsInMS = Number(mins) * 60000;
       const hoursPlusMinutesInMS = hoursInMS + minsInMS;
-      setEventTimeAfterMidnightUTCInMS(hoursPlusMinutesInMS);
 
-      // Show error if event isn't set at least one hour in advance:
-      if (hoursPlusMinutesInMS + eventStartDateMidnightUTCInMS < nowPlusOneHourMS) {
-        setEventDateTimeError("Event can only be set at least 1 hour in advance");
+      if (input === "start-time") {
+        setEventStartTimeAfterMidnightUTCInMS(hoursPlusMinutesInMS);
+
+        // Show error if event isn't set at least one hour in advance:
+        if (hoursPlusMinutesInMS + eventStartDateMidnightUTCInMS < nowPlusOneHourMS) {
+          setEventStartDateTimeError("Event can only be set at least 1 hour in advance");
+        } else {
+          setEventStartDateTimeError("");
+        }
       } else {
-        setEventDateTimeError("");
+        setEventEndTimeAfterMidnightUTCInMS(hoursPlusMinutesInMS);
+        if (
+          !(
+            eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS <
+            eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS
+          )
+        ) {
+          setEventEndDateTimeError("Event end must be after its start");
+        } else {
+          setEventEndDateTimeError("");
+        }
       }
     }
   };
@@ -540,9 +582,9 @@ const EventForm = ({
       setEventState(event.stateProvince);
       setEventCountry(event.country);
       setEventLocationError("");
-      setEventDateMidnightUTCInMS(event.eventStartDateMidnightUTCInMS);
-      setEventTimeAfterMidnightUTCInMS(event.eventStartTimeAfterMidnightUTCInMS);
-      setEventDateTimeError("");
+      setStartEventDateMidnightUTCInMS(event.eventStartDateMidnightUTCInMS);
+      setEventStartTimeAfterMidnightUTCInMS(event.eventStartTimeAfterMidnightUTCInMS);
+      setEventStartDateTimeError("");
       setEventAddress(event.address);
       setEventAddressError("");
       setMaxParticipants(event.maxParticipants);
@@ -567,9 +609,9 @@ const EventForm = ({
       setEventState("");
       setEventCountry("");
       setEventLocationError("");
-      setEventDateMidnightUTCInMS(0);
-      setEventTimeAfterMidnightUTCInMS(0);
-      setEventDateTimeError("");
+      setStartEventDateMidnightUTCInMS(0);
+      setEventStartTimeAfterMidnightUTCInMS(0);
+      setEventStartDateTimeError("");
       setEventAddress("");
       setEventAddressError("");
       setMaxParticipants(undefined);
@@ -855,7 +897,8 @@ const EventForm = ({
     eventDescriptionError === "" &&
     eventAdditionalInfoError === "" &&
     eventLocationError === "" &&
-    eventDateTimeError === "" &&
+    eventStartDateTimeError === "" &&
+    eventEndDateTimeError === "" &&
     eventAddressError === "" &&
     imageOneError === "" &&
     imageTwoError === "" &&
@@ -906,6 +949,9 @@ const EventForm = ({
     eventStartTimeAfterMidnightUTCInMS: eventStartTimeAfterMidnightUTCInMS,
     eventStartDateTimeInMS:
       eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS,
+    eventEndDateMidnightUTCInMS: eventEndDateMidnightUTCInMS,
+    eventEndTimeAfterMidnightUTCInMS: eventEndTimeAfterMidnightUTCInMS,
+    eventEndDateTimeInMS: eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS,
     maxParticipants: maxParticipants,
     address: eventAddress?.trim(),
     interestedUsers: [],
@@ -1167,7 +1213,7 @@ const EventForm = ({
       </label>
       <div className="date-time-inputs-container">
         <label>
-          <p>Date:</p>{" "}
+          <p>Start Date:</p>{" "}
           <input
             value={
               eventStartDateMidnightUTCInMS > 0
@@ -1183,17 +1229,18 @@ const EventForm = ({
             }
             disabled={isLoading}
             className={
-              (eventDateTimeError === "Please fill out this field" && showErrors) ||
-              eventDateTimeError === "Event can only be set at least 1 hour in advance"
+              (eventStartDateTimeError === "Please fill out this field" && showErrors) ||
+              eventStartDateTimeError ===
+                "Event can only be set at least 1 hour in advance"
                 ? "erroneous-field"
                 : undefined
             }
-            onChange={(e) => handleDateTimeInput(e, "date")}
+            onChange={(e) => handleDateTimeInput(e, "start-date")}
             type="date"
           />
         </label>
         <label>
-          <p>Time:</p>
+          <p>Start Time: (optional)</p>
           <input
             value={
               eventStartTimeAfterMidnightUTCInMS > 0
@@ -1210,21 +1257,74 @@ const EventForm = ({
                 : undefined
             }
             className={
-              (eventDateTimeError === "Please fill out this field" && showErrors) ||
-              eventDateTimeError === "Event can only be set at least 1 hour in advance"
+              (eventStartDateTimeError === "Please fill out this field" && showErrors) ||
+              eventStartDateTimeError ===
+                "Event can only be set at least 1 hour in advance"
                 ? "erroneous-field"
                 : undefined
             }
-            onChange={(e) => handleDateTimeInput(e, "time")}
+            onChange={(e) => handleDateTimeInput(e, "start-time")}
+            type="time"
+          />
+        </label>
+        <label>
+          <p>End Date: (optional)</p>{" "}
+          <input
+            value={
+              eventEndDateMidnightUTCInMS > 0
+                ? getDateFieldValue(eventEndDateMidnightUTCInMS)
+                : ""
+            }
+            ref={dateRef}
+            onFocus={() => setFocusedElement("date")}
+            style={
+              focusedElement === "date"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
+            disabled={isLoading}
+            className={
+              (eventStartDateTimeError === "Please fill out this field" && showErrors) ||
+              eventStartDateTimeError ===
+                "Event can only be set at least 1 hour in advance"
+                ? "erroneous-field"
+                : undefined
+            }
+            onChange={(e) => handleDateTimeInput(e, "end-date")}
+            type="date"
+          />
+        </label>
+        <label>
+          <p>End Time: (optional)</p>
+          <input
+            value={
+              eventEndTimeAfterMidnightUTCInMS > 0
+                ? getTimeFieldValue(eventEndTimeAfterMidnightUTCInMS)
+                : ""
+            }
+            step="600"
+            disabled={isLoading}
+            ref={timeRef}
+            onFocus={() => setFocusedElement("time")}
+            style={
+              focusedElement === "time"
+                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                : undefined
+            }
+            className={eventEndDateTimeError !== "" ? "erroneous-field" : undefined}
+            onChange={(e) => handleDateTimeInput(e, "end-time")}
             type="time"
           />
         </label>
       </div>
-      {eventDateTimeError === "Please fill out this field" && showErrors && (
-        <p style={{ display: "flex" }}>{eventDateTimeError}</p>
+      {eventStartDateTimeError === "Please fill out this field" && showErrors && (
+        <p style={{ display: "flex" }}>{eventStartDateTimeError}</p>
       )}
-      {eventDateTimeError === "Event can only be set at least 1 hour in advance" && (
-        <p style={{ display: "flex" }}>{eventDateTimeError}</p>
+      {eventStartDateTimeError === "Event can only be set at least 1 hour in advance" && (
+        <p style={{ display: "flex" }}>{eventStartDateTimeError}</p>
+      )}
+      {eventEndDateTimeError !== "" && (
+        <p style={{ display: "flex" }}>{eventEndDateTimeError}</p>
       )}
       <label>
         <p>Maximum Participants: (optional, not including organizers)</p>
