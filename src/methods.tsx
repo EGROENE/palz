@@ -19,7 +19,7 @@ const arraysAreIdentical = (_arr1: any[], _arr2: any[]) => {
 };
 
 const sortEventsSoonestToLatest = (eventArray: TEvent[]): TEvent[] =>
-  eventArray.sort((a, b) => a.eventDateTimeUnix - b.eventDateTimeUnix);
+  eventArray.sort((a, b) => a.eventDateTimeInMS - b.eventDateTimeInMS);
 
 // Function to check if URL is valid
 const isValidUrl = (url: string): boolean => {

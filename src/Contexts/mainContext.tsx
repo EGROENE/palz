@@ -80,7 +80,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
           refinedOrganizers.push(organizer);
         }
       }
-      if (event.eventDateTimeUnix < now || refinedOrganizers.length === 0) {
+      if (event.eventDateTimeInMS < now || refinedOrganizers.length === 0) {
         Requests.deleteEvent(event);
       }
     }

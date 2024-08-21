@@ -11,7 +11,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const { handleAddUserRSVP, handleDeleteUserRSVP, handleRemoveInvitee } =
     useUserContext();
 
-  const nextEventDateTime: Date = new Date(event.eventDateTimeUnix);
+  const nextEventDateTime: Date = new Date(event.eventDateTimeInMS);
 
   // Set color of event card's border randomly:
   useEffect(() => {

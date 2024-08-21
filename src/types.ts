@@ -40,9 +40,9 @@ export type TEvent = {
   organizers: (string | number)[];
   invitees: (string | number)[];
   description: string;
-  eventDateMidnightUTCUnix: number;
-  eventTimeAfterMidnightUTCUnix: number;
-  eventDateTimeUnix: number;
+  eventDateMidnightUTCInMS: number;
+  eventTimeAfterMidnightUTCInMS: number;
+  eventDateTimeInMS: number;
   publicity: "public" | "private";
   maxParticipants: number | undefined;
   imageOne?: string;
@@ -85,9 +85,9 @@ export type TEventValuesToUpdate = {
   imageOne?: string | undefined;
   address?: string | undefined;
   maxParticipants?: number | undefined;
-  eventDateMidnightUTCUnix?: number | undefined;
-  eventTimeAfterMidnightUTCUnix?: number | undefined;
-  eventDateTimeUnix?: number | undefined;
+  eventDateMidnightUTCInMS?: number | undefined;
+  eventTimeAfterMidnightUTCInMS?: number | undefined;
+  eventDateTimeInMS?: number | undefined;
   organizers?: (string | number)[] | undefined;
   invitees?: (string | number)[] | undefined;
   description?: string | undefined;

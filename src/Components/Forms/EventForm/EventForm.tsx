@@ -103,11 +103,11 @@ const EventForm = ({
   const [eventLocationError, setEventLocationError] = useState<string>(
     !event ? "Please fill out all 3 location fields" : ""
   );
-  const [eventDateMidnightUTCUnix, setEventDateMidnightUTCUnix] = useState(
-    event ? event.eventDateMidnightUTCUnix : 0
+  const [eventDateMidnightUTCInMS, setEventDateMidnightUTCInMS] = useState(
+    event ? event.eventDateMidnightUTCInMS : 0
   );
-  const [eventTimeAfterMidnightUTCUnix, setEventTimeAfterMidnightUTCUnix] = useState(
-    event ? event.eventTimeAfterMidnightUTCUnix : 0
+  const [eventTimeAfterMidnightUTCInMS, setEventTimeAfterMidnightUTCInMS] = useState(
+    event ? event.eventTimeAfterMidnightUTCInMS : 0
   );
   const [eventDateTimeError, setEventDateTimeError] = useState<string>(
     !event ? "Please fill out date & time fields" : ""
@@ -285,11 +285,11 @@ const EventForm = ({
     }
   };
 
-  const getDateFieldValue = (eventDateMidnightUTCUnix: number): string => {
+  const getDateFieldValue = (eventDateMidnightUTCInMS: number): string => {
     // yyyy-mm-dd
-    let month = String(new Date(eventDateMidnightUTCUnix).getMonth() + 1);
-    let day = String(new Date(eventDateMidnightUTCUnix).getDate());
-    const year = new Date(eventDateMidnightUTCUnix).getFullYear();
+    let month = String(new Date(eventDateMidnightUTCInMS).getMonth() + 1);
+    let day = String(new Date(eventDateMidnightUTCInMS).getDate());
+    const year = new Date(eventDateMidnightUTCInMS).getFullYear();
     if (Number(month) < 10) {
       month = `0${month}`;
     }
@@ -299,9 +299,9 @@ const EventForm = ({
     return `${year}-${month}-${day}`;
   };
 
-  const getTimeFieldValue = (eventTimeAfterMidnightUTCUnix: number): string => {
-    const hoursSinceMidnight = eventTimeAfterMidnightUTCUnix / 3600000; // EX: 23.75
-    const hoursSinceMidnightString = String(eventTimeAfterMidnightUTCUnix / 3600000); // EX: "23.75"
+  const getTimeFieldValue = (eventTimeAfterMidnightUTCInMS: number): string => {
+    const hoursSinceMidnight = eventTimeAfterMidnightUTCInMS / 3600000; // EX: 23.75
+    const hoursSinceMidnightString = String(hoursSinceMidnight); // EX: "23.75"
     const wholeHoursSinceMidnight = Math.floor(hoursSinceMidnight); // EX: 23
     const remainingMinutes = (
       Number(hoursSinceMidnightString.substring(hoursSinceMidnightString.indexOf("."))) *
@@ -318,17 +318,17 @@ const EventForm = ({
   ): void => {
     e.preventDefault();
     const nowDate = new Date();
-    const nowPlusOneHourEpoch = nowDate.getTime() + 3600000;
+    const nowPlusOneHourMS = nowDate.getTime() + 3600000;
 
     if (input === "date") {
       const inputDateLocal = new Date(e.target.value);
       const timezoneOffsetinMS = inputDateLocal.getTimezoneOffset() * 60000;
-      const inputDateEpoch = e.target.valueAsNumber; // stored time value in ms since midnight, January 1, 1970 UTC to input date
-      const eventDateUTCinMS = timezoneOffsetinMS + inputDateEpoch;
-      setEventDateMidnightUTCUnix(eventDateUTCinMS);
+      const inputDateMS = e.target.valueAsNumber; // stored time value in ms since midnight, January 1, 1970 UTC to input date
+      const eventDateUTCinMS = timezoneOffsetinMS + inputDateMS;
+      setEventDateMidnightUTCInMS(eventDateUTCinMS);
 
       // Show error if event isn't set at least one hour in advance:
-      if (eventDateUTCinMS + eventTimeAfterMidnightUTCUnix < nowPlusOneHourEpoch) {
+      if (eventDateUTCinMS + eventTimeAfterMidnightUTCInMS < nowPlusOneHourMS) {
         setEventDateTimeError("Event can only be set at least 1 hour in advance");
       } else {
         setEventDateTimeError("");
@@ -339,10 +339,10 @@ const EventForm = ({
       const hoursInMS = Number(hours) * 3600000;
       const minsInMS = Number(mins) * 60000;
       const hoursPlusMinutesInMS = hoursInMS + minsInMS;
-      setEventTimeAfterMidnightUTCUnix(hoursPlusMinutesInMS);
+      setEventTimeAfterMidnightUTCInMS(hoursPlusMinutesInMS);
 
       // Show error if event isn't set at least one hour in advance:
-      if (hoursPlusMinutesInMS + eventDateMidnightUTCUnix < nowPlusOneHourEpoch) {
+      if (hoursPlusMinutesInMS + eventDateMidnightUTCInMS < nowPlusOneHourMS) {
         setEventDateTimeError("Event can only be set at least 1 hour in advance");
       } else {
         setEventDateTimeError("");
@@ -540,8 +540,8 @@ const EventForm = ({
       setEventState(event.stateProvince);
       setEventCountry(event.country);
       setEventLocationError("");
-      setEventDateMidnightUTCUnix(event.eventDateMidnightUTCUnix);
-      setEventTimeAfterMidnightUTCUnix(event.eventTimeAfterMidnightUTCUnix);
+      setEventDateMidnightUTCInMS(event.eventDateMidnightUTCInMS);
+      setEventTimeAfterMidnightUTCInMS(event.eventTimeAfterMidnightUTCInMS);
       setEventDateTimeError("");
       setEventAddress(event.address);
       setEventAddressError("");
@@ -567,8 +567,8 @@ const EventForm = ({
       setEventState("");
       setEventCountry("");
       setEventLocationError("");
-      setEventDateMidnightUTCUnix(0);
-      setEventTimeAfterMidnightUTCUnix(0);
+      setEventDateMidnightUTCInMS(0);
+      setEventTimeAfterMidnightUTCInMS(0);
       setEventDateTimeError("");
       setEventAddress("");
       setEventAddressError("");
@@ -707,15 +707,15 @@ const EventForm = ({
           eventTitle.trim() !== event.title && {
             title: eventTitle,
           }),
-        ...(eventDateMidnightUTCUnix !== event.eventDateMidnightUTCUnix && {
-          eventDateMidnightUTCUnix: eventDateMidnightUTCUnix,
+        ...(eventDateMidnightUTCInMS !== event.eventDateMidnightUTCInMS && {
+          eventDateMidnightUTCInMS: eventDateMidnightUTCInMS,
         }),
-        ...(eventTimeAfterMidnightUTCUnix !== event.eventTimeAfterMidnightUTCUnix && {
-          eventTimeAfterMidnightUTCUnix: eventTimeAfterMidnightUTCUnix,
+        ...(eventTimeAfterMidnightUTCInMS !== event.eventTimeAfterMidnightUTCInMS && {
+          eventTimeAfterMidnightUTCInMS: eventTimeAfterMidnightUTCInMS,
         }),
-        ...(eventDateMidnightUTCUnix + eventTimeAfterMidnightUTCUnix !==
-          event.eventDateTimeUnix && {
-          eventDateTimeUnix: eventDateMidnightUTCUnix + eventTimeAfterMidnightUTCUnix,
+        ...(eventDateMidnightUTCInMS + eventTimeAfterMidnightUTCInMS !==
+          event.eventDateTimeInMS && {
+          eventDateTimeInMS: eventDateMidnightUTCInMS + eventTimeAfterMidnightUTCInMS,
         }),
         ...(organizers !== event.organizers && {
           organizers: organizers,
@@ -813,8 +813,8 @@ const EventForm = ({
         eventCity !== currentEvent?.city ||
         eventState !== currentEvent?.stateProvince ||
         eventCountry !== currentEvent?.country ||
-        eventDateMidnightUTCUnix !== event.eventDateMidnightUTCUnix ||
-        eventTimeAfterMidnightUTCUnix !== event.eventTimeAfterMidnightUTCUnix ||
+        eventDateMidnightUTCInMS !== event.eventDateMidnightUTCInMS ||
+        eventTimeAfterMidnightUTCInMS !== event.eventTimeAfterMidnightUTCInMS ||
         eventAddress !== currentEvent?.address ||
         maxParticipants !== currentEvent?.maxParticipants ||
         imageOne !== currentEvent?.imageOne ||
@@ -833,8 +833,8 @@ const EventForm = ({
       eventCity !== "" ||
       eventState !== "" ||
       eventCountry !== "" ||
-      eventDateMidnightUTCUnix !== 0 ||
-      eventTimeAfterMidnightUTCUnix !== 0 ||
+      eventDateMidnightUTCInMS !== 0 ||
+      eventTimeAfterMidnightUTCInMS !== 0 ||
       eventAddress !== "" ||
       maxParticipants !== undefined ||
       imageOne !== "" ||
@@ -865,8 +865,8 @@ const EventForm = ({
     eventCity !== "" &&
     eventState !== "" &&
     eventCountry !== "" &&
-    eventDateMidnightUTCUnix !== 0 &&
-    eventTimeAfterMidnightUTCUnix !== 0 &&
+    eventDateMidnightUTCInMS !== 0 &&
+    eventTimeAfterMidnightUTCInMS !== 0 &&
     eventAddress !== ""; */
 
   const getSubmitButtonIsDisabled = (): boolean => {
@@ -899,9 +899,9 @@ const EventForm = ({
     ),
     country: eventCountry,
     publicity: "public",
-    eventDateMidnightUTCUnix: eventDateMidnightUTCUnix,
-    eventTimeAfterMidnightUTCUnix: eventTimeAfterMidnightUTCUnix,
-    eventDateTimeUnix: eventDateMidnightUTCUnix + eventTimeAfterMidnightUTCUnix,
+    eventDateMidnightUTCInMS: eventDateMidnightUTCInMS,
+    eventTimeAfterMidnightUTCInMS: eventTimeAfterMidnightUTCInMS,
+    eventDateTimeInMS: eventDateMidnightUTCInMS + eventTimeAfterMidnightUTCInMS,
     maxParticipants: maxParticipants,
     address: eventAddress?.trim(),
     interestedUsers: [],
@@ -1166,8 +1166,8 @@ const EventForm = ({
           <p>Date:</p>{" "}
           <input
             value={
-              eventDateMidnightUTCUnix > 0
-                ? getDateFieldValue(eventDateMidnightUTCUnix)
+              eventDateMidnightUTCInMS > 0
+                ? getDateFieldValue(eventDateMidnightUTCInMS)
                 : ""
             }
             ref={dateRef}
@@ -1192,8 +1192,8 @@ const EventForm = ({
           <p>Time:</p>
           <input
             value={
-              eventTimeAfterMidnightUTCUnix > 0
-                ? getTimeFieldValue(eventTimeAfterMidnightUTCUnix)
+              eventTimeAfterMidnightUTCInMS > 0
+                ? getTimeFieldValue(eventTimeAfterMidnightUTCInMS)
                 : ""
             }
             step="600"
