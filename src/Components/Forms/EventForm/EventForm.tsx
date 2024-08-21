@@ -887,6 +887,7 @@ const EventForm = ({
 
   const eventInfos: TEvent = {
     title: eventTitle.trim(),
+    creator: currentUser?.id,
     organizers: organizers,
     invitees: invitees,
     description: eventDescription.trim(),

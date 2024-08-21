@@ -325,6 +325,7 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
 
   const raw = JSON.stringify({
     "title": eventData.title,
+    "creator": eventData.creator,
     "organizers": eventData.organizers,
     "invitees": eventData.invitees,
     "description": eventData.description,
