@@ -440,6 +440,11 @@
   color: var(--text-color-opposite);
 }
 
+.are-you-sure-modal .buttons-container button:first-child {
+  background-color: white;
+  color: black;
+}
+
 .phone-input-elements {
   display: flex;
 }
