@@ -158,8 +158,8 @@ const EventForm = ({
     setShowAreYouSureRemoveCurrentUserAsOrganizer,
   ] = useState<boolean>(false);
 
-  // Function to reset otherUsers to its original value, w/o filters from coOrganizersSearchQuery
-  const setPotentialCoOrganizersAndOrInviteesToOriginalValue = (
+  // Function to set otherUsers to its original value, w/o filters from coOrganizersSearchQuery
+  const setPotentialCoOrganizersAndOrInvitees = (
     field?: "co-organizers" | "invitees"
   ): void => {
     // use for...of loop to avoid TS errors
@@ -178,6 +178,8 @@ const EventForm = ({
         restOfUsers.push(user);
       }
     }
+
+    // If only potentialCoOrganizers should be reset (like when deleting coOrganizersSearchQuery)
     if (field === "co-organizers") {
       setPotentialCoOrganizers(
         currentUserFriends.concat(
@@ -190,8 +192,10 @@ const EventForm = ({
         )
       );
     } else if (field === "invitees") {
+      // If only potentialInvitees should be reset (like when deleting inviteesSearchQuery)
       setPotentialInvitees(currentUserFriends.concat(restOfUsers));
     } else {
+      // When both potentialCoOrganizers & potentialInvitees should be reset (like when adding/removing as co-organizer/invitee):
       setPotentialCoOrganizers(
         currentUserFriends.concat(
           restOfUsers.filter(
@@ -389,6 +393,7 @@ const EventForm = ({
       setCoOrganizersSearchQuery(inputCleaned);
       setShowPotentialCoOrganizers(true);
       if (inputCleaned.replace(/\s+/g, "") !== "") {
+        // If input w/o spaces is not empty string
         const matchingUsers: TUser[] = [];
         for (const user of allOtherUsers) {
           if (
@@ -405,7 +410,7 @@ const EventForm = ({
         setPotentialCoOrganizers(matchingUsers);
       } else {
         // setPotentialCoOrganizers to original value
-        setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
+        setPotentialCoOrganizersAndOrInvitees("co-organizers");
       }
     } else {
       setInviteesSearchQuery(inputCleaned);
@@ -426,7 +431,7 @@ const EventForm = ({
         }
         setPotentialInvitees(matchingUsers);
       } else {
-        setPotentialCoOrganizersAndOrInviteesToOriginalValue("invitees"); // make sep functions for each type
+        setPotentialCoOrganizersAndOrInvitees("invitees"); // make sep functions for each type
       }
     }
   };
@@ -441,7 +446,7 @@ const EventForm = ({
       if (organizers.includes(user.id)) {
         // Remove user as organizer:
         setOrganizers(organizers.filter((organizer) => organizer !== user?.id));
-        setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
+        setPotentialCoOrganizersAndOrInvitees("co-organizers");
       } else {
         // Add user as organizer:
         const updatedArray = organizers.concat(String(user?.id));
@@ -480,7 +485,7 @@ const EventForm = ({
     e?.preventDefault();
     if (invitees.includes(String(user?.id))) {
       setInvitees(invitees.filter((invitee) => invitee !== user?.id));
-      setPotentialCoOrganizersAndOrInviteesToOriginalValue("invitees");
+      setPotentialCoOrganizersAndOrInvitees("invitees");
     } else {
       const updatedArray = invitees.concat(String(user?.id));
       setInvitees(updatedArray);
@@ -889,11 +894,11 @@ const EventForm = ({
   };
 
   useEffect(() => {
-    setPotentialCoOrganizersAndOrInviteesToOriginalValue();
+    setPotentialCoOrganizersAndOrInvitees();
   }, [invitees, organizers]);
 
   useEffect(() => {
-    setPotentialCoOrganizersAndOrInviteesToOriginalValue();
+    setPotentialCoOrganizersAndOrInvitees();
 
     /* If user access event's edit page, but is not an organizer, redirect to their homepage & tell them they don't have permission to edit event */
     if (currentUser?.id && !event?.organizers.includes(currentUser.id)) {
@@ -1329,7 +1334,7 @@ const EventForm = ({
             <i
               onClick={() => {
                 setCoOrganizersSearchQuery("");
-                setPotentialCoOrganizersAndOrInviteesToOriginalValue("co-organizers");
+                setPotentialCoOrganizersAndOrInvitees("co-organizers");
               }}
               className="clear-other-users-search-query fas fa-times"
             ></i>
@@ -1418,7 +1423,7 @@ const EventForm = ({
             <i
               onClick={() => {
                 setInviteesSearchQuery("");
-                setPotentialCoOrganizersAndOrInviteesToOriginalValue("invitees");
+                setPotentialCoOrganizersAndOrInvitees("invitees");
               }}
               className="clear-other-users-search-query fas fa-times"
             ></i>
