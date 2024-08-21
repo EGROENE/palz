@@ -850,6 +850,7 @@ const EditUserInfoForm = ({
   // METHODS TO DELETE THINGS:
   const handleDeletePhoneNumber = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     e.preventDefault();
+    setIsLoading(true);
     Requests.deletePhoneNumber(currentUser)
       .then((response) => {
         if (!response.ok) {
@@ -865,11 +866,13 @@ const EditUserInfoForm = ({
           setPhoneNumberMinAndMaxLength(1, 13);
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   const handleDeleteLocation = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     e.preventDefault();
+    setIsLoading(true);
     Requests.deleteLocation(currentUser)
       .then((response) => {
         if (!response.ok) {
@@ -884,7 +887,8 @@ const EditUserInfoForm = ({
           setLocationError("");
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   const handleDeleteSocialMedium = (
@@ -892,6 +896,7 @@ const EditUserInfoForm = ({
     medium: "facebook" | "instagram" | "x"
   ) => {
     e.preventDefault();
+    setIsLoading(true);
     Requests.deleteSocialMedium(currentUser, medium)
       .then((response) => {
         if (!response.ok) {
@@ -909,11 +914,13 @@ const EditUserInfoForm = ({
           }
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   const handleDeleteUserAbout = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     e.preventDefault();
+    setIsLoading(true);
     Requests.deleteUserAbout(currentUser)
       .then((response) => {
         if (!response.ok) {
@@ -925,7 +932,8 @@ const EditUserInfoForm = ({
           setUserAbout("");
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   // Create array in which certain countries from countries array will be placed on top
