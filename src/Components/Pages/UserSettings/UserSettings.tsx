@@ -58,6 +58,7 @@ const UserSettings = () => {
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     e?.preventDefault();
+    setIsLoading(true);
     Requests.addUserInterest(currentUser, interest.trim())
       .then((response) => {
         if (!response.ok) {
@@ -68,7 +69,8 @@ const UserSettings = () => {
           fetchAllUsers();
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   const handleDeleteUserInterest = (
@@ -76,6 +78,7 @@ const UserSettings = () => {
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     e?.preventDefault();
+    setIsLoading(true);
     Requests.deleteUserInterest(currentUser, interest)
       .then((response) => {
         if (!response.ok) {
@@ -86,7 +89,8 @@ const UserSettings = () => {
           fetchAllUsers();
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   // Defined here, and not in userContext, as useNavigate hook can only be used in <Router> component (navigation is changed)
