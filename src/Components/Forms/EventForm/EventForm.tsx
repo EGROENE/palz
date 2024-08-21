@@ -1530,13 +1530,13 @@ const EventForm = ({
         imageURL={imageThree}
         handleImageURLInput={handleImageURLInput}
       />
-      {event && (
+      {event && event.creator === currentUser?.id && (
         <button
           type="button"
           onClick={() => setShowAreYouSureDeleteEvent(true)}
           className="delete-button"
         >
-          Delete Button
+          Delete Event
         </button>
       )}
       {showAreYouSureDeleteEvent && (
