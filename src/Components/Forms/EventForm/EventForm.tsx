@@ -1240,7 +1240,7 @@ const EventForm = ({
           />
         </label>
         <label>
-          <p>Start Time: (optional)</p>
+          <p>Start Time:</p>
           <input
             value={
               eventStartTimeAfterMidnightUTCInMS > 0
