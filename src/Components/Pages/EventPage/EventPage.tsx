@@ -77,7 +77,7 @@ const EventPage = () => {
     invitees.push(matchingUser);
   }
 
-  const nextEventDateTime = event ? new Date(event.eventDateTimeInMS) : undefined;
+  const nextEventDateTime = event ? new Date(event.eventStartDateTimeInMS) : undefined;
 
   const userRSVPd =
     currentUser && currentUser.id && event?.interestedUsers.includes(currentUser.id);
