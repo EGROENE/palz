@@ -103,7 +103,7 @@ const EventForm = ({
   const [eventLocationError, setEventLocationError] = useState<string>(
     !event ? "Please fill out all 3 location fields" : ""
   );
-  const [eventStartDateMidnightUTCInMS, setStartEventDateMidnightUTCInMS] = useState(
+  const [eventStartDateMidnightUTCInMS, setEventStartDateMidnightUTCInMS] = useState(
     event ? event.eventStartDateMidnightUTCInMS : 0
   );
   const [eventStartTimeAfterMidnightUTCInMS, setEventStartTimeAfterMidnightUTCInMS] =
@@ -345,7 +345,7 @@ const EventForm = ({
 
       if (input === "start-date") {
         setEventEndDateTimeError("");
-        setStartEventDateMidnightUTCInMS(eventDateUTCinMS);
+        setEventStartDateMidnightUTCInMS(eventDateUTCinMS);
 
         console.log(eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS);
         console.log(eventDateUTCinMS + eventStartTimeAfterMidnightUTCInMS);
@@ -637,7 +637,7 @@ const EventForm = ({
       setEventState(event.stateProvince);
       setEventCountry(event.country);
       setEventLocationError("");
-      setStartEventDateMidnightUTCInMS(event.eventStartDateMidnightUTCInMS);
+      setEventStartDateMidnightUTCInMS(event.eventStartDateMidnightUTCInMS);
       setEventStartTimeAfterMidnightUTCInMS(event.eventStartTimeAfterMidnightUTCInMS);
       setEventStartDateTimeError("");
       setEventEndDateMidnightUTCInMS(event.eventEndDateMidnightUTCInMS);
@@ -667,7 +667,7 @@ const EventForm = ({
       setEventState("");
       setEventCountry("");
       setEventLocationError("");
-      setStartEventDateMidnightUTCInMS(0);
+      setEventStartDateMidnightUTCInMS(0);
       setEventStartTimeAfterMidnightUTCInMS(0);
       setEventStartDateTimeError("");
       setEventEndDateMidnightUTCInMS(0);
