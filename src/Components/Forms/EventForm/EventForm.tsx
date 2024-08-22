@@ -107,7 +107,7 @@ const EventForm = ({
     event ? event.eventStartDateMidnightUTCInMS : 0
   );
   const [eventStartTimeAfterMidnightUTCInMS, setEventStartTimeAfterMidnightUTCInMS] =
-    useState(event ? event.eventStartTimeAfterMidnightUTCInMS : 0);
+    useState(event ? event.eventStartTimeAfterMidnightUTCInMS : -1); // set to this instead of undefined or null in order to avoid TS errors
   const [eventStartDateTimeError, setEventStartDateTimeError] = useState<string>(
     !event ? "Please fill out date & time fields" : ""
   );
@@ -344,13 +344,24 @@ const EventForm = ({
       const eventDateUTCinMS = timezoneOffsetinMS + inputDateMS;
 
       if (input === "start-date") {
-        setEventEndDateTimeError("");
         setEventStartDateMidnightUTCInMS(eventDateUTCinMS);
 
-        console.log(eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS);
-        console.log(eventDateUTCinMS + eventStartTimeAfterMidnightUTCInMS);
+        if (
+          eventEndDateMidnightUTCInMS > 0 &&
+          eventEndTimeAfterMidnightUTCInMS > -1 &&
+          eventDateUTCinMS + eventStartTimeAfterMidnightUTCInMS <
+            eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS
+        ) {
+          setEventEndDateTimeError("");
+        }
 
         if (
+          eventDateUTCinMS > 0 &&
+          eventDateUTCinMS + eventStartTimeAfterMidnightUTCInMS < nowPlusOneHourMS
+        ) {
+          // Show error if event isn't set at least one hour in advance:
+          setEventStartDateTimeError("Event can only be set at least 1 hour in advance");
+        } else if (
           eventEndDateMidnightUTCInMS !== 0 &&
           eventEndTimeAfterMidnightUTCInMS !== -1 &&
           eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS <=
@@ -359,18 +370,31 @@ const EventForm = ({
           setEventStartDateTimeError(
             "Event must start before its end & at least 1 hour from now"
           );
-        } else if (
-          eventDateUTCinMS + eventStartTimeAfterMidnightUTCInMS <
-          nowPlusOneHourMS
-        ) {
-          // Show error if event isn't set at least one hour in advance:
-          setEventStartDateTimeError("Event can only be set at least 1 hour in advance");
         } else {
-          setEventStartDateTimeError("");
+          if (
+            eventStartDateMidnightUTCInMS > 0 &&
+            eventStartTimeAfterMidnightUTCInMS > -1
+          ) {
+            setEventStartDateTimeError("");
+          } else {
+            setEventStartDateTimeError("Please fill out date & time fields");
+          }
         }
       } else {
-        setEventStartDateTimeError("");
         setEventEndDateMidnightUTCInMS(eventDateUTCinMS);
+
+        // if not at least 1 hour and one minute from now, set error (test on addeventpage, setting end date/time before start date/time)
+        const nowPlusOneHourAndOneMinuteInMS = nowPlusOneHourMS + 60000;
+
+        if (
+          eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS <
+            eventDateUTCinMS + eventEndDateMidnightUTCInMS &&
+          eventStartDateMidnightUTCInMS > 0 &&
+          eventStartTimeAfterMidnightUTCInMS > -1
+        ) {
+          setEventStartDateTimeError("");
+        }
+
         // If end time/date is edited, but other isn't:
         if (
           (!(eventDateUTCinMS > 0) && eventEndTimeAfterMidnightUTCInMS > -1) ||
@@ -385,6 +409,11 @@ const EventForm = ({
           eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS
         ) {
           setEventEndDateTimeError("Event end must be after its start");
+        } else if (
+          eventDateUTCinMS + eventEndTimeAfterMidnightUTCInMS <
+          nowPlusOneHourAndOneMinuteInMS
+        ) {
+          setEventEndDateTimeError("Event must end at least 1 hour & 1 minute from now");
         } else {
           setEventEndDateTimeError("");
         }
@@ -398,12 +427,20 @@ const EventForm = ({
       const hoursPlusMinutesInMS = hoursInMS + minsInMS;
 
       if (input === "start-time") {
-        setEventEndDateTimeError("");
         setEventStartTimeAfterMidnightUTCInMS(hoursPlusMinutesInMS);
 
         if (
-          eventEndDateMidnightUTCInMS !== 0 &&
-          eventEndTimeAfterMidnightUTCInMS !== -1 &&
+          eventEndDateMidnightUTCInMS > 0 &&
+          eventEndTimeAfterMidnightUTCInMS > -1 &&
+          eventStartDateMidnightUTCInMS + hoursPlusMinutesInMS <
+            eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS
+        ) {
+          setEventEndDateTimeError("");
+        }
+
+        if (
+          eventEndDateMidnightUTCInMS > 0 &&
+          eventEndTimeAfterMidnightUTCInMS > -1 &&
           eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS <=
             eventStartDateMidnightUTCInMS + hoursPlusMinutesInMS
         ) {
@@ -411,17 +448,37 @@ const EventForm = ({
             "Event must start before its end & at least 1 hour from now"
           );
         } else if (
-          hoursPlusMinutesInMS + eventStartDateMidnightUTCInMS <
-          nowPlusOneHourMS
+          eventStartDateMidnightUTCInMS > 0 &&
+          eventStartTimeAfterMidnightUTCInMS > -1 &&
+          hoursPlusMinutesInMS + eventStartDateMidnightUTCInMS < nowPlusOneHourMS
         ) {
           // Show error if event isn't set at least one hour in advance:
           setEventStartDateTimeError("Event can only be set at least 1 hour in advance");
         } else {
-          setEventStartDateTimeError("");
+          if (
+            eventStartDateMidnightUTCInMS > 0 &&
+            eventStartTimeAfterMidnightUTCInMS > -1
+          ) {
+            setEventStartDateTimeError("");
+          } else {
+            setEventStartDateTimeError("Please fill out date & time fields");
+          }
         }
       } else {
-        setEventStartDateTimeError("");
         setEventEndTimeAfterMidnightUTCInMS(hoursPlusMinutesInMS);
+
+        // if not at least 1 hour and one minute from now, set error (test on addeventpage, setting end date/time before start date/time)
+        const nowPlusOneHourAndOneMinuteInMS = nowPlusOneHourMS + 60000;
+
+        if (
+          eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS <
+            eventEndTimeAfterMidnightUTCInMS + hoursPlusMinutesInMS &&
+          eventStartDateMidnightUTCInMS > 0 &&
+          eventStartTimeAfterMidnightUTCInMS > -1
+        ) {
+          setEventStartDateTimeError("");
+        }
+
         if (
           (!(eventEndDateMidnightUTCInMS > 0) && hoursPlusMinutesInMS > -1) ||
           (hoursPlusMinutesInMS === -1 && !(eventEndDateMidnightUTCInMS > 0))
@@ -437,9 +494,12 @@ const EventForm = ({
           )
         ) {
           // if start date + time is not before event date + time:
-          console.log(eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS);
-          console.log(eventEndDateMidnightUTCInMS + hoursPlusMinutesInMS);
           setEventEndDateTimeError("Event end must be after its start");
+        } else if (
+          eventEndDateMidnightUTCInMS + hoursPlusMinutesInMS <
+          nowPlusOneHourAndOneMinuteInMS
+        ) {
+          setEventEndDateTimeError("Event must end at least 1 hour & 1 minute from now");
         } else {
           setEventEndDateTimeError("");
         }
@@ -941,7 +1001,7 @@ const EventForm = ({
       eventState !== "" ||
       eventCountry !== "" ||
       eventStartDateMidnightUTCInMS !== 0 ||
-      eventStartTimeAfterMidnightUTCInMS !== 0 ||
+      eventStartTimeAfterMidnightUTCInMS !== -1 ||
       eventEndDateMidnightUTCInMS !== 0 ||
       eventEndTimeAfterMidnightUTCInMS !== -1 ||
       eventAddress !== "" ||
@@ -1393,7 +1453,7 @@ const EventForm = ({
               />
             </label>
           </div>
-          {eventEndDateTimeError !== "" && (
+          {eventEndDateTimeError !== "" && showErrors && (
             <p style={{ display: "flex" }}>{eventEndDateTimeError}</p>
           )}
         </div>
