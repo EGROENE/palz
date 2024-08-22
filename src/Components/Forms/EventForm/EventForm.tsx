@@ -371,10 +371,7 @@ const EventForm = ({
             "Event must start before its end & at least 1 hour from now"
           );
         } else {
-          if (
-            eventStartDateMidnightUTCInMS > 0 &&
-            eventStartTimeAfterMidnightUTCInMS > -1
-          ) {
+          if (eventDateUTCinMS > 0 && eventStartTimeAfterMidnightUTCInMS > -1) {
             setEventStartDateTimeError("");
           } else {
             setEventStartDateTimeError("Please fill out date & time fields");
@@ -455,10 +452,7 @@ const EventForm = ({
           // Show error if event isn't set at least one hour in advance:
           setEventStartDateTimeError("Event can only be set at least 1 hour in advance");
         } else {
-          if (
-            eventStartDateMidnightUTCInMS > 0 &&
-            eventStartTimeAfterMidnightUTCInMS > -1
-          ) {
+          if (eventStartDateMidnightUTCInMS > 0 && hoursPlusMinutesInMS > -1) {
             setEventStartDateTimeError("");
           } else {
             setEventStartDateTimeError("Please fill out date & time fields");
