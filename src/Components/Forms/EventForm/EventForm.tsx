@@ -1298,7 +1298,7 @@ const EventForm = ({
                 className={
                   (eventStartDateTimeError === "Please fill out this field" &&
                     showErrors) ||
-                  eventStartDateTimeError !== ""
+                  (eventStartDateTimeError !== "" && showErrors)
                     ? "erroneous-field"
                     : undefined
                 }
@@ -1326,7 +1326,7 @@ const EventForm = ({
                 className={
                   (eventStartDateTimeError === "Please fill out this field" &&
                     showErrors) ||
-                  eventStartDateTimeError !== ""
+                  (eventStartDateTimeError !== "" && showErrors)
                     ? "erroneous-field"
                     : undefined
                 }
@@ -1357,7 +1357,11 @@ const EventForm = ({
                     : undefined
                 }
                 disabled={isLoading}
-                className={eventEndDateTimeError !== "" ? "erroneous-field" : undefined}
+                className={
+                  eventEndDateTimeError !== "" && showErrors
+                    ? "erroneous-field"
+                    : undefined
+                }
                 onChange={(e) => handleDateTimeInput(e, "end-date")}
                 type="date"
               />
@@ -1379,7 +1383,11 @@ const EventForm = ({
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
                     : undefined
                 }
-                className={eventEndDateTimeError !== "" ? "erroneous-field" : undefined}
+                className={
+                  eventEndDateTimeError !== "" && showErrors
+                    ? "erroneous-field"
+                    : undefined
+                }
                 onChange={(e) => handleDateTimeInput(e, "end-time")}
                 type="time"
               />
