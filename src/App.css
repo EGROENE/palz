@@ -154,7 +154,7 @@
 }
 
 .erroneous-field {
-  outline: 2px solid var(--theme-purple);
+  outline: 2px solid red;
   border: none;
 }
 
