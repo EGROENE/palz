@@ -118,7 +118,7 @@
 .form-type-underline {
   height: 2px;
   width: 100%;
-  background-color: var(--theme-red);
+  background-color: var(--theme-pink);
   animation-duration: 500ms;
 }
 
@@ -130,7 +130,7 @@
 .login-options-container header {
   font-size: 2rem;
   padding: 0.25rem;
-  color: var(--theme-red);
+  color: var(--theme-pink);
   font-weight: 900;
 }
 
@@ -688,7 +688,7 @@ form textarea {
 }
 
 .account-deletion-in-progress-modal header {
-  color: var(--theme-red);
+  color: var(--theme-pink);
   font-weight: 700;
   font-size: 2rem;
 }

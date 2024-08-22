@@ -17,7 +17,7 @@ const AddEventPage = () => {
     const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
       "var(--theme-green)",
-      "var(--theme-red)",
+      "var(--theme-pink)",
       "var(--theme-purple)",
       "var(--theme-orange)",
     ];
