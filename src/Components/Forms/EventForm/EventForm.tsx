@@ -1087,12 +1087,6 @@ const EventForm = ({
   useEffect(() => {
     setPotentialCoOrganizersAndOrInvitees();
 
-    /* If user access event's edit page, but is not an organizer, redirect to their homepage & tell them they don't have permission to edit event */
-    if (event && currentUser?.id && !event?.organizers.includes(currentUser.id)) {
-      navigation(`/users/${currentUser.username}`);
-      toast.error("You do not have permission to edit this event.");
-    }
-
     // Hide Sidebar if showing:
     if (showSidebar) {
       setShowSidebar(false);
