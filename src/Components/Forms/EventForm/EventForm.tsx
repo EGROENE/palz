@@ -112,10 +112,16 @@ const EventForm = ({
     !event ? "Please fill out date & time fields" : ""
   );
   const [eventEndDateMidnightUTCInMS, setEventEndDateMidnightUTCInMS] = useState(
-    event ? event.eventEndDateMidnightUTCInMS : 0
+    event && event.eventEndDateMidnightUTCInMS !== undefined
+      ? event.eventEndDateMidnightUTCInMS
+      : 0
   );
   const [eventEndTimeAfterMidnightUTCInMS, setEventEndTimeAfterMidnightUTCInMS] =
-    useState(event ? event.eventEndTimeAfterMidnightUTCInMS : 0);
+    useState(
+      event && event.eventEndTimeAfterMidnightUTCInMS !== undefined
+        ? event.eventEndTimeAfterMidnightUTCInMS
+        : -1 // set to this instead of undefined or null in order to avoid TS errors
+    );
   const [eventEndDateTimeError, setEventEndDateTimeError] = useState<string>("");
   const [eventAddress, setEventAddress] = useState<string | undefined>(
     event ? event.address : ""
@@ -348,11 +354,18 @@ const EventForm = ({
         }
       } else {
         setEventEndDateMidnightUTCInMS(eventDateUTCinMS);
+        // If end time/date is edited, but other isn't:
         if (
-          !(
-            eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS <
-            eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS
-          )
+          (!(eventDateUTCinMS > 0) && eventEndTimeAfterMidnightUTCInMS > -1) ||
+          (eventEndTimeAfterMidnightUTCInMS === -1 && eventDateUTCinMS > 0)
+        ) {
+          setEventEndDateTimeError(
+            "Both end date & end time fields must be empty or complete"
+          );
+        } else if (
+          // If event end is before the start:
+          eventDateUTCinMS + eventEndTimeAfterMidnightUTCInMS <=
+          eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS
         ) {
           setEventEndDateTimeError("Event end must be after its start");
         } else {
@@ -379,6 +392,13 @@ const EventForm = ({
       } else {
         setEventEndTimeAfterMidnightUTCInMS(hoursPlusMinutesInMS);
         if (
+          (!(eventEndDateMidnightUTCInMS > 0) && hoursPlusMinutesInMS > -1) ||
+          (hoursPlusMinutesInMS === -1 && !(eventEndDateMidnightUTCInMS > 0))
+        ) {
+          setEventEndDateTimeError(
+            "Both end date & end time fields must be empty or complete"
+          );
+        } else if (
           !(
             eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS <
             eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS
@@ -1211,121 +1231,126 @@ const EventForm = ({
         />
         {eventAddressError !== "" && showErrors && <p>{eventAddressError}</p>}
       </label>
-      <div className="date-time-inputs-container">
-        <label>
-          <p>Start Date:</p>{" "}
-          <input
-            value={
-              eventStartDateMidnightUTCInMS > 0
-                ? getDateFieldValue(eventStartDateMidnightUTCInMS)
-                : ""
-            }
-            ref={dateRef}
-            onFocus={() => setFocusedElement("date")}
-            style={
-              focusedElement === "date"
-                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                : undefined
-            }
-            disabled={isLoading}
-            className={
-              (eventStartDateTimeError === "Please fill out this field" && showErrors) ||
-              eventStartDateTimeError ===
-                "Event can only be set at least 1 hour in advance"
-                ? "erroneous-field"
-                : undefined
-            }
-            onChange={(e) => handleDateTimeInput(e, "start-date")}
-            type="date"
-          />
-        </label>
-        <label>
-          <p>Start Time:</p>
-          <input
-            value={
-              eventStartTimeAfterMidnightUTCInMS > 0
-                ? getTimeFieldValue(eventStartTimeAfterMidnightUTCInMS)
-                : ""
-            }
-            step="600"
-            disabled={isLoading}
-            ref={timeRef}
-            onFocus={() => setFocusedElement("time")}
-            style={
-              focusedElement === "time"
-                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                : undefined
-            }
-            className={
-              (eventStartDateTimeError === "Please fill out this field" && showErrors) ||
-              eventStartDateTimeError ===
-                "Event can only be set at least 1 hour in advance"
-                ? "erroneous-field"
-                : undefined
-            }
-            onChange={(e) => handleDateTimeInput(e, "start-time")}
-            type="time"
-          />
-        </label>
-        <label>
-          <p>End Date: (optional)</p>{" "}
-          <input
-            value={
-              eventEndDateMidnightUTCInMS > 0
-                ? getDateFieldValue(eventEndDateMidnightUTCInMS)
-                : ""
-            }
-            ref={dateRef}
-            onFocus={() => setFocusedElement("date")}
-            style={
-              focusedElement === "date"
-                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                : undefined
-            }
-            disabled={isLoading}
-            className={
-              (eventStartDateTimeError === "Please fill out this field" && showErrors) ||
-              eventStartDateTimeError ===
-                "Event can only be set at least 1 hour in advance"
-                ? "erroneous-field"
-                : undefined
-            }
-            onChange={(e) => handleDateTimeInput(e, "end-date")}
-            type="date"
-          />
-        </label>
-        <label>
-          <p>End Time: (optional)</p>
-          <input
-            value={
-              eventEndTimeAfterMidnightUTCInMS > 0
-                ? getTimeFieldValue(eventEndTimeAfterMidnightUTCInMS)
-                : ""
-            }
-            step="600"
-            disabled={isLoading}
-            ref={timeRef}
-            onFocus={() => setFocusedElement("time")}
-            style={
-              focusedElement === "time"
-                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                : undefined
-            }
-            className={eventEndDateTimeError !== "" ? "erroneous-field" : undefined}
-            onChange={(e) => handleDateTimeInput(e, "end-time")}
-            type="time"
-          />
-        </label>
+      <div className="date-time-inputs-line">
+        <div className="date-time-group-container">
+          <div className="date-time-inputs-container">
+            <label>
+              <p>Start Date:</p>{" "}
+              <input
+                value={
+                  eventStartDateMidnightUTCInMS > 0
+                    ? getDateFieldValue(eventStartDateMidnightUTCInMS)
+                    : ""
+                }
+                ref={dateRef}
+                onFocus={() => setFocusedElement("date")}
+                style={
+                  focusedElement === "date"
+                    ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                    : undefined
+                }
+                disabled={isLoading}
+                className={
+                  (eventStartDateTimeError === "Please fill out this field" &&
+                    showErrors) ||
+                  eventStartDateTimeError ===
+                    "Event can only be set at least 1 hour in advance"
+                    ? "erroneous-field"
+                    : undefined
+                }
+                onChange={(e) => handleDateTimeInput(e, "start-date")}
+                type="date"
+              />
+            </label>
+            <label>
+              <p>Start Time:</p>
+              <input
+                value={
+                  eventStartTimeAfterMidnightUTCInMS > -1
+                    ? getTimeFieldValue(eventStartTimeAfterMidnightUTCInMS)
+                    : ""
+                }
+                step="600"
+                disabled={isLoading}
+                ref={timeRef}
+                onFocus={() => setFocusedElement("time")}
+                style={
+                  focusedElement === "time"
+                    ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                    : undefined
+                }
+                className={
+                  (eventStartDateTimeError === "Please fill out this field" &&
+                    showErrors) ||
+                  eventStartDateTimeError ===
+                    "Event can only be set at least 1 hour in advance"
+                    ? "erroneous-field"
+                    : undefined
+                }
+                onChange={(e) => handleDateTimeInput(e, "start-time")}
+                type="time"
+              />
+            </label>
+          </div>
+          {eventStartDateTimeError === "Please fill out this field" && showErrors && (
+            <p style={{ display: "flex" }}>{eventStartDateTimeError}</p>
+          )}
+          {eventStartDateTimeError ===
+            "Event can only be set at least 1 hour in advance" && (
+            <p style={{ display: "flex" }}>{eventStartDateTimeError}</p>
+          )}
+        </div>
+        <div className="date-time-group-container">
+          <div className="date-time-inputs-container">
+            <label>
+              <p>End Date: (optional)</p>{" "}
+              <input
+                value={
+                  eventEndDateMidnightUTCInMS > 0
+                    ? getDateFieldValue(eventEndDateMidnightUTCInMS)
+                    : ""
+                }
+                ref={dateRef}
+                onFocus={() => setFocusedElement("date")}
+                style={
+                  focusedElement === "date"
+                    ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                    : undefined
+                }
+                disabled={isLoading}
+                className={eventEndDateTimeError !== "" ? "erroneous-field" : undefined}
+                onChange={(e) => handleDateTimeInput(e, "end-date")}
+                type="date"
+              />
+            </label>
+            <label>
+              <p>End Time: (optional)</p>
+              <input
+                value={
+                  eventEndTimeAfterMidnightUTCInMS > -1
+                    ? getTimeFieldValue(eventEndTimeAfterMidnightUTCInMS)
+                    : ""
+                }
+                step="600"
+                disabled={isLoading}
+                ref={timeRef}
+                onFocus={() => setFocusedElement("time")}
+                style={
+                  focusedElement === "time"
+                    ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                    : undefined
+                }
+                className={eventEndDateTimeError !== "" ? "erroneous-field" : undefined}
+                onChange={(e) => handleDateTimeInput(e, "end-time")}
+                type="time"
+              />
+            </label>
+          </div>
+          {eventEndDateTimeError !== "" && (
+            <p style={{ display: "flex" }}>{eventEndDateTimeError}</p>
+          )}
+        </div>
       </div>
-      {eventStartDateTimeError === "Please fill out this field" && showErrors && (
-        <p style={{ display: "flex" }}>{eventStartDateTimeError}</p>
-      )}
-      {eventStartDateTimeError === "Event can only be set at least 1 hour in advance" && (
-        <p style={{ display: "flex" }}>{eventStartDateTimeError}</p>
-      )}
-      {eventEndDateTimeError !== "" && (
-        <p style={{ display: "flex" }}>{eventEndDateTimeError}</p>
-      )}
       <label>
         <p>Maximum Participants: (optional, not including organizers)</p>
         <input

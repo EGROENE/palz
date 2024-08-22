@@ -521,8 +521,7 @@
   border-radius: 4px;
 }
 
-.location-inputs,
-.date-time-inputs-container {
+.location-inputs {
   display: flex;
 }
 
@@ -532,6 +531,18 @@
 
 .location-input:first-child ~ * {
   margin: 0.25rem 0 0.25rem 2rem;
+}
+
+.date-time-inputs-line {
+  display: flex;
+}
+
+.date-time-inputs-container {
+  display: flex;
+}
+
+.date-time-inputs-container:first-child {
+  margin-right: 6rem;
 }
 
 .date-time-inputs-container label {
