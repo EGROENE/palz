@@ -7,8 +7,7 @@ import { Link } from "react-router-dom";
 import Methods from "../../../methods";
 
 const UsersEvents = () => {
-  const { allEvents, currentUser, getMostCurrentEvents, userCreatedAccount } =
-    useMainContext();
+  const { allEvents, currentUser, fetchAllEvents, userCreatedAccount } = useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
 
   const navigation = useNavigate();
@@ -19,7 +18,7 @@ const UsersEvents = () => {
   }, [currentUser, navigation, userCreatedAccount]);
 
   useEffect(() => {
-    getMostCurrentEvents();
+    fetchAllEvents();
     if (showSidebar) {
       setShowSidebar(false);
     }

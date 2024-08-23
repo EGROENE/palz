@@ -6,8 +6,7 @@ import EventCard from "../../Elements/EventCard/EventCard";
 import Methods from "../../../methods";
 
 const EventsPage = () => {
-  const { allEvents, getMostCurrentEvents, currentUser, userCreatedAccount } =
-    useMainContext();
+  const { allEvents, fetchAllEvents, currentUser, userCreatedAccount } = useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
 
   const navigation = useNavigate();
@@ -18,7 +17,7 @@ const EventsPage = () => {
   }, [currentUser, navigation, userCreatedAccount]);
 
   useEffect(() => {
-    getMostCurrentEvents();
+    fetchAllEvents();
     if (showSidebar) {
       setShowSidebar(false);
     }

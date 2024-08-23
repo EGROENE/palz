@@ -25,7 +25,7 @@ const EventForm = ({
     allEvents,
     currentEvent,
     setCurrentEvent,
-    getMostCurrentEvents,
+    fetchAllEvents,
   } = useMainContext();
   const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
   const navigation = useNavigate();
@@ -780,7 +780,7 @@ const EventForm = ({
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
-    getMostCurrentEvents();
+    fetchAllEvents();
     if (!showErrors) {
       setShowErrors(true);
     }
@@ -792,10 +792,10 @@ const EventForm = ({
           .then((response) => {
             if (!response.ok) {
               toast.error("Could not update event. Please try again.");
-              getMostCurrentEvents();
+              fetchAllEvents();
             } else {
               toast.success("Event updated!");
-              getMostCurrentEvents();
+              fetchAllEvents();
 
               /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
               if (valuesToUpdate?.title) {
@@ -853,9 +853,9 @@ const EventForm = ({
           .then((response) => {
             if (!response.ok) {
               toast.error("Could not create event. Please try again.");
-              getMostCurrentEvents();
+              fetchAllEvents();
             } else {
-              getMostCurrentEvents();
+              fetchAllEvents();
               toast.success("Event created!");
               navigation(`/${currentUser?.username}/events`);
             }

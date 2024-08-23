@@ -11,7 +11,7 @@ const EventPage = () => {
   const {
     allUsers,
     allEvents,
-    getMostCurrentEvents,
+    fetchAllEvents,
     currentUser,
     userCreatedAccount,
     setCurrentEvent,
@@ -40,7 +40,7 @@ const EventPage = () => {
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
-    getMostCurrentEvents();
+    fetchAllEvents();
     const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
       "var(--theme-green)",
