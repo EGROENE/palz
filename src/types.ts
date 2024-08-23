@@ -9,6 +9,8 @@ export type TThemeColor =
 
 export type TUser = {
   id?: number | string;
+  eventsOrganized: TEvent[];
+  eventsAttended: TEvent[];
   firstName: string | undefined;
   lastName: string | undefined;
   username: string | undefined;
