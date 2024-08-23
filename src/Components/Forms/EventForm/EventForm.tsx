@@ -318,10 +318,15 @@ const EventForm = ({
     const hoursSinceMidnight = timeAfterMidnightUTCInMS / 3600000; // EX: 23.75
     const hoursSinceMidnightString = String(hoursSinceMidnight); // EX: "23.75"
     let wholeHoursSinceMidnight: number | string = Math.floor(hoursSinceMidnight); // EX: 23
-    let remainingMinutes: string = (
-      Number(hoursSinceMidnightString.substring(hoursSinceMidnightString.indexOf("."))) *
-      60
-    ).toFixed(0); // EX: 45 (0.75 * 60)
+    let remainingMinutes: string =
+      hoursSinceMidnightString.indexOf(".") === -1
+        ? "0"
+        : (
+            Number(
+              hoursSinceMidnightString.substring(hoursSinceMidnightString.indexOf("."))
+            ) * 60
+          ).toFixed(0); // EX: 45 (0.75 * 60)
+
     if (wholeHoursSinceMidnight < 10) {
       wholeHoursSinceMidnight = `0${wholeHoursSinceMidnight}`;
     }
@@ -897,6 +902,18 @@ const EventForm = ({
           event.eventStartDateTimeInMS && {
           eventStartDateTimeInMS:
             eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS,
+        }),
+        ...(eventEndDateMidnightUTCInMS !== event.eventEndDateMidnightUTCInMS && {
+          eventEndDateMidnightUTCInMS: eventEndDateMidnightUTCInMS,
+        }),
+        ...(eventEndTimeAfterMidnightUTCInMS !==
+          event.eventEndTimeAfterMidnightUTCInMS && {
+          eventEndTimeAfterMidnightUTCInMS: eventEndTimeAfterMidnightUTCInMS,
+        }),
+        ...(eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS !==
+          event.eventEndDateTimeInMS && {
+          eventEndDateTimeInMS:
+            eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS,
         }),
         ...(organizers !== event.organizers && {
           organizers: organizers,
