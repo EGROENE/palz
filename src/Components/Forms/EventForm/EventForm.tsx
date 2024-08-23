@@ -37,8 +37,10 @@ const EventForm = ({
     | "city"
     | "state"
     | "address"
-    | "date"
-    | "time"
+    | "startDate"
+    | "startTime"
+    | "endDate"
+    | "endTime"
     | "maxParticipants"
     | "public"
     | "private"
@@ -54,8 +56,10 @@ const EventForm = ({
   const cityRef = useRef<HTMLInputElement | null>(null);
   const stateRef = useRef<HTMLInputElement | null>(null);
   const addressRef = useRef<HTMLInputElement | null>(null);
-  const dateRef = useRef<HTMLInputElement | null>(null);
-  const timeRef = useRef<HTMLInputElement | null>(null);
+  const startDateRef = useRef<HTMLInputElement | null>(null);
+  const startTimeRef = useRef<HTMLInputElement | null>(null);
+  const endDateRef = useRef<HTMLInputElement | null>(null);
+  const endTimeRef = useRef<HTMLInputElement | null>(null);
   const maxParticipantsRef = useRef<HTMLInputElement | null>(null);
   const publicRef = useRef<HTMLInputElement | null>(null);
   const privateRef = useRef<HTMLInputElement | null>(null);
@@ -1353,10 +1357,10 @@ const EventForm = ({
                     ? getDateFieldValue(eventStartDateMidnightUTCInMS)
                     : ""
                 }
-                ref={dateRef}
-                onFocus={() => setFocusedElement("date")}
+                ref={startDateRef}
+                onFocus={() => setFocusedElement("startDate")}
                 style={
-                  focusedElement === "date"
+                  focusedElement === "startDate"
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
                     : undefined
                 }
@@ -1382,10 +1386,10 @@ const EventForm = ({
                 }
                 step="600"
                 disabled={isLoading}
-                ref={timeRef}
-                onFocus={() => setFocusedElement("time")}
+                ref={startTimeRef}
+                onFocus={() => setFocusedElement("startTime")}
                 style={
-                  focusedElement === "time"
+                  focusedElement === "startTime"
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
                     : undefined
                 }
@@ -1415,10 +1419,10 @@ const EventForm = ({
                     ? getDateFieldValue(eventEndDateMidnightUTCInMS)
                     : ""
                 }
-                ref={dateRef}
-                onFocus={() => setFocusedElement("date")}
+                ref={endDateRef}
+                onFocus={() => setFocusedElement("endDate")}
                 style={
-                  focusedElement === "date"
+                  focusedElement === "endDate"
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
                     : undefined
                 }
@@ -1442,10 +1446,10 @@ const EventForm = ({
                 }
                 step="600"
                 disabled={isLoading}
-                ref={timeRef}
-                onFocus={() => setFocusedElement("time")}
+                ref={endTimeRef}
+                onFocus={() => setFocusedElement("endTime")}
                 style={
-                  focusedElement === "time"
+                  focusedElement === "endTime"
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
                     : undefined
                 }
