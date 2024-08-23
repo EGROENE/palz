@@ -7,7 +7,7 @@ import { TThemeColor } from "../../../types";
 
 const LoginPage = () => {
   const { theme, toggleTheme, fetchAllUsers } = useMainContext();
-  const { signupIsSelected, toggleSignupLogin, resetFormFieldsAndErrors } =
+  const { signupIsSelected, toggleSignupLogin, resetLoginOrSignupFormFieldsAndErrors } =
     useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -15,7 +15,7 @@ const LoginPage = () => {
   useEffect(() => {
     fetchAllUsers(); // get most up-to-date allUsers
 
-    resetFormFieldsAndErrors();
+    resetLoginOrSignupFormFieldsAndErrors();
 
     // Display login form by default
     if (signupIsSelected) {

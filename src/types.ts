@@ -248,7 +248,7 @@ export type TUserContext = {
   setShowPasswordCriteria: React.Dispatch<React.SetStateAction<boolean>>;
   showUsernameCriteria: boolean;
   setShowUsernameCriteria: React.Dispatch<React.SetStateAction<boolean>>;
-  resetFormFieldsAndErrors: () => void;
+  resetLoginOrSignupFormFieldsAndErrors: () => void;
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   logout: () => void;

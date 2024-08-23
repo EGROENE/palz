@@ -162,7 +162,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Called when user switches b/t login & signup forms & when user logs out
   // Only necessary to reset errors for fields on login and/or signup form
-  const resetFormFieldsAndErrors = (): void => {
+  const resetLoginOrSignupFormFieldsAndErrors = (): void => {
     removeFirstName();
     setFirstNameError("Please fill out this field");
     removeLastName();
@@ -194,7 +194,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const toggleSignupLogin = (): void => {
     setSignupIsSelected(!signupIsSelected);
-    resetFormFieldsAndErrors();
+    resetLoginOrSignupFormFieldsAndErrors();
   };
 
   const toggleHidePassword = (): void => setPasswordIsHidden(!passwordIsHidden);
@@ -823,7 +823,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const logout = (): void => {
     setUserCreatedAccount(null);
     removeCurrentUser();
-    resetFormFieldsAndErrors();
+    resetLoginOrSignupFormFieldsAndErrors();
   };
 
   const userContextValues: TUserContext = {
@@ -851,7 +851,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setPhoneNumberWithoutCountryCode,
     phoneNumberError,
     setPhoneNumberError,
-    resetFormFieldsAndErrors,
+    resetLoginOrSignupFormFieldsAndErrors,
     showSidebar,
     setShowSidebar,
     logout,
