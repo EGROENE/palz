@@ -749,7 +749,7 @@ const EventForm = ({
       setEventCountry("");
       setEventLocationError("");
       setEventStartDateMidnightUTCInMS(0);
-      setEventStartTimeAfterMidnightUTCInMS(0);
+      setEventStartTimeAfterMidnightUTCInMS(-1);
       setEventStartDateTimeError("");
       setEventEndDateMidnightUTCInMS(0);
       setEventEndTimeAfterMidnightUTCInMS(-1);
@@ -768,6 +768,12 @@ const EventForm = ({
       setInvitees([]);
       setRelatedInterests([]);
     }
+  };
+
+  const handleClearEndDateTime = (): void => {
+    setEventEndDateMidnightUTCInMS(0);
+    setEventEndTimeAfterMidnightUTCInMS(-1);
+    setEventEndDateTimeError("");
   };
 
   const handleAddEventFormSubmission = (
@@ -1484,6 +1490,11 @@ const EventForm = ({
             <p style={{ display: "flex" }}>{eventEndDateTimeError}</p>
           )}
         </div>
+        {(eventEndDateMidnightUTCInMS > 0 || eventEndTimeAfterMidnightUTCInMS > -1) && (
+          <span onClick={() => handleClearEndDateTime()} className="remove-data">
+            Clear End Date/Time
+          </span>
+        )}
       </div>
       <label>
         <p>Maximum Participants: (optional, not including organizers)</p>
