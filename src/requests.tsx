@@ -25,6 +25,38 @@ const getAttendedEventsByUser = (): Promise<Response> => {
   });
 };
 
+const updateEventsOrganized = (
+  user: TUser,
+  eventID: string | number
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedEventOrganizedArray: (string | number)[] = [];
+  if (user?.eventsOrganized) {
+    for (const event of user.eventsOrganized) {
+      if (event.id) {
+        updatedEventOrganizedArray.push(event.id);
+      }
+    }
+    updatedEventOrganizedArray.push(eventID);
+  }
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "eventsOrganized": updatedEventOrganizedArray,
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/users/${user?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const createUser = (newUserData: TUser): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -36,6 +68,8 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "password": newUserData.password,
     "emailAddress": newUserData.emailAddress,
     "hostingCredits": 0,
+    "eventsOrganized": [],
+    "eventsAttended": [],
     "city": "",
     "stateProvince": "",
     "country": "",
@@ -427,6 +461,7 @@ const removeOrganizer = (
 };
 
 const Requests = {
+  updateEventsOrganized,
   updateEvent,
   removeInvitee,
   removeOrganizer,
