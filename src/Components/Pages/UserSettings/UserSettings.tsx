@@ -42,14 +42,8 @@ const UserSettings = () => {
     }
   }, []);
 
-  const {
-    currentUser,
-    theme,
-    toggleTheme,
-    getMostCurrentEvents,
-    fetchAllUsers,
-    allEvents,
-  } = useMainContext();
+  const { currentUser, theme, toggleTheme, fetchAllEvents, fetchAllUsers, allEvents } =
+    useMainContext();
   const { showSidebar, setShowSidebar, logout, passwordIsHidden, setPasswordIsHidden } =
     useUserContext();
 
@@ -125,15 +119,30 @@ const UserSettings = () => {
         })
         .catch((error) => console.log(error));
 
-      // Delete user from events they've organized:
-      promisesToAwait.push(Requests.removeOrganizer(event, currentUser));
-      Requests.removeOrganizer(event, currentUser)
-        .then((response) => {
-          if (!response.ok) {
-            requestToDeleteUserIDFromAllArraysIsOK = false;
-          }
-        })
-        .catch((error) => console.log(error));
+      // Delete user from events they've organized or delete events of which user is sole organizer:
+      if (
+        currentUser?.id &&
+        event.organizers.length === 1 &&
+        event.organizers.includes(currentUser.id)
+      ) {
+        promisesToAwait.push(Requests.deleteEvent(event));
+        Requests.deleteEvent(event)
+          .then((response) => {
+            if (!response.ok) {
+              requestToDeleteUserIDFromAllArraysIsOK = false;
+            }
+          })
+          .catch((error) => console.log(error));
+      } else {
+        promisesToAwait.push(Requests.removeOrganizer(event, currentUser));
+        Requests.removeOrganizer(event, currentUser)
+          .then((response) => {
+            if (!response.ok) {
+              requestToDeleteUserIDFromAllArraysIsOK = false;
+            }
+          })
+          .catch((error) => console.log(error));
+      }
     }
 
     // Wait for user to be removed from all invitee/organizer/RSVP arrays, then delete user object in DB. Eventually, also wait for user to be removed from palz & messages arrays.
@@ -148,13 +157,13 @@ const UserSettings = () => {
             .then((response) => {
               if (!response.ok) {
                 toast.error("Could not delete your account. Please try again.");
-                getMostCurrentEvents();
+                fetchAllEvents();
                 fetchAllUsers();
               } else {
                 toast.error("You have deleted your account. We're sorry to see you go!");
                 logout();
                 navigation("/");
-                getMostCurrentEvents();
+                fetchAllEvents();
                 fetchAllUsers();
               }
             })
