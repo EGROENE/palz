@@ -535,13 +535,14 @@
 
 .date-time-inputs-line {
   display: flex;
+  align-items: flex-end;
 }
 
 .date-time-inputs-container {
   display: flex;
 }
 
-.date-time-inputs-container:first-child {
+.date-time-group-container:first-child {
   margin-right: 9rem;
 }
 
