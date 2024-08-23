@@ -15,6 +15,13 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
+    /* Redirect to user homepage if event has ended (no longer editable). Should only happen if user pastes in url of event's edit page, as navigation options won't exist anymore */
+    const now = Date.now();
+    if (currentEvent?.eventEndDateTimeInMS && currentEvent.eventEndDateTimeInMS < now) {
+      navigation(`/users/${currentUser?.username}`);
+      toast.error("Event is finished, so it's no longer editable.");
+    }
+
     /* If user access event's edit page, but is not an organizer, redirect to their homepage & tell them they don't have permission to edit event */
     if (currentUser?.id && !currentEvent?.organizers.includes(currentUser.id)) {
       navigation(`/users/${currentUser.username}`);
