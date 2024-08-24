@@ -164,6 +164,13 @@ const EventPage = () => {
             }}
             className="event-main-info-container"
           >
+            {event.eventStartDateTimeInMS < now &&
+              event.eventEndDateTimeInMS !== -1 &&
+              event.eventEndDateTimeInMS > now && (
+                <p style={{ backgroundColor: randomColor, padding: "0.5rem" }}>
+                  Happening now!
+                </p>
+              )}
             <h1 style={{ "color": randomColor }}>{event.title}</h1>
             <div className="event-main-info-text-container">
               <div>
