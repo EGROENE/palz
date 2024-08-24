@@ -132,7 +132,12 @@ const EventCard = ({ event }: { event: TEvent }) => {
               ))}
           </div>
         </div>
-        <img src={event.imageOne} />
+        <div className="event-card-image-container">
+          {event.eventStartDateTimeInMS < now && event.eventEndDateTimeInMS > now && (
+            <p style={{ backgroundColor: randomColor }}>Happening now!</p>
+          )}
+          <img src={event.imageOne} />
+        </div>
       </div>
     </div>
   );
