@@ -69,6 +69,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
   };
   const rsvpButtonText = getRSVPButtonText();
 
+  const now = Date.now();
+
   return (
     <div
       className="event-card"
@@ -105,28 +107,29 @@ const EventCard = ({ event }: { event: TEvent }) => {
             >
               See Event
             </Link>
-            {!userIsOrganizer ? (
-              <button
-                disabled={maxParticipantsReached}
-                className="event-buttons-container-button"
-                onClick={(e) =>
-                  currentUser &&
-                  (userRSVPd
-                    ? handleDeleteUserRSVP(e, event, currentUser)
-                    : handleAddUserRSVP(e, event))
-                }
-              >
-                {rsvpButtonText}
-              </button>
-            ) : (
-              <Link
-                onClick={() => setCurrentEvent(event)}
-                to={`/edit-event/${event.id}`}
-                className="event-buttons-container-button"
-              >
-                Edit Event
-              </Link>
-            )}
+            {(event.eventEndDateTimeInMS === -1 || event.eventEndDateTimeInMS > now) &&
+              (!userIsOrganizer ? (
+                <button
+                  disabled={maxParticipantsReached}
+                  className="event-buttons-container-button"
+                  onClick={(e) =>
+                    currentUser &&
+                    (userRSVPd
+                      ? handleDeleteUserRSVP(e, event, currentUser)
+                      : handleAddUserRSVP(e, event))
+                  }
+                >
+                  {rsvpButtonText}
+                </button>
+              ) : (
+                <Link
+                  onClick={() => setCurrentEvent(event)}
+                  to={`/edit-event/${event.id}`}
+                  className="event-buttons-container-button"
+                >
+                  Edit Event
+                </Link>
+              ))}
           </div>
         </div>
         <img src={event.imageOne} />
