@@ -74,7 +74,11 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const getStatus = (): string | undefined => {
     if (Math.abs(event.eventStartDateTimeInMS - now) <= 3600000) {
       return "Recently started";
-    } else if (event.eventEndDateTimeInMS !== -1 && event.eventEndDateTimeInMS > now) {
+    } else if (
+      event.eventEndDateTimeInMS !== -1 &&
+      event.eventEndDateTimeInMS > now &&
+      event.eventStartDateTimeInMS < now
+    ) {
       return "Happening now!";
     }
     return undefined;
