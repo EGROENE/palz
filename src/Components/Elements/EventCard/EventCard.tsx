@@ -107,7 +107,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
             >
               See Event
             </Link>
-            {(event.eventEndDateTimeInMS === -1 || event.eventEndDateTimeInMS > now) &&
+            {((event.eventEndDateTimeInMS === -1 && event.eventStartDateTimeInMS > now) ||
+              event.eventEndDateTimeInMS > now) &&
               (!userIsOrganizer ? (
                 <button
                   disabled={maxParticipantsReached}
@@ -133,9 +134,11 @@ const EventCard = ({ event }: { event: TEvent }) => {
           </div>
         </div>
         <div className="event-card-image-container">
-          {event.eventStartDateTimeInMS < now && event.eventEndDateTimeInMS > now && (
-            <p style={{ backgroundColor: randomColor }}>Happening now!</p>
-          )}
+          {event.eventStartDateTimeInMS < now &&
+            event.eventEndDateTimeInMS !== -1 &&
+            event.eventEndDateTimeInMS > now && (
+              <p style={{ backgroundColor: randomColor }}>Happening now!</p>
+            )}
           <img src={event.imageOne} />
         </div>
       </div>
