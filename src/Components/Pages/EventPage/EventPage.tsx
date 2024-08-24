@@ -133,6 +133,20 @@ const EventPage = () => {
 
   const now = Date.now();
 
+  const getStatus = (): string | undefined => {
+    if (Math.abs(event.eventStartDateTimeInMS - now) <= 3600000) {
+      return "Recently started";
+    } else if (
+      event.eventEndDateTimeInMS !== -1 &&
+      event.eventEndDateTimeInMS > now &&
+      event.eventStartDateTimeInMS < now
+    ) {
+      return "Happening now!";
+    }
+    return undefined;
+  };
+  const status: string | undefined = getStatus();
+
   return (
     <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
       {event ? (
@@ -164,13 +178,9 @@ const EventPage = () => {
             }}
             className="event-main-info-container"
           >
-            {event.eventStartDateTimeInMS < now &&
-              event.eventEndDateTimeInMS !== -1 &&
-              event.eventEndDateTimeInMS > now && (
-                <p style={{ backgroundColor: randomColor, padding: "0.5rem" }}>
-                  Happening now!
-                </p>
-              )}
+            {status && (
+              <p style={{ backgroundColor: randomColor, padding: "0.5rem" }}>{status}</p>
+            )}
             <h1 style={{ "color": randomColor }}>{event.title}</h1>
             <div className="event-main-info-text-container">
               <div>

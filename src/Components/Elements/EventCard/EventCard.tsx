@@ -71,6 +71,16 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   const now = Date.now();
 
+  const getStatus = (): string | undefined => {
+    if (Math.abs(event.eventStartDateTimeInMS - now) <= 3600000) {
+      return "Recently started";
+    } else if (event.eventEndDateTimeInMS !== -1 && event.eventEndDateTimeInMS > now) {
+      return "Happening now!";
+    }
+    return undefined;
+  };
+  const status: string | undefined = getStatus();
+
   return (
     <div
       className="event-card"
@@ -134,11 +144,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
           </div>
         </div>
         <div className="event-card-image-container">
-          {event.eventStartDateTimeInMS < now &&
-            event.eventEndDateTimeInMS !== -1 &&
-            event.eventEndDateTimeInMS > now && (
-              <p style={{ backgroundColor: randomColor }}>Happening now!</p>
-            )}
+          {status && <p style={{ backgroundColor: randomColor }}>{status}</p>}
           <img src={event.imageOne} />
         </div>
       </div>
