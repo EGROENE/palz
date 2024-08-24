@@ -131,6 +131,8 @@ const EventPage = () => {
   };
   const rsvpButtonText = getRSVPButtonText();
 
+  const now = Date.now();
+
   return (
     <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
       {event ? (
@@ -224,29 +226,31 @@ const EventPage = () => {
               <p>{event?.description}</p>
               {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
             </div>
-            {!userIsOrganizer ? (
-              <button
-                disabled={maxParticipantsReached}
-                style={{ "backgroundColor": randomColor }}
-                onClick={(e) =>
-                  currentUser &&
-                  (userRSVPd
-                    ? handleDeleteUserRSVP(e, event, currentUser)
-                    : handleAddUserRSVP(e, event))
-                }
-              >
-                {rsvpButtonText}
-              </button>
-            ) : (
-              <Link to={`/edit-event/${event.id}`}>
+            {((event.eventEndDateTimeInMS === -1 && event.eventStartDateTimeInMS > now) ||
+              event.eventEndDateTimeInMS < now) &&
+              (!userIsOrganizer ? (
                 <button
-                  onClick={() => setCurrentEvent(event)}
+                  disabled={maxParticipantsReached}
                   style={{ "backgroundColor": randomColor }}
+                  onClick={(e) =>
+                    currentUser &&
+                    (userRSVPd
+                      ? handleDeleteUserRSVP(e, event, currentUser)
+                      : handleAddUserRSVP(e, event))
+                  }
                 >
-                  Edit Event
+                  {rsvpButtonText}
                 </button>
-              </Link>
-            )}
+              ) : (
+                <Link to={`/edit-event/${event.id}`}>
+                  <button
+                    onClick={() => setCurrentEvent(event)}
+                    style={{ "backgroundColor": randomColor }}
+                  >
+                    Edit Event
+                  </button>
+                </Link>
+              ))}
           </div>
         </>
       ) : (
