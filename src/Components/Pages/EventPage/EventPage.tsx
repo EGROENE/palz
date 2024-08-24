@@ -233,8 +233,8 @@ const EventPage = () => {
               <p>{event?.description}</p>
               {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
             </div>
-            {((event.eventEndDateTimeInMS === -1 && event.eventStartDateTimeInMS > now) ||
-              event.eventEndDateTimeInMS < now) &&
+            {((event.eventEndDateTimeInMS === -1 && event.eventStartDateTimeInMS < now) ||
+              event.eventEndDateTimeInMS > now) &&
               (!userIsOrganizer ? (
                 <button
                   disabled={maxParticipantsReached}

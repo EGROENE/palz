@@ -107,7 +107,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
             >
               See Event
             </Link>
-            {((event.eventEndDateTimeInMS === -1 && event.eventStartDateTimeInMS > now) ||
+            {((event.eventEndDateTimeInMS === -1 && event.eventStartDateTimeInMS < now) ||
               event.eventEndDateTimeInMS > now) &&
               (!userIsOrganizer ? (
                 <button
