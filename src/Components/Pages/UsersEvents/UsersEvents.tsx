@@ -52,8 +52,7 @@ const UsersEvents = () => {
   const currentAndUpcomingEvents: TEvent[] = usersEvents.filter(
     (event) =>
       event.eventStartDateTimeInMS > now || // if start is in future
-      event.eventEndDateTimeInMS > now || // if end is set and in future
-      Math.abs(event.eventStartDateTimeInMS - now) <= 3600000 // if start is at most 1hr ago
+      event.eventEndDateTimeInMS > now // if end is in future
   );
 
   const arrayOfUserEventArrays: TEvent[][] = [
