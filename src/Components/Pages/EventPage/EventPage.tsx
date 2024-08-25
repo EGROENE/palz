@@ -134,7 +134,10 @@ const EventPage = () => {
   const now = Date.now();
 
   const getStatus = (): string | undefined => {
-    if (Math.abs(event.eventStartDateTimeInMS - now) <= 3600000) {
+    if (
+      Math.abs(event.eventStartDateTimeInMS - now) <= 3600000 &&
+      event.eventEndDateTimeInMS > now
+    ) {
       return "Recently started";
     } else if (event.eventEndDateTimeInMS > now && event.eventStartDateTimeInMS < now) {
       return "Happening now!";
