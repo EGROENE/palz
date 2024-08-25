@@ -29,14 +29,11 @@ const EventsPage = () => {
     // Later, add filter conditionals here...
     // 'happening now' events should be only events whose end is not -1 (unset) & whose start is before now & end is after
 
-    // If no filters, return events whose end is in future, or whose start is in future, or whose end is unset & start is now or in future, or whose end is unset, but started at most one hour ago
+    // If no filters, return events whose end or start is in future:
     return allEvents.filter(
       (event) =>
         event.eventEndDateTimeInMS > now || // end is in future
-        event.eventStartDateTimeInMS > now || // start is in future
-        (event.eventEndDateTimeInMS === -1 && event.eventStartDateTimeInMS >= now) || // end unset & start is now or in future
-        (event.eventEndDateTimeInMS === -1 &&
-          Math.abs(event.eventStartDateTimeInMS - now) <= 3600000) // end unset & start is at most 1hr in past from now
+        event.eventStartDateTimeInMS > now // start is in future
     );
   };
   const displayedEvents: TEvent[] = getDisplayedEvents();
