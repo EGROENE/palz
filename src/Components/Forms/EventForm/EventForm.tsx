@@ -113,7 +113,7 @@ const EventForm = ({
   const [eventStartTimeAfterMidnightUTCInMS, setEventStartTimeAfterMidnightUTCInMS] =
     useState(event ? event.eventStartTimeAfterMidnightUTCInMS : -1); // set to this instead of undefined or null in order to avoid TS errors
   const [eventStartDateTimeError, setEventStartDateTimeError] = useState<string>(
-    !event ? "Please fill out date & time fields" : ""
+    !event ? "Please specify when event begins" : ""
   );
   const [eventEndDateMidnightUTCInMS, setEventEndDateMidnightUTCInMS] = useState(
     event && event.eventEndDateMidnightUTCInMS !== undefined
@@ -126,7 +126,9 @@ const EventForm = ({
         ? event.eventEndTimeAfterMidnightUTCInMS
         : -1 // set to this instead of undefined or null in order to avoid TS errors
     );
-  const [eventEndDateTimeError, setEventEndDateTimeError] = useState<string>("");
+  const [eventEndDateTimeError, setEventEndDateTimeError] = useState<string>(
+    !event ? "Please specify when event ends" : ""
+  );
   const [eventAddress, setEventAddress] = useState<string | undefined>(
     event ? event.address : ""
   );
