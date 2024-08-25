@@ -371,7 +371,7 @@ const EventForm = ({
         }
 
         if (
-          // If event start date has been edited, but start is not set at least an hour in from current moment:
+          // If event start date has been edited, but start is not set at least an hour in advance from current moment:
           eventDateUTCinMS > 0 &&
           eventDateUTCinMS + eventStartTimeAfterMidnightUTCInMS < nowPlusOneHourMS
         ) {
@@ -394,7 +394,7 @@ const EventForm = ({
             setEventStartDateTimeError("");
           } else {
             /* If either start date/event has not been edited (only one will be a this point, since this function is an input handler): */
-            setEventStartDateTimeError("Please fill out date & time fields");
+            setEventStartDateTimeError("Please specify when event begins");
           }
         }
       } else {
@@ -412,7 +412,7 @@ const EventForm = ({
           setEventStartDateTimeError("");
         }
 
-        if (
+        /* if (
           // If either end time/date is edited, but other isn't:
           (!(eventDateUTCinMS > 0) && eventEndTimeAfterMidnightUTCInMS > -1) ||
           (eventEndTimeAfterMidnightUTCInMS === -1 && eventDateUTCinMS > 0)
@@ -420,12 +420,14 @@ const EventForm = ({
           setEventEndDateTimeError(
             "Both end date & end time fields must be empty or complete"
           );
-        } else if (
+        } else */ if (
           // If event end is before the start:
           eventDateUTCinMS + eventEndTimeAfterMidnightUTCInMS <=
           eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS
         ) {
-          setEventEndDateTimeError("Event end must be after its start");
+          setEventEndDateTimeError(
+            "Event end must be after its start and at least 1 hour & 1 minute from now"
+          );
         } else if (
           // If end is not at least one hour and one minute from current moment:
           eventDateUTCinMS + eventEndTimeAfterMidnightUTCInMS <
@@ -433,7 +435,13 @@ const EventForm = ({
         ) {
           setEventEndDateTimeError("Event must end at least 1 hour & 1 minute from now");
         } else {
-          setEventEndDateTimeError("");
+          // If start date/time have both been edited (both are required fields):
+          if (eventDateUTCinMS > 0 && eventEndTimeAfterMidnightUTCInMS > -1) {
+            setEventEndDateTimeError("");
+          } else {
+            /* If either start date/event has not been edited (only one will be a this point, since this function is an input handler): */
+            setEventEndDateTimeError("Please specify when event ends");
+          }
         }
       }
     }
@@ -482,7 +490,7 @@ const EventForm = ({
             setEventStartDateTimeError("");
           } else {
             // If start date & time fields have not been completed:
-            setEventStartDateTimeError("Please fill out date & time fields");
+            setEventStartDateTimeError("Please specify when event begins");
           }
         }
       } else {
@@ -500,7 +508,7 @@ const EventForm = ({
           setEventStartDateTimeError("");
         }
 
-        if (
+        /* if (
           // If end date or time has been edited, but the other hasn't:
           (!(eventEndDateMidnightUTCInMS > 0) && hoursPlusMinutesInMS > -1) ||
           (hoursPlusMinutesInMS === -1 && !(eventEndDateMidnightUTCInMS > 0))
@@ -509,14 +517,16 @@ const EventForm = ({
           setEventEndDateTimeError(
             "Both end date & end time fields must be empty or complete"
           );
-        } else if (
+        } else  */ if (
           // If start is after end:
           !(
             eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS <
             eventEndDateMidnightUTCInMS + hoursPlusMinutesInMS
           )
         ) {
-          setEventEndDateTimeError("Event end must be after its start");
+          setEventEndDateTimeError(
+            "Event end must be after its start & at least 1 hour & 1 minute from now"
+          );
         } else if (
           // If end is set less than 1hr and 1min from current moment:
           eventEndDateMidnightUTCInMS + hoursPlusMinutesInMS <
@@ -524,7 +534,12 @@ const EventForm = ({
         ) {
           setEventEndDateTimeError("Event must end at least 1 hour & 1 minute from now");
         } else {
-          setEventEndDateTimeError("");
+          if (eventEndDateMidnightUTCInMS > 0 && hoursPlusMinutesInMS > -1) {
+            setEventEndDateTimeError("");
+          } else {
+            // If start date & time fields have not been completed:
+            setEventEndDateTimeError("Please specify when event ends");
+          }
         }
       }
     }
@@ -775,7 +790,7 @@ const EventForm = ({
   const handleClearEndDateTime = (): void => {
     setEventEndDateMidnightUTCInMS(0);
     setEventEndTimeAfterMidnightUTCInMS(-1);
-    setEventEndDateTimeError("");
+    setEventEndDateTimeError(!event ? "Please specify when event ends" : "");
   };
 
   const handleAddEventFormSubmission = (
@@ -1437,7 +1452,7 @@ const EventForm = ({
         <div className="date-time-group-container">
           <div className="date-time-inputs-container">
             <label>
-              <p>End Date: (optional)</p>{" "}
+              <p>End Date:</p>{" "}
               <input
                 value={
                   eventEndDateMidnightUTCInMS > 0
@@ -1462,7 +1477,7 @@ const EventForm = ({
               />
             </label>
             <label>
-              <p>End Time: (optional)</p>
+              <p>End Time:</p>
               <input
                 value={
                   eventEndTimeAfterMidnightUTCInMS > -1
@@ -1487,16 +1502,17 @@ const EventForm = ({
                 type="time"
               />
             </label>
+            {(eventEndDateMidnightUTCInMS > 0 ||
+              eventEndTimeAfterMidnightUTCInMS > -1) && (
+              <span onClick={() => handleClearEndDateTime()} className="remove-data">
+                Clear End Date/Time
+              </span>
+            )}
           </div>
           {eventEndDateTimeError !== "" && showErrors && (
             <p style={{ display: "flex" }}>{eventEndDateTimeError}</p>
           )}
         </div>
-        {(eventEndDateMidnightUTCInMS > 0 || eventEndTimeAfterMidnightUTCInMS > -1) && (
-          <span onClick={() => handleClearEndDateTime()} className="remove-data">
-            Clear End Date/Time
-          </span>
-        )}
       </div>
       <label>
         <p>Maximum Participants: (optional, not including organizers)</p>
