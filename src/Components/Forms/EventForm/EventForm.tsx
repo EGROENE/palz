@@ -787,10 +787,16 @@ const EventForm = ({
     }
   };
 
-  const handleClearEndDateTime = (): void => {
-    setEventEndDateMidnightUTCInMS(0);
-    setEventEndTimeAfterMidnightUTCInMS(-1);
-    setEventEndDateTimeError(!event ? "Please specify when event ends" : "");
+  const handleClearDateTime = (isStartDateTime: boolean): void => {
+    if (isStartDateTime) {
+      setEventStartDateMidnightUTCInMS(0);
+      setEventStartTimeAfterMidnightUTCInMS(-1);
+      setEventStartDateTimeError(!event ? "Please specify when event starts" : "");
+    } else {
+      setEventEndDateMidnightUTCInMS(0);
+      setEventEndTimeAfterMidnightUTCInMS(-1);
+      setEventEndDateTimeError(!event ? "Please specify when event ends" : "");
+    }
   };
 
   const handleAddEventFormSubmission = (
@@ -1444,6 +1450,12 @@ const EventForm = ({
                 type="time"
               />
             </label>
+            {(eventStartDateMidnightUTCInMS > 0 ||
+              eventStartTimeAfterMidnightUTCInMS > -1) && (
+              <span onClick={() => handleClearDateTime(true)} className="remove-data">
+                Clear Start Date/Time
+              </span>
+            )}
           </div>
           {eventStartDateTimeError !== "" && showErrors && (
             <p style={{ display: "flex" }}>{eventStartDateTimeError}</p>
@@ -1504,7 +1516,7 @@ const EventForm = ({
             </label>
             {(eventEndDateMidnightUTCInMS > 0 ||
               eventEndTimeAfterMidnightUTCInMS > -1) && (
-              <span onClick={() => handleClearEndDateTime()} className="remove-data">
+              <span onClick={() => handleClearDateTime(false)} className="remove-data">
                 Clear End Date/Time
               </span>
             )}
