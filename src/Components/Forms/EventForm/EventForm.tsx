@@ -412,15 +412,7 @@ const EventForm = ({
           setEventStartDateTimeError("");
         }
 
-        /* if (
-          // If either end time/date is edited, but other isn't:
-          (!(eventDateUTCinMS > 0) && eventEndTimeAfterMidnightUTCInMS > -1) ||
-          (eventEndTimeAfterMidnightUTCInMS === -1 && eventDateUTCinMS > 0)
-        ) {
-          setEventEndDateTimeError(
-            "Both end date & end time fields must be empty or complete"
-          );
-        } else */ if (
+        if (
           // If event end is before the start:
           eventDateUTCinMS + eventEndTimeAfterMidnightUTCInMS <=
           eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS
@@ -508,16 +500,7 @@ const EventForm = ({
           setEventStartDateTimeError("");
         }
 
-        /* if (
-          // If end date or time has been edited, but the other hasn't:
-          (!(eventEndDateMidnightUTCInMS > 0) && hoursPlusMinutesInMS > -1) ||
-          (hoursPlusMinutesInMS === -1 && !(eventEndDateMidnightUTCInMS > 0))
-        ) {
-          // if end date/time is changed, but other is not changed:
-          setEventEndDateTimeError(
-            "Both end date & end time fields must be empty or complete"
-          );
-        } else  */ if (
+        if (
           // If start is after end:
           !(
             eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS <
