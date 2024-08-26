@@ -26,15 +26,7 @@ const UsersEvents = () => {
 
   const now = Date.now();
 
-  const usersEvents = allEvents.filter((ev) =>
-    ev.organizers.includes(String(currentUser?.id))
-  );
-
-  const eventsUserCreated: TEvent[] = usersEvents.filter(
-    (event) => event.creator === currentUser?.id && event.eventEndDateTimeInMS < now
-  );
-
-  const eventsUserOrganized: TEvent[] = usersEvents.filter(
+  const pastEventsUserOrganized: TEvent[] = allEvents.filter(
     (event) =>
       currentUser?.id &&
       event.creator !== currentUser?.id &&
@@ -42,34 +34,66 @@ const UsersEvents = () => {
       event.eventEndDateTimeInMS < now
   );
 
-  const eventsUserRSVPd: TEvent[] = usersEvents.filter(
+  const pastEventsUserRSVPd: TEvent[] = allEvents.filter(
     (event) =>
       currentUser?.id &&
       event.interestedUsers.includes(currentUser.id) &&
       event.eventEndDateTimeInMS < now
   );
 
-  const currentAndUpcomingEvents: TEvent[] = usersEvents.filter(
+  const currentUpcomingEventsUserOrganizes: TEvent[] = allEvents.filter(
     (event) =>
-      event.eventStartDateTimeInMS > now || // if start is in future
-      event.eventEndDateTimeInMS > now // if end is in future
+      (event.eventStartDateTimeInMS > now || // if start is in future
+        event.eventEndDateTimeInMS > now) && // if end is in future
+      currentUser?.id &&
+      event.organizers.includes(currentUser.id)
   );
 
-  const arrayOfUserEventArrays: TEvent[][] = [
-    currentAndUpcomingEvents,
-    eventsUserRSVPd,
-    eventsUserCreated,
-    eventsUserOrganized,
+  const currentUpcomingEventsUserInvitedTo: TEvent[] = allEvents.filter(
+    (event) =>
+      (event.eventStartDateTimeInMS > now || // if start is in future
+        event.eventEndDateTimeInMS > now) && // if end is in future
+      currentUser?.id &&
+      event.invitees.includes(currentUser.id)
+  );
+
+  const currentUpcomingEventsUserRSVPdTo: TEvent[] = allEvents.filter(
+    (event) =>
+      (event.eventStartDateTimeInMS > now || // if start is in future
+        event.eventEndDateTimeInMS > now) && // if end is in future
+      currentUser?.id &&
+      event.interestedUsers.includes(currentUser.id)
+  );
+
+  const usersEvents = [
+    {
+      header: "Your Current & Upcoming Events",
+      array: currentUpcomingEventsUserOrganizes,
+    },
+    {
+      header: "Current & Upcoming Events You've RSVP'd To",
+      array: currentUpcomingEventsUserRSVPdTo,
+    },
+    {
+      header: "Current & Upcoming Events You've Been Invited To",
+      array: currentUpcomingEventsUserInvitedTo,
+    },
+    { header: "Past Events You RSVP'd To", array: pastEventsUserRSVPd },
+    { header: "Past Events You Organized", array: pastEventsUserOrganized },
   ];
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Your Events</h1>
       {usersEvents.length > 0 ? (
-        arrayOfUserEventArrays.map(
-          (eventsArray) =>
-            eventsArray.length > 0 && (
-              <UserEventsSection key={eventsArray[0].id} eventsArray={eventsArray} />
+        usersEvents.map(
+          (event) =>
+            event.array.length > 0 && (
+              <UserEventsSection
+                key={event.header}
+                eventsArray={event.array}
+                header={event.header}
+              />
             )
         )
       ) : (
