@@ -2,10 +2,16 @@ import Methods from "../../../methods";
 import EventCard from "../EventCard/EventCard";
 import { TEvent } from "../../../types";
 
-const UserEventsSection = ({ eventsArray }: { eventsArray: TEvent[] }) => {
+const UserEventsSection = ({
+  eventsArray,
+  header,
+}: {
+  eventsArray: TEvent[];
+  header: string;
+}) => {
   return (
     <section className="user-events-section">
-      <h2>Past Events You Created</h2>
+      <h2>{header}</h2>
       <div className="all-events-container">
         {Methods.sortEventsSoonestToLatest(eventsArray).map((event) => (
           <EventCard key={event.id} event={event} />
