@@ -546,11 +546,11 @@
 
 .date-time-inputs-line {
   display: flex;
-  align-items: flex-end;
 }
 
 .date-time-inputs-container {
   display: flex;
+  align-items: flex-end;
 }
 
 .date-time-group-container:first-child {
@@ -764,6 +764,27 @@ form textarea {
 
 .delete-button {
   background-color: tomato;
+}
+
+.user-events-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start;
+  margin: 0 auto 1.5rem auto;
+}
+
+.user-events-section h2 {
+  margin: 1rem 0 0 2rem;
+}
+
+.user-events-section .all-events-container {
+  margin: 0 2rem;
+  justify-content: flex-start;
+}
+
+.user-events-section .all-events-container .event-card {
+  margin: 1rem 3rem 2rem 0;
 }
 
 .all-events-container {
