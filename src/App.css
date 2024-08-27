@@ -620,33 +620,6 @@ form textarea {
   flex-wrap: wrap;
 }
 
-.tab {
-  margin: 0.5rem 1rem;
-  padding: 0.25rem 0.5rem;
-  font-family: var(--text-font);
-  border-radius: 10px;
-  max-height: 2.5rem;
-}
-
-.tab:hover {
-  opacity: 0.8;
-  cursor: pointer;
-}
-
-.tab i {
-  margin: 0.5rem;
-}
-
-.tab.user.disabled,
-.tab.disabled {
-  opacity: 0.6;
-}
-
-.tab.user.disabled:hover,
-.tab.disabled:hover {
-  cursor: not-allowed;
-}
-
 .modal-background {
   height: 100vh;
   width: 100vw;
@@ -892,36 +865,6 @@ form textarea {
   align-items: flex-start;
 }
 
-.tab.user {
-  font-size: 0.75rem;
-  max-width: 75%;
-  text-align: left;
-  display: flex;
-  align-items: center;
-}
-
-.tab.user img {
-  aspect-ratio: 1;
-  width: 1.5rem;
-  border-radius: 4px;
-}
-
-.add-other-users-area span {
-  font-size: 0.75rem;
-  margin: 0 0.25rem;
-}
-
-.add-other-users-area span:hover {
-  cursor: pointer;
-  opacity: 0.9;
-}
-
-.add-other-users-area {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
 .co-organizers-invitees-container {
   flex-wrap: wrap;
   width: 100%;
@@ -975,14 +918,6 @@ form textarea {
 
 .displayed-co-organizer {
   font-size: 0.75rem;
-}
-
-.tab.user span {
-  font-size: 1rem;
-}
-
-.tab.user i {
-  font-size: 1.25rem;
 }
 
 .show-listed-users-or-invitees {
