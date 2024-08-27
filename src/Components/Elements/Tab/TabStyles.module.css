@@ -1,0 +1,46 @@
+.tab {
+  margin: 0.5rem 1rem;
+  padding: 0.25rem 0.5rem;
+  font-family: var(--text-font);
+  border-radius: 10px;
+  max-height: 2.5rem;
+  font-size: 0.75rem;
+  max-width: 75%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.tab:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.tab span {
+  font-size: 1rem;
+  margin: 0 0.25rem;
+}
+
+.tab span:hover {
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+.tab i {
+  margin: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.tab img {
+  aspect-ratio: 1;
+  width: 1.5rem;
+  border-radius: 4px;
+}
+
+.tab.disabled {
+  opacity: 0.6;
+}
+
+.tab.disabled:hover {
+  cursor: not-allowed;
+}
