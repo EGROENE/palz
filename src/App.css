@@ -865,6 +865,15 @@ form textarea {
   align-items: flex-start;
 }
 
+.add-other-users-area span {
+  margin: 0 0.25rem;
+}
+
+.add-other-users-area span:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
 .co-organizers-invitees-container {
   flex-wrap: wrap;
   width: 100%;
