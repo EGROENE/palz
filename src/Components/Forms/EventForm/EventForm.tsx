@@ -1596,7 +1596,7 @@ const EventForm = ({
                   style={{ color: randomColor }}
                   onClick={() => setOrganizers([`${currentUser?.id}`])}
                 >
-                  Remove All
+                  Remove All Others
                 </span>
               </>
             )}
