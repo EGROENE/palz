@@ -182,6 +182,7 @@ const InterestsSection = ({
         {savedInterests?.length ? (
           Methods.getStringArraySortedAlphabetically(savedInterests)?.map((interest) => (
             <Tab
+              key={interest}
               info={interest}
               removeHandler={handleRemoveInterest}
               isDisabled={isDisabled}
