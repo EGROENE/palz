@@ -7,7 +7,7 @@ import Methods from "../../../methods";
 import { countries } from "../../../constants";
 import Requests from "../../../requests";
 import toast from "react-hot-toast";
-import UserTab from "../../Elements/UserTab/UserTab";
+import Tab from "../../Elements/Tab/Tab";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import ImageURLField from "../../Elements/ImageURLField/ImageURLField";
 import AreYouSureInterface from "../../Elements/AreYouSureInterface/AreYouSureInterface";
@@ -673,7 +673,7 @@ const EventForm = ({
     }
   };
 
-  /* prop could be user: TUser only, but TS must be satisfied (this function, along w/ handleAddRemoveUserAsOrganizer, which has the props now included here, are both passed to UserTab as removeHandler) */
+  /* prop could be user: TUser only, but TS must be satisfied (this function, along w/ handleAddRemoveUserAsOrganizer, which has the props now included here, are both passed to Tab as removeHandler) */
   const handleAddRemoveUserAsInvitee = (
     e?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     user?: TUser
@@ -1609,9 +1609,9 @@ const EventForm = ({
             usersWhoAreOrganizers
               .filter((user) => user.username !== currentUser?.username)
               .map((user) => (
-                <UserTab
+                <Tab
                   key={user.id}
-                  user={user}
+                  info={user}
                   removeHandler={handleAddRemoveUserAsOrganizer}
                   randomColor={randomColor}
                   isDisabled={isLoading}
@@ -1698,9 +1698,9 @@ const EventForm = ({
           {currentUser &&
             usersWhoAreInvitees.length > 0 &&
             usersWhoAreInvitees.map((user) => (
-              <UserTab
+              <Tab
                 key={user.id}
-                user={user}
+                info={user}
                 removeHandler={handleAddRemoveUserAsInvitee}
                 randomColor={randomColor}
                 isDisabled={isLoading}
