@@ -118,10 +118,11 @@ const InterestsSection = ({
       .replace(/\s+/g, " ")
       .toLowerCase();
     setInputInterest(inputCaseInsensitive);
+    const addableInterests = getAddableInterests(); // get updated addableInterests
     if (inputCaseInsensitive.trim() === "") {
+      console.log("hi");
       setDisplayedAdditionalInterests(addableInterests);
     } else {
-      const addableInterests = getAddableInterests(); // get updated addableInterests
       for (const interest of addableInterests) {
         if (interest === inputCaseInsensitive.trim()) {
           setDisplayedAdditionalInterests(
@@ -199,8 +200,7 @@ const InterestsSection = ({
           handleClearAddInterestInput={handleClearAddInterestInput}
           setShowInterestsModal={setShowInterestsModal}
           inputInterest={inputInterest}
-          setInputInterest={setInputInterest}
-          inputInterestsHandler={handleInterestsInput}
+          handleInterestsInput={handleInterestsInput}
           handleAddInterest={addInterestHandler}
           noAdditionalInterestsAndInputInterest={noAdditionalInterestsAndInputInterest}
           noAdditionalInterestsAndNoInputInterest={

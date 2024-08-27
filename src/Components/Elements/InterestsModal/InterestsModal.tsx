@@ -9,8 +9,7 @@ const InterestsModal = ({
   handleClearAddInterestInput,
   setShowInterestsModal,
   inputInterest,
-  setInputInterest,
-  inputInterestsHandler,
+  handleInterestsInput,
   handleAddInterest,
   noAdditionalInterestsAndInputInterest,
   noAdditionalInterestsAndNoInputInterest,
@@ -22,8 +21,7 @@ const InterestsModal = ({
   handleClearAddInterestInput: () => void;
   setShowInterestsModal: (value: React.SetStateAction<boolean>) => void;
   inputInterest: string;
-  setInputInterest: React.Dispatch<React.SetStateAction<string>>;
-  inputInterestsHandler: (input: string) => void;
+  handleInterestsInput: (input: string) => void;
   handleAddInterest: (
     interest: string,
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>
@@ -40,7 +38,7 @@ const InterestsModal = ({
         title="Close"
         onClick={() => {
           setShowInterestsModal(false);
-          setInputInterest("");
+          handleInterestsInput("");
         }}
         className="fas fa-times close-module-icon"
       ></i>
@@ -50,7 +48,7 @@ const InterestsModal = ({
           <SearchBar
             input={inputInterest}
             placeholder="Type an interest"
-            inputHandler={inputInterestsHandler}
+            inputHandler={handleInterestsInput}
             clearInputHandler={handleClearAddInterestInput}
             isSideButton={true}
             sideButtonText="Add"
