@@ -3,6 +3,7 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import { TEvent, TThemeColor } from "../../../types";
 import Methods from "../../../methods";
 import InterestsModal from "../InterestsModal/InterestsModal";
+import Tab from "../Tab/Tab";
 
 type InterestsSectionProps = {
   randomColor: TThemeColor | undefined;
@@ -180,21 +181,12 @@ const InterestsSection = ({
       <div className="interests-container">
         {savedInterests?.length ? (
           Methods.getStringArraySortedAlphabetically(savedInterests)?.map((interest) => (
-            <span
-              className={isDisabled ? "tab disabled" : "tab"}
-              key={interest}
-              style={{ backgroundColor: randomColor }}
-            >
-              {interest}
-
-              <i
-                title="Remove"
-                onClick={(e) =>
-                  !isDisabled ? handleRemoveInterest(interest, e) : undefined
-                }
-                className="fas fa-times"
-              ></i>
-            </span>
+            <Tab
+              info={interest}
+              removeHandler={handleRemoveInterest}
+              isDisabled={isDisabled}
+              randomColor={randomColor}
+            />
           ))
         ) : (
           <p>Click 'browse' to add some interests!</p>
