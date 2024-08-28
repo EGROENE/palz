@@ -135,6 +135,7 @@ const EventsPage = () => {
   };
 
   const handleAddDeleteFilter = (option: string): void => {
+    setSearchTerm("");
     // If activeFilters includes option, delete it from activeFilters and vice versa:
     const updatedActiveFiltersArray = activeFilters.includes(option)
       ? activeFilters.filter((o) => o !== option)
