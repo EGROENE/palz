@@ -21,10 +21,9 @@
   margin-right: 0.75rem;
 }
 
-/* .filterOptionsContainer label input:checked {
-  accent-color: var(--theme-pink);
-  color: black;
-} */
+.filterOptionsContainer label input:hover {
+  cursor: pointer;
+}
 
 .button {
   width: 11rem;
