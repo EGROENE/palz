@@ -1,0 +1,19 @@
+.bar {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  max-height: 2rem;
+}
+
+.bar i {
+  position: absolute;
+  font-size: 1.5rem;
+}
+
+.bar button {
+  margin-left: 0.5rem;
+}
+
+.bar button:disabled {
+  opacity: 0.6;
+}
