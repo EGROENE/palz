@@ -658,6 +658,15 @@ form textarea {
   justify-content: center;
 }
 
+.browse-interests-modal .bar-and-description {
+  width: 75%;
+}
+
+.browse-interests-modal .bar-and-description i {
+  top: 18%;
+  right: 18%;
+}
+
 .browse-interests-modal p {
   color: black;
 }
@@ -689,26 +698,16 @@ form textarea {
   font-size: 2rem;
 }
 
-.add-interests-bar {
+.search-tools-container {
   display: flex;
-  margin-bottom: 2rem;
-  position: relative;
-  justify-content: center;
+  width: 100%;
+  justify-content: space-around;
+  align-items: flex-start;
 }
 
-.bar-and-description .add-interests-bar input {
-  width: 75%;
-}
-
-.add-interests-bar i {
-  position: absolute;
-  top: 18%;
-  right: 18%;
-  font-size: 1.5rem;
-}
-
-.add-interests-bar button {
-  margin-left: 0.5rem;
+.search-tools-container i {
+  top: 14%;
+  right: 6%;
 }
 
 .non-user-interests-container {
@@ -719,6 +718,7 @@ form textarea {
   flex-wrap: wrap;
   height: 7rem;
   overflow-y: scroll;
+  margin-top: 1rem;
 }
 
 .non-user-interests-container .tab {
