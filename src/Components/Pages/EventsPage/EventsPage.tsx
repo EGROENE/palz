@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import EventCard from "../../Elements/EventCard/EventCard";
 import Methods from "../../../methods";
 import { TEvent, TThemeColor } from "../../../types";
 import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
+import SearchBar from "../../Elements/SearchBar/SearchBar";
 
 const EventsPage = () => {
   const { allEvents, fetchAllEvents, currentUser, userCreatedAccount } = useMainContext();
@@ -45,6 +46,10 @@ const EventsPage = () => {
   } */
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchBoxIsFocused, setSearchBoxIsFocused] = useState<boolean>(false);
+
+  const searchBoxRef = useRef<HTMLInputElement | null>(null);
 
   const navigation = useNavigate();
   useEffect(() => {
@@ -163,17 +168,39 @@ const EventsPage = () => {
     }
   };
 
+  const handleSearchTermInput = (input: string) => {
+    setActiveFilters([]);
+    const inputCleaned = input.replace(/\s+/g, " ");
+    setSearchTerm(inputCleaned);
+  };
+
+  const handleClearSearchTerm = (): void => setSearchTerm("");
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Events</h1>
-      <FilterDropdown
-        dropdownBtnText="Filters"
-        filterOptions={Object.keys(filterOptions)}
-        activeFilters={activeFilters}
-        setActiveFilters={setActiveFilters}
-        handleAddDeleteFilter={handleAddDeleteFilter}
-        randomColor={randomColor}
-      />
+      <div className="search-tools-container">
+        <SearchBar
+          input={searchTerm}
+          placeholder="Search events"
+          inputHandler={handleSearchTermInput}
+          clearInputHandler={handleClearSearchTerm}
+          isSideButton={false}
+          title="Search by title, organizers, description, related interests, or location"
+          searchBoxRef={searchBoxRef}
+          setSearchBoxIsFocused={setSearchBoxIsFocused}
+          searchBoxIsFocused={searchBoxIsFocused}
+          randomColor={randomColor}
+        />
+        <FilterDropdown
+          dropdownBtnText="Filters"
+          filterOptions={Object.keys(filterOptions)}
+          activeFilters={activeFilters}
+          setActiveFilters={setActiveFilters}
+          handleAddDeleteFilter={handleAddDeleteFilter}
+          randomColor={randomColor}
+        />
+      </div>
       <div className="all-events-container">
         {Methods.sortEventsSoonestToLatest(displayedEvents).map((event) => (
           <EventCard key={event.id} event={event} />
