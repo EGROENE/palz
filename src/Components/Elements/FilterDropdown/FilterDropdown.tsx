@@ -1,24 +1,28 @@
 import { useState } from "react";
+import styles from "./styles.module.css";
+import { TThemeColor } from "../../../types";
 
 const FilterDropdown = ({
   dropdownBtnText,
   filterOptions,
   activeFilters,
   handleAddDeleteFilter,
+  randomColor,
 }: {
   dropdownBtnText: string;
   filterOptions: string[];
   activeFilters: string[];
   setActiveFilters: React.Dispatch<React.SetStateAction<string[]>>;
   handleAddDeleteFilter: (option: string) => void;
+  randomColor?: TThemeColor;
 }) => {
   const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
 
   const toggleShowFilterOptions = (): void => setShowFilterOptions(!showFilterOptions);
 
   return (
-    <div className="filter-container">
-      <button onClick={() => toggleShowFilterOptions()}>
+    <div className={styles.filterContainer}>
+      <button className={styles.button} onClick={() => toggleShowFilterOptions()}>
         {dropdownBtnText}
         <i
           className="fas fa-chevron-down"
@@ -26,16 +30,17 @@ const FilterDropdown = ({
         ></i>
       </button>
       {showFilterOptions && (
-        <div className="filter-options-container">
+        <div className={styles.filterOptionsContainer}>
           {filterOptions.map((option) => (
-            <div key={option}>
+            <label key={option}>
               <span>{option}</span>
               <input
                 type="checkbox"
+                style={{ accentColor: randomColor }}
                 onChange={() => handleAddDeleteFilter(option)}
                 checked={activeFilters.includes(option)}
               />
-            </div>
+            </label>
           ))}
         </div>
       )}
