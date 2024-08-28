@@ -4,22 +4,17 @@ const FilterDropdown = ({
   dropdownBtnText,
   filterOptions,
   activeFilters,
-  setActiveFilters,
+  handleAddDeleteFilter,
 }: {
   dropdownBtnText: string;
   filterOptions: string[];
   activeFilters: string[];
   setActiveFilters: React.Dispatch<React.SetStateAction<string[]>>;
+  handleAddDeleteFilter: (option: string) => void;
 }) => {
   const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
 
   const toggleShowFilterOptions = (): void => setShowFilterOptions(!showFilterOptions);
-
-  const handleAddDeleteFilter = (option: string): void => {
-    activeFilters.includes(option)
-      ? setActiveFilters(activeFilters.filter((o) => o !== option))
-      : setActiveFilters(activeFilters.concat(option));
-  };
 
   return (
     <div className="filter-container">
@@ -33,7 +28,7 @@ const FilterDropdown = ({
       {showFilterOptions && (
         <div className="filter-options-container">
           {filterOptions.map((option) => (
-            <div>
+            <div key={option}>
               <span>{option}</span>
               <input
                 type="checkbox"
