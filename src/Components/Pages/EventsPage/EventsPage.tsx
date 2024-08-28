@@ -4,12 +4,26 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import EventCard from "../../Elements/EventCard/EventCard";
 import Methods from "../../../methods";
-import { TEvent } from "../../../types";
+import { TEvent, TThemeColor } from "../../../types";
 import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 
 const EventsPage = () => {
   const { allEvents, fetchAllEvents, currentUser, userCreatedAccount } = useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
+
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  useEffect(() => {
+    const themeColors: TThemeColor[] = [
+      "var(--theme-blue)",
+      "var(--theme-green)",
+      "var(--theme-pink)",
+      "var(--theme-purple)",
+      "var(--theme-orange)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
+  }, []);
 
   const now = Date.now();
 
@@ -158,6 +172,7 @@ const EventsPage = () => {
         activeFilters={activeFilters}
         setActiveFilters={setActiveFilters}
         handleAddDeleteFilter={handleAddDeleteFilter}
+        randomColor={randomColor}
       />
       <div className="all-events-container">
         {Methods.sortEventsSoonestToLatest(displayedEvents).map((event) => (
