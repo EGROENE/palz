@@ -4,12 +4,13 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import EventCard from "../../Elements/EventCard/EventCard";
 import Methods from "../../../methods";
-import { TEvent, TThemeColor } from "../../../types";
+import { TEvent, TThemeColor, TUser } from "../../../types";
 import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 
 const EventsPage = () => {
-  const { allEvents, fetchAllEvents, currentUser, userCreatedAccount } = useMainContext();
+  const { allEvents, allUsers, fetchAllEvents, currentUser, userCreatedAccount } =
+    useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -173,9 +174,63 @@ const EventsPage = () => {
     setActiveFilters([]);
     const inputCleaned = input.replace(/\s+/g, " ");
     setSearchTerm(inputCleaned);
+    console.log(inputCleaned);
+
+    if (inputCleaned.trim() !== "") {
+      let newDisplayedEvents: TEvent[] = [];
+
+      // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
+      let eventOrganizerNames: string[] = [];
+      let eventOrganizerUsernames: string[] = [];
+      for (const event of displayedEvents) {
+        for (const id of event.organizers) {
+          const matchingUser: TUser = allUsers.filter((user) => user?.id === id)[0];
+
+          const fullName: string = `${matchingUser.firstName?.toLowerCase()}, ${matchingUser.lastName?.toLowerCase()}`;
+          eventOrganizerNames.push(fullName);
+
+          if (matchingUser.username) {
+            eventOrganizerUsernames.push(matchingUser.username);
+          }
+        }
+
+        if (
+          event.title.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+          event.additionalInfo.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+          event.address?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+          event.city?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+          event.country?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+          event.description.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+          eventOrganizerNames.includes(inputCleaned.toLowerCase()) ||
+          eventOrganizerUsernames.includes(inputCleaned) ||
+          event.stateProvince?.toLowerCase().includes(inputCleaned.toLowerCase())
+        ) {
+          newDisplayedEvents.push(event);
+        }
+      }
+      setDisplayedEvents(newDisplayedEvents);
+    } else {
+      console.log(1);
+      setDisplayedEvents(
+        allEvents.filter(
+          (event) =>
+            event.eventEndDateTimeInMS > now || // end is in future
+            event.eventStartDateTimeInMS > now // start is in future
+        )
+      );
+    }
   };
 
-  const handleClearSearchTerm = (): void => setSearchTerm("");
+  const handleClearSearchTerm = (): void => {
+    setSearchTerm("");
+    setDisplayedEvents(
+      allEvents.filter(
+        (event) =>
+          event.eventEndDateTimeInMS > now || // end is in future
+          event.eventStartDateTimeInMS > now // start is in future
+      )
+    );
+  };
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
