@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { TEvent } from "../../../types";
+import { TEvent, TThemeColor } from "../../../types";
 import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSection";
 
 const UsersEvents = () => {
@@ -17,7 +17,19 @@ const UsersEvents = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
   useEffect(() => {
+    const themeColors: TThemeColor[] = [
+      "var(--theme-blue)",
+      "var(--theme-green)",
+      "var(--theme-pink)",
+      "var(--theme-purple)",
+      "var(--theme-orange)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
+
     fetchAllEvents();
     if (showSidebar) {
       setShowSidebar(false);
@@ -82,10 +94,14 @@ const UsersEvents = () => {
     { header: "Past Events You Organized", array: pastEventsUserOrganized },
   ];
 
+  const userEventsExist = usersEvents
+    .map((event) => event.array)
+    .some((eventArray) => eventArray.length > 0);
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Your Events</h1>
-      {usersEvents.length > 0 ? (
+      {userEventsExist ? (
         usersEvents.map(
           (event) =>
             event.array.length > 0 && (
@@ -97,20 +113,32 @@ const UsersEvents = () => {
             )
         )
       ) : (
-        <h2>
-          You haven't organized any events yet. Click{" "}
-          <Link
-            style={{
-              color: "var(--theme-orange)",
-              textDecoration: "underline",
-              fontWeight: "bold",
-            }}
-            to={"/add-event"}
-          >
-            here
-          </Link>{" "}
-          to add one!
-        </h2>
+        <>
+          <h2>
+            Once you create/organize, are invited to, or RSVP to events, they will appear
+            here.
+          </h2>
+          <div className="box-link-container">
+            <Link to="/add-event">
+              <div
+                style={{ boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }}
+                className="box-link"
+              >
+                <header>Create Event</header>
+                <i className="fas fa-lightbulb"></i>
+              </div>
+            </Link>
+            <Link to="/events">
+              <div
+                style={{ boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }}
+                className="box-link"
+              >
+                <header>Explore Events</header>
+                <i className="fas fa-search"></i>
+              </div>
+            </Link>
+          </div>
+        </>
       )}
     </div>
   );
