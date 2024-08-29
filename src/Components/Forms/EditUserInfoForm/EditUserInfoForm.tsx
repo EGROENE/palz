@@ -1061,6 +1061,7 @@ const EditUserInfoForm = ({
             <p>First Name:</p>
             <input
               onFocus={() => setFocusedElement("firstName")}
+              onBlur={() => setFocusedElement(undefined)}
               style={
                 focusedElement === "firstName"
                   ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1084,6 +1085,7 @@ const EditUserInfoForm = ({
             <p>Last Name:</p>
             <input
               onFocus={() => setFocusedElement("lastName")}
+              onBlur={() => setFocusedElement(undefined)}
               style={
                 focusedElement === "lastName"
                   ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1122,6 +1124,7 @@ const EditUserInfoForm = ({
           )}
           <input
             onFocus={() => setFocusedElement("username")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "username"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1144,6 +1147,7 @@ const EditUserInfoForm = ({
           <p>E-Mail Address:</p>
           <input
             onFocus={() => setFocusedElement("email")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "email"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1204,6 +1208,7 @@ const EditUserInfoForm = ({
             <div className="phone-without-country-code-element">
               <input
                 onFocus={() => setFocusedElement("phoneNumber")}
+                onBlur={() => setFocusedElement(undefined)}
                 style={
                   focusedElement === "phoneNumber"
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1258,6 +1263,7 @@ const EditUserInfoForm = ({
             <p>City:</p>
             <input
               onFocus={() => setFocusedElement("city")}
+              onBlur={() => setFocusedElement(undefined)}
               style={
                 focusedElement === "city"
                   ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1290,6 +1296,7 @@ const EditUserInfoForm = ({
             <p>State/Province:</p>
             <input
               onFocus={() => setFocusedElement("state")}
+              onBlur={() => setFocusedElement(undefined)}
               style={
                 focusedElement === "state"
                   ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1428,6 +1435,7 @@ const EditUserInfoForm = ({
             </p>
             <input
               onFocus={() => setFocusedElement("facebook")}
+              onBlur={() => setFocusedElement(undefined)}
               style={
                 focusedElement === "facebook"
                   ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1457,6 +1465,7 @@ const EditUserInfoForm = ({
             </p>
             <input
               onFocus={() => setFocusedElement("instagram")}
+              onBlur={() => setFocusedElement(undefined)}
               style={
                 focusedElement === "instagram"
                   ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1486,6 +1495,7 @@ const EditUserInfoForm = ({
             </p>
             <input
               onFocus={() => setFocusedElement("x")}
+              onBlur={() => setFocusedElement(undefined)}
               style={
                 focusedElement === "x"
                   ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1513,6 +1523,7 @@ const EditUserInfoForm = ({
           </p>
           <textarea
             onFocus={() => setFocusedElement("about")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "about"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1549,6 +1560,7 @@ const EditUserInfoForm = ({
           <div className="password-input">
             <input
               onFocus={() => setFocusedElement("password")}
+              onBlur={() => setFocusedElement(undefined)}
               style={
                 focusedElement === "password"
                   ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1579,6 +1591,7 @@ const EditUserInfoForm = ({
             <div className="password-input">
               <input
                 onFocus={() => setFocusedElement("confirmPassword")}
+                onBlur={() => setFocusedElement(undefined)}
                 style={
                   focusedElement === "confirmPassword" && confirmationPasswordError === ""
                     ? { boxShadow: "0px 0px 10px 2px randomColor", outline: "none" }

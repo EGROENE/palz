@@ -86,6 +86,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
           <input
             ref={firstNameRef}
             onFocus={() => setFocusedElement("firstName")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "firstName"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -110,6 +111,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
           <input
             ref={lastNameRef}
             onFocus={() => setFocusedElement("lastName")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "lastName"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -147,6 +149,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
         <input
           ref={usernameRef}
           onFocus={() => setFocusedElement("username")}
+          onBlur={() => setFocusedElement(undefined)}
           style={
             focusedElement === "username"
               ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -170,6 +173,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
         <input
           ref={emailRef}
           onFocus={() => setFocusedElement("email")}
+          onBlur={() => setFocusedElement(undefined)}
           style={
             focusedElement === "email"
               ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -210,6 +214,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
           <input
             ref={passwordRef}
             onFocus={() => setFocusedElement("password")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "password"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -240,6 +245,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
           <input
             ref={confirmPasswordRef}
             onFocus={() => setFocusedElement("confirmPassword")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "confirmPassword"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }

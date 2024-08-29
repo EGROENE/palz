@@ -1160,6 +1160,7 @@ const EventForm = ({
         <input
           ref={titleRef}
           onFocus={() => setFocusedElement("title")}
+          onBlur={() => setFocusedElement(undefined)}
           style={
             focusedElement === "title"
               ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1178,6 +1179,7 @@ const EventForm = ({
         <textarea
           ref={descriptionRef}
           onFocus={() => setFocusedElement("description")}
+          onBlur={() => setFocusedElement(undefined)}
           style={
             focusedElement === "description"
               ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1198,6 +1200,7 @@ const EventForm = ({
         <textarea
           ref={additionalInfoRef}
           onFocus={() => setFocusedElement("additionalInfo")}
+          onBlur={() => setFocusedElement(undefined)}
           style={
             focusedElement === "additionalInfo"
               ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1219,6 +1222,7 @@ const EventForm = ({
           <input
             ref={cityRef}
             onFocus={() => setFocusedElement("city")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "city"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1253,6 +1257,7 @@ const EventForm = ({
           <input
             ref={stateRef}
             onFocus={() => setFocusedElement("state")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "state"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1360,6 +1365,7 @@ const EventForm = ({
         <input
           ref={addressRef}
           onFocus={() => setFocusedElement("address")}
+          onBlur={() => setFocusedElement(undefined)}
           style={
             focusedElement === "address"
               ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1388,6 +1394,7 @@ const EventForm = ({
                 }
                 ref={startDateRef}
                 onFocus={() => setFocusedElement("startDate")}
+                onBlur={() => setFocusedElement(undefined)}
                 style={
                   focusedElement === "startDate"
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1417,6 +1424,7 @@ const EventForm = ({
                 disabled={isLoading}
                 ref={startTimeRef}
                 onFocus={() => setFocusedElement("startTime")}
+                onBlur={() => setFocusedElement(undefined)}
                 style={
                   focusedElement === "startTime"
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1456,6 +1464,7 @@ const EventForm = ({
                 }
                 ref={endDateRef}
                 onFocus={() => setFocusedElement("endDate")}
+                onBlur={() => setFocusedElement(undefined)}
                 style={
                   focusedElement === "endDate"
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1483,6 +1492,7 @@ const EventForm = ({
                 disabled={isLoading}
                 ref={endTimeRef}
                 onFocus={() => setFocusedElement("endTime")}
+                onBlur={() => setFocusedElement(undefined)}
                 style={
                   focusedElement === "endTime"
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1514,6 +1524,7 @@ const EventForm = ({
         <input
           ref={maxParticipantsRef}
           onFocus={() => setFocusedElement("maxParticipants")}
+          onBlur={() => setFocusedElement(undefined)}
           style={
             focusedElement === "maxParticipants"
               ? {
@@ -1541,6 +1552,7 @@ const EventForm = ({
           <input
             ref={publicRef}
             onFocus={() => setFocusedElement("public")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "public"
                 ? {
@@ -1561,6 +1573,7 @@ const EventForm = ({
           <input
             ref={privateRef}
             onFocus={() => setFocusedElement("private")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "private"
                 ? {
@@ -1622,6 +1635,7 @@ const EventForm = ({
           <input
             ref={coOrganizersRef}
             onFocus={() => setFocusedElement("coOrganizers")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "coOrganizers"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1711,6 +1725,7 @@ const EventForm = ({
           <input
             ref={inviteesRef}
             onFocus={() => setFocusedElement("invitees")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "invitees"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
@@ -1787,6 +1802,7 @@ const EventForm = ({
         imageNumber="one"
         imageFieldRef={imageOneRef}
         onFocusHandler={setFocusedElement}
+        onBlurHandler={setFocusedElement}
         focusedElement={focusedElement}
         randomColor={randomColor}
         isLoading={isLoading}
@@ -1798,6 +1814,7 @@ const EventForm = ({
         imageNumber="two"
         imageFieldRef={imageTwoRef}
         onFocusHandler={setFocusedElement}
+        onBlurHandler={setFocusedElement}
         focusedElement={focusedElement}
         randomColor={randomColor}
         isLoading={isLoading}
@@ -1809,6 +1826,7 @@ const EventForm = ({
         imageNumber="three"
         imageFieldRef={imageThreeRef}
         onFocusHandler={setFocusedElement}
+        onBlurHandler={setFocusedElement}
         focusedElement={focusedElement}
         randomColor={randomColor}
         isLoading={isLoading}

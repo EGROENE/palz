@@ -25,6 +25,27 @@ type TImageURLFieldProps = {
       | undefined
     >
   ) => void;
+  onBlurHandler: (
+    value: React.SetStateAction<
+      | "title"
+      | "description"
+      | "additionalInfo"
+      | "city"
+      | "state"
+      | "address"
+      | "startDate"
+      | "startTime"
+      | "endDate"
+      | "endTime"
+      | "maxParticipants"
+      | "public"
+      | "private"
+      | `image${string}`
+      | "coOrganizers"
+      | "invitees"
+      | undefined
+    >
+  ) => void;
   focusedElement:
     | "title"
     | "description"
@@ -57,6 +78,7 @@ const ImageURLField = ({
   imageNumber,
   imageFieldRef,
   onFocusHandler,
+  onBlurHandler,
   focusedElement,
   randomColor,
   isLoading,
@@ -70,6 +92,7 @@ const ImageURLField = ({
       <input
         ref={imageFieldRef}
         onFocus={() => onFocusHandler(`image${Methods.getCapitalizedWord(imageNumber)}`)}
+        onBlur={() => onBlurHandler(undefined)}
         style={
           focusedElement === `image${Methods.getCapitalizedWord(imageNumber)}`
             ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }

@@ -66,6 +66,7 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
         <p>Username or E-Mail Address:</p>
         <input
           onFocus={() => setFocusedElement("emailUsername")}
+          onBlur={() => setFocusedElement(undefined)}
           ref={emailUsernameRef}
           style={
             focusedElement === "emailUsername"
@@ -97,6 +98,7 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
           <input
             ref={passwordRef}
             onFocus={() => setFocusedElement("password")}
+            onBlur={() => setFocusedElement(undefined)}
             style={
               focusedElement === "password"
                 ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
