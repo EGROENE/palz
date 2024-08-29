@@ -3,6 +3,7 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { TEvent, TThemeColor } from "../../../types";
 import { Link } from "react-router-dom";
+import { countries } from "../../../constants";
 
 const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -85,6 +86,10 @@ const EventCard = ({ event }: { event: TEvent }) => {
   };
   const status: string | undefined = getStatus();
 
+  const eventCountryAbbreviation: string = countries.filter(
+    (country) => country.country === event.country
+  )[0].abbreviation;
+
   return (
     <div
       className="event-card"
@@ -102,54 +107,62 @@ const EventCard = ({ event }: { event: TEvent }) => {
         </div>
       )}
       <div className="event-card-main-info">
-        <div className="event-info-container">
-          <header>{event.title}</header>
-          <p>
-            {nextEventDateTime.toDateString()} at {nextEventDateTime.toLocaleTimeString()}
-          </p>
-          <p className="organizers-event-card">
-            <i className="fas fa-user-alt"></i>
-            {organizerUsernames.length === 1
-              ? organizerUsernames[0]
-              : `${organizerUsernames[0]}  +${organizerUsernames.length - 1}`}
-          </p>
-          <div className="event-buttons-container">
-            <Link
-              style={{ backgroundColor: randomColor }}
-              className="event-buttons-container-button"
-              to={`/events/${event.id}`}
-            >
-              See Event
-            </Link>
-            {((event.eventEndDateTimeInMS === -1 && event.eventStartDateTimeInMS < now) ||
-              event.eventEndDateTimeInMS > now) &&
-              (!userIsOrganizer ? (
-                <button
-                  disabled={maxParticipantsReached}
-                  className="event-buttons-container-button"
-                  onClick={(e) =>
-                    currentUser &&
-                    (userRSVPd
-                      ? handleDeleteUserRSVP(e, event, currentUser)
-                      : handleAddUserRSVP(e, event))
-                  }
-                >
-                  {rsvpButtonText}
-                </button>
-              ) : (
-                <Link
-                  onClick={() => setCurrentEvent(event)}
-                  to={`/edit-event/${event.id}`}
-                  className="event-buttons-container-button"
-                >
-                  Edit Event
-                </Link>
-              ))}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div className="event-info-container">
+            <header>{event.title}</header>
+            <p>
+              {nextEventDateTime.toDateString()} at{" "}
+              {nextEventDateTime.toLocaleTimeString()}
+            </p>
+            <p className="organizers-event-card">
+              <i className="fas fa-user-alt"></i>
+              {organizerUsernames.length === 1
+                ? organizerUsernames[0]
+                : `${organizerUsernames[0]}  +${organizerUsernames.length - 1}`}
+            </p>
+            <div className="event-buttons-container">
+              <Link
+                style={{ backgroundColor: randomColor }}
+                className="event-buttons-container-button"
+                to={`/events/${event.id}`}
+              >
+                See Event
+              </Link>
+              {((event.eventEndDateTimeInMS === -1 &&
+                event.eventStartDateTimeInMS < now) ||
+                event.eventEndDateTimeInMS > now) &&
+                (!userIsOrganizer ? (
+                  <button
+                    disabled={maxParticipantsReached}
+                    className="event-buttons-container-button"
+                    onClick={(e) =>
+                      currentUser &&
+                      (userRSVPd
+                        ? handleDeleteUserRSVP(e, event, currentUser)
+                        : handleAddUserRSVP(e, event))
+                    }
+                  >
+                    {rsvpButtonText}
+                  </button>
+                ) : (
+                  <Link
+                    onClick={() => setCurrentEvent(event)}
+                    to={`/edit-event/${event.id}`}
+                    className="event-buttons-container-button"
+                  >
+                    Edit Event
+                  </Link>
+                ))}
+            </div>
+          </div>
+          <div className="event-card-image-container">
+            {status && <p style={{ backgroundColor: randomColor }}>{status}</p>}
+            <img src={event.imageOne} />
           </div>
         </div>
-        <div className="event-card-image-container">
-          {status && <p style={{ backgroundColor: randomColor }}>{status}</p>}
-          <img src={event.imageOne} />
+        <div className="event-card-location-container">
+          <p>{`${event.city}, ${event.stateProvince}`}</p>
+          <img src={`/flags/4x3/${eventCountryAbbreviation}.svg`} />
         </div>
       </div>
     </div>
