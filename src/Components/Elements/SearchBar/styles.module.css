@@ -1,13 +1,19 @@
+.searchBarContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .bar {
   display: flex;
   position: relative;
   justify-content: center;
   max-height: 2rem;
+  align-items: center;
 }
 
 .bar i {
   position: absolute;
-  font-size: 1.5rem;
 }
 
 .bar button {
@@ -16,4 +22,8 @@
 
 .bar button:disabled {
   opacity: 0.6;
+}
+
+.searchBarContainer p {
+  margin: 0.5rem 0 0 0;
 }
