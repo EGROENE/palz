@@ -32,18 +32,27 @@ const EventsPage = () => {
   const [displayedEvents, setDisplayedEvents] = useState<TEvent[]>(
     allEvents.filter(
       (event) =>
-        event.eventEndDateTimeInMS > now || // end is in future
-        event.eventStartDateTimeInMS > now // start is in future
+        event.publicity === "public" &&
+        (event.eventEndDateTimeInMS > now || // end is in future
+          event.eventStartDateTimeInMS > now) // start is in future
     )
   );
 
+  const resetDisplayedEvents = () => {
+    setDisplayedEvents(
+      allEvents.filter(
+        (event) =>
+          event.publicity === "public" &&
+          (event.eventEndDateTimeInMS > now || // end is in future
+            event.eventStartDateTimeInMS > now) // start is in future
+      )
+    );
+  };
+
   /*  const resetFiltersAndSearch =() => {
-    setDisplayedEvents(allEvents.filter(
-      (event) =>
-        event.eventEndDateTimeInMS > now || // end is in future
-        event.eventStartDateTimeInMS > now // start is in future
-    ))
-    setActiveFilters([])
+    resetDisplayedEvents();
+    setActiveFilters([]);
+    setSearchTerm("");
   } */
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -160,13 +169,7 @@ const EventsPage = () => {
       }
       setDisplayedEvents(newDisplayedEvents);
     } else {
-      setDisplayedEvents(
-        allEvents.filter(
-          (event) =>
-            event.eventEndDateTimeInMS > now || // end is in future
-            event.eventStartDateTimeInMS > now // start is in future
-        )
-      );
+      resetDisplayedEvents();
     }
   };
 
@@ -210,26 +213,13 @@ const EventsPage = () => {
       }
       setDisplayedEvents(newDisplayedEvents);
     } else {
-      console.log(1);
-      setDisplayedEvents(
-        allEvents.filter(
-          (event) =>
-            event.eventEndDateTimeInMS > now || // end is in future
-            event.eventStartDateTimeInMS > now // start is in future
-        )
-      );
+      resetDisplayedEvents();
     }
   };
 
   const handleClearSearchTerm = (): void => {
     setSearchTerm("");
-    setDisplayedEvents(
-      allEvents.filter(
-        (event) =>
-          event.eventEndDateTimeInMS > now || // end is in future
-          event.eventStartDateTimeInMS > now // start is in future
-      )
-    );
+    resetDisplayedEvents();
   };
 
   return (
