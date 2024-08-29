@@ -665,6 +665,11 @@ form textarea {
 .browse-interests-modal .bar-and-description i {
   top: 18%;
   right: 18%;
+  font-size: 1.25rem;
+}
+
+.browse-interests-modal .bar-and-description input {
+  width: 75%;
 }
 
 .browse-interests-modal p {
@@ -706,8 +711,9 @@ form textarea {
 }
 
 .search-tools-container i {
-  top: 14%;
+  top: 17%;
   right: 6%;
+  font-size: 1rem;
 }
 
 .non-user-interests-container {
