@@ -174,26 +174,47 @@ const EventsPage = () => {
   };
 
   const handleSearchTermInput = (input: string) => {
-    setActiveFilters([]);
+    if (activeFilters.length > 0) {
+      setActiveFilters([]);
+    }
+
     const inputCleaned = input.replace(/\s+/g, " ");
     setSearchTerm(inputCleaned);
-    console.log(inputCleaned);
 
     if (inputCleaned.trim() !== "") {
       let newDisplayedEvents: TEvent[] = [];
 
-      // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
-      let eventOrganizerNames: string[] = [];
-      let eventOrganizerUsernames: string[] = [];
-      for (const event of displayedEvents) {
+      const allPublicEventsThatStartOrEndInFuture: TEvent[] = allEvents.filter(
+        (event) =>
+          (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
+          event.publicity === "public"
+      );
+
+      for (const event of allPublicEventsThatStartOrEndInFuture) {
+        // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
+        let eventOrganizerNames: string[] = [];
+        let eventOrganizerUsernames: string[] = [];
         for (const id of event.organizers) {
           const matchingUser: TUser = allUsers.filter((user) => user?.id === id)[0];
 
-          const fullName: string = `${matchingUser.firstName?.toLowerCase()}, ${matchingUser.lastName?.toLowerCase()}`;
+          const fullName: string = `${matchingUser.firstName?.toLowerCase()} ${matchingUser.lastName?.toLowerCase()}`;
           eventOrganizerNames.push(fullName);
 
           if (matchingUser.username) {
             eventOrganizerUsernames.push(matchingUser.username);
+          }
+        }
+        let isOrganizerNameMatch: boolean = false;
+        for (const name of eventOrganizerNames) {
+          if (name.includes(inputCleaned.toLowerCase())) {
+            isOrganizerNameMatch = true;
+          }
+        }
+
+        let isUsernameMatch: boolean = false;
+        for (const username of eventOrganizerUsernames) {
+          if (username.includes(inputCleaned.toLowerCase())) {
+            isUsernameMatch = true;
           }
         }
 
@@ -204,8 +225,8 @@ const EventsPage = () => {
           event.city?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
           event.country?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
           event.description.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-          eventOrganizerNames.includes(inputCleaned.toLowerCase()) ||
-          eventOrganizerUsernames.includes(inputCleaned) ||
+          isOrganizerNameMatch ||
+          isUsernameMatch ||
           event.stateProvince?.toLowerCase().includes(inputCleaned.toLowerCase())
         ) {
           newDisplayedEvents.push(event);
