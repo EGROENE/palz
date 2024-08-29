@@ -6,6 +6,7 @@ const FilterDropdown = ({
   dropdownBtnText,
   filterOptions,
   activeFilters,
+  setActiveFilters,
   handleAddDeleteFilter,
   randomColor,
 }: {
@@ -22,13 +23,24 @@ const FilterDropdown = ({
 
   return (
     <div className={styles.filterContainer}>
-      <button className={styles.button} onClick={() => toggleShowFilterOptions()}>
-        {dropdownBtnText}
-        <i
-          className="fas fa-chevron-down"
-          style={showFilterOptions ? { rotate: "180deg" } : undefined}
-        ></i>
-      </button>
+      <div style={{ display: "flex", alignItems: "flex-end" }}>
+        <button className={styles.button} onClick={() => toggleShowFilterOptions()}>
+          {dropdownBtnText}
+          <i
+            className="fas fa-chevron-down"
+            style={showFilterOptions ? { rotate: "180deg" } : undefined}
+          ></i>
+        </button>
+        {activeFilters.length > 0 && (
+          <span
+            onClick={() => setActiveFilters([])}
+            style={{ marginLeft: "0.5rem" }}
+            className="remove-data"
+          >
+            Reset all
+          </span>
+        )}
+      </div>
       {showFilterOptions && (
         <div className={styles.filterOptionsContainer}>
           {filterOptions.map((option) => (
