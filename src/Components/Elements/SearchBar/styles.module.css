@@ -12,6 +12,10 @@
   align-items: center;
 }
 
+.bar input {
+  padding: 0.25rem;
+}
+
 .bar i {
   position: absolute;
 }
