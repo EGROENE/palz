@@ -258,6 +258,7 @@ const EventsPage = () => {
           setSearchBoxIsFocused={setSearchBoxIsFocused}
           searchBoxIsFocused={searchBoxIsFocused}
           randomColor={randomColor}
+          numberOfResults={displayedEvents.length}
         />
         <FilterDropdown
           dropdownBtnText="Filters"
