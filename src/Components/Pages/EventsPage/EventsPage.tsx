@@ -29,14 +29,88 @@ const EventsPage = () => {
 
   const now = Date.now();
 
-  const [displayedEvents, setDisplayedEvents] = useState<TEvent[]>(
-    allEvents.filter(
-      (event) =>
-        event.publicity === "public" &&
-        (event.eventEndDateTimeInMS > now || // end is in future
-          event.eventStartDateTimeInMS > now) // start is in future
-    )
-  );
+  const [displayedEvents, setDisplayedEvents] = useState<TEvent[]>([]);
+
+  // Re-render page as changes (for now, RSVPs) are made to events in allEvents, taking into account any existing search term or filter
+  /* Before, when RSVPing/de-RSVPing, RSVP button text wasn't updating properly b/c component didn't have access to updated events in allEvents (which were updating properly) until a page refresh, but now, this UI will hot update b/c of functionality in a useEffect that updates displayedEvents that depends on allEvents */
+  useEffect(() => {
+    if (searchTerm.trim() !== "") {
+      let newDisplayedEvents: TEvent[] = [];
+
+      const allPublicEventsThatStartOrEndInFuture: TEvent[] = allEvents.filter(
+        (event) =>
+          (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
+          event.publicity === "public"
+      );
+
+      for (const event of allPublicEventsThatStartOrEndInFuture) {
+        // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
+        let eventOrganizerNames: string[] = [];
+        let eventOrganizerUsernames: string[] = [];
+        for (const id of event.organizers) {
+          const matchingUser: TUser = allUsers.filter((user) => user?.id === id)[0];
+
+          const fullName: string = `${matchingUser.firstName?.toLowerCase()} ${matchingUser.lastName?.toLowerCase()}`;
+          eventOrganizerNames.push(fullName);
+
+          if (matchingUser.username) {
+            eventOrganizerUsernames.push(matchingUser.username);
+          }
+        }
+        let isOrganizerNameMatch: boolean = false;
+        for (const name of eventOrganizerNames) {
+          if (name.includes(searchTerm.toLowerCase())) {
+            isOrganizerNameMatch = true;
+          }
+        }
+
+        let isUsernameMatch: boolean = false;
+        for (const username of eventOrganizerUsernames) {
+          if (username.includes(searchTerm.toLowerCase())) {
+            isUsernameMatch = true;
+          }
+        }
+
+        if (
+          event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.additionalInfo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.country?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          isOrganizerNameMatch ||
+          isUsernameMatch ||
+          event.stateProvince?.toLowerCase().includes(searchTerm.toLowerCase())
+        ) {
+          newDisplayedEvents.push(event);
+        }
+      }
+      setDisplayedEvents(newDisplayedEvents);
+    } else if (activeFilters.length > 0) {
+      let newDisplayedEvents: TEvent[] = [];
+      for (const filter of activeFilters) {
+        const indexOfArrayInFilterOptions = Object.keys(filterOptions).indexOf(filter);
+        const filterOptionEvents: TEvent[] =
+          Object.values(filterOptions)[indexOfArrayInFilterOptions];
+
+        for (const filterOptionEvent of filterOptionEvents) {
+          if (!newDisplayedEvents.map((ev) => ev.id).includes(filterOptionEvent?.id)) {
+            newDisplayedEvents.push(filterOptionEvent);
+          }
+        }
+      }
+      setDisplayedEvents(newDisplayedEvents);
+    } else {
+      setDisplayedEvents(
+        allEvents.filter(
+          (event) =>
+            event.publicity === "public" &&
+            (event.eventEndDateTimeInMS > now || // end is in future
+              event.eventStartDateTimeInMS > now) // start is in future
+        )
+      );
+    }
+  }, [allEvents]);
 
   const resetDisplayedEvents = () => {
     setDisplayedEvents(
@@ -77,9 +151,15 @@ const EventsPage = () => {
 
   const getEventsByCurrentUserInterests = (): TEvent[] => {
     let eventsByCurrentUserInterests = [];
+    const updatedDisplayedEvents = allEvents.filter(
+      (event) =>
+        event.publicity === "public" &&
+        (event.eventEndDateTimeInMS > now || // end is in future
+          event.eventStartDateTimeInMS > now) // start is in future
+    );
     if (currentUser?.interests) {
       for (const interest of currentUser?.interests) {
-        for (const event of displayedEvents) {
+        for (const event of updatedDisplayedEvents) {
           if (event.relatedInterests.includes(interest)) {
             eventsByCurrentUserInterests.push(event);
           }
@@ -92,9 +172,15 @@ const EventsPage = () => {
 
   const getEventsOrganizedByCurrentUserFriends = (): TEvent[] => {
     let eventsOrganizedByCurrentUserFriends = [];
+    const updatedDisplayedEvents = allEvents.filter(
+      (event) =>
+        event.publicity === "public" &&
+        (event.eventEndDateTimeInMS > now || // end is in future
+          event.eventStartDateTimeInMS > now) // start is in future
+    );
     if (currentUser?.friends) {
       for (const friend of currentUser.friends) {
-        for (const event of displayedEvents) {
+        for (const event of updatedDisplayedEvents) {
           if (event.organizers.includes(friend)) {
             eventsOrganizedByCurrentUserFriends.push(event);
           }
@@ -107,9 +193,15 @@ const EventsPage = () => {
 
   const getEventsRSVPdByCurrentUserFriends = (): TEvent[] => {
     let eventsRSVPdByCurrentUserFriends = [];
+    const updatedDisplayedEvents = allEvents.filter(
+      (event) =>
+        event.publicity === "public" &&
+        (event.eventEndDateTimeInMS > now || // end is in future
+          event.eventStartDateTimeInMS > now) // start is in future
+    );
     if (currentUser?.friends) {
       for (const friend of currentUser.friends) {
-        for (const event of displayedEvents) {
+        for (const event of updatedDisplayedEvents) {
           if (event.interestedUsers.includes(friend)) {
             eventsRSVPdByCurrentUserFriends.push(event);
           }
