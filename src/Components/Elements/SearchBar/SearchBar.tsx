@@ -75,13 +75,12 @@ const SearchBar = ({
           </button>
         )}
       </div>
-      {numberOfResults && input !== "" && (
-        <p>
-          {numberOfResults === 1
-            ? `${numberOfResults} result`
-            : `${numberOfResults} results`}
-        </p>
-      )}
+      {input !== "" &&
+        (numberOfResults === 1 ? (
+          <p>{`${numberOfResults} result`}</p>
+        ) : (
+          <p>{`${numberOfResults} results`}</p>
+        ))}
     </div>
   );
 };
