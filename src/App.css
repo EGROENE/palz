@@ -430,6 +430,7 @@
   color: red;
   font-size: 0.75rem;
   font-family: var(--text-font);
+  font-weight: 700;
 }
 
 .remove-data:hover {
