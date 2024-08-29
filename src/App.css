@@ -312,6 +312,19 @@
   width: 87vw;
 }
 
+.box-link-container {
+  display: flex;
+}
+
+.box-link {
+  display: flex;
+  flex-direction: column;
+  font-size: 3rem;
+  padding: 2rem;
+  margin: 2rem;
+  color: var(--text-color);
+}
+
 .event-card {
   border-radius: 8px;
   display: flex;
