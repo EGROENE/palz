@@ -1701,7 +1701,7 @@ const EventForm = ({
       </div>
       <div className="add-other-users-area">
         <p>
-          Invitees: (especially recommended if event is private){" "}
+          Invitees: (recommended if event is private){" "}
           {currentUser && usersWhoAreInvitees.length > 0 && (
             <span style={{ color: randomColor }} onClick={() => setInvitees([])}>
               Remove All
