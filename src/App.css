@@ -529,7 +529,7 @@
   aspect-ratio: 1;
 }
 
-.country-code-dropdown {
+.dropdown-list {
   flex-direction: column;
   align-items: flex-start;
   background-color: gray;
@@ -537,7 +537,7 @@
   overflow-y: scroll;
 }
 
-.country-code-dropdown li {
+.dropdown-list li {
   display: flex;
   padding: 0.5rem 0 0.5rem 0.5rem;
   font-family: var(--text-font);
@@ -545,17 +545,17 @@
   width: calc(100% - 0.5rem);
 }
 
-.country-code-dropdown li:hover {
+.dropdown-list li:hover {
   cursor: pointer;
   background-color: rgb(75, 75, 75);
   opacity: 0.8;
 }
 
-.country-code-dropdown li span {
+.dropdown-list li span {
   margin-left: 0.5rem;
 }
 
-.country-code-dropdown li img {
+.dropdown-list li img {
   aspect-ratio: 1;
   width: 1.5rem;
   border-radius: 4px;
@@ -955,7 +955,7 @@ form textarea {
   margin-right: 0.5rem;
 }
 
-.co-organizers-invitees-inputs .country-code-dropdown li:hover {
+.co-organizers-invitees-inputs .dropdown-list li:hover {
   background-color: unset;
   opacity: 1;
 }

@@ -1325,7 +1325,7 @@ const EventForm = ({
             ></i>
           </button>
           {showEventCountries && (
-            <ul className="country-code-dropdown">
+            <ul className="dropdown-list">
               {resortedCountries.map((country) => (
                 <li
                   style={
@@ -1672,7 +1672,7 @@ const EventForm = ({
               ></i>
             </button>
             {showPotentialCoOrganizers && (
-              <ul className="country-code-dropdown">
+              <ul className="dropdown-list">
                 {potentialCoOrganizers.map((user) => (
                   <div
                     key={user.id}
@@ -1762,7 +1762,7 @@ const EventForm = ({
               ></i>
             </button>
             {showPotentialInvitees && !maxParticipantsReached && (
-              <ul className="country-code-dropdown">
+              <ul className="dropdown-list">
                 {potentialInvitees.map((user) => (
                   <div
                     key={user.id}

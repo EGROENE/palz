@@ -1232,7 +1232,7 @@ const EditUserInfoForm = ({
             </div>
           </div>
           {showCountryPhoneCodes && (
-            <ul className="country-code-dropdown">
+            <ul className="dropdown-list">
               {resortedCountries.map((country) => (
                 <li
                   style={
@@ -1360,7 +1360,7 @@ const EditUserInfoForm = ({
               ></i>
             </button>
             {showUserLocationCountries && (
-              <ul className="country-code-dropdown">
+              <ul className="dropdown-list">
                 {resortedCountries.map((country) => (
                   <li
                     style={
