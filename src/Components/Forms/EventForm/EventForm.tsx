@@ -70,8 +70,6 @@ const EventForm = ({
   const inviteesRef = useRef<HTMLInputElement | null>(null);
   ///////
 
-  const allOtherUsers = allUsers.filter((user) => user.id !== currentUser?.id);
-  /* otherUsers is eventually the resorted version of allOtherUsers (with user's palz shown on top), followed by all others; used to display potential co-organizers in dropdown */
   const [potentialCoOrganizers, setPotentialCoOrganizers] = useState<TUser[]>([]);
   const [potentialInvitees, setPotentialInvitees] = useState<TUser[]>([]);
   const [coOrganizersSearchQuery, setCoOrganizersSearchQuery] = useState<string>("");
@@ -175,75 +173,14 @@ const EventForm = ({
     setShowAreYouSureRemoveCurrentUserAsOrganizer,
   ] = useState<boolean>(false);
 
-  // Function to set otherUsers to its original value, w/o filters from coOrganizersSearchQuery
-  const setPotentialCoOrganizersAndOrInvitees = (
-    field?: "co-organizers" | "invitees"
-  ): void => {
-    // use for...of loop to avoid TS errors
-    // friends will always be able to add friends as co-organizers/invite them to events
-    let currentUserFriends: TUser[] = [];
-    for (const user of allOtherUsers) {
-      if (user.id && currentUser?.friends.includes(user.id)) {
-        currentUserFriends.push(user);
-      }
-    }
-    // use for...of loop to avoid TS errors
-    const restOfUsers: TUser[] = [];
-    for (const user of allOtherUsers) {
-      // For all users who are not friends w/ currentUser, only include users who are not invited to event & who can be added as a co-organizer by anyone.
-      if (user.id && !currentUser?.friends.includes(user.id)) {
-        restOfUsers.push(user);
-      }
-    }
-
-    // If only potentialCoOrganizers should be reset (like when deleting coOrganizersSearchQuery)
-    if (field === "co-organizers") {
-      setPotentialCoOrganizers(
-        currentUserFriends.concat(
-          restOfUsers.filter(
-            (user) =>
-              user.id &&
-              !invitees.includes(user.id) &&
-              user.whoCanAddUserAsOrganizer === "anyone"
-          )
-        )
-      );
-    } else if (field === "invitees") {
-      // If only potentialInvitees should be reset (like when deleting inviteesSearchQuery)
-      setPotentialInvitees(
-        currentUserFriends.concat(
-          restOfUsers.filter(
-            (user) =>
-              user.id &&
-              !organizers.includes(user.id) &&
-              user.whoCanInviteUser === "anyone"
-          )
-        )
-      );
-    } else {
-      // When both potentialCoOrganizers & potentialInvitees should be reset (like when adding/removing as co-organizer/invitee):
-      setPotentialCoOrganizers(
-        currentUserFriends.concat(
-          restOfUsers.filter(
-            (user) =>
-              user.id &&
-              !invitees.includes(user.id) &&
-              user.whoCanAddUserAsOrganizer === "anyone"
-          )
-        )
-      );
-      setPotentialInvitees(
-        currentUserFriends.concat(
-          restOfUsers.filter(
-            (user) =>
-              user.id &&
-              !organizers.includes(user.id) &&
-              user.whoCanInviteUser === "anyone"
-          )
-        )
-      );
-    }
-  };
+  // Make allOtherUsers consist first of currentUser's friends, then all others
+  const currentUserFriends = allUsers.filter(
+    (user) => user.id && currentUser?.friends.includes(user.id)
+  );
+  const currentUserNonFriends = allUsers
+    .filter((user) => user.id !== currentUser?.id)
+    .filter((user) => user.id && !currentUser?.friends.includes(user.id));
+  const allOtherUsers = currentUserFriends.concat(currentUserNonFriends);
 
   // INPUT HANDLERS
   const handleEventTitleInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -606,7 +543,18 @@ const EventForm = ({
         setPotentialCoOrganizers(matchingUsers);
       } else {
         // setPotentialCoOrganizers to original value
-        setPotentialCoOrganizersAndOrInvitees("co-organizers");
+        setPotentialCoOrganizers(
+          allOtherUsers.filter((user) => {
+            if (user.id) {
+              return (
+                (user.whoCanAddUserAsOrganizer === "anyone" ||
+                  (user.whoCanAddUserAsOrganizer === "friends" &&
+                    currentUser?.friends.includes(user.id))) &&
+                !invitees.includes(user.id)
+              );
+            }
+          })
+        );
       }
     } else {
       setInviteesSearchQuery(inputCleaned);
@@ -627,7 +575,18 @@ const EventForm = ({
         }
         setPotentialInvitees(matchingUsers);
       } else {
-        setPotentialCoOrganizersAndOrInvitees("invitees"); // make sep functions for each type
+        setPotentialInvitees(
+          allOtherUsers.filter((user) => {
+            if (user.id) {
+              return (
+                (user.whoCanInviteUser === "anyone" ||
+                  (user.whoCanInviteUser === "friends" &&
+                    currentUser?.friends.includes(user.id))) &&
+                !organizers.includes(user.id)
+              );
+            }
+          })
+        );
       }
     }
   };
@@ -636,40 +595,30 @@ const EventForm = ({
     e?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     user?: TUser
   ): void => {
-    /* If 'user' is passed, it refers to a user that is not the current user, so the logic to update the organizers that display on page is handled here (then updated in DB once form is submitted.). In else below, the removal of currentUser as an organizer is handled. They are removed from the event's 'organizers' array in DB & redirected to their homepage. */
-    if (user?.id) {
-      // Add/remove other users as organizers:
+    e?.preventDefault();
+    if (user && user.id) {
       if (organizers.includes(user.id)) {
-        // Remove user as organizer:
-        setOrganizers(organizers.filter((organizer) => organizer !== user?.id));
-        setPotentialCoOrganizersAndOrInvitees("co-organizers");
+        // Remove non-current user who isn't currentUser
+        setOrganizers(organizers.filter((organizerID) => organizerID !== user.id));
       } else {
-        // Add user as organizer:
-        const updatedArray = organizers.concat(String(user?.id));
-        setOrganizers(updatedArray);
-        setPotentialInvitees(
-          potentialInvitees.filter((potentialInvitee) => potentialInvitee.id !== user?.id)
-        );
+        // Add non-current user as organizer
+        setOrganizers(organizers.concat(user.id));
       }
     } else {
-      // Remove currentUser as organizer:
-      e?.preventDefault();
-      // If removing self, currentUser.id is removed from event's 'organizers' array
-      // If request to do so is successful, user is redirected back to their homepage. Else, they can try again.
-      setIsLoading(true);
+      // Remove currentUser as organizer
       Requests.removeOrganizer(event, currentUser)
         .then((response) => {
           if (!response.ok) {
-            toast.error("Could not remove you as organizer. Please try again.");
+            toast.error("Could not remove you as user. Please try again.");
           } else {
-            toast.success(
-              "You have been removed as an organizer. You can no longer make changes to this event."
+            toast.error(
+              "You have removed yourself as an organizer & are no longer able to make changes to that event."
             );
             navigation(`/users/${currentUser?.username}`);
           }
         })
         .catch((error) => console.log(error))
-        .finally(() => setIsLoading(false));
+        .finally(() => fetchAllEvents());
     }
   };
 
@@ -679,17 +628,13 @@ const EventForm = ({
     user?: TUser
   ): void => {
     e?.preventDefault();
-    if (invitees.includes(String(user?.id))) {
-      setInvitees(invitees.filter((invitee) => invitee !== user?.id));
-      setPotentialCoOrganizersAndOrInvitees("invitees");
-    } else {
-      const updatedArray = invitees.concat(String(user?.id));
-      setInvitees(updatedArray);
-      setPotentialCoOrganizers(
-        potentialCoOrganizers.filter(
-          (potentialCoOrganizer) => potentialCoOrganizer.id !== user?.id
-        )
-      );
+    if (user?.id) {
+      if (invitees.includes(user.id)) {
+        // Remove user as invitee
+        setInvitees(invitees.filter((inviteeID) => inviteeID !== user?.id));
+      } else {
+        setInvitees(invitees.concat(user.id));
+      }
     }
   };
 
@@ -1132,12 +1077,6 @@ const EventForm = ({
   };
 
   useEffect(() => {
-    setPotentialCoOrganizersAndOrInvitees();
-  }, [invitees, organizers]);
-
-  useEffect(() => {
-    setPotentialCoOrganizersAndOrInvitees();
-
     // Hide Sidebar if showing:
     if (showSidebar) {
       setShowSidebar(false);
@@ -1152,6 +1091,34 @@ const EventForm = ({
   useEffect(() => {
     setCurrentEvent(allEvents.filter((ev) => ev.id === event?.id)[0]);
   }, [allEvents]);
+
+  useEffect(() => {
+    setPotentialCoOrganizers(
+      allOtherUsers.filter((user) => {
+        if (user.id) {
+          return (
+            (user.whoCanAddUserAsOrganizer === "anyone" ||
+              (user.whoCanAddUserAsOrganizer === "friends" &&
+                currentUser?.friends.includes(user.id))) &&
+            !invitees.includes(user.id)
+          );
+        }
+      })
+    );
+
+    setPotentialInvitees(
+      allOtherUsers.filter((user) => {
+        if (user.id) {
+          return (
+            (user.whoCanInviteUser === "anyone" ||
+              (user.whoCanInviteUser === "friends" &&
+                currentUser?.friends.includes(user.id))) &&
+            !organizers.includes(user.id)
+          );
+        }
+      })
+    );
+  }, [invitees, organizers]);
 
   return (
     <form className="event-form">
@@ -1653,7 +1620,18 @@ const EventForm = ({
             <i
               onClick={() => {
                 setCoOrganizersSearchQuery("");
-                setPotentialCoOrganizersAndOrInvitees("co-organizers");
+                setPotentialCoOrganizers(
+                  allOtherUsers.filter((user) => {
+                    if (user.id) {
+                      return (
+                        (user.whoCanAddUserAsOrganizer === "anyone" ||
+                          (user.whoCanAddUserAsOrganizer === "friends" &&
+                            currentUser?.friends.includes(user.id))) &&
+                        !invitees.includes(user.id)
+                      );
+                    }
+                  })
+                );
               }}
               className="clear-other-users-search-query fas fa-times"
             ></i>
@@ -1743,7 +1721,18 @@ const EventForm = ({
             <i
               onClick={() => {
                 setInviteesSearchQuery("");
-                setPotentialCoOrganizersAndOrInvitees("invitees");
+                setPotentialInvitees(
+                  allOtherUsers.filter((user) => {
+                    if (user.id) {
+                      return (
+                        (user.whoCanInviteUser === "anyone" ||
+                          (user.whoCanInviteUser === "friends" &&
+                            currentUser?.friends.includes(user.id))) &&
+                        !organizers.includes(user.id)
+                      );
+                    }
+                  })
+                );
               }}
               className="clear-other-users-search-query fas fa-times"
             ></i>
@@ -1860,7 +1849,7 @@ const EventForm = ({
           noButtonText="Cancel"
           yesButtonText="Remove Myself as Organizer"
           setShowAreYouSureInterface={setShowAreYouSureRemoveCurrentUserAsOrganizer}
-          executionHandler={handleAddRemoveUserAsInvitee}
+          executionHandler={handleAddRemoveUserAsOrganizer}
           randomColor={randomColor}
         />
       )}
