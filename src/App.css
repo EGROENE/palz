@@ -339,7 +339,7 @@
   position: relative;
 }
 
-.event-card .fas .fa-link {
+.event-card .fas.fa-link {
   position: absolute;
   top: 1rem;
   right: 2rem;
