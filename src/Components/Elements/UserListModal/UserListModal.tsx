@@ -1,3 +1,4 @@
+import { useMainContext } from "../../../Hooks/useMainContext";
 import { TUser, TEvent } from "../../../types";
 
 /* Component contains a modal w/ background, as well as a list of users. In every user box, there is user image, name, username, & button that will eventually make it possible to message user & a button that removes user from list. To be used on event pages to show list of RSVPs & list of invitees. */
@@ -5,7 +6,7 @@ const UserListModal = ({
   closeModalMethod,
   header,
   handleUserRemoval,
-  userArray,
+  userIDArray,
   event,
   randomColor,
 }: {
@@ -17,10 +18,18 @@ const UserListModal = ({
     event: TEvent,
     user: TUser
   ) => void;
-  userArray: TUser[];
+  userIDArray: (string | number | undefined)[];
   event: TEvent;
   randomColor?: string;
 }) => {
+  const { allUsers } = useMainContext();
+
+  const userArray: TUser[] = [];
+  for (const userID of userIDArray) {
+    const matchingUser = allUsers.filter((user) => user.id === userID)[0];
+    userArray.push(matchingUser);
+  }
+
   return (
     <div className="modal-background">
       <i
