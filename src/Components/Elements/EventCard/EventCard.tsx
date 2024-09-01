@@ -133,6 +133,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
             <div className="event-buttons-container">
               <Link
                 style={{ backgroundColor: randomColor }}
+                onClick={() => setCurrentEvent(event)}
                 className="event-buttons-container-button"
                 to={`/events/${event.id}`}
               >
