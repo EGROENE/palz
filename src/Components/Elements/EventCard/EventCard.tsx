@@ -4,6 +4,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { TEvent, TThemeColor } from "../../../types";
 import { Link } from "react-router-dom";
 import { countries } from "../../../constants";
+import toast from "react-hot-toast";
 
 const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -97,6 +98,15 @@ const EventCard = ({ event }: { event: TEvent }) => {
         boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
       }}
     >
+      <i
+        onClick={() => {
+          setCurrentEvent(event);
+          navigator.clipboard.writeText(`localhost:5173/events/${event.id}`);
+          toast.success("Link copied!");
+        }}
+        className="fas fa-link"
+        title="Copy link to event page to clipboard"
+      ></i>
       {userIsInvitee && !userRSVPd && !maxParticipantsReached && (
         <div className="event-card-invitation">
           <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
