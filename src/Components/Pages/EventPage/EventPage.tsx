@@ -14,8 +14,10 @@ const EventPage = () => {
     allEvents,
     fetchAllEvents,
     currentUser,
+    currentEvent,
     userCreatedAccount,
     setCurrentEvent,
+    fetchAllUsers,
   } = useMainContext();
   const {
     handleDeleteUserRSVP,
@@ -25,27 +27,28 @@ const EventPage = () => {
     handleRemoveInvitee,
   } = useUserContext();
   const { eventID } = useParams();
-  const [event, setEvent] = useState<TEvent>(
-    allEvents.filter((ev) => ev.id === eventID)[0]
-  );
+  const [event, setEvent] = useState<TEvent | undefined>();
   const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
   const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
   const [showInvitees, setShowInvitees] = useState<boolean>(false);
 
   const navigation = useNavigate();
-  useEffect(() => {
+  /*   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
       toast.error("Please login before accessing this page");
       navigation("/");
     }
-  }, [currentUser, navigation, userCreatedAccount]);
+  }, [currentUser, navigation, userCreatedAccount]); */
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
   useEffect(() => {
-    if (!event) {
+    /* if (!event) {
       navigation(`/`);
       toast.error("Please log in, then paste URL into same tab to view this event");
-    }
+    } */
+    setEvent(currentEvent);
+    fetchAllUsers();
     fetchAllEvents();
     const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
@@ -114,13 +117,14 @@ const EventPage = () => {
   };
   const organizerUsernames = getOrganizersUsernames();
 
+  // Explicitly return true or false to avoid TS error
   const userIsOrganizer: boolean =
-    currentUser && currentUser.id && event.organizers.includes(currentUser.id)
+    currentUser && currentUser.id && event?.organizers.includes(currentUser.id)
       ? true
       : false;
 
   const maxParticipantsReached: boolean =
-    event && event.invitees.length === event.maxParticipants;
+    event?.invitees.length === event?.maxParticipants;
 
   const getRSVPButtonText = (): string => {
     if (maxParticipantsReached) {
@@ -248,7 +252,21 @@ const EventPage = () => {
               <p>{event?.description}</p>
               {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
             </div>
+            {userCreatedAccount === null && (
+              <>
+                <p>
+                  Please log in or sign up to edit RSVP or to make changes to this event.
+                </p>
+                <Link to={`/`}>
+                  <button style={{ "backgroundColor": randomColor }}>
+                    Log in/Sign up
+                  </button>
+                </Link>
+              </>
+            )}
             {event.eventEndDateTimeInMS > now &&
+              currentUser &&
+              userCreatedAccount !== null &&
               (!userIsOrganizer ? (
                 <button
                   disabled={maxParticipantsReached}
