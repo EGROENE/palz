@@ -33,12 +33,6 @@ const EventPage = () => {
   const [showInvitees, setShowInvitees] = useState<boolean>(false);
 
   const navigation = useNavigate();
-  /*   useEffect(() => {
-    if (!currentUser && userCreatedAccount === null) {
-      toast.error("Please login before accessing this page");
-      navigation("/");
-    }
-  }, [currentUser, navigation, userCreatedAccount]); */
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
