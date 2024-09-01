@@ -43,6 +43,7 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
   // Bring user to homepage if not logged in:
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
+      toast.error("Please login before accessing this page");
       navigation("/");
     }
   }, [currentEvent, navigation]);

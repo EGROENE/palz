@@ -7,6 +7,7 @@ import Methods from "../../../methods";
 import { TEvent, TThemeColor, TUser } from "../../../types";
 import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
+import toast from "react-hot-toast";
 
 const EventsPage = () => {
   const { allEvents, allUsers, fetchAllEvents, currentUser, userCreatedAccount } =
@@ -138,6 +139,7 @@ const EventsPage = () => {
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
+      toast.error("Please login before accessing this page");
       navigation("/");
     }
   }, [currentUser, navigation, userCreatedAccount]);

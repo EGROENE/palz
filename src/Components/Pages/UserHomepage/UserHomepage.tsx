@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import EventCard from "../../Elements/EventCard/EventCard";
 import { TEvent } from "../../../types";
 import Methods from "../../../methods";
+import toast from "react-hot-toast";
 
 const UserHomepage = () => {
   const { currentUser, allEvents, userCreatedAccount, fetchAllEvents } = useMainContext();
@@ -23,6 +24,7 @@ const UserHomepage = () => {
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
+      toast.error("Please login before accessing this page");
       navigation("/");
     } else {
       navigation(`/users/${currentUser?.username}`);

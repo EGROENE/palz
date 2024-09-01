@@ -35,6 +35,7 @@ const EventPage = () => {
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
+      toast.error("Please login before accessing this page");
       navigation("/");
     }
   }, [currentUser, navigation, userCreatedAccount]);

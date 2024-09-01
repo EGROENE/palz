@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { TEvent, TThemeColor } from "../../../types";
 import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSection";
+import toast from "react-hot-toast";
 
 const UsersEvents = () => {
   const { allEvents, currentUser, fetchAllEvents, userCreatedAccount } = useMainContext();
@@ -13,6 +14,7 @@ const UsersEvents = () => {
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
+      toast.error("Please login before accessing this page");
       navigation("/");
     }
   }, [currentUser, navigation, userCreatedAccount]);

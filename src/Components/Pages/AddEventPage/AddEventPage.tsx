@@ -4,6 +4,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import EventForm from "../../Forms/EventForm/EventForm";
 import { TThemeColor } from "../../../types";
+import toast from "react-hot-toast";
 
 const AddEventPage = () => {
   const navigation = useNavigate();
@@ -27,6 +28,7 @@ const AddEventPage = () => {
 
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
+      toast.error("Please login before accessing this page");
       navigation("/");
     }
   }, [currentUser, navigation, userCreatedAccount]);
