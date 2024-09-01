@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import ImageSlideshow from "../../Elements/ImageSlideshow/ImageSlideshow";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
 
@@ -40,6 +41,10 @@ const EventPage = () => {
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
+    if (!event) {
+      navigation(`/`);
+      toast.error("Please log in, then paste URL into same tab to view this event");
+    }
     fetchAllEvents();
     const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
@@ -70,12 +75,6 @@ const EventPage = () => {
     }
     setRefinedInterestedUsers(refIntUsers);
   }, [allUsers]);
-
-  const invitees: TUser[] = [];
-  for (const userID of event.invitees) {
-    const matchingUser = allUsers.filter((user) => user.id === userID)[0];
-    invitees.push(matchingUser);
-  }
 
   const nextEventDateTime = event ? new Date(event.eventStartDateTimeInMS) : undefined;
 
@@ -119,7 +118,8 @@ const EventPage = () => {
       ? true
       : false;
 
-  const maxParticipantsReached: boolean = event.invitees.length === event.maxParticipants;
+  const maxParticipantsReached: boolean =
+    event && event.invitees.length === event.maxParticipants;
 
   const getRSVPButtonText = (): string => {
     if (maxParticipantsReached) {
@@ -135,11 +135,16 @@ const EventPage = () => {
 
   const getStatus = (): string | undefined => {
     if (
+      event &&
       Math.abs(event.eventStartDateTimeInMS - now) <= 3600000 &&
       event.eventEndDateTimeInMS > now
     ) {
       return "Recently started";
-    } else if (event.eventEndDateTimeInMS > now && event.eventStartDateTimeInMS < now) {
+    } else if (
+      event &&
+      event.eventEndDateTimeInMS > now &&
+      event.eventStartDateTimeInMS < now
+    ) {
       return "Happening now!";
     }
     return undefined;
@@ -155,7 +160,7 @@ const EventPage = () => {
               closeModalMethod={setShowInvitees}
               header="Invitees"
               handleUserRemoval={handleRemoveInvitee}
-              userArray={invitees}
+              userIDArray={event.invitees}
               event={event}
               randomColor={randomColor}
             />
@@ -165,7 +170,7 @@ const EventPage = () => {
               closeModalMethod={setShowRSVPs}
               header="RSVPs"
               handleUserRemoval={handleDeleteUserRSVP}
-              userArray={refinedInterestedUsers}
+              userIDArray={refinedInterestedUsers.map((user) => user.id)}
               event={event}
               randomColor={randomColor}
             />
