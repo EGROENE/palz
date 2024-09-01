@@ -43,13 +43,25 @@ const EventPage = () => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   useEffect(() => {
-    /* if (!event) {
-      navigation(`/`);
-      toast.error("Please log in, then paste URL into same tab to view this event");
-    } */
+    // Redirect user to their homepage or to login page if event is private & they are not an invitee or organizer
+    if (
+      currentEvent?.publicity === "private" &&
+      currentUser?.id &&
+      !currentEvent?.invitees.includes(currentUser.id) &&
+      !currentEvent?.organizers.includes(currentUser.id)
+    ) {
+      toast.error("You do not have permission to edit or view this event.");
+      if (currentUser && userCreatedAccount !== null) {
+        navigation(`/users/${currentUser.username}`);
+      } else {
+        navigation("/");
+      }
+    }
     setEvent(currentEvent);
     fetchAllUsers();
     fetchAllEvents();
+
+    // Set randomColor:
     const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
       "var(--theme-green)",
