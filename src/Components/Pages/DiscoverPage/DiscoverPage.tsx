@@ -9,7 +9,7 @@ import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
 
-const EventsPage = () => {
+const DiscoverPage = () => {
   const { allEvents, allUsers, fetchAllEvents, currentUser, userCreatedAccount } =
     useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
@@ -372,4 +372,4 @@ const EventsPage = () => {
   );
 };
 
-export default EventsPage;
+export default DiscoverPage;
