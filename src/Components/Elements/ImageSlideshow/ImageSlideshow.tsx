@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { TThemeColor } from "../../../types";
+import styles from "./styles.module.css";
 
 type TDirection = "next" | "prev";
 
@@ -35,7 +36,7 @@ const ImageSlideshow = ({
   };
 
   return (
-    <div className="slideshow-container">
+    <div className={styles.slideshowContainer}>
       {images && images.length > 1 && (
         <i
           onClick={() => {
@@ -45,7 +46,7 @@ const ImageSlideshow = ({
           title="Previous Image"
         ></i>
       )}
-      <div className="slideshow-img-container">
+      <div className={styles.slideshowImgContainer}>
         {/* If imgIndex is specifically not undefined (not just falsy), show image/alt text. imgIndex should never be falsy, as its value is set whenever this component renders, though it is initialized as undefined. It's not good practice to initialize it, then change it again as soon as component renders. */}
         {imgIndex !== undefined && (
           <img
