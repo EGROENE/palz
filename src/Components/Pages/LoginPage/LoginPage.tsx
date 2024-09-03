@@ -86,7 +86,7 @@ const LoginPage = () => {
         <p>
           {!signupIsSelected ? "Don't have an account?" : "Already have an account?"}
           <span className="link-to-other-form" onClick={() => toggleSignupLogin()}>
-            {!signupIsSelected ? "Sign Up" : "Log In"}
+            {!signupIsSelected ? " Sign Up" : " Log In"}
           </span>
         </p>
       </div>
