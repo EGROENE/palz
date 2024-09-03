@@ -1,5 +1,5 @@
 import { TUser } from "../../../types";
-import TabStyles from "./TabStyles.module.css";
+import styles from "./styles.module.css";
 
 /* Returns a tab w/ user image, username, & 'X' button, which, onClick, remove user from something. At time of creation, this is used on AddEventForm to show which other users have been added as co-organizers and/or invitees. */
 const Tab = ({
@@ -31,7 +31,7 @@ const Tab = ({
       title={typeof info !== "string" ? `${info.firstName} ${info.lastName}` : undefined}
       key={typeof info === "string" ? info : info.id}
       style={{ backgroundColor: randomColor }}
-      className={isDisabled ? `${TabStyles.tab} disabled` : `${TabStyles.tab}`}
+      className={isDisabled ? `${styles.tab} disabled` : `${styles.tab}`}
     >
       {typeof info !== "string" && (
         <img src={`${info.profileImage}`} alt={`${info.username} profile pic`} />
