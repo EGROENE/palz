@@ -1,0 +1,55 @@
+.modalBackground {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 101;
+  margin-left: -3rem;
+}
+
+.userListContainer {
+  background-color: var(--background-color);
+  color: black;
+  height: 75%;
+  width: 60%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+
+.listedUser {
+  color: var(--text-color);
+  padding: 1rem;
+  border-radius: 10px;
+  width: 74%;
+  border: 2px solid gray;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 1rem 0;
+}
+
+.listedUser img {
+  float: left;
+  width: 5rem;
+  height: 5rem;
+  object-fit: cover;
+}
+
+.listedUserTextsContainer {
+  text-align: left;
+}
+
+.listedUserTextsContainer p {
+  margin: 0;
+}
+
+.listedUserTextsContainer p:first-child {
+  font-size: 1.5rem;
+}
