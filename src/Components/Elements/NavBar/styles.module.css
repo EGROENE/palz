@@ -1,0 +1,10 @@
+.navbar {
+  width: 90vw;
+}
+
+.profileImageNavbar {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  border: 4px solid var(--header-one-color);
+}

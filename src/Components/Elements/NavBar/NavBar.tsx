@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
+import styles from "./styles.module.css";
 
 const NavBar = () => {
   const { currentUser } = useMainContext();
@@ -14,7 +15,7 @@ const NavBar = () => {
 
   return (
     <nav>
-      <ul className="navbar">
+      <ul className={styles.navbar}>
         <li>
           <Link to={`/users/${currentUser?.username}`}>
             PALZ IMAGE - LINK TO UserHomepage
@@ -32,7 +33,7 @@ const NavBar = () => {
         <li>
           <img
             onClick={() => setShowSidebar(!showSidebar)}
-            className="profile-image-navbar"
+            className={styles.profileImageNavbar}
             src={currentUser?.profileImage}
           />
         </li>
