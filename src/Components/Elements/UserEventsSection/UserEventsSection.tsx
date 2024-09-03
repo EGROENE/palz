@@ -1,6 +1,7 @@
 import Methods from "../../../methods";
 import EventCard from "../EventCard/EventCard";
 import { TEvent } from "../../../types";
+import styles from "./styles.module.css";
 
 const UserEventsSection = ({
   eventsArray,
@@ -10,9 +11,9 @@ const UserEventsSection = ({
   header: string;
 }) => {
   return (
-    <section className="user-events-section">
+    <section className={styles.userEventsSection}>
       <h2>{header}</h2>
-      <div className="all-events-container">
+      <div className={`${styles.userEventsSectionEventsContainer}`}>
         {Methods.sortEventsSoonestToLatest(eventsArray).map((event) => (
           <EventCard key={event.id} event={event} />
         ))}
