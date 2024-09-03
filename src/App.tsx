@@ -11,7 +11,7 @@ import Error404 from "./Components/Pages/Error404/Error404";
 import NavBar from "./Components/Elements/NavBar/NavBar";
 import UserSettings from "./Components/Pages/UserSettings/UserSettings";
 import AddEventPage from "./Components/Pages/AddEventPage/AddEventPage";
-import EventsPage from "./Components/Pages/EventsPage/EventsPage";
+import DiscoverPage from "./Components/Pages/DiscoverPage/DiscoverPage";
 import EventPage from "./Components/Pages/EventPage/EventPage";
 import UsersEvents from "./Components/Pages/UsersEvents/UsersEvents";
 import EditEventPage from "./Components/Pages/EditEventPage/EditEventPage";
@@ -70,10 +70,14 @@ function App() {
           path="/edit-event/:eventID"
           element={<EditEventPage currentEvent={currentEvent} />}
         />
-        <Route path="/events" element={<EventsPage />} />
+        <Route path="/events" element={<DiscoverPage usedFor="events" />} />
         <Route path="/events/:eventID" element={<EventPage />} />
         <Route path="/:username/events" element={<UsersEvents />} />
         <Route path="/users/:username" element={<UserHomepage />} />
+        <Route
+          path="/find-friends"
+          element={<DiscoverPage usedFor="potential-friends" />}
+        />
         <Route path="*" element={<Error404 />} />
       </Routes>
     </div>
