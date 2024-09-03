@@ -1,4 +1,5 @@
 import { TThemeColor } from "../../../types";
+import styles from "./styles.module.css";
 
 type TAreYouSureInterfaceProps = {
   message: string;
@@ -20,11 +21,11 @@ const AreYouSureInterface = ({
   randomColor,
 }: TAreYouSureInterfaceProps) => {
   return (
-    <div className="modal-background">
-      <div className="are-you-sure-modal">
+    <div className={styles.modalBackground}>
+      <div className={styles.areYouSureModal}>
         <header style={{ color: randomColor }}>{message}</header>
         <p>{subheader}</p>
-        <div className="buttons-container">
+        <div className={styles.buttonsContainer}>
           <button onClick={() => setShowAreYouSureInterface(false)}>
             {noButtonText}
           </button>
