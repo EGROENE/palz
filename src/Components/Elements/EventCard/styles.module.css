@@ -51,7 +51,10 @@
 
 .eventCardMainInfo i {
   position: absolute;
-  right: 2rem;
+  right: 0.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--text-color);
+  padding: 0.5rem;
 }
 
 .eventCardImageContainer {
@@ -93,6 +96,9 @@
   left: unset;
   right: unset;
   margin-right: 0.5rem;
+  border-radius: unset;
+  border: unset;
+  padding: unset;
 }
 
 .user-events-section .all-events-container .eventCard {
