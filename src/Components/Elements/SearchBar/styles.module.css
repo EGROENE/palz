@@ -10,6 +10,7 @@
   justify-content: center;
   max-height: 2rem;
   align-items: center;
+  width: 100%;
 }
 
 .bar input {
