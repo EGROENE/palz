@@ -99,15 +99,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
         boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
       }}
     >
-      <i
-        onClick={() => {
-          setCurrentEvent(event);
-          navigator.clipboard.writeText(`localhost:5173/events/${event.id}`);
-          toast.success("Link copied!");
-        }}
-        className="fas fa-link"
-        title="Copy link to event page to clipboard"
-      ></i>
       {userIsInvitee && !userRSVPd && !maxParticipantsReached && (
         <div className={styles.eventCardInvitation}>
           <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
@@ -118,6 +109,15 @@ const EventCard = ({ event }: { event: TEvent }) => {
         </div>
       )}
       <div className={styles.eventCardMainInfo}>
+        <i
+          onClick={() => {
+            setCurrentEvent(event);
+            navigator.clipboard.writeText(`localhost:5173/events/${event.id}`);
+            toast.success("Link copied!");
+          }}
+          className="fas fa-link"
+          title="Copy link to event page to clipboard"
+        ></i>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div className="event-info-container">
             <header>{event.title}</header>
@@ -127,9 +127,11 @@ const EventCard = ({ event }: { event: TEvent }) => {
             </p>
             <p className={styles.organizersEventCard}>
               <i className="fas fa-user-alt"></i>
-              {organizerUsernames.length === 1
-                ? organizerUsernames[0]
-                : `${organizerUsernames[0]}  +${organizerUsernames.length - 1}`}
+              <span>
+                {organizerUsernames.length === 1
+                  ? organizerUsernames[0]
+                  : `${organizerUsernames[0]}  +${organizerUsernames.length - 1}`}
+              </span>
             </p>
             <div className={styles.eventButtonsContainer}>
               <Link

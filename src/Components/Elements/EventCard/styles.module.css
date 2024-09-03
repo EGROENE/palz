@@ -16,7 +16,7 @@
   display: flex;
   width: 93%;
   justify-content: space-around;
-  margin: 2.5rem 0 1rem 0;
+  margin: 1rem 0;
 }
 
 .eventCardInvitation p {
@@ -46,6 +46,12 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+  position: relative;
+}
+
+.eventCardMainInfo i {
+  position: absolute;
+  right: 2rem;
 }
 
 .eventCardImageContainer {
@@ -76,10 +82,17 @@
 
 .organizersEventCard {
   font-size: 0.75rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .organizersEventCard i {
-  margin-right: 0.25rem;
+  position: relative;
+  left: unset;
+  right: unset;
+  margin-right: 0.5rem;
 }
 
 .user-events-section .all-events-container .eventCard {
