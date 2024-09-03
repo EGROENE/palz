@@ -8,3 +8,7 @@
   border-radius: 50%;
   border: 4px solid var(--header-one-color);
 }
+
+.navbar i {
+  margin-left: 0.5rem;
+}

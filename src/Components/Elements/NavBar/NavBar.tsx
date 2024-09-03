@@ -4,7 +4,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import styles from "./styles.module.css";
 
 const NavBar = () => {
-  const { currentUser } = useMainContext();
+  const { currentUser, userCreatedAccount } = useMainContext();
   const { showSidebar, setShowSidebar, logout } = useUserContext();
   const navigation = useNavigate();
 
@@ -27,9 +27,15 @@ const NavBar = () => {
         <li>
           <Link to={""}>Terms & Conditions</Link>
         </li>
-        <li onClick={() => handleLogout()}>
-          Log Out<i className="fas fa-sign-out-alt"></i>
-        </li>
+        {userCreatedAccount !== null ? (
+          <li onClick={() => handleLogout()}>
+            Log Out<i className="fas fa-sign-out-alt"></i>
+          </li>
+        ) : (
+          <Link to="/">
+            Log In/Sign Up<i className="fas fa-sign-out-alt"></i>
+          </Link>
+        )}
         <li>
           <img
             onClick={() => setShowSidebar(!showSidebar)}
