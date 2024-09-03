@@ -1,0 +1,63 @@
+.modalBackground {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 101;
+  margin-left: -3rem;
+}
+
+.browseInterestsModal {
+  background: white;
+  padding: 3rem;
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.browseInterestsModal .barAndDescription {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.browseInterestsModal .barAndDescription {
+  width: 75%;
+}
+
+.browseInterestsModal .barAndDescription i {
+  top: 18%;
+  right: 18%;
+  font-size: 1.25rem;
+}
+
+.browseInterestsModal .barAndDescription input {
+  width: 75%;
+}
+
+.browseInterestsModal p {
+  color: black;
+}
+
+.nonUserInterestsContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
+  height: 7rem;
+  overflow-y: scroll;
+  margin-top: 1rem;
+}
+
+.nonUserInterestsContainer .tab {
+  font-size: 1.25rem;
+}

@@ -2,6 +2,7 @@ import Methods from "../../../methods";
 import { TThemeColor } from "../../../types";
 import SearchBar from "../SearchBar/SearchBar";
 import Tab from "../Tab/Tab";
+import styles from "./styles.module.css";
 
 /* Returns a modal wherein user can see a bunch of tabs, each of which represent an interest & a '+', which adds interest to certain array. There is also a search bar that can be used to find interests or type in a nonexistent interest to be added. */
 const InterestsModal = ({
@@ -33,7 +34,7 @@ const InterestsModal = ({
   interestsRelation: "event" | "user";
 }) => {
   return (
-    <div className="modal-background">
+    <div className={styles.modalBackground}>
       <i
         title="Close"
         onClick={() => {
@@ -42,8 +43,8 @@ const InterestsModal = ({
         }}
         className="fas fa-times close-module-icon"
       ></i>
-      <div className="browse-interests-modal">
-        <div className="bar-and-description">
+      <div className={styles.browseInterestsModal}>
+        <div className={styles.barAndDescription}>
           <p>Don't see an interest listed? Type it below & add it:</p>
           <SearchBar
             input={inputInterest}
@@ -57,7 +58,7 @@ const InterestsModal = ({
             randomColor={randomColor}
           />
         </div>
-        <div className="non-user-interests-container">
+        <div className={styles.nonUserInterestsContainer}>
           {!noAdditionalInterestsAndNoInputInterest &&
             !noAdditionalInterestsAndInputInterest &&
             Methods.getStringArraySortedAlphabetically(displayedAdditionalInterests).map(
