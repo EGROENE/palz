@@ -5,6 +5,7 @@ import { TEvent, TThemeColor } from "../../../types";
 import { Link } from "react-router-dom";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
+import styles from "./styles.module.css";
 
 const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -93,7 +94,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   return (
     <div
-      className="event-card"
+      className={styles.eventCard}
       style={{
         boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
       }}
@@ -108,7 +109,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
         title="Copy link to event page to clipboard"
       ></i>
       {userIsInvitee && !userRSVPd && !maxParticipantsReached && (
-        <div className="event-card-invitation">
+        <div className={styles.eventCardInvitation}>
           <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
           <button onClick={(e) => handleAddUserRSVP(e, event)}>{rsvpButtonText}</button>
           <button onClick={(e) => handleRemoveInvitee(e, event, currentUser)}>
@@ -116,7 +117,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
           </button>
         </div>
       )}
-      <div className="event-card-main-info">
+      <div className={styles.eventCardMainInfo}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div className="event-info-container">
             <header>{event.title}</header>
@@ -124,17 +125,17 @@ const EventCard = ({ event }: { event: TEvent }) => {
               {nextEventDateTime.toDateString()} at{" "}
               {nextEventDateTime.toLocaleTimeString()}
             </p>
-            <p className="organizers-event-card">
+            <p className={styles.organizersEventCard}>
               <i className="fas fa-user-alt"></i>
               {organizerUsernames.length === 1
                 ? organizerUsernames[0]
                 : `${organizerUsernames[0]}  +${organizerUsernames.length - 1}`}
             </p>
-            <div className="event-buttons-container">
+            <div className={styles.eventButtonsContainer}>
               <Link
                 style={{ backgroundColor: randomColor }}
                 onClick={() => setCurrentEvent(event)}
-                className="event-buttons-container-button"
+                className={styles.eventButtonsContainerButton}
                 to={`/events/${event.id}`}
               >
                 See Event
@@ -145,7 +146,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                 (!userIsOrganizer ? (
                   <button
                     disabled={maxParticipantsReached}
-                    className="event-buttons-container-button"
+                    className={styles.eventButtonsContainerButton}
                     onClick={(e) =>
                       currentUser &&
                       (userRSVPd
@@ -159,19 +160,19 @@ const EventCard = ({ event }: { event: TEvent }) => {
                   <Link
                     onClick={() => setCurrentEvent(event)}
                     to={`/edit-event/${event.id}`}
-                    className="event-buttons-container-button"
+                    className={styles.eventButtonsContainerButton}
                   >
                     Edit Event
                   </Link>
                 ))}
             </div>
           </div>
-          <div className="event-card-image-container">
+          <div className={styles.eventCardImageContainer}>
             {status && <p style={{ backgroundColor: randomColor }}>{status}</p>}
             <img src={event.imageOne} />
           </div>
         </div>
-        <div className="event-card-location-container">
+        <div className={styles.eventCardLocationContainer}>
           <p>{`${event.city}, ${event.stateProvince}`}</p>
           <img src={`/flags/4x3/${eventCountryAbbreviation}.svg`} />
         </div>
