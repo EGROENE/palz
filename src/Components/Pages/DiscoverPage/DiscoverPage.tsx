@@ -10,8 +10,14 @@ import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
 
 const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) => {
-  const { allEvents, allUsers, fetchAllEvents, currentUser, userCreatedAccount } =
-    useMainContext();
+  const {
+    allEvents,
+    allUsers,
+    fetchAllEvents,
+    fetchAllUsers,
+    currentUser,
+    userCreatedAccount,
+  } = useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -145,7 +151,12 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
   }, [currentUser, navigation, userCreatedAccount]);
 
   useEffect(() => {
-    fetchAllEvents();
+    if (usedFor === "events") {
+      fetchAllEvents();
+    }
+    if (usedFor === "potential-friends") {
+      fetchAllUsers();
+    }
     if (showSidebar) {
       setShowSidebar(false);
     }
