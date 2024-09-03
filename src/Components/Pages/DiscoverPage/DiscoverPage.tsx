@@ -30,91 +30,93 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
 
   const now = Date.now();
 
-  const [displayedEvents, setDisplayedEvents] = useState<TEvent[]>([]);
+  const [displayedItems, setDisplayedItems] = useState<TEvent[]>([]);
 
   // Re-render page as changes (for now, RSVPs) are made to events in allEvents, taking into account any existing search term or filter
   /* Before, when RSVPing/de-RSVPing, RSVP button text wasn't updating properly b/c component didn't have access to updated events in allEvents (which were updating properly) until a page refresh, but now, this UI will hot update b/c of functionality in a useEffect that updates displayedEvents that depends on allEvents */
   useEffect(() => {
-    if (searchTerm.trim() !== "") {
-      let newDisplayedEvents: TEvent[] = [];
+    if (usedFor === "events") {
+      if (searchTerm.trim() !== "") {
+        let newDisplayedEvents: TEvent[] = [];
 
-      const allPublicEventsThatStartOrEndInFuture: TEvent[] = allEvents.filter(
-        (event) =>
-          (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
-          event.publicity === "public"
-      );
-
-      for (const event of allPublicEventsThatStartOrEndInFuture) {
-        // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
-        let eventOrganizerNames: string[] = [];
-        let eventOrganizerUsernames: string[] = [];
-        for (const id of event.organizers) {
-          const matchingUser: TUser = allUsers.filter((user) => user?.id === id)[0];
-
-          const fullName: string = `${matchingUser.firstName?.toLowerCase()} ${matchingUser.lastName?.toLowerCase()}`;
-          eventOrganizerNames.push(fullName);
-
-          if (matchingUser.username) {
-            eventOrganizerUsernames.push(matchingUser.username);
-          }
-        }
-        let isOrganizerNameMatch: boolean = false;
-        for (const name of eventOrganizerNames) {
-          if (name.includes(searchTerm.toLowerCase())) {
-            isOrganizerNameMatch = true;
-          }
-        }
-
-        let isUsernameMatch: boolean = false;
-        for (const username of eventOrganizerUsernames) {
-          if (username.includes(searchTerm.toLowerCase())) {
-            isUsernameMatch = true;
-          }
-        }
-
-        if (
-          event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          event.additionalInfo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          event.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          event.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          event.country?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          isOrganizerNameMatch ||
-          isUsernameMatch ||
-          event.stateProvince?.toLowerCase().includes(searchTerm.toLowerCase())
-        ) {
-          newDisplayedEvents.push(event);
-        }
-      }
-      setDisplayedEvents(newDisplayedEvents);
-    } else if (activeFilters.length > 0) {
-      let newDisplayedEvents: TEvent[] = [];
-      for (const filter of activeFilters) {
-        const indexOfArrayInFilterOptions = Object.keys(filterOptions).indexOf(filter);
-        const filterOptionEvents: TEvent[] =
-          Object.values(filterOptions)[indexOfArrayInFilterOptions];
-
-        for (const filterOptionEvent of filterOptionEvents) {
-          if (!newDisplayedEvents.map((ev) => ev.id).includes(filterOptionEvent?.id)) {
-            newDisplayedEvents.push(filterOptionEvent);
-          }
-        }
-      }
-      setDisplayedEvents(newDisplayedEvents);
-    } else {
-      setDisplayedEvents(
-        allEvents.filter(
+        const allPublicEventsThatStartOrEndInFuture: TEvent[] = allEvents.filter(
           (event) =>
-            event.publicity === "public" &&
-            (event.eventEndDateTimeInMS > now || // end is in future
-              event.eventStartDateTimeInMS > now) // start is in future
-        )
-      );
+            (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
+            event.publicity === "public"
+        );
+
+        for (const event of allPublicEventsThatStartOrEndInFuture) {
+          // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
+          let eventOrganizerNames: string[] = [];
+          let eventOrganizerUsernames: string[] = [];
+          for (const id of event.organizers) {
+            const matchingUser: TUser = allUsers.filter((user) => user?.id === id)[0];
+
+            const fullName: string = `${matchingUser.firstName?.toLowerCase()} ${matchingUser.lastName?.toLowerCase()}`;
+            eventOrganizerNames.push(fullName);
+
+            if (matchingUser.username) {
+              eventOrganizerUsernames.push(matchingUser.username);
+            }
+          }
+          let isOrganizerNameMatch: boolean = false;
+          for (const name of eventOrganizerNames) {
+            if (name.includes(searchTerm.toLowerCase())) {
+              isOrganizerNameMatch = true;
+            }
+          }
+
+          let isUsernameMatch: boolean = false;
+          for (const username of eventOrganizerUsernames) {
+            if (username.includes(searchTerm.toLowerCase())) {
+              isUsernameMatch = true;
+            }
+          }
+
+          if (
+            event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            event.additionalInfo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            event.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            event.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            event.country?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            isOrganizerNameMatch ||
+            isUsernameMatch ||
+            event.stateProvince?.toLowerCase().includes(searchTerm.toLowerCase())
+          ) {
+            newDisplayedEvents.push(event);
+          }
+        }
+        setDisplayedItems(newDisplayedEvents);
+      } else if (activeFilters.length > 0) {
+        let newDisplayedEvents: TEvent[] = [];
+        for (const filter of activeFilters) {
+          const indexOfArrayInFilterOptions = Object.keys(filterOptions).indexOf(filter);
+          const filterOptionEvents: TEvent[] =
+            Object.values(filterOptions)[indexOfArrayInFilterOptions];
+
+          for (const filterOptionEvent of filterOptionEvents) {
+            if (!newDisplayedEvents.map((ev) => ev.id).includes(filterOptionEvent?.id)) {
+              newDisplayedEvents.push(filterOptionEvent);
+            }
+          }
+        }
+        setDisplayedItems(newDisplayedEvents);
+      } else {
+        setDisplayedItems(
+          allEvents.filter(
+            (event) =>
+              event.publicity === "public" &&
+              (event.eventEndDateTimeInMS > now || // end is in future
+                event.eventStartDateTimeInMS > now) // start is in future
+          )
+        );
+      }
     }
   }, [allEvents]);
 
   const resetDisplayedEvents = () => {
-    setDisplayedEvents(
+    setDisplayedItems(
       allEvents.filter(
         (event) =>
           event.publicity === "public" &&
@@ -261,7 +263,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
           }
         }
       }
-      setDisplayedEvents(newDisplayedEvents);
+      setDisplayedItems(newDisplayedEvents);
     } else {
       resetDisplayedEvents();
     }
@@ -326,7 +328,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
           newDisplayedEvents.push(event);
         }
       }
-      setDisplayedEvents(newDisplayedEvents);
+      setDisplayedItems(newDisplayedEvents);
     } else {
       resetDisplayedEvents();
     }
@@ -339,7 +341,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
-      <h1>Events</h1>
+      <h1>{usedFor === "events" ? "Events" : "Find Friends"}</h1>
       <div className="search-tools-container">
         <SearchBar
           input={searchTerm}
@@ -352,7 +354,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
           setSearchBoxIsFocused={setSearchBoxIsFocused}
           searchBoxIsFocused={searchBoxIsFocused}
           randomColor={randomColor}
-          numberOfResults={displayedEvents.length}
+          numberOfResults={displayedItems.length}
         />
         <FilterDropdown
           dropdownBtnText="Filters"
@@ -364,7 +366,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
         />
       </div>
       <div className="all-events-container">
-        {Methods.sortEventsSoonestToLatest(displayedEvents).map((event) => (
+        {Methods.sortEventsSoonestToLatest(displayedItems).map((event) => (
           <EventCard key={event.id} event={event} />
         ))}
       </div>
