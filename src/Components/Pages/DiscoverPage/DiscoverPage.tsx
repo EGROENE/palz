@@ -9,7 +9,7 @@ import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
 
-const DiscoverPage = () => {
+const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) => {
   const { allEvents, allUsers, fetchAllEvents, currentUser, userCreatedAccount } =
     useMainContext();
   const { showSidebar, setShowSidebar } = useUserContext();
