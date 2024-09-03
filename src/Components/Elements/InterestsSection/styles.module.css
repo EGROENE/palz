@@ -1,0 +1,18 @@
+.interestsSection p {
+  font-size: 1.25rem;
+  font-family: var(--text-font);
+}
+
+.showModule {
+  font-size: 0.75rem;
+}
+
+.showModule:hover {
+  cursor: pointer;
+}
+
+.interestsContainer {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}

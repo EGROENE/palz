@@ -4,6 +4,7 @@ import { TEvent, TThemeColor } from "../../../types";
 import Methods from "../../../methods";
 import InterestsModal from "../InterestsModal/InterestsModal";
 import Tab from "../Tab/Tab";
+import styles from "./styles.module.css";
 
 type InterestsSectionProps = {
   randomColor: TThemeColor | undefined;
@@ -166,20 +167,20 @@ const InterestsSection = ({
   }, [currentUser?.interests, currentEvent?.relatedInterests, newEventInterests]);
 
   return (
-    <div className="interests-section">
+    <div className={styles.interestsSection}>
       <p>
         {interestsRelation === "user" ? "Interests: " : "Related Interests: "}
         {!isDisabled && (
           <span
             style={{ "color": randomColor }}
-            className="show-module"
+            className={styles.showModule}
             onClick={() => setShowInterestsModal(!showInterestsModal)}
           >
             Browse
           </span>
         )}
       </p>
-      <div className="interests-container">
+      <div className={styles.interestsContainer}>
         {savedInterests?.length ? (
           Methods.getStringArraySortedAlphabetically(savedInterests)?.map((interest) => (
             <Tab
