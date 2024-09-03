@@ -1,0 +1,16 @@
+.eye {
+  position: absolute;
+  top: 34%;
+  left: 94%;
+  color: white;
+}
+
+.eye:hover {
+  cursor: pointer;
+}
+
+@media screen and (max-width: 540px) {
+  .eye {
+    top: 2.3rem;
+  }
+}
