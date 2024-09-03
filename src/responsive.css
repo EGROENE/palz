@@ -45,10 +45,6 @@
   .form {
     width: 95%;
   }
-
-  .eye {
-    top: 2.3rem;
-  }
 }
 
 @media screen and (max-width: 500px) {
