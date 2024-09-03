@@ -41,6 +41,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
   // Re-render page as changes (for now, RSVPs) are made to events in allEvents, taking into account any existing search term or filter
   /* Before, when RSVPing/de-RSVPing, RSVP button text wasn't updating properly b/c component didn't have access to updated events in allEvents (which were updating properly) until a page refresh, but now, this UI will hot update b/c of functionality in a useEffect that updates displayedEvents that depends on allEvents */
   useEffect(() => {
+    fetchAllEvents();
     if (searchTerm.trim() !== "") {
       let newDisplayedEvents: TEvent[] = [];
 
