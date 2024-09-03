@@ -1,11 +1,13 @@
+import styles from "./styles.module.css";
+
 const PongLoader = () => {
   return (
     /* From Uiverse.io by TemRevil */
-    <div className="loading">
-      <div className="loading-box">
-        <div className="WH color l1"></div>
-        <div className="ball color"></div>
-        <div className="WH color l2"></div>
+    <div className={styles.loading}>
+      <div className={styles.loadingBox}>
+        <div className={`${styles.WH} ${styles.color} ${styles.l1}`}></div>
+        <div className={`${styles.ball} ${styles.color}`}></div>
+        <div className={`${styles.WH} ${styles.color} ${styles.l2}`}></div>
       </div>
     </div>
   );
