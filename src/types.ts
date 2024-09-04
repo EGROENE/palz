@@ -31,7 +31,7 @@ export type TUser = {
   interests: string[];
   whoCanAddUserAsOrganizer: "friends" | "anyone" | "nobody";
   whoCanInviteUser: "friends" | "anyone" | "nobody";
-  profileVisibleTo: "friends" | "anyone";
+  profileVisibleTo: "friends" | "anyone" | "friends of friends";
 };
 
 export type TEvent = {
@@ -79,7 +79,7 @@ export type TUserValuesToUpdate = {
   x?: string | undefined;
   whoCanAddUserAsOrganizer?: "anyone" | "friends" | "nobody" | undefined;
   whoCanInviteUser?: "anyone" | "friends" | "nobody" | undefined;
-  profileVisibleTo?: "anyone" | "friends" | undefined;
+  profileVisibleTo?: "anyone" | "friends" | "friends of friends" | undefined;
 };
 
 export type TEventValuesToUpdate = {
@@ -273,6 +273,8 @@ export type TUserContext = {
   setWhoCanInviteUser: React.Dispatch<
     React.SetStateAction<"anyone" | "friends" | "nobody">
   >;
-  profileVisibleTo: "anyone" | "friends";
-  setProfileVisibleTo: React.Dispatch<React.SetStateAction<"anyone" | "friends">>;
+  profileVisibleTo: "anyone" | "friends" | "friends of friends";
+  setProfileVisibleTo: React.Dispatch<
+    React.SetStateAction<"anyone" | "friends" | "friends of friends">
+  >;
 };
