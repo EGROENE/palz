@@ -179,6 +179,9 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
 
   const resetDisplayedEvents = () => setDisplayedItems(displayableEvents);
 
+  const resetDisplayedPotentialFriends = () =>
+    setDisplayedItems(displayablePotentialFriends);
+
   /*  const resetFiltersAndSearch =() => {
     resetDisplayedEvents();
     setActiveFilters([]);
@@ -405,59 +408,84 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     setSearchTerm(inputCleaned);
 
     if (inputCleaned.trim() !== "") {
-      let newDisplayedEvents: TEvent[] = [];
+      if (usedFor === "events") {
+        let newDisplayedEvents: TEvent[] = [];
 
-      const allPublicEventsThatStartOrEndInFuture: TEvent[] = allEvents.filter(
-        (event) =>
-          (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
-          event.publicity === "public"
-      );
+        const allPublicEventsThatStartOrEndInFuture: TEvent[] = allEvents.filter(
+          (event) =>
+            (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
+            event.publicity === "public"
+        );
 
-      for (const event of allPublicEventsThatStartOrEndInFuture) {
-        // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
-        let eventOrganizerNames: string[] = [];
-        let eventOrganizerUsernames: string[] = [];
-        for (const id of event.organizers) {
-          const matchingUser: TUser = allUsers.filter((user) => user?.id === id)[0];
+        for (const event of allPublicEventsThatStartOrEndInFuture) {
+          // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
+          let eventOrganizerNames: string[] = [];
+          let eventOrganizerUsernames: string[] = [];
+          for (const id of event.organizers) {
+            const matchingUser: TUser = allUsers.filter((user) => user?.id === id)[0];
 
-          const fullName: string = `${matchingUser.firstName?.toLowerCase()} ${matchingUser.lastName?.toLowerCase()}`;
-          eventOrganizerNames.push(fullName);
+            const fullName: string = `${matchingUser.firstName?.toLowerCase()} ${matchingUser.lastName?.toLowerCase()}`;
+            eventOrganizerNames.push(fullName);
 
-          if (matchingUser.username) {
-            eventOrganizerUsernames.push(matchingUser.username);
+            if (matchingUser.username) {
+              eventOrganizerUsernames.push(matchingUser.username);
+            }
+          }
+          let isOrganizerNameMatch: boolean = false;
+          for (const name of eventOrganizerNames) {
+            if (name.includes(inputCleaned.toLowerCase())) {
+              isOrganizerNameMatch = true;
+            }
+          }
+
+          let isUsernameMatch: boolean = false;
+          for (const username of eventOrganizerUsernames) {
+            if (username.includes(inputCleaned.toLowerCase())) {
+              isUsernameMatch = true;
+            }
+          }
+
+          if (
+            event.title.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            event.additionalInfo.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            event.address?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            event.city?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            event.country?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            event.description.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            isOrganizerNameMatch ||
+            isUsernameMatch ||
+            event.stateProvince?.toLowerCase().includes(inputCleaned.toLowerCase())
+          ) {
+            newDisplayedEvents.push(event);
           }
         }
-        let isOrganizerNameMatch: boolean = false;
-        for (const name of eventOrganizerNames) {
-          if (name.includes(inputCleaned.toLowerCase())) {
-            isOrganizerNameMatch = true;
-          }
-        }
-
-        let isUsernameMatch: boolean = false;
-        for (const username of eventOrganizerUsernames) {
-          if (username.includes(inputCleaned.toLowerCase())) {
-            isUsernameMatch = true;
-          }
-        }
-
-        if (
-          event.title.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-          event.additionalInfo.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-          event.address?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-          event.city?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-          event.country?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-          event.description.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-          isOrganizerNameMatch ||
-          isUsernameMatch ||
-          event.stateProvince?.toLowerCase().includes(inputCleaned.toLowerCase())
-        ) {
-          newDisplayedEvents.push(event);
-        }
+        setDisplayedItems(newDisplayedEvents);
       }
-      setDisplayedItems(newDisplayedEvents);
+
+      if (usedFor === "potential-friends") {
+        let newDisplayedPotentialFriends: TUser[] = [];
+        // search pot. friends by first/last name, city/state/country, username
+        for (const potentialFriend of displayablePotentialFriends) {
+          if (
+            potentialFriend.firstName?.includes(inputCleaned) ||
+            potentialFriend.lastName?.includes(inputCleaned) ||
+            potentialFriend.username?.includes(inputCleaned) ||
+            potentialFriend.city.includes(inputCleaned) ||
+            potentialFriend.country.includes(inputCleaned) ||
+            potentialFriend.stateProvince.includes(inputCleaned)
+          ) {
+            newDisplayedPotentialFriends.push(potentialFriend);
+          }
+        }
+        setDisplayedItems(newDisplayedPotentialFriends);
+      }
     } else {
-      resetDisplayedEvents();
+      if (usedFor === "events") {
+        resetDisplayedEvents();
+      }
+      if (usedFor === "potential-friends") {
+        resetDisplayedPotentialFriends();
+      }
     }
   };
 
@@ -493,7 +521,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
           title={
             usedFor === "events"
               ? "Search by title, organizers, description, related interests, or location"
-              : "Search by first/last name, location, or interests"
+              : "Search by first/last name, username, or location"
           }
           searchBoxRef={searchBoxRef}
           setSearchBoxIsFocused={setSearchBoxIsFocused}
