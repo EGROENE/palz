@@ -449,7 +449,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
       <div className="search-tools-container">
         <SearchBar
           input={searchTerm}
-          placeholder="Search events"
+          placeholder={usedFor === "events" ? "Search events" : "Search potential palz"}
           inputHandler={handleSearchTermInput}
           clearInputHandler={handleClearSearchTerm}
           isSideButton={false}
