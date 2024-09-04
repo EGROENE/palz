@@ -285,6 +285,56 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }),
   };
 
+  // get TUser object that matches each id in currentUser.friends:
+  let currentUserFriends: TUser[] = [];
+  if (currentUser?.friends) {
+    for (const friendID of currentUser.friends) {
+      currentUserFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
+    }
+  }
+  // get TUser object that matches each id in friends array of each of currentUser's friends
+  let friendsOfFriends: TUser[] = [];
+  for (const friend of currentUserFriends) {
+    for (const friendID of friend.friends) {
+      friendsOfFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
+    }
+  }
+
+  let potentialFriendsWithCommonInterests: TUser[] = [];
+  if (currentUser?.interests) {
+    for (const interest of currentUser.interests) {
+      for (const potentialFriend of displayablePotentialFriends) {
+        if (potentialFriend.interests.includes(interest)) {
+          potentialFriendsWithCommonInterests.push(potentialFriend);
+        }
+      }
+    }
+  }
+
+  const potentialFriendFilterOptions = {
+    ...(currentUser?.city !== "" && {
+      "in my city": displayablePotentialFriends.filter(
+        (user) => user.city === currentUser?.city
+      ),
+    }),
+    ...(currentUser?.stateProvince !== "" && {
+      "in my state": displayablePotentialFriends.filter(
+        (user) => user.stateProvince === currentUser?.stateProvince
+      ),
+    }),
+    ...(currentUser?.country !== "" && {
+      "in my country": displayablePotentialFriends.filter(
+        (user) => user.country === currentUser?.country
+      ),
+    }),
+    ...(currentUser?.friends.length && {
+      "friends of friends": friendsOfFriends,
+    }),
+    ...(currentUser?.interests.length && {
+      "common interests": potentialFriendsWithCommonInterests,
+    }),
+  };
+
   const handleAddDeleteFilter = (option: string): void => {
     setSearchTerm("");
     // If activeFilters includes option, delete it from activeFilters and vice versa:
