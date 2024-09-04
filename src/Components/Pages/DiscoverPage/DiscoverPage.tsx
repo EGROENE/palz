@@ -148,7 +148,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
   );
 
   /* Function to return for display an array of users whose profiles are visible to anyone, or friends only & currentUser is a friend, or to friends of friends & currentUser is a friend of a friend */
-  const getDisplayablePotentialFriends = () => {
+  const getDisplayablePotentialFriends = (): TUser[] => {
     let displayablePotentialFriends = nonFriendUsersVisibleToAnyone;
 
     for (const user of nonFriendUsersVisibleToFriends) {
@@ -285,31 +285,39 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }),
   };
 
-  // get TUser object that matches each id in currentUser.friends:
-  let currentUserFriends: TUser[] = [];
-  if (currentUser?.friends) {
-    for (const friendID of currentUser.friends) {
-      currentUserFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
+  const getFriendsOfFriends = (): TUser[] => {
+    // get TUser object that matches each id in currentUser.friends:
+    let currentUserFriends: TUser[] = [];
+    if (currentUser?.friends) {
+      for (const friendID of currentUser.friends) {
+        currentUserFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
+      }
     }
-  }
-  // get TUser object that matches each id in friends array of each of currentUser's friends
-  let friendsOfFriends: TUser[] = [];
-  for (const friend of currentUserFriends) {
-    for (const friendID of friend.friends) {
-      friendsOfFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
+    // get TUser object that matches each id in friends array of each of currentUser's friends
+    let friendsOfFriends: TUser[] = [];
+    for (const friend of currentUserFriends) {
+      for (const friendID of friend.friends) {
+        friendsOfFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
+      }
     }
-  }
+    return friendsOfFriends;
+  };
+  const friendsOfFriends = getFriendsOfFriends();
 
-  let potentialFriendsWithCommonInterests: TUser[] = [];
-  if (currentUser?.interests) {
-    for (const interest of currentUser.interests) {
-      for (const potentialFriend of displayablePotentialFriends) {
-        if (potentialFriend.interests.includes(interest)) {
-          potentialFriendsWithCommonInterests.push(potentialFriend);
+  const getPotentialFriendsWithCommonInterests = (): TUser[] => {
+    let potentialFriendsWithCommonInterests: TUser[] = [];
+    if (currentUser?.interests) {
+      for (const interest of currentUser.interests) {
+        for (const potentialFriend of displayablePotentialFriends) {
+          if (potentialFriend.interests.includes(interest)) {
+            potentialFriendsWithCommonInterests.push(potentialFriend);
+          }
         }
       }
     }
-  }
+    return potentialFriendsWithCommonInterests;
+  };
+  const potentialFriendsWithCommonInterests = getPotentialFriendsWithCommonInterests();
 
   const potentialFriendFilterOptions = {
     ...(currentUser?.city !== "" && {
