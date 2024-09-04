@@ -97,9 +97,10 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     } else if (activeFilters.length > 0) {
       let newDisplayedEvents: TEvent[] = [];
       for (const filter of activeFilters) {
-        const indexOfArrayInFilterOptions = Object.keys(filterOptions).indexOf(filter);
+        const indexOfArrayInFilterOptions =
+          Object.keys(eventFilterOptions).indexOf(filter);
         const filterOptionEvents: TEvent[] =
-          Object.values(filterOptions)[indexOfArrayInFilterOptions];
+          Object.values(eventFilterOptions)[indexOfArrayInFilterOptions];
 
         for (const filterOptionEvent of filterOptionEvents) {
           if (!newDisplayedEvents.map((ev) => ev.id).includes(filterOptionEvent?.id)) {
@@ -227,7 +228,10 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
   const eventsRSVPdByCurrentUserFriends = getEventsRSVPdByCurrentUserFriends();
 
   // Object containing filter options & the corresponding arrays of events
-  const filterOptions = {
+  // DISPLAY ONLY EVENTS THAT ARE PUBLIC
+  // for pot. friends, filter by city, state, country, friends of friends, common interests. put in var potentialFriendsFilterOptions
+
+  const eventFilterOptions = {
     ...(currentUser?.city !== "" && {
       "my city": allEvents.filter((event) => event.city === currentUser?.city),
     }),
@@ -263,9 +267,10 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     if (updatedActiveFiltersArray.length > 0) {
       let newDisplayedEvents: TEvent[] = [];
       for (const filter of updatedActiveFiltersArray) {
-        const indexOfArrayInFilterOptions = Object.keys(filterOptions).indexOf(filter);
+        const indexOfArrayInFilterOptions =
+          Object.keys(eventFilterOptions).indexOf(filter);
         const filterOptionEvents: TEvent[] =
-          Object.values(filterOptions)[indexOfArrayInFilterOptions];
+          Object.values(eventFilterOptions)[indexOfArrayInFilterOptions];
 
         for (const filterOptionEvent of filterOptionEvents) {
           if (!newDisplayedEvents.map((ev) => ev.id).includes(filterOptionEvent?.id)) {
@@ -368,7 +373,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
         />
         <FilterDropdown
           dropdownBtnText="Filters"
-          filterOptions={Object.keys(filterOptions)}
+          filterOptions={Object.keys(eventFilterOptions)}
           activeFilters={activeFilters}
           setActiveFilters={setActiveFilters}
           handleAddDeleteFilter={handleAddDeleteFilter}
