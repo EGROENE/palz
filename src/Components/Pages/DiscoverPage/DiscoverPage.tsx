@@ -482,7 +482,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
-      <h1>{usedFor === "events" ? "Events" : "Find Friends"}</h1>
+      <h1>{usedFor === "events" ? "Events" : "Find Palz"}</h1>
       <div className="search-tools-container">
         <SearchBar
           input={searchTerm}
