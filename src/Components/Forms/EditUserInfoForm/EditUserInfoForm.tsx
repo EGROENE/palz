@@ -987,7 +987,10 @@ const EditUserInfoForm = ({
     facebook !== currentUser?.facebook ||
     instagram !== currentUser?.instagram ||
     x !== currentUser?.x ||
-    userAbout !== currentUser?.about;
+    userAbout !== currentUser?.about ||
+    whoCanAddUserAsOrganizer !== currentUser?.whoCanAddUserAsOrganizer ||
+    whoCanInviteUser !== currentUser?.whoCanInviteUser ||
+    profileVisibleTo !== currentUser?.profileVisibleTo;
 
   // If a data point is updated, it is used in PATCH request to update its part of the user's data object in DB
   const valuesToUpdate: TUserValuesToUpdate = {
