@@ -92,10 +92,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [whoCanInviteUser, setWhoCanInviteUser] = useSessionStorage<
     "anyone" | "friends" | "nobody"
   >("whoCanInviteUser", "anyone");
-  const [profileVisibleTo, setProfileVisibleTo] = useSessionStorage<"anyone" | "friends">(
-    "profileVisibleTo",
-    "anyone"
-  );
+  const [profileVisibleTo, setProfileVisibleTo] = useSessionStorage<
+    "anyone" | "friends" | "friends of friends"
+  >("profileVisibleTo", "anyone");
 
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
   const [showPasswordCriteria, setShowPasswordCriteria] = useState<boolean>(false);
