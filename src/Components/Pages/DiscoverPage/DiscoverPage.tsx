@@ -453,7 +453,11 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
           inputHandler={handleSearchTermInput}
           clearInputHandler={handleClearSearchTerm}
           isSideButton={false}
-          title="Search by title, organizers, description, related interests, or location"
+          title={
+            usedFor === "events"
+              ? "Search by title, organizers, description, related interests, or location"
+              : "Search by first/last name, location, or interests"
+          }
           searchBoxRef={searchBoxRef}
           setSearchBoxIsFocused={setSearchBoxIsFocused}
           searchBoxIsFocused={searchBoxIsFocused}
