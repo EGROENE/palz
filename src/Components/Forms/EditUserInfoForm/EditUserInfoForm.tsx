@@ -195,6 +195,9 @@ const EditUserInfoForm = ({
     setXError("");
     setUserAbout(currentUser?.about);
     setUserAboutError("");
+    setWhoCanAddUserAsOrganizer(currentUser?.whoCanAddUserAsOrganizer);
+    setWhoCanInviteUser(currentUser?.whoCanInviteUser);
+    setProfileVisibleTo(currentUser?.profileVisibleTo);
   };
 
   // If currentUser has given a phone code, set limits for length of rest of number based on that
