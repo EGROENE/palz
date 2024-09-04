@@ -130,6 +130,52 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
             event.organizers.includes(currentUser.id))))
   );
 
+  // display only users whose profile is visible to anyone, to friends & currentUser is friend, and friends of friends & currentUser is a friend of a user's friend
+  const allOtherNonFriendUsers = allUsers.filter(
+    (user) =>
+      currentUser?.id &&
+      user.id !== currentUser.id &&
+      !user.friends.includes(currentUser.id)
+  );
+  const nonFriendUsersVisibleToAnyone = allOtherNonFriendUsers.filter(
+    (user) => user.profileVisibleTo === "anyone"
+  );
+  const nonFriendUsersVisibleToFriends = allOtherNonFriendUsers.filter(
+    (user) => user.profileVisibleTo === "friends"
+  );
+  const nonFriendUsersVisibleToFriendsOfFriends = allOtherNonFriendUsers.filter(
+    (user) => user.profileVisibleTo === "friends of friends"
+  );
+
+  /* Function to return for display an array of users whose profiles are visible to anyone, or friends only & currentUser is a friend, or to friends of friends & currentUser is a friend of a friend */
+  const getDisplayablePotentialFriends = () => {
+    let displayablePotentialFriends = nonFriendUsersVisibleToAnyone;
+
+    for (const user of nonFriendUsersVisibleToFriends) {
+      if (currentUser?.id && user.friends.includes(currentUser.id)) {
+        displayablePotentialFriends.push(user);
+      }
+    }
+
+    for (const user of nonFriendUsersVisibleToFriendsOfFriends) {
+      // for each friend of user, check if their friends arr includes currentUser.id
+      // will need to get TUser of friend, not just id
+      const userFriends: TUser[] = []; // array of user's friends in TUser form
+      // Push user in allUsers w/ id that matches friendID into userFriends
+      for (const friendID of user.friends) {
+        userFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
+      }
+      /* for every friend of userFriends, check if their friends list includes currentUser.id & push to displayablePotentialFriends if it does */
+      for (const friend of userFriends) {
+        if (currentUser?.id && friend.friends.includes(currentUser.id)) {
+          displayablePotentialFriends.push(friend);
+        }
+      }
+    }
+    return displayablePotentialFriends;
+  };
+  const displayablePotentialFriends = getDisplayablePotentialFriends();
+
   const resetDisplayedEvents = () => setDisplayedItems(displayableEvents);
 
   /*  const resetFiltersAndSearch =() => {
@@ -214,7 +260,6 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
 
   // Object containing filter options & the corresponding arrays of events
   // for pot. friends, filter by city, state, country, friends of friends, common interests. put in var potentialFriendsFilterOptions
-
   const eventFilterOptions = {
     ...(currentUser?.city !== "" && {
       "my city": displayableEvents.filter((event) => event.city === currentUser?.city),
