@@ -29,9 +29,9 @@ export type TUser = {
   subscriptionType: string;
   hostingCredits: number;
   interests: string[];
-  whoCanAddUserAsOrganizer: "friends" | "anyone" | "nobody";
-  whoCanInviteUser: "friends" | "anyone" | "nobody";
-  profileVisibleTo: "friends" | "anyone" | "friends of friends";
+  whoCanAddUserAsOrganizer: "friends" | "anyone" | "nobody"| undefined;
+  whoCanInviteUser: "friends" | "anyone" | "nobody"| undefined;
+  profileVisibleTo: "friends" | "anyone" | "friends of friends"| undefined;
 };
 
 export type TEvent = {
@@ -265,16 +265,16 @@ export type TUserContext = {
   setUserAbout: React.Dispatch<React.SetStateAction<string | undefined>>;
   userAboutError: string;
   setUserAboutError: React.Dispatch<React.SetStateAction<string>>;
-  whoCanAddUserAsOrganizer: "anyone" | "friends" | "nobody";
+  whoCanAddUserAsOrganizer: "anyone" | "friends" | "nobody" | undefined;
   setWhoCanAddUserAsOrganizer: React.Dispatch<
-    React.SetStateAction<"anyone" | "friends" | "nobody">
+    React.SetStateAction<"anyone" | "friends" | "nobody" | undefined>
   >;
-  whoCanInviteUser: "anyone" | "friends" | "nobody";
+  whoCanInviteUser: "anyone" | "friends" | "nobody" | undefined;
   setWhoCanInviteUser: React.Dispatch<
-    React.SetStateAction<"anyone" | "friends" | "nobody">
+    React.SetStateAction<"anyone" | "friends" | "nobody" | undefined>
   >;
-  profileVisibleTo: "anyone" | "friends" | "friends of friends";
+  profileVisibleTo: "anyone" | "friends" | "friends of friends" | undefined;
   setProfileVisibleTo: React.Dispatch<
-    React.SetStateAction<"anyone" | "friends" | "friends of friends">
+    React.SetStateAction<"anyone" | "friends" | "friends of friends" | undefined>
   >;
 };
