@@ -3,6 +3,7 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import EventCard from "../../Elements/EventCard/EventCard";
+import UserCard from "../../Elements/UserCard/UserCard";
 import Methods from "../../../methods";
 import { TEvent, TThemeColor, TUser } from "../../../types";
 import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
@@ -36,7 +37,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
 
   const now = Date.now();
 
-  const [displayedItems, setDisplayedItems] = useState<TEvent[]>([]);
+  const [displayedItems, setDisplayedItems] = useState<(TEvent | TUser)[]>([]);
 
   // Re-render page as changes (for now, RSVPs) are made to events in allEvents, taking into account any existing search term or filter
   /* Before, when RSVPing/de-RSVPing, RSVP button text wasn't updating properly b/c component didn't have access to updated events in allEvents (which were updating properly) until a page refresh, but now, this UI will hot update b/c of functionality in a useEffect that updates displayedEvents that depends on allEvents */
@@ -354,20 +355,42 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     // If at least one filter, display events that can be described by the filter(s)
     // Else, if no filters (when user clears them all), reset to all events whose start or end is in future
     if (updatedActiveFiltersArray.length > 0) {
-      let newDisplayedEvents: TEvent[] = [];
+      let newDisplayedItems: (TEvent | TUser)[] = [];
       for (const filter of updatedActiveFiltersArray) {
-        const indexOfArrayInFilterOptions =
-          Object.keys(eventFilterOptions).indexOf(filter);
-        const filterOptionEvents: TEvent[] =
-          Object.values(eventFilterOptions)[indexOfArrayInFilterOptions];
+        if (usedFor === "events") {
+          const indexOfArrayInFilterOptions =
+            Object.keys(eventFilterOptions).indexOf(filter);
+          const filterOptionEvents: TEvent[] =
+            Object.values(eventFilterOptions)[indexOfArrayInFilterOptions];
 
-        for (const filterOptionEvent of filterOptionEvents) {
-          if (!newDisplayedEvents.map((ev) => ev.id).includes(filterOptionEvent?.id)) {
-            newDisplayedEvents.push(filterOptionEvent);
+          for (const filterOptionEvent of Methods.sortEventsSoonestToLatest(
+            filterOptionEvents
+          )) {
+            if (!newDisplayedItems.map((ev) => ev.id).includes(filterOptionEvent?.id)) {
+              newDisplayedItems.push(filterOptionEvent);
+            }
+          }
+        }
+
+        if (usedFor === "potential-friends") {
+          const indexOfArrayInFilterOptions = Object.keys(
+            potentialFriendFilterOptions
+          ).indexOf(filter);
+          const filterOptionPotentialFriends: TUser[] = Object.values(
+            potentialFriendFilterOptions
+          )[indexOfArrayInFilterOptions];
+          for (const filterOptionPotentialFriend of filterOptionPotentialFriends) {
+            if (
+              !newDisplayedItems
+                .map((potFriend) => potFriend.id)
+                .includes(filterOptionPotentialFriend?.id)
+            ) {
+              newDisplayedItems.push(filterOptionPotentialFriend);
+            }
           }
         }
       }
-      setDisplayedItems(newDisplayedEvents);
+      setDisplayedItems(newDisplayedItems);
     } else {
       resetDisplayedEvents();
     }
@@ -443,6 +466,20 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     resetDisplayedEvents();
   };
 
+  const isTEvent = (value: any): value is TEvent => {
+    if (value.eventStartDateTimeInMS) {
+      return true;
+    }
+    return false;
+  };
+
+  const isTUser = (value: any): value is TUser => {
+    if (value.username) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>{usedFor === "events" ? "Events" : "Find Friends"}</h1>
@@ -478,9 +515,14 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
         />
       </div>
       <div className="all-events-container">
-        {Methods.sortEventsSoonestToLatest(displayedItems).map((event) => (
-          <EventCard key={event.id} event={event} />
-        ))}
+        {usedFor === "events" &&
+          displayedItems.map(
+            (item) => isTEvent(item) && <EventCard key={item.id} event={item} />
+          )}
+        {usedFor === "potential-friends" &&
+          displayedItems.map(
+            (item) => isTUser(item) && <UserCard key={item.id} user={item} />
+          )}
       </div>
     </div>
   );
