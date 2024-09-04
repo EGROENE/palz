@@ -1,3 +1,8 @@
+.interestsSection {
+  width: 76%;
+  text-align: left;
+}
+
 .interestsSection p {
   font-size: 1.25rem;
   font-family: var(--text-font);
