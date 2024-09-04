@@ -121,16 +121,16 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }
   }, [allEvents]);
 
-  const resetDisplayedEvents = () => {
-    setDisplayedItems(
-      allEvents.filter(
-        (event) =>
-          event.publicity === "public" &&
-          (event.eventEndDateTimeInMS > now || // end is in future
-            event.eventStartDateTimeInMS > now) // start is in future
-      )
-    );
-  };
+  const displayableEvents = allEvents.filter(
+    (event) =>
+      (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
+      (event.publicity === "public" ||
+        (currentUser?.id &&
+          (event.invitees.includes(currentUser.id) ||
+            event.organizers.includes(currentUser.id))))
+  );
+
+  const resetDisplayedEvents = () => setDisplayedItems(displayableEvents);
 
   /*  const resetFiltersAndSearch =() => {
     resetDisplayedEvents();
@@ -166,12 +166,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
 
   const getEventsByCurrentUserInterests = (): TEvent[] => {
     let eventsByCurrentUserInterests = [];
-    const updatedDisplayedEvents = allEvents.filter(
-      (event) =>
-        event.publicity === "public" &&
-        (event.eventEndDateTimeInMS > now || // end is in future
-          event.eventStartDateTimeInMS > now) // start is in future
-    );
+    const updatedDisplayedEvents = displayableEvents;
     if (currentUser?.interests) {
       for (const interest of currentUser?.interests) {
         for (const event of updatedDisplayedEvents) {
@@ -187,12 +182,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
 
   const getEventsOrganizedByCurrentUserFriends = (): TEvent[] => {
     let eventsOrganizedByCurrentUserFriends = [];
-    const updatedDisplayedEvents = allEvents.filter(
-      (event) =>
-        event.publicity === "public" &&
-        (event.eventEndDateTimeInMS > now || // end is in future
-          event.eventStartDateTimeInMS > now) // start is in future
-    );
+    const updatedDisplayedEvents = displayableEvents;
     if (currentUser?.friends) {
       for (const friend of currentUser.friends) {
         for (const event of updatedDisplayedEvents) {
@@ -208,12 +198,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
 
   const getEventsRSVPdByCurrentUserFriends = (): TEvent[] => {
     let eventsRSVPdByCurrentUserFriends = [];
-    const updatedDisplayedEvents = allEvents.filter(
-      (event) =>
-        event.publicity === "public" &&
-        (event.eventEndDateTimeInMS > now || // end is in future
-          event.eventStartDateTimeInMS > now) // start is in future
-    );
+    const updatedDisplayedEvents = displayableEvents;
     if (currentUser?.friends) {
       for (const friend of currentUser.friends) {
         for (const event of updatedDisplayedEvents) {
@@ -228,20 +213,21 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
   const eventsRSVPdByCurrentUserFriends = getEventsRSVPdByCurrentUserFriends();
 
   // Object containing filter options & the corresponding arrays of events
-  // DISPLAY ONLY EVENTS THAT ARE PUBLIC
   // for pot. friends, filter by city, state, country, friends of friends, common interests. put in var potentialFriendsFilterOptions
 
   const eventFilterOptions = {
     ...(currentUser?.city !== "" && {
-      "my city": allEvents.filter((event) => event.city === currentUser?.city),
+      "my city": displayableEvents.filter((event) => event.city === currentUser?.city),
     }),
     ...(currentUser?.stateProvince !== "" && {
-      "my state": allEvents.filter(
+      "my state": displayableEvents.filter(
         (event) => event.stateProvince === currentUser?.stateProvince
       ),
     }),
     ...(currentUser?.country !== "" && {
-      "my country": allEvents.filter((event) => event.country === currentUser?.country),
+      "my country": displayableEvents.filter(
+        (event) => event.country === currentUser?.country
+      ),
     }),
     ...(currentUser?.interests.length && {
       "my interests": eventsByCurrentUserInterests,
