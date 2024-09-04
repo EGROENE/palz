@@ -257,7 +257,13 @@
 .radio-input-and-label {
   display: flex;
   font-family: var(--text-font);
-  width: 7rem;
+}
+
+.radio-input-and-label span {
+  text-wrap: nowrap;
+  display: flex;
+  height: 100%;
+  align-items: center;
 }
 
 .buttons-container {
