@@ -1707,6 +1707,15 @@ const EditUserInfoForm = ({
               />
               <span>Friends</span>
             </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setProfileVisibleTo("friends of friends")}
+                checked={profileVisibleTo === "friends of friends"}
+                name="who-can-see-profile"
+                type="radio"
+              />
+              <span>Friends of Friends</span>
+            </div>
           </div>
         </label>
         <div className="buttons-container">
