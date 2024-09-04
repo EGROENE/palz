@@ -462,7 +462,11 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
         />
         <FilterDropdown
           dropdownBtnText="Filters"
-          filterOptions={Object.keys(eventFilterOptions)}
+          filterOptions={
+            usedFor === "events"
+              ? Object.keys(eventFilterOptions)
+              : Object.keys(potentialFriendFilterOptions)
+          }
           activeFilters={activeFilters}
           setActiveFilters={setActiveFilters}
           handleAddDeleteFilter={handleAddDeleteFilter}
