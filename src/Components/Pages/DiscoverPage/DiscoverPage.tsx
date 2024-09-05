@@ -310,7 +310,16 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     let friendsOfFriends: TUser[] = [];
     for (const friend of currentUserFriends) {
       for (const friendID of friend.friends) {
-        friendsOfFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
+        const friendOfFriend: TUser | undefined = allUsers.filter(
+          (u) =>
+            friendID !== currentUser?.id &&
+            !currentUser?.friends.includes(friendID) &&
+            u.id === friendID
+        )[0];
+        /* Necessary to check that friendOfFriend is truthy b/c it would sometimes be undefined if no user in allUsers fit the criteria (without this check, undefined would be pushed to friendsOfFriends) */
+        if (friendOfFriend) {
+          friendsOfFriends.push(friendOfFriend);
+        }
       }
     }
     return friendsOfFriends;
