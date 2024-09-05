@@ -433,13 +433,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
       if (usedFor === "events") {
         let newDisplayedEvents: TEvent[] = [];
 
-        const allPublicEventsThatStartOrEndInFuture: TEvent[] = allEvents.filter(
-          (event) =>
-            (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
-            event.publicity === "public"
-        );
-
-        for (const event of allPublicEventsThatStartOrEndInFuture) {
+        for (const event of displayableEvents) {
           // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
           let eventOrganizerNames: string[] = [];
           let eventOrganizerUsernames: string[] = [];
