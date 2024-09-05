@@ -50,7 +50,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
   const searchBoxRef = useRef<HTMLInputElement | null>(null);
 
   // Re-render page as changes (for now, RSVPs) are made to events in allEvents, taking into account any existing search term or filter
-  /* Before, when RSVPing/de-RSVPing, RSVP button text wasn't updating properly b/c component didn't have access to updated events in allEvents (which were updating properly) until a page refresh, but now, this UI will hot update b/c of functionality in a useEffect that updates displayedEvents that depends on allEvents */
+  /* Before, when RSVPing/de-RSVPing, RSVP button text wasn't updating properly b/c component didn't have access to updated events in allEvents (which were updating properly) until a page refresh, but now, this UI will hot update b/c of functionality in a useEffect that updates displayedEvents that depends on allEvents. UI would not update properly if this functionality were inside a useEffect w/ an empty dependency array. */
   useEffect(() => {
     if (usedFor === "events") {
       fetchAllEvents();
@@ -122,14 +122,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
         }
         setDisplayedItems(newDisplayedEvents);
       } else {
-        setDisplayedItems(
-          allEvents.filter(
-            (event) =>
-              event.publicity === "public" &&
-              (event.eventEndDateTimeInMS > now || // end is in future
-                event.eventStartDateTimeInMS > now) // start is in future
-          )
-        );
+        resetDisplayedEvents();
       }
     }
   }, [allEvents]);
