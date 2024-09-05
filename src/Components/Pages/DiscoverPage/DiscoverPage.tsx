@@ -39,6 +39,24 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
 
   const [displayedItems, setDisplayedItems] = useState<(TEvent | TUser)[]>([]);
 
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const [searchBoxIsFocused, setSearchBoxIsFocused] = useState<boolean>(false);
+  const searchBoxRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (usedFor === "events") {
+      fetchAllEvents();
+    }
+    if (usedFor === "potential-friends") {
+      fetchAllUsers();
+    }
+    if (showSidebar) {
+      setShowSidebar(false);
+    }
+  }, []);
+
   // Re-render page as changes (for now, RSVPs) are made to events in allEvents, taking into account any existing search term or filter
   /* Before, when RSVPing/de-RSVPing, RSVP button text wasn't updating properly b/c component didn't have access to updated events in allEvents (which were updating properly) until a page refresh, but now, this UI will hot update b/c of functionality in a useEffect that updates displayedEvents that depends on allEvents */
   useEffect(() => {
@@ -122,6 +140,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }
   }, [allEvents]);
 
+  // EVENTS VARIABLES
   const displayableEvents = allEvents.filter(
     (event) =>
       (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
@@ -130,89 +149,6 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
           (event.invitees.includes(currentUser.id) ||
             event.organizers.includes(currentUser.id))))
   );
-
-  // display only users whose profile is visible to anyone, to friends & currentUser is friend, and friends of friends & currentUser is a friend of a user's friend
-  const allOtherNonFriendUsers = allUsers.filter(
-    (user) =>
-      currentUser?.id &&
-      user.id !== currentUser.id &&
-      !user.friends.includes(currentUser.id)
-  );
-  const nonFriendUsersVisibleToAnyone = allOtherNonFriendUsers.filter(
-    (user) => user.profileVisibleTo === "anyone"
-  );
-  const nonFriendUsersVisibleToFriends = allOtherNonFriendUsers.filter(
-    (user) => user.profileVisibleTo === "friends"
-  );
-  const nonFriendUsersVisibleToFriendsOfFriends = allOtherNonFriendUsers.filter(
-    (user) => user.profileVisibleTo === "friends of friends"
-  );
-
-  /* Function to return for display an array of users whose profiles are visible to anyone, or friends only & currentUser is a friend, or to friends of friends & currentUser is a friend of a friend */
-  const getDisplayablePotentialFriends = (): TUser[] => {
-    let displayablePotentialFriends = nonFriendUsersVisibleToAnyone;
-
-    for (const user of nonFriendUsersVisibleToFriends) {
-      if (currentUser?.id && user.friends.includes(currentUser.id)) {
-        displayablePotentialFriends.push(user);
-      }
-    }
-
-    for (const user of nonFriendUsersVisibleToFriendsOfFriends) {
-      // for each friend of user, check if their friends arr includes currentUser.id
-      // will need to get TUser of friend, not just id
-      const userFriends: TUser[] = []; // array of user's friends in TUser form
-      // Push user in allUsers w/ id that matches friendID into userFriends
-      for (const friendID of user.friends) {
-        userFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
-      }
-      /* for every friend of userFriends, check if their friends list includes currentUser.id & push to displayablePotentialFriends if it does */
-      for (const friend of userFriends) {
-        if (currentUser?.id && friend.friends.includes(currentUser.id)) {
-          displayablePotentialFriends.push(friend);
-        }
-      }
-    }
-    return displayablePotentialFriends;
-  };
-  const displayablePotentialFriends = getDisplayablePotentialFriends();
-
-  const resetDisplayedEvents = () => setDisplayedItems(displayableEvents);
-
-  const resetDisplayedPotentialFriends = () =>
-    setDisplayedItems(displayablePotentialFriends);
-
-  /*  const resetFiltersAndSearch =() => {
-    resetDisplayedEvents();
-    setActiveFilters([]);
-    setSearchTerm("");
-  } */
-
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchBoxIsFocused, setSearchBoxIsFocused] = useState<boolean>(false);
-
-  const searchBoxRef = useRef<HTMLInputElement | null>(null);
-
-  const navigation = useNavigate();
-  useEffect(() => {
-    if (!currentUser && userCreatedAccount === null) {
-      toast.error("Please login before accessing this page");
-      navigation("/");
-    }
-  }, [currentUser, navigation, userCreatedAccount]);
-
-  useEffect(() => {
-    if (usedFor === "events") {
-      fetchAllEvents();
-    }
-    if (usedFor === "potential-friends") {
-      fetchAllUsers();
-    }
-    if (showSidebar) {
-      setShowSidebar(false);
-    }
-  }, []);
 
   const getEventsByCurrentUserInterests = (): TEvent[] => {
     let eventsByCurrentUserInterests = [];
@@ -289,6 +225,56 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }),
   };
 
+  const resetDisplayedEvents = () => setDisplayedItems(displayableEvents);
+  //////////////////////////////////////////
+
+  // POTENTIAL-FRIENDS VARIABLES
+  // display only users whose profile is visible to anyone, to friends & currentUser is friend, and friends of friends & currentUser is a friend of a user's friend
+  const allOtherNonFriendUsers = allUsers.filter(
+    (user) =>
+      currentUser?.id &&
+      user.id !== currentUser.id &&
+      !user.friends.includes(currentUser.id)
+  );
+  const nonFriendUsersVisibleToAnyone = allOtherNonFriendUsers.filter(
+    (user) => user.profileVisibleTo === "anyone"
+  );
+  const nonFriendUsersVisibleToFriends = allOtherNonFriendUsers.filter(
+    (user) => user.profileVisibleTo === "friends"
+  );
+  const nonFriendUsersVisibleToFriendsOfFriends = allOtherNonFriendUsers.filter(
+    (user) => user.profileVisibleTo === "friends of friends"
+  );
+
+  /* Function to return for display an array of users whose profiles are visible to anyone, or friends only & currentUser is a friend, or to friends of friends & currentUser is a friend of a friend */
+  const getDisplayablePotentialFriends = (): TUser[] => {
+    let displayablePotentialFriends = nonFriendUsersVisibleToAnyone;
+
+    for (const user of nonFriendUsersVisibleToFriends) {
+      if (currentUser?.id && user.friends.includes(currentUser.id)) {
+        displayablePotentialFriends.push(user);
+      }
+    }
+
+    for (const user of nonFriendUsersVisibleToFriendsOfFriends) {
+      // for each friend of user, check if their friends arr includes currentUser.id
+      // will need to get TUser of friend, not just id
+      const userFriends: TUser[] = []; // array of user's friends in TUser form
+      // Push user in allUsers w/ id that matches friendID into userFriends
+      for (const friendID of user.friends) {
+        userFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
+      }
+      /* for every friend of userFriends, check if their friends list includes currentUser.id & push to displayablePotentialFriends if it does */
+      for (const friend of userFriends) {
+        if (currentUser?.id && friend.friends.includes(currentUser.id)) {
+          displayablePotentialFriends.push(friend);
+        }
+      }
+    }
+    return displayablePotentialFriends;
+  };
+  const displayablePotentialFriends = getDisplayablePotentialFriends();
+
   const getFriendsOfFriends = (): TUser[] => {
     // get TUser object that matches each id in currentUser.friends:
     let currentUserFriends: TUser[] = [];
@@ -347,6 +333,25 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }),
   };
 
+  const resetDisplayedPotentialFriends = () =>
+    setDisplayedItems(displayablePotentialFriends);
+  //////////////////////////////////////////////////////////////
+
+  /*  const resetFiltersAndSearch =() => {
+    resetDisplayedEvents();
+    setActiveFilters([]);
+    setSearchTerm("");
+  } */
+
+  const navigation = useNavigate();
+  useEffect(() => {
+    if (!currentUser && userCreatedAccount === null) {
+      toast.error("Please login before accessing this page");
+      navigation("/");
+    }
+  }, [currentUser, navigation, userCreatedAccount]);
+
+  // HANDLERS
   const handleAddDeleteFilter = (option: string): void => {
     setSearchTerm("");
     // If activeFilters includes option, delete it from activeFilters and vice versa:
@@ -493,6 +498,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     setSearchTerm("");
     resetDisplayedEvents();
   };
+  //////////////////////////////////////////////
 
   const isTEvent = (value: any): value is TEvent => {
     if (value.eventStartDateTimeInMS) {
