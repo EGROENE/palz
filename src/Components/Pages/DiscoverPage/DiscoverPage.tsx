@@ -127,6 +127,50 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }
   }, [allEvents]);
 
+  useEffect(() => {
+    if (usedFor === "potential-friends") {
+      fetchAllUsers();
+      let newDisplayedPotentialFriends: TUser[] = [];
+      if (searchTerm.trim() !== "") {
+        let newDisplayedPotentialFriends: TUser[] = [];
+        // search pot. friends by first/last name, city/state/country, username
+        for (const potentialFriend of displayablePotentialFriends) {
+          if (
+            potentialFriend.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            potentialFriend.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            potentialFriend.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            potentialFriend.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            potentialFriend.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            potentialFriend.stateProvince.toLowerCase().includes(searchTerm.toLowerCase())
+          ) {
+            newDisplayedPotentialFriends.push(potentialFriend);
+          }
+        }
+        setDisplayedItems(newDisplayedPotentialFriends);
+      } else if (activeFilters.length > 0) {
+        for (const filter of activeFilters) {
+          const indexOfArrayInFilterOptions = Object.keys(
+            potentialFriendFilterOptions
+          ).indexOf(filter);
+          const filterOptionPotentialFriends: TUser[] = Object.values(
+            potentialFriendFilterOptions
+          )[indexOfArrayInFilterOptions];
+          for (const filterOptionPotentialFriend of filterOptionPotentialFriends) {
+            if (
+              !newDisplayedPotentialFriends
+                .map((potFriend) => potFriend.id)
+                .includes(filterOptionPotentialFriend?.id)
+            ) {
+              newDisplayedPotentialFriends.push(filterOptionPotentialFriend);
+            }
+          }
+        }
+      } else {
+        resetDisplayedPotentialFriends();
+      }
+    }
+  }, [allUsers]);
+
   // EVENTS VARIABLES
   const displayableEvents = allEvents.filter(
     (event) =>
@@ -445,12 +489,20 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
         // search pot. friends by first/last name, city/state/country, username
         for (const potentialFriend of displayablePotentialFriends) {
           if (
-            potentialFriend.firstName?.includes(inputCleaned) ||
-            potentialFriend.lastName?.includes(inputCleaned) ||
-            potentialFriend.username?.includes(inputCleaned) ||
-            potentialFriend.city.includes(inputCleaned) ||
-            potentialFriend.country.includes(inputCleaned) ||
-            potentialFriend.stateProvince.includes(inputCleaned)
+            potentialFriend.firstName
+              ?.toLowerCase()
+              .includes(inputCleaned.toLowerCase()) ||
+            potentialFriend.lastName
+              ?.toLowerCase()
+              .includes(inputCleaned.toLowerCase()) ||
+            potentialFriend.username
+              ?.toLowerCase()
+              .includes(inputCleaned.toLowerCase()) ||
+            potentialFriend.city.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            potentialFriend.country.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            potentialFriend.stateProvince
+              .toLowerCase()
+              .includes(inputCleaned.toLowerCase())
           ) {
             newDisplayedPotentialFriends.push(potentialFriend);
           }
