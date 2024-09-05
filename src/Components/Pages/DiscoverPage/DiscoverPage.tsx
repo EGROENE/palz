@@ -158,7 +158,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }
     return eventsByCurrentUserInterests;
   };
-  const eventsByCurrentUserInterests = getEventsByCurrentUserInterests();
+  const eventsByCurrentUserInterests: TEvent[] = getEventsByCurrentUserInterests();
 
   const getEventsOrganizedByCurrentUserFriends = (): TEvent[] => {
     let eventsOrganizedByCurrentUserFriends = [];
@@ -174,7 +174,8 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }
     return eventsOrganizedByCurrentUserFriends;
   };
-  const eventsOrganizedByCurrentUserFriends = getEventsOrganizedByCurrentUserFriends();
+  const eventsOrganizedByCurrentUserFriends: TEvent[] =
+    getEventsOrganizedByCurrentUserFriends();
 
   const getEventsRSVPdByCurrentUserFriends = (): TEvent[] => {
     let eventsRSVPdByCurrentUserFriends = [];
@@ -190,7 +191,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }
     return eventsRSVPdByCurrentUserFriends;
   };
-  const eventsRSVPdByCurrentUserFriends = getEventsRSVPdByCurrentUserFriends();
+  const eventsRSVPdByCurrentUserFriends: TEvent[] = getEventsRSVPdByCurrentUserFriends();
 
   // Object containing filter options & the corresponding arrays of events
   // for pot. friends, filter by city, state, country, friends of friends, common interests. put in var potentialFriendsFilterOptions
@@ -219,36 +220,27 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }),
   };
 
-  const resetDisplayedEvents = () => setDisplayedItems(displayableEvents);
+  const resetDisplayedEvents = (): void => setDisplayedItems(displayableEvents);
   //////////////////////////////////////////
 
   // POTENTIAL-FRIENDS VARIABLES
   // display only users whose profile is visible to anyone, to friends & currentUser is friend, and friends of friends & currentUser is a friend of a user's friend
-  const allOtherNonFriendUsers = allUsers.filter(
+  const allOtherNonFriendUsers: TUser[] = allUsers.filter(
     (user) =>
       currentUser?.id &&
       user.id !== currentUser.id &&
       !user.friends.includes(currentUser.id)
   );
-  const nonFriendUsersVisibleToAnyone = allOtherNonFriendUsers.filter(
+  const nonFriendUsersVisibleToAnyone: TUser[] = allOtherNonFriendUsers.filter(
     (user) => user.profileVisibleTo === "anyone"
   );
-  const nonFriendUsersVisibleToFriends = allOtherNonFriendUsers.filter(
-    (user) => user.profileVisibleTo === "friends"
-  );
-  const nonFriendUsersVisibleToFriendsOfFriends = allOtherNonFriendUsers.filter(
+  const nonFriendUsersVisibleToFriendsOfFriends: TUser[] = allOtherNonFriendUsers.filter(
     (user) => user.profileVisibleTo === "friends of friends"
   );
 
   /* Function to return for display an array of users whose profiles are visible to anyone, or to friends of friends & currentUser is a friend of a friend */
   const getDisplayablePotentialFriends = (): TUser[] => {
     let displayablePotentialFriends = nonFriendUsersVisibleToAnyone;
-
-    for (const user of nonFriendUsersVisibleToFriends) {
-      if (currentUser?.id && user.friends.includes(currentUser.id)) {
-        displayablePotentialFriends.push(user);
-      }
-    }
 
     for (const user of nonFriendUsersVisibleToFriendsOfFriends) {
       // for each friend of user, check if their friends arr includes currentUser.id
@@ -327,15 +319,9 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }),
   };
 
-  const resetDisplayedPotentialFriends = () =>
+  const resetDisplayedPotentialFriends = (): void =>
     setDisplayedItems(displayablePotentialFriends);
   //////////////////////////////////////////////////////////////
-
-  /*  const resetFiltersAndSearch =() => {
-    resetDisplayedEvents();
-    setActiveFilters([]);
-    setSearchTerm("");
-  } */
 
   const navigation = useNavigate();
   useEffect(() => {
@@ -398,7 +384,7 @@ const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) 
     }
   };
 
-  const handleSearchTermInput = (input: string) => {
+  const handleSearchTermInput = (input: string): void => {
     if (activeFilters.length > 0) {
       setActiveFilters([]);
     }
