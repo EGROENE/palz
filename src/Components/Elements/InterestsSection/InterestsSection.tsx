@@ -121,7 +121,6 @@ const InterestsSection = ({
     setInputInterest(inputCaseInsensitive);
     const addableInterests = getAddableInterests(); // get updated addableInterests
     if (inputCaseInsensitive.trim() === "") {
-      console.log("hi");
       setDisplayedAdditionalInterests(addableInterests);
     } else {
       for (const interest of addableInterests) {
