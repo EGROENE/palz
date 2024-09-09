@@ -12,6 +12,7 @@
   --background-color-opposite: rgb(233, 231, 228);
   --header-one-color: var(--theme-yellow);
   --header-two-color: var(--theme-yellow);
+  --header-font: "Indie Flower", cursive;
   --text-font: "Josefine Sans", monospace, sans-serif;
   --text-color: white;
   --text-color-opposite: black;
