@@ -6,6 +6,7 @@
   background-color: gray;
   color: white;
   border-radius: 10px;
+  width: 13rem;
 }
 
 .filterOptionsContainer label {
