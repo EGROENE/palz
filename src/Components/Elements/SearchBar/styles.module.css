@@ -28,7 +28,3 @@
 .bar button:disabled {
   opacity: 0.6;
 }
-
-.searchBarContainer p {
-  margin: 0.5rem 0 0 3rem;
-}
