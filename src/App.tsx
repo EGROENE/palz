@@ -75,6 +75,7 @@ function App() {
         <Route path="/:username/events" element={<UsersEvents />} />
         <Route path="/users/:username" element={<UserHomepage />} />
         <Route path="/find-palz" element={<DiscoverPage usedFor="potential-friends" />} />
+        <Route path="/my-palz" element={<DiscoverPage usedFor="my-friends" />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
     </div>

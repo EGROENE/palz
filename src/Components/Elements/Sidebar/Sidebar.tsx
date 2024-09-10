@@ -69,7 +69,9 @@ const Sidebar = () => {
         <Link className={styles.sidebarOption} to="/find-palz">
           Find Palz
         </Link>
-        <p className={styles.sidebarOption}>My Palz</p>
+        <Link className={styles.sidebarOption} to={"/my-palz"}>
+          My Palz
+        </Link>
         <Link className={styles.sidebarOption} to="/settings">
           Settings
         </Link>
