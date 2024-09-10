@@ -716,11 +716,7 @@ const DisplayedCardsPage = ({
           displayedItems.map(
             (item) => isTEvent(item) && <EventCard key={item.id} event={item} />
           )}
-        {usedFor === "potential-friends" &&
-          displayedItems.map(
-            (item) => isTUser(item) && <UserCard key={item.id} user={item} />
-          )}
-        {usedFor === "my-friends" &&
+        {(usedFor === "potential-friends" || usedFor === "my-friends") &&
           displayedItems.map(
             (item) => isTUser(item) && <UserCard key={item.id} user={item} />
           )}
