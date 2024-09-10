@@ -56,6 +56,7 @@ const InterestsModal = ({
             sideButtonIsDisabled={disableAddInterestsButton}
             addMethod={handleAddInterest}
             randomColor={randomColor}
+            numberOfResults={displayedAdditionalInterests.length}
           />
         </div>
         <div className={styles.nonUserInterestsContainer}>
