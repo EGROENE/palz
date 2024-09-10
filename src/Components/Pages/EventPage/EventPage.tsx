@@ -218,13 +218,15 @@ const EventPage = () => {
                     Invitees:{" "}
                     <span
                       onClick={() =>
-                        event.organizers.includes(String(currentUser?.id)) &&
+                        currentUser?.id &&
+                        event.organizers.includes(currentUser.id) &&
                         event.invitees.length > 0
                           ? setShowInvitees(true)
                           : undefined
                       }
                       className={
-                        event.organizers.includes(String(currentUser?.id)) &&
+                        currentUser?.id &&
+                        event.organizers.includes(currentUser.id) &&
                         event.invitees.length > 0
                           ? "show-listed-users-or-invitees"
                           : undefined
@@ -236,13 +238,15 @@ const EventPage = () => {
                   RSVPs:{" "}
                   <span
                     onClick={() =>
-                      event.organizers.includes(String(currentUser?.id)) &&
+                      currentUser?.id &&
+                      event.organizers.includes(currentUser.id) &&
                       refinedInterestedUsers.length > 0
                         ? setShowRSVPs(true)
                         : undefined
                     }
                     className={
-                      event.organizers.includes(String(currentUser?.id)) &&
+                      currentUser?.id &&
+                      event.organizers.includes(currentUser.id) &&
                       refinedInterestedUsers.length > 0
                         ? "show-listed-users-or-invitees"
                         : undefined

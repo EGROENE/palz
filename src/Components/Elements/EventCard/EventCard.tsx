@@ -36,7 +36,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
       : false;
 
   const userIsInvitee: boolean = currentUser?.id
-    ? event.invitees.includes(String(currentUser.id))
+    ? event.invitees.includes(currentUser.id)
     : false;
 
   const refinedOrganizers: (string | number)[] = [];
