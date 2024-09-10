@@ -33,6 +33,10 @@
   width: 75%;
 }
 
+.browseInterestsModal .barAndDescription p {
+  margin: 0.5rem 0 0 3rem;
+}
+
 .browseInterestsModal .barAndDescription i {
   top: 18%;
   right: 18%;
