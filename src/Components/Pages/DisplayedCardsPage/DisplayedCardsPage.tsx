@@ -136,7 +136,6 @@ const DisplayedCardsPage = ({
       fetchAllUsers();
       let newDisplayedPotentialFriends: TUser[] = [];
       if (searchTerm.trim() !== "") {
-        let newDisplayedPotentialFriends: TUser[] = [];
         // search pot. friends by first/last name, city/state/country, username
         for (const potentialFriend of displayablePotentialFriends) {
           if (
@@ -171,6 +170,45 @@ const DisplayedCardsPage = ({
         }
       } else {
         resetDisplayedPotentialFriends();
+      }
+    }
+
+    if (usedFor === "my-friends") {
+      fetchAllUsers();
+      let newDisplayedFriends: TUser[] = [];
+
+      if (searchTerm !== "") {
+        for (const pal of currentUserPalz) {
+          if (
+            pal.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            pal.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            pal.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            pal.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            pal.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            pal.stateProvince.toLowerCase().includes(searchTerm.toLowerCase())
+          ) {
+            newDisplayedFriends.push(pal);
+          }
+        }
+        setDisplayedItems(newDisplayedFriends);
+      } else if (activeFilters.length > 0) {
+        for (const filter of activeFilters) {
+          const indexOfArrayInFilterOptions =
+            Object.keys(friendFilterOptions).indexOf(filter);
+          const filterOptionFriends: TUser[] =
+            Object.values(friendFilterOptions)[indexOfArrayInFilterOptions];
+          for (const filterOptionFriend of filterOptionFriends) {
+            if (
+              !newDisplayedFriends
+                .map((friend) => friend.id)
+                .includes(filterOptionFriend.id)
+            ) {
+              newDisplayedFriends.push(filterOptionFriend);
+            }
+          }
+        }
+      } else {
+        resetDisplayedFriends();
       }
     }
   }, [allUsers]);
@@ -373,6 +411,46 @@ const DisplayedCardsPage = ({
     setDisplayedItems(displayablePotentialFriends);
   //////////////////////////////////////////////////////////////
 
+  // FRIENDS VARIABLES
+  const currentUserPalz: TUser[] = [];
+  if (currentUser?.friends) {
+    for (const id of currentUser.friends) {
+      currentUserPalz.push(allUsers.filter((user) => user.id === id)[0]);
+    }
+  }
+
+  const friendsWithCommonInterests: TUser[] = [];
+  for (const pal of currentUserPalz) {
+    if (currentUser?.interests) {
+      for (const interest of currentUser.interests) {
+        if (pal.interests.includes(interest)) {
+          friendsWithCommonInterests.push(pal);
+        }
+      }
+    }
+  }
+  const friendFilterOptions = {
+    ...(currentUser?.city !== "" && {
+      "in my city": currentUserPalz.filter((user) => user.city === currentUser?.city),
+    }),
+    ...(currentUser?.stateProvince !== "" && {
+      "in my state": currentUserPalz.filter(
+        (user) => user.stateProvince === currentUser?.stateProvince
+      ),
+    }),
+    ...(currentUser?.country !== "" && {
+      "in my country": currentUserPalz.filter(
+        (user) => user.country === currentUser?.country
+      ),
+    }),
+    ...(currentUser?.interests.length && {
+      "common interests": friendsWithCommonInterests,
+    }),
+  };
+
+  const resetDisplayedFriends = (): void => setDisplayedItems(currentUserPalz);
+  ////////////////////////////////////////////////////////////
+
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
@@ -424,6 +502,22 @@ const DisplayedCardsPage = ({
                 .includes(filterOptionPotentialFriend?.id)
             ) {
               newDisplayedItems.push(filterOptionPotentialFriend);
+            }
+          }
+        }
+
+        if (usedFor === "my-friends") {
+          const indexOfArrayInFilterOptions =
+            Object.keys(friendFilterOptions).indexOf(filter);
+          const filterOptionFriends: TUser[] =
+            Object.values(friendFilterOptions)[indexOfArrayInFilterOptions];
+          for (const filterOptionFriend of filterOptionFriends) {
+            if (
+              !newDisplayedItems
+                .map((friend) => friend.id)
+                .includes(filterOptionFriend?.id)
+            ) {
+              newDisplayedItems.push(filterOptionFriend);
             }
           }
         }
@@ -516,12 +610,33 @@ const DisplayedCardsPage = ({
         }
         setDisplayedItems(newDisplayedPotentialFriends);
       }
+
+      if (usedFor === "my-friends") {
+        let newDisplayedFriends: TUser[] = [];
+        // search pot. friends by first/last name, city/state/country, username
+        for (const pal of currentUserPalz) {
+          if (
+            pal.firstName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            pal.lastName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            pal.username?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            pal.city.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            pal.country.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            pal.stateProvince.toLowerCase().includes(inputCleaned.toLowerCase())
+          ) {
+            newDisplayedFriends.push(pal);
+          }
+        }
+        setDisplayedItems(newDisplayedFriends);
+      }
     } else {
       if (usedFor === "events") {
         resetDisplayedEvents();
       }
       if (usedFor === "potential-friends") {
         resetDisplayedPotentialFriends();
+      }
+      if (usedFor === "my-friends") {
+        resetDisplayedFriends();
       }
     }
   };
@@ -556,6 +671,16 @@ const DisplayedCardsPage = ({
   };
   const pageHeading: string = getPageHeading();
 
+  const getFilterOptions = (): string[] => {
+    if (usedFor === "events") {
+      return Object.keys(eventFilterOptions);
+    } else if (usedFor === "potential-friends") {
+      return Object.keys(potentialFriendFilterOptions);
+    }
+    return Object.keys(friendFilterOptions);
+  };
+  const filterOptions = getFilterOptions();
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>{pageHeading}</h1>
@@ -579,11 +704,7 @@ const DisplayedCardsPage = ({
         />
         <FilterDropdown
           dropdownBtnText="Filters"
-          filterOptions={
-            usedFor === "events"
-              ? Object.keys(eventFilterOptions)
-              : Object.keys(potentialFriendFilterOptions)
-          }
+          filterOptions={filterOptions}
           activeFilters={activeFilters}
           setActiveFilters={setActiveFilters}
           handleAddDeleteFilter={handleAddDeleteFilter}
@@ -596,6 +717,10 @@ const DisplayedCardsPage = ({
             (item) => isTEvent(item) && <EventCard key={item.id} event={item} />
           )}
         {usedFor === "potential-friends" &&
+          displayedItems.map(
+            (item) => isTUser(item) && <UserCard key={item.id} user={item} />
+          )}
+        {usedFor === "my-friends" &&
           displayedItems.map(
             (item) => isTUser(item) && <UserCard key={item.id} user={item} />
           )}
