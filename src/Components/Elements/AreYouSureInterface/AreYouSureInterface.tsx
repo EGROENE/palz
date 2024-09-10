@@ -24,7 +24,7 @@ const AreYouSureInterface = ({
     <div className={styles.modalBackground}>
       <div className={styles.areYouSureModal}>
         <header style={{ color: randomColor }}>{message}</header>
-        <p>{subheader}</p>
+        {subheader && <p>{subheader}</p>}
         <div className={styles.buttonsContainer}>
           <button onClick={() => setShowAreYouSureInterface(false)}>
             {noButtonText}
