@@ -31,14 +31,14 @@ const UserHomepage = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
-  const userRSVPDEvents: TEvent[] = allEvents.filter((ev) =>
-    currentUser && currentUser.id ? ev.interestedUsers.includes(currentUser.id) : []
+  const userRSVPDEvents: TEvent[] = allEvents.filter(
+    (ev) => currentUser?.id && ev.interestedUsers.includes(currentUser.id)
   );
-  const userOrganizedEvents: TEvent[] = allEvents.filter((ev) =>
-    ev.organizers.includes(String(currentUser?.id))
+  const userOrganizedEvents: TEvent[] = allEvents.filter(
+    (ev) => currentUser?.id && ev.organizers.includes(currentUser.id)
   );
-  const eventsUserIsInvitedTo = allEvents.filter((ev) =>
-    ev.invitees.includes(String(currentUser?.id))
+  const eventsUserIsInvitedTo = allEvents.filter(
+    (ev) => currentUser?.id && ev.invitees.includes(currentUser.id)
   );
   const allCurrentUserEvents = Methods.removeDuplicatesFromArray(
     userRSVPDEvents.concat(userOrganizedEvents).concat(eventsUserIsInvitedTo)
@@ -77,7 +77,9 @@ const UserHomepage = () => {
           <Link to={"/add-event"}>
             <button>Create Event</button>
           </Link>
-          <Link to={`/find-palz`}><button>Find Palz</button></Link>
+          <Link to={`/find-palz`}>
+            <button>Find Palz</button>
+          </Link>
           <Link to={`/${currentUser.username}/events`}>
             <button>My Events</button>
           </Link>
