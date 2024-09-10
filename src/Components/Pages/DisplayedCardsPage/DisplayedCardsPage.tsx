@@ -546,9 +546,19 @@ const DisplayedCardsPage = ({
     return false;
   };
 
+  const getPageHeading = (): string => {
+    if (usedFor === "events") {
+      return "Events";
+    } else if (usedFor === "potential-friends") {
+      return "Find Palz";
+    }
+    return "My Palz";
+  };
+  const pageHeading: string = getPageHeading();
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
-      <h1>{usedFor === "events" ? "Events" : "Find Palz"}</h1>
+      <h1>{pageHeading}</h1>
       <div className="search-tools-container">
         <SearchBar
           input={searchTerm}
