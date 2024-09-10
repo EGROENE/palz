@@ -10,7 +10,11 @@ import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
 
-const DiscoverPage = ({ usedFor }: { usedFor: "events" | "potential-friends" }) => {
+const DiscoverPage = ({
+  usedFor,
+}: {
+  usedFor: "events" | "potential-friends" | "my-friends";
+}) => {
   const {
     allEvents,
     allUsers,
