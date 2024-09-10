@@ -1572,12 +1572,14 @@ const EventForm = ({
                 >
                   Remove Yourself
                 </span>
-                <span
-                  style={{ color: randomColor }}
-                  onClick={() => setOrganizers([`${currentUser?.id}`])}
-                >
-                  Remove All Others
-                </span>
+                {event?.creator === currentUser?.id && (
+                  <span
+                    style={{ color: randomColor }}
+                    onClick={() => setOrganizers([`${currentUser?.id}`])}
+                  >
+                    Remove All Others
+                  </span>
+                )}
               </>
             )}
         </p>
@@ -1595,6 +1597,7 @@ const EventForm = ({
                   removeHandler={handleAddRemoveUserAsOrganizer}
                   randomColor={randomColor}
                   isDisabled={isLoading}
+                  userMayNotDelete={event?.creator === user.id}
                 />
               ))}
         </div>
