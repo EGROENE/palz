@@ -10,7 +10,7 @@ import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
 
-const DiscoverPage = ({
+const DisplayedCardsPage = ({
   usedFor,
 }: {
   usedFor: "events" | "potential-friends" | "my-friends";
@@ -594,4 +594,4 @@ const DiscoverPage = ({
   );
 };
 
-export default DiscoverPage;
+export default DisplayedCardsPage;

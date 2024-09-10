@@ -11,7 +11,7 @@ import Error404 from "./Components/Pages/Error404/Error404";
 import NavBar from "./Components/Elements/NavBar/NavBar";
 import UserSettings from "./Components/Pages/UserSettings/UserSettings";
 import AddEventPage from "./Components/Pages/AddEventPage/AddEventPage";
-import DiscoverPage from "./Components/Pages/DiscoverPage/DiscoverPage";
+import DisplayedCardsPage from "./Components/Pages/DisplayedCardsPage/DisplayedCardsPage";
 import EventPage from "./Components/Pages/EventPage/EventPage";
 import UsersEvents from "./Components/Pages/UsersEvents/UsersEvents";
 import EditEventPage from "./Components/Pages/EditEventPage/EditEventPage";
@@ -70,12 +70,15 @@ function App() {
           path="/edit-event/:eventID"
           element={<EditEventPage currentEvent={currentEvent} />}
         />
-        <Route path="/events" element={<DiscoverPage usedFor="events" />} />
+        <Route path="/events" element={<DisplayedCardsPage usedFor="events" />} />
         <Route path="/events/:eventID" element={<EventPage />} />
         <Route path="/:username/events" element={<UsersEvents />} />
         <Route path="/users/:username" element={<UserHomepage />} />
-        <Route path="/find-palz" element={<DiscoverPage usedFor="potential-friends" />} />
-        <Route path="/my-palz" element={<DiscoverPage usedFor="my-friends" />} />
+        <Route
+          path="/find-palz"
+          element={<DisplayedCardsPage usedFor="potential-friends" />}
+        />
+        <Route path="/my-palz" element={<DisplayedCardsPage usedFor="my-friends" />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
     </div>
