@@ -445,6 +445,10 @@ form textarea {
   align-items: flex-start;
 }
 
+.search-tools-container p {
+  margin: 0.5rem 0 0 0;
+}
+
 .search-tools-container i {
   top: 17%;
   right: 6%;
