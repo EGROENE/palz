@@ -52,6 +52,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "subscriptionType": "",
     "interests": [],
     "friends": [],
+    "friendRequests": [],
     "profileVisibleTo": newUserData.profileVisibleTo,
     "whoCanAddUserAsOrganizer": newUserData.whoCanAddUserAsOrganizer,
     "whoCanInviteUser": newUserData.whoCanInviteUser,
