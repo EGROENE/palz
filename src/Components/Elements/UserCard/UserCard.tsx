@@ -2,9 +2,16 @@ import styles from "./styles.module.css";
 import { TUser, TThemeColor } from "../../../types";
 import { countries } from "../../../constants";
 import { useState, useEffect } from "react";
+import Requests from "../../../requests";
+import toast from "react-hot-toast";
+import { useMainContext } from "../../../Hooks/useMainContext";
 
 const UserCard = ({ user }: { user: TUser }) => {
+  const { fetchAllUsers, currentUser } = useMainContext();
+
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  const [buttonsAreDisabled, setButtonsAreDisabled] = useState<boolean>(false);
 
   // Set color of event card's border randomly:
   useEffect(() => {
@@ -23,6 +30,45 @@ const UserCard = ({ user }: { user: TUser }) => {
     user.country !== ""
       ? countries.filter((country) => country.country === user.country)[0].abbreviation
       : undefined;
+
+  const handleSendFriendRequest = (senderID: string | number, recipient: TUser): void => {
+    Requests.sendFriendRequest(senderID, recipient)
+      .then((response) => {
+        setButtonsAreDisabled(true);
+        if (!response.ok) {
+          fetchAllUsers();
+          toast.error("Could not send friend request. Please try again.");
+        } else {
+          fetchAllUsers();
+          toast.success("Friend request sent!");
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => {
+        setButtonsAreDisabled(false);
+      });
+  };
+
+  const handleRetractFriendRequest = (
+    senderID: string | number,
+    recipient: TUser
+  ): void => {
+    Requests.retractFriendRequest(senderID, recipient)
+      .then((response) => {
+        setButtonsAreDisabled(true);
+        if (!response.ok) {
+          fetchAllUsers();
+          toast.error("Could not send friend request. Please try again.");
+        } else {
+          fetchAllUsers();
+          toast.error("Friend request retracted");
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => {
+        setButtonsAreDisabled(false);
+      });
+  };
 
   return (
     <div
@@ -56,10 +102,27 @@ const UserCard = ({ user }: { user: TUser }) => {
         </div>
       )}
       <div className={styles.userCardBtnContainer}>
-        <button style={{ backgroundColor: randomColor }}>
-          <i className="fas fa-user-plus"></i>Add Friend
+        <button
+          onClick={() =>
+            currentUser?.id &&
+            (user.friendRequests.includes(currentUser.id)
+              ? handleRetractFriendRequest(currentUser.id, user)
+              : handleSendFriendRequest(currentUser.id, user))
+          }
+          disabled={buttonsAreDisabled}
+          style={{ backgroundColor: randomColor }}
+        >
+          {currentUser?.id && user.friendRequests.includes(currentUser.id) ? (
+            <>
+              <i className="fas fa-user-minus"></i>Retract Request
+            </>
+          ) : (
+            <>
+              <i className="fas fa-user-plus"></i>Add Friend
+            </>
+          )}
         </button>
-        <button>View Profile</button>
+        <button disabled={buttonsAreDisabled}>View Profile</button>
       </div>
     </div>
   );
