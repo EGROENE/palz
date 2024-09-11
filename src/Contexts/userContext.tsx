@@ -155,6 +155,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     whoCanAddUserAsOrganizer: whoCanAddUserAsOrganizer,
     whoCanInviteUser: whoCanInviteUser,
     profileVisibleTo: profileVisibleTo,
+    friendRequests: [],
   };
 
   // Called when user switches b/t login & signup forms & when user logs out
