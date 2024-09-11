@@ -458,8 +458,34 @@ const sendFriendRequest = (
   });
 };
 
+const retractFriendRequest = (
+  senderID: string | number,
+  recipient: TUser
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedFriendRequestsArray: Array<string | number | undefined> =
+    recipient.friendRequests.filter((id) => id !== senderID);
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "friendRequests": updatedFriendRequestsArray,
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/users/${recipient?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
   sendFriendRequest,
+  retractFriendRequest,
   updateEvent,
   removeInvitee,
   removeOrganizer,
