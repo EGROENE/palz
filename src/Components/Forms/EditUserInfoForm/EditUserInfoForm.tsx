@@ -167,7 +167,7 @@ const EditUserInfoForm = ({
 
   // Function that resets form values to what they are in currentUser
   // Called upon first render of this component or if user cancels changes they made to edit-user-info form
-  const handleEditUserInfoRevert = () => {
+  const handleEditUserInfoRevert = (): void => {
     setFirstName(currentUser?.firstName);
     setFirstNameError("");
     setLastName(currentUser?.lastName);
