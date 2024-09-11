@@ -429,7 +429,36 @@ const removeOrganizer = (
   });
 };
 
+const sendFriendRequest = (
+  senderID: string | number,
+  recipient: TUser
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedFriendRequestsArray: Array<string | number | undefined> = [];
+  for (const existingSenderID of recipient.friendRequests) {
+    updatedFriendRequestsArray.push(existingSenderID);
+  }
+  updatedFriendRequestsArray.push(senderID);
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "friendRequests": updatedFriendRequestsArray,
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/users/${recipient?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
+  sendFriendRequest,
   updateEvent,
   removeInvitee,
   removeOrganizer,
