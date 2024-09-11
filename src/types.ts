@@ -29,9 +29,10 @@ export type TUser = {
   subscriptionType: string;
   hostingCredits: number;
   interests: string[];
-  whoCanAddUserAsOrganizer: "friends" | "anyone" | "nobody"| undefined;
-  whoCanInviteUser: "friends" | "anyone" | "nobody"| undefined;
-  profileVisibleTo: "friends" | "anyone" | "friends of friends"| undefined;
+  whoCanAddUserAsOrganizer: "friends" | "anyone" | "nobody" | undefined;
+  whoCanInviteUser: "friends" | "anyone" | "nobody" | undefined;
+  profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
+  friendRequests: (string | number)[];
 };
 
 export type TEvent = {
