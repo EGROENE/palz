@@ -132,8 +132,8 @@ const DisplayedCardsPage = ({
   }, [allEvents]);
 
   useEffect(() => {
+    fetchAllUsers();
     if (usedFor === "potential-friends") {
-      fetchAllUsers();
       let newDisplayedPotentialFriends: TUser[] = [];
       if (searchTerm.trim() !== "") {
         // search pot. friends by first/last name, city/state/country, username
@@ -174,7 +174,6 @@ const DisplayedCardsPage = ({
     }
 
     if (usedFor === "my-friends") {
-      fetchAllUsers();
       let newDisplayedFriends: TUser[] = [];
 
       if (searchTerm !== "") {
