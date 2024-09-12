@@ -431,7 +431,7 @@ const removeOrganizer = (
   });
 };
 
-const addToRecipientFriendRequests = (
+const addToFriendRequestsReceived = (
   senderID: string | number,
   recipient: TUser
 ): Promise<Response> => {
@@ -459,7 +459,7 @@ const addToRecipientFriendRequests = (
   });
 };
 
-const removeFromRecipientFriendRequests = (
+const removeFromFriendRequestsReceived = (
   sender: string | number,
   recipient: TUser
 ): Promise<Response> => {
@@ -513,8 +513,8 @@ const acceptFriendRequest = (
 };
 
 const Requests = {
-  addToRecipientFriendRequests,
-  removeFromRecipientFriendRequests,
+  addToFriendRequestsReceived,
+  removeFromFriendRequestsReceived,
   updateEvent,
   removeInvitee,
   removeOrganizer,

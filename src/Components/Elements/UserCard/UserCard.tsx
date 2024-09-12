@@ -33,7 +33,7 @@ const UserCard = ({ user }: { user: TUser }) => {
 
   const handleSendFriendRequest = (sender: string | number, recipient: TUser): void => {
     setButtonsAreDisabled(true);
-    Requests.addToRecipientFriendRequests(sender, recipient)
+    Requests.addToFriendRequestsReceived(sender, recipient)
       .then((response) => {
         if (!response.ok) {
           fetchAllUsers();
@@ -54,7 +54,7 @@ const UserCard = ({ user }: { user: TUser }) => {
     recipient: TUser
   ): void => {
     setButtonsAreDisabled(true);
-    Requests.removeFromRecipientFriendRequests(sender, recipient)
+    Requests.removeFromFriendRequestsReceived(sender, recipient)
       .then((response) => {
         if (!response.ok) {
           fetchAllUsers();
