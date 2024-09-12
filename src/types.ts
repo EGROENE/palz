@@ -32,7 +32,7 @@ export type TUser = {
   whoCanAddUserAsOrganizer: "friends" | "anyone" | "nobody" | undefined;
   whoCanInviteUser: "friends" | "anyone" | "nobody" | undefined;
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
-  friendRequests: (string | number)[];
+  friendRequestsReceived: (string | number)[];
 };
 
 export type TEvent = {
