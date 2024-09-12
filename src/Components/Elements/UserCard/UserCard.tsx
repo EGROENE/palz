@@ -32,9 +32,9 @@ const UserCard = ({ user }: { user: TUser }) => {
       : undefined;
 
   const handleSendFriendRequest = (senderID: string | number, recipient: TUser): void => {
+    setButtonsAreDisabled(true);
     Requests.sendFriendRequest(senderID, recipient)
       .then((response) => {
-        setButtonsAreDisabled(true);
         if (!response.ok) {
           fetchAllUsers();
           toast.error("Could not send friend request. Please try again.");
@@ -53,9 +53,9 @@ const UserCard = ({ user }: { user: TUser }) => {
     senderID: string | number,
     recipient: TUser
   ): void => {
+    setButtonsAreDisabled(true);
     Requests.retractFriendRequest(senderID, recipient)
       .then((response) => {
-        setButtonsAreDisabled(true);
         if (!response.ok) {
           fetchAllUsers();
           toast.error("Could not send friend request. Please try again.");
