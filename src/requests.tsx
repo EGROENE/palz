@@ -53,6 +53,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "interests": [],
     "friends": [],
     "friendRequestsReceived": [],
+    "friendRequestsSent": [],
     "profileVisibleTo": newUserData.profileVisibleTo,
     "whoCanAddUserAsOrganizer": newUserData.whoCanAddUserAsOrganizer,
     "whoCanInviteUser": newUserData.whoCanInviteUser,
@@ -430,7 +431,6 @@ const removeOrganizer = (
   });
 };
 
-// change to addToRecipientFriendRequests
 const addToRecipientFriendRequests = (
   senderID: string | number,
   recipient: TUser
@@ -459,7 +459,6 @@ const addToRecipientFriendRequests = (
   });
 };
 
-// change to removeFromRecipientFriendRequests
 const removeFromRecipientFriendRequests = (
   sender: string | number,
   recipient: TUser

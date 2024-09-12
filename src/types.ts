@@ -33,6 +33,7 @@ export type TUser = {
   whoCanInviteUser: "friends" | "anyone" | "nobody" | undefined;
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
   friendRequestsReceived: (string | number)[];
+  friendRequestsSent: (string | number)[];
 };
 
 export type TEvent = {
