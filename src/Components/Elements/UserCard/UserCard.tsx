@@ -31,9 +31,9 @@ const UserCard = ({ user }: { user: TUser }) => {
       ? countries.filter((country) => country.country === user.country)[0].abbreviation
       : undefined;
 
-  const handleSendFriendRequest = (senderID: string | number, recipient: TUser): void => {
+  const handleSendFriendRequest = (sender: string | number, recipient: TUser): void => {
     setButtonsAreDisabled(true);
-    Requests.sendFriendRequest(senderID, recipient)
+    Requests.addToRecipientFriendRequests(sender, recipient)
       .then((response) => {
         if (!response.ok) {
           fetchAllUsers();
@@ -50,11 +50,11 @@ const UserCard = ({ user }: { user: TUser }) => {
   };
 
   const handleRetractFriendRequest = (
-    senderID: string | number,
+    sender: string | number,
     recipient: TUser
   ): void => {
     setButtonsAreDisabled(true);
-    Requests.retractFriendRequest(senderID, recipient)
+    Requests.removeFromRecipientFriendRequests(sender, recipient)
       .then((response) => {
         if (!response.ok) {
           fetchAllUsers();
@@ -105,14 +105,14 @@ const UserCard = ({ user }: { user: TUser }) => {
         <button
           onClick={() =>
             currentUser?.id &&
-            (user.friendRequests.includes(currentUser.id)
+            (user.friendRequestsReceived.includes(currentUser.id)
               ? handleRetractFriendRequest(currentUser.id, user)
               : handleSendFriendRequest(currentUser.id, user))
           }
           disabled={buttonsAreDisabled}
           style={{ backgroundColor: randomColor }}
         >
-          {currentUser?.id && user.friendRequests.includes(currentUser.id) ? (
+          {currentUser?.id && user.friendRequestsReceived.includes(currentUser.id) ? (
             <>
               <i className="fas fa-user-minus"></i>Retract Request
             </>

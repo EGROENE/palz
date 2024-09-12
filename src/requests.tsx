@@ -52,7 +52,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "subscriptionType": "",
     "interests": [],
     "friends": [],
-    "friendRequests": [],
+    "friendRequestsReceived": [],
     "profileVisibleTo": newUserData.profileVisibleTo,
     "whoCanAddUserAsOrganizer": newUserData.whoCanAddUserAsOrganizer,
     "whoCanInviteUser": newUserData.whoCanInviteUser,
@@ -430,22 +430,23 @@ const removeOrganizer = (
   });
 };
 
-const sendFriendRequest = (
+// change to addToRecipientFriendRequests
+const addToRecipientFriendRequests = (
   senderID: string | number,
   recipient: TUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendRequestsArray: Array<string | number | undefined> = [];
-  for (const existingSenderID of recipient.friendRequests) {
-    updatedFriendRequestsArray.push(existingSenderID);
+  const updatedFriendRequestsReceivedArray: Array<string | number | undefined> = [];
+  for (const existingSenderID of recipient.friendRequestsReceived) {
+    updatedFriendRequestsReceivedArray.push(existingSenderID);
   }
-  updatedFriendRequestsArray.push(senderID);
+  updatedFriendRequestsReceivedArray.push(senderID);
 
   const getRaw = () => {
     return JSON.stringify({
-      "friendRequests": updatedFriendRequestsArray,
+      "friendRequestsReceived": updatedFriendRequestsReceivedArray,
     });
   };
   const raw = getRaw();
@@ -458,19 +459,48 @@ const sendFriendRequest = (
   });
 };
 
-const retractFriendRequest = (
-  senderID: string | number,
+// change to removeFromRecipientFriendRequests
+const removeFromRecipientFriendRequests = (
+  sender: string | number,
   recipient: TUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
   const updatedFriendRequestsArray: Array<string | number | undefined> =
-    recipient.friendRequests.filter((id) => id !== senderID);
+    recipient.friendRequestsReceived.filter((id) => id !== sender);
 
   const getRaw = () => {
     return JSON.stringify({
-      "friendRequests": updatedFriendRequestsArray,
+      "friendRequestsReceived": updatedFriendRequestsArray,
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/users/${recipient?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
+const acceptFriendRequest = (
+  sender: string | number,
+  recipient: TUser
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedFriendRequestsArray: Array<string | number | undefined> = [];
+  for (const existingSenderID of recipient.friendRequestsReceived) {
+    updatedFriendRequestsArray.push(existingSenderID);
+  }
+  updatedFriendRequestsArray.push(sender);
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "friendRequestsReceived": updatedFriendRequestsArray,
     });
   };
   const raw = getRaw();
@@ -484,8 +514,8 @@ const retractFriendRequest = (
 };
 
 const Requests = {
-  sendFriendRequest,
-  retractFriendRequest,
+  addToRecipientFriendRequests,
+  removeFromRecipientFriendRequests,
   updateEvent,
   removeInvitee,
   removeOrganizer,
