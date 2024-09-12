@@ -432,15 +432,17 @@ const removeOrganizer = (
 };
 
 const addToFriendRequestsReceived = (
-  senderID: string | number,
-  recipient: TUser
+  senderID: string | number | undefined,
+  recipient: TUser | undefined
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
   const updatedFriendRequestsReceivedArray: Array<string | number | undefined> = [];
-  for (const existingSenderID of recipient.friendRequestsReceived) {
-    updatedFriendRequestsReceivedArray.push(existingSenderID);
+  if (recipient?.friendRequestsReceived) {
+    for (const existingSenderID of recipient.friendRequestsReceived) {
+      updatedFriendRequestsReceivedArray.push(existingSenderID);
+    }
   }
   updatedFriendRequestsReceivedArray.push(senderID);
 
@@ -452,6 +454,36 @@ const addToFriendRequestsReceived = (
   const raw = getRaw();
 
   return fetch(`http://localhost:3000/users/${recipient?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
+const addToFriendRequestsSent = (
+  sender: TUser | undefined,
+  recipientID: string | number | undefined
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedFriendRequestsSentArray: Array<string | number | undefined> = [];
+  if (sender?.friendRequestsSent) {
+    for (const existingRecipientID of sender.friendRequestsSent) {
+      updatedFriendRequestsSentArray.push(existingRecipientID);
+    }
+  }
+  updatedFriendRequestsSentArray.push(recipientID);
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "friendRequestsSent": updatedFriendRequestsSentArray,
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/users/${sender?.id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -484,7 +516,7 @@ const removeFromFriendRequestsReceived = (
   });
 };
 
-const acceptFriendRequest = (
+/* const acceptFriendRequest = (
   sender: string | number,
   recipient: TUser
 ): Promise<Response> => {
@@ -510,10 +542,11 @@ const acceptFriendRequest = (
     body: raw,
     redirect: "follow",
   });
-};
+}; */
 
 const Requests = {
   addToFriendRequestsReceived,
+  addToFriendRequestsSent,
   removeFromFriendRequestsReceived,
   updateEvent,
   removeInvitee,

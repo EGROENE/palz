@@ -31,12 +31,33 @@ const UserCard = ({ user }: { user: TUser }) => {
       ? countries.filter((country) => country.country === user.country)[0].abbreviation
       : undefined;
 
-  const handleSendFriendRequest = (sender: string | number, recipient: TUser): void => {
+  const handleSendFriendRequest = (sender: TUser, recipient: TUser): void => {
     setButtonsAreDisabled(true);
-    Requests.addToFriendRequestsReceived(sender, recipient)
+    const promisesToAwait: Promise<Response>[] = [
+      Requests.addToFriendRequestsReceived(sender.id, recipient),
+      Requests.addToFriendRequestsSent(sender, recipient.id),
+    ];
+    let requestToUpdateSenderAndReceiverFriendRequestArraysIsOK: boolean = true;
+
+    Requests.addToFriendRequestsReceived(sender.id, recipient)
       .then((response) => {
         if (!response.ok) {
-          fetchAllUsers();
+          requestToUpdateSenderAndReceiverFriendRequestArraysIsOK = false;
+        }
+      })
+      .catch((error) => console.log(error));
+
+    Requests.addToFriendRequestsSent(sender, recipient.id)
+      .then((response) => {
+        if (!response.ok) {
+          requestToUpdateSenderAndReceiverFriendRequestArraysIsOK = false;
+        }
+      })
+      .catch((error) => console.log(error));
+
+    Promise.all(promisesToAwait)
+      .then(() => {
+        if (!requestToUpdateSenderAndReceiverFriendRequestArraysIsOK) {
           toast.error("Could not send friend request. Please try again.");
         } else {
           fetchAllUsers();
@@ -107,7 +128,7 @@ const UserCard = ({ user }: { user: TUser }) => {
             currentUser?.id &&
             (user.friendRequestsReceived.includes(currentUser.id)
               ? handleRetractFriendRequest(currentUser.id, user)
-              : handleSendFriendRequest(currentUser.id, user))
+              : handleSendFriendRequest(currentUser, user))
           }
           disabled={buttonsAreDisabled}
           style={{ backgroundColor: randomColor }}
