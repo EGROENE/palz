@@ -152,12 +152,12 @@ const UserSettings = () => {
       .then(() => {
         // run after the others have finished
         if (!requestToDeleteUserIDFromAllArraysIsOK) {
-          toast.error("Could not delete your account. Please try again.");
+          toast.error("Account deletion incomplete; please try again.");
         } else {
           Requests.deleteUser(currentUser?.id)
             .then((response) => {
               if (!response.ok) {
-                toast.error("Could not delete your account. Please try again.");
+                toast.error("Account deletion incomplete; please try again.");
                 fetchAllEvents();
                 fetchAllUsers();
               } else {
