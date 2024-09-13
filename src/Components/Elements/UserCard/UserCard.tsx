@@ -33,13 +33,13 @@ const UserCard = ({ user }: { user: TUser }) => {
 
   const handleSendFriendRequest = (sender: TUser, recipient: TUser): void => {
     setButtonsAreDisabled(true);
-    const promisesToAwait: Promise<Response>[] = [
-      Requests.addToFriendRequestsReceived(sender.id, recipient),
-      Requests.addToFriendRequestsSent(sender, recipient.id),
-    ];
+
     let requestToUpdateSenderAndReceiverFriendRequestArraysIsOK: boolean = true;
 
-    Requests.addToFriendRequestsReceived(sender.id, recipient)
+    const addToFriendRequestsReceived = Requests.addToFriendRequestsReceived(
+      sender.id,
+      recipient
+    )
       .then((response) => {
         if (!response.ok) {
           requestToUpdateSenderAndReceiverFriendRequestArraysIsOK = false;
@@ -47,13 +47,18 @@ const UserCard = ({ user }: { user: TUser }) => {
       })
       .catch((error) => console.log(error));
 
-    Requests.addToFriendRequestsSent(sender, recipient.id)
+    const addToFriendRequestsSent = Requests.addToFriendRequestsSent(sender, recipient.id)
       .then((response) => {
         if (!response.ok) {
           requestToUpdateSenderAndReceiverFriendRequestArraysIsOK = false;
         }
       })
       .catch((error) => console.log(error));
+
+    const promisesToAwait: Promise<void>[] = [
+      addToFriendRequestsReceived,
+      addToFriendRequestsSent,
+    ];
 
     Promise.all(promisesToAwait)
       .then(() => {
