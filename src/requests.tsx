@@ -492,7 +492,7 @@ const addToFriendRequestsSent = (
 };
 
 const removeFromFriendRequestsReceived = (
-  sender: string | number,
+  sender: string | number | undefined,
   recipient: TUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
@@ -509,6 +509,31 @@ const removeFromFriendRequestsReceived = (
   const raw = getRaw();
 
   return fetch(`http://localhost:3000/users/${recipient?.id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
+const removeFromFriendRequestsSent = (
+  recipientID: string | number | undefined,
+  sender: TUser
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedFriendRequestsArray: Array<string | number | undefined> =
+    sender.friendRequestsSent.filter((id) => id !== recipientID);
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "friendRequestsSent": updatedFriendRequestsArray,
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:3000/users/${sender?.id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -548,6 +573,7 @@ const Requests = {
   addToFriendRequestsReceived,
   addToFriendRequestsSent,
   removeFromFriendRequestsReceived,
+  removeFromFriendRequestsSent,
   updateEvent,
   removeInvitee,
   removeOrganizer,
