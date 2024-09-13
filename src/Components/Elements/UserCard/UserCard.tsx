@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { useMainContext } from "../../../Hooks/useMainContext";
 
 const UserCard = ({ user }: { user: TUser }) => {
-  const { fetchAllUsers, currentUser } = useMainContext();
+  const { currentUser, allUsers } = useMainContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -65,7 +65,6 @@ const UserCard = ({ user }: { user: TUser }) => {
         if (!requestToUpdateSenderAndReceiverFriendRequestArraysIsOK) {
           toast.error("Could not send friend request. Please try again.");
         } else {
-          fetchAllUsers();
           toast.success("Friend request sent!");
         }
       })
@@ -75,18 +74,42 @@ const UserCard = ({ user }: { user: TUser }) => {
       });
   };
 
-  const handleRetractFriendRequest = (
-    sender: string | number,
-    recipient: TUser
-  ): void => {
+  const handleRetractFriendRequest = (sender: TUser, recipient: TUser): void => {
     setButtonsAreDisabled(true);
-    Requests.removeFromFriendRequestsReceived(sender, recipient)
+    let requestToUpdateSenderAndReceiverFriendRequestArraysIsOK: boolean = true;
+
+    const removeFromFriendRequestsReceived = Requests.removeFromFriendRequestsReceived(
+      sender.id,
+      recipient
+    )
       .then((response) => {
         if (!response.ok) {
-          fetchAllUsers();
+          requestToUpdateSenderAndReceiverFriendRequestArraysIsOK = false;
+        }
+      })
+      .catch((error) => console.log(error));
+
+    const removeFromFriendRequestsSent = Requests.removeFromFriendRequestsSent(
+      recipient.id,
+      sender
+    )
+      .then((response) => {
+        if (!response.ok) {
+          requestToUpdateSenderAndReceiverFriendRequestArraysIsOK = false;
+        }
+      })
+      .catch((error) => console.log(error));
+
+    const promisesToAwait = [
+      removeFromFriendRequestsReceived,
+      removeFromFriendRequestsSent,
+    ];
+
+    Promise.all(promisesToAwait)
+      .then(() => {
+        if (!requestToUpdateSenderAndReceiverFriendRequestArraysIsOK) {
           toast.error("Could not send friend request. Please try again.");
         } else {
-          fetchAllUsers();
           toast.error("Friend request retracted");
         }
       })
@@ -129,12 +152,16 @@ const UserCard = ({ user }: { user: TUser }) => {
       )}
       <div className={styles.userCardBtnContainer}>
         <button
-          onClick={() =>
+          onClick={() => {
+            /* sender below is absolute most-current version of currentUser. currentUser itself (the state value) doesn't update in time if friend requests are sent/rescinded, but the corresponding user in allUsers does update in time, so sender is simply that value, captured when Add/Retract friend req btn is clicked. */
+            const sender = allUsers.filter((user) => user.id === currentUser?.id)[0];
             currentUser?.id &&
-            (user.friendRequestsReceived.includes(currentUser.id)
-              ? handleRetractFriendRequest(currentUser.id, user)
-              : handleSendFriendRequest(currentUser, user))
-          }
+              user.id &&
+              (user.friendRequestsReceived.includes(currentUser.id) &&
+              sender.friendRequestsSent.includes(user.id)
+                ? handleRetractFriendRequest(sender, user)
+                : handleSendFriendRequest(sender, user));
+          }}
           disabled={buttonsAreDisabled}
           style={{ backgroundColor: randomColor }}
         >
