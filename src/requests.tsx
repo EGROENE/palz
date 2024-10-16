@@ -1,7 +1,7 @@
 import { TUser, TEvent, TEventValuesToUpdate, TUserValuesToUpdate } from "./types";
 
 const getAllUsers = (): Promise<TUser[]> => {
-  return fetch("http://localhost:3000/users", {
+  return fetch("http://localhost:4000/palz/users", {
     method: "GET",
     redirect: "follow",
   }).then((response) => response.json() as Promise<TUser[]>);
