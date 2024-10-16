@@ -47,7 +47,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     fetchAllUsers();
   }, [allUsers]);
 
-  useEffect(() => {
+  // CHANGE PORT NUMBER IN REQUEST TO 4000
+  /* useEffect(() => {
     fetchAllEvents();
   }, [allEvents]);
 
@@ -60,7 +61,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
         setAttendedEventsByUser(JSON.parse(result));
       })
       .catch((error) => console.log(error));
-  }, [attendedEvents]);
+  }, [attendedEvents]); */
 
   // REFETCH METHODS
   const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
