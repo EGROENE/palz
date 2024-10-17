@@ -152,7 +152,7 @@ const EventForm = ({
     event ? event.publicity : "public"
   );
   const [organizers, setOrganizers] = useState<(string | number)[]>(
-    event ? event.organizers : [`${currentUser?.id}`]
+    event ? event.organizers : [`${currentUser?._id}`]
   );
   const [invitees, setInvitees] = useState<(string | number)[]>(
     event ? event.invitees : []
@@ -175,11 +175,11 @@ const EventForm = ({
 
   // Make allOtherUsers consist first of currentUser's friends, then all others
   const currentUserFriends = allUsers.filter(
-    (user) => user.id && currentUser?.friends.includes(user.id)
+    (user) => user._id && currentUser?.friends.includes(user._id)
   );
   const currentUserNonFriends = allUsers
-    .filter((user) => user.id !== currentUser?.id)
-    .filter((user) => user.id && !currentUser?.friends.includes(user.id));
+    .filter((user) => user._id !== currentUser?._id)
+    .filter((user) => user._id && !currentUser?.friends.includes(user._id));
   const allOtherUsers = currentUserFriends.concat(currentUserNonFriends);
 
   // INPUT HANDLERS
@@ -545,12 +545,12 @@ const EventForm = ({
         // setPotentialCoOrganizers to original value
         setPotentialCoOrganizers(
           allOtherUsers.filter((user) => {
-            if (user.id) {
+            if (user._id) {
               return (
                 (user.whoCanAddUserAsOrganizer === "anyone" ||
                   (user.whoCanAddUserAsOrganizer === "friends" &&
-                    currentUser?.friends.includes(user.id))) &&
-                !invitees.includes(user.id)
+                    currentUser?.friends.includes(user._id))) &&
+                !invitees.includes(user._id)
               );
             }
           })
@@ -577,12 +577,12 @@ const EventForm = ({
       } else {
         setPotentialInvitees(
           allOtherUsers.filter((user) => {
-            if (user.id) {
+            if (user._id) {
               return (
                 (user.whoCanInviteUser === "anyone" ||
                   (user.whoCanInviteUser === "friends" &&
-                    currentUser?.friends.includes(user.id))) &&
-                !organizers.includes(user.id)
+                    currentUser?.friends.includes(user._id))) &&
+                !organizers.includes(user._id)
               );
             }
           })
@@ -596,13 +596,13 @@ const EventForm = ({
     user?: TUser
   ): void => {
     e?.preventDefault();
-    if (user && user.id) {
-      if (organizers.includes(user.id)) {
+    if (user && user._id) {
+      if (organizers.includes(user._id)) {
         // Remove non-current user who isn't currentUser
-        setOrganizers(organizers.filter((organizerID) => organizerID !== user.id));
+        setOrganizers(organizers.filter((organizerID) => organizerID !== user._id));
       } else {
         // Add non-current user as organizer
-        setOrganizers(organizers.concat(user.id));
+        setOrganizers(organizers.concat(user._id));
       }
     } else {
       // Remove currentUser as organizer
@@ -628,12 +628,12 @@ const EventForm = ({
     user?: TUser
   ): void => {
     e?.preventDefault();
-    if (user?.id) {
-      if (invitees.includes(user.id)) {
+    if (user?._id) {
+      if (invitees.includes(user._id)) {
         // Remove user as invitee
-        setInvitees(invitees.filter((inviteeID) => inviteeID !== user?.id));
+        setInvitees(invitees.filter((inviteeID) => inviteeID !== user?._id));
       } else {
-        setInvitees(invitees.concat(user.id));
+        setInvitees(invitees.concat(user._id));
       }
     }
   };
@@ -709,7 +709,7 @@ const EventForm = ({
       setImageThree("");
       setImageThreeError("");
       setPublicity("public");
-      setOrganizers([`${currentUser?.id}`]);
+      setOrganizers([`${currentUser?._id}`]);
       setInvitees([]);
       setRelatedInterests([]);
     }
@@ -942,7 +942,7 @@ const EventForm = ({
   const getUsersWhoAreOrganizers = (): TUser[] => {
     const usersWhoAreOrganizers: TUser[] = [];
     for (const organizer of organizers) {
-      const user = allUsers.filter((user) => user.id === organizer)[0];
+      const user = allUsers.filter((user) => user._id === organizer)[0];
       usersWhoAreOrganizers.push(user);
     }
     return usersWhoAreOrganizers;
@@ -952,7 +952,7 @@ const EventForm = ({
   const getUsersWhoAreInvitees = (): TUser[] => {
     const usersWhoAreInvitees: TUser[] = [];
     for (const invitee of invitees) {
-      const user = allUsers.filter((user) => user.id === invitee)[0];
+      const user = allUsers.filter((user) => user._id === invitee)[0];
       usersWhoAreInvitees.push(user);
     }
     return usersWhoAreInvitees;
@@ -1047,7 +1047,7 @@ const EventForm = ({
 
   const eventInfos: TEvent = {
     title: eventTitle.trim(),
-    creator: currentUser?.id,
+    creator: currentUser?._id,
     organizers: organizers,
     invitees: invitees,
     description: eventDescription.trim(),
@@ -1095,12 +1095,12 @@ const EventForm = ({
   useEffect(() => {
     setPotentialCoOrganizers(
       allOtherUsers.filter((user) => {
-        if (user.id) {
+        if (user._id) {
           return (
             (user.whoCanAddUserAsOrganizer === "anyone" ||
               (user.whoCanAddUserAsOrganizer === "friends" &&
-                currentUser?.friends.includes(user.id))) &&
-            !invitees.includes(user.id)
+                currentUser?.friends.includes(user._id))) &&
+            !invitees.includes(user._id)
           );
         }
       })
@@ -1108,12 +1108,12 @@ const EventForm = ({
 
     setPotentialInvitees(
       allOtherUsers.filter((user) => {
-        if (user.id) {
+        if (user._id) {
           return (
             (user.whoCanInviteUser === "anyone" ||
               (user.whoCanInviteUser === "friends" &&
-                currentUser?.friends.includes(user.id))) &&
-            !organizers.includes(user.id)
+                currentUser?.friends.includes(user._id))) &&
+            !organizers.includes(user._id)
           );
         }
       })
@@ -1572,10 +1572,10 @@ const EventForm = ({
                 >
                   Remove Yourself
                 </span>
-                {event?.creator === currentUser?.id && (
+                {event?.creator === currentUser?._id && (
                   <span
                     style={{ color: randomColor }}
-                    onClick={() => setOrganizers([`${currentUser?.id}`])}
+                    onClick={() => setOrganizers([`${currentUser?._id}`])}
                   >
                     Remove All Others
                   </span>
@@ -1592,12 +1592,12 @@ const EventForm = ({
               .filter((user) => user.username !== currentUser?.username)
               .map((user) => (
                 <Tab
-                  key={user.id}
+                  key={user._id}
                   info={user}
                   removeHandler={handleAddRemoveUserAsOrganizer}
                   randomColor={randomColor}
                   isDisabled={isLoading}
-                  userMayNotDelete={event?.creator === user.id}
+                  userMayNotDelete={event?.creator === user._id}
                 />
               ))}
         </div>
@@ -1625,12 +1625,12 @@ const EventForm = ({
                 setCoOrganizersSearchQuery("");
                 setPotentialCoOrganizers(
                   allOtherUsers.filter((user) => {
-                    if (user.id) {
+                    if (user._id) {
                       return (
                         (user.whoCanAddUserAsOrganizer === "anyone" ||
                           (user.whoCanAddUserAsOrganizer === "friends" &&
-                            currentUser?.friends.includes(user.id))) &&
-                        !invitees.includes(user.id)
+                            currentUser?.friends.includes(user._id))) &&
+                        !invitees.includes(user._id)
                       );
                     }
                   })
@@ -1656,7 +1656,7 @@ const EventForm = ({
               <ul className="dropdown-list">
                 {potentialCoOrganizers.map((user) => (
                   <div
-                    key={user.id}
+                    key={user._id}
                     onClick={() => handleAddRemoveUserAsOrganizer(undefined, user)}
                     className="other-user-option"
                   >
@@ -1664,8 +1664,8 @@ const EventForm = ({
                       disabled={isLoading}
                       onChange={() => handleAddRemoveUserAsOrganizer(undefined, user)}
                       checked={
-                        (typeof user.id === "string" || typeof user.id === "number") &&
-                        organizers.includes(user.id)
+                        (typeof user._id === "string" || typeof user._id === "number") &&
+                        organizers.includes(user._id)
                       }
                       type="checkbox"
                     />
@@ -1694,7 +1694,7 @@ const EventForm = ({
             usersWhoAreInvitees.length > 0 &&
             usersWhoAreInvitees.map((user) => (
               <Tab
-                key={user.id}
+                key={user._id}
                 info={user}
                 removeHandler={handleAddRemoveUserAsInvitee}
                 randomColor={randomColor}
@@ -1726,12 +1726,12 @@ const EventForm = ({
                 setInviteesSearchQuery("");
                 setPotentialInvitees(
                   allOtherUsers.filter((user) => {
-                    if (user.id) {
+                    if (user._id) {
                       return (
                         (user.whoCanInviteUser === "anyone" ||
                           (user.whoCanInviteUser === "friends" &&
-                            currentUser?.friends.includes(user.id))) &&
-                        !organizers.includes(user.id)
+                            currentUser?.friends.includes(user._id))) &&
+                        !organizers.includes(user._id)
                       );
                     }
                   })
@@ -1757,7 +1757,7 @@ const EventForm = ({
               <ul className="dropdown-list">
                 {potentialInvitees.map((user) => (
                   <div
-                    key={user.id}
+                    key={user._id}
                     onClick={() => handleAddRemoveUserAsInvitee(undefined, user)}
                     className="other-user-option"
                   >
@@ -1765,8 +1765,8 @@ const EventForm = ({
                       disabled={isLoading}
                       onChange={() => handleAddRemoveUserAsInvitee(undefined, user)}
                       checked={
-                        (typeof user.id === "string" || typeof user.id === "number") &&
-                        invitees.includes(user.id)
+                        (typeof user._id === "string" || typeof user._id === "number") &&
+                        invitees.includes(user._id)
                       }
                       type="checkbox"
                     />
@@ -1826,7 +1826,7 @@ const EventForm = ({
         imageURL={imageThree}
         handleImageURLInput={handleImageURLInput}
       />
-      {event && event.creator === currentUser?.id && (
+      {event && event.creator === currentUser?._id && (
         <button
           type="button"
           onClick={() => setShowAreYouSureDeleteEvent(true)}

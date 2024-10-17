@@ -336,7 +336,7 @@ const EditUserInfoForm = ({
   ): void => {
     fetchAllUsers();
     const phoneNumberTaken: boolean = allUsers
-      .filter((user) => user.id !== currentUser?.id)
+      .filter((user) => user._id !== currentUser?._id)
       .map((user) => user.phoneCountryCode + user.phoneNumberWithoutCountryCode)
       .includes(countryCode + value);
     // If input doesn't meet length req or if it doesn't meet length req and countryCode is blank:

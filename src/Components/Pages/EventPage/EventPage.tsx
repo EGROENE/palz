@@ -40,9 +40,9 @@ const EventPage = () => {
     // Redirect user to their homepage or to login page if event is private & they are not an invitee or organizer
     if (
       currentEvent?.publicity === "private" &&
-      currentUser?.id &&
-      !currentEvent?.invitees.includes(currentUser.id) &&
-      !currentEvent?.organizers.includes(currentUser.id)
+      currentUser?._id &&
+      !currentEvent?.invitees.includes(currentUser._id) &&
+      !currentEvent?.organizers.includes(currentUser._id)
     ) {
       toast.error("You do not have permission to edit or view this event.");
       if (currentUser && userCreatedAccount !== null) {
@@ -77,7 +77,7 @@ const EventPage = () => {
     if (event) {
       for (const userID of event.interestedUsers) {
         for (const user of allUsers) {
-          if (user.id === userID) {
+          if (user._id === userID) {
             refIntUsers.push(user);
           }
         }
@@ -89,7 +89,7 @@ const EventPage = () => {
   const nextEventDateTime = event ? new Date(event.eventStartDateTimeInMS) : undefined;
 
   const userRSVPd =
-    currentUser && currentUser.id && event?.interestedUsers.includes(currentUser.id);
+    currentUser && currentUser._id && event?.interestedUsers.includes(currentUser._id);
 
   const getImagesArray = ():
     | {
@@ -115,7 +115,7 @@ const EventPage = () => {
     if (event) {
       for (const organizerID of event.organizers) {
         usernameArray.push(
-          allUsers.filter((user) => user.id === organizerID)[0].username
+          allUsers.filter((user) => user._id === organizerID)[0].username
         );
       }
     }
@@ -125,7 +125,7 @@ const EventPage = () => {
 
   // Explicitly return true or false to avoid TS error
   const userIsOrganizer: boolean =
-    currentUser && currentUser.id && event?.organizers.includes(currentUser.id)
+    currentUser && currentUser._id && event?.organizers.includes(currentUser._id)
       ? true
       : false;
 
@@ -181,7 +181,7 @@ const EventPage = () => {
               closeModalMethod={setShowRSVPs}
               header="RSVPs"
               handleUserRemoval={handleDeleteUserRSVP}
-              userIDArray={refinedInterestedUsers.map((user) => user.id)}
+              userIDArray={refinedInterestedUsers.map((user) => user._id)}
               event={event}
               randomColor={randomColor}
             />
@@ -218,15 +218,15 @@ const EventPage = () => {
                     Invitees:{" "}
                     <span
                       onClick={() =>
-                        currentUser?.id &&
-                        event.organizers.includes(currentUser.id) &&
+                        currentUser?._id &&
+                        event.organizers.includes(currentUser._id) &&
                         event.invitees.length > 0
                           ? setShowInvitees(true)
                           : undefined
                       }
                       className={
-                        currentUser?.id &&
-                        event.organizers.includes(currentUser.id) &&
+                        currentUser?._id &&
+                        event.organizers.includes(currentUser._id) &&
                         event.invitees.length > 0
                           ? "show-listed-users-or-invitees"
                           : undefined
@@ -238,15 +238,15 @@ const EventPage = () => {
                   RSVPs:{" "}
                   <span
                     onClick={() =>
-                      currentUser?.id &&
-                      event.organizers.includes(currentUser.id) &&
+                      currentUser?._id &&
+                      event.organizers.includes(currentUser._id) &&
                       refinedInterestedUsers.length > 0
                         ? setShowRSVPs(true)
                         : undefined
                     }
                     className={
-                      currentUser?.id &&
-                      event.organizers.includes(currentUser.id) &&
+                      currentUser?._id &&
+                      event.organizers.includes(currentUser._id) &&
                       refinedInterestedUsers.length > 0
                         ? "show-listed-users-or-invitees"
                         : undefined
@@ -291,7 +291,7 @@ const EventPage = () => {
                   {rsvpButtonText}
                 </button>
               ) : (
-                <Link to={`/edit-event/${event.id}`}>
+                <Link to={`/edit-event/${event._id}`}>
                   <button
                     onClick={() => setCurrentEvent(event)}
                     style={{ "backgroundColor": randomColor }}

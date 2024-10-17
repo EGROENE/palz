@@ -27,7 +27,7 @@ const UserListModal = ({
 
   const userArray: TUser[] = [];
   for (const userID of userIDArray) {
-    const matchingUser = allUsers.filter((user) => user.id === userID)[0];
+    const matchingUser = allUsers.filter((user) => user._id === userID)[0];
     userArray.push(matchingUser);
   }
 
@@ -41,7 +41,7 @@ const UserListModal = ({
       <div className={styles.userListContainer}>
         <h2>{header}</h2>
         {userArray.map((user) => (
-          <div key={user.id} className={styles.listedUser}>
+          <div key={user._id} className={styles.listedUser}>
             <img
               style={{ border: `2px solid ${randomColor}` }}
               src={`${user.profileImage}`}

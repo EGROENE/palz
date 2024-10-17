@@ -72,7 +72,7 @@ const DisplayedCardsPage = ({
           let eventOrganizerNames: string[] = [];
           let eventOrganizerUsernames: string[] = [];
           for (const id of event.organizers) {
-            const matchingUser: TUser = allUsers.filter((user) => user?.id === id)[0];
+            const matchingUser: TUser = allUsers.filter((user) => user?._id === id)[0];
 
             const fullName: string = `${matchingUser.firstName?.toLowerCase()} ${matchingUser.lastName?.toLowerCase()}`;
             eventOrganizerNames.push(fullName);
@@ -161,8 +161,8 @@ const DisplayedCardsPage = ({
           for (const filterOptionPotentialFriend of filterOptionPotentialFriends) {
             if (
               !newDisplayedPotentialFriends
-                .map((potFriend) => potFriend.id)
-                .includes(filterOptionPotentialFriend?.id)
+                .map((potFriend) => potFriend._id)
+                .includes(filterOptionPotentialFriend?._id)
             ) {
               newDisplayedPotentialFriends.push(filterOptionPotentialFriend);
             }
@@ -199,8 +199,8 @@ const DisplayedCardsPage = ({
           for (const filterOptionFriend of filterOptionFriends) {
             if (
               !newDisplayedFriends
-                .map((friend) => friend.id)
-                .includes(filterOptionFriend.id)
+                .map((friend) => friend._id)
+                .includes(filterOptionFriend._id)
             ) {
               newDisplayedFriends.push(filterOptionFriend);
             }
@@ -217,9 +217,9 @@ const DisplayedCardsPage = ({
     (event) =>
       (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
       (event.publicity === "public" ||
-        (currentUser?.id &&
-          (event.invitees.includes(currentUser.id) ||
-            event.organizers.includes(currentUser.id))))
+        (currentUser?._id &&
+          (event.invitees.includes(currentUser._id) ||
+            event.organizers.includes(currentUser._id))))
   );
 
   const getEventsByCurrentUserInterests = (): TEvent[] => {
@@ -305,9 +305,9 @@ const DisplayedCardsPage = ({
   // display only users whose profile is visible to anyone, to friends & currentUser is friend, and friends of friends & currentUser is a friend of a user's friend
   const allOtherNonFriendUsers: TUser[] = allUsers.filter(
     (user) =>
-      currentUser?.id &&
-      user.id !== currentUser.id &&
-      !user.friends.includes(currentUser.id)
+      currentUser?._id &&
+      user._id !== currentUser._id &&
+      !user.friends.includes(currentUser._id)
   );
   const nonFriendUsersVisibleToAnyone: TUser[] = allOtherNonFriendUsers.filter(
     (user) => user.profileVisibleTo === "anyone"
@@ -321,16 +321,16 @@ const DisplayedCardsPage = ({
     let displayablePotentialFriends = nonFriendUsersVisibleToAnyone;
 
     for (const user of nonFriendUsersVisibleToFriendsOfFriends) {
-      // for each friend of user, check if their friends arr includes currentUser.id
+      // for each friend of user, check if their friends arr includes currentUser._id
       // will need to get TUser of friend, not just id
       const userFriends: TUser[] = []; // array of user's friends in TUser form
       // Push user in allUsers w/ id that matches friendID into userFriends
       for (const friendID of user.friends) {
-        userFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
+        userFriends.push(allUsers.filter((u) => u._id === friendID)[0]);
       }
-      /* for every friend of userFriends, check if their friends list includes currentUser.id & push to displayablePotentialFriends if it does */
+      /* for every friend of userFriends, check if their friends list includes currentUser._id & push to displayablePotentialFriends if it does */
       for (const friend of userFriends) {
-        if (currentUser?.id && friend.friends.includes(currentUser.id)) {
+        if (currentUser?._id && friend.friends.includes(currentUser._id)) {
           displayablePotentialFriends.push(friend);
         }
       }
@@ -344,7 +344,7 @@ const DisplayedCardsPage = ({
     let currentUserFriends: TUser[] = [];
     if (currentUser?.friends) {
       for (const friendID of currentUser.friends) {
-        currentUserFriends.push(allUsers.filter((u) => u.id === friendID)[0]);
+        currentUserFriends.push(allUsers.filter((u) => u._id === friendID)[0]);
       }
     }
     // get TUser object that matches each id in friends array of each of currentUser's friends
@@ -353,9 +353,9 @@ const DisplayedCardsPage = ({
       for (const friendID of friend.friends) {
         const friendOfFriend: TUser | undefined = allUsers.filter(
           (u) =>
-            friendID !== currentUser?.id &&
+            friendID !== currentUser?._id &&
             !currentUser?.friends.includes(friendID) &&
-            u.id === friendID
+            u._id === friendID
         )[0];
         /* Necessary to check that friendOfFriend is truthy b/c it would sometimes be undefined if no user in allUsers fit the criteria (without this check, undefined would be pushed to friendsOfFriends) */
         if (friendOfFriend) {
@@ -414,7 +414,7 @@ const DisplayedCardsPage = ({
   const currentUserPalz: TUser[] = [];
   if (currentUser?.friends) {
     for (const id of currentUser.friends) {
-      currentUserPalz.push(allUsers.filter((user) => user.id === id)[0]);
+      currentUserPalz.push(allUsers.filter((user) => user._id === id)[0]);
     }
   }
 
@@ -481,7 +481,7 @@ const DisplayedCardsPage = ({
           for (const filterOptionEvent of Methods.sortEventsSoonestToLatest(
             filterOptionEvents
           )) {
-            if (!newDisplayedItems.map((ev) => ev.id).includes(filterOptionEvent?.id)) {
+            if (!newDisplayedItems.map((ev) => ev._id).includes(filterOptionEvent?.id)) {
               newDisplayedItems.push(filterOptionEvent);
             }
           }
@@ -497,8 +497,8 @@ const DisplayedCardsPage = ({
           for (const filterOptionPotentialFriend of filterOptionPotentialFriends) {
             if (
               !newDisplayedItems
-                .map((potFriend) => potFriend.id)
-                .includes(filterOptionPotentialFriend?.id)
+                .map((potFriend) => potFriend._id)
+                .includes(filterOptionPotentialFriend?._id)
             ) {
               newDisplayedItems.push(filterOptionPotentialFriend);
             }
@@ -513,8 +513,8 @@ const DisplayedCardsPage = ({
           for (const filterOptionFriend of filterOptionFriends) {
             if (
               !newDisplayedItems
-                .map((friend) => friend.id)
-                .includes(filterOptionFriend?.id)
+                .map((friend) => friend._id)
+                .includes(filterOptionFriend?._id)
             ) {
               newDisplayedItems.push(filterOptionFriend);
             }
@@ -544,7 +544,7 @@ const DisplayedCardsPage = ({
           let eventOrganizerNames: string[] = [];
           let eventOrganizerUsernames: string[] = [];
           for (const id of event.organizers) {
-            const matchingUser: TUser = allUsers.filter((user) => user?.id === id)[0];
+            const matchingUser: TUser = allUsers.filter((user) => user?._id === id)[0];
 
             const fullName: string = `${matchingUser.firstName?.toLowerCase()} ${matchingUser.lastName?.toLowerCase()}`;
             eventOrganizerNames.push(fullName);
@@ -717,7 +717,7 @@ const DisplayedCardsPage = ({
           )}
         {(usedFor === "potential-friends" || usedFor === "my-friends") &&
           displayedItems.map(
-            (item) => isTUser(item) && <UserCard key={item.id} user={item} />
+            (item) => isTUser(item) && <UserCard key={item._id} user={item} />
           )}
       </div>
     </div>

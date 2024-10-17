@@ -76,7 +76,7 @@ const patchUpdatedUserInfo = (
 
   const raw = JSON.stringify(valuesToUpdate);
 
-  return fetch(`http://localhost:3000/users/${user?.id}`, {
+  return fetch(`http://localhost:3000/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -94,7 +94,7 @@ const deletePhoneNumber = (user: TUser | undefined): Promise<Response> => {
     "phoneNumberWithoutCountryCode": "",
   });
 
-  return fetch(`http://localhost:3000/users/${user?.id}`, {
+  return fetch(`http://localhost:3000/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -112,7 +112,7 @@ const deleteLocation = (user: TUser | undefined): Promise<Response> => {
     "country": "",
   });
 
-  return fetch(`http://localhost:3000/users/${user?.id}`, {
+  return fetch(`http://localhost:3000/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -128,7 +128,7 @@ const deleteUserAbout = (user: TUser | undefined): Promise<Response> => {
     "about": "",
   });
 
-  return fetch(`http://localhost:3000/users/${user?.id}`, {
+  return fetch(`http://localhost:3000/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -155,7 +155,7 @@ const deleteSocialMedium = (
 
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${user?.id}`, {
+  return fetch(`http://localhost:3000/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -177,7 +177,7 @@ const deleteUserInterest = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${user?.id}`, {
+  return fetch(`http://localhost:3000/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -207,7 +207,7 @@ const addUserInterest = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${user?.id}`, {
+  return fetch(`http://localhost:3000/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -287,7 +287,7 @@ const addUserRSVP = (user: TUser | undefined, event: TEvent): Promise<Response> 
     updatedInterestedUsersArray.push(intUser);
   }
   if (user?.username) {
-    updatedInterestedUsersArray.push(user.id);
+    updatedInterestedUsersArray.push(user._id);
   }
 
   const getRaw = () => {
@@ -311,7 +311,7 @@ const deleteUserRSVP = (user: TUser | undefined, event: TEvent) => {
 
   const getRaw = () => {
     return JSON.stringify({
-      "interestedUsers": event?.interestedUsers.filter((id) => id !== user?.id),
+      "interestedUsers": event?.interestedUsers.filter((id) => id !== user?._id),
     });
   };
   const raw = getRaw();
@@ -396,7 +396,7 @@ const removeInvitee = (event: TEvent, user: TUser | undefined): Promise<Response
 
   const getRaw = () => {
     return JSON.stringify({
-      "invitees": event.invitees.filter((id) => id !== user?.id),
+      "invitees": event.invitees.filter((id) => id !== user?._id),
     });
   };
   const raw = getRaw();
@@ -418,7 +418,7 @@ const removeOrganizer = (
 
   const getRaw = () => {
     return JSON.stringify({
-      "organizers": event?.organizers.filter((id) => id !== user?.id),
+      "organizers": event?.organizers.filter((id) => id !== user?._id),
     });
   };
   const raw = getRaw();
@@ -453,7 +453,7 @@ const addToFriendRequestsReceived = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${recipient?.id}`, {
+  return fetch(`http://localhost:3000/users/${recipient?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -483,7 +483,7 @@ const addToFriendRequestsSent = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${sender?.id}`, {
+  return fetch(`http://localhost:3000/users/${sender?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -508,7 +508,7 @@ const removeFromFriendRequestsReceived = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${recipient?.id}`, {
+  return fetch(`http://localhost:3000/users/${recipient?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -533,7 +533,7 @@ const removeFromFriendRequestsSent = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${sender?.id}`, {
+  return fetch(`http://localhost:3000/users/${sender?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -561,7 +561,7 @@ const removeFromFriendRequestsSent = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${recipient?.id}`, {
+  return fetch(`http://localhost:3000/users/${recipient?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,

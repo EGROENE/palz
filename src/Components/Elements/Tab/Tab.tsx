@@ -31,7 +31,7 @@ const Tab = ({
   return (
     <div
       title={typeof info !== "string" ? `${info.firstName} ${info.lastName}` : undefined}
-      key={typeof info === "string" ? info : info.id}
+      key={typeof info === "string" ? info : info._id}
       style={{ backgroundColor: randomColor }}
       className={isDisabled ? `${styles.tab} disabled` : `${styles.tab}`}
     >

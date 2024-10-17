@@ -31,17 +31,17 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   // Make sure that this updates after user de-RSVPs
   const userRSVPd: boolean =
-    currentUser && currentUser.id
-      ? event.interestedUsers.includes(currentUser.id)
+    currentUser && currentUser._id
+      ? event.interestedUsers.includes(currentUser._id)
       : false;
 
-  const userIsInvitee: boolean = currentUser?.id
-    ? event.invitees.includes(currentUser.id)
+  const userIsInvitee: boolean = currentUser?._id
+    ? event.invitees.includes(currentUser._id)
     : false;
 
   const refinedOrganizers: (string | number)[] = [];
   for (const organizer of event.organizers) {
-    if (allUsers.map((user) => user.id).includes(organizer)) {
+    if (allUsers.map((user) => user._id).includes(organizer)) {
       refinedOrganizers.push(organizer);
     }
   }
@@ -49,14 +49,14 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const getOrganizersUsernames = (): (string | undefined)[] => {
     const usernameArray: Array<string | undefined> = [];
     for (const organizerID of refinedOrganizers) {
-      usernameArray.push(allUsers.filter((user) => user.id === organizerID)[0].username);
+      usernameArray.push(allUsers.filter((user) => user._id === organizerID)[0].username);
     }
     return usernameArray;
   };
   const organizerUsernames = getOrganizersUsernames();
 
   const userIsOrganizer =
-    currentUser && currentUser.id && refinedOrganizers.includes(currentUser.id)
+    currentUser && currentUser._id && refinedOrganizers.includes(currentUser._id)
       ? true
       : false;
 

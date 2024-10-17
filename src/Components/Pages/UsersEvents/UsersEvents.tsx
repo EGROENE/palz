@@ -42,16 +42,16 @@ const UsersEvents = () => {
 
   const pastEventsUserOrganized: TEvent[] = allEvents.filter(
     (event) =>
-      currentUser?.id &&
-      event.creator !== currentUser?.id &&
-      event.organizers.includes(currentUser.id) &&
+      currentUser?._id &&
+      event.creator !== currentUser?._id &&
+      event.organizers.includes(currentUser._id) &&
       event.eventEndDateTimeInMS < now
   );
 
   const pastEventsUserRSVPd: TEvent[] = allEvents.filter(
     (event) =>
-      currentUser?.id &&
-      event.interestedUsers.includes(currentUser.id) &&
+      currentUser?._id &&
+      event.interestedUsers.includes(currentUser._id) &&
       event.eventEndDateTimeInMS < now
   );
 
@@ -59,24 +59,24 @@ const UsersEvents = () => {
     (event) =>
       (event.eventStartDateTimeInMS > now || // if start is in future
         event.eventEndDateTimeInMS > now) && // if end is in future
-      currentUser?.id &&
-      event.organizers.includes(currentUser.id)
+      currentUser?._id &&
+      event.organizers.includes(currentUser._id)
   );
 
   const currentUpcomingEventsUserInvitedTo: TEvent[] = allEvents.filter(
     (event) =>
       (event.eventStartDateTimeInMS > now || // if start is in future
         event.eventEndDateTimeInMS > now) && // if end is in future
-      currentUser?.id &&
-      event.invitees.includes(currentUser.id)
+      currentUser?._id &&
+      event.invitees.includes(currentUser._id)
   );
 
   const currentUpcomingEventsUserRSVPdTo: TEvent[] = allEvents.filter(
     (event) =>
       (event.eventStartDateTimeInMS > now || // if start is in future
         event.eventEndDateTimeInMS > now) && // if end is in future
-      currentUser?.id &&
-      event.interestedUsers.includes(currentUser.id)
+      currentUser?._id &&
+      event.interestedUsers.includes(currentUser._id)
   );
 
   const usersEvents = [

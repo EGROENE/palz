@@ -37,7 +37,7 @@ const UserCard = ({ user }: { user: TUser }) => {
     let requestToUpdateSenderAndReceiverFriendRequestArraysIsOK: boolean = true;
 
     const addToFriendRequestsReceived = Requests.addToFriendRequestsReceived(
-      sender.id,
+      sender._id,
       recipient
     )
       .then((response) => {
@@ -47,7 +47,10 @@ const UserCard = ({ user }: { user: TUser }) => {
       })
       .catch((error) => console.log(error));
 
-    const addToFriendRequestsSent = Requests.addToFriendRequestsSent(sender, recipient.id)
+    const addToFriendRequestsSent = Requests.addToFriendRequestsSent(
+      sender,
+      recipient._id
+    )
       .then((response) => {
         if (!response.ok) {
           requestToUpdateSenderAndReceiverFriendRequestArraysIsOK = false;
@@ -79,7 +82,7 @@ const UserCard = ({ user }: { user: TUser }) => {
     let requestToUpdateSenderAndReceiverFriendRequestArraysIsOK: boolean = true;
 
     const removeFromFriendRequestsReceived = Requests.removeFromFriendRequestsReceived(
-      sender.id,
+      sender._id,
       recipient
     )
       .then((response) => {
@@ -90,7 +93,7 @@ const UserCard = ({ user }: { user: TUser }) => {
       .catch((error) => console.log(error));
 
     const removeFromFriendRequestsSent = Requests.removeFromFriendRequestsSent(
-      recipient.id,
+      recipient._id,
       sender
     )
       .then((response) => {
@@ -154,18 +157,18 @@ const UserCard = ({ user }: { user: TUser }) => {
         <button
           onClick={() => {
             /* sender below is absolute most-current version of currentUser. currentUser itself (the state value) doesn't update in time if friend requests are sent/rescinded, but the corresponding user in allUsers does update in time, so sender is simply that value, captured when Add/Retract friend req btn is clicked. */
-            const sender = allUsers.filter((user) => user.id === currentUser?.id)[0];
-            currentUser?.id &&
-              user.id &&
-              (user.friendRequestsReceived.includes(currentUser.id) &&
-              sender.friendRequestsSent.includes(user.id)
+            const sender = allUsers.filter((user) => user._id === currentUser?._id)[0];
+            currentUser?._id &&
+              user._id &&
+              (user.friendRequestsReceived.includes(currentUser._id) &&
+              sender.friendRequestsSent.includes(user._id)
                 ? handleRetractFriendRequest(sender, user)
                 : handleSendFriendRequest(sender, user));
           }}
           disabled={buttonsAreDisabled}
           style={{ backgroundColor: randomColor }}
         >
-          {currentUser?.id && user.friendRequestsReceived.includes(currentUser.id) ? (
+          {currentUser?._id && user.friendRequestsReceived.includes(currentUser._id) ? (
             <>
               <i className="fas fa-user-minus"></i>Retract Request
             </>

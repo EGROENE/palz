@@ -122,9 +122,9 @@ const UserSettings = () => {
 
       // Delete user from events they've organized or delete events of which user is sole organizer:
       if (
-        currentUser?.id &&
+        currentUser?._id &&
         event.organizers.length === 1 &&
-        event.organizers.includes(currentUser.id)
+        event.organizers.includes(currentUser._id)
       ) {
         promisesToAwait.push(Requests.deleteEvent(event));
         Requests.deleteEvent(event)
@@ -154,7 +154,7 @@ const UserSettings = () => {
         if (!requestToDeleteUserIDFromAllArraysIsOK) {
           toast.error("Account deletion incomplete; please try again.");
         } else {
-          Requests.deleteUser(currentUser?.id)
+          Requests.deleteUser(currentUser?._id)
             .then((response) => {
               if (!response.ok) {
                 toast.error("Account deletion incomplete; please try again.");

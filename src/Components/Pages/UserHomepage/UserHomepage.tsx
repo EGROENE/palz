@@ -32,13 +32,13 @@ const UserHomepage = () => {
   }, [currentUser, navigation, userCreatedAccount]);
 
   const userRSVPDEvents: TEvent[] = allEvents.filter(
-    (ev) => currentUser?.id && ev.interestedUsers.includes(currentUser.id)
+    (ev) => currentUser?._id && ev.interestedUsers.includes(currentUser._id)
   );
   const userOrganizedEvents: TEvent[] = allEvents.filter(
-    (ev) => currentUser?.id && ev.organizers.includes(currentUser.id)
+    (ev) => currentUser?._id && ev.organizers.includes(currentUser._id)
   );
   const eventsUserIsInvitedTo = allEvents.filter(
-    (ev) => currentUser?.id && ev.invitees.includes(currentUser.id)
+    (ev) => currentUser?._id && ev.invitees.includes(currentUser._id)
   );
   const allCurrentUserEvents = Methods.removeDuplicatesFromArray(
     userRSVPDEvents.concat(userOrganizedEvents).concat(eventsUserIsInvitedTo)

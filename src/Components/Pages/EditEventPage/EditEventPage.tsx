@@ -23,7 +23,7 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
     }
 
     /* If user access event's edit page, but is not an organizer, redirect to their homepage & tell them they don't have permission to edit event */
-    if (currentUser?.id && !currentEvent?.organizers.includes(currentUser.id)) {
+    if (currentUser?._id && !currentEvent?.organizers.includes(currentUser._id)) {
       navigation(`/users/${currentUser.username}`);
       toast.error("You do not have permission to edit this event.");
     }

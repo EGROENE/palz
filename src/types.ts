@@ -8,7 +8,7 @@ export type TThemeColor =
   | "var(--theme-orange)";
 
 export type TUser = {
-  id?: number | string;
+  _id?: number | string;
   firstName: string | undefined;
   lastName: string | undefined;
   username: string | undefined;
