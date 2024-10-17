@@ -48,11 +48,11 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   }, [allUsers]);
 
   // CHANGE PORT NUMBER IN REQUEST TO 4000
-  /* useEffect(() => {
+  useEffect(() => {
     fetchAllEvents();
   }, [allEvents]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     Requests.getAttendedEventsByUser()
       .then((response) => {
         return response.text();
