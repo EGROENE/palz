@@ -37,11 +37,63 @@ const getUser = async (req, res) => {
 
 // create new user
 const createNewUser = async (req, res) => {
-  const { firstName, lastName } = req.body;
+  const {
+    firstName,
+    lastName,
+    password,
+    city,
+    stateProvince,
+    country,
+    phoneCountry,
+    phoneCountryCode,
+    phoneCountryWithoutCountryCode,
+    instagram,
+    facebook,
+    x,
+    interests,
+    about,
+    friendRequestsReceived,
+    friendRequestsSent,
+    hostingCredits,
+    profileImage,
+    profileVisibleTo,
+    subscriptionType,
+    whoCanAddUserAsOrganizer,
+    whoCanInviteUser,
+    username,
+    friends,
+    emailAddress,
+  } = req.body;
 
   // add document to DB:
   try {
-    const user = await User.create({ firstName, lastName });
+    const user = await User.create({
+      firstName,
+      lastName,
+      password,
+      city,
+      stateProvince,
+      country,
+      phoneCountry,
+      phoneCountryCode,
+      phoneCountryWithoutCountryCode,
+      instagram,
+      facebook,
+      x,
+      interests,
+      about,
+      friendRequestsReceived,
+      friendRequestsSent,
+      hostingCredits,
+      profileImage,
+      profileVisibleTo,
+      subscriptionType,
+      whoCanAddUserAsOrganizer,
+      whoCanInviteUser,
+      username,
+      friends,
+      emailAddress,
+    });
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ error: error.message });
