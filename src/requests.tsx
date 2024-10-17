@@ -8,13 +8,13 @@ const getAllUsers = (): Promise<TUser[]> => {
 };
 
 const getAllEvents = (): Promise<TEvent[]> => {
-  return fetch("http://localhost:3000/events", {
+  return fetch("http://localhost:4000/palz/events", {
     method: "GET",
     redirect: "follow",
   }).then((response) => response.json() as Promise<TEvent[]>);
 };
 
-const getAttendedEventsByUser = (): Promise<Response> => {
+/* const getAttendedEventsByUser = (): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json");
 
@@ -23,7 +23,7 @@ const getAttendedEventsByUser = (): Promise<Response> => {
     headers: myHeaders,
     redirect: "follow",
   });
-};
+}; */
 
 const createUser = (newUserData: TUser): Promise<Response> => {
   const myHeaders = new Headers();
@@ -583,7 +583,7 @@ const Requests = {
   deleteUserRSVP,
   getAllUsers,
   getAllEvents,
-  getAttendedEventsByUser,
+  //getAttendedEventsByUser,
   createUser,
   patchUpdatedUserInfo,
   deletePhoneNumber,
