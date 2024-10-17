@@ -11,6 +11,7 @@ const cors = require("cors");
 app.use(cors());
 
 const userRoutes = require("./routes/users.cjs");
+const eventRoutes = require("./routes/events.cjs");
 
 // MIDDLEWARE
 app.use(express.json()); // if any request has data that it sends to the server, this attaches it to request object, so we can access it in request handler
@@ -22,7 +23,7 @@ app.use((req, res, next) => {
 
 // ROUTES
 app.use("/palz/users", userRoutes);
-// app.use("/events", eventRoutes)
+app.use("/palz/events", eventRoutes);
 // app.use("/messages", messageRoutes)
 
 // Connect to Mongoose:
