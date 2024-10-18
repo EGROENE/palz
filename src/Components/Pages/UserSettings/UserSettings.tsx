@@ -43,8 +43,15 @@ const UserSettings = () => {
     }
   }, []);
 
-  const { currentUser, theme, toggleTheme, fetchAllEvents, fetchAllUsers, allEvents } =
-    useMainContext();
+  const {
+    currentUser,
+    theme,
+    toggleTheme,
+    fetchAllEvents,
+    fetchAllUsers,
+    allUsers,
+    allEvents,
+  } = useMainContext();
   const { showSidebar, setShowSidebar, logout, passwordIsHidden, setPasswordIsHidden } =
     useUserContext();
 
@@ -144,6 +151,20 @@ const UserSettings = () => {
           })
           .catch((error) => console.log(error));
       }
+    }
+
+    // Delete user from friendRequestsReceived arrays in other users' DB documents:
+    for (const user of allUsers) {
+      promisesToAwait.push(
+        Requests.removeFromFriendRequestsReceived(currentUser?._id, user)
+      );
+      Requests.removeFromFriendRequestsReceived(currentUser?._id, user)
+        .then((response) => {
+          if (!response.ok) {
+            requestToDeleteUserIDFromAllArraysIsOK = false;
+          }
+        })
+        .catch((error) => console.log(error));
     }
 
     // Wait for user to be removed from all invitee/organizer/RSVP arrays, then delete user object in DB. Eventually, also wait for user to be removed from palz & messages arrays.
