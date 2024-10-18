@@ -35,7 +35,7 @@ const userSchema = new Schema({
     type: String,
     required: false,
   },
-  phoneCountryWithoutCountryCode: {
+  phoneNumberWithoutCountryCode: {
     type: String,
     required: false,
   },
