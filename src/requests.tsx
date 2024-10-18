@@ -14,17 +14,6 @@ const getAllEvents = (): Promise<TEvent[]> => {
   }).then((response) => response.json() as Promise<TEvent[]>);
 };
 
-/* const getAttendedEventsByUser = (): Promise<Response> => {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-type", "application/json");
-
-  return fetch("http://localhost:3000/attended-events", {
-    method: "GET",
-    headers: myHeaders,
-    redirect: "follow",
-  });
-}; */
-
 const createUser = (newUserData: TUser): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -59,7 +48,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "whoCanInviteUser": newUserData.whoCanInviteUser,
   });
 
-  return fetch("http://localhost:3000/users", {
+  return fetch("http://localhost:4000/palz/users", {
     method: "POST",
     headers: myHeaders,
     body: raw,
@@ -76,7 +65,7 @@ const patchUpdatedUserInfo = (
 
   const raw = JSON.stringify(valuesToUpdate);
 
-  return fetch(`http://localhost:3000/users/${user?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -94,7 +83,7 @@ const deletePhoneNumber = (user: TUser | undefined): Promise<Response> => {
     "phoneNumberWithoutCountryCode": "",
   });
 
-  return fetch(`http://localhost:3000/users/${user?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -112,7 +101,7 @@ const deleteLocation = (user: TUser | undefined): Promise<Response> => {
     "country": "",
   });
 
-  return fetch(`http://localhost:3000/users/${user?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -128,7 +117,7 @@ const deleteUserAbout = (user: TUser | undefined): Promise<Response> => {
     "about": "",
   });
 
-  return fetch(`http://localhost:3000/users/${user?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -155,7 +144,7 @@ const deleteSocialMedium = (
 
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${user?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -177,7 +166,7 @@ const deleteUserInterest = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${user?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -207,7 +196,7 @@ const addUserInterest = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${user?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -237,7 +226,7 @@ const addEventInterest = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/events/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event?.id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -259,7 +248,7 @@ const deleteEventInterest = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/users/${event?.id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -271,7 +260,7 @@ const deleteUser = (userID: number | string | undefined): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json");
 
-  return fetch(`http://localhost:3000/users/${userID}`, {
+  return fetch(`http://localhost:4000/palz/users/${userID}`, {
     method: "DELETE",
     headers: myHeaders,
     redirect: "follow",
@@ -297,7 +286,7 @@ const addUserRSVP = (user: TUser | undefined, event: TEvent): Promise<Response> 
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/events/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event?.id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -316,7 +305,7 @@ const deleteUserRSVP = (user: TUser | undefined, event: TEvent) => {
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/events/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event?.id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -354,7 +343,7 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
     "relatedInterests": eventData.relatedInterests,
   });
 
-  return fetch("http://localhost:3000/events", {
+  return fetch("http://localhost:4000/palz/events", {
     method: "POST",
     headers: myHeaders,
     body: raw,
@@ -371,7 +360,7 @@ const updateEvent = (
 
   const raw = JSON.stringify(valuesToUpdate);
 
-  return fetch(`http://localhost:3000/events/${event.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event.id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -383,7 +372,7 @@ const deleteEvent = (event: TEvent | undefined): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  return fetch(`http://localhost:3000/events/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event?.id}`, {
     method: "DELETE",
     headers: myHeaders,
     redirect: "follow",
@@ -401,7 +390,7 @@ const removeInvitee = (event: TEvent, user: TUser | undefined): Promise<Response
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/events/${event.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event.id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -423,7 +412,7 @@ const removeOrganizer = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/events/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event?.id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -453,7 +442,7 @@ const addToFriendRequestsReceived = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${recipient?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${recipient?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -483,7 +472,7 @@ const addToFriendRequestsSent = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${sender?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${sender?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -508,7 +497,7 @@ const removeFromFriendRequestsReceived = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${recipient?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${recipient?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -533,7 +522,7 @@ const removeFromFriendRequestsSent = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:3000/users/${sender?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${sender?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
