@@ -26,7 +26,7 @@ export type TUser = {
   profileImage: string;
   about: string;
   friends: (string | number)[];
-  subscriptionType: string;
+  subscriptionType: "free" | "bronze" | "silver" | "gold" | "platinum";
   hostingCredits: number;
   interests: string[];
   whoCanAddUserAsOrganizer: "friends" | "anyone" | "nobody" | undefined;
