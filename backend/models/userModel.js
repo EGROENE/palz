@@ -17,39 +17,39 @@ const userSchema = new Schema({
   },
   city: {
     type: String,
-    required: true,
+    required: false,
   },
   stateProvince: {
     type: String,
-    required: true,
+    required: false,
   },
   country: {
     type: String,
-    required: true,
+    required: false,
   },
   phoneCountry: {
     type: String,
-    required: true,
+    required: false,
   },
   phoneCountryCode: {
     type: String,
-    required: true,
+    required: false,
   },
   phoneCountryWithoutCountryCode: {
     type: String,
-    required: true,
+    required: false,
   },
   instagram: {
     type: String,
-    required: true,
+    required: false,
   },
   facebook: {
     type: String,
-    required: true,
+    required: false,
   },
   x: {
     type: String,
-    required: true,
+    required: false,
   },
   interests: {
     type: Array,
@@ -57,7 +57,7 @@ const userSchema = new Schema({
   },
   about: {
     type: String,
-    required: true,
+    required: false,
   },
   friendRequestsReceived: {
     type: Array,
@@ -81,7 +81,7 @@ const userSchema = new Schema({
   },
   subscriptionType: {
     type: String,
-    required: true,
+    required: false,
   },
   whoCanAddUserAsOrganizer: {
     type: String,
