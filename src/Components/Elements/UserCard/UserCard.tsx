@@ -26,9 +26,17 @@ const UserCard = ({ user }: { user: TUser }) => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
+  const matchingCountryObject:
+    | {
+        country: string;
+        abbreviation: string;
+        phoneCode: string;
+      }
+    | undefined = countries.filter((country) => country.country === user.country)[0];
+
   const userCountryAbbreviation: string | undefined =
-    user.country !== ""
-      ? countries.filter((country) => country.country === user.country)[0].abbreviation
+    user.country !== "" && matchingCountryObject
+      ? matchingCountryObject.abbreviation
       : undefined;
 
   const handleSendFriendRequest = (sender: TUser, recipient: TUser): void => {
