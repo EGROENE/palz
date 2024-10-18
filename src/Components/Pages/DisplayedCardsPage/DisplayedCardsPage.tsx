@@ -119,7 +119,9 @@ const DisplayedCardsPage = ({
             Object.values(eventFilterOptions)[indexOfArrayInFilterOptions];
 
           for (const filterOptionEvent of filterOptionEvents) {
-            if (!newDisplayedEvents.map((ev) => ev.id).includes(filterOptionEvent?.id)) {
+            if (
+              !newDisplayedEvents.map((ev) => ev._id).includes(filterOptionEvent?._id)
+            ) {
               newDisplayedEvents.push(filterOptionEvent);
             }
           }
@@ -481,7 +483,7 @@ const DisplayedCardsPage = ({
           for (const filterOptionEvent of Methods.sortEventsSoonestToLatest(
             filterOptionEvents
           )) {
-            if (!newDisplayedItems.map((ev) => ev._id).includes(filterOptionEvent?.id)) {
+            if (!newDisplayedItems.map((ev) => ev._id).includes(filterOptionEvent?._id)) {
               newDisplayedItems.push(filterOptionEvent);
             }
           }
@@ -713,7 +715,7 @@ const DisplayedCardsPage = ({
       <div className="all-events-container">
         {usedFor === "events" &&
           displayedItems.map(
-            (item) => isTEvent(item) && <EventCard key={item.id} event={item} />
+            (item) => isTEvent(item) && <EventCard key={item._id} event={item} />
           )}
         {(usedFor === "potential-friends" || usedFor === "my-friends") &&
           displayedItems.map(

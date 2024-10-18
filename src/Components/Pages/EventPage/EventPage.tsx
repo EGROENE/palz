@@ -68,7 +68,7 @@ const EventPage = () => {
   }, []);
 
   useEffect(() => {
-    setEvent(allEvents.filter((ev) => ev.id === eventID)[0]);
+    setEvent(allEvents.filter((ev) => ev._id === eventID)[0]);
   }, [allEvents]);
 
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */

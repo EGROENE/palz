@@ -226,7 +226,7 @@ const addEventInterest = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -248,7 +248,7 @@ const deleteEventInterest = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/users/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -286,7 +286,7 @@ const addUserRSVP = (user: TUser | undefined, event: TEvent): Promise<Response> 
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -305,7 +305,7 @@ const deleteUserRSVP = (user: TUser | undefined, event: TEvent) => {
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -360,7 +360,7 @@ const updateEvent = (
 
   const raw = JSON.stringify(valuesToUpdate);
 
-  return fetch(`http://localhost:4000/palz/events/${event.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -372,7 +372,7 @@ const deleteEvent = (event: TEvent | undefined): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  return fetch(`http://localhost:4000/palz/events/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
     method: "DELETE",
     headers: myHeaders,
     redirect: "follow",
@@ -390,7 +390,7 @@ const removeInvitee = (event: TEvent, user: TUser | undefined): Promise<Response
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -412,7 +412,7 @@ const removeOrganizer = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event?.id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,

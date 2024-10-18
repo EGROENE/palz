@@ -1084,12 +1084,12 @@ const EventForm = ({
 
     // If event passed to this component, setCurrentEvent in mainContext to that:
     if (event) {
-      setCurrentEvent(allEvents.filter((ev) => ev.id === event.id)[0]);
+      setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
     }
   }, []);
 
   useEffect(() => {
-    setCurrentEvent(allEvents.filter((ev) => ev.id === event?.id)[0]);
+    setCurrentEvent(allEvents.filter((ev) => ev._id === event?._id)[0]);
   }, [allEvents]);
 
   useEffect(() => {

@@ -37,7 +37,7 @@ export type TUser = {
 };
 
 export type TEvent = {
-  id?: string | number;
+  _id?: string | number;
   creator: string | number | undefined;
   title: string;
   organizers: (string | number)[];

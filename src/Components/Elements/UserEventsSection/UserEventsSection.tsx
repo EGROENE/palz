@@ -15,7 +15,7 @@ const UserEventsSection = ({
       <h2>{header}</h2>
       <div className={`${styles.userEventsSectionEventsContainer}`}>
         {Methods.sortEventsSoonestToLatest(eventsArray).map((event) => (
-          <EventCard key={event.id} event={event} />
+          <EventCard key={event._id} event={event} />
         ))}
       </div>
     </section>

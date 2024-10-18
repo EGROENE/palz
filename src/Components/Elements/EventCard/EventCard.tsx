@@ -112,7 +112,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
         <i
           onClick={() => {
             setCurrentEvent(event);
-            navigator.clipboard.writeText(`localhost:5173/events/${event.id}`);
+            navigator.clipboard.writeText(`localhost:5173/events/${event._id}`);
             toast.success("Link copied!");
           }}
           className="fas fa-link"
@@ -138,7 +138,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                 style={{ backgroundColor: randomColor }}
                 onClick={() => setCurrentEvent(event)}
                 className={styles.eventButtonsContainerButton}
-                to={`/events/${event.id}`}
+                to={`/events/${event._id}`}
               >
                 See Event
               </Link>
@@ -161,7 +161,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                 ) : (
                   <Link
                     onClick={() => setCurrentEvent(event)}
-                    to={`/edit-event/${event.id}`}
+                    to={`/edit-event/${event._id}`}
                     className={styles.eventButtonsContainerButton}
                   >
                     Edit Event

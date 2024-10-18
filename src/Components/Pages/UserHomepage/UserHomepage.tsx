@@ -60,7 +60,7 @@ const UserHomepage = () => {
             >
               {Methods.sortEventsSoonestToLatest(allCurrentUserEvents).map(
                 (event: TEvent) => (
-                  <EventCard key={event.id} event={event} />
+                  <EventCard key={event._id} event={event} />
                 )
               )}
             </div>

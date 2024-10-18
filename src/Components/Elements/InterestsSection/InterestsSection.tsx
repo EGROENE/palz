@@ -68,7 +68,7 @@ const InterestsSection = ({
       // Returns allOtherEventInterests + allUserInterests - interests that exist on currentEvent
       const allOtherEventInterests: string[] = Methods.removeDuplicatesFromArray(
         allEvents
-          .filter((ev) => ev.id !== currentEvent?.id)
+          .filter((ev) => ev._id !== currentEvent?._id)
           .map((ev) => ev.relatedInterests)
           .flat()
           .filter((int) => !currentEvent.relatedInterests.includes(int))
