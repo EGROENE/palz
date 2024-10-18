@@ -92,7 +92,7 @@ const eventSchema = new Schema({
     required: true,
   },
   maxParticipants: {
-    type: Number | null,
+    type: Schema.Types.Mixed,
     required: true,
   },
 });
