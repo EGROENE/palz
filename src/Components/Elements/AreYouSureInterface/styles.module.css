@@ -27,7 +27,7 @@
 }
 
 .areYouSureModal p {
-  color: var(--text-color-opposite);
+  color: var(--text-color);
 }
 
 .buttonsContainer {
