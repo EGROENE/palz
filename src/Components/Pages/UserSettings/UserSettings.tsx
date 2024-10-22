@@ -153,12 +153,22 @@ const UserSettings = () => {
       }
     }
 
-    // Delete user from friendRequestsReceived arrays in other users' DB documents:
+    // Delete user from friendRequestsReceived & friends arrays in other users' DB documents:
     for (const user of allUsers) {
       promisesToAwait.push(
-        Requests.removeFromFriendRequestsReceived(currentUser?._id, user)
+        Requests.removeFromFriendRequestsReceived(currentUser?._id, user),
+        Requests.deleteFriendFromFriendsArray(user, currentUser?._id)
       );
+
       Requests.removeFromFriendRequestsReceived(currentUser?._id, user)
+        .then((response) => {
+          if (!response.ok) {
+            requestToDeleteUserIDFromAllArraysIsOK = false;
+          }
+        })
+        .catch((error) => console.log(error));
+
+      Requests.deleteFriendFromFriendsArray(user, currentUser?._id)
         .then((response) => {
           if (!response.ok) {
             requestToDeleteUserIDFromAllArraysIsOK = false;
