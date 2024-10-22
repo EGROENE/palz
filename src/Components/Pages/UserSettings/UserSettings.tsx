@@ -109,23 +109,9 @@ const UserSettings = () => {
     for (const event of allEvents) {
       // Delete any user RSVPs:
       promisesToAwait.push(Requests.deleteUserRSVP(currentUser, event));
-      Requests.deleteUserRSVP(currentUser, event)
-        .then((response) => {
-          if (!response.ok) {
-            requestToDeleteUserIDFromAllArraysIsOK = false;
-          }
-        })
-        .catch((error) => console.log(error));
 
       // Delete user from events they've been invited to:
       promisesToAwait.push(Requests.removeInvitee(event, currentUser));
-      Requests.removeInvitee(event, currentUser)
-        .then((response) => {
-          if (!response.ok) {
-            requestToDeleteUserIDFromAllArraysIsOK = false;
-          }
-        })
-        .catch((error) => console.log(error));
 
       // Delete user from events they've organized or delete events of which user is sole organizer:
       if (
@@ -134,22 +120,8 @@ const UserSettings = () => {
         event.organizers.includes(currentUser._id)
       ) {
         promisesToAwait.push(Requests.deleteEvent(event));
-        Requests.deleteEvent(event)
-          .then((response) => {
-            if (!response.ok) {
-              requestToDeleteUserIDFromAllArraysIsOK = false;
-            }
-          })
-          .catch((error) => console.log(error));
       } else {
         promisesToAwait.push(Requests.removeOrganizer(event, currentUser));
-        Requests.removeOrganizer(event, currentUser)
-          .then((response) => {
-            if (!response.ok) {
-              requestToDeleteUserIDFromAllArraysIsOK = false;
-            }
-          })
-          .catch((error) => console.log(error));
       }
     }
 
@@ -159,27 +131,20 @@ const UserSettings = () => {
         Requests.removeFromFriendRequestsReceived(currentUser?._id, user),
         Requests.deleteFriendFromFriendsArray(user, currentUser?._id)
       );
-
-      Requests.removeFromFriendRequestsReceived(currentUser?._id, user)
-        .then((response) => {
-          if (!response.ok) {
-            requestToDeleteUserIDFromAllArraysIsOK = false;
-          }
-        })
-        .catch((error) => console.log(error));
-
-      Requests.deleteFriendFromFriendsArray(user, currentUser?._id)
-        .then((response) => {
-          if (!response.ok) {
-            requestToDeleteUserIDFromAllArraysIsOK = false;
-          }
-        })
-        .catch((error) => console.log(error));
     }
 
     // Wait for user to be removed from all invitee/organizer/RSVP arrays, then delete user object in DB. Eventually, also wait for user to be removed from palz & messages arrays.
     // in .finally(), hide deletionInProgress modal
     Promise.all(promisesToAwait)
+      .then(() => {
+        for (const promise of promisesToAwait) {
+          promise.then((response) => {
+            if (!response.ok) {
+              requestToDeleteUserIDFromAllArraysIsOK = false;
+            }
+          });
+        }
+      })
       .then(() => {
         // run after the others have finished
         if (!requestToDeleteUserIDFromAllArraysIsOK) {
