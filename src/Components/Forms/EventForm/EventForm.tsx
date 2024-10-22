@@ -133,8 +133,8 @@ const EventForm = ({
   const [eventAddressError, setEventAddressError] = useState<string | undefined>(
     !event ? "Please fill out this field" : ""
   );
-  const [maxParticipants, setMaxParticipants] = useState<number | undefined>(
-    event ? event.maxParticipants : undefined
+  const [maxParticipants, setMaxParticipants] = useState<number | null>(
+    event ? event.maxParticipants : null
   );
   const [imageOne, setImageOne] = useState<string | undefined>(
     event ? event.imageOne : ""
@@ -151,12 +151,10 @@ const EventForm = ({
   const [publicity, setPublicity] = useState<"public" | "private">(
     event ? event.publicity : "public"
   );
-  const [organizers, setOrganizers] = useState<(string | number)[]>(
+  const [organizers, setOrganizers] = useState<string[]>(
     event ? event.organizers : [`${currentUser?._id}`]
   );
-  const [invitees, setInvitees] = useState<(string | number)[]>(
-    event ? event.invitees : []
-  );
+  const [invitees, setInvitees] = useState<string[]>(event ? event.invitees : []);
   const [relatedInterests, setRelatedInterests] = useState<string[]>(
     event ? event.relatedInterests : []
   );
@@ -467,7 +465,7 @@ const EventForm = ({
 
   const handleMaxParticipantsInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const inputCleaned = Number(e.target.value.replace(/[^0-9]/g, ""));
-    inputCleaned > 0 ? setMaxParticipants(inputCleaned) : setMaxParticipants(undefined);
+    inputCleaned > 0 ? setMaxParticipants(inputCleaned) : setMaxParticipants(null);
   };
 
   const handleImageURLInput = (
@@ -701,7 +699,7 @@ const EventForm = ({
       setEventEndDateTimeError("");
       setEventAddress("");
       setEventAddressError("");
-      setMaxParticipants(undefined);
+      setMaxParticipants(null);
       setImageOne("");
       setImageOneError("");
       setImageTwo("");
