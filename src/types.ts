@@ -50,7 +50,7 @@ export type TEvent = {
   eventEndTimeAfterMidnightUTCInMS: number;
   eventEndDateTimeInMS: number;
   publicity: "public" | "private";
-  maxParticipants: number | undefined;
+  maxParticipants: number | null;
   imageOne?: string;
   imageTwo?: string;
   imageThree?: string;
