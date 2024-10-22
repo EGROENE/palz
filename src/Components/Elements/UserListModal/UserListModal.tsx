@@ -19,7 +19,7 @@ const UserListModal = ({
     event: TEvent,
     user: TUser
   ) => void;
-  userIDArray: (string | number | undefined)[];
+  userIDArray: (string | undefined)[];
   event: TEvent;
   randomColor?: string;
 }) => {

@@ -39,7 +39,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ? event.invitees.includes(currentUser._id)
     : false;
 
-  const refinedOrganizers: (string | number)[] = [];
+  const refinedOrganizers: string[] = [];
   for (const organizer of event.organizers) {
     if (allUsers.map((user) => user._id).includes(organizer)) {
       refinedOrganizers.push(organizer);
