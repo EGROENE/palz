@@ -8,7 +8,7 @@ export type TThemeColor =
   | "var(--theme-orange)";
 
 export type TUser = {
-  _id?: number | string;
+  _id?: string;
   firstName: string | undefined;
   lastName: string | undefined;
   username: string | undefined;
@@ -25,23 +25,23 @@ export type TUser = {
   x: string;
   profileImage: string;
   about: string;
-  friends: (string | number)[];
+  friends: string[];
   subscriptionType: "free" | "bronze" | "silver" | "gold" | "platinum";
   hostingCredits: number;
   interests: string[];
   whoCanAddUserAsOrganizer: "friends" | "anyone" | "nobody" | undefined;
   whoCanInviteUser: "friends" | "anyone" | "nobody" | undefined;
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
-  friendRequestsReceived: (string | number)[];
-  friendRequestsSent: (string | number)[];
+  friendRequestsReceived: string[];
+  friendRequestsSent: string[];
 };
 
 export type TEvent = {
-  _id?: string | number;
-  creator: string | number | undefined;
+  _id?: string;
+  creator: string | undefined;
   title: string;
-  organizers: (string | number)[];
-  invitees: (string | number)[];
+  organizers: string[];
+  invitees: string[];
   description: string;
   eventStartDateMidnightUTCInMS: number;
   eventStartTimeAfterMidnightUTCInMS: number;
@@ -59,7 +59,7 @@ export type TEvent = {
   country: string | undefined;
   address: string | undefined;
   additionalInfo: string;
-  interestedUsers: (string | number)[];
+  interestedUsers: string[];
   relatedInterests: string[];
 };
 
@@ -90,15 +90,15 @@ export type TEventValuesToUpdate = {
   imageTwo?: string | undefined;
   imageOne?: string | undefined;
   address?: string | undefined;
-  maxParticipants?: number | undefined;
+  maxParticipants?: number | null;
   eventStartDateMidnightUTCInMS?: number | undefined;
   eventStartTimeAfterMidnightUTCInMS?: number | undefined;
   eventStartDateTimeInMS?: number | undefined;
   eventEndDateMidnightUTCInMS?: number | undefined;
   eventEndTimeAfterMidnightUTCInMS?: number | undefined;
   eventEndDateTimeInMS?: number | undefined;
-  organizers?: (string | number)[] | undefined;
-  invitees?: (string | number)[] | undefined;
+  organizers?: string[] | undefined;
+  invitees?: string[] | undefined;
   description?: string | undefined;
   additionalInfo?: string | undefined;
   city?: string | undefined;
@@ -121,7 +121,7 @@ export type TMainContext = {
   allEvents: TEvent[];
   setAllEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
   attendedEvents: {
-    id: string;
+    _id: string;
     eventID: string;
     eventName: string;
     username: string;
