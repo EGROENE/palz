@@ -558,7 +558,51 @@ const removeFromFriendRequestsSent = (
   });
 }; */
 
+const addFriendToFriendsArray = (
+  user: TUser,
+  friend: string | undefined
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedFriendsArray = [...user.friends, friend];
+
+  var raw = JSON.stringify({
+    "friends": updatedFriendsArray,
+  });
+
+  return fetch(`http://localhost:4000/palz/users/${user._id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
+const deleteFriendFromFriendsArray = (
+  user: TUser,
+  friend: string | undefined
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedFriendsArray = user.friends.filter((f) => f !== friend);
+
+  var raw = JSON.stringify({
+    "friends": updatedFriendsArray,
+  });
+
+  return fetch(`http://localhost:4000/palz/users/${user._id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
+  addFriendToFriendsArray,
+  deleteFriendFromFriendsArray,
   addToFriendRequestsReceived,
   addToFriendRequestsSent,
   removeFromFriendRequestsReceived,
