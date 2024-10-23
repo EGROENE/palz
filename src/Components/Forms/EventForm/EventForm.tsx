@@ -1592,6 +1592,18 @@ const EventForm = ({
                   randomColor={randomColor}
                   isDisabled={isLoading}
                   userMayNotDelete={event?.creator === user._id}
+                  specialIcon={
+                    event?.creator === user._id ? (
+                      <i
+                        style={{
+                          color: "#B3995D",
+                          fontSize: "1.05rem",
+                          margin: "0 0 0 0.5rem",
+                        }}
+                        className="fas fa-crown"
+                      ></i>
+                    ) : undefined
+                  }
                 />
               ))}
         </div>
