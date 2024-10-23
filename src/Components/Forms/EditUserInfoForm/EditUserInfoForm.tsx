@@ -264,8 +264,6 @@ const EditUserInfoForm = ({
             fetchAllUsers();
           } else {
             toast.success("Profile info updated");
-            // Reset allUsers after patch successfully made:
-            fetchAllUsers();
 
             /* Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first, which won't happen) */
             if (valuesToUpdate.firstName) {
@@ -861,7 +859,6 @@ const EditUserInfoForm = ({
           fetchAllUsers();
         } else {
           toast.success("Phone number deleted");
-          fetchAllUsers();
           setPhoneCountry("");
           setPhoneCountryCode("");
           setPhoneNumberWithoutCountryCode("");
@@ -883,7 +880,6 @@ const EditUserInfoForm = ({
           fetchAllUsers();
         } else {
           toast.success("Location deleted");
-          fetchAllUsers();
           setUserCity("");
           setUserState("");
           setUserCountry("");
@@ -907,7 +903,6 @@ const EditUserInfoForm = ({
           fetchAllUsers();
         } else {
           toast.success(`${medium.toUpperCase()} link deleted`);
-          fetchAllUsers();
           if (medium === "facebook") {
             setFacebook("");
           } else if (medium === "instagram") {
@@ -931,7 +926,6 @@ const EditUserInfoForm = ({
           fetchAllUsers();
         } else {
           toast.success(`'About' section deleted`);
-          fetchAllUsers();
           setUserAbout("");
         }
       })

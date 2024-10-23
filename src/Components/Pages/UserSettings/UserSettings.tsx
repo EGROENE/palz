@@ -68,7 +68,6 @@ const UserSettings = () => {
           fetchAllUsers();
         } else {
           toast.success(`'${interest}' added to interests`);
-          fetchAllUsers();
         }
       })
       .catch((error) => console.log(error))
@@ -88,7 +87,6 @@ const UserSettings = () => {
           fetchAllUsers();
         } else {
           toast.success(`'${interest}' removed from interests`);
-          fetchAllUsers();
         }
       })
       .catch((error) => console.log(error))
@@ -161,7 +159,6 @@ const UserSettings = () => {
                 logout();
                 navigation("/");
                 fetchAllEvents();
-                fetchAllUsers();
               }
             })
             .catch((error) => console.log(error));
