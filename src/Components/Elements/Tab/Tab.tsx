@@ -9,6 +9,7 @@ const Tab = ({
   randomColor,
   isDisabled,
   userMayNotDelete,
+  specialIcon,
 }: {
   info: TUser | string;
   addHandler?: any;
@@ -16,6 +17,7 @@ const Tab = ({
   randomColor?: string;
   isDisabled?: boolean;
   userMayNotDelete?: boolean;
+  specialIcon?: JSX.Element;
 }) => {
   const onClickFunction = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     if (addHandler) {
@@ -38,7 +40,10 @@ const Tab = ({
       {typeof info !== "string" && (
         <img src={`${info.profileImage}`} alt={`${info.username} profile pic`} />
       )}
-      <span>{typeof info !== "string" ? info.username : info}</span>
+      <span>
+        {typeof info !== "string" ? info.username : info}
+        {specialIcon && specialIcon}
+      </span>
       {!userMayNotDelete && (
         <i
           style={addHandler && { "rotate": "45deg" }} // turns X into plus sign
