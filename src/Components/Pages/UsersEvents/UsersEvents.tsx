@@ -79,7 +79,16 @@ const UsersEvents = () => {
       event.interestedUsers.includes(currentUser._id)
   );
 
+  const ongoingEvents: TEvent[] = allEvents.filter((event) => {
+    event.eventStartDateTimeInMS < now &&
+      event.eventEndDateTimeInMS > now &&
+      currentUser?._id &&
+      (event.organizers.includes(currentUser._id) ||
+        event.interestedUsers.includes(currentUser._id));
+  });
+
   const usersEvents = [
+    { header: "Events Happening Now", array: ongoingEvents },
     {
       header: "Your Current & Upcoming Events",
       array: currentUpcomingEventsUserOrganizes,
