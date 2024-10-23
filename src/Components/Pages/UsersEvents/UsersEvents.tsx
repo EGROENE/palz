@@ -55,26 +55,26 @@ const UsersEvents = () => {
       event.eventEndDateTimeInMS < now
   );
 
-  const currentUpcomingEventsUserOrganizes: TEvent[] = allEvents.filter(
+  const upcomingEventsUserOrganizes: TEvent[] = allEvents.filter(
     (event) =>
-      (event.eventStartDateTimeInMS > now || // if start is in future
-        event.eventEndDateTimeInMS > now) && // if end is in future
+      event.eventStartDateTimeInMS > now &&
+      event.eventEndDateTimeInMS > now &&
       currentUser?._id &&
       event.organizers.includes(currentUser._id)
   );
 
-  const currentUpcomingEventsUserInvitedTo: TEvent[] = allEvents.filter(
+  const upcomingEventsUserInvitedTo: TEvent[] = allEvents.filter(
     (event) =>
-      (event.eventStartDateTimeInMS > now || // if start is in future
-        event.eventEndDateTimeInMS > now) && // if end is in future
+      event.eventStartDateTimeInMS > now &&
+      event.eventEndDateTimeInMS > now &&
       currentUser?._id &&
       event.invitees.includes(currentUser._id)
   );
 
-  const currentUpcomingEventsUserRSVPdTo: TEvent[] = allEvents.filter(
+  const upcomingEventsUserRSVPdTo: TEvent[] = allEvents.filter(
     (event) =>
-      (event.eventStartDateTimeInMS > now || // if start is in future
-        event.eventEndDateTimeInMS > now) && // if end is in future
+      event.eventStartDateTimeInMS > now &&
+      event.eventEndDateTimeInMS > now &&
       currentUser?._id &&
       event.interestedUsers.includes(currentUser._id)
   );
@@ -90,16 +90,16 @@ const UsersEvents = () => {
   const usersEvents = [
     { header: "Events Happening Now", array: ongoingEvents },
     {
-      header: "Your Current & Upcoming Events",
-      array: currentUpcomingEventsUserOrganizes,
+      header: "Your Upcoming Events",
+      array: upcomingEventsUserOrganizes,
     },
     {
-      header: "Current & Upcoming Events You've RSVP'd To",
-      array: currentUpcomingEventsUserRSVPdTo,
+      header: "Upcoming Events You've RSVP'd To",
+      array: upcomingEventsUserRSVPdTo,
     },
     {
-      header: "Current & Upcoming Events You've Been Invited To",
-      array: currentUpcomingEventsUserInvitedTo,
+      header: "Upcoming Events You've Been Invited To",
+      array: upcomingEventsUserInvitedTo,
     },
     { header: "Past Events You RSVP'd To", array: pastEventsUserRSVPd },
     { header: "Past Events You Organized", array: pastEventsUserOrganized },
