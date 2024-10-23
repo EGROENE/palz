@@ -615,8 +615,7 @@ const EventForm = ({
             navigation(`/users/${currentUser?.username}`);
           }
         })
-        .catch((error) => console.log(error))
-        .finally(() => fetchAllEvents());
+        .catch((error) => console.log(error));
     }
   };
 
@@ -729,7 +728,6 @@ const EventForm = ({
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
-    fetchAllEvents();
     if (!showErrors) {
       setShowErrors(true);
     }
@@ -744,7 +742,6 @@ const EventForm = ({
               fetchAllEvents();
             } else {
               toast.success("Event updated!");
-              fetchAllEvents();
 
               /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
               if (valuesToUpdate?.title) {
@@ -804,7 +801,6 @@ const EventForm = ({
               toast.error("Could not create event. Please try again.");
               fetchAllEvents();
             } else {
-              fetchAllEvents();
               toast.success("Event created!");
               navigation(`/${currentUser?.username}/events`);
             }

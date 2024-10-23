@@ -693,7 +693,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           toast.error("Could not RSVP to event. Please try again.");
           fetchAllEvents();
         } else {
-          fetchAllEvents();
           toast.success("RSVP added");
         }
       })
@@ -712,7 +711,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         fetchAllEvents();
       } else {
         toast.error("RSVP deleted");
-        fetchAllEvents();
       }
     });
   };
@@ -731,7 +729,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           fetchAllEvents();
         } else {
           toast.error("Invitation declined.");
-          fetchAllEvents();
         }
       })
       .catch((error) => console.log(error));
