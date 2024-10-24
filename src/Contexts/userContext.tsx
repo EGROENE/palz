@@ -65,6 +65,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     ""
   );
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
+  const [profileImageUrl, setProfileImageUrl] = useSessionStorage<string | unknown>(
+    "profileImage",
+    ""
+  );
   const [userCity, setUserCity, removeUserCity] = useSessionStorage<string | undefined>(
     "city",
     ""
@@ -146,8 +150,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     instagram: "",
     facebook: "",
     x: "",
-    profileImage:
-      "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.iC6w-uAguv7_8AQJvWl7kAHaHa%26pid%3DApi&f=1&ipt=e28f6633e3153114f06c264e9a038281b7f36831fc29639194ac586d588d75b2&ipo=images",
+    profileImage: profileImageUrl,
     friends: [],
     about: "",
     subscriptionType: "free",
@@ -823,6 +826,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    profileImageUrl,
+    setProfileImageUrl,
     handleRemoveInvitee,
     handleCityStateCountryInput,
     handleDeleteUserRSVP,
