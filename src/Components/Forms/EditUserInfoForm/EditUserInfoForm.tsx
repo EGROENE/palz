@@ -9,8 +9,7 @@ import Requests from "../../../requests";
 import { countries, phoneNumberLengthRanges } from "../../../constants";
 import toast from "react-hot-toast";
 import Methods from "../../../methods";
-import { TThemeColor, TUserValuesToUpdate } from "../../../types";
-import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
+import { TThemeColor } from "../../../types";
 
 const EditUserInfoForm = ({
   randomColor,
@@ -23,6 +22,7 @@ const EditUserInfoForm = ({
 }) => {
   const { currentUser, setCurrentUser, fetchAllUsers, allUsers } = useMainContext();
   const {
+    valuesToUpdate,
     whoCanAddUserAsOrganizer,
     setWhoCanAddUserAsOrganizer,
     whoCanInviteUser,
@@ -96,7 +96,6 @@ const EditUserInfoForm = ({
     setUserAbout,
     userAboutError,
     setUserAboutError,
-    profileImageUrl,
     setProfileImageUrl,
   } = useUserContext();
 
@@ -175,7 +174,6 @@ const EditUserInfoForm = ({
     setFirstNameError("");
     setLastName(currentUser?.lastName);
     setLastNameError("");
-    setProfileImageUrl(currentUser?.profileImage);
     setUsername(currentUser?.username);
     setUsernameError("");
     setEmailAddress(currentUser?.emailAddress);
@@ -202,15 +200,6 @@ const EditUserInfoForm = ({
     setWhoCanAddUserAsOrganizer(currentUser?.whoCanAddUserAsOrganizer);
     setWhoCanInviteUser(currentUser?.whoCanInviteUser);
     setProfileVisibleTo(currentUser?.profileVisibleTo);
-  };
-
-  const handleProfileImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): Promise<void> => {
-    e.preventDefault();
-    const file = e.target.files && e.target.files[0];
-    const base64 = file && (await Methods.convertToBase64(file));
-    setProfileImageUrl(base64);
   };
 
   // If currentUser has given a phone code, set limits for length of rest of number based on that
@@ -988,7 +977,6 @@ const EditUserInfoForm = ({
   const userInfoEdited: boolean =
     firstName?.trim() !== currentUser?.firstName ||
     lastName?.trim() !== currentUser?.lastName ||
-    profileImageUrl !== currentUser?.profileImage ||
     emailAddress !== currentUser?.emailAddress ||
     username !== currentUser?.username ||
     password !== currentUser?.password ||
@@ -1005,69 +993,6 @@ const EditUserInfoForm = ({
     whoCanAddUserAsOrganizer !== currentUser?.whoCanAddUserAsOrganizer ||
     whoCanInviteUser !== currentUser?.whoCanInviteUser ||
     profileVisibleTo !== currentUser?.profileVisibleTo;
-
-  // If a data point is updated, it is used in PATCH request to update its part of the user's data object in DB
-  const valuesToUpdate: TUserValuesToUpdate = {
-    ...(firstName?.trim() !== "" &&
-      firstName !== currentUser?.firstName && {
-        firstName: Methods.formatHyphensAndSpacesInString(
-          Methods.formatCapitalizedName(firstName?.trim())
-        ),
-      }),
-    ...(lastName?.trim() !== "" &&
-      lastName !== currentUser?.lastName && {
-        lastName: Methods.formatHyphensAndSpacesInString(
-          Methods.formatCapitalizedName(lastName?.trim())
-        ),
-      }),
-    ...(profileImageUrl !== currentUser?.profileImage && {
-      profileImage: profileImageUrl,
-    }),
-    ...(username !== "" && username !== currentUser?.username && { username: username }),
-    ...(emailAddress !== "" &&
-      emailAddress !== currentUser?.emailAddress && {
-        emailAddress: emailAddress?.trim(),
-      }),
-    ...(password !== "" &&
-      password !== currentUser?.password && { password: password?.replace(/\s+/g, "") }),
-    ...(phoneCountry !== "" &&
-      phoneCountry !== currentUser?.phoneCountry && { phoneCountry: phoneCountry }),
-    ...(phoneCountryCode !== "" &&
-      phoneCountryCode !== currentUser?.phoneCountryCode && {
-        phoneCountryCode: phoneCountryCode,
-      }),
-    ...(phoneNumberWithoutCountryCode !== "" &&
-      phoneNumberWithoutCountryCode !== currentUser?.phoneNumberWithoutCountryCode && {
-        phoneNumberWithoutCountryCode: phoneNumberWithoutCountryCode,
-      }),
-    ...(userCity !== "" &&
-      userCity !== currentUser?.city && {
-        city: Methods.formatHyphensAndSpacesInString(
-          Methods.formatCapitalizedName(userCity?.trim())
-        ),
-      }),
-    ...(userState !== "" &&
-      userState !== currentUser?.stateProvince && {
-        stateProvince: Methods.formatHyphensAndSpacesInString(
-          Methods.formatCapitalizedName(userState?.trim())
-        ),
-      }),
-    ...(userCountry !== "" &&
-      userCountry !== currentUser?.country && { country: userCountry }),
-    ...(facebook !== currentUser?.facebook && { facebook: facebook }),
-    ...(instagram !== currentUser?.instagram && { instagram: instagram }),
-    ...(x !== currentUser?.x && { x: x }),
-    ...(userAbout !== currentUser?.about && { about: userAbout?.trim() }),
-    ...(whoCanAddUserAsOrganizer !== currentUser?.whoCanAddUserAsOrganizer && {
-      whoCanAddUserAsOrganizer: whoCanAddUserAsOrganizer,
-    }),
-    ...(whoCanInviteUser !== currentUser?.whoCanInviteUser && {
-      whoCanInviteUser: whoCanInviteUser,
-    }),
-    ...(profileVisibleTo !== currentUser?.profileVisibleTo && {
-      profileVisibleTo: profileVisibleTo,
-    }),
-  };
 
   return (
     <>
@@ -1557,27 +1482,6 @@ const EditUserInfoForm = ({
             placeholder="Tell the world a bit about yourself (max 100 characters)"
           ></textarea>
           {userAboutError !== "" && <p>{userAboutError}</p>}
-        </label>
-        <label htmlFor="profile-image-upload">
-          <img
-            src={
-              typeof profileImageUrl === "string" ? profileImageUrl : defaultProfileImage
-            }
-            alt="profile image"
-          />
-          <p>Profile Image URL: </p>
-          <input
-            id="profile-image-upload"
-            name="profileImage"
-            onChange={(e) => handleProfileImageUpload(e)}
-            style={{ display: "none" }}
-            disabled={isLoading}
-            autoComplete="off"
-            type="file"
-            accept=".jpeg, .png, .jpg"
-            placeholder="Enter URL of image you want as your profile picture"
-            inputMode="text"
-          />
         </label>
         <label>
           <p>
