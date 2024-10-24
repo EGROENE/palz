@@ -744,11 +744,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e.preventDefault();
     const file = e.target.files && e.target.files[0];
     const base64 = file && (await Methods.convertToBase64(file));
-    setProfileImageUrl(base64);
     Requests.updateUserProfileImage(currentUser, base64)
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not update profile image. Please try again.");
+        } else {
+          toast.success("Profile image updated");
+          setProfileImageUrl(base64);
         }
       })
       .catch((error) => console.log(error));
