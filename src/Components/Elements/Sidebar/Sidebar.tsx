@@ -4,6 +4,7 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { TThemeColor } from "../../../types";
 import styles from "./styles.module.css";
+import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const Sidebar = () => {
   const { currentUser, theme, toggleTheme } = useMainContext();
@@ -48,7 +49,14 @@ const Sidebar = () => {
         }
         style={{ backgroundColor: randomColor }}
       ></i>
-      <img className={`${styles.profileImageSidebar}`} src={currentUser?.profileImage} />
+      <img
+        className={`${styles.profileImageSidebar}`}
+        src={
+          typeof currentUser?.profileImage === "string"
+            ? currentUser?.profileImage
+            : defaultProfileImage
+        }
+      />
       <div
         style={{ backgroundColor: randomColor }}
         className={styles.sidebarNamesContainer}
