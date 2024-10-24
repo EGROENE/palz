@@ -2,10 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import styles from "./styles.module.css";
+import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const NavBar = () => {
   const { currentUser, userCreatedAccount } = useMainContext();
-  const { showSidebar, setShowSidebar, logout } = useUserContext();
+  const { showSidebar, setShowSidebar, logout, profileImageUrl } = useUserContext();
   const navigation = useNavigate();
 
   const handleLogout = () => {
@@ -40,7 +41,9 @@ const NavBar = () => {
           <img
             onClick={() => setShowSidebar(!showSidebar)}
             className={styles.profileImageNavbar}
-            src={currentUser?.profileImage}
+            src={
+              typeof profileImageUrl === "string" ? profileImageUrl : defaultProfileImage
+            }
           />
         </li>
       </ul>
