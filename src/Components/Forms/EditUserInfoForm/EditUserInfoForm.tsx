@@ -96,7 +96,6 @@ const EditUserInfoForm = ({
     setUserAbout,
     userAboutError,
     setUserAboutError,
-    setProfileImageUrl,
   } = useUserContext();
 
   // REFS
@@ -273,9 +272,6 @@ const EditUserInfoForm = ({
             }
             if (valuesToUpdate.lastName) {
               setLastName(valuesToUpdate.lastName);
-            }
-            if (valuesToUpdate.profileImageUrl) {
-              setProfileImageUrl(valuesToUpdate.profileImageUrl);
             }
             if (valuesToUpdate.emailAddress) {
               setEmailAddress(valuesToUpdate.emailAddress);
