@@ -7,8 +7,8 @@ import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const Sidebar = () => {
-  const { currentUser, theme, toggleTheme } = useMainContext();
-  const { showSidebar, setShowSidebar } = useUserContext();
+  const { currentUser, theme } = useMainContext();
+  const { showSidebar, setShowSidebar, handleProfileImageUpload } = useUserContext();
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   useEffect(() => {
@@ -40,15 +40,20 @@ const Sidebar = () => {
         style={{ backgroundColor: randomColor }}
         className={`${styles.sidebarIcon} ${styles.sidebarClose} fas fa-times`}
       ></i>
-      <i
-        onClick={() => toggleTheme()}
-        className={
-          theme === "light"
-            ? `${styles.sidebarIcon} ${styles.sidebarToggleTheme} ${styles.themeToggleIcon} fas fa-moon`
-            : `${styles.sidebarIcon} ${styles.sidebarToggleTheme} ${styles.themeToggleIcon} fas fa-sun`
-        }
+      <label
+        className={`${styles.sidebarIcon} ${styles.sidebarEditProfileImage}`}
         style={{ backgroundColor: randomColor }}
-      ></i>
+      >
+        <i className="fas fa-camera"></i>
+        <input
+          id="profile-image-upload"
+          name="profileImage"
+          onChange={(e) => handleProfileImageUpload(e)}
+          style={{ display: "none" }}
+          type="file"
+          accept=".jpeg, .png, .jpg"
+        />
+      </label>
       <img
         className={`${styles.profileImageSidebar}`}
         src={
