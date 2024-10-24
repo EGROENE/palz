@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useState } from "react";
-import { TUserContext, TUser, TEvent } from "../types";
+import { TUserContext, TUser, TEvent, TUserValuesToUpdate } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -737,6 +737,23 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .catch((error) => console.log(error));
   };
 
+  // maybe create separate request to update user profile img
+  const handleProfileImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
+    e.preventDefault();
+    const file = e.target.files && e.target.files[0];
+    const base64 = file && (await Methods.convertToBase64(file));
+    setProfileImageUrl(base64);
+    Requests.updateUserProfileImage(currentUser, base64)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not update profile image. Please try again.");
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   // Defined here, as it's used in methods that are used in multiple components
   const allSignupFormFieldsFilled: boolean =
     firstName !== "" &&
@@ -751,6 +768,66 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const allLoginInputsFilled: boolean =
     (username !== "" || emailAddress !== "") && password !== "";
+
+  // If a data point is updated, it is used in PATCH request to update its part of the user's data object in DB
+  const valuesToUpdate: TUserValuesToUpdate = {
+    ...(firstName?.trim() !== "" &&
+      firstName !== currentUser?.firstName && {
+        firstName: Methods.formatHyphensAndSpacesInString(
+          Methods.formatCapitalizedName(firstName?.trim())
+        ),
+      }),
+    ...(lastName?.trim() !== "" &&
+      lastName !== currentUser?.lastName && {
+        lastName: Methods.formatHyphensAndSpacesInString(
+          Methods.formatCapitalizedName(lastName?.trim())
+        ),
+      }),
+    ...(username !== "" && username !== currentUser?.username && { username: username }),
+    ...(emailAddress !== "" &&
+      emailAddress !== currentUser?.emailAddress && {
+        emailAddress: emailAddress?.trim(),
+      }),
+    ...(password !== "" &&
+      password !== currentUser?.password && { password: password?.replace(/\s+/g, "") }),
+    ...(phoneCountry !== "" &&
+      phoneCountry !== currentUser?.phoneCountry && { phoneCountry: phoneCountry }),
+    ...(phoneCountryCode !== "" &&
+      phoneCountryCode !== currentUser?.phoneCountryCode && {
+        phoneCountryCode: phoneCountryCode,
+      }),
+    ...(phoneNumberWithoutCountryCode !== "" &&
+      phoneNumberWithoutCountryCode !== currentUser?.phoneNumberWithoutCountryCode && {
+        phoneNumberWithoutCountryCode: phoneNumberWithoutCountryCode,
+      }),
+    ...(userCity !== "" &&
+      userCity !== currentUser?.city && {
+        city: Methods.formatHyphensAndSpacesInString(
+          Methods.formatCapitalizedName(userCity?.trim())
+        ),
+      }),
+    ...(userState !== "" &&
+      userState !== currentUser?.stateProvince && {
+        stateProvince: Methods.formatHyphensAndSpacesInString(
+          Methods.formatCapitalizedName(userState?.trim())
+        ),
+      }),
+    ...(userCountry !== "" &&
+      userCountry !== currentUser?.country && { country: userCountry }),
+    ...(facebook !== currentUser?.facebook && { facebook: facebook }),
+    ...(instagram !== currentUser?.instagram && { instagram: instagram }),
+    ...(x !== currentUser?.x && { x: x }),
+    ...(userAbout !== currentUser?.about && { about: userAbout?.trim() }),
+    ...(whoCanAddUserAsOrganizer !== currentUser?.whoCanAddUserAsOrganizer && {
+      whoCanAddUserAsOrganizer: whoCanAddUserAsOrganizer,
+    }),
+    ...(whoCanInviteUser !== currentUser?.whoCanInviteUser && {
+      whoCanInviteUser: whoCanInviteUser,
+    }),
+    ...(profileVisibleTo !== currentUser?.profileVisibleTo && {
+      profileVisibleTo: profileVisibleTo,
+    }),
+  };
 
   const handleSignupOrLoginFormSubmission = (
     isOnSignup: boolean,
@@ -826,6 +903,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    valuesToUpdate,
+    handleProfileImageUpload,
     profileImageUrl,
     setProfileImageUrl,
     handleRemoveInvitee,
