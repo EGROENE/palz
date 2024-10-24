@@ -28,7 +28,7 @@
 .sidebar img {
   max-height: 15rem;
   height: 15rem;
-  width: 15rem;
+  width: 100%;
   object-fit: cover;
 }
 
