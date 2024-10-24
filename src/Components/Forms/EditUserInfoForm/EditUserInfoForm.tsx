@@ -10,6 +10,7 @@ import { countries, phoneNumberLengthRanges } from "../../../constants";
 import toast from "react-hot-toast";
 import Methods from "../../../methods";
 import { TThemeColor, TUserValuesToUpdate } from "../../../types";
+import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const EditUserInfoForm = ({
   randomColor,
@@ -95,6 +96,8 @@ const EditUserInfoForm = ({
     setUserAbout,
     userAboutError,
     setUserAboutError,
+    profileImageUrl,
+    setProfileImageUrl,
   } = useUserContext();
 
   // REFS
@@ -172,6 +175,7 @@ const EditUserInfoForm = ({
     setFirstNameError("");
     setLastName(currentUser?.lastName);
     setLastNameError("");
+    setProfileImageUrl(currentUser?.profileImage);
     setUsername(currentUser?.username);
     setUsernameError("");
     setEmailAddress(currentUser?.emailAddress);
@@ -198,6 +202,15 @@ const EditUserInfoForm = ({
     setWhoCanAddUserAsOrganizer(currentUser?.whoCanAddUserAsOrganizer);
     setWhoCanInviteUser(currentUser?.whoCanInviteUser);
     setProfileVisibleTo(currentUser?.profileVisibleTo);
+  };
+
+  const handleProfileImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
+    e.preventDefault();
+    const file = e.target.files && e.target.files[0];
+    const base64 = file && (await Methods.convertToBase64(file));
+    setProfileImageUrl(base64);
   };
 
   // If currentUser has given a phone code, set limits for length of rest of number based on that
@@ -271,6 +284,9 @@ const EditUserInfoForm = ({
             }
             if (valuesToUpdate.lastName) {
               setLastName(valuesToUpdate.lastName);
+            }
+            if (valuesToUpdate.profileImageUrl) {
+              setProfileImageUrl(valuesToUpdate.profileImageUrl);
             }
             if (valuesToUpdate.emailAddress) {
               setEmailAddress(valuesToUpdate.emailAddress);
@@ -972,6 +988,7 @@ const EditUserInfoForm = ({
   const userInfoEdited: boolean =
     firstName?.trim() !== currentUser?.firstName ||
     lastName?.trim() !== currentUser?.lastName ||
+    profileImageUrl !== currentUser?.profileImage ||
     emailAddress !== currentUser?.emailAddress ||
     username !== currentUser?.username ||
     password !== currentUser?.password ||
@@ -1003,6 +1020,9 @@ const EditUserInfoForm = ({
           Methods.formatCapitalizedName(lastName?.trim())
         ),
       }),
+    ...(profileImageUrl !== currentUser?.profileImage && {
+      profileImage: profileImageUrl,
+    }),
     ...(username !== "" && username !== currentUser?.username && { username: username }),
     ...(emailAddress !== "" &&
       emailAddress !== currentUser?.emailAddress && {
@@ -1537,6 +1557,27 @@ const EditUserInfoForm = ({
             placeholder="Tell the world a bit about yourself (max 100 characters)"
           ></textarea>
           {userAboutError !== "" && <p>{userAboutError}</p>}
+        </label>
+        <label htmlFor="profile-image-upload">
+          <img
+            src={
+              typeof profileImageUrl === "string" ? profileImageUrl : defaultProfileImage
+            }
+            alt="profile image"
+          />
+          <p>Profile Image URL: </p>
+          <input
+            id="profile-image-upload"
+            name="profileImage"
+            onChange={(e) => handleProfileImageUpload(e)}
+            style={{ display: "none" }}
+            disabled={isLoading}
+            autoComplete="off"
+            type="file"
+            accept=".jpeg, .png, .jpg"
+            placeholder="Enter URL of image you want as your profile picture"
+            inputMode="text"
+          />
         </label>
         <label>
           <p>
