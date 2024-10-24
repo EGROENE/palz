@@ -138,6 +138,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  valuesToUpdate: TUserValuesToUpdate;
+  handleProfileImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   profileImageUrl: string | unknown;
   setProfileImageUrl: React.Dispatch<React.SetStateAction<string | unknown>>;
   handleRemoveInvitee: (
