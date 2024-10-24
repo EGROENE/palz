@@ -23,7 +23,7 @@ export type TUser = {
   instagram: string;
   facebook: string;
   x: string;
-  profileImage: string;
+  profileImage: string | unknown;
   about: string;
   friends: string[];
   subscriptionType: "free" | "bronze" | "silver" | "gold" | "platinum";
@@ -66,6 +66,7 @@ export type TEvent = {
 export type TUserValuesToUpdate = {
   firstName?: string | undefined;
   lastName?: string | undefined;
+  profileImageUrl?: string | unknown;
   username?: string | undefined;
   emailAddress?: string | undefined;
   about?: string | undefined;
@@ -137,6 +138,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  profileImageUrl: string | unknown;
+  setProfileImageUrl: React.Dispatch<React.SetStateAction<string | unknown>>;
   handleRemoveInvitee: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
