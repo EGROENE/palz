@@ -73,6 +73,23 @@ const patchUpdatedUserInfo = (
   });
 };
 
+const updateUserProfileImage = (
+  user: TUser | undefined,
+  newImage: string | unknown
+): Promise<Response> => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const raw = JSON.stringify({ profileImage: newImage });
+
+  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const deletePhoneNumber = (user: TUser | undefined): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -601,6 +618,7 @@ const deleteFriendFromFriendsArray = (
 };
 
 const Requests = {
+  updateUserProfileImage,
   addFriendToFriendsArray,
   deleteFriendFromFriendsArray,
   addToFriendRequestsReceived,
