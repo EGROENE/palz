@@ -846,6 +846,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setCurrentUser(userData);
       setFirstName(userData.firstName);
       setLastName(userData.lastName);
+      setProfileImageUrl("");
       setEmailAddress(userData.emailAddress);
       setPassword(userData.password);
       setPhoneCountry(userData.phoneCountry);
@@ -867,6 +868,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
       setFirstName(currentUser?.firstName);
       setLastName(currentUser?.lastName);
+      setProfileImageUrl(currentUser?.profileImage);
       setEmailAddress(currentUser?.emailAddress);
       setPassword(currentUser?.password);
       setPhoneCountry(currentUser?.phoneCountry);
