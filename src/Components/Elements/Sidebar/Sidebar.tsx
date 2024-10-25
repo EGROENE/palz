@@ -8,7 +8,8 @@ import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const Sidebar = () => {
   const { currentUser, theme } = useMainContext();
-  const { showSidebar, setShowSidebar, handleProfileImageUpload } = useUserContext();
+  const { showSidebar, setShowSidebar, handleProfileImageUpload, profileImage } =
+    useUserContext();
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   useEffect(() => {
@@ -56,11 +57,7 @@ const Sidebar = () => {
       </label>
       <img
         className={`${styles.profileImageSidebar}`}
-        src={
-          typeof currentUser?.profileImage === "string"
-            ? currentUser?.profileImage
-            : defaultProfileImage
-        }
+        src={typeof profileImage === "string" ? profileImage : defaultProfileImage}
       />
       <div
         style={{ backgroundColor: randomColor }}
