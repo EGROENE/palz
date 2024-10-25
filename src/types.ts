@@ -135,7 +135,7 @@ export type TUserContext = {
   valuesToUpdate: TUserValuesToUpdate;
   handleProfileImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   profileImage: string | unknown;
-  setProfileImageUrl: React.Dispatch<React.SetStateAction<string | unknown>>;
+  setProfileImage: React.Dispatch<React.SetStateAction<string | unknown>>;
   handleRemoveInvitee: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,

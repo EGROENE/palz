@@ -65,7 +65,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     ""
   );
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
-  const [profileImage, setProfileImageUrl] = useSessionStorage<string | unknown>(
+  const [profileImage, setProfileImage] = useSessionStorage<string | unknown>(
     "profileImage",
     ""
   );
@@ -750,7 +750,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           toast.error("Could not update profile image. Please try again.");
         } else {
           toast.success("Profile image updated");
-          setProfileImageUrl(base64);
+          setProfileImage(base64);
         }
       })
       .catch((error) => console.log(error));
@@ -847,7 +847,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setCurrentUser(userData);
       setFirstName(userData.firstName);
       setLastName(userData.lastName);
-      setProfileImageUrl(userData.profileImage);
+      setProfileImage(userData.profileImage);
       setEmailAddress(userData.emailAddress);
       setPassword(userData.password);
       setPhoneCountry(userData.phoneCountry);
@@ -869,7 +869,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
       setFirstName(currentUser?.firstName);
       setLastName(currentUser?.lastName);
-      setProfileImageUrl(currentUser?.profileImage);
+      setProfileImage(currentUser?.profileImage);
       setEmailAddress(currentUser?.emailAddress);
       setPassword(currentUser?.password);
       setPhoneCountry(currentUser?.phoneCountry);
@@ -905,14 +905,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setUserCreatedAccount(null);
     removeCurrentUser();
     resetLoginOrSignupFormFieldsAndErrors();
-    setProfileImageUrl("");
+    setProfileImage("");
   };
 
   const userContextValues: TUserContext = {
     valuesToUpdate,
     handleProfileImageUpload,
     profileImage,
-    setProfileImageUrl,
+    setProfileImage,
     handleRemoveInvitee,
     handleCityStateCountryInput,
     handleDeleteUserRSVP,
