@@ -29,7 +29,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     undefined
   ); // event user is editing or viewing
   const [allEvents, setAllEvents] = useSessionStorage<TEvent[]>("allEvents", []);
-  const [attendedEvents, setAttendedEventsByUser] = useState([]);
   const [userCreatedAccount, setUserCreatedAccount] = useSessionStorage<boolean | null>(
     "userCreatedAccount",
     null
@@ -79,7 +78,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     removeCurrentUser,
     allEvents,
     setAllEvents,
-    attendedEvents,
     currentEvent,
     setCurrentEvent,
     userCreatedAccount,

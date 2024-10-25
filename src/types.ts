@@ -121,12 +121,6 @@ export type TMainContext = {
   removeCurrentUser: () => void;
   allEvents: TEvent[];
   setAllEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
-  attendedEvents: {
-    _id: string;
-    eventID: string;
-    eventName: string;
-    username: string;
-  }[];
   userCreatedAccount: null | boolean;
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
   showWelcomeMessage: boolean;
