@@ -66,7 +66,7 @@ export type TEvent = {
 export type TUserValuesToUpdate = {
   firstName?: string | undefined;
   lastName?: string | undefined;
-  profileImageUrl?: string | unknown;
+  profileImage?: string | unknown;
   username?: string | undefined;
   emailAddress?: string | undefined;
   about?: string | undefined;
@@ -140,7 +140,7 @@ export type TMainContext = {
 export type TUserContext = {
   valuesToUpdate: TUserValuesToUpdate;
   handleProfileImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
-  profileImageUrl: string | unknown;
+  profileImage: string | unknown;
   setProfileImageUrl: React.Dispatch<React.SetStateAction<string | unknown>>;
   handleRemoveInvitee: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,

@@ -65,7 +65,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     ""
   );
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
-  const [profileImageUrl, setProfileImageUrl] = useSessionStorage<string | unknown>(
+  const [profileImage, setProfileImageUrl] = useSessionStorage<string | unknown>(
     "profileImage",
     ""
   );
@@ -150,7 +150,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     instagram: "",
     facebook: "",
     x: "",
-    profileImage: profileImageUrl,
+    profileImage: profileImage,
     friends: [],
     about: "",
     subscriptionType: "free",
@@ -907,7 +907,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const userContextValues: TUserContext = {
     valuesToUpdate,
     handleProfileImageUpload,
-    profileImageUrl,
+    profileImage,
     setProfileImageUrl,
     handleRemoveInvitee,
     handleCityStateCountryInput,
