@@ -48,7 +48,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "whoCanInviteUser": newUserData.whoCanInviteUser,
   });
 
-  return fetch("http://localhost:4000/palz/users", {
+  return fetch("http://localhost:4000/palz/users/", {
     method: "POST",
     headers: myHeaders,
     body: raw,
