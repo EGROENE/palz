@@ -747,7 +747,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     Requests.updateUserProfileImage(currentUser, base64)
       .then((response) => {
         if (!response.ok) {
-          toast.error("Could not update profile image. Please try again.");
+          if (response.status === 413) {
+            toast.error("Please upload a smaller file.");
+          } else {
+            toast.error("Could not update profile image. Please try again.");
+          }
         } else {
           toast.success("Profile image updated");
           setProfileImage(base64);
