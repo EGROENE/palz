@@ -845,7 +845,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (!passwordIsHidden) {
       toggleHidePassword();
     }
-    console.log(userData);
     if (isOnSignup) {
       handleNewAccountCreation(userData);
       setCurrentUser(userData);
