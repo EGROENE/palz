@@ -150,14 +150,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     instagram: "",
     facebook: "",
     x: "",
-    profileImage: profileImage,
+    profileImage: "",
     friends: [],
     about: "",
     subscriptionType: "free",
     interests: [],
-    whoCanAddUserAsOrganizer: whoCanAddUserAsOrganizer,
-    whoCanInviteUser: whoCanInviteUser,
-    profileVisibleTo: profileVisibleTo,
+    whoCanAddUserAsOrganizer: "anyone",
+    whoCanInviteUser: "anyone",
+    profileVisibleTo: "anyone",
     friendRequestsReceived: [],
     friendRequestsSent: [],
   };
@@ -841,12 +841,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (!passwordIsHidden) {
       toggleHidePassword();
     }
+    console.log(userData);
     if (isOnSignup) {
       handleNewAccountCreation(userData);
       setCurrentUser(userData);
       setFirstName(userData.firstName);
       setLastName(userData.lastName);
-      setProfileImageUrl("");
+      setProfileImageUrl(userData.profileImage);
       setEmailAddress(userData.emailAddress);
       setPassword(userData.password);
       setPhoneCountry(userData.phoneCountry);
