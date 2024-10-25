@@ -57,7 +57,11 @@ const Sidebar = () => {
       </label>
       <img
         className={`${styles.profileImageSidebar}`}
-        src={typeof profileImage === "string" ? profileImage : defaultProfileImage}
+        src={
+          profileImage !== "" && typeof profileImage === "string"
+            ? profileImage
+            : defaultProfileImage
+        }
       />
       <div
         style={{ backgroundColor: randomColor }}

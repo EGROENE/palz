@@ -41,7 +41,11 @@ const NavBar = () => {
           <img
             onClick={() => setShowSidebar(!showSidebar)}
             className={styles.profileImageNavbar}
-            src={typeof profileImage === "string" ? profileImage : defaultProfileImage}
+            src={
+              profileImage !== "" && typeof profileImage === "string"
+                ? profileImage
+                : defaultProfileImage
+            }
           />
         </li>
       </ul>
