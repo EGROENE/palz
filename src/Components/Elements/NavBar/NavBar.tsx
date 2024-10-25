@@ -6,7 +6,7 @@ import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const NavBar = () => {
   const { currentUser, userCreatedAccount } = useMainContext();
-  const { showSidebar, setShowSidebar, logout, profileImage } = useUserContext();
+  const { showSidebar, setShowSidebar, logout } = useUserContext();
   const navigation = useNavigate();
 
   const handleLogout = () => {
@@ -41,7 +41,11 @@ const NavBar = () => {
           <img
             onClick={() => setShowSidebar(!showSidebar)}
             className={styles.profileImageNavbar}
-            src={typeof profileImage === "string" ? profileImage : defaultProfileImage}
+            src={
+              typeof currentUser?.profileImage === "string"
+                ? currentUser?.profileImage
+                : defaultProfileImage
+            }
           />
         </li>
       </ul>
