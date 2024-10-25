@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import { useMainContext } from "../../../Hooks/useMainContext";
+import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const UserCard = ({ user }: { user: TUser }) => {
   const { currentUser, allUsers } = useMainContext();
@@ -148,7 +149,11 @@ const UserCard = ({ user }: { user: TUser }) => {
       ></i>
       <img
         style={{ border: `2px solid ${randomColor}` }}
-        src={user.profileImage}
+        src={
+          user.profileImage !== "" && typeof user.profileImage === "string"
+            ? user.profileImage
+            : defaultProfileImage
+        }
         alt="profile image"
       />
       <header>
