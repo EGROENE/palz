@@ -352,16 +352,18 @@ const DisplayedCardsPage = ({
     // get TUser object that matches each id in friends array of each of currentUser's friends
     let friendsOfFriends: TUser[] = [];
     for (const friend of currentUserFriends) {
-      for (const friendID of friend.friends) {
-        const friendOfFriend: TUser | undefined = allUsers.filter(
-          (u) =>
-            friendID !== currentUser?._id &&
-            !currentUser?.friends.includes(friendID) &&
-            u._id === friendID
-        )[0];
-        /* Necessary to check that friendOfFriend is truthy b/c it would sometimes be undefined if no user in allUsers fit the criteria (without this check, undefined would be pushed to friendsOfFriends) */
-        if (friendOfFriend) {
-          friendsOfFriends.push(friendOfFriend);
+      if (friend && friend.friends.length > 0) {
+        for (const friendID of friend.friends) {
+          const friendOfFriend: TUser | undefined = allUsers.filter(
+            (u) =>
+              friendID !== currentUser?._id &&
+              !currentUser?.friends.includes(friendID) &&
+              u._id === friendID
+          )[0];
+          /* Necessary to check that friendOfFriend is truthy b/c it would sometimes be undefined if no user in allUsers fit the criteria (without this check, undefined would be pushed to friendsOfFriends) */
+          if (friendOfFriend) {
+            friendsOfFriends.push(friendOfFriend);
+          }
         }
       }
     }
@@ -424,7 +426,7 @@ const DisplayedCardsPage = ({
   for (const pal of currentUserPalz) {
     if (currentUser?.interests) {
       for (const interest of currentUser.interests) {
-        if (pal.interests.includes(interest)) {
+        if (pal && pal.interests.includes(interest)) {
           friendsWithCommonInterests.push(pal);
         }
       }
