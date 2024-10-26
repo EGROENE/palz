@@ -60,10 +60,13 @@ const EventCard = ({ event }: { event: TEvent }) => {
       ? true
       : false;
 
-  const maxParticipantsReached: boolean = event.invitees.length === event.maxParticipants;
+  const maxInviteesReached: boolean =
+    event.maxParticipants && event
+      ? event.invitees.length === event.maxParticipants - event?.organizers.length
+      : false;
 
   const getRSVPButtonText = (): string => {
-    if (maxParticipantsReached) {
+    if (maxInviteesReached) {
       return "Max participants reached";
     } else if (userRSVPd) {
       return "Remove RSVP";
@@ -99,7 +102,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
         boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
       }}
     >
-      {userIsInvitee && !userRSVPd && !maxParticipantsReached && (
+      {userIsInvitee && !userRSVPd && !maxInviteesReached && (
         <div className={styles.eventCardInvitation}>
           <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
           <button onClick={(e) => handleAddUserRSVP(e, event)}>{rsvpButtonText}</button>
@@ -147,7 +150,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                 event.eventEndDateTimeInMS > now) &&
                 (!userIsOrganizer ? (
                   <button
-                    disabled={maxParticipantsReached}
+                    disabled={maxInviteesReached}
                     className={styles.eventButtonsContainerButton}
                     onClick={(e) =>
                       currentUser &&

@@ -129,11 +129,13 @@ const EventPage = () => {
       ? true
       : false;
 
-  const maxParticipantsReached: boolean =
-    event?.invitees.length === event?.maxParticipants;
+  const maxInviteesReached: boolean =
+    event && event.maxParticipants
+      ? event.invitees.length === event.maxParticipants - event?.organizers.length
+      : false;
 
   const getRSVPButtonText = (): string => {
-    if (maxParticipantsReached) {
+    if (maxInviteesReached) {
       return "Max participants reached";
     } else if (userRSVPd) {
       return "Remove RSVP";
@@ -279,7 +281,7 @@ const EventPage = () => {
               userCreatedAccount !== null &&
               (!userIsOrganizer ? (
                 <button
-                  disabled={maxParticipantsReached}
+                  disabled={maxInviteesReached}
                   style={{ "backgroundColor": randomColor }}
                   onClick={(e) =>
                     currentUser &&
