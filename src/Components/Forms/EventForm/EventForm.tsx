@@ -1035,10 +1035,6 @@ const EventForm = ({
   };
   const submitButtonIsDisabled: boolean = getSubmitButtonIsDisabled();
 
-  const maxParticipantsReached: boolean = maxParticipants
-    ? invitees.length > maxParticipants
-    : false;
-
   const eventInfos: TEvent = {
     title: eventTitle.trim(),
     creator: currentUser?._id,
@@ -1749,7 +1745,7 @@ const EventForm = ({
           <div className="co-organizers-invitees-dropdown">
             <button
               style={{ backgroundColor: randomColor }}
-              disabled={isLoading || maxParticipantsReached}
+              disabled={isLoading}
               type="button"
               onClick={() => setShowPotentialInvitees(!showPotentialInvitees)}
             >
@@ -1759,7 +1755,7 @@ const EventForm = ({
                 className="fas fa-chevron-down"
               ></i>
             </button>
-            {showPotentialInvitees && !maxParticipantsReached && (
+            {showPotentialInvitees && (
               <ul className="dropdown-list">
                 {potentialInvitees.map((user) => (
                   <div
@@ -1785,7 +1781,6 @@ const EventForm = ({
               </ul>
             )}
           </div>
-          {maxParticipantsReached && <p>Max participants reached</p>}
         </div>
       </div>
       <InterestsSection
