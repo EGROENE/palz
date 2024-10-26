@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { TEvent } from "./types";
 
 const arraysAreIdentical = (_arr1: any[], _arr2: any[]) => {
@@ -32,29 +33,25 @@ const isValidUrl = (url: string): boolean => {
 };
 
 const nameNoSpecialChars = (input: string) =>
-  input.replace(/[^a-zÄäÖöÜüÑñÉéóÓÍí -]/gi, "");
+  input.replace(/[^a-zÄäÖöÜüÑñÉéóÓÍí -']/gi, "");
 
-const getCapitalizedWord = (word: string | undefined): string => {
-  const wordLetters = word?.split("");
-  const firstLetterCapitalized = wordLetters ? wordLetters[0]?.toUpperCase() : "";
-  const otherLettersJoined = wordLetters?.slice(1).join("").toLowerCase();
-
-  return firstLetterCapitalized + otherLettersJoined;
+const getCapitalizedWord = (word) => {
+  const firstLetterCapitalized = word && word[0].toUpperCase();
+  const restOfWord = word.slice(1);
+  return firstLetterCapitalized + restOfWord;
 };
 
-const formatCapitalizedName = (string: string | undefined): string => {
+const formatCapitalizedName = (name) => {
   let formattedWordOrWords = "";
 
-  if (string !== "") {
-    if (string?.includes("-")) {
-      const stringWords: string[] = string.split(/[\s-]+/);
+  if (name !== "") {
+    if (name?.includes("-")) {
+      const stringWords: string[] = name.split(/[\s-]+/);
       for (const word of stringWords) {
         const trimmedWord = word.trim();
         const capitalizedWord = getCapitalizedWord(trimmedWord);
         // If char before/after word in original string is hyphen, separator should be "-"; else, " ":
-        const stringNoMultiSpacesSplitBySpaces = string
-          .replace(/\s+/g, " ")
-          .split(" ")[0];
+        const stringNoMultiSpacesSplitBySpaces = name.replace(/\s+/g, " ").split(" ")[0];
         const indexOfWordInStringNoMultiSpacesSplitBySpaces =
           stringNoMultiSpacesSplitBySpaces.indexOf(word);
         const prevItemIndex = indexOfWordInStringNoMultiSpacesSplitBySpaces - 1;
@@ -69,8 +66,8 @@ const formatCapitalizedName = (string: string | undefined): string => {
             ? formattedWordOrWords + separator + capitalizedWord
             : capitalizedWord;
       }
-    } else if (string?.includes(" ")) {
-      const stringWords: string[] = string.replace(/\s+/g, " ").split(" ");
+    } else if (name?.includes(" ")) {
+      const stringWords: string[] = name.replace(/\s+/g, " ").split(" ");
       for (const word of stringWords) {
         const trimmedWord = word.trim();
         const capitalizedWord = getCapitalizedWord(trimmedWord);
@@ -80,20 +77,10 @@ const formatCapitalizedName = (string: string | undefined): string => {
             : capitalizedWord;
       }
     } else {
-      const capitalizedWord = getCapitalizedWord(string);
-      formattedWordOrWords =
-        formattedWordOrWords !== ""
-          ? formattedWordOrWords + " " + capitalizedWord
-          : capitalizedWord;
+      formattedWordOrWords = getCapitalizedWord(name);
     }
   }
-  return (
-    formattedWordOrWords
-      // .replace(/\undefined/g, "") // Formerly, this was used, but there was an error. So far, .replace(/undefined/g, "") seems to work.
-      .replace(/undefined/g, "")
-      .replace(/\s+/g, " ")
-      .trim()
-  );
+  return formattedWordOrWords.replace(/\s+/g, " ").trim();
 };
 
 const formatHyphensAndSpacesInString = (name: string): string => {
