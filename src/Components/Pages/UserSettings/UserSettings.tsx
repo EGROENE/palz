@@ -94,7 +94,7 @@ const UserSettings = () => {
   };
 
   // Defined here, and not in userContext, as useNavigate hook can only be used in <Router> component (navigation is changed)
-  const handleAccountDeletion = () => {
+  const handleAccountDeletion = (): void => {
     setShowAreYouSureInterface(false);
 
     setAccountDeletionInProgress(true);
