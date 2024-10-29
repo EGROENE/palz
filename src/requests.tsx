@@ -273,7 +273,7 @@ const deleteEventInterest = (
   });
 };
 
-const deleteUser = (userID: number | string | undefined): Promise<Response> => {
+const deleteUser = (userID: string | undefined): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json");
 
