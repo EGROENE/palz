@@ -12,7 +12,7 @@ const getEvent = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "Event doesn't exist" });
+    return res.status(400).json({ error: "Bad request (invalid id)" });
   }
 
   const event = await Event.findById(id);
@@ -87,7 +87,7 @@ const deleteEvent = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "Event doesn't exist" });
+    return res.status(400).json({ error: "Bad request (invalid id)" });
   }
 
   const event = await Event.findOneAndDelete({ _id: id });
@@ -103,7 +103,7 @@ const updateEvent = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "Event doesn't exist" });
+    return res.status(400).json({ error: "Bad request (invalid id)" });
   }
 
   const event = await Event.findOneAndUpdate({ _id: id }, { ...req.body }, { new: true });
