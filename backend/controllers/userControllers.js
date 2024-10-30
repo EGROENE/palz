@@ -20,7 +20,7 @@ const getUser = async (req, res) => {
 
   // Check that id is a valid MongoDB ObjectId:
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "User doesn't exist" });
+    return res.status(400).json({ error: "Bad request (invalid id)" });
   }
 
   // assign user to document in DB that has id that matches the id defined in this method:
@@ -105,7 +105,7 @@ const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "User doesn't exist" });
+    return res.status(400).json({ error: "Bad request (invalid id)" });
   }
 
   const user = await User.findOneAndDelete({ _id: id });
@@ -122,7 +122,7 @@ const updateUser = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "User doesn't exist" });
+    return res.status(400).json({ error: "Bad request (invalid id)" });
   }
 
   // 2nd argument in findOneAndUpdate represents updates we want to make
