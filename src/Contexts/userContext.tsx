@@ -777,6 +777,20 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .catch((error) => console.log(error));
   };
 
+  const removeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    Requests.updateUserProfileImage(currentUser, "")
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not remove profile image. Please try again.");
+        } else {
+          toast.error("Profile image removed");
+          setProfileImage("");
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   // Defined here, as it's used in methods that are used in multiple components
   const allSignupFormFieldsFilled: boolean =
     firstName !== "" &&
@@ -929,6 +943,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    removeProfileImage,
     handleDeclineInvitation,
     valuesToUpdate,
     handleProfileImageUpload,

@@ -133,6 +133,7 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  removeProfileImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleDeclineInvitation: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent
