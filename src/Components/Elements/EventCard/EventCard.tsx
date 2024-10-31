@@ -39,6 +39,10 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ? event.invitees.includes(currentUser._id)
     : false;
 
+  const userDeclinedInvitation: boolean = currentUser?._id
+    ? event.disinterestedUsers.includes(currentUser._id)
+    : false;
+
   const refinedOrganizers: string[] = [];
   for (const organizer of event.organizers) {
     if (allUsers.map((user) => user._id).includes(organizer)) {
@@ -102,7 +106,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
         boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
       }}
     >
-      {userIsInvitee && !userRSVPd && !maxInviteesReached && (
+      {userIsInvitee && !userDeclinedInvitation && !userRSVPd && !maxInviteesReached && (
         <div className={styles.eventCardInvitation}>
           <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
           <button onClick={(e) => handleAddUserRSVP(e, event)}>{rsvpButtonText}</button>
