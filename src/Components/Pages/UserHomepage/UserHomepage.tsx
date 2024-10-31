@@ -38,7 +38,10 @@ const UserHomepage = () => {
     (ev) => currentUser?._id && ev.organizers.includes(currentUser._id)
   );
   const eventsUserIsInvitedTo = allEvents.filter(
-    (ev) => currentUser?._id && ev.invitees.includes(currentUser._id)
+    (ev) =>
+      currentUser?._id &&
+      ev.invitees.includes(currentUser._id) &&
+      !ev.disinterestedUsers.includes(currentUser._id)
   );
   const allCurrentUserEvents = Methods.removeDuplicatesFromArray(
     userRSVPDEvents.concat(userOrganizedEvents).concat(eventsUserIsInvitedTo)
