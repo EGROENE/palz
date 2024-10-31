@@ -11,7 +11,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   const { currentUser, allUsers, setCurrentEvent } = useMainContext();
-  const { handleAddUserRSVP, handleDeleteUserRSVP, handleRemoveInvitee } =
+  const { handleAddUserRSVP, handleDeleteUserRSVP, handleDeclineInvitation } =
     useUserContext();
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
@@ -106,9 +106,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
         <div className={styles.eventCardInvitation}>
           <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
           <button onClick={(e) => handleAddUserRSVP(e, event)}>{rsvpButtonText}</button>
-          <button onClick={(e) => handleRemoveInvitee(e, event, currentUser)}>
-            Decline
-          </button>
+          <button onClick={(e) => handleDeclineInvitation(e, event)}>Decline</button>
         </div>
       )}
       <div className={styles.eventCardMainInfo}>
