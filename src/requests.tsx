@@ -311,6 +311,36 @@ const addUserRSVP = (user: TUser | undefined, event: TEvent): Promise<Response> 
   });
 };
 
+const addToDisinterestedUsers = (
+  user: TUser | undefined,
+  event: TEvent
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const updatedDisinterestedUsersArray: Array<string | number | undefined> = [];
+  for (const disintUser of event.disinterestedUsers) {
+    updatedDisinterestedUsersArray.push(disintUser);
+  }
+  if (user?.username) {
+    updatedDisinterestedUsersArray.push(user._id);
+  }
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "disinterestedUsers": updatedDisinterestedUsersArray,
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const deleteUserRSVP = (user: TUser | undefined, event: TEvent) => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -618,6 +648,7 @@ const deleteFriendFromFriendsArray = (
 };
 
 const Requests = {
+  addToDisinterestedUsers,
   updateUserProfileImage,
   addFriendToFriendsArray,
   deleteFriendFromFriendsArray,
