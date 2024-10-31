@@ -1060,6 +1060,7 @@ const EventForm = ({
     maxParticipants: maxParticipants,
     address: eventAddress?.trim(),
     interestedUsers: [],
+    disinterestedUsers: [],
     imageOne: imageOne,
     imageTwo: imageTwo,
     imageThree: imageThree,
