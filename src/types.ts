@@ -60,6 +60,7 @@ export type TEvent = {
   address: string | undefined;
   additionalInfo: string;
   interestedUsers: string[];
+  disinterestedUsers: string[];
   relatedInterests: string[];
 };
 
