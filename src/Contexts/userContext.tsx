@@ -737,6 +737,23 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .catch((error) => console.log(error));
   };
 
+  const handleDeclineInvitation = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent
+  ) => {
+    e.preventDefault();
+    Requests.addToDisinterestedUsers(currentUser, event)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not decline invitation. Please try again.");
+          fetchAllEvents();
+        } else {
+          toast.error("Invitation declined.");
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   // maybe create separate request to update user profile img
   const handleProfileImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -912,6 +929,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    handleDeclineInvitation,
     valuesToUpdate,
     handleProfileImageUpload,
     profileImage,

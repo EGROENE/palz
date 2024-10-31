@@ -133,6 +133,10 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  handleDeclineInvitation: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent
+  ) => void;
   valuesToUpdate: TUserValuesToUpdate;
   handleProfileImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   profileImage: string | unknown;
