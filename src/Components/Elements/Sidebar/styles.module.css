@@ -9,12 +9,17 @@
   overflow-y: scroll;
 }
 
-.sidebarIcon {
+.sidebarIcon,
+.sidebarIconContainer i {
   position: absolute;
   left: 1rem;
   font-size: 1.5rem;
   color: white;
   padding: 0.25rem 0.5rem;
+}
+
+.sidebarIconContainer {
+  position: relative;
 }
 
 .sidebarClose {
