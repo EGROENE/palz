@@ -133,6 +133,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  showUpdateProfileImageInterface: boolean;
+  setShowUpdateProfileImageInterface: React.Dispatch<React.SetStateAction<boolean>>;
   removeProfileImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleDeclineInvitation: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
