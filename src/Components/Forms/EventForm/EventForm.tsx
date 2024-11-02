@@ -1839,23 +1839,21 @@ const EventForm = ({
       )}
       {showAreYouSureDeleteEvent && (
         <AreYouSureInterface
-          message="Are you sure you want to delete this event?"
-          noButtonText="Cancel"
-          yesButtonText="Delete Event"
+          header="Are you sure you want to delete this event?"
+          buttonTwoText="Delete Event"
+          buttonOneText="Cancel"
           setShowAreYouSureInterface={setShowAreYouSureDeleteEvent}
           executionHandler={handleDeleteEvent}
-          randomColor={randomColor}
         />
       )}
       {showAreYouSureRemoveCurrentUserAsOrganizer && (
         <AreYouSureInterface
-          message="Are you sure you want to remove yourself as an organizer?"
+          header="Are you sure you want to remove yourself as an organizer?"
           subheader="You will no longer be able to make changes to this event, unless another user adds you as a co-organizer."
-          noButtonText="Cancel"
-          yesButtonText="Remove Myself as Organizer"
+          buttonTwoText="Remove Myself as Organizer"
+          buttonOneText="Cancel"
           setShowAreYouSureInterface={setShowAreYouSureRemoveCurrentUserAsOrganizer}
           executionHandler={handleAddRemoveUserAsOrganizer}
-          randomColor={randomColor}
         />
       )}
       <div className="buttons-container">

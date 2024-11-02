@@ -211,14 +211,13 @@ const UserSettings = () => {
       </div>
       {showAreYouSureInterface && (
         <AreYouSureInterface
-          message="Are you sure you want to permanently delete your account?"
+          header="Are you sure you want to permanently delete your account?"
           subheader="Please understand that this action is
             irreversible."
-          noButtonText="Cancel"
-          yesButtonText="Delete Account"
+          buttonTwoText="Delete Account"
+          buttonOneText="Cancel"
           setShowAreYouSureInterface={setShowAreYouSureInterface}
           executionHandler={handleAccountDeletion}
-          randomColor={randomColor}
         />
       )}
       {accountDeletionInProgress && <AccountDeletionInProgressModal />}
