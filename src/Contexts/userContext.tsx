@@ -22,6 +22,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   } = useMainContext();
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
+  const [showUpdateProfileImageInterface, setShowUpdateProfileImageInterface] =
+    useState<boolean>(false);
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
@@ -774,7 +776,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           setProfileImage(base64);
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => setShowUpdateProfileImageInterface(false));
   };
 
   const removeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -788,7 +791,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           setProfileImage("");
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => setShowUpdateProfileImageInterface(false));
   };
 
   // Defined here, as it's used in methods that are used in multiple components
@@ -1043,6 +1047,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setWhoCanInviteUser,
     profileVisibleTo,
     setProfileVisibleTo,
+    showUpdateProfileImageInterface,
+    setShowUpdateProfileImageInterface,
   };
 
   return (
