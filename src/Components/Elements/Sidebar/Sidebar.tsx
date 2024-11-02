@@ -8,8 +8,12 @@ import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const Sidebar = () => {
   const { currentUser, theme } = useMainContext();
-  const { showSidebar, setShowSidebar, handleProfileImageUpload, profileImage } =
-    useUserContext();
+  const {
+    showSidebar,
+    setShowSidebar,
+    profileImage,
+    setShowUpdateProfileImageInterface,
+  } = useUserContext();
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   useEffect(() => {
@@ -41,20 +45,13 @@ const Sidebar = () => {
         style={{ backgroundColor: randomColor }}
         className={`${styles.sidebarIcon} ${styles.sidebarClose} fas fa-times`}
       ></i>
-      <label
-        className={`${styles.sidebarIcon} ${styles.sidebarEditProfileImage}`}
-        style={{ backgroundColor: randomColor }}
-      >
-        <i className="fas fa-camera"></i>
-        <input
-          id="profile-image-upload"
-          name="profileImage"
-          onChange={(e) => handleProfileImageUpload(e)}
-          style={{ display: "none" }}
-          type="file"
-          accept=".jpeg, .png, .jpg"
-        />
-      </label>
+      <div className={`${styles.sidebarIconContainer} ${styles.sidebarEditProfileImage}`}>
+        <i
+          style={{ backgroundColor: randomColor }}
+          onClick={() => setShowUpdateProfileImageInterface(true)}
+          className="fas fa-camera"
+        ></i>
+      </div>
       <img
         className={`${styles.profileImageSidebar}`}
         src={
