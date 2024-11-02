@@ -15,11 +15,17 @@ import DisplayedCardsPage from "./Components/Pages/DisplayedCardsPage/DisplayedC
 import EventPage from "./Components/Pages/EventPage/EventPage";
 import UsersEvents from "./Components/Pages/UsersEvents/UsersEvents";
 import EditEventPage from "./Components/Pages/EditEventPage/EditEventPage";
+import AreYouSureInterface from "./Components/Elements/AreYouSureInterface/AreYouSureInterface";
 
 function App() {
   const { userCreatedAccount, theme, showWelcomeMessage, currentUser, currentEvent } =
     useMainContext();
-  const { showSidebar } = useUserContext();
+  const {
+    showSidebar,
+    showUpdateProfileImageInterface,
+    setShowUpdateProfileImageInterface,
+    removeProfileImage,
+  } = useUserContext();
 
   const navigation = useNavigate();
   const currentURL = useLocation().pathname;
@@ -62,6 +68,16 @@ function App() {
         baseURLElement !== <Welcome /> &&
         baseURLElement !== <LoginPage /> && <NavBar />}
       {showSidebar && <Sidebar />}
+      {showUpdateProfileImageInterface && (
+        <AreYouSureInterface
+          header="Edit Profile Image"
+          removeFile={removeProfileImage}
+          buttonOneText="Upload New"
+          buttonTwoText="Remove Profile Image"
+          setShowAreYouSureInterface={setShowUpdateProfileImageInterface}
+          isFileUpload={true}
+        />
+      )}
       <Routes>
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />
