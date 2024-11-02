@@ -7,7 +7,7 @@ import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import { TThemeColor } from "../../../types";
-import AreYouSureInterface from "../../Elements/AreYouSureInterface/AreYouSureInterface";
+import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import AccountDeletionInProgressModal from "../../Elements/AccountDeletionInProgressModal/AccountDeletionInProgressModal";
 
 const UserSettings = () => {
@@ -210,7 +210,7 @@ const UserSettings = () => {
         </div>
       </div>
       {showAreYouSureInterface && (
-        <AreYouSureInterface
+        <TwoOptionsInterface
           header="Are you sure you want to permanently delete your account?"
           subheader="Please understand that this action is
             irreversible."

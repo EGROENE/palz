@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import Tab from "../../Elements/Tab/Tab";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import ImageURLField from "../../Elements/ImageURLField/ImageURLField";
-import AreYouSureInterface from "../../Elements/AreYouSureInterface/AreYouSureInterface";
+import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 
 const EventForm = ({
   randomColor,
@@ -1838,7 +1838,7 @@ const EventForm = ({
         </button>
       )}
       {showAreYouSureDeleteEvent && (
-        <AreYouSureInterface
+        <TwoOptionsInterface
           header="Are you sure you want to delete this event?"
           buttonTwoText="Delete Event"
           buttonOneText="Cancel"
@@ -1847,7 +1847,7 @@ const EventForm = ({
         />
       )}
       {showAreYouSureRemoveCurrentUserAsOrganizer && (
-        <AreYouSureInterface
+        <TwoOptionsInterface
           header="Are you sure you want to remove yourself as an organizer?"
           subheader="You will no longer be able to make changes to this event, unless another user adds you as a co-organizer."
           buttonTwoText="Remove Myself as Organizer"

@@ -15,7 +15,7 @@ import DisplayedCardsPage from "./Components/Pages/DisplayedCardsPage/DisplayedC
 import EventPage from "./Components/Pages/EventPage/EventPage";
 import UsersEvents from "./Components/Pages/UsersEvents/UsersEvents";
 import EditEventPage from "./Components/Pages/EditEventPage/EditEventPage";
-import AreYouSureInterface from "./Components/Elements/AreYouSureInterface/AreYouSureInterface";
+import TwoOptionsInterface from "./Components/Elements/TwoOptionsInterface/TwoOptionsInterface";
 
 function App() {
   const { userCreatedAccount, theme, showWelcomeMessage, currentUser, currentEvent } =
@@ -69,7 +69,7 @@ function App() {
         baseURLElement !== <LoginPage /> && <NavBar />}
       {showSidebar && <Sidebar />}
       {showUpdateProfileImageInterface && (
-        <AreYouSureInterface
+        <TwoOptionsInterface
           header="Edit Profile Image"
           removeFile={removeProfileImage}
           buttonOneText="Upload New"

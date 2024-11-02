@@ -4,7 +4,7 @@ import styles from "./styles.module.css";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useState, useEffect } from "react";
 
-type TAreYouSureInterfaceProps = {
+type TTwoOptionsInterfaceProps = {
   header: string;
   subheader?: string;
   buttonTwoText: string;
@@ -15,7 +15,7 @@ type TAreYouSureInterfaceProps = {
   removeFile?: Function;
 };
 
-const AreYouSureInterface = ({
+const TwoOptionsInterface = ({
   header,
   subheader,
   buttonTwoText,
@@ -24,7 +24,7 @@ const AreYouSureInterface = ({
   executionHandler,
   isFileUpload,
   removeFile,
-}: TAreYouSureInterfaceProps) => {
+}: TTwoOptionsInterfaceProps) => {
   const { handleProfileImageUpload, profileImage } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -89,4 +89,4 @@ const AreYouSureInterface = ({
     </div>
   );
 };
-export default AreYouSureInterface;
+export default TwoOptionsInterface;
