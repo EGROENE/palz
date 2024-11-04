@@ -75,16 +75,8 @@ const eventSchema = new Schema({
     type: Array,
     required: true,
   },
-  imageOne: {
-    type: String,
-    required: false,
-  },
-  imageTwo: {
-    type: String,
-    required: false,
-  },
-  imageThree: {
-    type: String,
+  images: {
+    type: Array,
     required: false,
   },
   relatedInterests: {
