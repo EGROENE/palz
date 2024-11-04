@@ -767,7 +767,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .then((response) => {
         if (!response.ok) {
           if (response.status === 413) {
-            toast.error("Please upload a smaller file.");
+            toast.error("Max file size is 50MB.");
           } else {
             toast.error("Could not update profile image. Please try again.");
           }
