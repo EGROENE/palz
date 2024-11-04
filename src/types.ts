@@ -51,9 +51,7 @@ export type TEvent = {
   eventEndDateTimeInMS: number;
   publicity: "public" | "private";
   maxParticipants: number | null;
-  imageOne?: string;
-  imageTwo?: string;
-  imageThree?: string;
+  images: string[];
   city: string | undefined;
   stateProvince: string | undefined;
   country: string | undefined;
@@ -88,9 +86,7 @@ export type TUserValuesToUpdate = {
 
 export type TEventValuesToUpdate = {
   relatedInterests?: string[] | undefined;
-  imageThree?: string | undefined;
-  imageTwo?: string | undefined;
-  imageOne?: string | undefined;
+  images?: string[] | undefined;
   address?: string | undefined;
   maxParticipants?: number | null;
   eventStartDateMidnightUTCInMS?: number | undefined;
