@@ -13,13 +13,13 @@ const FileUploadWithButton = ({
     <label>
       <label
         className={styles.uploadFileButton}
-        htmlFor="profile-image-upload"
+        htmlFor="image-upload"
         style={{ backgroundColor: randomColor }}
       >
         {addFileButtonText}
       </label>
       <input
-        id="profile-image-upload"
+        id="image-upload"
         name="profileImage"
         onChange={(e) => addFile(e)}
         style={{ display: "none" }}
