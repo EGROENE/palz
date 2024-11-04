@@ -2,6 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 
+const bodyParser = require("body-parser");
+
 // Express app:
 const app = express();
 
@@ -14,6 +16,8 @@ const userRoutes = require("./routes/users.cjs");
 const eventRoutes = require("./routes/events.cjs");
 
 // MIDDLEWARE
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.json()); // if any request has data that it sends to the server, this attaches it to request object, so we can access it in request handler
 
 app.use((req, res, next) => {
