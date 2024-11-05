@@ -508,28 +508,37 @@ const EventForm = ({
     e.preventDefault();
     const file = e.target.files && e.target.files[0];
     const base64: string | null = file && String(await Methods.convertToBase64(file));
-    if (
-      base64 &&
-      (event && event.images
-        ? !event.images.includes(base64)
-        : !eventImages?.includes(base64))
-    ) {
-      Requests.addEventImage(event, base64)
-        .then((response) => {
-          if (!response.ok) {
-            if (response.status === 413) {
-              toast.error("Max file size is 50MB.");
+    // If event (component is used to edit existing event), save image to DB when added
+    /* If !event (component is used to add new event), only add image to state value eventImages, which will be 
+    passed into database when user submits form successfully */
+    if (base64) {
+      if (
+        event &&
+        event.images &&
+        !event.images.includes(base64) &&
+        !eventImages?.includes(base64)
+      ) {
+        Requests.addEventImage(event, base64)
+          .then((response) => {
+            if (!response.ok) {
+              if (response.status === 413) {
+                toast.error("Max file size is 50MB.");
+              } else {
+                toast.error("Could not add event image. Please try again.");
+              }
             } else {
-              toast.error("Could not add event image. Please try again.");
+              toast.success("Event image added");
+              setEventImages(eventImages?.concat(base64));
             }
-          } else {
-            toast.success("Event image added");
-            setEventImages(eventImages?.concat(base64));
-          }
-        })
-        .catch((error) => console.log(error));
-    } else {
-      toast.error("Cannot upload same image more than once.");
+          })
+          .catch((error) => console.log(error));
+      } else {
+        if (event?.images?.includes(base64) || eventImages?.includes(base64)) {
+          toast.error("Cannot upload same image more than once.");
+        } else {
+          setEventImages(eventImages?.concat(base64));
+        }
+      }
     }
   };
 
@@ -538,24 +547,28 @@ const EventForm = ({
     imageToBeRemoved: string
   ): Promise<void> => {
     e.preventDefault();
-    Requests.removeEventImage(event, imageToBeRemoved)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not remove event image. Please try again.");
-        } else {
-          toast.error("Event image removed");
-          let newEventImages = [];
-          if (eventImages) {
-            for (const image of eventImages) {
-              if (image !== imageToBeRemoved) {
-                newEventImages.push(image);
+    if (event) {
+      Requests.removeEventImage(event, imageToBeRemoved)
+        .then((response) => {
+          if (!response.ok) {
+            toast.error("Could not remove event image. Please try again.");
+          } else {
+            toast.error("Event image removed");
+            let newEventImages = [];
+            if (eventImages) {
+              for (const image of eventImages) {
+                if (image !== imageToBeRemoved) {
+                  newEventImages.push(image);
+                }
               }
             }
+            setEventImages(newEventImages);
           }
-          setEventImages(newEventImages);
-        }
-      })
-      .catch((error) => console.log(error));
+        })
+        .catch((error) => console.log(error));
+    } else {
+      setEventImages(eventImages?.filter((image) => image !== imageToBeRemoved));
+    }
   };
 
   const handlePublicPrivateBoxChecking = (option: "public" | "private"): void =>
@@ -1560,7 +1573,7 @@ const EventForm = ({
                     event?.creator === user._id ? (
                       <i
                         style={{
-                          color: "#B3995D",
+                          color: "rgb(253, 255, 8)",
                           fontSize: "1.05rem",
                           margin: "0 0 0 0.5rem",
                         }}
@@ -1764,7 +1777,7 @@ const EventForm = ({
         {
           <div className={styles.eventImagesContainer}>
             {eventImages &&
-              event &&
+              eventImages.length > 0 &&
               eventImages.map((img) => (
                 <div className={styles.eventImageContainer} key={img}>
                   <i
@@ -1779,7 +1792,7 @@ const EventForm = ({
                   />
                 </div>
               ))}
-            {((event && eventImages && eventImages.length < 3) || !event) && (
+            {eventImages && eventImages.length < 3 && (
               <label>
                 <label title="Add Photo" htmlFor="image-upload">
                   <i className="fas fa-plus"></i>
