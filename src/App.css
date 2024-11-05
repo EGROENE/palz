@@ -369,23 +369,6 @@
   margin: 0.25rem 0 0.25rem 2rem;
 }
 
-.date-time-inputs-line {
-  display: flex;
-}
-
-.date-time-inputs-container {
-  display: flex;
-  align-items: flex-end;
-}
-
-.date-time-group-container:first-child {
-  margin-right: 9rem;
-}
-
-.date-time-inputs-container label {
-  margin: 0 2rem 0 0;
-}
-
 .socials-inputs-container label:first-child ~ * {
   margin-left: 2rem;
 }
@@ -501,50 +484,6 @@ form textarea {
   justify-content: space-evenly;
 }
 
-.event-form-checkbox-container {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.event-form-checkbox-container label {
-  display: flex;
-  margin: 0 1rem 0 0;
-  align-items: center;
-}
-
-.event-form .delete-button {
-  margin-top: 2rem;
-}
-
-.add-other-users-area {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.add-other-users-area span {
-  margin: 0 0.25rem;
-}
-
-.add-other-users-area span:hover {
-  cursor: pointer;
-  opacity: 0.8;
-}
-
-.co-organizers-invitees-container {
-  flex-wrap: wrap;
-  width: 100%;
-  max-width: 100%;
-  display: flex;
-}
-
-.co-organizers-invitees-inputs {
-  display: flex;
-  width: 100%;
-  position: relative;
-  align-items: baseline;
-}
-
 .clear-other-users-search-query {
   position: absolute;
   top: 10px;
@@ -552,35 +491,21 @@ form textarea {
   font-size: 1.25rem;
 }
 
-.page-hero form .co-organizers-invitees-inputs input {
+/* .page-hero form .co-organizers-invitees-inputs input {
   width: 37%;
   height: calc(28px - 0.45rem);
   max-height: calc(28px - 0.45rem);
   margin-right: 4rem;
-}
-
-.co-organizers-invitees-dropdown {
-  display: flex;
-  flex-direction: column;
-}
-
-.co-organizers-invitees-dropdown i {
-  margin-left: 1rem;
-}
+} */
 
 .other-user-option {
   display: flex;
   align-items: center;
 }
 
-.page-hero form .co-organizers-invitees-inputs .other-user-option input {
+/* .page-hero form .co-organizers-invitees-inputs .other-user-option input {
   margin-right: 0.5rem;
-}
-
-.co-organizers-invitees-inputs .dropdown-list li:hover {
-  background-color: unset;
-  opacity: 1;
-}
+} */
 
 .displayed-co-organizer {
   font-size: 0.75rem;
