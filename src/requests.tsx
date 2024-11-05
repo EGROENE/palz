@@ -415,13 +415,40 @@ const updateEvent = (
 
 const addEventImage = (
   event: TEvent | undefined,
-  newImage: string | unknown
+  newImage: string
 ): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const newImagesArray = event && [...event.images, newImage];
+  let newImagesArray = [];
+  if (event && event.images) {
+    for (const image of event.images) {
+      newImagesArray.push(image);
+    }
+  }
+  newImagesArray.concat(newImage);
   const raw = JSON.stringify({ images: newImagesArray });
+
+  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
+const removeEventImage = (event: TEvent | undefined, imageToRemove: string | unknown) => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const getRaw = () => {
+    if (event && event.images) {
+      return JSON.stringify({
+        "images": event.images.filter((image) => image !== imageToRemove),
+      });
+    }
+  };
+  const raw = getRaw();
 
   return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
     method: "PATCH",
@@ -664,6 +691,7 @@ const deleteFriendFromFriendsArray = (
 };
 
 const Requests = {
+  removeEventImage,
   addEventImage,
   addToDisinterestedUsers,
   updateUserProfileImage,
