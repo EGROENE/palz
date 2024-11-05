@@ -341,11 +341,11 @@
   width: calc(100% - 0.5rem);
 }
 
-.dropdown-list li:hover {
+/* .dropdown-list li:hover {
   cursor: pointer;
   background-color: rgb(75, 75, 75);
   opacity: 0.8;
-}
+} */
 
 .dropdown-list li span {
   margin-left: 0.5rem;
