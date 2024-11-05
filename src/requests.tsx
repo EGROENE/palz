@@ -384,7 +384,7 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
     "maxParticipants": eventData.maxParticipants,
     "address": eventData.address,
     "interestedUsers": [],
-    "images": [],
+    "images": eventData.images,
     "relatedInterests": eventData.relatedInterests,
   });
 
@@ -420,14 +420,7 @@ const addEventImage = (
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let newImagesArray = [];
-  if (event && event.images) {
-    for (const image of event.images) {
-      newImagesArray.push(image);
-    }
-  }
-  newImagesArray.concat(newImage);
-  const raw = JSON.stringify({ images: newImagesArray });
+  const raw = JSON.stringify({ images: event?.images?.concat(newImage) });
 
   return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
     method: "PATCH",
