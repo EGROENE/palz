@@ -174,6 +174,11 @@ const EventForm = ({
     // If event passed to this component, setCurrentEvent in mainContext to that:
     if (event) {
       setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
+    } else {
+      if (eventImages && eventImages.length > 0) {
+        // Remove any previously added event images (like if user added some on new event, but didn't submit form)
+        setEventImages([]);
+      }
     }
   }, []);
 
