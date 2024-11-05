@@ -51,7 +51,7 @@ export type TEvent = {
   eventEndDateTimeInMS: number;
   publicity: "public" | "private";
   maxParticipants: number | null;
-  images: string[];
+  images: string[] | undefined;
   city: string | undefined;
   stateProvince: string | undefined;
   country: string | undefined;
