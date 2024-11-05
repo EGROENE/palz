@@ -845,7 +845,6 @@ const EventForm = ({
           .then((response) => {
             if (!response.ok) {
               toast.error("Could not create event. Please try again.");
-              fetchAllEvents();
             } else {
               toast.success("Event created!");
               navigation(`/${currentUser?.username}/events`);
