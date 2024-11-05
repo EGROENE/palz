@@ -518,9 +518,12 @@ const EventForm = ({
         !event.images.includes(base64) &&
         !eventImages?.includes(base64)
       ) {
+        setEventImages(eventImages?.concat(base64));
         Requests.addEventImage(event, base64)
           .then((response) => {
             if (!response.ok) {
+              e.preventDefault();
+              setEventImages(eventImages?.filter((image) => image !== base64));
               if (response.status === 413) {
                 toast.error("Max file size is 50MB.");
               } else {
@@ -528,7 +531,6 @@ const EventForm = ({
               }
             } else {
               toast.success("Event image added");
-              setEventImages(eventImages?.concat(base64));
             }
           })
           .catch((error) => console.log(error));
@@ -547,10 +549,12 @@ const EventForm = ({
     imageToBeRemoved: string
   ): Promise<void> => {
     e.preventDefault();
+    setEventImages(eventImages?.filter((image) => image !== imageToBeRemoved));
     if (event) {
       Requests.removeEventImage(event, imageToBeRemoved)
         .then((response) => {
           if (!response.ok) {
+            setEventImages(eventImages);
             toast.error("Could not remove event image. Please try again.");
           } else {
             toast.error("Event image removed");
@@ -566,8 +570,6 @@ const EventForm = ({
           }
         })
         .catch((error) => console.log(error));
-    } else {
-      setEventImages(eventImages?.filter((image) => image !== imageToBeRemoved));
     }
   };
 
