@@ -1,0 +1,163 @@
+.eventFormCheckboxContainer {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.eventFormCheckboxContainer label {
+  display: flex;
+  margin: 0 1rem 0 0;
+  align-items: center;
+}
+
+.eventForm .delete-button {
+  margin-top: 2rem;
+}
+
+.dateTimeInputsLine {
+  display: flex;
+}
+
+.dateTimeInputsContainer {
+  display: flex;
+  align-items: flex-end;
+}
+
+.dateTimeGroupContainer {
+  display: flex;
+}
+
+.dateTimeGroupContainer:first-child {
+  margin-right: 9rem;
+}
+
+.dateTimeInputsContainer label {
+  margin: 0 2rem 0 0;
+}
+
+.addOtherUsersArea {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.addOtherUsersArea span {
+  margin: 0 0.25rem;
+}
+
+.addOtherUsersArea span:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.coorganizersInviteesContainer {
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+}
+
+.coorganizersInviteesInputs {
+  display: flex;
+  width: 100%;
+  position: relative;
+  align-items: baseline;
+}
+
+form .coorganizersInviteesInputs input {
+  width: 37%;
+  height: calc(28px - 0.45rem);
+  max-height: calc(28px - 0.45rem);
+  margin-right: 4rem;
+}
+
+.coorganizersInviteesInputs .other-user-option input {
+  margin-right: 0.5rem;
+}
+
+.coorganizersInviteesInputs .dropdown-list li:hover {
+  background-color: unset;
+  opacity: 1;
+}
+
+.coorganizersInviteesInputs .dropdown-list li:hover {
+  background-color: unset;
+  opacity: 1;
+}
+
+.coorganizersInviteesDropdown {
+  display: flex;
+  flex-direction: column;
+}
+
+.coorganizersInviteesDropdown i {
+  margin-left: 1rem;
+}
+
+.coorganizersInviteesDropdown button {
+  width: 12rem;
+}
+
+.eventImagesField {
+  display: flex;
+  flex-direction: column;
+  margin: 2rem 0;
+}
+
+.eventImagesContainer {
+  display: flex;
+  align-items: center;
+}
+
+.eventImagesContainer img {
+  float: left;
+  width: 20rem;
+  height: 13rem;
+  object-fit: cover;
+  margin: 0 0.75rem;
+}
+
+.eventImagesContainer label {
+  margin: 0;
+}
+
+.eventImagesContainer i {
+  /* padding: 2.75rem; */
+  font-size: 2rem;
+  /* border-radius: 50%; */
+  height: 13rem;
+  width: 12rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dotted var(--background-color-opposite);
+}
+
+.eventImagesContainer i:hover {
+  opacity: 0.6;
+}
+
+.eventImageContainer {
+  display: flex;
+  position: relative;
+}
+
+.eventImageContainer i {
+  background-color: black;
+  position: absolute;
+  top: -1rem;
+  right: 0.25rem;
+  padding: 2px;
+  /* border-radius: 55%; */
+  font-size: 1rem;
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
+  border: unset;
+}
+
+.eventImageContainer i:hover {
+  opacity: 0.9;
+}

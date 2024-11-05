@@ -1,4 +1,6 @@
+import styles from "./styles.module.css";
 import { useState, useEffect, useRef } from "react";
+import { useSessionStorage } from "usehooks-ts";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +11,6 @@ import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import Tab from "../../Elements/Tab/Tab";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
-import ImageURLField from "../../Elements/ImageURLField/ImageURLField";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 
 const EventForm = ({
@@ -63,9 +64,6 @@ const EventForm = ({
   const maxParticipantsRef = useRef<HTMLInputElement | null>(null);
   const publicRef = useRef<HTMLInputElement | null>(null);
   const privateRef = useRef<HTMLInputElement | null>(null);
-  const imageOneRef = useRef<HTMLInputElement | null>(null);
-  const imageTwoRef = useRef<HTMLInputElement | null>(null);
-  const imageThreeRef = useRef<HTMLInputElement | null>(null);
   const coOrganizersRef = useRef<HTMLInputElement | null>(null);
   const inviteesRef = useRef<HTMLInputElement | null>(null);
   ///////
@@ -136,18 +134,10 @@ const EventForm = ({
   const [maxParticipants, setMaxParticipants] = useState<number | null>(
     event ? event.maxParticipants : null
   );
-  const [imageOne, setImageOne] = useState<string | undefined>(
-    event ? event.imageOne : ""
+  const [eventImages, setEventImages] = useSessionStorage<string[] | undefined>(
+    "eventImages",
+    event ? event.images : []
   );
-  const [imageOneError, setImageOneError] = useState<string>("");
-  const [imageTwo, setImageTwo] = useState<string | undefined>(
-    event ? event.imageTwo : ""
-  );
-  const [imageTwoError, setImageTwoError] = useState<string>("");
-  const [imageThree, setImageThree] = useState<string | undefined>(
-    event ? event.imageThree : ""
-  );
-  const [imageThreeError, setImageThreeError] = useState<string>("");
   const [publicity, setPublicity] = useState<"public" | "private">(
     event ? event.publicity : "public"
   );
@@ -170,6 +160,50 @@ const EventForm = ({
     showAreYouSureRemoveCurrentUserAsOrganizer,
     setShowAreYouSureRemoveCurrentUserAsOrganizer,
   ] = useState<boolean>(false);
+
+  useEffect(() => {
+    setCurrentEvent(allEvents.filter((ev) => ev._id === event?._id)[0]);
+  }, [allEvents]);
+
+  useEffect(() => {
+    // Hide Sidebar if showing:
+    if (showSidebar) {
+      setShowSidebar(false);
+    }
+
+    // If event passed to this component, setCurrentEvent in mainContext to that:
+    if (event) {
+      setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
+    }
+  }, []);
+
+  useEffect(() => {
+    setPotentialCoOrganizers(
+      allOtherUsers.filter((user) => {
+        if (user._id) {
+          return (
+            (user.whoCanAddUserAsOrganizer === "anyone" ||
+              (user.whoCanAddUserAsOrganizer === "friends" &&
+                currentUser?.friends.includes(user._id))) &&
+            !invitees.includes(user._id)
+          );
+        }
+      })
+    );
+
+    setPotentialInvitees(
+      allOtherUsers.filter((user) => {
+        if (user._id) {
+          return (
+            (user.whoCanInviteUser === "anyone" ||
+              (user.whoCanInviteUser === "friends" &&
+                currentUser?.friends.includes(user._id))) &&
+            !organizers.includes(user._id)
+          );
+        }
+      })
+    );
+  }, [invitees, organizers]);
 
   // Make allOtherUsers consist first of currentUser's friends, then all others
   const currentUserFriends = allUsers.filter(
@@ -468,47 +502,60 @@ const EventForm = ({
     inputCleaned > 0 ? setMaxParticipants(inputCleaned) : setMaxParticipants(null);
   };
 
-  const handleImageURLInput = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    imageNumber: "one" | "two" | "three"
-  ): void => {
+  const handleAddEventImage = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
     e.preventDefault();
-    // Handle setting of appropriate state value:
-    switch (imageNumber) {
-      case "one":
-        setImageOne(e.target.value.trim());
-        break;
-      case "two":
-        setImageTwo(e.target.value.trim());
-        break;
-      default:
-        setImageThree(e.target.value.trim());
-    }
-
-    // Handle setting of appropriate error:
-    if (e.target.value.trim() !== "" && !Methods.isValidUrl(e.target.value.trim())) {
-      switch (imageNumber) {
-        case "one":
-          setImageOneError("Invalid URL");
-          break;
-        case "two":
-          setImageTwoError("Invalid URL");
-          break;
-        default:
-          setImageThreeError("Invalid URL");
-      }
+    const file = e.target.files && e.target.files[0];
+    const base64: string | null = file && String(await Methods.convertToBase64(file));
+    if (
+      base64 &&
+      (event && event.images
+        ? !event.images.includes(base64)
+        : !eventImages?.includes(base64))
+    ) {
+      Requests.addEventImage(event, base64)
+        .then((response) => {
+          if (!response.ok) {
+            if (response.status === 413) {
+              toast.error("Max file size is 50MB.");
+            } else {
+              toast.error("Could not add event image. Please try again.");
+            }
+          } else {
+            toast.success("Event image added");
+            setEventImages(eventImages?.concat(base64));
+          }
+        })
+        .catch((error) => console.log(error));
     } else {
-      switch (imageNumber) {
-        case "one":
-          setImageOneError("");
-          break;
-        case "two":
-          setImageTwoError("");
-          break;
-        default:
-          setImageThreeError("");
-      }
+      toast.error("Cannot upload same image more than once.");
     }
+  };
+
+  const handleDeleteEventImage = async (
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
+    imageToBeRemoved: string
+  ): Promise<void> => {
+    e.preventDefault();
+    Requests.removeEventImage(event, imageToBeRemoved)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not remove event image. Please try again.");
+        } else {
+          toast.error("Event image removed");
+          let newEventImages = [];
+          if (eventImages) {
+            for (const image of eventImages) {
+              if (image !== imageToBeRemoved) {
+                newEventImages.push(image);
+              }
+            }
+          }
+          setEventImages(newEventImages);
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   const handlePublicPrivateBoxChecking = (option: "public" | "private"): void =>
@@ -669,12 +716,6 @@ const EventForm = ({
       setEventAddress(event.address);
       setEventAddressError("");
       setMaxParticipants(event.maxParticipants);
-      setImageOne(event.imageOne);
-      setImageOneError("");
-      setImageTwo(event.imageTwo);
-      setImageTwoError("");
-      setImageThree(event.imageThree);
-      setImageThreeError("");
       setPublicity("public");
       setOrganizers(event.organizers);
       setInvitees(event.invitees);
@@ -699,12 +740,6 @@ const EventForm = ({
       setEventAddress("");
       setEventAddressError("");
       setMaxParticipants(null);
-      setImageOne("");
-      setImageOneError("");
-      setImageTwo("");
-      setImageTwoError("");
-      setImageThree("");
-      setImageThreeError("");
       setPublicity("public");
       setOrganizers([`${currentUser?._id}`]);
       setInvitees([]);
@@ -776,15 +811,6 @@ const EventForm = ({
               }
               if (valuesToUpdate?.address) {
                 setEventAddress(valuesToUpdate.address);
-              }
-              if (valuesToUpdate?.imageOne) {
-                setImageOne(valuesToUpdate.imageOne);
-              }
-              if (valuesToUpdate?.imageTwo) {
-                setImageTwo(valuesToUpdate.imageTwo);
-              }
-              if (valuesToUpdate?.imageThree) {
-                setImageThree(valuesToUpdate.imageThree);
               }
               if (valuesToUpdate?.relatedInterests) {
                 setRelatedInterests(valuesToUpdate.relatedInterests);
@@ -903,10 +929,6 @@ const EventForm = ({
           eventAddress?.trim() !== event.address && {
             address: eventAddress?.trim(),
           }),
-        ...(imageOne !== "" && imageOne !== event.imageOne && { imageOne: imageOne }),
-        ...(imageTwo !== "" && imageTwo !== event.imageTwo && { imageTwo: imageTwo }),
-        ...(imageThree !== "" &&
-          imageThree !== event.imageThree && { imageThree: imageThree }),
         ...(relatedInterests !== event.relatedInterests && {
           relatedInterests: relatedInterests,
         }),
@@ -968,9 +990,6 @@ const EventForm = ({
         eventEndTimeAfterMidnightUTCInMS !== event.eventEndTimeAfterMidnightUTCInMS ||
         eventAddress !== currentEvent?.address ||
         maxParticipants !== currentEvent?.maxParticipants ||
-        imageOne !== currentEvent?.imageOne ||
-        imageTwo !== currentEvent?.imageTwo ||
-        imageThree !== currentEvent?.imageThree ||
         publicity !== currentEvent?.publicity ||
         !Methods.arraysAreIdentical(organizers, currentEvent?.organizers) ||
         !Methods.arraysAreIdentical(currentEvent?.invitees, invitees) ||
@@ -990,9 +1009,6 @@ const EventForm = ({
       eventEndTimeAfterMidnightUTCInMS !== -1 ||
       eventAddress !== "" ||
       maxParticipants !== undefined ||
-      imageOne !== "" ||
-      imageTwo !== "" ||
-      imageThree !== "" ||
       publicity !== "public" ||
       organizers.length > 1 ||
       invitees.length > 0 ||
@@ -1008,10 +1024,7 @@ const EventForm = ({
     eventLocationError === "" &&
     eventStartDateTimeError === "" &&
     eventEndDateTimeError === "" &&
-    eventAddressError === "" &&
-    imageOneError === "" &&
-    imageTwoError === "" &&
-    imageThreeError === "";
+    eventAddressError === "";
 
   /* const allRequiredFieldsFilled: boolean =
     eventTitle !== "" &&
@@ -1061,58 +1074,12 @@ const EventForm = ({
     address: eventAddress?.trim(),
     interestedUsers: [],
     disinterestedUsers: [],
-    imageOne: imageOne,
-    imageTwo: imageTwo,
-    imageThree: imageThree,
+    images: eventImages,
     relatedInterests: relatedInterests,
   };
 
-  useEffect(() => {
-    // Hide Sidebar if showing:
-    if (showSidebar) {
-      setShowSidebar(false);
-    }
-
-    // If event passed to this component, setCurrentEvent in mainContext to that:
-    if (event) {
-      setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
-    }
-  }, []);
-
-  useEffect(() => {
-    setCurrentEvent(allEvents.filter((ev) => ev._id === event?._id)[0]);
-  }, [allEvents]);
-
-  useEffect(() => {
-    setPotentialCoOrganizers(
-      allOtherUsers.filter((user) => {
-        if (user._id) {
-          return (
-            (user.whoCanAddUserAsOrganizer === "anyone" ||
-              (user.whoCanAddUserAsOrganizer === "friends" &&
-                currentUser?.friends.includes(user._id))) &&
-            !invitees.includes(user._id)
-          );
-        }
-      })
-    );
-
-    setPotentialInvitees(
-      allOtherUsers.filter((user) => {
-        if (user._id) {
-          return (
-            (user.whoCanInviteUser === "anyone" ||
-              (user.whoCanInviteUser === "friends" &&
-                currentUser?.friends.includes(user._id))) &&
-            !organizers.includes(user._id)
-          );
-        }
-      })
-    );
-  }, [invitees, organizers]);
-
   return (
-    <form className="event-form">
+    <form className={styles.eventForm}>
       <label>
         <p>Title:</p>
         <input
@@ -1339,9 +1306,9 @@ const EventForm = ({
         />
         {eventAddressError !== "" && showErrors && <p>{eventAddressError}</p>}
       </label>
-      <div className="date-time-inputs-line">
-        <div className="date-time-group-container">
-          <div className="date-time-inputs-container">
+      <div className={styles.dateTimeInputsLine}>
+        <div className={styles.dateTimeGroupContainer}>
+          <div className={styles.dateTimeInputsContainer}>
             <label>
               <p>Start Date:</p>{" "}
               <input
@@ -1410,8 +1377,8 @@ const EventForm = ({
             <p style={{ display: "flex" }}>{eventStartDateTimeError}</p>
           )}
         </div>
-        <div className="date-time-group-container">
-          <div className="date-time-inputs-container">
+        <div className={styles.dateTimeGroupContainer}>
+          <div className={styles.dateTimeInputsContainer}>
             <label>
               <p>End Date:</p>{" "}
               <input
@@ -1504,7 +1471,7 @@ const EventForm = ({
           placeholder="Max number of participants"
         />
       </label>
-      <div className="event-form-checkbox-container">
+      <div className={styles.eventFormCheckboxContainer}>
         <label>
           <span>Public</span>
           <input
@@ -1548,7 +1515,7 @@ const EventForm = ({
           />
         </label>
       </div>
-      <div className="add-other-users-area">
+      <div className={styles.addOtherUsersArea}>
         <p>
           Co-organizers: (optional){" "}
           {currentUser &&
@@ -1574,7 +1541,7 @@ const EventForm = ({
               </>
             )}
         </p>
-        <div className="co-organizers-invitees-container">
+        <div className={styles.coorganizersInviteesContainer}>
           {currentUser &&
             usersWhoAreOrganizers.filter(
               (user) => user.username !== currentUser?.username
@@ -1604,7 +1571,7 @@ const EventForm = ({
                 />
               ))}
         </div>
-        <div className="co-organizers-invitees-inputs">
+        <div className={styles.coorganizersInviteesInputs}>
           <input
             ref={coOrganizersRef}
             onFocus={() => setFocusedElement("coOrganizers")}
@@ -1642,7 +1609,7 @@ const EventForm = ({
               className="clear-other-users-search-query fas fa-times"
             ></i>
           )}
-          <div className="co-organizers-invitees-dropdown">
+          <div className={styles.coorganizersInviteesDropdown}>
             <button
               style={{ backgroundColor: randomColor }}
               disabled={isLoading}
@@ -1683,7 +1650,7 @@ const EventForm = ({
           </div>
         </div>
       </div>
-      <div className="add-other-users-area">
+      <div className={styles.addOtherUsersArea}>
         <p>
           Invitees: (recommended if event is private){" "}
           {currentUser && usersWhoAreInvitees.length > 0 && (
@@ -1692,7 +1659,7 @@ const EventForm = ({
             </span>
           )}
         </p>
-        <div className="co-organizers-invitees-container">
+        <div className={styles.coorganizersInviteesContainer}>
           {currentUser &&
             usersWhoAreInvitees.length > 0 &&
             usersWhoAreInvitees.map((user) => (
@@ -1705,7 +1672,7 @@ const EventForm = ({
               />
             ))}
         </div>
-        <div className="co-organizers-invitees-inputs">
+        <div className={styles.coorganizersInviteesInputs}>
           <input
             ref={inviteesRef}
             onFocus={() => setFocusedElement("invitees")}
@@ -1743,7 +1710,7 @@ const EventForm = ({
               className="clear-other-users-search-query fas fa-times"
             ></i>
           )}
-          <div className="co-organizers-invitees-dropdown">
+          <div className={styles.coorganizersInviteesDropdown}>
             <button
               style={{ backgroundColor: randomColor }}
               disabled={isLoading}
@@ -1792,42 +1759,43 @@ const EventForm = ({
         handleRemoveInterest={handleRemoveEventInterest}
         isDisabled={isLoading}
       />
-      <ImageURLField
-        imageNumber="one"
-        imageFieldRef={imageOneRef}
-        onFocusHandler={setFocusedElement}
-        onBlurHandler={setFocusedElement}
-        focusedElement={focusedElement}
-        randomColor={randomColor}
-        isLoading={isLoading}
-        imageError={imageOneError}
-        imageURL={imageOne}
-        handleImageURLInput={handleImageURLInput}
-      />
-      <ImageURLField
-        imageNumber="two"
-        imageFieldRef={imageTwoRef}
-        onFocusHandler={setFocusedElement}
-        onBlurHandler={setFocusedElement}
-        focusedElement={focusedElement}
-        randomColor={randomColor}
-        isLoading={isLoading}
-        imageError={imageTwoError}
-        imageURL={imageTwo}
-        handleImageURLInput={handleImageURLInput}
-      />
-      <ImageURLField
-        imageNumber="three"
-        imageFieldRef={imageThreeRef}
-        onFocusHandler={setFocusedElement}
-        onBlurHandler={setFocusedElement}
-        focusedElement={focusedElement}
-        randomColor={randomColor}
-        isLoading={isLoading}
-        imageError={imageThreeError}
-        imageURL={imageThree}
-        handleImageURLInput={handleImageURLInput}
-      />
+      <div className={styles.eventImagesField}>
+        <p>Images:</p>
+        {
+          <div className={styles.eventImagesContainer}>
+            {eventImages &&
+              eventImages.map((img) => (
+                <div className={styles.eventImageContainer} key={img}>
+                  <i
+                    title="Remove"
+                    onClick={(e) => handleDeleteEventImage(e, img)}
+                    className="fas fa-times"
+                  ></i>
+                  <img
+                    key={typeof img === "string" ? img : undefined}
+                    src={typeof img === "string" ? img : undefined}
+                    style={{ border: `1px solid ${randomColor}` }}
+                  />
+                </div>
+              ))}
+            {((eventImages && eventImages.length < 3) || !eventImages) && (
+              <label>
+                <label title="Add Photo" htmlFor="image-upload">
+                  <i className="fas fa-plus"></i>
+                </label>
+                <input
+                  id="image-upload"
+                  name="profileImage"
+                  onChange={(e) => handleAddEventImage(e)}
+                  style={{ display: "none" }}
+                  type="file"
+                  accept=".jpeg, .png, .jpg"
+                />
+              </label>
+            )}
+          </div>
+        }
+      </div>
       {event && event.creator === currentUser?._id && (
         <button
           type="button"
