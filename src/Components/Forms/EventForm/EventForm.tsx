@@ -1628,7 +1628,7 @@ const EventForm = ({
                   <div
                     key={user._id}
                     onClick={() => handleAddRemoveUserAsOrganizer(undefined, user)}
-                    className="other-user-option"
+                    className={styles.otherUserOption}
                   >
                     <input
                       disabled={isLoading}
@@ -1729,7 +1729,7 @@ const EventForm = ({
                   <div
                     key={user._id}
                     onClick={() => handleAddRemoveUserAsInvitee(undefined, user)}
-                    className="other-user-option"
+                    className={styles.otherUserOption}
                   >
                     <input
                       disabled={isLoading}
@@ -1764,6 +1764,7 @@ const EventForm = ({
         {
           <div className={styles.eventImagesContainer}>
             {eventImages &&
+              event &&
               eventImages.map((img) => (
                 <div className={styles.eventImageContainer} key={img}>
                   <i
@@ -1778,7 +1779,7 @@ const EventForm = ({
                   />
                 </div>
               ))}
-            {((eventImages && eventImages.length < 3) || !eventImages) && (
+            {((event && eventImages && eventImages.length < 3) || !event) && (
               <label>
                 <label title="Add Photo" htmlFor="image-upload">
                   <i className="fas fa-plus"></i>

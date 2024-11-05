@@ -97,6 +97,21 @@ form .coorganizersInviteesInputs input {
   width: 12rem;
 }
 
+.otherUserOption {
+  display: flex;
+  align-items: center;
+}
+
+.otherUserOption:hover {
+  cursor: pointer;
+  background-color: rgb(75, 75, 75);
+  opacity: 0.8;
+}
+
+form .otherUserOption input {
+  margin-right: 0;
+}
+
 .eventImagesField {
   display: flex;
   flex-direction: column;
