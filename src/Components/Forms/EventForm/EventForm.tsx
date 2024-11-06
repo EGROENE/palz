@@ -27,6 +27,7 @@ const EventForm = ({
     currentEvent,
     setCurrentEvent,
     fetchAllEvents,
+    setAddEventIsInProgress,
   } = useMainContext();
   const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
   const navigation = useNavigate();
@@ -789,6 +790,7 @@ const EventForm = ({
     }
     if (areNoErrors) {
       setIsLoading(true);
+      setAddEventIsInProgress(true);
       if (event) {
         // When updating an existing event:
         Requests.updateEvent(event, valuesToUpdate)
@@ -852,7 +854,10 @@ const EventForm = ({
             }
           })
           .catch((error) => console.log(error))
-          .finally(() => setIsLoading(false));
+          .finally(() => {
+            setAddEventIsInProgress(false);
+            setIsLoading(false);
+          });
       }
     } else {
       window.alert(
