@@ -67,6 +67,7 @@
 .eventCardImageContainer p {
   font-size: 0.85rem;
   width: 75%;
+  padding: 2rem 0.5rem;
 }
 
 .eventCardLocationContainer {
