@@ -25,7 +25,6 @@ function App() {
     showWelcomeMessage,
     currentUser,
     currentEvent,
-    accountDeletionInProgress,
     addEventIsInProgress,
     eventDeletionIsInProgress,
   } = useMainContext();
@@ -34,6 +33,7 @@ function App() {
     showUpdateProfileImageInterface,
     setShowUpdateProfileImageInterface,
     removeProfileImage,
+    accountDeletionInProgress,
   } = useUserContext();
 
   const navigation = useNavigate();
