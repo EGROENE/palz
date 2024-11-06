@@ -220,7 +220,9 @@ const UserSettings = () => {
           executionHandler={handleAccountDeletion}
         />
       )}
-      {accountDeletionInProgress && <LoadingModal />}
+      {accountDeletionInProgress && (
+        <LoadingModal message="Account deletion in progress..." />
+      )}
     </div>
   );
 };
