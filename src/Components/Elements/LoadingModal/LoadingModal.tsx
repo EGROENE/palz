@@ -1,10 +1,10 @@
 import PongLoader from "../PongLoader/PongLoader";
 import styles from "./styles.module.css";
 
-const AccountDeletionInProgressModal = () => {
+const LoadingModal = () => {
   return (
     <div className={styles.modalBackground}>
-      <div className={styles.accountDeletionInProgressModal}>
+      <div className={styles.loadingModal}>
         <header className="animate__animated animate__pulse animate animate__infinite">
           Deleting account...
         </header>
@@ -13,4 +13,4 @@ const AccountDeletionInProgressModal = () => {
     </div>
   );
 };
-export default AccountDeletionInProgressModal;
+export default LoadingModal;

@@ -8,7 +8,7 @@ import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import { TThemeColor } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
-import AccountDeletionInProgressModal from "../../Elements/AccountDeletionInProgressModal/AccountDeletionInProgressModal";
+import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 
 const UserSettings = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -220,7 +220,7 @@ const UserSettings = () => {
           executionHandler={handleAccountDeletion}
         />
       )}
-      {accountDeletionInProgress && <AccountDeletionInProgressModal />}
+      {accountDeletionInProgress && <LoadingModal />}
     </div>
   );
 };

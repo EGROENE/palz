@@ -12,14 +12,14 @@
   margin-left: -3rem;
 }
 
-.accountDeletionInProgressModal {
+.loadingModal {
   background-color: black;
   border-radius: 10px;
   border: 1px solid white;
   padding: 2rem;
 }
 
-.accountDeletionInProgressModal header {
+.loadingModal header {
   color: var(--theme-pink);
   font-weight: 700;
   font-size: 2rem;
