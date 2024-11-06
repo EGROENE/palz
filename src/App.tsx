@@ -26,6 +26,7 @@ function App() {
     currentUser,
     currentEvent,
     accountDeletionInProgress,
+    addEventIsInProgress,
   } = useMainContext();
   const {
     showSidebar,
@@ -86,6 +87,7 @@ function App() {
         />
       )}
       {accountDeletionInProgress && <LoadingModal message="Deleting account..." />}
+      {addEventIsInProgress && <LoadingModal message="Adding event..." />}
       <Routes>
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />
