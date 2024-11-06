@@ -107,6 +107,8 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  accountDeletionInProgress: boolean;
+  setAccountDeletionInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   addEventIsInProgress: boolean;
   setAddEventIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   currentEvent: TEvent | undefined;

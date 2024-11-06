@@ -34,6 +34,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     null
   );
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
+  const [accountDeletionInProgress, setAccountDeletionInProgress] =
+    useState<boolean>(false);
   const [addEventIsInProgress, setAddEventIsInProgress] = useState<boolean>(false);
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
     useState<number>(2500);
@@ -90,6 +92,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setWelcomeMessageDisplayTime,
     addEventIsInProgress,
     setAddEventIsInProgress,
+    accountDeletionInProgress,
+    setAccountDeletionInProgress,
   };
 
   return (
