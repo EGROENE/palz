@@ -16,10 +16,17 @@ import EventPage from "./Components/Pages/EventPage/EventPage";
 import UsersEvents from "./Components/Pages/UsersEvents/UsersEvents";
 import EditEventPage from "./Components/Pages/EditEventPage/EditEventPage";
 import TwoOptionsInterface from "./Components/Elements/TwoOptionsInterface/TwoOptionsInterface";
+import LoadingModal from "./Components/Elements/LoadingModal/LoadingModal";
 
 function App() {
-  const { userCreatedAccount, theme, showWelcomeMessage, currentUser, currentEvent } =
-    useMainContext();
+  const {
+    userCreatedAccount,
+    theme,
+    showWelcomeMessage,
+    currentUser,
+    currentEvent,
+    accountDeletionInProgress,
+  } = useMainContext();
   const {
     showSidebar,
     showUpdateProfileImageInterface,
@@ -78,6 +85,7 @@ function App() {
           isFileUpload={true}
         />
       )}
+      {accountDeletionInProgress && <LoadingModal message="Deleting account..." />}
       <Routes>
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />

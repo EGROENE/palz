@@ -8,12 +8,9 @@ import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import { TThemeColor } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
-import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 
 const UserSettings = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [accountDeletionInProgress, setAccountDeletionInProgress] =
-    useState<boolean>(false);
   const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
   // Set random color:
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -51,6 +48,7 @@ const UserSettings = () => {
     fetchAllUsers,
     allUsers,
     allEvents,
+    setAccountDeletionInProgress,
   } = useMainContext();
   const { showSidebar, setShowSidebar, logout, passwordIsHidden, setPasswordIsHidden } =
     useUserContext();
@@ -219,9 +217,6 @@ const UserSettings = () => {
           setShowAreYouSureInterface={setShowAreYouSureInterface}
           executionHandler={handleAccountDeletion}
         />
-      )}
-      {accountDeletionInProgress && (
-        <LoadingModal message="Account deletion in progress..." />
       )}
     </div>
   );
