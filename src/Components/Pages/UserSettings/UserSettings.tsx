@@ -48,10 +48,15 @@ const UserSettings = () => {
     fetchAllUsers,
     allUsers,
     allEvents,
-    setAccountDeletionInProgress,
   } = useMainContext();
-  const { showSidebar, setShowSidebar, logout, passwordIsHidden, setPasswordIsHidden } =
-    useUserContext();
+  const {
+    showSidebar,
+    setShowSidebar,
+    logout,
+    passwordIsHidden,
+    setPasswordIsHidden,
+    setAccountDeletionInProgress,
+  } = useUserContext();
 
   const handleAddUserInterest = (
     interest: string,
