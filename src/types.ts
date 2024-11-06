@@ -109,8 +109,7 @@ export type TEventValuesToUpdate = {
 export type TMainContext = {
   eventDeletionIsInProgress: boolean;
   setEventDeletionIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
-  accountDeletionInProgress: boolean;
-  setAccountDeletionInProgress: React.Dispatch<React.SetStateAction<boolean>>;
+
   addEventIsInProgress: boolean;
   setAddEventIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   currentEvent: TEvent | undefined;
@@ -135,6 +134,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  accountDeletionInProgress: boolean;
+  setAccountDeletionInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   showUpdateProfileImageInterface: boolean;
   setShowUpdateProfileImageInterface: React.Dispatch<React.SetStateAction<boolean>>;
   removeProfileImage: (e: React.ChangeEvent<HTMLInputElement>) => void;

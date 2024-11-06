@@ -24,6 +24,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showUpdateProfileImageInterface, setShowUpdateProfileImageInterface] =
     useState<boolean>(false);
+  const [accountDeletionInProgress, setAccountDeletionInProgress] =
+    useState<boolean>(false);
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
@@ -947,6 +949,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    accountDeletionInProgress,
+    setAccountDeletionInProgress,
     removeProfileImage,
     handleDeclineInvitation,
     valuesToUpdate,
