@@ -107,6 +107,8 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  addEventIsInProgress: boolean;
+  setAddEventIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   currentEvent: TEvent | undefined;
   setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
   fetchAllEvents: () => Promise<void>;
