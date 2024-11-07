@@ -700,7 +700,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not RSVP to event. Please try again.");
-          fetchAllEvents();
         } else {
           toast.success("RSVP added");
         }
@@ -720,7 +719,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not remove RSVP. Please try again.");
-          fetchAllEvents();
         } else {
           toast.error("RSVP deleted");
         }
