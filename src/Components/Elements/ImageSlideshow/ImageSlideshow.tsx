@@ -8,11 +8,7 @@ const ImageSlideshow = ({
   images,
   randomColor,
 }: {
-  images:
-    | {
-        url: string | undefined;
-      }[]
-    | undefined;
+  images: string[];
   randomColor: TThemeColor | undefined;
 }) => {
   const [imgIndex, setImgIndex] = useState<number>(0);
@@ -50,7 +46,7 @@ const ImageSlideshow = ({
         {/* If imgIndex is specifically not undefined (not just falsy), show image/alt text. imgIndex should never be falsy, as its value is set whenever this component renders, though it is initialized as undefined. It's not good practice to initialize it, then change it again as soon as component renders. */}
         {imgIndex !== undefined && (
           <img
-            src={images && images[imgIndex].url}
+            src={images && images[imgIndex]}
             onError={() => changeImage(slideshowDirection)}
             style={{ "border": `2px solid ${randomColor}` }}
           />

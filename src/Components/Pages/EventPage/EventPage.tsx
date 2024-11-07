@@ -96,25 +96,6 @@ const EventPage = () => {
 
   const nextEventDateTime = event ? new Date(event.eventStartDateTimeInMS) : undefined;
 
-  const getImagesArray = ():
-    | {
-        url: string | undefined;
-      }[]
-    | undefined => {
-    if (event?.imageOne !== "" && event?.imageTwo !== "" && event?.imageThree !== "") {
-      return [
-        { url: event?.imageOne },
-        { url: event?.imageTwo },
-        { url: event?.imageThree },
-      ];
-    } else if (event?.imageOne !== "" && event?.imageTwo !== "") {
-      return [{ url: event?.imageOne }, { url: event?.imageTwo }];
-    } else if (event?.imageOne !== "") {
-      return [{ url: event?.imageOne }];
-    }
-  };
-  const eventImages = getImagesArray();
-
   const getOrganizersUsernames = (): (string | undefined)[] => {
     const usernameArray: Array<string | undefined> = [];
     if (event) {
@@ -306,8 +287,11 @@ const EventPage = () => {
                 </p>
               </div>
             </div>
-            {event.imageOne !== "" && (
-              <ImageSlideshow randomColor={randomColor} images={eventImages} />
+            {event.images && event.images.length > 0 && (
+              <ImageSlideshow
+                randomColor={randomColor}
+                images={event.images && event.images}
+              />
             )}
             <div>
               <p>{event?.description}</p>
