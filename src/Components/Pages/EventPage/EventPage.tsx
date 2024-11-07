@@ -25,6 +25,7 @@ const EventPage = () => {
     showSidebar,
     setShowSidebar,
     handleRemoveInvitee,
+    isLoading,
   } = useUserContext();
   const { eventID } = useParams();
   const [event, setEvent] = useState<TEvent | undefined>();
@@ -281,7 +282,7 @@ const EventPage = () => {
               userCreatedAccount !== null &&
               (!userIsOrganizer ? (
                 <button
-                  disabled={maxInviteesReached}
+                  disabled={maxInviteesReached || isLoading}
                   style={{ "backgroundColor": randomColor }}
                   onClick={(e) =>
                     currentUser &&

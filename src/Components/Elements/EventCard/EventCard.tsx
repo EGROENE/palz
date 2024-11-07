@@ -11,7 +11,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   const { currentUser, allUsers, setCurrentEvent } = useMainContext();
-  const { handleAddUserRSVP, handleDeleteUserRSVP, handleDeclineInvitation } =
+  const { handleAddUserRSVP, handleDeleteUserRSVP, handleDeclineInvitation, isLoading } =
     useUserContext();
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
@@ -109,8 +109,12 @@ const EventCard = ({ event }: { event: TEvent }) => {
       {userIsInvitee && !userDeclinedInvitation && !userRSVPd && !maxInviteesReached && (
         <div className={styles.eventCardInvitation}>
           <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
-          <button onClick={(e) => handleAddUserRSVP(e, event)}>{rsvpButtonText}</button>
-          <button onClick={(e) => handleDeclineInvitation(e, event)}>Decline</button>
+          <button disabled={isLoading} onClick={(e) => handleAddUserRSVP(e, event)}>
+            {rsvpButtonText}
+          </button>
+          <button disabled={isLoading} onClick={(e) => handleDeclineInvitation(e, event)}>
+            Decline
+          </button>
         </div>
       )}
       <div className={styles.eventCardMainInfo}>
@@ -152,7 +156,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                 event.eventEndDateTimeInMS > now) &&
                 (!userIsOrganizer ? (
                   <button
-                    disabled={maxInviteesReached}
+                    disabled={maxInviteesReached || isLoading}
                     className={styles.eventButtonsContainerButton}
                     onClick={(e) =>
                       currentUser &&
