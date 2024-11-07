@@ -28,7 +28,7 @@ const EventForm = ({
     setCurrentEvent,
     fetchAllEvents,
     setAddEventIsInProgress,
-    setEventDeletionIsInProgress
+    setEventDeletionIsInProgress,
   } = useMainContext();
   const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
   const navigation = useNavigate();
@@ -842,7 +842,10 @@ const EventForm = ({
             }
           })
           .catch((error) => console.log(error))
-          .finally(() => setIsLoading(false));
+          .finally(() => {
+            setIsLoading(false);
+            setAddEventIsInProgress(false);
+          });
       } else {
         // When adding a newly created event:
         Requests.createEvent(eventInfos)
@@ -872,7 +875,7 @@ const EventForm = ({
   ): void => {
     e.preventDefault();
     setIsLoading(true);
-    setEventDeletionIsInProgress(true)
+    setEventDeletionIsInProgress(true);
     Requests.deleteEvent(event)
       .then((response) => {
         setShowAreYouSureDeleteEvent(false);
@@ -886,8 +889,8 @@ const EventForm = ({
       .catch((error) => console.log(error))
       .finally(() => {
         setEventDeletionIsInProgress(false);
-        setIsLoading(false)
-      } );
+        setIsLoading(false);
+      });
   };
 
   const getValuesToUpdate = (): TEventValuesToUpdate | undefined => {
