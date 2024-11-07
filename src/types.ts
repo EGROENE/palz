@@ -134,6 +134,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   accountDeletionInProgress: boolean;
   setAccountDeletionInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   showUpdateProfileImageInterface: boolean;
