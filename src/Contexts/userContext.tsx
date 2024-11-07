@@ -29,6 +29,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   /* Some values kept in session storage so that they can be used to autofill fields on edit-user-info form. Due to input handler functions setting these & not currentUser._____, currentUser.______ isn't used to do so, but will rather be set when user saves changes to their data object in the DB by submitting the edit-user-info form & allUsers is refetched. */
 
@@ -694,6 +695,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     event: TEvent
   ): void => {
     e.preventDefault();
+    setIsLoading(true);
     Requests.addUserRSVP(currentUser, event)
       .then((response) => {
         if (!response.ok) {
@@ -703,7 +705,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           toast.success("RSVP added");
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   const handleDeleteUserRSVP = (
@@ -712,14 +715,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     user: TUser
   ): void => {
     e.preventDefault();
-    Requests.deleteUserRSVP(user, event).then((response) => {
-      if (!response.ok) {
-        toast.error("Could not remove RSVP. Please try again.");
-        fetchAllEvents();
-      } else {
-        toast.error("RSVP deleted");
-      }
-    });
+    setIsLoading(true);
+    Requests.deleteUserRSVP(user, event)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not remove RSVP. Please try again.");
+          fetchAllEvents();
+        } else {
+          toast.error("RSVP deleted");
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   // Handler for user to decline invitation. Should remove them from invitees array.
@@ -949,6 +956,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    isLoading,
+    setIsLoading,
     accountDeletionInProgress,
     setAccountDeletionInProgress,
     removeProfileImage,
