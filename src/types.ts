@@ -171,15 +171,6 @@ export type TUserContext = {
     country?: string,
     e?: React.ChangeEvent<HTMLInputElement>
   ) => void;
-  handleAddUserRSVP: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
-  ) => void;
-  handleDeleteUserRSVP: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent,
-    user: TUser
-  ) => void;
   phoneCountry: string | undefined;
   setPhoneCountry: React.Dispatch<React.SetStateAction<string | undefined>>;
   phoneCountryCode: string | undefined;

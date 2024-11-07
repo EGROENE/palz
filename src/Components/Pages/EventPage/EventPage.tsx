@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
+import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import ImageSlideshow from "../../Elements/ImageSlideshow/ImageSlideshow";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
@@ -19,19 +20,14 @@ const EventPage = () => {
     setCurrentEvent,
     fetchAllUsers,
   } = useMainContext();
-  const {
-    handleDeleteUserRSVP,
-    handleAddUserRSVP,
-    showSidebar,
-    setShowSidebar,
-    handleRemoveInvitee,
-    isLoading,
-  } = useUserContext();
+  const { showSidebar, setShowSidebar, handleRemoveInvitee, isLoading, setIsLoading } =
+    useUserContext();
   const { eventID } = useParams();
   const [event, setEvent] = useState<TEvent | undefined>();
   const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
   const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
   const [showInvitees, setShowInvitees] = useState<boolean>(false);
+  const [userRSVPd, setUserRSVPd] = useState<boolean>(false);
 
   const navigation = useNavigate();
 
@@ -52,6 +48,7 @@ const EventPage = () => {
         navigation("/");
       }
     }
+    // FIX THIS
     setEvent(currentEvent);
     fetchAllUsers();
     fetchAllEvents();
@@ -66,6 +63,16 @@ const EventPage = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+
+    // Set init value of userRSVPd:
+    if (
+      currentUser &&
+      currentUser._id &&
+      event &&
+      event.interestedUsers.includes(currentUser._id)
+    ) {
+      setUserRSVPd(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -88,9 +95,6 @@ const EventPage = () => {
   }, [allUsers]);
 
   const nextEventDateTime = event ? new Date(event.eventStartDateTimeInMS) : undefined;
-
-  const userRSVPd =
-    currentUser && currentUser._id && event?.interestedUsers.includes(currentUser._id);
 
   const getImagesArray = ():
     | {
@@ -164,6 +168,50 @@ const EventPage = () => {
     return undefined;
   };
   const status: string | undefined = getStatus();
+
+  /* Handlers to add/remove user rsvp defined here in order to allow for optimistic rendering.
+   Variable userRSVPd must be set in state in this component & not in userContext, otherwise, rnndering
+   takes too long after user adds/removes their RSVP. */
+  const handleAddUserRSVP = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent
+  ): void => {
+    e.preventDefault();
+    setIsLoading(true);
+    setUserRSVPd(true);
+    Requests.addUserRSVP(currentUser, event)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not RSVP to event. Please try again.");
+          setUserRSVPd(false);
+        } else {
+          toast.success("RSVP added");
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
+  };
+
+  const handleDeleteUserRSVP = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent,
+    user: TUser
+  ): void => {
+    e.preventDefault();
+    setIsLoading(true);
+    setUserRSVPd(false);
+    Requests.deleteUserRSVP(user, event)
+      .then((response) => {
+        if (!response.ok) {
+          setUserRSVPd(true);
+          toast.error("Could not remove RSVP. Please try again.");
+        } else {
+          toast.error("RSVP deleted");
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
+  };
 
   return (
     <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">

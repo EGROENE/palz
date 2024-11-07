@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TEvent, TThemeColor } from "../../../types";
+import { TEvent, TThemeColor, TUser } from "../../../types";
 import { Link } from "react-router-dom";
 import { countries } from "../../../constants";
+import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import styles from "./styles.module.css";
 
 const EventCard = ({ event }: { event: TEvent }) => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+  const [userRSVPd, setUserRSVPd] = useState<boolean>(false);
 
   const { currentUser, allUsers, setCurrentEvent } = useMainContext();
-  const { handleAddUserRSVP, handleDeleteUserRSVP, handleDeclineInvitation, isLoading } =
-    useUserContext();
+  const { handleDeclineInvitation, isLoading, setIsLoading } = useUserContext();
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
 
-  // Set color of event card's border randomly:
   useEffect(() => {
+    // Set color of event card's border randomly:
     const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
       "var(--theme-green)",
@@ -27,13 +28,22 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+
+    // Set init value of userRSVPd:
+    if (
+      currentUser &&
+      currentUser._id &&
+      event.interestedUsers.includes(currentUser._id)
+    ) {
+      setUserRSVPd(true);
+    }
   }, []);
 
   // Make sure that this updates after user de-RSVPs
-  const userRSVPd: boolean =
+  /* const userRSVPd: boolean =
     currentUser && currentUser._id
       ? event.interestedUsers.includes(currentUser._id)
-      : false;
+      : false; */
 
   const userIsInvitee: boolean = currentUser?._id
     ? event.invitees.includes(currentUser._id)
@@ -98,6 +108,50 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const eventCountryAbbreviation: string = countries.filter(
     (country) => country.country === event.country
   )[0].abbreviation;
+
+  /* Handlers to add/remove user rsvp defined here in order to allow for optimistic rendering.
+   Variable userRSVPd must be set in state in this component & not in userContext, otherwise, rnndering
+   takes too long after user adds/removes their RSVP. */
+  const handleAddUserRSVP = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent
+  ): void => {
+    e.preventDefault();
+    setIsLoading(true);
+    setUserRSVPd(true);
+    Requests.addUserRSVP(currentUser, event)
+      .then((response) => {
+        if (!response.ok) {
+          toast.error("Could not RSVP to event. Please try again.");
+          setUserRSVPd(false);
+        } else {
+          toast.success("RSVP added");
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
+  };
+
+  const handleDeleteUserRSVP = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent,
+    user: TUser
+  ): void => {
+    e.preventDefault();
+    setIsLoading(true);
+    setUserRSVPd(false);
+    Requests.deleteUserRSVP(user, event)
+      .then((response) => {
+        if (!response.ok) {
+          setUserRSVPd(true);
+          toast.error("Could not remove RSVP. Please try again.");
+        } else {
+          toast.error("RSVP deleted");
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
+  };
 
   return (
     <div

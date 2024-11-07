@@ -690,43 +690,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       });
   };
 
-  const handleAddUserRSVP = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
-  ): void => {
-    e.preventDefault();
-    setIsLoading(true);
-    Requests.addUserRSVP(currentUser, event)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not RSVP to event. Please try again.");
-        } else {
-          toast.success("RSVP added");
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
-  };
-
-  const handleDeleteUserRSVP = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent,
-    user: TUser
-  ): void => {
-    e.preventDefault();
-    setIsLoading(true);
-    Requests.deleteUserRSVP(user, event)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not remove RSVP. Please try again.");
-        } else {
-          toast.error("RSVP deleted");
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
-  };
-
   // Handler for user to decline invitation. Should remove them from invitees array.
   const handleRemoveInvitee = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
@@ -966,8 +929,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setProfileImage,
     handleRemoveInvitee,
     handleCityStateCountryInput,
-    handleDeleteUserRSVP,
-    handleAddUserRSVP,
     facebook,
     setFacebook,
     facebookError,
