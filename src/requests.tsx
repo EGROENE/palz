@@ -504,13 +504,13 @@ const removeOrganizer = (
 };
 
 const addToFriendRequestsReceived = (
-  senderID: string | number | undefined,
+  senderID: string | undefined,
   recipient: TUser | undefined
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendRequestsReceivedArray: Array<string | number | undefined> = [];
+  const updatedFriendRequestsReceivedArray: Array<string | undefined> = [];
   if (recipient?.friendRequestsReceived) {
     for (const existingSenderID of recipient.friendRequestsReceived) {
       updatedFriendRequestsReceivedArray.push(existingSenderID);
@@ -535,7 +535,7 @@ const addToFriendRequestsReceived = (
 
 const addToFriendRequestsSent = (
   sender: TUser | undefined,
-  recipientID: string | number | undefined
+  recipientID: string | undefined
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -564,14 +564,15 @@ const addToFriendRequestsSent = (
 };
 
 const removeFromFriendRequestsReceived = (
-  sender: string | number | undefined,
-  recipient: TUser
+  senderID: string | undefined,
+  recipient: TUser | undefined
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendRequestsArray: Array<string | number | undefined> =
-    recipient.friendRequestsReceived.filter((id) => id !== sender);
+  const updatedFriendRequestsArray = recipient?.friendRequestsReceived.filter(
+    (id) => id !== senderID
+  );
 
   const getRaw = () => {
     return JSON.stringify({
@@ -589,14 +590,15 @@ const removeFromFriendRequestsReceived = (
 };
 
 const removeFromFriendRequestsSent = (
-  recipientID: string | number | undefined,
-  sender: TUser
+  sender: TUser | undefined,
+  recipientID: string | undefined
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendRequestsArray: Array<string | number | undefined> =
-    sender.friendRequestsSent.filter((id) => id !== recipientID);
+  const updatedFriendRequestsArray = sender?.friendRequestsSent.filter(
+    (id) => id !== recipientID
+  );
 
   const getRaw = () => {
     return JSON.stringify({
