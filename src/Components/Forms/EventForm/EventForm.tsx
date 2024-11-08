@@ -29,6 +29,8 @@ const EventForm = ({
     fetchAllEvents,
     setAddEventIsInProgress,
     setEventDeletionIsInProgress,
+    setImageIsUploading,
+    setImageIsDeleting
   } = useMainContext();
   const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
   const navigation = useNavigate();
@@ -526,6 +528,7 @@ const EventForm = ({
         !event.images.includes(base64) &&
         !eventImages?.includes(base64)
       ) {
+        setImageIsUploading(true);
         setEventImages(eventImages?.concat(base64));
         Requests.addEventImage(event, base64)
           .then((response) => {
@@ -541,7 +544,8 @@ const EventForm = ({
               toast.success("Event image added");
             }
           })
-          .catch((error) => console.log(error));
+          .catch((error) => console.log(error))
+          .finally(() => setImageIsUploading(false));
       } else {
         if (event?.images?.includes(base64) || eventImages?.includes(base64)) {
           toast.error("Cannot upload same image more than once.");
@@ -557,6 +561,7 @@ const EventForm = ({
     imageToBeRemoved: string
   ): Promise<void> => {
     e.preventDefault();
+    setImageIsDeleting(true);
     setEventImages(eventImages?.filter((image) => image !== imageToBeRemoved));
     if (event) {
       Requests.removeEventImage(event, imageToBeRemoved)
@@ -577,7 +582,8 @@ const EventForm = ({
             setEventImages(newEventImages);
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => setImageIsDeleting(false));
     }
   };
 
