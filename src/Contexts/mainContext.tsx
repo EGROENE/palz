@@ -47,6 +47,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     fetchAllUsers();
+    setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
   }, [allUsers]);
 
   // CHANGE PORT NUMBER IN REQUEST TO 4000
