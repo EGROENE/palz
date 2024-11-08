@@ -35,6 +35,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   );
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
   const [addEventIsInProgress, setAddEventIsInProgress] = useState<boolean>(false);
+  const [eventEditIsInProgress, setEventEditIsInProgress] = useState<boolean>(false);
   const [eventDeletionIsInProgress, setEventDeletionIsInProgress] =
     useState<boolean>(false);
   const [imageIsUploading, setImageIsUploading] = useState<boolean>(false);
@@ -74,6 +75,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const fetchAllEvents = (): Promise<void> => Requests.getAllEvents().then(setAllEvents);
 
   const mainContextValues: TMainContext = {
+    eventEditIsInProgress,
+    setEventEditIsInProgress,
     imageIsUploading,
     setImageIsUploading,
     imageIsDeleting,

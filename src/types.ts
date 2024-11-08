@@ -107,6 +107,8 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  eventEditIsInProgress: boolean;
+  setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   imageIsUploading: boolean;
   setImageIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
   imageIsDeleting: boolean;

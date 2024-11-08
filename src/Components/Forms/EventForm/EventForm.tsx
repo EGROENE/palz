@@ -30,7 +30,8 @@ const EventForm = ({
     setAddEventIsInProgress,
     setEventDeletionIsInProgress,
     setImageIsUploading,
-    setImageIsDeleting
+    setImageIsDeleting,
+    setEventEditIsInProgress,
   } = useMainContext();
   const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
   const navigation = useNavigate();
@@ -797,9 +798,9 @@ const EventForm = ({
     }
     if (areNoErrors) {
       setIsLoading(true);
-      setAddEventIsInProgress(true);
       if (event) {
         // When updating an existing event:
+        setEventEditIsInProgress(true);
         Requests.updateEvent(event, valuesToUpdate)
           .then((response) => {
             if (!response.ok) {
@@ -850,10 +851,11 @@ const EventForm = ({
           .catch((error) => console.log(error))
           .finally(() => {
             setIsLoading(false);
-            setAddEventIsInProgress(false);
+            setEventEditIsInProgress(false);
           });
       } else {
         // When adding a newly created event:
+        setAddEventIsInProgress(true);
         Requests.createEvent(eventInfos)
           .then((response) => {
             if (!response.ok) {

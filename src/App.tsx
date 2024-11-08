@@ -29,6 +29,7 @@ function App() {
     eventDeletionIsInProgress,
     imageIsUploading,
     imageIsDeleting,
+    eventEditIsInProgress,
   } = useMainContext();
   const {
     showSidebar,
@@ -91,6 +92,7 @@ function App() {
       )}
       {accountDeletionInProgress && <LoadingModal message="Deleting account..." />}
       {addEventIsInProgress && <LoadingModal message="Adding event..." />}
+      {eventEditIsInProgress && <LoadingModal message="Updating event..." />}
       {eventDeletionIsInProgress && <LoadingModal message="Deleting event..." />}
       {imageIsUploading && <LoadingModal message="Uploading image..." />}
       {imageIsDeleting && <LoadingModal message="Removing image..." />}
