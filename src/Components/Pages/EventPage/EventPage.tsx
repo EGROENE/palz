@@ -8,6 +8,8 @@ import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import ImageSlideshow from "../../Elements/ImageSlideshow/ImageSlideshow";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
+import Tab from "../../Elements/Tab/Tab";
+import styles from "./styles.module.css";
 
 const EventPage = () => {
   const {
@@ -96,18 +98,13 @@ const EventPage = () => {
 
   const nextEventDateTime = event ? new Date(event.eventStartDateTimeInMS) : undefined;
 
-  const getOrganizersUsernames = (): (string | undefined)[] => {
-    const usernameArray: Array<string | undefined> = [];
-    if (event) {
-      for (const organizerID of event.organizers) {
-        usernameArray.push(
-          allUsers.filter((user) => user._id === organizerID)[0].username
-        );
-      }
+  let organizers: TUser[] = [];
+  if (event?.organizers) {
+    for (const id of event.organizers) {
+      const organizerUserObject = allUsers.filter((user) => user._id === id)[0];
+      organizers.push(organizerUserObject);
     }
-    return usernameArray;
-  };
-  const organizerUsernames = getOrganizersUsernames();
+  }
 
   // Explicitly return true or false to avoid TS error
   const userIsOrganizer: boolean =
@@ -229,6 +226,16 @@ const EventPage = () => {
               <p style={{ backgroundColor: randomColor, padding: "0.5rem" }}>{status}</p>
             )}
             <h1 style={{ "color": randomColor }}>{event.title}</h1>
+            <div className={styles.organizersContainer}>
+              {organizers.map((organizer) => (
+                <Tab
+                  key={organizer._id}
+                  info={organizer}
+                  randomColor={randomColor}
+                  userMayNotDelete={true}
+                />
+              ))}
+            </div>
             <div className="event-main-info-text-container">
               <div>
                 <p>
@@ -239,12 +246,6 @@ const EventPage = () => {
                 <p>{`${event.city}, ${event.stateProvince}, ${event.country}`}</p>
               </div>
               <div>
-                {organizerUsernames.length === 1 ? (
-                  <p>Organizer: {organizerUsernames[0]}</p>
-                ) : (
-                  <p>Organizers: {organizerUsernames.join(", ")}</p>
-                )}
-
                 {event.invitees.length > 0 && (
                   <p>
                     Invitees:{" "}
