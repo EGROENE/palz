@@ -8,14 +8,20 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const UserCard = ({ user }: { user: TUser }) => {
-  const { currentUser, allUsers } = useMainContext();
+  const { currentUser, fetchAllUsers, allUsers } = useMainContext();
+  // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
+  const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   const [buttonsAreDisabled, setButtonsAreDisabled] = useState<boolean>(false);
+  const [friendRequestSent, setFriendRequestSent] = useState<boolean>(false);
 
-  // Set color of event card's border randomly:
+  /* sender below is absolute most-current version of currentUser. currentUser itself (the state value) doesn't update in time if friend requests are sent/rescinded, but the corresponding user in allUsers does update in time, so sender is simply that value, captured when Add/Retract friend req btn is clicked. */
+  //const sender = allUsers.filter((user) => user._id === currentUser?._id)[0];
+
   useEffect(() => {
+    // Set color of event card's border randomly:
     const themeColors: TThemeColor[] = [
       "var(--theme-blue)",
       "var(--theme-green)",
@@ -25,6 +31,16 @@ const UserCard = ({ user }: { user: TUser }) => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+
+    // Initialize value of friendRequestSent:
+    if (
+      user._id &&
+      currentUserUpdated?._id &&
+      currentUserUpdated?.friendRequestsSent.includes(user._id) &&
+      user.friendRequestsReceived.includes(currentUserUpdated?._id)
+    ) {
+      setFriendRequestSent(true);
+    }
   }, []);
 
   const matchingCountryObject:
@@ -40,95 +56,66 @@ const UserCard = ({ user }: { user: TUser }) => {
       ? matchingCountryObject.abbreviation
       : undefined;
 
-  const handleSendFriendRequest = (sender: TUser, recipient: TUser): void => {
+  const handleSendFriendRequest = (sender: TUser | undefined, recipient: TUser): void => {
+    setFriendRequestSent(true);
     setButtonsAreDisabled(true);
 
-    let requestToUpdateSenderAndReceiverFriendRequestArraysIsOK: boolean = true;
+    let isRequestError = false;
 
-    const addToFriendRequestsReceived = Requests.addToFriendRequestsReceived(
-      sender._id,
-      recipient
-    )
-      .then((response) => {
-        if (!response.ok) {
-          requestToUpdateSenderAndReceiverFriendRequestArraysIsOK = false;
-        }
-      })
-      .catch((error) => console.log(error));
-
-    const addToFriendRequestsSent = Requests.addToFriendRequestsSent(
-      sender,
-      recipient._id
-    )
-      .then((response) => {
-        if (!response.ok) {
-          requestToUpdateSenderAndReceiverFriendRequestArraysIsOK = false;
-        }
-      })
-      .catch((error) => console.log(error));
-
-    const promisesToAwait: Promise<void>[] = [
-      addToFriendRequestsReceived,
-      addToFriendRequestsSent,
+    const promisesToAwait: Promise<Response>[] = [
+      Requests.addToFriendRequestsReceived(sender?._id, recipient),
+      Requests.addToFriendRequestsSent(sender, recipient._id),
     ];
 
     Promise.all(promisesToAwait)
       .then(() => {
-        if (!requestToUpdateSenderAndReceiverFriendRequestArraysIsOK) {
-          toast.error("Could not send friend request. Please try again.");
+        for (const promise of promisesToAwait) {
+          promise.then((response) => {
+            if (!response.ok) {
+              isRequestError = true;
+            }
+          });
+        }
+      })
+      .then(() => {
+        if (isRequestError) {
+          setFriendRequestSent(false);
+          toast.error("Couldn't send request. Please try again.");
         } else {
           toast.success("Friend request sent!");
+          fetchAllUsers();
         }
       })
       .catch((error) => console.log(error))
-      .finally(() => {
-        setButtonsAreDisabled(false);
-      });
+      .finally(() => setButtonsAreDisabled(false));
   };
 
-  const handleRetractFriendRequest = (sender: TUser, recipient: TUser): void => {
+  const handleRetractFriendRequest = (
+    sender: TUser | undefined,
+    recipient: TUser
+  ): void => {
     setButtonsAreDisabled(true);
-    let requestToUpdateSenderAndReceiverFriendRequestArraysIsOK: boolean = true;
-
-    const removeFromFriendRequestsReceived = Requests.removeFromFriendRequestsReceived(
-      sender._id,
-      recipient
-    )
+    setFriendRequestSent(false);
+    Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
       .then((response) => {
         if (!response.ok) {
-          requestToUpdateSenderAndReceiverFriendRequestArraysIsOK = false;
-        }
-      })
-      .catch((error) => console.log(error));
-
-    const removeFromFriendRequestsSent = Requests.removeFromFriendRequestsSent(
-      recipient._id,
-      sender
-    )
-      .then((response) => {
-        if (!response.ok) {
-          requestToUpdateSenderAndReceiverFriendRequestArraysIsOK = false;
-        }
-      })
-      .catch((error) => console.log(error));
-
-    const promisesToAwait = [
-      removeFromFriendRequestsReceived,
-      removeFromFriendRequestsSent,
-    ];
-
-    Promise.all(promisesToAwait)
-      .then(() => {
-        if (!requestToUpdateSenderAndReceiverFriendRequestArraysIsOK) {
-          toast.error("Could not send friend request. Please try again.");
+          setFriendRequestSent(true);
+          toast.error("Could not retract request. Please try again.");
         } else {
-          toast.error("Friend request retracted");
+          Requests.removeFromFriendRequestsSent(sender, recipient._id)
+            .then((response) => {
+              if (!response.ok) {
+                setFriendRequestSent(true);
+                toast.error("Could not retract request. Please try again.");
+              } else {
+                toast.error("Friend request retracted");
+              }
+            })
+            .catch((error) => console.log(error));
         }
       })
       .catch((error) => console.log(error))
-      .finally(() => {
-        setButtonsAreDisabled(false);
-      });
+      .finally(() => setButtonsAreDisabled(false));
   };
 
   return (
@@ -169,19 +156,14 @@ const UserCard = ({ user }: { user: TUser }) => {
       <div className={styles.userCardBtnContainer}>
         <button
           onClick={() => {
-            /* sender below is absolute most-current version of currentUser. currentUser itself (the state value) doesn't update in time if friend requests are sent/rescinded, but the corresponding user in allUsers does update in time, so sender is simply that value, captured when Add/Retract friend req btn is clicked. */
-            const sender = allUsers.filter((user) => user._id === currentUser?._id)[0];
-            currentUser?._id &&
-              user._id &&
-              (user.friendRequestsReceived.includes(currentUser._id) &&
-              sender.friendRequestsSent.includes(user._id)
-                ? handleRetractFriendRequest(sender, user)
-                : handleSendFriendRequest(sender, user));
+            friendRequestSent
+              ? handleRetractFriendRequest(currentUser, user)
+              : handleSendFriendRequest(currentUser, user);
           }}
           disabled={buttonsAreDisabled}
           style={{ backgroundColor: randomColor }}
         >
-          {currentUser?._id && user.friendRequestsReceived.includes(currentUser._id) ? (
+          {friendRequestSent ? (
             <>
               <i className="fas fa-user-minus"></i>Retract Request
             </>
