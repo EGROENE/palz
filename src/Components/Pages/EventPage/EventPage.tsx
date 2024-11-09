@@ -227,7 +227,7 @@ const EventPage = () => {
             )}
             <h1 style={{ "color": randomColor }}>{event.title}</h1>
             <div className={styles.organizersContainer}>
-              <p>Organizers: </p>
+              {event.organizers.length > 1 ? <p>Organizers: </p> : <p>Organizer: </p>}
               {organizers.map((organizer) => (
                 <Tab
                   key={organizer._id}
