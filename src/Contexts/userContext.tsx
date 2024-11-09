@@ -19,6 +19,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     handleWelcomeMessage,
     fetchAllUsers,
     fetchAllEvents,
+    setImageIsUploading,
+    setImageIsDeleting,
   } = useMainContext();
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
@@ -731,6 +733,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.ChangeEvent<HTMLInputElement>
   ): Promise<void> => {
     e.preventDefault();
+    setImageIsUploading(true);
+    setShowUpdateProfileImageInterface(false);
     const file = e.target.files && e.target.files[0];
     const base64 = file && (await Methods.convertToBase64(file));
     Requests.updateUserProfileImage(currentUser, base64)
@@ -747,11 +751,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         }
       })
       .catch((error) => console.log(error))
-      .finally(() => setShowUpdateProfileImageInterface(false));
+      .finally(() => setImageIsUploading(false));
   };
 
   const removeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
+    setImageIsDeleting(true);
+    setShowUpdateProfileImageInterface(false);
     Requests.updateUserProfileImage(currentUser, "")
       .then((response) => {
         if (!response.ok) {
@@ -762,7 +768,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         }
       })
       .catch((error) => console.log(error))
-      .finally(() => setShowUpdateProfileImageInterface(false));
+      .finally(() => setImageIsDeleting(false));
   };
 
   // Defined here, as it's used in methods that are used in multiple components
