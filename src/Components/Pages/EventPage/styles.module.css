@@ -1,3 +1,45 @@
 .organizersContainer {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.eventMainInfoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 75%;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 5rem;
+  margin-top: 3rem;
+}
+
+.eventDetailsContainer {
+  width: 92%;
+  display: flex;
+  position: relative;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.eventMainInfoTextContainerWithImage {
+  width: 40%;
+  text-align: left;
+  padding: 1rem 0 0 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.eventMainInfoTextContainerNoImage {
+  width: 40%;
+  text-align: left;
+  /* padding: 1rem 0 0 1rem; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
 }

@@ -220,13 +220,14 @@ const EventPage = () => {
               border: `2px solid ${randomColor}`,
               boxShadow: `${randomColor} 0px 7px 90px`,
             }}
-            className="event-main-info-container"
+            className={styles.eventMainInfoContainer}
           >
             {status && (
               <p style={{ backgroundColor: randomColor, padding: "0.5rem" }}>{status}</p>
             )}
             <h1 style={{ "color": randomColor }}>{event.title}</h1>
             <div className={styles.organizersContainer}>
+              <p>Organizers: </p>
               {organizers.map((organizer) => (
                 <Tab
                   key={organizer._id}
@@ -236,67 +237,84 @@ const EventPage = () => {
                 />
               ))}
             </div>
-            <div className="event-main-info-text-container">
-              <div>
-                <p>
-                  {nextEventDateTime?.toDateString()} at{" "}
-                  {nextEventDateTime?.toLocaleTimeString()}
-                </p>
-                <p>{`${event.address}`}</p>
-                <p>{`${event.city}, ${event.stateProvince}, ${event.country}`}</p>
-              </div>
-              <div>
-                {event.invitees.length > 0 && (
+            <div>
+              <p>{event?.description}</p>
+              {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
+            </div>
+
+            <div className={styles.eventDetailsContainer}>
+              <div
+                style={
+                  event.images && event.images.length > 0
+                    ? {
+                        borderLeft: `2px solid ${randomColor}`,
+                        borderTop: `2px solid ${randomColor}`,
+                      }
+                    : { border: `2px solid ${randomColor}` }
+                }
+                className={
+                  event.images && event.images.length > 0
+                    ? styles.eventMainInfoTextContainerWithImage
+                    : styles.eventMainInfoTextContainerNoImage
+                }
+              >
+                <div>
                   <p>
-                    Invitees:{" "}
+                    {nextEventDateTime?.toDateString()} at{" "}
+                    {nextEventDateTime?.toLocaleTimeString()}
+                  </p>
+                  <p>{`${event.address}`}</p>
+                  <p>{`${event.city}, ${event.stateProvince}, ${event.country}`}</p>
+                </div>
+                <div>
+                  {event.invitees.length > 0 && (
+                    <p>
+                      Invitees:{" "}
+                      <span
+                        onClick={() =>
+                          currentUser?._id &&
+                          event.organizers.includes(currentUser._id) &&
+                          event.invitees.length > 0
+                            ? setShowInvitees(true)
+                            : undefined
+                        }
+                        className={
+                          currentUser?._id &&
+                          event.organizers.includes(currentUser._id) &&
+                          event.invitees.length > 0
+                            ? "show-listed-users-or-invitees"
+                            : undefined
+                        }
+                      >{`${event.invitees.length}`}</span>
+                    </p>
+                  )}
+                  <p>
+                    RSVPs:{" "}
                     <span
                       onClick={() =>
                         currentUser?._id &&
                         event.organizers.includes(currentUser._id) &&
-                        event.invitees.length > 0
-                          ? setShowInvitees(true)
+                        refinedInterestedUsers.length > 0
+                          ? setShowRSVPs(true)
                           : undefined
                       }
                       className={
                         currentUser?._id &&
                         event.organizers.includes(currentUser._id) &&
-                        event.invitees.length > 0
+                        refinedInterestedUsers.length > 0
                           ? "show-listed-users-or-invitees"
                           : undefined
                       }
-                    >{`${event.invitees.length}`}</span>
+                    >{`${refinedInterestedUsers.length}`}</span>
                   </p>
-                )}
-                <p>
-                  RSVPs:{" "}
-                  <span
-                    onClick={() =>
-                      currentUser?._id &&
-                      event.organizers.includes(currentUser._id) &&
-                      refinedInterestedUsers.length > 0
-                        ? setShowRSVPs(true)
-                        : undefined
-                    }
-                    className={
-                      currentUser?._id &&
-                      event.organizers.includes(currentUser._id) &&
-                      refinedInterestedUsers.length > 0
-                        ? "show-listed-users-or-invitees"
-                        : undefined
-                    }
-                  >{`${refinedInterestedUsers.length}`}</span>
-                </p>
+                </div>
               </div>
-            </div>
-            {event.images && event.images.length > 0 && (
-              <ImageSlideshow
-                randomColor={randomColor}
-                images={event.images && event.images}
-              />
-            )}
-            <div>
-              <p>{event?.description}</p>
-              {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
+              {event.images && event.images.length > 0 && (
+                <ImageSlideshow
+                  randomColor={randomColor}
+                  images={event.images && event.images}
+                />
+              )}
             </div>
             {userCreatedAccount === null && (
               <>
