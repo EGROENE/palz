@@ -22,34 +22,3 @@
   flex-direction: column;
   overflow-y: scroll;
 }
-
-.listedUser {
-  color: var(--text-color);
-  padding: 1rem;
-  border-radius: 10px;
-  width: 74%;
-  border: 2px solid gray;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  margin: 1rem 0;
-}
-
-.listedUser img {
-  float: left;
-  width: 5rem;
-  height: 5rem;
-  object-fit: cover;
-}
-
-.listedUserTextsContainer {
-  text-align: left;
-}
-
-.listedUserTextsContainer p {
-  margin: 0;
-}
-
-.listedUserTextsContainer p:first-child {
-  font-size: 1.5rem;
-}
