@@ -1,0 +1,26 @@
+.friendRequestFilterHeaders {
+  display: flex;
+  width: 37%;
+  justify-content: space-evenly;
+}
+
+.friendRequestFilterHeaders header {
+  font-size: 1.5rem;
+}
+
+.friendRequestFilterHeaders header:hover {
+  cursor: pointer;
+}
+
+.requestTypeUnderline {
+  height: 2px;
+  width: 100%;
+  animation-duration: 500ms;
+}
+
+.friendRequestUsersContainer {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
