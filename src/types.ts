@@ -140,6 +140,11 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  handleAcceptFriendRequest: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    sender: TUser,
+    receiver: TUser
+  ) => void;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   accountDeletionInProgress: boolean;

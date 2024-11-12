@@ -771,6 +771,56 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .finally(() => setImageIsDeleting(false));
   };
 
+  const handleAcceptFriendRequest = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    sender: TUser,
+    receiver: TUser
+  ): void => {
+    e.preventDefault();
+    const addSenderIDToReceiverFriends = Requests.addFriendToFriendsArray(
+      receiver,
+      sender._id
+    );
+    const removeSenderIDFromReceiverFriendRequestsReceived =
+      Requests.removeFromFriendRequestsReceived(sender._id, receiver);
+    const addReceiverIDToSenderFriends = Requests.addFriendToFriendsArray(
+      sender,
+      receiver._id
+    );
+    const removeReceiverIDFromSenderFriendRequestsSent =
+      Requests.removeFromFriendRequestsSent(sender, receiver._id);
+
+    const promisesToAwait = [
+      addSenderIDToReceiverFriends,
+      removeSenderIDFromReceiverFriendRequestsReceived,
+      addReceiverIDToSenderFriends,
+      removeReceiverIDFromSenderFriendRequestsSent,
+    ];
+
+    let requestToAcceptFriendRequestIsOK = true;
+
+    Promise.all(promisesToAwait)
+      .then(() => {
+        for (const promise of promisesToAwait) {
+          promise.then((response) => {
+            if (!response.ok) {
+              requestToAcceptFriendRequestIsOK = false;
+            }
+          });
+        }
+      })
+      .then(() => {
+        if (!requestToAcceptFriendRequestIsOK) {
+          toast.error("Could not accept friend request. Please try again.");
+        } else {
+          toast.success(
+            `You are now friends with ${sender.firstName} ${sender.lastName}!`
+          );
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   // Defined here, as it's used in methods that are used in multiple components
   const allSignupFormFieldsFilled: boolean =
     firstName !== "" &&
@@ -923,6 +973,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    handleAcceptFriendRequest,
     isLoading,
     setIsLoading,
     accountDeletionInProgress,
