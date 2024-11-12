@@ -777,48 +777,65 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     receiver: TUser
   ): void => {
     e.preventDefault();
-    const addSenderIDToReceiverFriends = Requests.addFriendToFriendsArray(
-      receiver,
-      sender._id
-    );
-    const removeSenderIDFromReceiverFriendRequestsReceived =
-      Requests.removeFromFriendRequestsReceived(sender._id, receiver);
-    const addReceiverIDToSenderFriends = Requests.addFriendToFriendsArray(
-      sender,
-      receiver._id
-    );
-    const removeReceiverIDFromSenderFriendRequestsSent =
-      Requests.removeFromFriendRequestsSent(sender, receiver._id);
+    const addSenderIDToReceiverFriends =
+      sender && sender._id
+        ? Requests.addFriendToFriendsArray(receiver, sender._id)
+        : undefined;
 
-    const promisesToAwait = [
-      addSenderIDToReceiverFriends,
-      removeSenderIDFromReceiverFriendRequestsReceived,
-      addReceiverIDToSenderFriends,
-      removeReceiverIDFromSenderFriendRequestsSent,
-    ];
+    const removeSenderIDFromReceiverFriendRequestsReceived =
+      sender && sender._id
+        ? Requests.removeFromFriendRequestsReceived(sender._id, receiver)
+        : undefined;
+
+    const addReceiverIDToSenderFriends =
+      sender && sender._id && receiver && receiver._id
+        ? Requests.addFriendToFriendsArray(sender, receiver._id)
+        : undefined;
+
+    const removeReceiverIDFromSenderFriendRequestsSent =
+      receiver && receiver._id
+        ? Requests.removeFromFriendRequestsSent(sender, receiver._id)
+        : undefined;
+
+    const allRequestsAreDefined =
+      addSenderIDToReceiverFriends &&
+      removeSenderIDFromReceiverFriendRequestsReceived &&
+      addReceiverIDToSenderFriends &&
+      removeReceiverIDFromSenderFriendRequestsSent;
+
+    const promisesToAwait = allRequestsAreDefined
+      ? [
+          addSenderIDToReceiverFriends,
+          removeSenderIDFromReceiverFriendRequestsReceived,
+          addReceiverIDToSenderFriends,
+          removeReceiverIDFromSenderFriendRequestsSent,
+        ]
+      : undefined;
 
     let requestToAcceptFriendRequestIsOK = true;
 
-    Promise.all(promisesToAwait)
-      .then(() => {
-        for (const promise of promisesToAwait) {
-          promise.then((response) => {
-            if (!response.ok) {
-              requestToAcceptFriendRequestIsOK = false;
-            }
-          });
-        }
-      })
-      .then(() => {
-        if (!requestToAcceptFriendRequestIsOK) {
-          toast.error("Could not accept friend request. Please try again.");
-        } else {
-          toast.success(
-            `You are now friends with ${sender.firstName} ${sender.lastName}!`
-          );
-        }
-      })
-      .catch((error) => console.log(error));
+    if (promisesToAwait) {
+      Promise.all(promisesToAwait)
+        .then(() => {
+          for (const promise of promisesToAwait) {
+            promise.then((response) => {
+              if (!response.ok) {
+                requestToAcceptFriendRequestIsOK = false;
+              }
+            });
+          }
+        })
+        .then(() => {
+          if (!requestToAcceptFriendRequestIsOK) {
+            toast.error("Could not accept friend request. Please try again.");
+          } else {
+            toast.success(
+              `You are now friends with ${sender.firstName} ${sender.lastName}!`
+            );
+          }
+        })
+        .catch((error) => console.log(error));
+    }
   };
 
   const handleRejectFriendRequest = (
@@ -830,38 +847,50 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     console.log(receiver);
     console.log(sender);
     const removeSenderIDFromReceiverFriendRequestsReceived =
-      Requests.removeFromFriendRequestsReceived(sender._id, receiver);
+      sender && sender._id
+        ? Requests.removeFromFriendRequestsReceived(sender._id, receiver)
+        : undefined;
 
     const removeReceiverIDFromSenderFriendRequestsSent =
-      Requests.removeFromFriendRequestsSent(sender, receiver._id);
+      receiver && receiver._id
+        ? Requests.removeFromFriendRequestsSent(sender, receiver._id)
+        : undefined;
 
-    const promisesToAwait = [
-      removeSenderIDFromReceiverFriendRequestsReceived,
-      removeReceiverIDFromSenderFriendRequestsSent,
-    ];
+    const allRequestsAreDefined =
+      removeSenderIDFromReceiverFriendRequestsReceived &&
+      removeReceiverIDFromSenderFriendRequestsSent;
+
+    const promisesToAwait = allRequestsAreDefined
+      ? [
+          removeSenderIDFromReceiverFriendRequestsReceived,
+          removeReceiverIDFromSenderFriendRequestsSent,
+        ]
+      : undefined;
 
     let requestToAcceptFriendRequestIsOK = true;
 
-    Promise.all(promisesToAwait)
-      .then(() => {
-        for (const promise of promisesToAwait) {
-          promise.then((response) => {
-            if (!response.ok) {
-              requestToAcceptFriendRequestIsOK = false;
-            }
-          });
-        }
-      })
-      .then(() => {
-        if (!requestToAcceptFriendRequestIsOK) {
-          toast.error("Could not reject friend request. Please try again.");
-        } else {
-          toast.error(
-            `Rejected friend request from ${sender.firstName} ${sender.lastName}.`
-          );
-        }
-      })
-      .catch((error) => console.log(error));
+    if (promisesToAwait) {
+      Promise.all(promisesToAwait)
+        .then(() => {
+          for (const promise of promisesToAwait) {
+            promise.then((response) => {
+              if (!response.ok) {
+                requestToAcceptFriendRequestIsOK = false;
+              }
+            });
+          }
+        })
+        .then(() => {
+          if (!requestToAcceptFriendRequestIsOK) {
+            toast.error("Could not reject friend request. Please try again.");
+          } else {
+            toast.error(
+              `Rejected friend request from ${sender.firstName} ${sender.lastName}.`
+            );
+          }
+        })
+        .catch((error) => console.log(error));
+    }
   };
 
   // Defined here, as it's used in methods that are used in multiple components
