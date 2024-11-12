@@ -540,7 +540,7 @@ const addToFriendRequestsSent = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendRequestsSentArray: Array<string | number | undefined> = [];
+  let updatedFriendRequestsSentArray: Array<string | number | undefined> = [];
   if (sender?.friendRequestsSent) {
     for (const existingRecipientID of sender.friendRequestsSent) {
       updatedFriendRequestsSentArray.push(existingRecipientID);
@@ -650,7 +650,13 @@ const addFriendToFriendsArray = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendsArray = [...user.friends, friend];
+  let updatedFriendsArray = [];
+  if (user?.friends) {
+    for (const existingFriendID of user.friendRequestsSent) {
+      updatedFriendsArray.push(existingFriendID);
+    }
+  }
+  updatedFriendsArray.push(friend);
 
   var raw = JSON.stringify({
     "friends": updatedFriendsArray,
