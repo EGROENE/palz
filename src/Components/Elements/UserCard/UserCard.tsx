@@ -8,7 +8,7 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const UserCard = ({ user }: { user: TUser }) => {
-  const { currentUser, fetchAllUsers, allUsers } = useMainContext();
+  const { currentUser, allUsers } = useMainContext();
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
   const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
 
@@ -62,32 +62,37 @@ const UserCard = ({ user }: { user: TUser }) => {
 
     let isRequestError = false;
 
-    const promisesToAwait: Promise<Response>[] = [
-      Requests.addToFriendRequestsReceived(sender?._id, recipient),
-      Requests.addToFriendRequestsSent(sender, recipient._id),
-    ];
+    const promisesToAwait =
+      sender && sender._id && recipient._id
+        ? [
+            Requests.addToFriendRequestsReceived(sender?._id, recipient),
+            Requests.addToFriendRequestsSent(sender, recipient._id),
+          ]
+        : undefined;
 
-    Promise.all(promisesToAwait)
-      .then(() => {
-        for (const promise of promisesToAwait) {
-          promise.then((response) => {
-            if (!response.ok) {
-              isRequestError = true;
-            }
-          });
-        }
-      })
-      .then(() => {
-        if (isRequestError) {
-          setFriendRequestSent(false);
-          toast.error("Couldn't send request. Please try again.");
-        } else {
-          toast.success("Friend request sent!");
-          fetchAllUsers();
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setButtonsAreDisabled(false));
+    if (promisesToAwait) {
+      Promise.all(promisesToAwait)
+        .then(() => {
+          for (const promise of promisesToAwait) {
+            promise.then((response) => {
+              if (!response.ok) {
+                isRequestError = true;
+              }
+            });
+          }
+        })
+        .then(() => {
+          if (isRequestError) {
+            setFriendRequestSent(false);
+            toast.error("Couldn't send request. Please try again.");
+          } else {
+            toast.success("Friend request sent!");
+            //fetchAllUsers();
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setButtonsAreDisabled(false));
+    }
   };
 
   const handleRetractFriendRequest = (
@@ -96,26 +101,30 @@ const UserCard = ({ user }: { user: TUser }) => {
   ): void => {
     setButtonsAreDisabled(true);
     setFriendRequestSent(false);
-    Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
-      .then((response) => {
-        if (!response.ok) {
-          setFriendRequestSent(true);
-          toast.error("Could not retract request. Please try again.");
-        } else {
-          Requests.removeFromFriendRequestsSent(sender, recipient._id)
-            .then((response) => {
-              if (!response.ok) {
-                setFriendRequestSent(true);
-                toast.error("Could not retract request. Please try again.");
-              } else {
-                toast.error("Friend request retracted");
-              }
-            })
-            .catch((error) => console.log(error));
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setButtonsAreDisabled(false));
+    if (sender && sender._id) {
+      Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
+        .then((response) => {
+          if (!response.ok) {
+            setFriendRequestSent(true);
+            toast.error("Could not retract request. Please try again.");
+          } else {
+            if (sender && recipient._id) {
+              Requests.removeFromFriendRequestsSent(sender, recipient._id)
+                .then((response) => {
+                  if (!response.ok) {
+                    setFriendRequestSent(true);
+                    toast.error("Could not retract request. Please try again.");
+                  } else {
+                    toast.error("Friend request retracted");
+                  }
+                })
+                .catch((error) => console.log(error));
+            }
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setButtonsAreDisabled(false));
+    }
   };
 
   return (
