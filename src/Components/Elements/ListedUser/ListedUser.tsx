@@ -34,7 +34,8 @@ const ListedUser = ({
       <button
         onClick={
           buttonOneHandler
-            ? (e) => buttonOneHandler(e, [...[buttonOneHandlerParams]])
+            ? // @ts-ignore
+              (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
             : undefined
         }
         style={{ backgroundColor: randomColor }}
@@ -44,7 +45,7 @@ const ListedUser = ({
       <button
         onClick={
           buttonTwoHandler
-            ? (e) => buttonTwoHandler(e, [...[buttonTwoHandlerParams]])
+            ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
             : undefined
         }
         style={{ backgroundColor: "tomato" }}
