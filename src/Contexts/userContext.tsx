@@ -1030,7 +1030,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     e.preventDefault();
     window.alert(
-      "Please ensure all fields have been filled out & fix any form errors, then try again"
+      "Please ensure all fields have been filled out & fix any form errors. If everything looks right to you, re-enter the info try again."
     );
     setShowErrors(true);
   };
