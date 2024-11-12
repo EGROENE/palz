@@ -17,6 +17,7 @@ import UsersEvents from "./Components/Pages/UsersEvents/UsersEvents";
 import EditEventPage from "./Components/Pages/EditEventPage/EditEventPage";
 import TwoOptionsInterface from "./Components/Elements/TwoOptionsInterface/TwoOptionsInterface";
 import LoadingModal from "./Components/Elements/LoadingModal/LoadingModal";
+import FriendRequests from "./Components/Pages/FriendRequests/FriendRequests";
 
 function App() {
   const {
@@ -107,6 +108,7 @@ function App() {
         <Route path="/events" element={<DisplayedCardsPage usedFor="events" />} />
         <Route path="/events/:eventID" element={<EventPage />} />
         <Route path="/:username/events" element={<UsersEvents />} />
+        <Route path="/:username/friend-requests" element={<FriendRequests />} />
         <Route path="/users/:username" element={<UserHomepage />} />
         <Route
           path="/find-palz"
