@@ -821,6 +821,49 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .catch((error) => console.log(error));
   };
 
+  const handleRejectFriendRequest = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    sender: TUser,
+    receiver: TUser
+  ) => {
+    e.preventDefault();
+    console.log(receiver);
+    console.log(sender);
+    const removeSenderIDFromReceiverFriendRequestsReceived =
+      Requests.removeFromFriendRequestsReceived(sender._id, receiver);
+
+    const removeReceiverIDFromSenderFriendRequestsSent =
+      Requests.removeFromFriendRequestsSent(sender, receiver._id);
+
+    const promisesToAwait = [
+      removeSenderIDFromReceiverFriendRequestsReceived,
+      removeReceiverIDFromSenderFriendRequestsSent,
+    ];
+
+    let requestToAcceptFriendRequestIsOK = true;
+
+    Promise.all(promisesToAwait)
+      .then(() => {
+        for (const promise of promisesToAwait) {
+          promise.then((response) => {
+            if (!response.ok) {
+              requestToAcceptFriendRequestIsOK = false;
+            }
+          });
+        }
+      })
+      .then(() => {
+        if (!requestToAcceptFriendRequestIsOK) {
+          toast.error("Could not reject friend request. Please try again.");
+        } else {
+          toast.error(
+            `Rejected friend request from ${sender.firstName} ${sender.lastName}.`
+          );
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   // Defined here, as it's used in methods that are used in multiple components
   const allSignupFormFieldsFilled: boolean =
     firstName !== "" &&
@@ -973,6 +1016,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    handleRejectFriendRequest,
     handleAcceptFriendRequest,
     isLoading,
     setIsLoading,
