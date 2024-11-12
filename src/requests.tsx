@@ -504,8 +504,8 @@ const removeOrganizer = (
 };
 
 const addToFriendRequestsReceived = (
-  senderID: string | undefined,
-  recipient: TUser | undefined
+  senderID: string,
+  recipient: TUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -534,8 +534,8 @@ const addToFriendRequestsReceived = (
 };
 
 const addToFriendRequestsSent = (
-  sender: TUser | undefined,
-  recipientID: string | undefined
+  sender: TUser,
+  recipientID: string
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -564,8 +564,8 @@ const addToFriendRequestsSent = (
 };
 
 const removeFromFriendRequestsReceived = (
-  senderID: string | undefined,
-  recipient: TUser | undefined
+  senderID: string,
+  recipient: TUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -590,13 +590,13 @@ const removeFromFriendRequestsReceived = (
 };
 
 const removeFromFriendRequestsSent = (
-  sender: TUser | undefined,
-  recipientID: string | undefined
+  sender: TUser,
+  recipientID: string
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendRequestsArray = sender?.friendRequestsSent.filter(
+  const updatedFriendRequestsArray = sender.friendRequestsSent.filter(
     (id) => id !== recipientID
   );
 
@@ -607,7 +607,7 @@ const removeFromFriendRequestsSent = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${sender?._id}`, {
+  return fetch(`http://localhost:4000/palz/users/${sender._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -643,10 +643,7 @@ const removeFromFriendRequestsSent = (
   });
 }; */
 
-const addFriendToFriendsArray = (
-  user: TUser,
-  friend: string | undefined
-): Promise<Response> => {
+const addFriendToFriendsArray = (user: TUser, friend: string): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -670,10 +667,7 @@ const addFriendToFriendsArray = (
   });
 };
 
-const deleteFriendFromFriendsArray = (
-  user: TUser,
-  friend: string | undefined
-): Promise<Response> => {
+const deleteFriendFromFriendsArray = (user: TUser, friend: string): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
