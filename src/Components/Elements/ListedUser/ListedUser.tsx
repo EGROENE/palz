@@ -1,20 +1,22 @@
-import { TUser, TEvent } from "../../../types";
+import { TUser } from "../../../types";
 import styles from "./styles.module.css";
 
 const ListedUser = ({
   user,
-  event,
   randomColor,
   buttonOneHandler,
+  buttonOneHandlerParams,
   buttonTwoHandler,
+  buttonTwoHandlerParams,
   buttonOneText,
   buttonTwoText,
 }: {
   user?: TUser;
-  event?: TEvent;
   randomColor?: string;
   buttonOneHandler?: Function;
+  buttonOneHandlerParams?: any[];
   buttonTwoHandler?: Function;
+  buttonTwoHandlerParams?: any[];
   buttonOneText: string;
   buttonTwoText: string;
 }) => {
@@ -30,13 +32,21 @@ const ListedUser = ({
         <p>{user?.username}</p>
       </div>
       <button
-        onClick={buttonOneHandler ? (e) => buttonOneHandler(e) : undefined}
+        onClick={
+          buttonOneHandler
+            ? (e) => buttonOneHandler(e, [...[buttonOneHandlerParams]])
+            : undefined
+        }
         style={{ backgroundColor: randomColor }}
       >
         {buttonOneText}
       </button>
       <button
-        onClick={buttonTwoHandler ? (e) => buttonTwoHandler(e, event, user) : undefined}
+        onClick={
+          buttonTwoHandler
+            ? (e) => buttonTwoHandler(e, [...[buttonTwoHandlerParams]])
+            : undefined
+        }
         style={{ backgroundColor: "tomato" }}
       >
         {buttonTwoText}
