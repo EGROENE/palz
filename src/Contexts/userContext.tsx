@@ -844,8 +844,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     receiver: TUser
   ) => {
     e.preventDefault();
-    console.log(receiver);
-    console.log(sender);
     const removeSenderIDFromReceiverFriendRequestsReceived =
       sender && sender._id
         ? Requests.removeFromFriendRequestsReceived(sender._id, receiver)
