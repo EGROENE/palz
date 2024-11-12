@@ -77,6 +77,12 @@ const Sidebar = () => {
         <Link className={styles.sidebarOption} to={"/events"}>
           Explore Events
         </Link>
+        <Link
+          className={styles.sidebarOption}
+          to={`/${currentUser?.username}/friend-requests`}
+        >
+          Friend Requests
+        </Link>
         <Link className={styles.sidebarOption} to="/find-palz">
           Find Palz
         </Link>
