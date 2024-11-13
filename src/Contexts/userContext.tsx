@@ -141,6 +141,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
+  const [selectedOtherUser, setSelectedOtherUser] = useSessionStorage<TUser | null>(
+    "selectedOtherUser",
+    null
+  );
+
   const userData: TUser = {
     firstName: Methods.formatHyphensAndSpacesInString(
       Methods.formatCapitalizedName(firstName)
@@ -894,6 +899,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     let requestToAcceptFriendRequestIsOK = true;
 
+    if (showFriendRequestResponseOptions) {
+      setShowFriendRequestResponseOptions(false);
+    }
+
     if (promisesToAwait) {
       Promise.all(promisesToAwait)
         .then(() => {
@@ -946,6 +955,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       : undefined;
 
     let requestToAcceptFriendRequestIsOK = true;
+
+    if (showFriendRequestResponseOptions) {
+      setShowFriendRequestResponseOptions(false);
+    }
 
     if (promisesToAwait) {
       Promise.all(promisesToAwait)
@@ -1168,6 +1181,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    selectedOtherUser,
+    setSelectedOtherUser,
     friendRequestSent,
     setFriendRequestSent,
     buttonsAreDisabled,
