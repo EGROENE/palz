@@ -127,11 +127,13 @@ const UserSettings = () => {
     }
 
     // Delete user from friendRequestsReceived & friends arrays in other users' DB documents:
-    for (const user of allUsers) {
-      promisesToAwait.push(
-        Requests.removeFromFriendRequestsReceived(currentUser?._id, user),
-        Requests.deleteFriendFromFriendsArray(user, currentUser?._id)
-      );
+    if (currentUser && currentUser._id) {
+      for (const user of allUsers) {
+        promisesToAwait.push(
+          Requests.removeFromFriendRequestsReceived(currentUser?._id, user),
+          Requests.deleteFriendFromFriendsArray(user, currentUser?._id)
+        );
+      }
     }
 
     // Wait for user to be removed from all invitee/organizer/RSVP arrays, then delete user object in DB. Eventually, also wait for user to be removed from palz & messages arrays.
@@ -220,7 +222,7 @@ const UserSettings = () => {
           buttonTwoText="Delete Account"
           buttonOneText="Cancel"
           setShowAreYouSureInterface={setShowAreYouSureInterface}
-          executionHandler={handleAccountDeletion}
+          buttonOneHandler={handleAccountDeletion}
         />
       )}
     </div>
