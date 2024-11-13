@@ -28,6 +28,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     useState<boolean>(false);
   const [accountDeletionInProgress, setAccountDeletionInProgress] =
     useState<boolean>(false);
+  const [showFriendRequestResponseOptions, setShowFriendRequestResponseOptions] =
+    useState<boolean>(false);
+  const [buttonsAreDisabled, setButtonsAreDisabled] = useState<boolean>(false);
+  const [friendRequestSent, setFriendRequestSent] = useState<boolean>(false);
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
@@ -771,6 +775,82 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .finally(() => setImageIsDeleting(false));
   };
 
+  const handleSendFriendRequest = (sender: TUser | undefined, recipient: TUser): void => {
+    setFriendRequestSent(true);
+    setButtonsAreDisabled(true);
+
+    let isRequestError = false;
+
+    const promisesToAwait =
+      sender && sender._id && recipient._id
+        ? [
+            Requests.addToFriendRequestsReceived(sender?._id, recipient),
+            Requests.addToFriendRequestsSent(sender, recipient._id),
+          ]
+        : undefined;
+
+    if (promisesToAwait) {
+      Promise.all(promisesToAwait)
+        .then(() => {
+          for (const promise of promisesToAwait) {
+            promise.then((response) => {
+              if (!response.ok) {
+                isRequestError = true;
+              }
+            });
+          }
+        })
+        .then(() => {
+          if (isRequestError) {
+            setFriendRequestSent(false);
+            toast.error("Couldn't send request. Please try again.");
+          } else {
+            toast.success("Friend request sent!");
+            //fetchAllUsers();
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setButtonsAreDisabled(false));
+    }
+  };
+
+  const handleRetractFriendRequest = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    sender: TUser,
+    recipient: TUser
+  ): void => {
+    console.log(sender);
+    console.log(sender._id);
+    e.preventDefault();
+    setButtonsAreDisabled(true);
+    setFriendRequestSent(false);
+    if (sender && sender._id) {
+      console.log("HD");
+      Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
+        .then((response) => {
+          if (!response.ok) {
+            setFriendRequestSent(true);
+            toast.error("Could not retract request. Please try again.");
+          } else {
+            if (sender && recipient._id) {
+              Requests.removeFromFriendRequestsSent(sender, recipient._id)
+                .then((response) => {
+                  if (!response.ok) {
+                    setFriendRequestSent(true);
+                    toast.error("Could not retract request. Please try again.");
+                  } else {
+                    toast.error("Friend request retracted");
+                  }
+                })
+                .catch((error) => console.log(error));
+            }
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setButtonsAreDisabled(false));
+    }
+  };
+
   const handleAcceptFriendRequest = (
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
@@ -885,6 +965,51 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             toast.error(
               `Rejected friend request from ${sender.firstName} ${sender.lastName}.`
             );
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+  };
+
+  const handleUnfriending = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    user: TUser,
+    friend: TUser
+  ): void => {
+    e.preventDefault();
+    const removeUserFromFriendsFriendsArray = friend._id
+      ? Requests.deleteFriendFromFriendsArray(user, friend._id)
+      : undefined;
+
+    const removeFriendFromUserFriendsArray = user._id
+      ? Requests.deleteFriendFromFriendsArray(friend, user._id)
+      : undefined;
+
+    const promisesToAwait =
+      removeUserFromFriendsFriendsArray && removeFriendFromUserFriendsArray
+        ? [removeUserFromFriendsFriendsArray, removeFriendFromUserFriendsArray]
+        : undefined;
+
+    let allRequestsAreOK = true;
+
+    if (promisesToAwait) {
+      Promise.all(promisesToAwait)
+        .then(() => {
+          for (const promise of promisesToAwait) {
+            promise.then((response) => {
+              if (!response.ok) {
+                allRequestsAreOK = false;
+              }
+            });
+          }
+        })
+        .then(() => {
+          if (!allRequestsAreOK) {
+            toast.error(
+              `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`
+            );
+          } else {
+            toast.error(`You have unfriended ${friend.firstName} ${friend.lastName}.`);
           }
         })
         .catch((error) => console.log(error));
@@ -1043,6 +1168,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    friendRequestSent,
+    setFriendRequestSent,
+    buttonsAreDisabled,
+    setButtonsAreDisabled,
+    handleSendFriendRequest,
+    handleRetractFriendRequest,
+    showFriendRequestResponseOptions,
+    setShowFriendRequestResponseOptions,
+    handleUnfriending,
     handleRejectFriendRequest,
     handleAcceptFriendRequest,
     isLoading,
