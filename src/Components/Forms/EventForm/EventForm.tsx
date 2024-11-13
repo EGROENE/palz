@@ -1853,7 +1853,7 @@ const EventForm = ({
           buttonTwoText="Delete Event"
           buttonOneText="Cancel"
           setShowAreYouSureInterface={setShowAreYouSureDeleteEvent}
-          executionHandler={handleDeleteEvent}
+          buttonTwoHandler={handleDeleteEvent}
         />
       )}
       {showAreYouSureRemoveCurrentUserAsOrganizer && (
@@ -1863,7 +1863,8 @@ const EventForm = ({
           buttonTwoText="Remove Myself as Organizer"
           buttonOneText="Cancel"
           setShowAreYouSureInterface={setShowAreYouSureRemoveCurrentUserAsOrganizer}
-          executionHandler={handleAddRemoveUserAsOrganizer}
+          buttonTwoHandler={handleAddRemoveUserAsOrganizer}
+          buttonTwoHandlerParams={[currentUser]}
         />
       )}
       <div className="buttons-container">
