@@ -84,7 +84,7 @@ function App() {
       {showUpdateProfileImageInterface && (
         <TwoOptionsInterface
           header="Edit Profile Image"
-          removeFile={removeProfileImage}
+          buttonTwoHandler={removeProfileImage}
           buttonOneText="Upload New"
           buttonTwoText="Remove Profile Image"
           setShowAreYouSureInterface={setShowUpdateProfileImageInterface}
