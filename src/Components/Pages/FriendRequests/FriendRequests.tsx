@@ -51,7 +51,9 @@ const FriendRequests = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+  }, []);
 
+  useEffect(() => {
     if (
       currentUser.friendRequestsReceived.length > 0 &&
       currentUser.friendRequestsSent.length > 0
@@ -65,7 +67,7 @@ const FriendRequests = () => {
         setRequestsVisible("sent");
       }
     }
-  }, []);
+  }, [allUsers]);
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
