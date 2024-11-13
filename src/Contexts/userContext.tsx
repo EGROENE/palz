@@ -824,8 +824,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     sender: TUser,
     recipient: TUser
   ): void => {
-    console.log(sender);
-    console.log(sender._id);
     e.preventDefault();
     setButtonsAreDisabled(true);
     setFriendRequestSent(false);
