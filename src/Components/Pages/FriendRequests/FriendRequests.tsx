@@ -13,6 +13,7 @@ const FriendRequests = () => {
     setShowSidebar,
     handleAcceptFriendRequest,
     handleRejectFriendRequest,
+    handleRetractFriendRequest,
   } = useUserContext();
   const { username } = useParams();
 
@@ -136,10 +137,12 @@ const FriendRequests = () => {
                     key={user._id}
                     user={user}
                     randomColor={randomColor}
-                    //buttonOneHandler={}
-                    //buttonTwoHandler={}
                     buttonOneText="See Profile"
+                    //buttonOneHandler={}
+                    // buttonOneHandlerParams={[]}
                     buttonTwoText="Retract"
+                    buttonTwoHandler={handleRetractFriendRequest}
+                    buttonTwoHandlerParams={[currentUser, user]}
                   />
                 ))
               : usersWhoSentCurrentUserARequest.length > 0 &&
