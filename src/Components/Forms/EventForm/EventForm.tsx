@@ -1852,7 +1852,7 @@ const EventForm = ({
           header="Are you sure you want to delete this event?"
           buttonTwoText="Delete Event"
           buttonOneText="Cancel"
-          setShowAreYouSureInterface={setShowAreYouSureDeleteEvent}
+          closeHandler={setShowAreYouSureDeleteEvent}
           buttonTwoHandler={handleDeleteEvent}
         />
       )}
@@ -1862,7 +1862,7 @@ const EventForm = ({
           subheader="You will no longer be able to make changes to this event, unless another user adds you as a co-organizer."
           buttonTwoText="Remove Myself as Organizer"
           buttonOneText="Cancel"
-          setShowAreYouSureInterface={setShowAreYouSureRemoveCurrentUserAsOrganizer}
+          closeHandler={setShowAreYouSureRemoveCurrentUserAsOrganizer}
           buttonTwoHandler={handleAddRemoveUserAsOrganizer}
           buttonTwoHandlerParams={[currentUser]}
         />
