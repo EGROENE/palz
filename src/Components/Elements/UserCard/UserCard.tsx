@@ -2,20 +2,29 @@ import styles from "./styles.module.css";
 import { TUser, TThemeColor } from "../../../types";
 import { countries } from "../../../constants";
 import { useState, useEffect } from "react";
-import Requests from "../../../requests";
-import toast from "react-hot-toast";
 import { useMainContext } from "../../../Hooks/useMainContext";
+import { useUserContext } from "../../../Hooks/useUserContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
+import TwoOptionsInterface from "../TwoOptionsInterface/TwoOptionsInterface";
 
 const UserCard = ({ user }: { user: TUser }) => {
   const { currentUser, allUsers } = useMainContext();
+  const {
+    handleUnfriending,
+    handleRejectFriendRequest,
+    handleAcceptFriendRequest,
+    showFriendRequestResponseOptions,
+    setShowFriendRequestResponseOptions,
+    friendRequestSent,
+    setFriendRequestSent,
+    handleRetractFriendRequest,
+    handleSendFriendRequest,
+    buttonsAreDisabled,
+  } = useUserContext();
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
   const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-
-  const [buttonsAreDisabled, setButtonsAreDisabled] = useState<boolean>(false);
-  const [friendRequestSent, setFriendRequestSent] = useState<boolean>(false);
 
   /* sender below is absolute most-current version of currentUser. currentUser itself (the state value) doesn't update in time if friend requests are sent/rescinded, but the corresponding user in allUsers does update in time, so sender is simply that value, captured when Add/Retract friend req btn is clicked. */
   //const sender = allUsers.filter((user) => user._id === currentUser?._id)[0];
@@ -56,135 +65,148 @@ const UserCard = ({ user }: { user: TUser }) => {
       ? matchingCountryObject.abbreviation
       : undefined;
 
-  const handleSendFriendRequest = (sender: TUser | undefined, recipient: TUser): void => {
-    setFriendRequestSent(true);
-    setButtonsAreDisabled(true);
+  const getButtonOneText = (): JSX.Element | string => {
+    // either Unfriend, Retract Request
 
-    let isRequestError = false;
+    // If user has sent currentUser a friend req, return btn "Accept/Decline Request" w/ handler that shows TwoOptionsModal w/ Accept/Decline btns
 
-    const promisesToAwait =
-      sender && sender._id && recipient._id
-        ? [
-            Requests.addToFriendRequestsReceived(sender?._id, recipient),
-            Requests.addToFriendRequestsSent(sender, recipient._id),
-          ]
-        : undefined;
-
-    if (promisesToAwait) {
-      Promise.all(promisesToAwait)
-        .then(() => {
-          for (const promise of promisesToAwait) {
-            promise.then((response) => {
-              if (!response.ok) {
-                isRequestError = true;
-              }
-            });
-          }
-        })
-        .then(() => {
-          if (isRequestError) {
-            setFriendRequestSent(false);
-            toast.error("Couldn't send request. Please try again.");
-          } else {
-            toast.success("Friend request sent!");
-            //fetchAllUsers();
-          }
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setButtonsAreDisabled(false));
+    // If user has sent currentUser a friend request:
+    if (
+      currentUser &&
+      currentUser._id &&
+      user.friendRequestsSent.includes(currentUser._id)
+    ) {
+      return "Accept/Decline Request";
     }
+
+    // If currentUser has sent user friend request:
+    if (user._id && currentUser?.friendRequestsSent.includes(user._id)) {
+      return (
+        <>
+          <i className="fas fa-user-minus"></i>Retract Request
+        </>
+      );
+    }
+
+    // If user and currentUser are friends:
+    if (
+      currentUser &&
+      currentUser._id &&
+      user &&
+      user._id &&
+      user.friends.includes(currentUser._id) &&
+      currentUser.friends.includes(user._id)
+    ) {
+      return (
+        <>
+          <i className="fas fa-user-minus"></i>Unfriend
+        </>
+      );
+    }
+
+    // Else, if no connection exists b/t currentUser & user whatsoever:
+    return (
+      <>
+        <i className="fas fa-user-plus"></i>Add Friend
+      </>
+    );
   };
 
-  const handleRetractFriendRequest = (
-    sender: TUser | undefined,
-    recipient: TUser
-  ): void => {
-    setButtonsAreDisabled(true);
-    setFriendRequestSent(false);
-    if (sender && sender._id) {
-      Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
-        .then((response) => {
-          if (!response.ok) {
-            setFriendRequestSent(true);
-            toast.error("Could not retract request. Please try again.");
-          } else {
-            if (sender && recipient._id) {
-              Requests.removeFromFriendRequestsSent(sender, recipient._id)
-                .then((response) => {
-                  if (!response.ok) {
-                    setFriendRequestSent(true);
-                    toast.error("Could not retract request. Please try again.");
-                  } else {
-                    toast.error("Friend request retracted");
-                  }
-                })
-                .catch((error) => console.log(error));
-            }
-          }
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setButtonsAreDisabled(false));
-    }
-  };
+  const buttonOneText = getButtonOneText();
+
+  const currentUserAndUserAreFriends =
+    currentUser &&
+    currentUser._id &&
+    user &&
+    user._id &&
+    currentUser?.friends.includes(user._id) &&
+    user.friends.includes(currentUser._id);
+
+  const currentUserHasSentUserAFriendRequest =
+    currentUser &&
+    currentUser._id &&
+    user.friendRequestsReceived.includes(currentUser._id);
+
+  const userHasSentCurrentUserAFriendRequest =
+    user && user._id && currentUser?.friendRequestsReceived.includes(user._id);
+
+  const noConnectionBetweenUserAndCurrentUser =
+    !currentUserAndUserAreFriends &&
+    !currentUserHasSentUserAFriendRequest &&
+    !userHasSentCurrentUserAFriendRequest;
 
   return (
-    <div
-      className={styles.userCard}
-      style={{
-        boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
-      }}
-    >
-      <i
-        style={{
-          position: "absolute",
-          right: "1rem",
-          top: "1rem",
-          fontSize: "1.25rem",
-        }}
-        className="fas fa-comments"
-      ></i>
-      <img
-        style={{ border: `2px solid ${randomColor}` }}
-        src={
-          user.profileImage !== "" && typeof user.profileImage === "string"
-            ? user.profileImage
-            : defaultProfileImage
-        }
-        alt="profile image"
-      />
-      <header>
-        {user.firstName} {user.lastName}
-      </header>
-      <p>{user.username}</p>
-      {user.country !== "" && (
-        <div className={styles.userCardLocationContainer}>
-          <p>{`${user.city}, ${user.stateProvince}`}</p>
-          <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
-        </div>
+    <>
+      {showFriendRequestResponseOptions && (
+        <TwoOptionsInterface
+          header={`Respond to friend request from ${user.firstName} ${user.lastName} (${user.username})`}
+          buttonOneText="Accept"
+          buttonOneHandler={handleAcceptFriendRequest}
+          buttonOneHandlerParams={[user, currentUser]}
+          buttonTwoText="Decline"
+          buttonTwoHandler={handleRejectFriendRequest}
+          buttonTwoHandlerParams={[user, currentUser]}
+        />
       )}
-      <div className={styles.userCardBtnContainer}>
-        <button
-          onClick={() => {
-            friendRequestSent
-              ? handleRetractFriendRequest(currentUser, user)
-              : handleSendFriendRequest(currentUser, user);
+      <div
+        className={styles.userCard}
+        style={{
+          boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
+        }}
+      >
+        <i
+          style={{
+            position: "absolute",
+            right: "1rem",
+            top: "1rem",
+            fontSize: "1.25rem",
           }}
-          disabled={buttonsAreDisabled}
-          style={{ backgroundColor: randomColor }}
-        >
-          {friendRequestSent ? (
-            <>
-              <i className="fas fa-user-minus"></i>Retract Request
-            </>
-          ) : (
-            <>
-              <i className="fas fa-user-plus"></i>Add Friend
-            </>
-          )}
-        </button>
-        <button disabled={buttonsAreDisabled}>View Profile</button>
+          className="fas fa-comments"
+        ></i>
+        <img
+          style={{ border: `2px solid ${randomColor}` }}
+          src={
+            user.profileImage !== "" && typeof user.profileImage === "string"
+              ? user.profileImage
+              : defaultProfileImage
+          }
+          alt="profile image"
+        />
+        <header>
+          {user.firstName} {user.lastName}
+        </header>
+        <p>{user.username}</p>
+        {user.country !== "" && (
+          <div className={styles.userCardLocationContainer}>
+            <p>{`${user.city}, ${user.stateProvince}`}</p>
+            <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
+          </div>
+        )}
+        <div className={styles.userCardBtnContainer}>
+          <button
+            onClick={(e) => {
+              if (currentUserAndUserAreFriends) {
+                handleUnfriending(e, currentUser, user);
+              }
+              if (currentUserHasSentUserAFriendRequest) {
+                handleRetractFriendRequest(e, currentUser, user);
+              }
+              if (userHasSentCurrentUserAFriendRequest) {
+                setShowFriendRequestResponseOptions(true);
+              }
+              if (currentUser && noConnectionBetweenUserAndCurrentUser) {
+                handleSendFriendRequest(currentUser, user);
+              }
+            }}
+            disabled={buttonsAreDisabled}
+            style={{ backgroundColor: randomColor }}
+          >
+            {buttonOneText}
+          </button>
+          <button disabled={buttonsAreDisabled}>View Profile</button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 export default UserCard;
