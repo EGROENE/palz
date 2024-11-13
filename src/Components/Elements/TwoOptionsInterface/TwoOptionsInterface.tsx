@@ -9,10 +9,12 @@ type TTwoOptionsInterfaceProps = {
   subheader?: string;
   buttonTwoText: string;
   buttonOneText: string;
-  setShowAreYouSureInterface: React.Dispatch<React.SetStateAction<boolean>>;
-  executionHandler?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  buttonOneHandler?: Function;
+  buttonOneHandlerParams?: any[];
+  buttonTwoHandler?: Function;
+  buttonTwoHandlerParams?: any[];
   isFileUpload?: boolean;
-  removeFile?: Function;
+  setShowAreYouSureInterface?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const TwoOptionsInterface = ({
@@ -20,10 +22,12 @@ const TwoOptionsInterface = ({
   subheader,
   buttonTwoText,
   buttonOneText,
-  setShowAreYouSureInterface,
-  executionHandler,
+  buttonOneHandler,
   isFileUpload,
-  removeFile,
+  buttonOneHandlerParams,
+  buttonTwoHandler,
+  buttonTwoHandlerParams,
+  setShowAreYouSureInterface,
 }: TTwoOptionsInterfaceProps) => {
   const { handleProfileImageUpload, profileImage } = useUserContext();
 
@@ -46,7 +50,11 @@ const TwoOptionsInterface = ({
       {isFileUpload && (
         <i
           title="Close"
-          onClick={() => setShowAreYouSureInterface(false)}
+          onClick={
+            setShowAreYouSureInterface
+              ? () => setShowAreYouSureInterface(false)
+              : undefined
+          }
           className="fas fa-times close-module-icon"
         ></i>
       )}
@@ -56,12 +64,23 @@ const TwoOptionsInterface = ({
             <header style={{ color: randomColor }}>{header}</header>
             {subheader && <p>{subheader}</p>}
             <div className={styles.buttonsContainer}>
-              <button onClick={() => setShowAreYouSureInterface(false)}>
+              <button
+                onClick={
+                  buttonOneHandler
+                    ? // @ts-ignore
+                      (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
+                    : undefined
+                }
+              >
                 {buttonOneText}
               </button>
               <button
                 style={{ backgroundColor: randomColor }}
-                onClick={executionHandler ? (e) => executionHandler(e) : undefined}
+                onClick={
+                  buttonTwoHandler
+                    ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                    : undefined
+                }
               >
                 {buttonTwoText}
               </button>
@@ -73,7 +92,13 @@ const TwoOptionsInterface = ({
             {subheader && <p>{subheader}</p>}
             <div className={styles.buttonsContainer}>
               {profileImage !== "" && (
-                <button onClick={removeFile ? (e) => removeFile(e) : undefined}>
+                <button
+                  onClick={
+                    buttonTwoHandler
+                      ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                      : undefined
+                  }
+                >
                   {buttonTwoText}
                 </button>
               )}
