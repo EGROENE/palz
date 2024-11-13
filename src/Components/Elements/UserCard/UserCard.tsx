@@ -15,11 +15,12 @@ const UserCard = ({ user }: { user: TUser }) => {
     handleAcceptFriendRequest,
     showFriendRequestResponseOptions,
     setShowFriendRequestResponseOptions,
-    friendRequestSent,
     setFriendRequestSent,
     handleRetractFriendRequest,
     handleSendFriendRequest,
     buttonsAreDisabled,
+    selectedOtherUser,
+    setSelectedOtherUser,
   } = useUserContext();
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
   const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
@@ -137,17 +138,20 @@ const UserCard = ({ user }: { user: TUser }) => {
 
   return (
     <>
-      {showFriendRequestResponseOptions && (
-        <TwoOptionsInterface
-          header={`Respond to friend request from ${user.firstName} ${user.lastName} (${user.username})`}
-          buttonOneText="Accept"
-          buttonOneHandler={handleAcceptFriendRequest}
-          buttonOneHandlerParams={[user, currentUser]}
-          buttonTwoText="Decline"
-          buttonTwoHandler={handleRejectFriendRequest}
-          buttonTwoHandlerParams={[user, currentUser]}
-        />
-      )}
+      {showFriendRequestResponseOptions &&
+        selectedOtherUser &&
+        selectedOtherUser._id === user._id && (
+          <TwoOptionsInterface
+            header={`Respond to friend request from ${selectedOtherUser.firstName} ${selectedOtherUser.lastName} (${selectedOtherUser.username})`}
+            buttonOneText="Accept"
+            buttonOneHandler={handleAcceptFriendRequest}
+            buttonOneHandlerParams={[selectedOtherUser, currentUser]}
+            buttonTwoText="Decline"
+            buttonTwoHandler={handleRejectFriendRequest}
+            buttonTwoHandlerParams={[selectedOtherUser, currentUser]}
+            closeHandler={setShowFriendRequestResponseOptions}
+          />
+        )}
       <div
         className={styles.userCard}
         style={{
@@ -192,6 +196,7 @@ const UserCard = ({ user }: { user: TUser }) => {
                 handleRetractFriendRequest(e, currentUser, user);
               }
               if (userHasSentCurrentUserAFriendRequest) {
+                setSelectedOtherUser(user);
                 setShowFriendRequestResponseOptions(true);
               }
               if (currentUser && noConnectionBetweenUserAndCurrentUser) {
