@@ -14,7 +14,7 @@ type TTwoOptionsInterfaceProps = {
   buttonTwoHandler?: Function;
   buttonTwoHandlerParams?: any[];
   isFileUpload?: boolean;
-  setShowAreYouSureInterface?: React.Dispatch<React.SetStateAction<boolean>>;
+  closeHandler: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const TwoOptionsInterface = ({
@@ -27,7 +27,7 @@ const TwoOptionsInterface = ({
   buttonOneHandlerParams,
   buttonTwoHandler,
   buttonTwoHandlerParams,
-  setShowAreYouSureInterface,
+  closeHandler,
 }: TTwoOptionsInterfaceProps) => {
   const { handleProfileImageUpload, profileImage } = useUserContext();
 
@@ -47,17 +47,11 @@ const TwoOptionsInterface = ({
 
   return (
     <div className={styles.modalBackground}>
-      {isFileUpload && (
-        <i
-          title="Close"
-          onClick={
-            setShowAreYouSureInterface
-              ? () => setShowAreYouSureInterface(false)
-              : undefined
-          }
-          className="fas fa-times close-module-icon"
-        ></i>
-      )}
+      <i
+        title="Close"
+        onClick={() => closeHandler(false)}
+        className="fas fa-times close-module-icon"
+      ></i>
       <div className={styles.areYouSureModal}>
         {!isFileUpload ? (
           <>
