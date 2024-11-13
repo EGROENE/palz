@@ -87,7 +87,7 @@ function App() {
           buttonTwoHandler={removeProfileImage}
           buttonOneText="Upload New"
           buttonTwoText="Remove Profile Image"
-          setShowAreYouSureInterface={setShowUpdateProfileImageInterface}
+          closeHandler={setShowUpdateProfileImageInterface}
           isFileUpload={true}
         />
       )}
