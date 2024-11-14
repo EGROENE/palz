@@ -219,10 +219,11 @@ const UserSettings = () => {
           header="Are you sure you want to permanently delete your account?"
           subheader="Please understand that this action is
             irreversible."
-          buttonTwoText="Delete Account"
           buttonOneText="Cancel"
+          buttonOneHandler={() => setShowAreYouSureInterface(false)}
+          buttonTwoText="Delete Account"
+          buttonTwoHandler={handleAccountDeletion}
           closeHandler={setShowAreYouSureInterface}
-          buttonOneHandler={handleAccountDeletion}
         />
       )}
     </div>
