@@ -16,18 +16,25 @@ const EventPage = () => {
     useMainContext();
   const { showSidebar, setShowSidebar, handleRemoveInvitee, isLoading, setIsLoading } =
     useUserContext();
-  const { eventID } = useParams();
-  const [event, setEvent] = useState<TEvent | undefined>();
+  //const [event, setEvent] = useState<TEvent | undefined>();
   const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
   const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
   const [showInvitees, setShowInvitees] = useState<boolean>(false);
-  const [userRSVPd, setUserRSVPd] = useState<boolean>();
+
+  // Get most current version of event to which this page pertains:
+  const { eventID } = useParams();
+  const currentEvent = allEvents.filter((ev) => ev._id === eventID)[0];
+  const [userRSVPd, setUserRSVPd] = useState<boolean>(
+    currentUser &&
+      currentUser._id &&
+      currentEvent.interestedUsers.includes(currentUser._id)
+      ? true
+      : false
+  ); // use for optimistic rendering
 
   const navigation = useNavigate();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-
-  const currentEvent = allEvents.filter((ev) => ev._id === eventID)[0];
 
   useEffect(() => {
     // Redirect user to their homepage or to login page if event is private & they are not an invitee or organizer
@@ -44,8 +51,6 @@ const EventPage = () => {
         navigation("/");
       }
     }
-    // FIX THIS
-    setEvent(currentEvent);
 
     // Set randomColor:
     const themeColors: TThemeColor[] = [
@@ -57,25 +62,12 @@ const EventPage = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
-
-    // Set init value of userRSVPd:
-    if (
-      currentUser &&
-      currentUser._id &&
-      currentEvent.interestedUsers.includes(currentUser._id)
-    ) {
-      setUserRSVPd(true);
-    } else {
-      setUserRSVPd(false);
-    }
-    setEvent(currentEvent);
   }, []);
 
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
   useEffect(() => {
     const refIntUsers = [];
     if (currentEvent) {
-      console.log(currentEvent);
       for (const userID of currentEvent.interestedUsers) {
         for (const user of allUsers) {
           if (user._id === userID) {
@@ -87,11 +79,13 @@ const EventPage = () => {
     setRefinedInterestedUsers(refIntUsers);
   }, [allUsers, allEvents]);
 
-  const nextEventDateTime = event ? new Date(event.eventStartDateTimeInMS) : undefined;
+  const nextEventDateTime = currentEvent
+    ? new Date(currentEvent.eventStartDateTimeInMS)
+    : undefined;
 
   let organizers: TUser[] = [];
-  if (event?.organizers) {
-    for (const id of event.organizers) {
+  if (currentEvent?.organizers) {
+    for (const id of currentEvent.organizers) {
       const organizerUserObject = allUsers.filter((user) => user._id === id)[0];
       organizers.push(organizerUserObject);
     }
@@ -99,13 +93,14 @@ const EventPage = () => {
 
   // Explicitly return true or false to avoid TS error
   const userIsOrganizer: boolean =
-    currentUser && currentUser._id && event?.organizers.includes(currentUser._id)
+    currentUser && currentUser._id && currentEvent?.organizers.includes(currentUser._id)
       ? true
       : false;
 
   const maxInviteesReached: boolean =
-    event && event.maxParticipants
-      ? event.invitees.length === event.maxParticipants - event?.organizers.length
+    currentEvent && currentEvent.maxParticipants
+      ? currentEvent.invitees.length ===
+        currentEvent.maxParticipants - currentEvent?.organizers.length
       : false;
 
   const getRSVPButtonText = (): string => {
@@ -126,15 +121,15 @@ const EventPage = () => {
 
   const getStatus = (): string | undefined => {
     if (
-      event &&
-      Math.abs(event.eventStartDateTimeInMS - now) <= 3600000 &&
-      event.eventEndDateTimeInMS > now
+      currentEvent &&
+      Math.abs(currentEvent.eventStartDateTimeInMS - now) <= 3600000 &&
+      currentEvent.eventEndDateTimeInMS > now
     ) {
       return "Recently started";
     } else if (
-      event &&
-      event.eventEndDateTimeInMS > now &&
-      event.eventStartDateTimeInMS < now
+      currentEvent &&
+      currentEvent.eventEndDateTimeInMS > now &&
+      currentEvent.eventStartDateTimeInMS < now
     ) {
       return "Happening now!";
     }
@@ -188,15 +183,15 @@ const EventPage = () => {
 
   return (
     <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
-      {event ? (
+      {currentEvent ? (
         <>
           {showInvitees && (
             <UserListModal
               closeModalMethod={setShowInvitees}
               header="Invitees"
               handleUserRemoval={handleRemoveInvitee}
-              userIDArray={event.invitees}
-              event={event}
+              userIDArray={currentEvent.invitees}
+              event={currentEvent}
               randomColor={randomColor}
             />
           )}
@@ -206,7 +201,7 @@ const EventPage = () => {
               header="RSVPs"
               handleUserRemoval={handleDeleteUserRSVP}
               userIDArray={refinedInterestedUsers.map((user) => user._id)}
-              event={event}
+              event={currentEvent}
               randomColor={randomColor}
             />
           )}
@@ -220,9 +215,13 @@ const EventPage = () => {
             {status && (
               <p style={{ backgroundColor: randomColor, padding: "0.5rem" }}>{status}</p>
             )}
-            <h1 style={{ "color": randomColor }}>{event.title}</h1>
+            <h1 style={{ "color": randomColor }}>{currentEvent.title}</h1>
             <div className={styles.organizersContainer}>
-              {event.organizers.length > 1 ? <p>Organizers: </p> : <p>Organizer: </p>}
+              {currentEvent.organizers.length > 1 ? (
+                <p>Organizers: </p>
+              ) : (
+                <p>Organizer: </p>
+              )}
               {organizers.map((organizer) => (
                 <Tab
                   key={organizer._id}
@@ -233,14 +232,16 @@ const EventPage = () => {
               ))}
             </div>
             <div>
-              <p>{event?.description}</p>
-              {event?.additionalInfo !== "" && <p>{event?.additionalInfo}</p>}
+              <p>{currentEvent?.description}</p>
+              {currentEvent?.additionalInfo !== "" && (
+                <p>{currentEvent?.additionalInfo}</p>
+              )}
             </div>
 
             <div className={styles.eventDetailsContainer}>
               <div
                 style={
-                  event.images && event.images.length > 0
+                  currentEvent.images && currentEvent.images.length > 0
                     ? {
                         borderLeft: `2px solid ${randomColor}`,
                         borderTop: `2px solid ${randomColor}`,
@@ -248,7 +249,7 @@ const EventPage = () => {
                     : { border: `2px solid ${randomColor}` }
                 }
                 className={
-                  event.images && event.images.length > 0
+                  currentEvent.images && currentEvent.images.length > 0
                     ? styles.eventMainInfoTextContainerWithImage
                     : styles.eventMainInfoTextContainerNoImage
                 }
@@ -258,29 +259,29 @@ const EventPage = () => {
                     {nextEventDateTime?.toDateString()} at{" "}
                     {nextEventDateTime?.toLocaleTimeString()}
                   </p>
-                  <p>{`${event.address}`}</p>
-                  <p>{`${event.city}, ${event.stateProvince}, ${event.country}`}</p>
+                  <p>{`${currentEvent.address}`}</p>
+                  <p>{`${currentEvent.city}, ${currentEvent.stateProvince}, ${currentEvent.country}`}</p>
                 </div>
                 <div>
-                  {event.invitees.length > 0 && (
+                  {currentEvent.invitees.length > 0 && (
                     <p>
                       Invitees:{" "}
                       <span
                         onClick={() =>
                           currentUser?._id &&
-                          event.organizers.includes(currentUser._id) &&
-                          event.invitees.length > 0
+                          currentEvent.organizers.includes(currentUser._id) &&
+                          currentEvent.invitees.length > 0
                             ? setShowInvitees(true)
                             : undefined
                         }
                         className={
                           currentUser?._id &&
-                          event.organizers.includes(currentUser._id) &&
-                          event.invitees.length > 0
+                          currentEvent.organizers.includes(currentUser._id) &&
+                          currentEvent.invitees.length > 0
                             ? "show-listed-users-or-invitees"
                             : undefined
                         }
-                      >{`${event.invitees.length}`}</span>
+                      >{`${currentEvent.invitees.length}`}</span>
                     </p>
                   )}
                   <p>
@@ -288,14 +289,14 @@ const EventPage = () => {
                     <span
                       onClick={() =>
                         currentUser?._id &&
-                        event.organizers.includes(currentUser._id) &&
+                        currentEvent.organizers.includes(currentUser._id) &&
                         refinedInterestedUsers.length > 0
                           ? setShowRSVPs(true)
                           : undefined
                       }
                       className={
                         currentUser?._id &&
-                        event.organizers.includes(currentUser._id) &&
+                        currentEvent.organizers.includes(currentUser._id) &&
                         refinedInterestedUsers.length > 0
                           ? "show-listed-users-or-invitees"
                           : undefined
@@ -304,10 +305,10 @@ const EventPage = () => {
                   </p>
                 </div>
               </div>
-              {event.images && event.images.length > 0 && (
+              {currentEvent.images && currentEvent.images.length > 0 && (
                 <ImageSlideshow
                   randomColor={randomColor}
-                  images={event.images && event.images}
+                  images={currentEvent.images && currentEvent.images}
                 />
               )}
             </div>
@@ -323,7 +324,7 @@ const EventPage = () => {
                 </Link>
               </>
             )}
-            {event.eventEndDateTimeInMS > now &&
+            {currentEvent.eventEndDateTimeInMS > now &&
               currentUser &&
               userCreatedAccount !== null &&
               (!userIsOrganizer ? (
@@ -332,17 +333,18 @@ const EventPage = () => {
                   style={{ "backgroundColor": randomColor }}
                   onClick={(e) =>
                     currentUser &&
-                    (userRSVPd
-                      ? handleDeleteUserRSVP(e, event, currentUser)
-                      : handleAddUserRSVP(e, event))
+                    currentUser._id &&
+                    currentEvent.interestedUsers.includes(currentUser._id)
+                      ? handleDeleteUserRSVP(e, currentEvent, currentUser)
+                      : handleAddUserRSVP(e, currentEvent)
                   }
                 >
                   {rsvpButtonText}
                 </button>
               ) : (
-                <Link to={`/edit-event/${event._id}`}>
+                <Link to={`/edit-event/${currentEvent._id}`}>
                   <button
-                    onClick={() => setCurrentEvent(event)}
+                    onClick={() => setCurrentEvent(currentEvent)}
                     style={{ "backgroundColor": randomColor }}
                   >
                     Edit Event
