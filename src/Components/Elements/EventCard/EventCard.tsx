@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
+import { useEventContext } from "../../../Hooks/useEventContext";
 import { TEvent, TThemeColor, TUser } from "../../../types";
 import { Link } from "react-router-dom";
 import { countries } from "../../../constants";
@@ -11,13 +12,14 @@ import styles from "./styles.module.css";
 const EventCard = ({ event }: { event: TEvent }) => {
   const { currentUser, allUsers, setCurrentEvent } = useMainContext();
   const { handleDeclineInvitation, isLoading, setIsLoading } = useUserContext();
+  const { userRSVPdOptimistic, setUserRSVPdOptimistic } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-  const [userRSVPd, setUserRSVPd] = useState<boolean>(
+  const [userRSVPdActual, setUserRSVPdActual] = useState<boolean>(
     currentUser && currentUser._id && event.interestedUsers.includes(currentUser._id)
       ? true
       : false
-  ); //used for optimistic rendering
+  );
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
 
@@ -32,13 +34,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
-  }, []);
 
-  // Make sure that this updates after user de-RSVPs
-  /* const userRSVPd: boolean =
-    currentUser && currentUser._id
-      ? event.interestedUsers.includes(currentUser._id)
-      : false; */
+    setUserRSVPdOptimistic(userRSVPdActual);
+  }, []);
 
   const userIsInvitee: boolean = currentUser?._id
     ? event.invitees.includes(currentUser._id)
@@ -77,7 +75,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const getRSVPButtonText = (): string => {
     if (maxInviteesReached) {
       return "Max participants reached";
-    } else if (userRSVPd) {
+    } else if (userRSVPdActual || userRSVPdOptimistic) {
       return "Remove RSVP";
     }
     return "RSVP";
@@ -104,23 +102,21 @@ const EventCard = ({ event }: { event: TEvent }) => {
     (country) => country.country === event.country
   )[0].abbreviation;
 
-  /* Handlers to add/remove user rsvp defined here in order to allow for optimistic rendering.
-   Variable userRSVPd must be set in state in this component & not in userContext, otherwise, rnndering
-   takes too long after user adds/removes their RSVP. */
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent
   ): void => {
     e.preventDefault();
     setIsLoading(true);
-    setUserRSVPd(true);
+    setUserRSVPdOptimistic(true);
     Requests.addUserRSVP(currentUser, event)
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not RSVP to event. Please try again.");
-          setUserRSVPd(false);
+          setUserRSVPdOptimistic(false);
         } else {
           toast.success("RSVP added");
+          setUserRSVPdActual(true);
         }
       })
       .catch((error) => console.log(error))
@@ -134,14 +130,15 @@ const EventCard = ({ event }: { event: TEvent }) => {
   ): void => {
     e.preventDefault();
     setIsLoading(true);
-    setUserRSVPd(false);
+    setUserRSVPdOptimistic(false);
     Requests.deleteUserRSVP(user, event)
       .then((response) => {
         if (!response.ok) {
-          setUserRSVPd(true);
+          setUserRSVPdOptimistic(true);
           toast.error("Could not remove RSVP. Please try again.");
         } else {
           toast.error("RSVP deleted");
+          setUserRSVPdActual(false);
         }
       })
       .catch((error) => console.log(error))
@@ -155,17 +152,23 @@ const EventCard = ({ event }: { event: TEvent }) => {
         boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
       }}
     >
-      {userIsInvitee && !userDeclinedInvitation && !userRSVPd && !maxInviteesReached && (
-        <div className={styles.eventCardInvitation}>
-          <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
-          <button disabled={isLoading} onClick={(e) => handleAddUserRSVP(e, event)}>
-            {rsvpButtonText}
-          </button>
-          <button disabled={isLoading} onClick={(e) => handleDeclineInvitation(e, event)}>
-            Decline
-          </button>
-        </div>
-      )}
+      {userIsInvitee &&
+        !userDeclinedInvitation &&
+        !userRSVPdActual &&
+        !maxInviteesReached && (
+          <div className={styles.eventCardInvitation}>
+            <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
+            <button disabled={isLoading} onClick={(e) => handleAddUserRSVP(e, event)}>
+              {rsvpButtonText}
+            </button>
+            <button
+              disabled={isLoading}
+              onClick={(e) => handleDeclineInvitation(e, event)}
+            >
+              Decline
+            </button>
+          </div>
+        )}
       <div className={styles.eventCardMainInfo}>
         <i
           onClick={() => {
@@ -207,12 +210,17 @@ const EventCard = ({ event }: { event: TEvent }) => {
                   <button
                     disabled={maxInviteesReached || isLoading}
                     className={styles.eventButtonsContainerButton}
-                    onClick={(e) =>
-                      currentUser &&
-                      (userRSVPd
-                        ? handleDeleteUserRSVP(e, event, currentUser)
-                        : handleAddUserRSVP(e, event))
-                    }
+                    onClick={(e) => {
+                      if (userRSVPdOptimistic && !userRSVPdActual) {
+                        undefined;
+                      } else {
+                        if (userRSVPdActual && currentUser) {
+                          handleDeleteUserRSVP(e, event, currentUser);
+                        } else {
+                          handleAddUserRSVP(e, event);
+                        }
+                      }
+                    }}
                   >
                     {rsvpButtonText}
                   </button>
