@@ -42,6 +42,7 @@ const UserListModal = ({
         <h2>{header}</h2>
         {userArray.map((user) => (
           <ListedUser
+            key={user._id}
             user={user}
             randomColor={randomColor}
             buttonTwoHandler={handleUserRemoval}
