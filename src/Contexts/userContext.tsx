@@ -828,7 +828,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setButtonsAreDisabled(true);
     setFriendRequestSent(false);
     if (sender && sender._id) {
-      console.log("HD");
       Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
         .then((response) => {
           if (!response.ok) {
