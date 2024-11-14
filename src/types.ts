@@ -322,4 +322,17 @@ export type TUserContext = {
 export type TEventContext = {
   userRSVPdOptimistic: boolean;
   setUserRSVPdOptimistic: React.Dispatch<React.SetStateAction<boolean>>;
+  handleAddUserRSVP: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent,
+    setUserRSVPdActual?: React.Dispatch<React.SetStateAction<boolean | null>>
+  ) => void;
+  handleDeleteUserRSVP: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent,
+    user: TUser,
+    setUserRSVPdActual?: React.Dispatch<React.SetStateAction<boolean | null>>
+  ) => void;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
