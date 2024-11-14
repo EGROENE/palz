@@ -36,6 +36,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
       event.interestedUsers.includes(currentUser._id)
     ) {
       setUserRSVPd(true);
+    } else {
+      setUserRSVPd(false);
     }
   }, []);
 
