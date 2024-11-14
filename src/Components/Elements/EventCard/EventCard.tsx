@@ -9,11 +9,15 @@ import toast from "react-hot-toast";
 import styles from "./styles.module.css";
 
 const EventCard = ({ event }: { event: TEvent }) => {
-  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-  const [userRSVPd, setUserRSVPd] = useState<boolean>(false);
-
   const { currentUser, allUsers, setCurrentEvent } = useMainContext();
   const { handleDeclineInvitation, isLoading, setIsLoading } = useUserContext();
+
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+  const [userRSVPd, setUserRSVPd] = useState<boolean>(
+    currentUser && currentUser._id && event.interestedUsers.includes(currentUser._id)
+      ? true
+      : false
+  ); //used for optimistic rendering
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
 
@@ -28,17 +32,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
-
-    // Set init value of userRSVPd:
-    if (
-      currentUser &&
-      currentUser._id &&
-      event.interestedUsers.includes(currentUser._id)
-    ) {
-      setUserRSVPd(true);
-    } else {
-      setUserRSVPd(false);
-    }
   }, []);
 
   // Make sure that this updates after user de-RSVPs
