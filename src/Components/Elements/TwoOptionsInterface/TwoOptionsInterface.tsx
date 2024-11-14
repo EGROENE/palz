@@ -62,7 +62,10 @@ const TwoOptionsInterface = ({
                 onClick={
                   buttonOneHandler
                     ? // @ts-ignore
-                      (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
+                      (e) =>
+                        buttonOneHandlerParams
+                          ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                          : buttonOneHandler()
                     : undefined
                 }
               >
@@ -72,7 +75,10 @@ const TwoOptionsInterface = ({
                 style={{ backgroundColor: randomColor }}
                 onClick={
                   buttonTwoHandler
-                    ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                    ? (e) =>
+                        buttonTwoHandlerParams
+                          ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                          : buttonTwoHandler()
                     : undefined
                 }
               >
@@ -89,7 +95,10 @@ const TwoOptionsInterface = ({
                 <button
                   onClick={
                     buttonTwoHandler
-                      ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                      ? (e) =>
+                          buttonTwoHandlerParams
+                            ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                            : buttonTwoHandler()
                       : undefined
                   }
                 >
