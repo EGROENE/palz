@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import EventCard from "../../Elements/EventCard/EventCard";
 import UserCard from "../../Elements/UserCard/UserCard";
 import Methods from "../../../methods";
@@ -687,13 +687,41 @@ const DisplayedCardsPage = ({
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>{pageHeading}</h1>
-      {(displayedItems.length === 0 && usedFor === "potential-friends" && (
-        <h2>No more potential friends</h2>
-      )) ||
-        (usedFor === "my-friends" && <h2>No friends yet. Click here to find some!</h2>) ||
-        (usedFor === "events" && (
-          <h2>No events to be found. Create your own or wait for others to do so.</h2>
-        ))}
+      {displayedItems.length === 0 && usedFor === "potential-friends" && (
+        <h2>No more potential friends. You must be popular!</h2>
+      )}
+      {displayedItems.length === 0 && usedFor === "my-friends" && (
+        <h2>
+          No friends yet. Click{" "}
+          <Link
+            style={{
+              textDecoration: "underline",
+              color: "var(--header-one-color)",
+              fontWeight: "bold",
+            }}
+            to="/find-palz"
+          >
+            here
+          </Link>{" "}
+          to find some!
+        </h2>
+      )}
+      {displayedItems.length === 0 && usedFor === "events" && (
+        <h2>
+          No events to be found.{" "}
+          <Link
+            style={{
+              textDecoration: "underline",
+              color: "var(--header-one-color)",
+              fontWeight: "bold",
+            }}
+            to={"/add-event"}
+          >
+            Create your own
+          </Link>{" "}
+          or wait for others to do so.
+        </h2>
+      )}
       {displayedItems.length > 0 && (
         <div className="search-tools-container">
           <SearchBar
