@@ -2,24 +2,32 @@ import { useEffect, useState } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import { TEvent, TThemeColor, TUser } from "../../../types";
+import { TEvent, TThemeColor } from "../../../types";
 import { Link } from "react-router-dom";
 import { countries } from "../../../constants";
-import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import styles from "./styles.module.css";
 
 const EventCard = ({ event }: { event: TEvent }) => {
   const { currentUser, allUsers, setCurrentEvent } = useMainContext();
-  const { handleDeclineInvitation, isLoading, setIsLoading } = useUserContext();
-  const { userRSVPdOptimistic, setUserRSVPdOptimistic } = useEventContext();
+  const { handleDeclineInvitation } = useUserContext();
+  const { userRSVPdOptimistic, isLoading, handleAddUserRSVP, handleDeleteUserRSVP } =
+    useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-  const [userRSVPdActual, setUserRSVPdActual] = useState<boolean>(
-    currentUser && currentUser._id && event.interestedUsers.includes(currentUser._id)
-      ? true
-      : false
-  );
+  const [userRSVPdActual, setUserRSVPdActual] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (
+      currentUser &&
+      currentUser._id &&
+      event.interestedUsers.includes(currentUser._id)
+    ) {
+      setUserRSVPdActual(true);
+    } else {
+      setUserRSVPdActual(false);
+    }
+  }, [userRSVPdOptimistic]);
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
 
@@ -34,8 +42,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
-
-    setUserRSVPdOptimistic(userRSVPdActual);
   }, []);
 
   const userIsInvitee: boolean = currentUser?._id
@@ -102,49 +108,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
     (country) => country.country === event.country
   )[0].abbreviation;
 
-  const handleAddUserRSVP = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
-  ): void => {
-    e.preventDefault();
-    setIsLoading(true);
-    setUserRSVPdOptimistic(true);
-    Requests.addUserRSVP(currentUser, event)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not RSVP to event. Please try again.");
-          setUserRSVPdOptimistic(false);
-        } else {
-          toast.success("RSVP added");
-          setUserRSVPdActual(true);
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
-  };
-
-  const handleDeleteUserRSVP = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent,
-    user: TUser
-  ): void => {
-    e.preventDefault();
-    setIsLoading(true);
-    setUserRSVPdOptimistic(false);
-    Requests.deleteUserRSVP(user, event)
-      .then((response) => {
-        if (!response.ok) {
-          setUserRSVPdOptimistic(true);
-          toast.error("Could not remove RSVP. Please try again.");
-        } else {
-          toast.error("RSVP deleted");
-          setUserRSVPdActual(false);
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
-  };
-
   return (
     <div
       className={styles.eventCard}
@@ -158,7 +121,10 @@ const EventCard = ({ event }: { event: TEvent }) => {
         !maxInviteesReached && (
           <div className={styles.eventCardInvitation}>
             <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
-            <button disabled={isLoading} onClick={(e) => handleAddUserRSVP(e, event)}>
+            <button
+              disabled={isLoading}
+              onClick={(e) => handleAddUserRSVP(e, event, setUserRSVPdActual)}
+            >
               {rsvpButtonText}
             </button>
             <button
@@ -211,14 +177,10 @@ const EventCard = ({ event }: { event: TEvent }) => {
                     disabled={maxInviteesReached || isLoading}
                     className={styles.eventButtonsContainerButton}
                     onClick={(e) => {
-                      if (userRSVPdOptimistic && !userRSVPdActual) {
-                        undefined;
-                      } else {
-                        if (userRSVPdActual && currentUser) {
-                          handleDeleteUserRSVP(e, event, currentUser);
-                        } else {
-                          handleAddUserRSVP(e, event);
-                        }
+                      if (userRSVPdActual && userRSVPdOptimistic && currentUser) {
+                        handleDeleteUserRSVP(e, event, currentUser, setUserRSVPdActual);
+                      } else if (!userRSVPdActual && !userRSVPdOptimistic) {
+                        handleAddUserRSVP(e, event, setUserRSVPdActual);
                       }
                     }}
                   >

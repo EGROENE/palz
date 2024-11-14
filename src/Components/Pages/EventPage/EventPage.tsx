@@ -1,10 +1,10 @@
-import { TEvent, TThemeColor, TUser } from "../../../types";
+import { TThemeColor, TUser } from "../../../types";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
+import { useEventContext } from "../../../Hooks/useEventContext";
 import { useNavigate } from "react-router-dom";
-import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import ImageSlideshow from "../../Elements/ImageSlideshow/ImageSlideshow";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
@@ -14,8 +14,10 @@ import styles from "./styles.module.css";
 const EventPage = () => {
   const { allUsers, allEvents, currentUser, userCreatedAccount, setCurrentEvent } =
     useMainContext();
-  const { showSidebar, setShowSidebar, handleRemoveInvitee, isLoading, setIsLoading } =
-    useUserContext();
+  const { showSidebar, setShowSidebar, handleRemoveInvitee } = useUserContext();
+  const { userRSVPdOptimistic, isLoading, handleAddUserRSVP, handleDeleteUserRSVP } =
+    useEventContext();
+
   //const [event, setEvent] = useState<TEvent | undefined>();
   const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
   const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
@@ -24,13 +26,19 @@ const EventPage = () => {
   // Get most current version of event to which this page pertains:
   const { eventID } = useParams();
   const currentEvent = allEvents.filter((ev) => ev._id === eventID)[0];
-  const [userRSVPd, setUserRSVPd] = useState<boolean>(
-    currentUser &&
+  const [userRSVPdActual, setUserRSVPdActual] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (
+      currentUser &&
       currentUser._id &&
       currentEvent.interestedUsers.includes(currentUser._id)
-      ? true
-      : false
-  ); // use for optimistic rendering
+    ) {
+      setUserRSVPdActual(true);
+    } else {
+      setUserRSVPdActual(false);
+    }
+  }, [allEvents]);
 
   const navigation = useNavigate();
 
@@ -106,11 +114,7 @@ const EventPage = () => {
   const getRSVPButtonText = (): string => {
     if (maxInviteesReached) {
       return "Max participants reached";
-    } else if (
-      currentUser &&
-      currentUser._id &&
-      currentEvent.interestedUsers.includes(currentUser._id)
-    ) {
+    } else if (userRSVPdActual || userRSVPdOptimistic) {
       return "Remove RSVP";
     }
     return "RSVP";
@@ -136,50 +140,6 @@ const EventPage = () => {
     return undefined;
   };
   const status: string | undefined = getStatus();
-
-  /* Handlers to add/remove user rsvp defined here in order to allow for optimistic rendering.
-   Variable userRSVPd must be set in state in this component & not in userContext, otherwise, rnndering
-   takes too long after user adds/removes their RSVP. */
-  const handleAddUserRSVP = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
-  ): void => {
-    e.preventDefault();
-    setIsLoading(true);
-    setUserRSVPd(true);
-    Requests.addUserRSVP(currentUser, event)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not RSVP to event. Please try again.");
-          setUserRSVPd(false);
-        } else {
-          toast.success("RSVP added");
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
-  };
-
-  const handleDeleteUserRSVP = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent,
-    user: TUser
-  ): void => {
-    e.preventDefault();
-    setIsLoading(true);
-    setUserRSVPd(false);
-    Requests.deleteUserRSVP(user, event)
-      .then((response) => {
-        if (!response.ok) {
-          setUserRSVPd(true);
-          toast.error("Could not remove RSVP. Please try again.");
-        } else {
-          toast.error("RSVP deleted");
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
-  };
 
   return (
     <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
@@ -331,13 +291,18 @@ const EventPage = () => {
                 <button
                   disabled={maxInviteesReached || isLoading}
                   style={{ "backgroundColor": randomColor }}
-                  onClick={(e) =>
-                    currentUser &&
-                    currentUser._id &&
-                    currentEvent.interestedUsers.includes(currentUser._id)
-                      ? handleDeleteUserRSVP(e, currentEvent, currentUser)
-                      : handleAddUserRSVP(e, currentEvent)
-                  }
+                  onClick={(e) => {
+                    if (userRSVPdActual && userRSVPdOptimistic && currentUser) {
+                      handleDeleteUserRSVP(
+                        e,
+                        currentEvent,
+                        currentUser,
+                        setUserRSVPdActual
+                      );
+                    } else if (!userRSVPdActual && !userRSVPdOptimistic) {
+                      handleAddUserRSVP(e, currentEvent, setUserRSVPdActual);
+                    }
+                  }}
                 >
                   {rsvpButtonText}
                 </button>
