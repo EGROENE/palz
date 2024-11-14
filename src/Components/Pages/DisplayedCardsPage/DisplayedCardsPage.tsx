@@ -687,33 +687,42 @@ const DisplayedCardsPage = ({
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>{pageHeading}</h1>
-      <div className="search-tools-container">
-        <SearchBar
-          input={searchTerm}
-          placeholder={usedFor === "events" ? "Search events" : "Search potential palz"}
-          inputHandler={handleSearchTermInput}
-          clearInputHandler={handleClearSearchTerm}
-          isSideButton={false}
-          title={
-            usedFor === "events"
-              ? "Search by title, organizers, description, related interests, or location"
-              : "Search by first/last name, username, or location"
-          }
-          searchBoxRef={searchBoxRef}
-          setSearchBoxIsFocused={setSearchBoxIsFocused}
-          searchBoxIsFocused={searchBoxIsFocused}
-          randomColor={randomColor}
-          numberOfResults={displayedItems.length}
-        />
-        <FilterDropdown
-          dropdownBtnText="Filters"
-          filterOptions={filterOptions}
-          activeFilters={activeFilters}
-          setActiveFilters={setActiveFilters}
-          handleAddDeleteFilter={handleAddDeleteFilter}
-          randomColor={randomColor}
-        />
-      </div>
+      {(displayedItems.length === 0 && usedFor === "potential-friends" && (
+        <h2>No more potential friends</h2>
+      )) ||
+        (usedFor === "my-friends" && <h2>No friends yet. Click here to find some!</h2>) ||
+        (usedFor === "events" && (
+          <h2>No events to be found. Create your own or wait for others to do so.</h2>
+        ))}
+      {displayedItems.length > 0 && (
+        <div className="search-tools-container">
+          <SearchBar
+            input={searchTerm}
+            placeholder={usedFor === "events" ? "Search events" : "Search potential palz"}
+            inputHandler={handleSearchTermInput}
+            clearInputHandler={handleClearSearchTerm}
+            isSideButton={false}
+            title={
+              usedFor === "events"
+                ? "Search by title, organizers, description, related interests, or location"
+                : "Search by first/last name, username, or location"
+            }
+            searchBoxRef={searchBoxRef}
+            setSearchBoxIsFocused={setSearchBoxIsFocused}
+            searchBoxIsFocused={searchBoxIsFocused}
+            randomColor={randomColor}
+            numberOfResults={displayedItems.length}
+          />
+          <FilterDropdown
+            dropdownBtnText="Filters"
+            filterOptions={filterOptions}
+            activeFilters={activeFilters}
+            setActiveFilters={setActiveFilters}
+            handleAddDeleteFilter={handleAddDeleteFilter}
+            randomColor={randomColor}
+          />
+        </div>
+      )}
       <div className="all-events-container">
         {usedFor === "events" &&
           displayedItems.map(
