@@ -143,11 +143,11 @@ const UserCard = ({ user }: { user: TUser }) => {
         selectedOtherUser._id === user._id && (
           <TwoOptionsInterface
             header={`Respond to friend request from ${selectedOtherUser.firstName} ${selectedOtherUser.lastName} (${selectedOtherUser.username})`}
-            buttonOneText="Accept"
-            buttonOneHandler={handleAcceptFriendRequest}
+            buttonOneText="Decline"
+            buttonOneHandler={handleRejectFriendRequest}
             buttonOneHandlerParams={[selectedOtherUser, currentUser]}
-            buttonTwoText="Decline"
-            buttonTwoHandler={handleRejectFriendRequest}
+            buttonTwoText="Accept"
+            buttonTwoHandler={handleAcceptFriendRequest}
             buttonTwoHandlerParams={[selectedOtherUser, currentUser]}
             closeHandler={setShowFriendRequestResponseOptions}
           />
