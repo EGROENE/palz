@@ -288,11 +288,11 @@ const addUserRSVP = (user: TUser | undefined, event: TEvent): Promise<Response> 
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedInterestedUsersArray: Array<string | number | undefined> = [];
+  const updatedInterestedUsersArray: Array<string> = [];
   for (const intUser of event.interestedUsers) {
     updatedInterestedUsersArray.push(intUser);
   }
-  if (user?.username) {
+  if (user && user._id) {
     updatedInterestedUsersArray.push(user._id);
   }
 
