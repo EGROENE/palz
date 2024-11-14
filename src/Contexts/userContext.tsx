@@ -725,6 +725,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     event: TEvent
   ) => {
     e.preventDefault();
+    setIsLoading(true);
     Requests.addToDisinterestedUsers(currentUser, event)
       .then((response) => {
         if (!response.ok) {
@@ -734,7 +735,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           toast.error("Invitation declined.");
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   // maybe create separate request to update user profile img
