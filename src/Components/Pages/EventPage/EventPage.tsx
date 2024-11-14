@@ -12,16 +12,8 @@ import Tab from "../../Elements/Tab/Tab";
 import styles from "./styles.module.css";
 
 const EventPage = () => {
-  const {
-    allUsers,
-    allEvents,
-    fetchAllEvents,
-    currentUser,
-    currentEvent,
-    userCreatedAccount,
-    setCurrentEvent,
-    fetchAllUsers,
-  } = useMainContext();
+  const { allUsers, allEvents, currentUser, userCreatedAccount, setCurrentEvent } =
+    useMainContext();
   const { showSidebar, setShowSidebar, handleRemoveInvitee, isLoading, setIsLoading } =
     useUserContext();
   const { eventID } = useParams();
@@ -29,11 +21,13 @@ const EventPage = () => {
   const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
   const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
   const [showInvitees, setShowInvitees] = useState<boolean>(false);
-  const [userRSVPd, setUserRSVPd] = useState<boolean>(false);
+  const [userRSVPd, setUserRSVPd] = useState<boolean>();
 
   const navigation = useNavigate();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  const currentEvent = allEvents.filter((ev) => ev._id === eventID)[0];
 
   useEffect(() => {
     // Redirect user to their homepage or to login page if event is private & they are not an invitee or organizer
@@ -52,8 +46,6 @@ const EventPage = () => {
     }
     // FIX THIS
     setEvent(currentEvent);
-    fetchAllUsers();
-    fetchAllEvents();
 
     // Set randomColor:
     const themeColors: TThemeColor[] = [
@@ -70,22 +62,21 @@ const EventPage = () => {
     if (
       currentUser &&
       currentUser._id &&
-      event &&
-      event.interestedUsers.includes(currentUser._id)
+      currentEvent.interestedUsers.includes(currentUser._id)
     ) {
       setUserRSVPd(true);
+    } else {
+      setUserRSVPd(false);
     }
+    setEvent(currentEvent);
   }, []);
-
-  useEffect(() => {
-    setEvent(allEvents.filter((ev) => ev._id === eventID)[0]);
-  }, [allEvents]);
 
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
   useEffect(() => {
     const refIntUsers = [];
-    if (event) {
-      for (const userID of event.interestedUsers) {
+    if (currentEvent) {
+      console.log(currentEvent);
+      for (const userID of currentEvent.interestedUsers) {
         for (const user of allUsers) {
           if (user._id === userID) {
             refIntUsers.push(user);
@@ -94,7 +85,7 @@ const EventPage = () => {
       }
     }
     setRefinedInterestedUsers(refIntUsers);
-  }, [allUsers]);
+  }, [allUsers, allEvents]);
 
   const nextEventDateTime = event ? new Date(event.eventStartDateTimeInMS) : undefined;
 
@@ -120,7 +111,11 @@ const EventPage = () => {
   const getRSVPButtonText = (): string => {
     if (maxInviteesReached) {
       return "Max participants reached";
-    } else if (userRSVPd) {
+    } else if (
+      currentUser &&
+      currentUser._id &&
+      currentEvent.interestedUsers.includes(currentUser._id)
+    ) {
       return "Remove RSVP";
     }
     return "RSVP";
