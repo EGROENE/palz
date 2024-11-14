@@ -318,3 +318,8 @@ export type TUserContext = {
     React.SetStateAction<"anyone" | "friends" | "friends of friends" | undefined>
   >;
 };
+
+export type TEventContext = {
+  userRSVPdOptimistic: boolean;
+  setUserRSVPdOptimistic: React.Dispatch<React.SetStateAction<boolean>>;
+};
