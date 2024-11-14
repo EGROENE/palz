@@ -1850,18 +1850,20 @@ const EventForm = ({
       {showAreYouSureDeleteEvent && (
         <TwoOptionsInterface
           header="Are you sure you want to delete this event?"
-          buttonTwoText="Delete Event"
           buttonOneText="Cancel"
-          closeHandler={setShowAreYouSureDeleteEvent}
+          buttonOneHandler={() => setShowAreYouSureDeleteEvent(false)}
+          buttonTwoText="Delete Event"
           buttonTwoHandler={handleDeleteEvent}
+          closeHandler={setShowAreYouSureDeleteEvent}
         />
       )}
       {showAreYouSureRemoveCurrentUserAsOrganizer && (
         <TwoOptionsInterface
           header="Are you sure you want to remove yourself as an organizer?"
           subheader="You will no longer be able to make changes to this event, unless another user adds you as a co-organizer."
-          buttonTwoText="Remove Myself as Organizer"
           buttonOneText="Cancel"
+          buttonOneHandler={() => setShowAreYouSureRemoveCurrentUserAsOrganizer(false)}
+          buttonTwoText="Remove Myself as Organizer"
           closeHandler={setShowAreYouSureRemoveCurrentUserAsOrganizer}
           buttonTwoHandler={handleAddRemoveUserAsOrganizer}
           buttonTwoHandlerParams={[currentUser]}
