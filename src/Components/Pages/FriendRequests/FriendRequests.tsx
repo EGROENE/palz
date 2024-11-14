@@ -72,10 +72,10 @@ const FriendRequests = () => {
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Friend Requests</h1>
-      {userHasPendingRequests === null ? (
-        <div className="page-hero standalone-element">
-          <h1>No pending friend requests</h1>
-        </div>
+      {userHasPendingRequests === null ||
+      usersToWhomCurrentUserSentRequest.length === 0 ||
+      usersWhoSentCurrentUserARequest.length === 0 ? (
+        <h2>No pending friend requests</h2>
       ) : (
         <>
           <div className={styles.friendRequestFilterHeaders}>
