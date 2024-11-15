@@ -750,10 +750,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleSendFriendRequest = (
     sender: TUser | undefined,
     recipient: TUser,
-    setUserSentFriendRequestOptimistic: React.Dispatch<React.SetStateAction<boolean>>,
-    setUserSentFriendRequestActual: React.Dispatch<React.SetStateAction<boolean | null>>
+    setUserSentFriendRequestOptimistic?: React.Dispatch<React.SetStateAction<boolean>>,
+    setUserSentFriendRequestActual?: React.Dispatch<React.SetStateAction<boolean | null>>
   ): void => {
-    setUserSentFriendRequestOptimistic(true);
+    if (setUserSentFriendRequestOptimistic) {
+      setUserSentFriendRequestOptimistic(true);
+    }
     setButtonsAreDisabled(true);
 
     let isRequestError = false;
@@ -779,11 +781,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         })
         .then(() => {
           if (isRequestError) {
-            setUserSentFriendRequestOptimistic(false);
+            if (setUserSentFriendRequestOptimistic) {
+              setUserSentFriendRequestOptimistic(false);
+            }
             toast.error("Couldn't send request. Please try again.");
           } else {
             toast.success("Friend request sent!");
-            setUserSentFriendRequestActual(true);
+            if (setUserSentFriendRequestActual) {
+              setUserSentFriendRequestActual(true);
+            }
           }
         })
         .catch((error) => console.log(error))
@@ -795,28 +801,36 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     sender: TUser,
     recipient: TUser,
-    setUserSentFriendRequestOptimistic: React.Dispatch<React.SetStateAction<boolean>>,
-    setUserSentFriendRequestActual: React.Dispatch<React.SetStateAction<boolean | null>>
+    setUserSentFriendRequestOptimistic?: React.Dispatch<React.SetStateAction<boolean>>,
+    setUserSentFriendRequestActual?: React.Dispatch<React.SetStateAction<boolean | null>>
   ): void => {
     e.preventDefault();
     setButtonsAreDisabled(true);
-    setUserSentFriendRequestOptimistic(false);
+    if (setUserSentFriendRequestOptimistic) {
+      setUserSentFriendRequestOptimistic(false);
+    }
     if (sender && sender._id) {
       Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
         .then((response) => {
           if (!response.ok) {
-            setUserSentFriendRequestOptimistic(true);
+            if (setUserSentFriendRequestOptimistic) {
+              setUserSentFriendRequestOptimistic(true);
+            }
             toast.error("Could not retract request. Please try again.");
           } else {
             if (sender && recipient._id) {
               Requests.removeFromFriendRequestsSent(sender, recipient._id)
                 .then((response) => {
                   if (!response.ok) {
-                    setUserSentFriendRequestOptimistic(true);
+                    if (setUserSentFriendRequestOptimistic) {
+                      setUserSentFriendRequestOptimistic(true);
+                    }
                     toast.error("Could not retract request. Please try again.");
                   } else {
                     toast.error("Friend request retracted");
-                    setUserSentFriendRequestActual(false);
+                    if (setUserSentFriendRequestActual) {
+                      setUserSentFriendRequestActual(false);
+                    }
                   }
                 })
                 .catch((error) => console.log(error));
