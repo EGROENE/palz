@@ -154,7 +154,7 @@ const EventPage = () => {
             <UserListModal
               closeModalMethod={setShowInvitees}
               header="Invitees"
-              handleUserRemoval={handleRemoveInvitee}
+              handleDeletion={handleRemoveInvitee}
               userIDArray={currentEvent.invitees}
               event={currentEvent}
               randomColor={randomColor}
@@ -164,7 +164,7 @@ const EventPage = () => {
             <UserListModal
               closeModalMethod={setShowRSVPs}
               header="RSVPs"
-              handleUserRemoval={handleDeleteUserRSVP}
+              handleDeletion={handleDeleteUserRSVP}
               userIDArray={refinedInterestedUsers.map((user) => user._id)}
               event={currentEvent}
               randomColor={randomColor}
