@@ -23,6 +23,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [imageIsDeleting, setImageIsDeleting] = useState<boolean>(false);
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
     useState<number>(2500);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleWelcomeMessage = () => {
     setShowWelcomeMessage(true);
@@ -30,6 +31,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mainContextValues: TMainContext = {
+    isLoading,
+    setIsLoading,
     showSidebar,
     setShowSidebar,
     imageIsUploading,

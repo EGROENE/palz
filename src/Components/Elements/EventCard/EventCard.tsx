@@ -6,12 +6,13 @@ import { Link } from "react-router-dom";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
 import styles from "./styles.module.css";
+import { useMainContext } from "../../../Hooks/useMainContext";
 
 const EventCard = ({ event }: { event: TEvent }) => {
+  const { isLoading } = useMainContext();
   const { currentUser, allUsers } = useUserContext();
   const {
     userRSVPdOptimistic,
-    isLoading,
     handleAddUserRSVP,
     handleDeleteUserRSVP,
     handleDeclineInvitation,

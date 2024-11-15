@@ -2,12 +2,14 @@ import { useState, createContext, ReactNode, useEffect } from "react";
 import { useSessionStorage } from "usehooks-ts";
 import { TEventContext, TUser, TEvent } from "../types";
 import Requests from "../requests";
+import { useMainContext } from "../Hooks/useMainContext";
 import { useUserContext } from "../Hooks/useUserContext";
 import toast from "react-hot-toast";
 
 export const EventContext = createContext<TEventContext | null>(null);
 
 export const EventContextProvider = ({ children }: { children: ReactNode }) => {
+  const { setIsLoading } = useMainContext();
   const { currentUser } = useUserContext();
 
   const [currentEvent, setCurrentEvent] = useSessionStorage<TEvent | undefined>(
@@ -22,8 +24,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Use for optimistic rendering related to event rsvp-ing
   const [userRSVPdOptimistic, setUserRSVPdOptimistic] = useState<boolean>(false);
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     fetchAllEvents();
@@ -125,8 +125,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     setUserRSVPdOptimistic,
     handleAddUserRSVP,
     handleDeleteUserRSVP,
-    isLoading,
-    setIsLoading,
     eventEditIsInProgress,
     setEventEditIsInProgress,
     fetchAllEvents,

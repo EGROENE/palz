@@ -120,6 +120,8 @@ export type TMainContext = {
   welcomeMessageDisplayTime: number;
   setWelcomeMessageDisplayTime: React.Dispatch<React.SetStateAction<number>>;
   handleWelcomeMessage: () => void;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type TUserContext = {
@@ -152,8 +154,6 @@ export type TUserContext = {
     sender: TUser,
     receiver: TUser
   ) => void;
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   accountDeletionInProgress: boolean;
   setAccountDeletionInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   showUpdateProfileImageInterface: boolean;
@@ -332,6 +332,4 @@ export type TEventContext = {
     user: TUser,
     setUserRSVPdActual?: React.Dispatch<React.SetStateAction<boolean | null>>
   ) => void;
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };

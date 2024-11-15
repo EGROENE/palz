@@ -10,11 +10,8 @@ import Methods from "../methods";
 export const UserContext = createContext<TUserContext | null>(null);
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
-  const {
-    handleWelcomeMessage,
-    setImageIsUploading,
-    setImageIsDeleting,
-  } = useMainContext();
+  const { handleWelcomeMessage, setImageIsUploading, setImageIsDeleting } =
+    useMainContext();
 
   const [allUsers, setAllUsers] = useSessionStorage<TUser[]>("allUsers", []);
   const [currentUser, setCurrentUser, removeCurrentUser] = useSessionStorage<
@@ -36,7 +33,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   /* Some values kept in session storage so that they can be used to autofill fields on edit-user-info form. Due to input handler functions setting these & not currentUser._____, currentUser.______ isn't used to do so, but will rather be set when user saves changes to their data object in the DB by submitting the edit-user-info form & allUsers is refetched. */
 
@@ -1163,8 +1159,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     handleUnfriending,
     handleRejectFriendRequest,
     handleAcceptFriendRequest,
-    isLoading,
-    setIsLoading,
     accountDeletionInProgress,
     setAccountDeletionInProgress,
     removeProfileImage,

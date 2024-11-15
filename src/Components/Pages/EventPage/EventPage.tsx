@@ -12,11 +12,10 @@ import styles from "./styles.module.css";
 import { useMainContext } from "../../../Hooks/useMainContext";
 
 const EventPage = () => {
-  const { showSidebar, setShowSidebar } = useMainContext();
+  const { showSidebar, isLoading, setShowSidebar } = useMainContext();
   const { allUsers, currentUser, userCreatedAccount } = useUserContext();
   const {
     userRSVPdOptimistic,
-    isLoading,
     handleAddUserRSVP,
     handleDeleteUserRSVP,
     allEvents,
