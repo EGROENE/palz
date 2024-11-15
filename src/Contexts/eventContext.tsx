@@ -90,7 +90,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not decline invitation. Please try again.");
-          fetchAllEvents();
         } else {
           toast.error("Invitation declined.");
         }
@@ -109,10 +108,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     Requests.removeInvitee(event, user)
       .then((response) => {
         if (!response.ok) {
-          toast.error("Could not decline invitation. Please try again.");
-          fetchAllEvents();
+          toast.error("Could not remove invitee. Please try again.");
         } else {
-          toast.error("Invitation declined.");
+          toast.error("Invitee removed.");
         }
       })
       .catch((error) => console.log(error));
