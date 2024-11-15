@@ -1,7 +1,5 @@
-import { useState, useEffect, createContext, ReactNode } from "react";
-import { useSessionStorage } from "usehooks-ts";
-import { TMainContext, TUser, TEvent } from "../types";
-import Requests from "../requests";
+import { useState, createContext, ReactNode } from "react";
+import { TMainContext } from "../types";
 import useLocalStorage from "use-local-storage";
 
 export const MainContext = createContext<TMainContext | null>(null);
@@ -19,25 +17,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setTheme(newTheme);
   };
 
-  /* Necessary to keep allUsers & allEvents in session storage instead of state b/c I couldn't figure out how to get these again when reloading some components, like LoginPage & EventPage. Probably something about async I'm missing. Wouldn't be necessary to do this in the case of a RESTful API, as one could likely get the required data w/ a search parameter. */
-  const [allUsers, setAllUsers] = useSessionStorage<TUser[]>("allUsers", []);
-  const [currentUser, setCurrentUser, removeCurrentUser] = useSessionStorage<
-    TUser | undefined
-  >("currentUser", undefined);
-  const [currentEvent, setCurrentEvent] = useSessionStorage<TEvent | undefined>(
-    "currentEvent",
-    undefined
-  ); // event user is editing or viewing
-  const [allEvents, setAllEvents] = useSessionStorage<TEvent[]>("allEvents", []);
-  const [userCreatedAccount, setUserCreatedAccount] = useSessionStorage<boolean | null>(
-    "userCreatedAccount",
-    null
-  );
+  const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
-  const [addEventIsInProgress, setAddEventIsInProgress] = useState<boolean>(false);
-  const [eventEditIsInProgress, setEventEditIsInProgress] = useState<boolean>(false);
-  const [eventDeletionIsInProgress, setEventDeletionIsInProgress] =
-    useState<boolean>(false);
   const [imageIsUploading, setImageIsUploading] = useState<boolean>(false);
   const [imageIsDeleting, setImageIsDeleting] = useState<boolean>(false);
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
@@ -48,62 +29,20 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setTimeout(() => setShowWelcomeMessage(false), welcomeMessageDisplayTime);
   };
 
-  useEffect(() => {
-    fetchAllUsers();
-    setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
-  }, [allUsers]);
-
-  // CHANGE PORT NUMBER IN REQUEST TO 4000
-  useEffect(() => {
-    fetchAllEvents();
-  }, [allEvents]);
-
-  /* useEffect(() => {
-    Requests.getAttendedEventsByUser()
-      .then((response) => {
-        return response.text();
-      })
-      .then((result) => {
-        setAttendedEventsByUser(JSON.parse(result));
-      })
-      .catch((error) => console.log(error));
-  }, [attendedEvents]); */
-
-  // REFETCH METHODS
-  const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
-
-  const fetchAllEvents = (): Promise<void> => Requests.getAllEvents().then(setAllEvents);
-
   const mainContextValues: TMainContext = {
-    eventEditIsInProgress,
-    setEventEditIsInProgress,
+    showSidebar,
+    setShowSidebar,
     imageIsUploading,
     setImageIsUploading,
     imageIsDeleting,
     setImageIsDeleting,
-    fetchAllUsers,
-    fetchAllEvents,
     theme,
     toggleTheme,
-    allUsers,
-    currentUser,
-    setCurrentUser,
-    removeCurrentUser,
-    allEvents,
-    setAllEvents,
-    currentEvent,
-    setCurrentEvent,
-    userCreatedAccount,
-    setUserCreatedAccount,
     handleWelcomeMessage,
     showWelcomeMessage,
     setShowWelcomeMessage,
     welcomeMessageDisplayTime,
     setWelcomeMessageDisplayTime,
-    addEventIsInProgress,
-    setAddEventIsInProgress,
-    eventDeletionIsInProgress,
-    setEventDeletionIsInProgress,
   };
 
   return (

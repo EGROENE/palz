@@ -1,4 +1,4 @@
-import { useMainContext } from "../../../Hooks/useMainContext";
+import { useUserContext } from "../../../Hooks/useUserContext";
 import { TUser, TEvent } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
 import styles from "./styles.module.css";
@@ -23,7 +23,7 @@ const UserListModal = ({
   event: TEvent;
   randomColor?: string;
 }) => {
-  const { allUsers } = useMainContext();
+  const { allUsers } = useUserContext();
 
   const userArray: TUser[] = [];
   for (const userID of userIDArray) {

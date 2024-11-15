@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import Tab from "../../Elements/Tab/Tab";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const EventForm = ({
   randomColor,
@@ -20,20 +21,19 @@ const EventForm = ({
   randomColor: TThemeColor | undefined;
   event?: TEvent;
 }) => {
+  const { showSidebar, setShowSidebar, setImageIsUploading, setImageIsDeleting } =
+    useMainContext();
+  const { handleCityStateCountryInput, allUsers, currentUser } = useUserContext();
   const {
-    allUsers,
-    currentUser,
     allEvents,
     currentEvent,
     setCurrentEvent,
     fetchAllEvents,
     setAddEventIsInProgress,
     setEventDeletionIsInProgress,
-    setImageIsUploading,
-    setImageIsDeleting,
     setEventEditIsInProgress,
-  } = useMainContext();
-  const { showSidebar, setShowSidebar, handleCityStateCountryInput } = useUserContext();
+  } = useEventContext();
+
   const navigation = useNavigate();
 
   const [focusedElement, setFocusedElement] = useState<

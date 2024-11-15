@@ -1,8 +1,8 @@
-import { useMainContext } from "../../../Hooks/useMainContext";
+import { useUserContext } from "../../../Hooks/useUserContext";
 import styles from "./styles.module.css";
 
 const Welcome = () => {
-  const { currentUser, userCreatedAccount } = useMainContext();
+  const { currentUser, userCreatedAccount } = useUserContext();
 
   return (
     <div className="page-hero">

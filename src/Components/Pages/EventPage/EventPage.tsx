@@ -1,7 +1,6 @@
 import { TThemeColor, TUser } from "../../../types";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import { useNavigate } from "react-router-dom";
@@ -10,13 +9,20 @@ import ImageSlideshow from "../../Elements/ImageSlideshow/ImageSlideshow";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
 import Tab from "../../Elements/Tab/Tab";
 import styles from "./styles.module.css";
+import { useMainContext } from "../../../Hooks/useMainContext";
 
 const EventPage = () => {
-  const { allUsers, allEvents, currentUser, userCreatedAccount, setCurrentEvent } =
-    useMainContext();
-  const { showSidebar, setShowSidebar, handleRemoveInvitee } = useUserContext();
-  const { userRSVPdOptimistic, isLoading, handleAddUserRSVP, handleDeleteUserRSVP } =
-    useEventContext();
+  const { showSidebar, setShowSidebar } = useMainContext();
+  const { allUsers, currentUser, userCreatedAccount } = useUserContext();
+  const {
+    userRSVPdOptimistic,
+    isLoading,
+    handleAddUserRSVP,
+    handleDeleteUserRSVP,
+    allEvents,
+    setCurrentEvent,
+    handleRemoveInvitee,
+  } = useEventContext();
 
   //const [event, setEvent] = useState<TEvent | undefined>();
   const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);

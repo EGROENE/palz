@@ -5,8 +5,8 @@ import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const NavBar = () => {
-  const { currentUser, userCreatedAccount } = useMainContext();
-  const { showSidebar, setShowSidebar, logout, profileImage } = useUserContext();
+  const { showSidebar, setShowSidebar } = useMainContext();
+  const { logout, profileImage, currentUser, userCreatedAccount } = useUserContext();
   const navigation = useNavigate();
 
   const handleLogout = () => {

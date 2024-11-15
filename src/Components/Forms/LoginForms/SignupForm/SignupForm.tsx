@@ -1,15 +1,17 @@
 import OpenEye from "../../../Elements/Eyecons/OpenEye/OpenEye";
 import ClosedEye from "../../../Elements/Eyecons/ClosedEye/ClosedEye";
-import { useUserContext } from "../../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../../../Hooks/useMainContext";
+import { useUserContext } from "../../../../Hooks/useUserContext";
 import { useEffect, useRef, useState } from "react";
 import { TThemeColor } from "../../../../types";
 
 // should have isOnSignup param
 const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
-  const { currentUser, welcomeMessageDisplayTime, fetchAllUsers } = useMainContext();
+  const { welcomeMessageDisplayTime } = useMainContext();
   const {
+    currentUser,
+    fetchAllUsers,
     resetLoginOrSignupFormFieldsAndErrors,
     areNoSignupFormErrors,
     passwordIsHidden,

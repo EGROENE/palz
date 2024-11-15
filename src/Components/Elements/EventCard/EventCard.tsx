@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import { TEvent, TThemeColor } from "../../../types";
@@ -9,10 +8,15 @@ import toast from "react-hot-toast";
 import styles from "./styles.module.css";
 
 const EventCard = ({ event }: { event: TEvent }) => {
-  const { currentUser, allUsers, setCurrentEvent } = useMainContext();
-  const { handleDeclineInvitation } = useUserContext();
-  const { userRSVPdOptimistic, isLoading, handleAddUserRSVP, handleDeleteUserRSVP } =
-    useEventContext();
+  const { currentUser, allUsers } = useUserContext();
+  const {
+    userRSVPdOptimistic,
+    isLoading,
+    handleAddUserRSVP,
+    handleDeleteUserRSVP,
+    handleDeclineInvitation,
+    setCurrentEvent,
+  } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   const [userRSVPdActual, setUserRSVPdActual] = useState<boolean | null>(null);

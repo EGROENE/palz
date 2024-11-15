@@ -7,7 +7,8 @@ import { useState, useRef, useEffect } from "react";
 import { TThemeColor } from "../../../../types";
 
 const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
-  const { currentUser, welcomeMessageDisplayTime, fetchAllUsers } = useMainContext();
+  const { welcomeMessageDisplayTime } = useMainContext();
+  const { currentUser, fetchAllUsers } = useUserContext();
 
   const {
     passwordIsHidden,

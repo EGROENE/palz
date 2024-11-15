@@ -8,8 +8,8 @@ import toast from "react-hot-toast";
 
 const AddEventPage = () => {
   const navigation = useNavigate();
-  const { currentUser, userCreatedAccount } = useMainContext();
-  const { showSidebar, setShowSidebar } = useUserContext();
+  const { showSidebar, setShowSidebar } = useMainContext();
+  const { currentUser, userCreatedAccount } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 

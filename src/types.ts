@@ -107,36 +107,19 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
-  eventEditIsInProgress: boolean;
-  setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
+  showSidebar: boolean;
+  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   imageIsUploading: boolean;
   setImageIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
   imageIsDeleting: boolean;
   setImageIsDeleting: React.Dispatch<React.SetStateAction<boolean>>;
-  eventDeletionIsInProgress: boolean;
-  setEventDeletionIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
-
-  addEventIsInProgress: boolean;
-  setAddEventIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
-  currentEvent: TEvent | undefined;
-  setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
-  fetchAllEvents: () => Promise<void>;
   theme: "dark" | "light";
   toggleTheme: () => void;
-  allUsers: TUser[];
-  currentUser: TUser | undefined;
-  setCurrentUser: React.Dispatch<React.SetStateAction<TUser | undefined>>;
-  removeCurrentUser: () => void;
-  allEvents: TEvent[];
-  setAllEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
-  userCreatedAccount: null | boolean;
-  setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
   showWelcomeMessage: boolean;
   setShowWelcomeMessage: React.Dispatch<React.SetStateAction<boolean>>;
   welcomeMessageDisplayTime: number;
   setWelcomeMessageDisplayTime: React.Dispatch<React.SetStateAction<number>>;
   handleWelcomeMessage: () => void;
-  fetchAllUsers: () => Promise<void>;
 };
 
 export type TUserContext = {
@@ -176,19 +159,10 @@ export type TUserContext = {
   showUpdateProfileImageInterface: boolean;
   setShowUpdateProfileImageInterface: React.Dispatch<React.SetStateAction<boolean>>;
   removeProfileImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDeclineInvitation: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
-  ) => void;
   valuesToUpdate: TUserValuesToUpdate;
   handleProfileImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   profileImage: string | unknown;
   setProfileImage: React.Dispatch<React.SetStateAction<string | unknown>>;
-  handleRemoveInvitee: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent,
-    user: TUser | undefined
-  ) => void;
   handleCityStateCountryInput: (
     stateValues: {
       city: string | undefined;
@@ -286,8 +260,6 @@ export type TUserContext = {
   showUsernameCriteria: boolean;
   setShowUsernameCriteria: React.Dispatch<React.SetStateAction<boolean>>;
   resetLoginOrSignupFormFieldsAndErrors: () => void;
-  showSidebar: boolean;
-  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   logout: () => void;
   facebook: string | undefined;
   setFacebook: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -317,9 +289,36 @@ export type TUserContext = {
   setProfileVisibleTo: React.Dispatch<
     React.SetStateAction<"anyone" | "friends" | "friends of friends" | undefined>
   >;
+  fetchAllUsers: () => Promise<void>;
+  userCreatedAccount: null | boolean;
+  setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
+  allUsers: TUser[];
+  currentUser: TUser | undefined;
+  setCurrentUser: React.Dispatch<React.SetStateAction<TUser | undefined>>;
+  removeCurrentUser: () => void;
 };
 
 export type TEventContext = {
+  handleRemoveInvitee: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent,
+    user: TUser | undefined
+  ) => void;
+  handleDeclineInvitation: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent
+  ) => void;
+  eventDeletionIsInProgress: boolean;
+  setEventDeletionIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
+  allEvents: TEvent[];
+  setAllEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
+  addEventIsInProgress: boolean;
+  setAddEventIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
+  currentEvent: TEvent | undefined;
+  setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
+  fetchAllEvents: () => Promise<void>;
+  eventEditIsInProgress: boolean;
+  setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   userRSVPdOptimistic: boolean;
   setUserRSVPdOptimistic: React.Dispatch<React.SetStateAction<boolean>>;
   handleAddUserRSVP: (

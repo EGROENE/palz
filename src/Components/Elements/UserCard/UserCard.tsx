@@ -2,13 +2,12 @@ import styles from "./styles.module.css";
 import { TUser, TThemeColor } from "../../../types";
 import { countries } from "../../../constants";
 import { useState, useEffect } from "react";
-import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import TwoOptionsInterface from "../TwoOptionsInterface/TwoOptionsInterface";
 
 const UserCard = ({ user }: { user: TUser }) => {
-  const { currentUser, allUsers } = useMainContext();
+  const { currentUser, allUsers } = useUserContext();
   const {
     handleUnfriending,
     handleRejectFriendRequest,

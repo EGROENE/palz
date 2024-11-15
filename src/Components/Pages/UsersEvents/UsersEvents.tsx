@@ -6,10 +6,12 @@ import { Link } from "react-router-dom";
 import { TEvent, TThemeColor } from "../../../types";
 import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSection";
 import toast from "react-hot-toast";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const UsersEvents = () => {
-  const { allEvents, currentUser, fetchAllEvents, userCreatedAccount } = useMainContext();
-  const { showSidebar, setShowSidebar } = useUserContext();
+  const { showSidebar, setShowSidebar } = useMainContext();
+  const { currentUser, userCreatedAccount } = useUserContext();
+  const { allEvents, fetchAllEvents } = useEventContext();
 
   const navigation = useNavigate();
   useEffect(() => {

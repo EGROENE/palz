@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { useMainContext } from "../../../Hooks/useMainContext";
 import { TEvent, TThemeColor } from "../../../types";
 import Methods from "../../../methods";
 import InterestsModal from "../InterestsModal/InterestsModal";
 import Tab from "../Tab/Tab";
 import styles from "./styles.module.css";
+import { useUserContext } from "../../../Hooks/useUserContext";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 type InterestsSectionProps = {
   randomColor: TThemeColor | undefined;
@@ -50,7 +51,8 @@ const InterestsSection = ({
       inputInterest === displayedAdditionalInterests[0]) ||
     inputInterest === "";
 
-  const { currentUser, allUsers, allEvents } = useMainContext();
+  const { currentUser, allUsers } = useUserContext();
+  const { allEvents } = useEventContext();
 
   // Get array of interests that are not present on user/event object
   // This will be passed to InterestsModal; for each item in array, an addable interest displays

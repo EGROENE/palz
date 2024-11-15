@@ -18,27 +18,25 @@ import EditEventPage from "./Components/Pages/EditEventPage/EditEventPage";
 import TwoOptionsInterface from "./Components/Elements/TwoOptionsInterface/TwoOptionsInterface";
 import LoadingModal from "./Components/Elements/LoadingModal/LoadingModal";
 import FriendRequests from "./Components/Pages/FriendRequests/FriendRequests";
+import { useEventContext } from "./Hooks/useEventContext";
 
 function App() {
+  const { theme, showWelcomeMessage, imageIsUploading, imageIsDeleting, showSidebar } =
+    useMainContext();
   const {
     userCreatedAccount,
-    theme,
-    showWelcomeMessage,
     currentUser,
-    currentEvent,
-    addEventIsInProgress,
-    eventDeletionIsInProgress,
-    imageIsUploading,
-    imageIsDeleting,
-    eventEditIsInProgress,
-  } = useMainContext();
-  const {
-    showSidebar,
     showUpdateProfileImageInterface,
     setShowUpdateProfileImageInterface,
     removeProfileImage,
     accountDeletionInProgress,
   } = useUserContext();
+  const {
+    currentEvent,
+    eventEditIsInProgress,
+    addEventIsInProgress,
+    eventDeletionIsInProgress,
+  } = useEventContext();
 
   const navigation = useNavigate();
   const currentURL = useLocation().pathname;

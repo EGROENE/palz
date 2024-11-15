@@ -7,10 +7,9 @@ import ListedUser from "../../Elements/ListedUser/ListedUser";
 import styles from "./styles.module.css";
 
 const FriendRequests = () => {
-  const { allUsers } = useMainContext();
+  const { showSidebar, setShowSidebar } = useMainContext();
   const {
-    showSidebar,
-    setShowSidebar,
+    allUsers,
     handleAcceptFriendRequest,
     handleRejectFriendRequest,
     handleRetractFriendRequest,

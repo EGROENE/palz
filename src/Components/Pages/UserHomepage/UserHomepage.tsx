@@ -6,10 +6,12 @@ import EventCard from "../../Elements/EventCard/EventCard";
 import { TEvent } from "../../../types";
 import Methods from "../../../methods";
 import toast from "react-hot-toast";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const UserHomepage = () => {
-  const { currentUser, allEvents, userCreatedAccount, fetchAllEvents } = useMainContext();
-  const { showSidebar, setShowSidebar } = useUserContext();
+  const { showSidebar, setShowSidebar } = useMainContext();
+  const { currentUser, userCreatedAccount } = useUserContext();
+  const { allEvents, fetchAllEvents } = useEventContext();
 
   // On init rendering, hide sidebar, if displayed (better ux when returning to user homepage from Settings, etc.)
   useEffect(() => {

@@ -1,5 +1,5 @@
-import { createContext, ReactNode, useState } from "react";
-import { TUserContext, TUser, TEvent, TUserValuesToUpdate } from "../types";
+import { createContext, ReactNode, useState, useEffect } from "react";
+import { TUserContext, TUser, TUserValuesToUpdate } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -11,19 +11,20 @@ export const UserContext = createContext<TUserContext | null>(null);
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const {
-    removeCurrentUser,
-    setUserCreatedAccount,
-    allUsers,
-    currentUser,
-    setCurrentUser,
     handleWelcomeMessage,
-    fetchAllUsers,
-    fetchAllEvents,
     setImageIsUploading,
     setImageIsDeleting,
   } = useMainContext();
 
-  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+  const [allUsers, setAllUsers] = useSessionStorage<TUser[]>("allUsers", []);
+  const [currentUser, setCurrentUser, removeCurrentUser] = useSessionStorage<
+    TUser | undefined
+  >("currentUser", undefined);
+  const [userCreatedAccount, setUserCreatedAccount] = useSessionStorage<boolean | null>(
+    "userCreatedAccount",
+    null
+  );
+
   const [showUpdateProfileImageInterface, setShowUpdateProfileImageInterface] =
     useState<boolean>(false);
   const [accountDeletionInProgress, setAccountDeletionInProgress] =
@@ -145,6 +146,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     "selectedOtherUser",
     null
   );
+
+  useEffect(() => {
+    fetchAllUsers();
+    setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
+  }, [allUsers]);
+
+  const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
 
   const userData: TUser = {
     firstName: Methods.formatHyphensAndSpacesInString(
@@ -701,44 +709,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       });
   };
 
-  // Handler for user to decline invitation. Should remove them from invitees array.
-  const handleRemoveInvitee = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent,
-    user: TUser | undefined
-  ): void => {
-    e.preventDefault();
-    Requests.removeInvitee(event, user)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not decline invitation. Please try again.");
-          fetchAllEvents();
-        } else {
-          toast.error("Invitation declined.");
-        }
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleDeclineInvitation = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
-  ) => {
-    e.preventDefault();
-    setIsLoading(true);
-    Requests.addToDisinterestedUsers(currentUser, event)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not decline invitation. Please try again.");
-          fetchAllEvents();
-        } else {
-          toast.error("Invitation declined.");
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
-  };
-
   // maybe create separate request to update user profile img
   const handleProfileImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -1198,12 +1168,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     accountDeletionInProgress,
     setAccountDeletionInProgress,
     removeProfileImage,
-    handleDeclineInvitation,
     valuesToUpdate,
     handleProfileImageUpload,
     profileImage,
     setProfileImage,
-    handleRemoveInvitee,
     handleCityStateCountryInput,
     facebook,
     setFacebook,
@@ -1226,8 +1194,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     phoneNumberError,
     setPhoneNumberError,
     resetLoginOrSignupFormFieldsAndErrors,
-    showSidebar,
-    setShowSidebar,
     logout,
     loginMethod,
     signupIsSelected,
@@ -1297,6 +1263,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setProfileVisibleTo,
     showUpdateProfileImageInterface,
     setShowUpdateProfileImageInterface,
+    fetchAllUsers,
+    allUsers,
+    currentUser,
+    setCurrentUser,
+    removeCurrentUser,
+    userCreatedAccount,
+    setUserCreatedAccount,
   };
 
   return (

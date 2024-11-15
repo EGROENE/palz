@@ -3,7 +3,6 @@ import { useRef } from "react";
 import OpenEye from "../../Elements/Eyecons/OpenEye/OpenEye";
 import ClosedEye from "../../Elements/Eyecons/ClosedEye/ClosedEye";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { useMainContext } from "../../../Hooks/useMainContext";
 import { useEffect, useState } from "react";
 import Requests from "../../../requests";
 import { countries, phoneNumberLengthRanges } from "../../../constants";
@@ -20,7 +19,7 @@ const EditUserInfoForm = ({
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { currentUser, setCurrentUser, fetchAllUsers, allUsers } = useMainContext();
+  const { currentUser, setCurrentUser, fetchAllUsers, allUsers } = useUserContext();
   const {
     valuesToUpdate,
     whoCanAddUserAsOrganizer,

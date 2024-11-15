@@ -7,13 +7,9 @@ import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const Sidebar = () => {
-  const { currentUser, theme } = useMainContext();
-  const {
-    showSidebar,
-    setShowSidebar,
-    profileImage,
-    setShowUpdateProfileImageInterface,
-  } = useUserContext();
+  const { showSidebar, setShowSidebar, theme } = useMainContext();
+  const { profileImage, currentUser, setShowUpdateProfileImageInterface } =
+    useUserContext();
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   useEffect(() => {

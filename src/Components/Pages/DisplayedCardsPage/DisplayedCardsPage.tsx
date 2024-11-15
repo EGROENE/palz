@@ -9,21 +9,16 @@ import { TEvent, TThemeColor, TUser } from "../../../types";
 import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const DisplayedCardsPage = ({
   usedFor,
 }: {
   usedFor: "events" | "potential-friends" | "my-friends";
 }) => {
-  const {
-    allEvents,
-    allUsers,
-    fetchAllEvents,
-    fetchAllUsers,
-    currentUser,
-    userCreatedAccount,
-  } = useMainContext();
-  const { showSidebar, setShowSidebar } = useUserContext();
+  const { showSidebar, setShowSidebar } = useMainContext();
+  const { allUsers, fetchAllUsers, currentUser, userCreatedAccount } = useUserContext();
+  const { allEvents, fetchAllEvents } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 

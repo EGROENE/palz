@@ -8,6 +8,7 @@ import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import { TThemeColor } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const UserSettings = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -40,23 +41,17 @@ const UserSettings = () => {
     }
   }, []);
 
+  const { theme, toggleTheme, showSidebar, setShowSidebar } = useMainContext();
   const {
     currentUser,
-    theme,
-    toggleTheme,
-    fetchAllEvents,
     fetchAllUsers,
     allUsers,
-    allEvents,
-  } = useMainContext();
-  const {
-    showSidebar,
-    setShowSidebar,
     logout,
     passwordIsHidden,
     setPasswordIsHidden,
     setAccountDeletionInProgress,
   } = useUserContext();
+  const { fetchAllEvents, allEvents } = useEventContext();
 
   const handleAddUserInterest = (
     interest: string,

@@ -8,8 +8,8 @@ import toast from "react-hot-toast";
 
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
 const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
-  const { currentUser, userCreatedAccount } = useMainContext();
-  const { showSidebar, setShowSidebar } = useUserContext();
+  const { showSidebar, setShowSidebar } = useMainContext();
+  const { currentUser, userCreatedAccount } = useUserContext();
 
   const navigation = useNavigate();
 
