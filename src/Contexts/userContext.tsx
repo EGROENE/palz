@@ -29,7 +29,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [showFriendRequestResponseOptions, setShowFriendRequestResponseOptions] =
     useState<boolean>(false);
   const [buttonsAreDisabled, setButtonsAreDisabled] = useState<boolean>(false);
-  const [friendRequestSent, setFriendRequestSent] = useState<boolean>(false);
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
@@ -748,8 +747,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .finally(() => setImageIsDeleting(false));
   };
 
-  const handleSendFriendRequest = (sender: TUser | undefined, recipient: TUser): void => {
-    setFriendRequestSent(true);
+  const handleSendFriendRequest = (
+    sender: TUser | undefined,
+    recipient: TUser,
+    setUserSentFriendRequestOptimistic: React.Dispatch<React.SetStateAction<boolean>>,
+    setUserSentFriendRequestActual: React.Dispatch<React.SetStateAction<boolean | null>>
+  ): void => {
+    setUserSentFriendRequestOptimistic(true);
     setButtonsAreDisabled(true);
 
     let isRequestError = false;
@@ -775,11 +779,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         })
         .then(() => {
           if (isRequestError) {
-            setFriendRequestSent(false);
+            setUserSentFriendRequestOptimistic(false);
             toast.error("Couldn't send request. Please try again.");
           } else {
             toast.success("Friend request sent!");
-            //fetchAllUsers();
+            setUserSentFriendRequestActual(true);
           }
         })
         .catch((error) => console.log(error))
@@ -790,26 +794,29 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleRetractFriendRequest = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     sender: TUser,
-    recipient: TUser
+    recipient: TUser,
+    setUserSentFriendRequestOptimistic: React.Dispatch<React.SetStateAction<boolean>>,
+    setUserSentFriendRequestActual: React.Dispatch<React.SetStateAction<boolean | null>>
   ): void => {
     e.preventDefault();
     setButtonsAreDisabled(true);
-    setFriendRequestSent(false);
+    setUserSentFriendRequestOptimistic(false);
     if (sender && sender._id) {
       Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
         .then((response) => {
           if (!response.ok) {
-            setFriendRequestSent(true);
+            setUserSentFriendRequestOptimistic(true);
             toast.error("Could not retract request. Please try again.");
           } else {
             if (sender && recipient._id) {
               Requests.removeFromFriendRequestsSent(sender, recipient._id)
                 .then((response) => {
                   if (!response.ok) {
-                    setFriendRequestSent(true);
+                    setUserSentFriendRequestOptimistic(true);
                     toast.error("Could not retract request. Please try again.");
                   } else {
                     toast.error("Friend request retracted");
+                    setUserSentFriendRequestActual(false);
                   }
                 })
                 .catch((error) => console.log(error));
@@ -1148,14 +1155,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const userContextValues: TUserContext = {
     selectedOtherUser,
     setSelectedOtherUser,
-    friendRequestSent,
-    setFriendRequestSent,
     buttonsAreDisabled,
     setButtonsAreDisabled,
-    handleSendFriendRequest,
-    handleRetractFriendRequest,
     showFriendRequestResponseOptions,
     setShowFriendRequestResponseOptions,
+    handleSendFriendRequest,
+    handleRetractFriendRequest,
     handleUnfriending,
     handleRejectFriendRequest,
     handleAcceptFriendRequest,

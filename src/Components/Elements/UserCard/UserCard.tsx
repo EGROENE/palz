@@ -14,7 +14,6 @@ const UserCard = ({ user }: { user: TUser }) => {
     handleAcceptFriendRequest,
     showFriendRequestResponseOptions,
     setShowFriendRequestResponseOptions,
-    setFriendRequestSent,
     handleRetractFriendRequest,
     handleSendFriendRequest,
     buttonsAreDisabled,
@@ -23,6 +22,48 @@ const UserCard = ({ user }: { user: TUser }) => {
   } = useUserContext();
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
   const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
+
+  const [userSentFriendRequestOptimistic, setUserSentFriendRequestOptimistic] =
+    useState<boolean>(false);
+  const [userReceivedFriendRequestOptimistic, setUserReceivedFriendRequestOptimistic] =
+    useState<boolean>(false);
+
+  const [userSentFriendRequestActual, setUserSentFriendRequestActual] = useState<
+    boolean | null
+  >(null);
+  const [userReceivedFriendRequestActual, setUserReceivedFriendRequestActual] = useState<
+    boolean | null
+  >(null);
+
+  useEffect(() => {
+    if (
+      user._id &&
+      currentUserUpdated?._id &&
+      currentUserUpdated?.friendRequestsSent.includes(user._id) &&
+      user.friendRequestsReceived.includes(currentUserUpdated?._id)
+    ) {
+      setUserSentFriendRequestActual(true);
+      setUserReceivedFriendRequestOptimistic(true);
+    } else {
+      setUserSentFriendRequestActual(false);
+      setUserReceivedFriendRequestOptimistic(false);
+    }
+  }, [userSentFriendRequestOptimistic]);
+
+  useEffect(() => {
+    if (
+      user._id &&
+      currentUserUpdated?._id &&
+      currentUserUpdated?.friendRequestsReceived.includes(user._id) &&
+      user.friendRequestsSent.includes(currentUserUpdated?._id)
+    ) {
+      setUserReceivedFriendRequestActual(true);
+      setUserReceivedFriendRequestOptimistic(true);
+    } else {
+      setUserReceivedFriendRequestActual(false);
+      setUserReceivedFriendRequestOptimistic(false);
+    }
+  }, [userReceivedFriendRequestOptimistic]);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -40,16 +81,6 @@ const UserCard = ({ user }: { user: TUser }) => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
-
-    // Initialize value of friendRequestSent:
-    if (
-      user._id &&
-      currentUserUpdated?._id &&
-      currentUserUpdated?.friendRequestsSent.includes(user._id) &&
-      user.friendRequestsReceived.includes(currentUserUpdated?._id)
-    ) {
-      setFriendRequestSent(true);
-    }
   }, []);
 
   const matchingCountryObject:
@@ -66,21 +97,12 @@ const UserCard = ({ user }: { user: TUser }) => {
       : undefined;
 
   const getButtonOneText = (): JSX.Element | string => {
-    // either Unfriend, Retract Request
-
-    // If user has sent currentUser a friend req, return btn "Accept/Decline Request" w/ handler that shows TwoOptionsModal w/ Accept/Decline btns
-
-    // If user has sent currentUser a friend request:
-    if (
-      currentUser &&
-      currentUser._id &&
-      user.friendRequestsSent.includes(currentUser._id)
-    ) {
+    if (userReceivedFriendRequestActual || userReceivedFriendRequestOptimistic) {
       return "Accept/Decline Request";
     }
 
     // If currentUser has sent user friend request:
-    if (user._id && currentUser?.friendRequestsSent.includes(user._id)) {
+    if (userSentFriendRequestActual || userSentFriendRequestOptimistic) {
       return (
         <>
           <i className="fas fa-user-minus"></i>Retract Request
@@ -104,7 +126,7 @@ const UserCard = ({ user }: { user: TUser }) => {
       );
     }
 
-    // Else, if no connection exists b/t currentUser & user whatsoever:
+    // Else, if no connection exists b/t currentUser & user whatsoever, and no friend request has been sent:
     return (
       <>
         <i className="fas fa-user-plus"></i>Add Friend
@@ -123,12 +145,10 @@ const UserCard = ({ user }: { user: TUser }) => {
     user.friends.includes(currentUser._id);
 
   const currentUserHasSentUserAFriendRequest =
-    currentUser &&
-    currentUser._id &&
-    user.friendRequestsReceived.includes(currentUser._id);
+    userSentFriendRequestActual && userSentFriendRequestOptimistic;
 
   const userHasSentCurrentUserAFriendRequest =
-    user && user._id && currentUser?.friendRequestsReceived.includes(user._id);
+    userReceivedFriendRequestActual && userReceivedFriendRequestOptimistic;
 
   const noConnectionBetweenUserAndCurrentUser =
     !currentUserAndUserAreFriends &&
@@ -191,15 +211,26 @@ const UserCard = ({ user }: { user: TUser }) => {
               if (currentUserAndUserAreFriends) {
                 handleUnfriending(e, currentUser, user);
               }
-              if (currentUserHasSentUserAFriendRequest) {
-                handleRetractFriendRequest(e, currentUser, user);
+              if (currentUserHasSentUserAFriendRequest && currentUser) {
+                handleRetractFriendRequest(
+                  e,
+                  currentUser,
+                  user,
+                  setUserSentFriendRequestOptimistic,
+                  setUserSentFriendRequestActual
+                );
               }
               if (userHasSentCurrentUserAFriendRequest) {
                 setSelectedOtherUser(user);
                 setShowFriendRequestResponseOptions(true);
               }
               if (currentUser && noConnectionBetweenUserAndCurrentUser) {
-                handleSendFriendRequest(currentUser, user);
+                handleSendFriendRequest(
+                  currentUser,
+                  user,
+                  setUserSentFriendRequestOptimistic,
+                  setUserSentFriendRequestActual
+                );
               }
             }}
             disabled={buttonsAreDisabled}

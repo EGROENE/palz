@@ -127,15 +127,20 @@ export type TMainContext = {
 export type TUserContext = {
   selectedOtherUser: TUser | null;
   setSelectedOtherUser: React.Dispatch<React.SetStateAction<TUser | null>>;
-  friendRequestSent: boolean;
-  setFriendRequestSent: React.Dispatch<React.SetStateAction<boolean>>;
   buttonsAreDisabled: boolean;
   setButtonsAreDisabled: React.Dispatch<React.SetStateAction<boolean>>;
-  handleSendFriendRequest: (sender: TUser, recipient: TUser) => void;
+  handleSendFriendRequest: (
+    sender: TUser | undefined,
+    recipient: TUser,
+    setUserSentFriendRequestOptimistic: React.Dispatch<React.SetStateAction<boolean>>,
+    setUserSentFriendRequestActual: React.Dispatch<React.SetStateAction<boolean | null>>
+  ) => void;
   handleRetractFriendRequest: (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     sender: TUser,
-    recipient: TUser
+    recipient: TUser,
+    setUserSentFriendRequestOptimistic: React.Dispatch<React.SetStateAction<boolean>>,
+    setUserSentFriendRequestActual: React.Dispatch<React.SetStateAction<boolean | null>>
   ) => void;
   showFriendRequestResponseOptions: boolean;
   setShowFriendRequestResponseOptions: React.Dispatch<React.SetStateAction<boolean>>;
