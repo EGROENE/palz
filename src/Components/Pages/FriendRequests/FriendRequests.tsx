@@ -37,6 +37,17 @@ const FriendRequests = () => {
     currentUser.friendRequestsSent.length > 0;
 
   useEffect(() => {
+    if (
+      currentUser.friendRequestsReceived.length > 0 ||
+      currentUser.friendRequestsSent.length > 0
+    ) {
+      if (currentUser.friendRequestsSent.length > 0) {
+        setRequestsVisible("sent");
+      } else {
+        setRequestsVisible("received");
+      }
+    }
+
     if (showSidebar) {
       setShowSidebar(false);
     }
@@ -54,17 +65,17 @@ const FriendRequests = () => {
 
   useEffect(() => {
     if (
-      currentUser.friendRequestsReceived.length > 0 &&
+      currentUser.friendRequestsReceived.length > 0 ||
       currentUser.friendRequestsSent.length > 0
     ) {
-      setRequestsVisible("sent");
-    } else {
-      if (currentUser.friendRequestsReceived.length > 0) {
-        setRequestsVisible("received");
-      }
-      if (currentUser.friendRequestsSent.length > 0) {
+      if (!(currentUser.friendRequestsReceived.length > 0)) {
         setRequestsVisible("sent");
       }
+      if (!(currentUser.friendRequestsSent.length > 0)) {
+        setRequestsVisible("received");
+      }
+    } else {
+      setRequestsVisible(null);
     }
   }, [allUsers]);
 
