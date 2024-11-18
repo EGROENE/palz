@@ -48,7 +48,9 @@ const UserListModal = ({
             randomColor={randomColor}
             user={user}
             buttonOneText="Message"
+            buttonOneIsDisabled={null}
             buttonTwoText="Remove"
+            buttonTwoIsDisabled={null}
             buttonTwoHandler={handleDeletion}
             buttonTwoHandlerParams={[currentEvent, user]}
           />
