@@ -540,13 +540,13 @@ const addToFriendRequestsSent = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedFriendRequestsSentArray: Array<string | number | undefined> = [];
-  if (sender?.friendRequestsSent) {
+  let updatedFriendRequestsSentArray = sender.friendRequestsSent.concat(recipientID);
+  /* if (sender?.friendRequestsSent) {
     for (const existingRecipientID of sender.friendRequestsSent) {
       updatedFriendRequestsSentArray.push(existingRecipientID);
     }
   }
-  updatedFriendRequestsSentArray.push(recipientID);
+  updatedFriendRequestsSentArray.push(recipientID); */
 
   const getRaw = () => {
     return JSON.stringify({
