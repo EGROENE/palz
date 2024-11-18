@@ -6,19 +6,23 @@ const ListedUser = ({
   randomColor,
   buttonOneHandler,
   buttonOneHandlerParams,
+  buttonOneIsDisabled,
   buttonTwoHandler,
   buttonTwoHandlerParams,
   buttonOneText,
   buttonTwoText,
+  buttonTwoIsDisabled,
 }: {
   user?: TUser;
   randomColor?: string;
   buttonOneHandler?: Function;
   buttonOneHandlerParams?: any[];
+  buttonOneIsDisabled: boolean | null;
   buttonTwoHandler?: Function;
   buttonTwoHandlerParams?: any[];
   buttonOneText: string;
   buttonTwoText: string;
+  buttonTwoIsDisabled: boolean | null;
 }) => {
   return (
     <div key={user?._id} className={styles.listedUser}>
@@ -32,6 +36,7 @@ const ListedUser = ({
         <p>{user?.username}</p>
       </div>
       <button
+      disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
         onClick={
           buttonOneHandler
             ? // @ts-ignore
@@ -43,6 +48,7 @@ const ListedUser = ({
         {buttonOneText}
       </button>
       <button
+      disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
         onClick={
           buttonTwoHandler
             ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
