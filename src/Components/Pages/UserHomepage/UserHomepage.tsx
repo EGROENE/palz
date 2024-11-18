@@ -29,7 +29,7 @@ const UserHomepage = () => {
       toast.error("Please login before accessing this page");
       navigation("/");
     } else {
-      navigation(`/users/${currentUser?.username}`);
+      navigation(`/${currentUser?.username}`);
     }
   }, [currentUser, navigation, userCreatedAccount]);
 

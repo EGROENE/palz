@@ -107,7 +107,7 @@ function App() {
         <Route path="/events/:eventID" element={<EventPage />} />
         <Route path="/:username/events" element={<UsersEvents />} />
         <Route path="/:username/friend-requests" element={<FriendRequests />} />
-        <Route path="/users/:username" element={<UserHomepage />} />
+        <Route path="/:username" element={<UserHomepage />} />
         <Route
           path="/find-palz"
           element={<DisplayedCardsPage usedFor="potential-friends" />}

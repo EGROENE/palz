@@ -59,7 +59,7 @@ const EventPage = () => {
     ) {
       toast.error("You do not have permission to edit or view this event.");
       if (currentUser && userCreatedAccount !== null) {
-        navigation(`/users/${currentUser.username}`);
+        navigation(`/${currentUser.username}`);
       } else {
         navigation("/");
       }

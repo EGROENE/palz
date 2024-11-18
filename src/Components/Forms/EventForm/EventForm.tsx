@@ -689,7 +689,7 @@ const EventForm = ({
             toast.error(
               "You have removed yourself as an organizer & are no longer able to make changes to that event."
             );
-            navigation(`/users/${currentUser?.username}`);
+            navigation(`/${currentUser?.username}`);
           }
         })
         .catch((error) => console.log(error));
@@ -891,7 +891,7 @@ const EventForm = ({
           toast.error("Could not delete event. Please try again.");
         } else {
           toast.error("Event deleted");
-          navigation(`/users/${currentUser?.username}`); // redirect to user homepage after del event
+          navigation(`/${currentUser?.username}`); // redirect to user homepage after del event
         }
       })
       .catch((error) => console.log(error))
