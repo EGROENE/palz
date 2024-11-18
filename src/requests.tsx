@@ -647,13 +647,13 @@ const addFriendToFriendsArray = (user: TUser, friend: string): Promise<Response>
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedFriendsArray = [];
-  if (user?.friends) {
+  let updatedFriendsArray = user?.friends.concat(friend);
+  /* if (user?.friends) {
     for (const existingFriendID of user.friendRequestsSent) {
       updatedFriendsArray.push(existingFriendID);
     }
-  }
-  updatedFriendsArray.push(friend);
+  } */
+  //updatedFriendsArray.push(friend);
 
   var raw = JSON.stringify({
     "friends": updatedFriendsArray,
