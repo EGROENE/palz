@@ -890,6 +890,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (promisesToAwait) {
+      setButtonsAreDisabled(true);
       Promise.all(promisesToAwait)
         .then(() => {
           for (const promise of promisesToAwait) {
@@ -909,7 +910,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             );
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => setButtonsAreDisabled(false));
     }
   };
 
@@ -947,6 +949,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (promisesToAwait) {
+      setButtonsAreDisabled(true);
       Promise.all(promisesToAwait)
         .then(() => {
           for (const promise of promisesToAwait) {
@@ -966,7 +969,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             );
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => setButtonsAreDisabled(false));
     }
   };
 
@@ -992,6 +996,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     let allRequestsAreOK = true;
 
     if (promisesToAwait) {
+      setButtonsAreDisabled(true);
       Promise.all(promisesToAwait)
         .then(() => {
           for (const promise of promisesToAwait) {
@@ -1011,7 +1016,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             toast.error(`You have unfriended ${friend.firstName} ${friend.lastName}.`);
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => setButtonsAreDisabled(false));
     }
   };
 

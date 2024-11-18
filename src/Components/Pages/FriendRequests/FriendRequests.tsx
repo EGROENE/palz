@@ -13,6 +13,7 @@ const FriendRequests = () => {
     handleAcceptFriendRequest,
     handleRejectFriendRequest,
     handleRetractFriendRequest,
+    buttonsAreDisabled,
   } = useUserContext();
   const { username } = useParams();
 
@@ -150,11 +151,13 @@ const FriendRequests = () => {
                     user={user}
                     randomColor={randomColor}
                     buttonOneText="See Profile"
+                    buttonOneIsDisabled={null}
                     //buttonOneHandler={}
                     // buttonOneHandlerParams={[]}
                     buttonTwoText="Retract"
                     buttonTwoHandler={handleRetractFriendRequest}
                     buttonTwoHandlerParams={[currentUser, user]}
+                    buttonTwoIsDisabled={null}
                   />
                 ))
               : usersWhoSentCurrentUserARequest.length > 0 &&
@@ -164,11 +167,13 @@ const FriendRequests = () => {
                     user={user}
                     randomColor={randomColor}
                     buttonOneText="Accept"
+                    buttonOneIsDisabled={buttonsAreDisabled}
                     buttonTwoText="Reject"
                     buttonOneHandler={handleAcceptFriendRequest}
                     buttonOneHandlerParams={[user, currentUser]}
                     buttonTwoHandler={handleRejectFriendRequest}
                     buttonTwoHandlerParams={[user, currentUser]}
+                    buttonTwoIsDisabled={buttonsAreDisabled}
                   />
                 ))}
           </div>
