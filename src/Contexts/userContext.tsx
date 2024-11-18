@@ -137,8 +137,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
-  const [selectedOtherUser, setSelectedOtherUser] = useSessionStorage<TUser | null>(
-    "selectedOtherUser",
+  const [currentOtherUser, setCurrentOtherUser] = useSessionStorage<TUser | null>(
+    "currentOtherUser",
     null
   );
 
@@ -1173,8 +1173,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
-    selectedOtherUser,
-    setSelectedOtherUser,
+    currentOtherUser,
+    setCurrentOtherUser,
     buttonsAreDisabled,
     setButtonsAreDisabled,
     showFriendRequestResponseOptions,

@@ -17,8 +17,8 @@ const UserCard = ({ user }: { user: TUser }) => {
     handleRetractFriendRequest,
     handleSendFriendRequest,
     buttonsAreDisabled,
-    selectedOtherUser,
-    setSelectedOtherUser,
+    currentOtherUser,
+    setCurrentOtherUser,
   } = useUserContext();
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
   const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
@@ -158,16 +158,16 @@ const UserCard = ({ user }: { user: TUser }) => {
   return (
     <>
       {showFriendRequestResponseOptions &&
-        selectedOtherUser &&
-        selectedOtherUser._id === user._id && (
+        currentOtherUser &&
+        currentOtherUser._id === user._id && (
           <TwoOptionsInterface
-            header={`Respond to friend request from ${selectedOtherUser.firstName} ${selectedOtherUser.lastName} (${selectedOtherUser.username})`}
+            header={`Respond to friend request from ${currentOtherUser.firstName} ${currentOtherUser.lastName} (${currentOtherUser.username})`}
             buttonOneText="Decline"
             buttonOneHandler={handleRejectFriendRequest}
-            buttonOneHandlerParams={[selectedOtherUser, currentUser]}
+            buttonOneHandlerParams={[currentOtherUser, currentUser]}
             buttonTwoText="Accept"
             buttonTwoHandler={handleAcceptFriendRequest}
-            buttonTwoHandlerParams={[selectedOtherUser, currentUser]}
+            buttonTwoHandlerParams={[currentOtherUser, currentUser]}
             closeHandler={setShowFriendRequestResponseOptions}
           />
         )}
@@ -221,7 +221,7 @@ const UserCard = ({ user }: { user: TUser }) => {
                 );
               }
               if (userHasSentCurrentUserAFriendRequest) {
-                setSelectedOtherUser(user);
+                setCurrentOtherUser(user);
                 setShowFriendRequestResponseOptions(true);
               }
               if (currentUser && noConnectionBetweenUserAndCurrentUser) {

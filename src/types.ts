@@ -125,8 +125,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
-  selectedOtherUser: TUser | null;
-  setSelectedOtherUser: React.Dispatch<React.SetStateAction<TUser | null>>;
+  currentOtherUser: TUser | null;
+  setCurrentOtherUser: React.Dispatch<React.SetStateAction<TUser | null>>;
   buttonsAreDisabled: boolean;
   setButtonsAreDisabled: React.Dispatch<React.SetStateAction<boolean>>;
   handleSendFriendRequest: (
