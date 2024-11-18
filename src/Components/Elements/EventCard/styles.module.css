@@ -14,7 +14,7 @@
 
 .eventCardInvitation {
   display: flex;
-  width: 93%;
+  width: 100%;
   justify-content: space-around;
   margin: 1rem 0;
 }
