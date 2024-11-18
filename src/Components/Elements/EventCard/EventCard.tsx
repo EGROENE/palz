@@ -182,7 +182,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                     disabled={maxInviteesReached || isLoading}
                     className={styles.eventButtonsContainerButton}
                     onClick={(e) => {
-                      if (userRSVPdActual && userRSVPdOptimistic && currentUser) {
+                      if (userRSVPdActual && currentUser) {
                         handleDeleteUserRSVP(e, event, currentUser, setUserRSVPdActual);
                       } else if (!userRSVPdActual && !userRSVPdOptimistic) {
                         handleAddUserRSVP(e, event, setUserRSVPdActual);
