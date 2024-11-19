@@ -1,5 +1,5 @@
 import { useState, createContext, ReactNode, useEffect } from "react";
-import { useSessionStorage } from "usehooks-ts";
+import { useLocalStorage } from "usehooks-ts";
 import { TEventContext, TUser, TEvent } from "../types";
 import Requests from "../requests";
 import { useMainContext } from "../Hooks/useMainContext";
@@ -12,11 +12,11 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const { setIsLoading } = useMainContext();
   const { currentUser } = useUserContext();
 
-  const [currentEvent, setCurrentEvent] = useSessionStorage<TEvent | undefined>(
+  const [currentEvent, setCurrentEvent] = useLocalStorage<TEvent | undefined>(
     "currentEvent",
     undefined
   ); // event user is editing or viewing
-  const [allEvents, setAllEvents] = useSessionStorage<TEvent[]>("allEvents", []);
+  const [allEvents, setAllEvents] = useLocalStorage<TEvent[]>("allEvents", []);
   const [addEventIsInProgress, setAddEventIsInProgress] = useState<boolean>(false);
   const [eventEditIsInProgress, setEventEditIsInProgress] = useState<boolean>(false);
   const [eventDeletionIsInProgress, setEventDeletionIsInProgress] =
