@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { TUser } from "../../../types";
 import styles from "./styles.module.css";
 
@@ -7,11 +8,13 @@ const ListedUser = ({
   buttonOneHandler,
   buttonOneHandlerParams,
   buttonOneIsDisabled,
+  buttonOneLink,
   buttonTwoHandler,
   buttonTwoHandlerParams,
   buttonOneText,
   buttonTwoText,
   buttonTwoIsDisabled,
+  buttonTwoLink,
 }: {
   user?: TUser;
   randomColor?: string;
@@ -23,6 +26,8 @@ const ListedUser = ({
   buttonOneText: string;
   buttonTwoText: string;
   buttonTwoIsDisabled: boolean | null;
+  buttonOneLink: string | null;
+  buttonTwoLink: string | null;
 }) => {
   return (
     <div key={user?._id} className={styles.listedUser}>
@@ -35,29 +40,70 @@ const ListedUser = ({
         <p>{`${user?.firstName} ${user?.lastName}`}</p>
         <p>{user?.username}</p>
       </div>
-      <button
-      disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
-        onClick={
-          buttonOneHandler
-            ? // @ts-ignore
-              (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
-            : undefined
-        }
-        style={{ backgroundColor: randomColor }}
-      >
-        {buttonOneText}
-      </button>
-      <button
-      disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
-        onClick={
-          buttonTwoHandler
-            ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
-            : undefined
-        }
-        style={{ backgroundColor: "tomato" }}
-      >
-        {buttonTwoText}
-      </button>
+      {buttonOneLink !== null ? (
+        <Link target="_blank" to={buttonOneLink}>
+          <button
+            disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
+            onClick={
+              buttonOneHandler
+                ? buttonOneHandlerParams && buttonOneHandlerParams.length > 0
+                  ? // @ts-ignore
+                    (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
+                  : () => buttonOneHandler()
+                : undefined
+            }
+            style={{ backgroundColor: randomColor }}
+          >
+            {buttonOneText}
+          </button>
+        </Link>
+      ) : (
+        <button
+          disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
+          onClick={
+            buttonOneHandler
+              ? buttonOneHandlerParams && buttonOneHandlerParams.length > 0
+                ? // @ts-ignore
+                  (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
+                : () => buttonOneHandler()
+              : undefined
+          }
+          style={{ backgroundColor: randomColor }}
+        >
+          {buttonOneText}
+        </button>
+      )}
+      {buttonTwoLink !== null ? (
+        <Link to={buttonTwoLink}>
+          <button
+            disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
+            onClick={
+              buttonTwoHandler
+                ? buttonTwoHandlerParams && buttonTwoHandlerParams.length > 0
+                  ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                  : buttonTwoHandler()
+                : undefined
+            }
+            style={{ backgroundColor: "tomato" }}
+          >
+            {buttonTwoText}
+          </button>
+        </Link>
+      ) : (
+        <button
+          disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
+          onClick={
+            buttonTwoHandler
+              ? buttonTwoHandlerParams && buttonTwoHandlerParams.length > 0
+                ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                : buttonTwoHandler()
+              : undefined
+          }
+          style={{ backgroundColor: "tomato" }}
+        >
+          {buttonTwoText}
+        </button>
+      )}
     </div>
   );
 };
