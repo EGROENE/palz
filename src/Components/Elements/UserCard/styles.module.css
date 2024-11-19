@@ -62,7 +62,7 @@
   font-size: 0.75rem;
 }
 
-.userCardBtnContainer button:nth-child(2) {
+.userCardBtnContainer a button {
   background-color: var(--background-color-opposite);
   color: var(--text-color-opposite);
 }
