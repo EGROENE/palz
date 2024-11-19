@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useState, useEffect } from "react";
 import { TUserContext, TUser, TUserValuesToUpdate } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
-import { useSessionStorage } from "usehooks-ts";
+import { useLocalStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
 import Requests from "../requests";
 import toast from "react-hot-toast";
@@ -13,11 +13,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const { handleWelcomeMessage, setImageIsUploading, setImageIsDeleting } =
     useMainContext();
 
-  const [allUsers, setAllUsers] = useSessionStorage<TUser[]>("allUsers", []);
-  const [currentUser, setCurrentUser, removeCurrentUser] = useSessionStorage<
-    TUser | undefined
-  >("currentUser", undefined);
-  const [userCreatedAccount, setUserCreatedAccount] = useSessionStorage<boolean | null>(
+  const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
+  const [currentUser, setCurrentUser] = useLocalStorage<TUser | undefined>(
+    "currentUser",
+    undefined
+  );
+  const [userCreatedAccount, setUserCreatedAccount] = useLocalStorage<boolean | null>(
     "userCreatedAccount",
     null
   );
@@ -33,79 +34,76 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
 
-  /* Some values kept in session storage so that they can be used to autofill fields on edit-user-info form. Due to input handler functions setting these & not currentUser._____, currentUser.______ isn't used to do so, but will rather be set when user saves changes to their data object in the DB by submitting the edit-user-info form & allUsers is refetched. */
-
-  /* USAGE: Each of these will need to:
-  1. be set to existing currentUser data in handleSignupOrLoginFormSubmission, whether logging in or signing up
-  2. exported in values from this context; set in handleUpdateProfileInfo if value changed on edit form 
-  3. in handleEditUserInfoRevert, set to corresponding currentUser data point, and its error message reset, if applicable 
-  4. reckoned with inside userInfoEdited
-  5. added to valuesToUpdate
-  6. be used in any appropriate handler functions
-  7. added to body inside patchUpdatedUserInfo */
-  const [firstName, setFirstName, removeFirstName] = useSessionStorage<
-    string | undefined
-  >("firstName", "");
-  const [lastName, setLastName, removeLastName] = useSessionStorage<string | undefined>(
+  /* Some values on currentUser are kept separately from currentUser. These will be compared to values on currentUser when user changes these in Settings to render certain form UI. User can reset these to original values. */
+  const [firstName, setFirstName, removeFirstName] = useLocalStorage<string | undefined>(
+    "firstName",
+    ""
+  );
+  const [lastName, setLastName, removeLastName] = useLocalStorage<string | undefined>(
     "lastName",
     ""
   );
-  const [username, setUsername, removeUsername] = useSessionStorage<string | undefined>(
+  const [username, setUsername, removeUsername] = useLocalStorage<string | undefined>(
     "username",
     ""
   );
-  const [emailAddress, setEmailAddress, removeEmailAddress] = useSessionStorage<
+  const [emailAddress, setEmailAddress, removeEmailAddress] = useLocalStorage<
     string | undefined
   >("emailAddress", "");
-  const [phoneCountry, setPhoneCountry, removePhoneCountry] = useSessionStorage<
+  const [phoneCountry, setPhoneCountry, removePhoneCountry] = useLocalStorage<
     string | undefined
   >("phoneCountry", "");
-  const [phoneCountryCode, setPhoneCountryCode, removePhoneCountryCode] =
-    useSessionStorage<string | undefined>("phoneCountryCode", "");
+  const [phoneCountryCode, setPhoneCountryCode, removePhoneCountryCode] = useLocalStorage<
+    string | undefined
+  >("phoneCountryCode", "");
   const [
     phoneNumberWithoutCountryCode,
     setPhoneNumberWithoutCountryCode,
     removePhoneNumberWithoutCountryCode,
-  ] = useSessionStorage<string | undefined>("phoneNumberWithoutCountryCode", "");
-  const [password, setPassword, removePassword] = useSessionStorage<string | undefined>(
+  ] = useLocalStorage<string | undefined>("phoneNumberWithoutCountryCode", "");
+  const [password, setPassword, removePassword] = useLocalStorage<string | undefined>(
     "password",
     ""
   );
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
-  const [profileImage, setProfileImage] = useSessionStorage<string | unknown>(
+  const [profileImage, setProfileImage] = useLocalStorage<string | unknown>(
     "profileImage",
     ""
   );
-  const [userCity, setUserCity, removeUserCity] = useSessionStorage<string | undefined>(
+  const [userCity, setUserCity, removeUserCity] = useLocalStorage<string | undefined>(
     "city",
     ""
   );
-  const [userState, setUserState, removeUserState] = useSessionStorage<
-    string | undefined
-  >("state", "");
-  const [userCountry, setUserCountry, removeUserCountry] = useSessionStorage<
+  const [userState, setUserState, removeUserState] = useLocalStorage<string | undefined>(
+    "state",
+    ""
+  );
+  const [userCountry, setUserCountry, removeUserCountry] = useLocalStorage<
     string | undefined
   >("country", "");
-  const [facebook, setFacebook, removeFacebook] = useSessionStorage<string | undefined>(
+  const [facebook, setFacebook, removeFacebook] = useLocalStorage<string | undefined>(
     "facebook",
     ""
   );
-  const [instagram, setInstagram, removeInstagram] = useSessionStorage<
-    string | undefined
-  >("instagram", "");
-  const [x, setX, removeX] = useSessionStorage<string | undefined>("x", "");
-  const [userAbout, setUserAbout, removeUserAbout] = useSessionStorage<
-    string | undefined
-  >("userAbout", "");
-  const [whoCanAddUserAsOrganizer, setWhoCanAddUserAsOrganizer] = useSessionStorage<
+  const [instagram, setInstagram, removeInstagram] = useLocalStorage<string | undefined>(
+    "instagram",
+    ""
+  );
+  const [x, setX, removeX] = useLocalStorage<string | undefined>("x", "");
+  const [userAbout, setUserAbout, removeUserAbout] = useLocalStorage<string | undefined>(
+    "userAbout",
+    ""
+  );
+  const [whoCanAddUserAsOrganizer, setWhoCanAddUserAsOrganizer] = useLocalStorage<
     "anyone" | "friends" | "nobody" | undefined
   >("whoCanAddUserAsOrganizer", "anyone");
-  const [whoCanInviteUser, setWhoCanInviteUser] = useSessionStorage<
+  const [whoCanInviteUser, setWhoCanInviteUser] = useLocalStorage<
     "anyone" | "friends" | "nobody" | undefined
   >("whoCanInviteUser", "anyone");
-  const [profileVisibleTo, setProfileVisibleTo] = useSessionStorage<
+  const [profileVisibleTo, setProfileVisibleTo] = useLocalStorage<
     "anyone" | "friends" | "friends of friends" | undefined
   >("profileVisibleTo", "anyone");
+  /////////////////////////////////////////////////////////////////////////////////
 
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
   const [showPasswordCriteria, setShowPasswordCriteria] = useState<boolean>(false);
@@ -137,7 +135,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
-  const [currentOtherUser, setCurrentOtherUser] = useSessionStorage<TUser | null>(
+  const [currentOtherUser, setCurrentOtherUser] = useLocalStorage<TUser | null>(
     "currentOtherUser",
     null
   );
@@ -1167,9 +1165,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = (): void => {
     setUserCreatedAccount(null);
-    removeCurrentUser();
     resetLoginOrSignupFormFieldsAndErrors();
     setProfileImage("");
+    localStorage.clear();
   };
 
   const userContextValues: TUserContext = {
@@ -1286,7 +1284,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     allUsers,
     currentUser,
     setCurrentUser,
-    removeCurrentUser,
     userCreatedAccount,
     setUserCreatedAccount,
   };
