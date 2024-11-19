@@ -18,6 +18,7 @@ import EditEventPage from "./Components/Pages/EditEventPage/EditEventPage";
 import TwoOptionsInterface from "./Components/Elements/TwoOptionsInterface/TwoOptionsInterface";
 import LoadingModal from "./Components/Elements/LoadingModal/LoadingModal";
 import FriendRequests from "./Components/Pages/FriendRequests/FriendRequests";
+import OtherUserProfile from "./Components/Pages/OtherUserProfile/OtherUserProfile";
 import { useEventContext } from "./Hooks/useEventContext";
 
 function App() {
@@ -108,6 +109,7 @@ function App() {
         <Route path="/:username/events" element={<UsersEvents />} />
         <Route path="/:username/friend-requests" element={<FriendRequests />} />
         <Route path="/:username" element={<UserHomepage />} />
+        <Route path="/users/:username" element={<OtherUserProfile />} />
         <Route
           path="/find-palz"
           element={<DisplayedCardsPage usedFor="potential-friends" />}

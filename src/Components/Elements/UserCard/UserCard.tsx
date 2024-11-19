@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import TwoOptionsInterface from "../TwoOptionsInterface/TwoOptionsInterface";
+import { Link } from "react-router-dom";
 
 const UserCard = ({ user }: { user: TUser }) => {
   const { currentUser, allUsers } = useUserContext();
@@ -238,7 +239,14 @@ const UserCard = ({ user }: { user: TUser }) => {
           >
             {buttonOneText}
           </button>
-          <button disabled={buttonsAreDisabled}>View Profile</button>
+          <Link target="_blank" to={`/users/${user.username}`}>
+            <button
+              onClick={() => setCurrentOtherUser(user)}
+              disabled={buttonsAreDisabled}
+            >
+              View Profile
+            </button>
+          </Link>
         </div>
       </div>
     </>
