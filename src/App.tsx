@@ -6,7 +6,13 @@ import Sidebar from "./Components/Elements/Sidebar/Sidebar";
 import UserHomepage from "./Components/Pages/UserHomepage/UserHomepage";
 import { useMainContext } from "./Hooks/useMainContext";
 import { useUserContext } from "./Hooks/useUserContext";
-import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  useNavigate,
+  useLocation,
+  useBeforeUnload,
+} from "react-router-dom";
 import Error404 from "./Components/Pages/Error404/Error404";
 import NavBar from "./Components/Elements/NavBar/NavBar";
 import UserSettings from "./Components/Pages/UserSettings/UserSettings";
@@ -20,8 +26,13 @@ import LoadingModal from "./Components/Elements/LoadingModal/LoadingModal";
 import FriendRequests from "./Components/Pages/FriendRequests/FriendRequests";
 import OtherUserProfile from "./Components/Pages/OtherUserProfile/OtherUserProfile";
 import { useEventContext } from "./Hooks/useEventContext";
+import useLocalStorage from "use-local-storage";
 
 function App() {
+  const [sessionCount, setSessionCount] = useLocalStorage<number | null>(
+    "sessionCount",
+    null
+  );
   const { theme, showWelcomeMessage, imageIsUploading, imageIsDeleting, showSidebar } =
     useMainContext();
   const {
@@ -31,6 +42,7 @@ function App() {
     setShowUpdateProfileImageInterface,
     removeProfileImage,
     accountDeletionInProgress,
+    logout,
   } = useUserContext();
   const {
     currentEvent,
@@ -41,6 +53,26 @@ function App() {
 
   const navigation = useNavigate();
   const currentURL = useLocation().pathname;
+
+  useEffect(() => {
+    if (sessionCount === null) {
+      setSessionCount(1);
+    } else {
+      setSessionCount(sessionCount + 1);
+    }
+  }, []);
+
+  useBeforeUnload(() => {
+    setSessionCount(sessionCount && sessionCount - 1);
+    if (sessionCount !== null) {
+      if (sessionCount - 1 === 0) {
+        logout();
+        localStorage.setItem("sessionCount", "0");
+      } else {
+        setSessionCount(sessionCount - 1);
+      }
+    }
+  });
 
   theme === "dark"
     ? (document.body.style.backgroundColor = "#242424")
