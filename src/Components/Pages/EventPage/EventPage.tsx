@@ -13,7 +13,8 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 
 const EventPage = () => {
   const { showSidebar, isLoading, setShowSidebar } = useMainContext();
-  const { allUsers, currentUser, userCreatedAccount } = useUserContext();
+  const { allUsers, currentUser, userCreatedAccount, setCurrentOtherUser } =
+    useUserContext();
   const {
     userRSVPdOptimistic,
     handleAddUserRSVP,
@@ -188,12 +189,18 @@ const EventPage = () => {
                 <p>Organizer: </p>
               )}
               {organizers.map((organizer) => (
-                <Tab
+                <Link
                   key={organizer._id}
-                  info={organizer}
-                  randomColor={randomColor}
-                  userMayNotDelete={true}
-                />
+                  target="_blank"
+                  to={`/users/${organizer.username}`}
+                  onClick={() => setCurrentOtherUser(organizer)}
+                >
+                  <Tab
+                    info={organizer}
+                    randomColor={randomColor}
+                    userMayNotDelete={true}
+                  />
+                </Link>
               ))}
             </div>
             <div>
