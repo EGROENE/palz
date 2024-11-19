@@ -1,6 +1,5 @@
 import styles from "./styles.module.css";
 import { useState, useEffect, useRef } from "react";
-import { useSessionStorage } from "usehooks-ts";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
@@ -139,8 +138,7 @@ const EventForm = ({
   const [maxParticipants, setMaxParticipants] = useState<number | null>(
     event ? event.maxParticipants : null
   );
-  const [eventImages, setEventImages] = useSessionStorage<string[] | undefined>(
-    "eventImages",
+  const [eventImages, setEventImages] = useState<string[] | undefined>(
     event ? event.images : []
   );
   const [publicity, setPublicity] = useState<"public" | "private">(
