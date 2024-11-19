@@ -74,7 +74,7 @@ const patchUpdatedUserInfo = (
 };
 
 const updateUserProfileImage = (
-  user: TUser | undefined,
+  user: TUser | null,
   newImage: string | unknown
 ): Promise<Response> => {
   const myHeaders = new Headers();
@@ -90,7 +90,7 @@ const updateUserProfileImage = (
   });
 };
 
-const deletePhoneNumber = (user: TUser | undefined): Promise<Response> => {
+const deletePhoneNumber = (user: TUser | null): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -108,7 +108,7 @@ const deletePhoneNumber = (user: TUser | undefined): Promise<Response> => {
   });
 };
 
-const deleteLocation = (user: TUser | undefined): Promise<Response> => {
+const deleteLocation = (user: TUser | null): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -126,7 +126,7 @@ const deleteLocation = (user: TUser | undefined): Promise<Response> => {
   });
 };
 
-const deleteUserAbout = (user: TUser | undefined): Promise<Response> => {
+const deleteUserAbout = (user: TUser | null): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -284,7 +284,7 @@ const deleteUser = (userID: string | undefined): Promise<Response> => {
   });
 };
 
-const addUserRSVP = (user: TUser | undefined, event: TEvent): Promise<Response> => {
+const addUserRSVP = (user: TUser | null, event: TEvent): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -312,7 +312,7 @@ const addUserRSVP = (user: TUser | undefined, event: TEvent): Promise<Response> 
 };
 
 const addToDisinterestedUsers = (
-  user: TUser | undefined,
+  user: TUser | null,
   event: TEvent
 ): Promise<Response> => {
   var myHeaders = new Headers();
