@@ -55,6 +55,7 @@ const UserListModal = ({
             buttonTwoHandler={handleDeletion}
             buttonTwoHandlerParams={[currentEvent, user]}
             buttonTwoLink={null}
+            objectLink={`/users/${user?.username}`}
           />
         ))}
       </div>
