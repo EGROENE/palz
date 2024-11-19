@@ -300,7 +300,6 @@ export type TUserContext = {
   allUsers: TUser[];
   currentUser: TUser | undefined;
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser | undefined>>;
-  removeCurrentUser: () => void;
 };
 
 export type TEventContext = {
