@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useState, useEffect } from "react";
 import { TUserContext, TUser, TUserValuesToUpdate } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
-import { useLocalStorage } from "usehooks-ts";
+import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
 import Requests from "../requests";
 import toast from "react-hot-toast";
@@ -14,9 +14,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     useMainContext();
 
   const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
-  const [currentUser, setCurrentUser] = useLocalStorage<TUser | undefined>(
+  const [currentUser, setCurrentUser] = useLocalStorage<TUser | null>(
     "currentUser",
-    undefined
+    null
   );
   const [userCreatedAccount, setUserCreatedAccount] = useLocalStorage<boolean | null>(
     "userCreatedAccount",
@@ -35,72 +35,68 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
 
   /* Some values on currentUser are kept separately from currentUser. These will be compared to values on currentUser when user changes these in Settings to render certain form UI. User can reset these to original values. */
-  const [firstName, setFirstName, removeFirstName] = useLocalStorage<string | undefined>(
-    "firstName",
-    ""
-  );
-  const [lastName, setLastName, removeLastName] = useLocalStorage<string | undefined>(
+  const [firstName, setFirstName, removeFirstName] = useSessionStorage<
+    string | undefined
+  >("firstName", "");
+  console.log(firstName);
+  const [lastName, setLastName, removeLastName] = useSessionStorage<string | undefined>(
     "lastName",
     ""
   );
-  const [username, setUsername, removeUsername] = useLocalStorage<string | undefined>(
+  const [username, setUsername, removeUsername] = useSessionStorage<string | undefined>(
     "username",
     ""
   );
-  const [emailAddress, setEmailAddress, removeEmailAddress] = useLocalStorage<
+  const [emailAddress, setEmailAddress, removeEmailAddress] = useSessionStorage<
     string | undefined
   >("emailAddress", "");
-  const [phoneCountry, setPhoneCountry, removePhoneCountry] = useLocalStorage<
+  const [phoneCountry, setPhoneCountry, removePhoneCountry] = useSessionStorage<
     string | undefined
   >("phoneCountry", "");
-  const [phoneCountryCode, setPhoneCountryCode, removePhoneCountryCode] = useLocalStorage<
-    string | undefined
-  >("phoneCountryCode", "");
+  const [phoneCountryCode, setPhoneCountryCode, removePhoneCountryCode] =
+    useSessionStorage<string | undefined>("phoneCountryCode", "");
   const [
     phoneNumberWithoutCountryCode,
     setPhoneNumberWithoutCountryCode,
     removePhoneNumberWithoutCountryCode,
-  ] = useLocalStorage<string | undefined>("phoneNumberWithoutCountryCode", "");
-  const [password, setPassword, removePassword] = useLocalStorage<string | undefined>(
+  ] = useSessionStorage<string | undefined>("phoneNumberWithoutCountryCode", "");
+  const [password, setPassword, removePassword] = useSessionStorage<string | undefined>(
     "password",
     ""
   );
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
-  const [profileImage, setProfileImage] = useLocalStorage<string | unknown>(
+  const [profileImage, setProfileImage] = useSessionStorage<string | unknown>(
     "profileImage",
-    ""
+    currentUser?.profileImage !== "" ? currentUser?.profileImage : ""
   );
-  const [userCity, setUserCity, removeUserCity] = useLocalStorage<string | undefined>(
+  const [userCity, setUserCity, removeUserCity] = useSessionStorage<string | undefined>(
     "city",
     ""
   );
-  const [userState, setUserState, removeUserState] = useLocalStorage<string | undefined>(
-    "state",
-    ""
-  );
-  const [userCountry, setUserCountry, removeUserCountry] = useLocalStorage<
+  const [userState, setUserState, removeUserState] = useSessionStorage<
+    string | undefined
+  >("state", "");
+  const [userCountry, setUserCountry, removeUserCountry] = useSessionStorage<
     string | undefined
   >("country", "");
-  const [facebook, setFacebook, removeFacebook] = useLocalStorage<string | undefined>(
+  const [facebook, setFacebook, removeFacebook] = useSessionStorage<string | undefined>(
     "facebook",
     ""
   );
-  const [instagram, setInstagram, removeInstagram] = useLocalStorage<string | undefined>(
-    "instagram",
-    ""
-  );
-  const [x, setX, removeX] = useLocalStorage<string | undefined>("x", "");
-  const [userAbout, setUserAbout, removeUserAbout] = useLocalStorage<string | undefined>(
-    "userAbout",
-    ""
-  );
-  const [whoCanAddUserAsOrganizer, setWhoCanAddUserAsOrganizer] = useLocalStorage<
+  const [instagram, setInstagram, removeInstagram] = useSessionStorage<
+    string | undefined
+  >("instagram", "");
+  const [x, setX, removeX] = useSessionStorage<string | undefined>("x", "");
+  const [userAbout, setUserAbout, removeUserAbout] = useSessionStorage<
+    string | undefined
+  >("userAbout", "");
+  const [whoCanAddUserAsOrganizer, setWhoCanAddUserAsOrganizer] = useSessionStorage<
     "anyone" | "friends" | "nobody" | undefined
   >("whoCanAddUserAsOrganizer", "anyone");
-  const [whoCanInviteUser, setWhoCanInviteUser] = useLocalStorage<
+  const [whoCanInviteUser, setWhoCanInviteUser] = useSessionStorage<
     "anyone" | "friends" | "nobody" | undefined
   >("whoCanInviteUser", "anyone");
-  const [profileVisibleTo, setProfileVisibleTo] = useLocalStorage<
+  const [profileVisibleTo, setProfileVisibleTo] = useSessionStorage<
     "anyone" | "friends" | "friends of friends" | undefined
   >("profileVisibleTo", "anyone");
   /////////////////////////////////////////////////////////////////////////////////
@@ -245,7 +241,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       !areNoSignupFormErrors &&
       formType === "signup"
     ) {
-      setCurrentUser(undefined);
+      setCurrentUser(null);
     }
 
     if (formType === "signup") {
@@ -292,7 +288,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       !areNoSignupFormErrors &&
       formType === "signup"
     ) {
-      setCurrentUser(undefined);
+      setCurrentUser(null);
     }
 
     /* Get most-current version of allUsers (in case another user has changed their username, so username user inputs may become available or in available. Fetching allUsers onChange of username field ensures most-current data on users exists. This is also checked onSubmit of EditUserInfoForm.) */
@@ -341,7 +337,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       !areNoSignupFormErrors &&
       formType === "signup"
     ) {
-      setCurrentUser(undefined);
+      setCurrentUser(null);
     }
 
     /* Get most-current version of allUsers (in case another user has changed their email, so email user inputs may become available or in available. Fetching allUsers onChange of email field ensures most-current data on users exists. This is also checked onSubmit of EditUserInfoForm.) */
@@ -466,7 +462,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     } else if (formType === "signup") {
       allSignupFormFieldsFilled && areNoSignupFormErrors
         ? setCurrentUser(userData)
-        : setCurrentUser(undefined);
+        : setCurrentUser(null);
 
       if (inputPWNoWhitespaces !== "") {
         // If pw isn't/is valid...
@@ -519,7 +515,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       ) {
         setCurrentUser(userData);
       } else {
-        setCurrentUser(undefined);
+        setCurrentUser(null);
       }
     }
 
