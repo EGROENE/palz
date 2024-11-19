@@ -145,11 +145,9 @@ const UserCard = ({ user }: { user: TUser }) => {
     currentUser?.friends.includes(user._id) &&
     user.friends.includes(currentUser._id);
 
-  const currentUserHasSentUserAFriendRequest =
-    userSentFriendRequestActual && userSentFriendRequestOptimistic;
+  const currentUserHasSentUserAFriendRequest = userSentFriendRequestActual;
 
-  const userHasSentCurrentUserAFriendRequest =
-    userReceivedFriendRequestActual && userReceivedFriendRequestOptimistic;
+  const userHasSentCurrentUserAFriendRequest = userReceivedFriendRequestActual;
 
   const noConnectionBetweenUserAndCurrentUser =
     !currentUserAndUserAreFriends &&
