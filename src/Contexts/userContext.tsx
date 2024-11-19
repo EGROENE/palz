@@ -1162,7 +1162,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setUserCreatedAccount(null);
     resetLoginOrSignupFormFieldsAndErrors();
     setProfileImage("");
-    localStorage.clear();
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("userCreatedAccount");
+    localStorage.removeItem("currentOtherUser");
   };
 
   const userContextValues: TUserContext = {
