@@ -15,6 +15,7 @@ const ListedUser = ({
   buttonTwoText,
   buttonTwoIsDisabled,
   buttonTwoLink,
+  objectLink,
 }: {
   user?: TUser;
   randomColor?: string;
@@ -28,6 +29,7 @@ const ListedUser = ({
   buttonTwoIsDisabled: boolean | null;
   buttonOneLink: string | null;
   buttonTwoLink: string | null;
+  objectLink?: string | undefined;
 }) => {
   return (
     <div key={user?._id} className={styles.listedUser}>
@@ -36,10 +38,19 @@ const ListedUser = ({
         src={`${user?.profileImage}`}
         alt="profile pic"
       />
-      <div className={styles.listedUserTextsContainer}>
-        <p>{`${user?.firstName} ${user?.lastName}`}</p>
-        <p>{user?.username}</p>
-      </div>
+      {objectLink ? (
+        <Link target="_blank" to={objectLink}>
+          <div className={styles.listedUserTextsContainer}>
+            <p>{`${user?.firstName} ${user?.lastName}`}</p>
+            <p>{user?.username}</p>
+          </div>
+        </Link>
+      ) : (
+        <div className={styles.listedUserTextsContainer}>
+          <p>{`${user?.firstName} ${user?.lastName}`}</p>
+          <p>{user?.username}</p>
+        </div>
+      )}
       {buttonOneLink !== null ? (
         <Link target="_blank" to={buttonOneLink}>
           <button
