@@ -38,7 +38,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [firstName, setFirstName, removeFirstName] = useSessionStorage<
     string | undefined
   >("firstName", "");
-  console.log(firstName);
   const [lastName, setLastName, removeLastName] = useSessionStorage<string | undefined>(
     "lastName",
     ""
