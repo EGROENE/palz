@@ -79,6 +79,10 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  whoCanMessage: {
+    type: String,
+    required: true,
+  },
   subscriptionType: {
     type: String,
     required: false,
@@ -96,6 +100,10 @@ const userSchema = new Schema({
     required: true,
   },
   friends: {
+    type: Array,
+    required: true,
+  },
+  blockedUsers: {
     type: Array,
     required: true,
   },

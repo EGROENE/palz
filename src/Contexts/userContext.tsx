@@ -98,6 +98,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [profileVisibleTo, setProfileVisibleTo] = useSessionStorage<
     "anyone" | "friends" | "friends of friends" | undefined
   >("profileVisibleTo", "anyone");
+  const [whoCanMessage, setWhoCanMessage] = useSessionStorage<
+    "anyone" | "friends" | "friends of friends" | undefined
+  >("whoCanMessage", "anyone");
   /////////////////////////////////////////////////////////////////////////////////
 
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
@@ -170,8 +173,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     whoCanAddUserAsOrganizer: "anyone",
     whoCanInviteUser: "anyone",
     profileVisibleTo: "anyone",
+    whoCanMessage: "anyone",
     friendRequestsReceived: [],
     friendRequestsSent: [],
+    blockedUsers: [],
   };
 
   // Called when user switches b/t login & signup forms & when user logs out
@@ -1087,6 +1092,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     ...(profileVisibleTo !== currentUser?.profileVisibleTo && {
       profileVisibleTo: profileVisibleTo,
     }),
+    ...(whoCanMessage !== currentUser?.whoCanMessage && {
+      whoCanMessage: whoCanMessage,
+    }),
   };
 
   const handleSignupOrLoginFormSubmission = (
@@ -1168,6 +1176,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    whoCanMessage,
+    setWhoCanMessage,
     currentOtherUser,
     setCurrentOtherUser,
     buttonsAreDisabled,

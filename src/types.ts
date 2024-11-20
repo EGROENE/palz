@@ -34,6 +34,8 @@ export type TUser = {
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
   friendRequestsReceived: string[];
   friendRequestsSent: string[];
+  blockedUsers: string[];
+  whoCanMessage: "friends" | "anyone" | "nobody" | undefined;
 };
 
 export type TEvent = {
@@ -82,6 +84,7 @@ export type TUserValuesToUpdate = {
   whoCanAddUserAsOrganizer?: "anyone" | "friends" | "nobody" | undefined;
   whoCanInviteUser?: "anyone" | "friends" | "nobody" | undefined;
   profileVisibleTo?: "anyone" | "friends" | "friends of friends" | undefined;
+  whoCanMessage?: "anyone" | "friends" | "friends of friends" | undefined;
 };
 
 export type TEventValuesToUpdate = {
@@ -292,6 +295,10 @@ export type TUserContext = {
   >;
   profileVisibleTo: "anyone" | "friends" | "friends of friends" | undefined;
   setProfileVisibleTo: React.Dispatch<
+    React.SetStateAction<"anyone" | "friends" | "friends of friends" | undefined>
+  >;
+  whoCanMessage: "anyone" | "friends" | "friends of friends" | undefined;
+  setWhoCanMessage: React.Dispatch<
     React.SetStateAction<"anyone" | "friends" | "friends of friends" | undefined>
   >;
   fetchAllUsers: () => Promise<void>;
