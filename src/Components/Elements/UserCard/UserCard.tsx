@@ -237,7 +237,7 @@ const UserCard = ({ user }: { user: TUser }) => {
           >
             {buttonOneText}
           </button>
-          <Link target="_blank" to={`/users/${user.username}`}>
+          <Link to={`/users/${user.username}`}>
             <button
               onClick={() => setCurrentOtherUser(user)}
               disabled={buttonsAreDisabled}

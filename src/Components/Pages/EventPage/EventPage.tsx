@@ -191,7 +191,6 @@ const EventPage = () => {
               {organizers.map((organizer) => (
                 <Link
                   key={organizer._id}
-                  target="_blank"
                   to={`/users/${organizer.username}`}
                   onClick={() => setCurrentOtherUser(organizer)}
                 >

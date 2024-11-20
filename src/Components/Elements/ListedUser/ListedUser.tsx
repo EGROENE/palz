@@ -39,7 +39,7 @@ const ListedUser = ({
         alt="profile pic"
       />
       {objectLink ? (
-        <Link target="_blank" to={objectLink}>
+        <Link to={objectLink}>
           <div className={styles.listedUserTextsContainer}>
             <p>{`${user?.firstName} ${user?.lastName}`}</p>
             <p>{user?.username}</p>
@@ -52,7 +52,7 @@ const ListedUser = ({
         </div>
       )}
       {buttonOneLink !== null ? (
-        <Link target="_blank" to={buttonOneLink}>
+        <Link to={buttonOneLink}>
           <button
             disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
             onClick={
