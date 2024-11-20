@@ -35,7 +35,7 @@ export type TUser = {
   friendRequestsReceived: string[];
   friendRequestsSent: string[];
   blockedUsers: string[];
-  whoCanMessage: "friends" | "anyone" | "nobody" | undefined;
+  whoCanMessage: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
 };
 
 export type TEvent = {
@@ -84,7 +84,7 @@ export type TUserValuesToUpdate = {
   whoCanAddUserAsOrganizer?: "anyone" | "friends" | "nobody" | undefined;
   whoCanInviteUser?: "anyone" | "friends" | "nobody" | undefined;
   profileVisibleTo?: "anyone" | "friends" | "friends of friends" | undefined;
-  whoCanMessage?: "anyone" | "friends" | "friends of friends" | undefined;
+  whoCanMessage?: "anyone" | "friends" | "nobody" | "friends of friends" | undefined;
 };
 
 export type TEventValuesToUpdate = {
@@ -297,9 +297,11 @@ export type TUserContext = {
   setProfileVisibleTo: React.Dispatch<
     React.SetStateAction<"anyone" | "friends" | "friends of friends" | undefined>
   >;
-  whoCanMessage: "anyone" | "friends" | "friends of friends" | undefined;
+  whoCanMessage: "anyone" | "friends" | "nobody" | "friends of friends" | undefined;
   setWhoCanMessage: React.Dispatch<
-    React.SetStateAction<"anyone" | "friends" | "friends of friends" | undefined>
+    React.SetStateAction<
+      "anyone" | "friends" | "friends of friends" | "nobody" | undefined
+    >
   >;
   fetchAllUsers: () => Promise<void>;
   userCreatedAccount: null | boolean;

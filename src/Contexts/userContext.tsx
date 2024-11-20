@@ -99,7 +99,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     "anyone" | "friends" | "friends of friends" | undefined
   >("profileVisibleTo", "anyone");
   const [whoCanMessage, setWhoCanMessage] = useSessionStorage<
-    "anyone" | "friends" | "friends of friends" | undefined
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanMessage", "anyone");
   /////////////////////////////////////////////////////////////////////////////////
 
