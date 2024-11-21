@@ -572,13 +572,15 @@ const removeFromFriendRequestsReceived = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendRequestsArray = recipient?.friendRequestsReceived.filter(
+  /* const updatedFriendRequestsArray = recipient?.friendRequestsReceived.filter(
     (id) => id !== senderID
-  );
+  ); */
 
   const getRaw = () => {
     return JSON.stringify({
-      "friendRequestsReceived": updatedFriendRequestsArray,
+      "friendRequestsReceived": recipient?.friendRequestsReceived.filter(
+        (id) => id !== senderID
+      ),
     });
   };
   const raw = getRaw();
