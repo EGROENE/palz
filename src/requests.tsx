@@ -59,7 +59,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
 };
 
 const patchUpdatedUserInfo = (
-  user: TUser | undefined,
+  user: TUser | null,
   valuesToUpdate: TUserValuesToUpdate
 ): Promise<Response> => {
   const myHeaders = new Headers();
@@ -145,7 +145,7 @@ const deleteUserAbout = (user: TUser | null): Promise<Response> => {
 };
 
 const deleteSocialMedium = (
-  user: TUser | undefined,
+  user: TUser | null,
   medium: "facebook" | "instagram" | "x"
 ): Promise<Response> => {
   var myHeaders = new Headers();
@@ -171,10 +171,7 @@ const deleteSocialMedium = (
   });
 };
 
-const deleteUserInterest = (
-  user: TUser | undefined,
-  interest: string
-): Promise<Response> => {
+const deleteUserInterest = (user: TUser | null, interest: string): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -193,10 +190,7 @@ const deleteUserInterest = (
   });
 };
 
-const addUserInterest = (
-  user: TUser | undefined,
-  interest: string
-): Promise<Response> => {
+const addUserInterest = (user: TUser | null, interest: string): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -343,7 +337,7 @@ const addToDisinterestedUsers = (
   });
 };
 
-const deleteUserRSVP = (user: TUser | undefined, event: TEvent) => {
+const deleteUserRSVP = (user: TUser | null, event: TEvent) => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -464,7 +458,7 @@ const deleteEvent = (event: TEvent | undefined): Promise<Response> => {
   });
 };
 
-const removeInvitee = (event: TEvent, user: TUser | undefined): Promise<Response> => {
+const removeInvitee = (event: TEvent, user: TUser | null): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -485,7 +479,7 @@ const removeInvitee = (event: TEvent, user: TUser | undefined): Promise<Response
 
 const removeOrganizer = (
   event: TEvent | undefined,
-  user: TUser | undefined
+  user: TUser | null
 ): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");

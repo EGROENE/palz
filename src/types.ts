@@ -315,7 +315,7 @@ export type TEventContext = {
   handleRemoveInvitee: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
-    user: TUser | undefined
+    user: TUser | null
   ) => void;
   handleDeclineInvitation: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
