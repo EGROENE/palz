@@ -30,9 +30,25 @@ const FriendRequests = () => {
     (user) => user._id && currentUser.friendRequestsReceived.includes(user._id)
   );
 
-  const usersToWhomCurrentUserSentRequest: TUser[] = allUsers.filter(
+  /* const usersToWhomCurrentUserSentRequest: TUser[] = allUsers.filter(
     (user) => user._id && currentUser.friendRequestsSent.includes(user._id)
+  ); */
+
+  const [usersToWhomCurrentUserSentRequest, setUsersToWhomCurrentUserSentRequest] =
+    useState<TUser[]>(
+      allUsers.filter(
+        (user) => user._id && currentUser.friendRequestsSent.includes(user._id)
+      )
+    );
+  const [displayedSentRequests, setDisplayedSentRequests] = useState<TUser[]>(
+    allUsers.filter(
+      (user) => user._id && currentUser.friendRequestsSent.includes(user._id)
+    )
   );
+
+  useEffect(() => {
+    setDisplayedSentRequests(usersToWhomCurrentUserSentRequest);
+  }, [usersToWhomCurrentUserSentRequest]);
 
   const userHasPendingRequests: boolean =
     currentUser.friendRequestsReceived.length > 0 ||
@@ -79,6 +95,8 @@ const FriendRequests = () => {
     } else {
       setRequestsVisible(null);
     }
+
+    setDisplayedSentRequests(usersToWhomCurrentUserSentRequest);
   }, [allUsers]);
 
   return (
@@ -146,7 +164,7 @@ const FriendRequests = () => {
           </div>
           <div className={styles.friendRequestUsersContainer}>
             {requestsVisible === "sent"
-              ? usersToWhomCurrentUserSentRequest.map((user) => (
+              ? displayedSentRequests.map((user) => (
                   <ListedUser
                     key={user._id}
                     user={user}
@@ -157,7 +175,14 @@ const FriendRequests = () => {
                     buttonOneHandler={() => setCurrentOtherUser(user)}
                     buttonTwoText="Retract"
                     buttonTwoHandler={handleRetractFriendRequest}
-                    buttonTwoHandlerParams={[currentUser, user]}
+                    buttonTwoHandlerParams={[
+                      currentUser,
+                      user,
+                      undefined,
+                      undefined,
+                      usersToWhomCurrentUserSentRequest,
+                      setUsersToWhomCurrentUserSentRequest,
+                    ]}
                     buttonTwoIsDisabled={buttonsAreDisabled}
                     buttonTwoLink={null}
                     objectLink={`/users/${user?.username}`}

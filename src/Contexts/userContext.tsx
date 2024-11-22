@@ -800,19 +800,36 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     sender: TUser,
     recipient: TUser,
     setUserSentFriendRequestOptimistic?: React.Dispatch<React.SetStateAction<boolean>>,
-    setUserSentFriendRequestActual?: React.Dispatch<React.SetStateAction<boolean | null>>
+    setUserSentFriendRequestActual?: React.Dispatch<React.SetStateAction<boolean | null>>,
+    usersToWhomCurrentUserSentRequest?: TUser[],
+    setUsersToWhomCurrentUserSentRequest?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
     e.preventDefault();
+
     setButtonsAreDisabled(true);
+
     if (setUserSentFriendRequestOptimistic) {
       setUserSentFriendRequestOptimistic(false);
     }
+
+    if (setUsersToWhomCurrentUserSentRequest && usersToWhomCurrentUserSentRequest) {
+      setUsersToWhomCurrentUserSentRequest(
+        usersToWhomCurrentUserSentRequest.filter((user) => user._id !== recipient._id)
+      );
+    }
+
     if (sender && sender._id) {
       Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
         .then((response) => {
           if (!response.ok) {
             if (setUserSentFriendRequestOptimistic) {
               setUserSentFriendRequestOptimistic(true);
+              if (
+                setUsersToWhomCurrentUserSentRequest &&
+                usersToWhomCurrentUserSentRequest
+              ) {
+                setUsersToWhomCurrentUserSentRequest(usersToWhomCurrentUserSentRequest);
+              }
             }
             toast.error("Could not retract request. Please try again.");
           } else {
@@ -822,6 +839,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   if (!response.ok) {
                     if (setUserSentFriendRequestOptimistic) {
                       setUserSentFriendRequestOptimistic(true);
+                    }
+                    if (
+                      setUsersToWhomCurrentUserSentRequest &&
+                      usersToWhomCurrentUserSentRequest
+                    ) {
+                      setUsersToWhomCurrentUserSentRequest(
+                        usersToWhomCurrentUserSentRequest
+                      );
                     }
                     toast.error("Could not retract request. Please try again.");
                   } else {
