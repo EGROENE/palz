@@ -152,13 +152,13 @@ const FriendRequests = () => {
                     user={user}
                     randomColor={randomColor}
                     buttonOneText="See Profile"
-                    buttonOneIsDisabled={null}
+                    buttonOneIsDisabled={buttonsAreDisabled}
                     buttonOneLink={`/users/${user?.username}`}
                     buttonOneHandler={() => setCurrentOtherUser(user)}
                     buttonTwoText="Retract"
                     buttonTwoHandler={handleRetractFriendRequest}
                     buttonTwoHandlerParams={[currentUser, user]}
-                    buttonTwoIsDisabled={null}
+                    buttonTwoIsDisabled={buttonsAreDisabled}
                     buttonTwoLink={null}
                     objectLink={`/users/${user?.username}`}
                   />
