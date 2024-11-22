@@ -142,7 +142,7 @@ const OtherUserProfile = () => {
         type: "add friend",
         buttonText: (
           <>
-            <i className="fas fa-user-plus"></i>Add Friend
+            <i className="fas fa-user-plus"></i> Add Friend
           </>
         ),
         handler: handleSendFriendRequest,
@@ -164,7 +164,7 @@ const OtherUserProfile = () => {
     type: "unfriend",
     buttonText: (
       <>
-        <i className="fas fa-user-minus"></i>Unfriend
+        <i className="fas fa-user-minus"></i> Unfriend
       </>
     ),
     handler: undefined,
