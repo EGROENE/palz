@@ -26,18 +26,6 @@ const OtherUserProfile = () => {
   const { username } = useParams();
   const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
 
-  const [userSentFriendRequestOptimistic, setUserSentFriendRequestOptimistic] =
-    useState<boolean>(false);
-  const [userReceivedFriendRequestOptimistic, setUserReceivedFriendRequestOptimistic] =
-    useState<boolean>(false);
-
-  const [userSentFriendRequestActual, setUserSentFriendRequestActual] = useState<
-    boolean | null
-  >(null);
-  const [userReceivedFriendRequestActual, setUserReceivedFriendRequestActual] = useState<
-    boolean | null
-  >(null);
-
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
     // Set color of event card's border randomly:
@@ -121,7 +109,7 @@ const OtherUserProfile = () => {
           type: "retract request",
           buttonText: (
             <>
-              <i className="fas fa-user-minus"></i>Retract Request
+              <i className="fas fa-user-minus"></i> Retract Request
             </>
           ),
           handler: handleRetractFriendRequest,
