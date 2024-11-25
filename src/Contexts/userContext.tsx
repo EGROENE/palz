@@ -968,6 +968,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     e.preventDefault();
 
+    setButtonsAreDisabled(true);
+
     if (showFriendRequestResponseOptions) {
       setShowFriendRequestResponseOptions(false);
     }
