@@ -157,12 +157,16 @@ export type TUserContext = {
   handleAcceptFriendRequest: (
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
-    receiver: TUser
+    receiver: TUser,
+    usersWhoSentCurrentUserARequest?: TUser[],
+    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>
   ) => void;
   handleRejectFriendRequest: (
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
-    receiver: TUser
+    receiver: TUser,
+    usersWhoSentCurrentUserARequest?: TUser[],
+    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>
   ) => void;
   accountDeletionInProgress: boolean;
   setAccountDeletionInProgress: React.Dispatch<React.SetStateAction<boolean>>;

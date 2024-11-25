@@ -868,128 +868,144 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAcceptFriendRequest = (
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
-    receiver: TUser
+    receiver: TUser,
+    usersWhoSentCurrentUserARequest?: TUser[],
+    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
     e.preventDefault();
-    const addSenderIDToReceiverFriends =
-      sender && sender._id
-        ? Requests.addFriendToFriendsArray(receiver, sender._id)
-        : undefined;
-
-    const removeSenderIDFromReceiverFriendRequestsReceived =
-      sender && sender._id
-        ? Requests.removeFromFriendRequestsReceived(sender._id, receiver)
-        : undefined;
-
-    const addReceiverIDToSenderFriends =
-      sender && sender._id && receiver && receiver._id
-        ? Requests.addFriendToFriendsArray(sender, receiver._id)
-        : undefined;
-
-    const removeReceiverIDFromSenderFriendRequestsSent =
-      receiver && receiver._id
-        ? Requests.removeFromFriendRequestsSent(sender, receiver._id)
-        : undefined;
-
-    const allRequestsAreDefined =
-      addSenderIDToReceiverFriends &&
-      removeSenderIDFromReceiverFriendRequestsReceived &&
-      addReceiverIDToSenderFriends &&
-      removeReceiverIDFromSenderFriendRequestsSent;
-
-    const promisesToAwait = allRequestsAreDefined
-      ? [
-          addSenderIDToReceiverFriends,
-          removeSenderIDFromReceiverFriendRequestsReceived,
-          addReceiverIDToSenderFriends,
-          removeReceiverIDFromSenderFriendRequestsSent,
-        ]
-      : undefined;
-
-    let requestToAcceptFriendRequestIsOK = true;
+    setButtonsAreDisabled(true);
 
     if (showFriendRequestResponseOptions) {
       setShowFriendRequestResponseOptions(false);
     }
 
-    if (promisesToAwait) {
-      setButtonsAreDisabled(true);
-      Promise.all(promisesToAwait)
-        .then(() => {
-          for (const promise of promisesToAwait) {
-            promise.then((response) => {
-              if (!response.ok) {
-                requestToAcceptFriendRequestIsOK = false;
-              }
-            });
-          }
-        })
-        .then(() => {
-          if (!requestToAcceptFriendRequestIsOK) {
+    if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
+      setUsersWhoSentCurrentUserARequest(
+        usersWhoSentCurrentUserARequest.filter((user) => user._id !== sender._id)
+      );
+    }
+
+    if (sender && sender._id) {
+      Requests.addFriendToFriendsArray(receiver, sender._id).then((response) => {
+        if (!response.ok) {
+          if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
+            setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
             toast.error("Could not accept friend request. Please try again.");
-          } else {
-            toast.success(
-              `You are now friends with ${sender.firstName} ${sender.lastName}!`
-            );
           }
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setButtonsAreDisabled(false));
+        } else {
+          if (sender && sender._id) {
+            Requests.removeFromFriendRequestsReceived(sender._id, receiver)
+              .then((response) => {
+                if (!response.ok) {
+                  if (
+                    setUsersWhoSentCurrentUserARequest &&
+                    usersWhoSentCurrentUserARequest
+                  ) {
+                    setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
+                    toast.error("Could not accept friend request. Please try again.");
+                  }
+                } else {
+                  if (receiver && receiver._id) {
+                    Requests.addFriendToFriendsArray(sender, receiver._id).then(
+                      (response) => {
+                        if (!response.ok) {
+                          if (
+                            setUsersWhoSentCurrentUserARequest &&
+                            usersWhoSentCurrentUserARequest
+                          ) {
+                            setUsersWhoSentCurrentUserARequest(
+                              usersWhoSentCurrentUserARequest
+                            );
+                            toast.error(
+                              "Could not accept friend request. Please try again."
+                            );
+                          }
+                        } else {
+                          if (receiver && receiver._id) {
+                            Requests.removeFromFriendRequestsSent(
+                              sender,
+                              receiver._id
+                            ).then((response) => {
+                              if (!response.ok) {
+                                if (
+                                  setUsersWhoSentCurrentUserARequest &&
+                                  usersWhoSentCurrentUserARequest
+                                ) {
+                                  setUsersWhoSentCurrentUserARequest(
+                                    usersWhoSentCurrentUserARequest
+                                  );
+                                  toast.error(
+                                    "Could not accept friend request. Please try again."
+                                  );
+                                }
+                              } else {
+                                toast.success(
+                                  `You are now friends with ${sender.firstName} ${sender.lastName}!`
+                                );
+                              }
+                            });
+                          }
+                        }
+                      }
+                    );
+                  }
+                }
+              })
+              .catch((error) => console.log(error))
+              .finally(() => setButtonsAreDisabled(false));
+          }
+        }
+      });
     }
   };
 
   const handleRejectFriendRequest = (
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
-    receiver: TUser
+    receiver: TUser,
+    usersWhoSentCurrentUserARequest?: TUser[],
+    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>
   ) => {
     e.preventDefault();
-    const removeSenderIDFromReceiverFriendRequestsReceived =
-      sender && sender._id
-        ? Requests.removeFromFriendRequestsReceived(sender._id, receiver)
-        : undefined;
-
-    const removeReceiverIDFromSenderFriendRequestsSent =
-      receiver && receiver._id
-        ? Requests.removeFromFriendRequestsSent(sender, receiver._id)
-        : undefined;
-
-    const allRequestsAreDefined =
-      removeSenderIDFromReceiverFriendRequestsReceived &&
-      removeReceiverIDFromSenderFriendRequestsSent;
-
-    const promisesToAwait = allRequestsAreDefined
-      ? [
-          removeSenderIDFromReceiverFriendRequestsReceived,
-          removeReceiverIDFromSenderFriendRequestsSent,
-        ]
-      : undefined;
-
-    let requestToAcceptFriendRequestIsOK = true;
 
     if (showFriendRequestResponseOptions) {
       setShowFriendRequestResponseOptions(false);
     }
 
-    if (promisesToAwait) {
-      setButtonsAreDisabled(true);
-      Promise.all(promisesToAwait)
-        .then(() => {
-          for (const promise of promisesToAwait) {
-            promise.then((response) => {
-              if (!response.ok) {
-                requestToAcceptFriendRequestIsOK = false;
-              }
-            });
-          }
-        })
-        .then(() => {
-          if (!requestToAcceptFriendRequestIsOK) {
+    if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
+      setUsersWhoSentCurrentUserARequest(
+        usersWhoSentCurrentUserARequest.filter((user) => user._id !== sender._id)
+      );
+    }
+
+    if (sender && sender._id) {
+      Requests.removeFromFriendRequestsReceived(sender._id, receiver)
+        .then((response) => {
+          if (!response.ok) {
             toast.error("Could not reject friend request. Please try again.");
+            if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
+              setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
+            }
           } else {
-            toast.error(
-              `Rejected friend request from ${sender.firstName} ${sender.lastName}.`
-            );
+            if (receiver && receiver._id) {
+              Requests.removeFromFriendRequestsSent(sender, receiver._id).then(
+                (response) => {
+                  if (!response.ok) {
+                    toast.error("Could not reject friend request. Please try again.");
+                    if (
+                      setUsersWhoSentCurrentUserARequest &&
+                      usersWhoSentCurrentUserARequest
+                    ) {
+                      setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
+                    }
+                  } else {
+                    toast.error(
+                      `Rejected friend request from ${sender.firstName} ${sender.lastName}.`
+                    );
+                  }
+                }
+              );
+            }
           }
         })
         .catch((error) => console.log(error))

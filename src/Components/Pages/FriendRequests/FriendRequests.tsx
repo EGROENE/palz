@@ -26,14 +26,6 @@ const FriendRequests = () => {
 
   const currentUser: TUser = allUsers.filter((user) => user.username === username)[0];
 
-  const usersWhoSentCurrentUserARequest: TUser[] = allUsers.filter(
-    (user) => user._id && currentUser.friendRequestsReceived.includes(user._id)
-  );
-
-  /* const usersToWhomCurrentUserSentRequest: TUser[] = allUsers.filter(
-    (user) => user._id && currentUser.friendRequestsSent.includes(user._id)
-  ); */
-
   const [usersToWhomCurrentUserSentRequest, setUsersToWhomCurrentUserSentRequest] =
     useState<TUser[]>(
       allUsers.filter(
@@ -46,9 +38,26 @@ const FriendRequests = () => {
     )
   );
 
+  const [usersWhoSentCurrentUserARequest, setUsersWhoSentCurrentUserRequest] = useState<
+    TUser[]
+  >(
+    allUsers.filter(
+      (user) => user._id && currentUser.friendRequestsReceived.includes(user._id)
+    )
+  );
+  const [displayedReceivedRequests, setDisplayedReceivedRequests] = useState<TUser[]>(
+    allUsers.filter(
+      (user) => user._id && currentUser.friendRequestsReceived.includes(user._id)
+    )
+  );
+
   useEffect(() => {
     setDisplayedSentRequests(usersToWhomCurrentUserSentRequest);
   }, [usersToWhomCurrentUserSentRequest]);
+
+  useEffect(() => {
+    setDisplayedReceivedRequests(usersWhoSentCurrentUserARequest);
+  }, [usersWhoSentCurrentUserARequest]);
 
   const userHasPendingRequests: boolean =
     currentUser.friendRequestsReceived.length > 0 ||
@@ -82,20 +91,7 @@ const FriendRequests = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      currentUser.friendRequestsReceived.length > 0 ||
-      currentUser.friendRequestsSent.length > 0
-    ) {
-      if (!(currentUser.friendRequestsReceived.length > 0)) {
-        setRequestsVisible("sent");
-      }
-      if (!(currentUser.friendRequestsSent.length > 0)) {
-        setRequestsVisible("received");
-      }
-    } else {
-      setRequestsVisible(null);
-    }
-
+    setDisplayedReceivedRequests(usersWhoSentCurrentUserARequest);
     setDisplayedSentRequests(usersToWhomCurrentUserSentRequest);
   }, [allUsers]);
 
@@ -188,20 +184,29 @@ const FriendRequests = () => {
                     objectLink={`/users/${user?.username}`}
                   />
                 ))
-              : usersWhoSentCurrentUserARequest.length > 0 &&
-                usersWhoSentCurrentUserARequest.map((user) => (
+              : displayedReceivedRequests.map((user) => (
                   <ListedUser
                     key={user._id}
                     user={user}
                     randomColor={randomColor}
                     buttonOneText="Accept"
                     buttonOneLink={null}
+                    buttonOneHandler={handleAcceptFriendRequest}
+                    buttonOneHandlerParams={[
+                      user,
+                      currentUser,
+                      usersWhoSentCurrentUserARequest,
+                      setUsersWhoSentCurrentUserRequest,
+                    ]}
                     buttonOneIsDisabled={buttonsAreDisabled}
                     buttonTwoText="Reject"
-                    buttonOneHandler={handleAcceptFriendRequest}
-                    buttonOneHandlerParams={[user, currentUser]}
                     buttonTwoHandler={handleRejectFriendRequest}
-                    buttonTwoHandlerParams={[user, currentUser]}
+                    buttonTwoHandlerParams={[
+                      user,
+                      currentUser,
+                      usersWhoSentCurrentUserARequest,
+                      setUsersWhoSentCurrentUserRequest,
+                    ]}
                     buttonTwoIsDisabled={buttonsAreDisabled}
                     buttonTwoLink={null}
                     objectLink={`/users/${user?.username}`}
