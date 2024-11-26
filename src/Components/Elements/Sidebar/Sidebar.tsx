@@ -38,12 +38,20 @@ const Sidebar = () => {
     >
       <i
         onClick={() => setShowSidebar(!showSidebar)}
-        style={{ backgroundColor: randomColor }}
+        style={
+          randomColor === "var(--primary-color)"
+            ? { backgroundColor: randomColor, color: "black" }
+            : { backgroundColor: randomColor, color: "white" }
+        }
         className={`${styles.sidebarIcon} ${styles.sidebarClose} fas fa-times`}
       ></i>
       <div className={`${styles.sidebarIconContainer} ${styles.sidebarEditProfileImage}`}>
         <i
-          style={{ backgroundColor: randomColor }}
+          style={
+            randomColor === "var(--primary-color)"
+              ? { backgroundColor: randomColor, color: "black" }
+              : { backgroundColor: randomColor, color: "white" }
+          }
           onClick={() => setShowUpdateProfileImageInterface(true)}
           className="fas fa-camera"
         ></i>
@@ -60,8 +68,22 @@ const Sidebar = () => {
         style={{ backgroundColor: randomColor }}
         className={styles.sidebarNamesContainer}
       >
-        <p>{`${currentUser?.firstName} ${currentUser?.lastName}`}</p>
-        <p>{currentUser?.username}</p>
+        <p
+          style={
+            randomColor === "var(--primary-color)"
+              ? { color: "black" }
+              : { color: "white" }
+          }
+        >{`${currentUser?.firstName} ${currentUser?.lastName}`}</p>
+        <p
+          style={
+            randomColor === "var(--primary-color)"
+              ? { color: "black" }
+              : { color: "white" }
+          }
+        >
+          {currentUser?.username}
+        </p>
       </div>
       <div className={styles.sidebarOptionContainer}>
         <Link to={"/add-event"} className={styles.sidebarOption}>
