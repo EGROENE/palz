@@ -14,7 +14,11 @@ const FileUploadWithButton = ({
       <label
         className={styles.uploadFileButton}
         htmlFor="image-upload"
-        style={{ backgroundColor: randomColor, color: "var(--text-color-opposite)" }}
+        style={
+          randomColor === "var(--primary-color)"
+            ? { backgroundColor: randomColor, color: "black" }
+            : { backgroundColor: randomColor, color: "white" }
+        }
       >
         {addFileButtonText}
       </label>
