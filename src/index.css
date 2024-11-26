@@ -10,8 +10,6 @@
 
   --background-color: #242424;
   --background-color-opposite: rgb(233, 231, 228);
-  --header-one-color: var(--theme-yellow);
-  --header-two-color: var(--theme-yellow);
   --header-font: "Indie Flower", cursive;
   --text-font: "Josefine Sans", monospace, sans-serif;
   --text-color: white;
@@ -21,6 +19,7 @@
   --tertiary-color: #8f77e0;
   --fourth-color: #a951e8;
   --fifth-color: #52aac4;
+  --header-three-color: var(--primary-color);
   --theme-blue: #004cff;
   --theme-green: rgb(3, 173, 3);
   --theme-pink: rgb(255, 44, 209);
@@ -33,14 +32,16 @@
 [data-theme="light"] {
   --background-color: rgb(233, 231, 228);
   --background-color-opposite: #242424;
-  --header-one-color: var(--theme-brown);
-  --header-two-color: var(--theme-brown);
+  --header-three-color: var(--secondary-color);
   --text-color: black;
   --text-color-opposite: white;
 }
 
 nav {
   width: 90vw;
+  display: flex;
+  align-items: center;
+  margin-top: 2rem;
 }
 
 a {
@@ -72,17 +73,72 @@ body {
 
 h1 {
   font-size: 3.2em;
-  line-height: 1.1;
+  line-height: 1.5;
   margin: 0.5rem auto;
-  color: var(--header-one-color);
+
+  background: linear-gradient(
+    80deg,
+    var(--primary-color),
+    var(--primary-color),
+    var(--secondary-color),
+    var(--secondary-color)
+  );
+  background: -webkit-linear-gradient(
+    34deg,
+    var(--primary-color),
+    var(--primary-color),
+    var(--secondary-color),
+    var(--secondary-color)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 300% !important;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animated_h1 10s ease-in-out infinite;
+  -moz-animation: animated_h1 10s ease-in-out infinite;
+  -webkit-animation: animated_h1 10s ease-in-out infinite;
+}
+@keyframes animated_h1 {
+  0% {
+    background-position: 0px 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0px 50%;
+  }
 }
 
 h2 {
-  color: var(--header-two-color);
+  background: linear-gradient(80deg, #a951e8, #a951e8, #52aac4, #52aac4);
+  background: -webkit-linear-gradient(80deg, #a951e8, #a951e8, #52aac4, #52aac4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 300% !important;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animated_h2 10s ease-in-out infinite;
+  -moz-animation: animated_h2 10s ease-in-out infinite;
+  -webkit-animation: animated_h2 10s ease-in-out infinite;
+}
+@keyframes animated_h2 {
+  0% {
+    background-position: 0px 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0px 50%;
+  }
 }
 
 h3 {
-  color: var(--text-color);
+  color: var(--secondary-color);
   letter-spacing: 3px;
   font-size: 2rem;
   margin: 0;
