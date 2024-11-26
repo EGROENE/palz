@@ -38,15 +38,7 @@ const LoginPage = () => {
         <h1>Welcome to Palz!</h1>
         <h2>Do fun things, meet fun friends</h2>
         <div className="button-container">
-          <button
-            className="theme-toggle-button"
-            style={
-              theme !== "dark"
-                ? { backgroundColor: "black", color: "white" }
-                : { backgroundColor: "white", color: "black" }
-            }
-            onClick={() => toggleTheme()}
-          >
+          <button className="theme-toggle-button" onClick={() => toggleTheme()}>
             {theme === "light" ? (
               <span>
                 Switch to dark mode <i className="theme-toggle-icon fas fa-moon"></i>

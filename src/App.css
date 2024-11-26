@@ -72,15 +72,14 @@
 
 .theme-toggle-button {
   padding: 0.5rem;
-  background-color: gray;
   border: none;
   font-size: 0.75rem;
 }
 
-.theme-toggle-button:focus {
+/* .theme-toggle-button:focus {
   border: none;
   outline: none;
-}
+} */
 
 .theme-toggle-icon {
   position: relative;
@@ -95,6 +94,43 @@
   justify-content: space-around;
   flex-direction: row;
   width: 80%;
+}
+
+.login-greeting-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-greeting-container h1,
+.login-greeting-container h2 {
+  background: linear-gradient(
+    80deg,
+    var(--primary-color),
+    var(--primary-color),
+    var(--secondary-color),
+    var(--secondary-color)
+  );
+  background: -webkit-linear-gradient(
+    34deg,
+    var(--primary-color),
+    var(--primary-color),
+    var(--secondary-color),
+    var(--secondary-color)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 300% !important;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animated_h1 10s ease-in-out infinite;
+  -moz-animation: animated_h1 10s ease-in-out infinite;
+  -webkit-animation: animated_h1 10s ease-in-out infinite;
+}
+
+.login-greeting-container h2 {
+  margin-top: 0;
 }
 
 .login-greeting-container button {
@@ -113,7 +149,7 @@
 .form-type-underline {
   height: 2px;
   width: 100%;
-  background-color: var(--theme-pink);
+  background-color: var(--header-three-color);
   animation-duration: 500ms;
 }
 
@@ -125,7 +161,7 @@
 .login-options-container header {
   font-size: 2rem;
   padding: 0.25rem;
-  color: var(--theme-pink);
+  color: var(--header-three-color);
   font-weight: 900;
 }
 
@@ -140,6 +176,11 @@
 .page-hero .login-signup-edit-form {
   margin-top: 1rem;
   width: unset;
+}
+
+.login-signup-edit-form .button-container {
+  width: 103%;
+  margin-top: 1.5rem;
 }
 
 .login-signup-edit-form p:first-child {
@@ -168,15 +209,13 @@
 }
 
 .login-button {
-  width: 104%;
-  margin-top: 1.5rem;
+  width: 100%;
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.5em 1.2em;
   font-size: 1.25rem;
   font-weight: 500;
   font-family: var(--text-font);
-  background-color: var(--theme-blue);
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -186,7 +225,7 @@
 }
 
 .link-to-other-form {
-  color: var(--theme-blue);
+  color: var(--header-three-color);
   font-weight: 900;
 }
 
