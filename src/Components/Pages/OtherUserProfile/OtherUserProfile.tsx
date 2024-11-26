@@ -30,11 +30,11 @@ const OtherUserProfile = () => {
   useEffect(() => {
     // Set color of event card's border randomly:
     const themeColors: TThemeColor[] = [
-      "var(--theme-blue)",
-      "var(--theme-green)",
-      "var(--theme-pink)",
-      "var(--theme-purple)",
-      "var(--theme-orange)",
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
@@ -227,19 +227,20 @@ const OtherUserProfile = () => {
             {displayedButtons.map(
               (button) =>
                 button && (
-                  <button
-                    disabled={buttonsAreDisabled}
-                    key={button.type}
-                    style={{ backgroundColor: randomColor }}
-                    onClick={
-                      button.paramsIncludeEvent // @ts-ignore
-                        ? (e) => button.handler(e, ...button.handlerParams)
-                        : // @ts-ignore
-                          () => button.handler(...button.handlerParams)
-                    }
-                  >
-                    {button.buttonText}
-                  </button>
+                  <div key={button.type} className="button-container">
+                    <button
+                      disabled={buttonsAreDisabled}
+                      style={{ backgroundColor: randomColor }}
+                      onClick={
+                        button.paramsIncludeEvent // @ts-expect-error: ...
+                          ? (e) => button.handler(e, ...button.handlerParams)
+                          : // @ts-expect-error: ...
+                            () => button.handler(...button.handlerParams)
+                      }
+                    >
+                      {button.buttonText}
+                    </button>
+                  </div>
                 )
             )}
           </div>

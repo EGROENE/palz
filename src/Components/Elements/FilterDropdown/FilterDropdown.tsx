@@ -24,13 +24,15 @@ const FilterDropdown = ({
   return (
     <div className={styles.filterContainer}>
       <div style={{ display: "flex", alignItems: "flex-end" }}>
-        <button className={styles.button} onClick={() => toggleShowFilterOptions()}>
-          {dropdownBtnText}
-          <i
-            className="fas fa-chevron-down"
-            style={showFilterOptions ? { rotate: "180deg" } : undefined}
-          ></i>
-        </button>
+        <div className="button-container">
+          <button className={styles.button} onClick={() => toggleShowFilterOptions()}>
+            {dropdownBtnText}
+            <i
+              className="fas fa-chevron-down"
+              style={showFilterOptions ? { rotate: "180deg" } : undefined}
+            ></i>
+          </button>
+        </div>
         {activeFilters.length > 0 && (
           <span
             onClick={() => setActiveFilters([])}

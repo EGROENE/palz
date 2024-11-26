@@ -61,18 +61,20 @@ const SearchBar = ({
           ></i>
         )}
         {isSideButton && (
-          <button
-            onClick={(e) => {
-              if (addMethod) {
-                addMethod(input, e);
-                clearInputHandler();
-              }
-            }}
-            disabled={sideButtonIsDisabled}
-            style={{ backgroundColor: randomColor }}
-          >
-            {sideButtonText}
-          </button>
+          <div className="button-container">
+            <button
+              onClick={(e) => {
+                if (addMethod) {
+                  addMethod(input, e);
+                  clearInputHandler();
+                }
+              }}
+              disabled={sideButtonIsDisabled}
+              style={{ backgroundColor: randomColor }}
+            >
+              {sideButtonText}
+            </button>
+          </div>
         )}
       </div>
       {input !== "" &&

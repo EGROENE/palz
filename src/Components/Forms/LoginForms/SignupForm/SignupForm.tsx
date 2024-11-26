@@ -275,17 +275,19 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
           <p className="input-error-message">{confirmationPasswordError}</p>
         )}
       </label>
-      <button
-        className="login-button"
-        type={areNoSignupFormErrors ? "submit" : "button"}
-        onClick={(e) =>
-          areNoSignupFormErrors && allSignupFormFieldsFilled
-            ? undefined
-            : handleFormRejection(e)
-        }
-      >
-        Sign Up
-      </button>
+      <div className="button-container">
+        <button
+          className="login-button"
+          type={areNoSignupFormErrors ? "submit" : "button"}
+          onClick={(e) =>
+            areNoSignupFormErrors && allSignupFormFieldsFilled
+              ? undefined
+              : handleFormRejection(e)
+          }
+        >
+          Sign Up
+        </button>
+      </div>
     </form>
   );
 };

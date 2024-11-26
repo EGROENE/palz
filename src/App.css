@@ -183,7 +183,6 @@
 
 .login-button:hover {
   cursor: pointer;
-  opacity: 0.8;
 }
 
 .link-to-other-form {
@@ -230,11 +229,11 @@
   margin: 3rem auto;
 }
 
-.site-links-container button {
+/* .site-links-container button {
   background-color: var(--background-color-opposite);
   color: var(--text-color-opposite);
   font-family: var(--text-font);
-}
+} */
 
 .remove-data {
   color: red;
@@ -245,7 +244,6 @@
 
 .remove-data:hover {
   cursor: pointer;
-  opacity: 0.8;
 }
 
 .radio-inputs-container {
@@ -276,10 +274,10 @@
   color: white;
 }
 
-.buttons-container button:first-child {
+/* .buttons-container button:first-child {
   background-color: var(--background-color-opposite);
   color: var(--text-color-opposite);
-}
+} */
 
 .phone-input-elements {
   display: flex;

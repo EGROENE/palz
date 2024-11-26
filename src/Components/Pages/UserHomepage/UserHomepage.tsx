@@ -80,19 +80,29 @@ const UserHomepage = () => {
         )}
         <div className="site-links-container">
           <Link to={"/add-event"}>
-            <button>Create Event</button>
+            <div className="button-container">
+              <button>Create Event</button>
+            </div>
           </Link>
           <Link to={"/events"}>
-            <button>Explore Events</button>
+            <div className="button-container">
+              <button>Explore Events</button>
+            </div>
           </Link>
           <Link to={`/find-palz`}>
-            <button>Find Palz</button>
+            <div className="button-container">
+              <button>Find Palz</button>
+            </div>
           </Link>
           <Link to={`/${currentUser.username}/events`}>
-            <button>My Events</button>
+            <div className="button-container">
+              <button>My Events</button>
+            </div>
           </Link>
           <Link to={"/my-palz"}>
-            <button>My Palz</button>
+            <div className="button-container">
+              <button>My Palz</button>
+            </div>
           </Link>
         </div>
       </div>

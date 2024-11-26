@@ -16,6 +16,11 @@
   --text-font: "Josefine Sans", monospace, sans-serif;
   --text-color: white;
   --text-color-opposite: black;
+  --primary-color: #00ffa3;
+  --secondary-color: #dc1fff;
+  --tertiary-color: #8f77e0;
+  --fourth-color: #a951e8;
+  --fifth-color: #52aac4;
   --theme-blue: #004cff;
   --theme-green: rgb(3, 173, 3);
   --theme-pink: rgb(255, 44, 209);
@@ -23,6 +28,15 @@
   --theme-brown: #644117;
   --theme-purple: rgb(197, 0, 197);
   --theme-orange: rgb(255, 115, 0);
+}
+
+[data-theme="light"] {
+  --background-color: rgb(233, 231, 228);
+  --background-color-opposite: #242424;
+  --header-one-color: var(--theme-brown);
+  --header-two-color: var(--theme-brown);
+  --text-color: black;
+  --text-color-opposite: white;
 }
 
 nav {
@@ -37,7 +51,7 @@ a {
 
 a:hover,
 li:hover {
-  opacity: 0.8;
+  /* opacity: 0.8; */
   cursor: pointer;
 }
 
@@ -79,24 +93,57 @@ p {
   font-family: var(--text-font);
 }
 
+.button-container {
+  /* max-width: 250px; */
+  padding: 1rem;
+  position: relative;
+  background: linear-gradient(to right, #00ffa3, #dc1fff);
+  padding: 3px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
 button {
+  text-align: center;
+  font-size: 1rem;
+  height: 100%;
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
-  font-size: 1em;
+  /* font-size: 1em; */
   font-weight: 500;
   font-family: var(--text-font);
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-}
-button:hover {
-  opacity: 0.9;
+  border: none;
+  outline: none;
+  color: white;
+  /* background-color: #111; */
   cursor: pointer;
+  position: relative;
+  border-radius: 8px;
+  /* padding: 10px 20px; */
+  /* width: 100%; */
+  border: none;
+  outline: none;
+  position: relative;
+  z-index: 1;
+  background: black;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+.button-container:hover {
+  box-shadow: 0px 0px 13px 3px var(--tertiary-color);
+}
+
+/* .button-container:hover:before {
+  animation: glowing 10s linear infinite;
+  opacity: 1;
+  filter: blur(2px);
+} */
+
+button:active {
+  background: transparent;
+  color: black;
 }
 
 button:disabled {
@@ -105,15 +152,6 @@ button:disabled {
 
 button:disabled:hover {
   cursor: not-allowed;
-}
-
-[data-theme="light"] {
-  --background-color: rgb(233, 231, 228);
-  --background-color-opposite: #242424;
-  --header-one-color: var(--theme-brown);
-  --header-two-color: var(--theme-brown);
-  --text-color: black;
-  --text-color-opposite: white;
 }
 
 label {

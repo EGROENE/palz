@@ -53,6 +53,25 @@ const ListedUser = ({
       )}
       {buttonOneLink !== null ? (
         <Link to={buttonOneLink}>
+          <div className="button-container">
+            <button
+              disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
+              onClick={
+                buttonOneHandler
+                  ? buttonOneHandlerParams && buttonOneHandlerParams.length > 0
+                    ? // @ts-ignore
+                      (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
+                    : () => buttonOneHandler()
+                  : undefined
+              }
+              style={{ backgroundColor: randomColor }}
+            >
+              {buttonOneText}
+            </button>
+          </div>
+        </Link>
+      ) : (
+        <div className="button-container">
           <button
             disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
             onClick={
@@ -67,25 +86,28 @@ const ListedUser = ({
           >
             {buttonOneText}
           </button>
-        </Link>
-      ) : (
-        <button
-          disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
-          onClick={
-            buttonOneHandler
-              ? buttonOneHandlerParams && buttonOneHandlerParams.length > 0
-                ? // @ts-ignore
-                  (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
-                : () => buttonOneHandler()
-              : undefined
-          }
-          style={{ backgroundColor: randomColor }}
-        >
-          {buttonOneText}
-        </button>
+        </div>
       )}
       {buttonTwoLink !== null ? (
         <Link to={buttonTwoLink}>
+          <div className="button-container">
+            <button
+              disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
+              onClick={
+                buttonTwoHandler
+                  ? buttonTwoHandlerParams && buttonTwoHandlerParams.length > 0
+                    ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                    : buttonTwoHandler()
+                  : undefined
+              }
+              style={{ backgroundColor: "tomato" }}
+            >
+              {buttonTwoText}
+            </button>
+          </div>
+        </Link>
+      ) : (
+        <div className="button-container">
           <button
             disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
             onClick={
@@ -99,21 +121,7 @@ const ListedUser = ({
           >
             {buttonTwoText}
           </button>
-        </Link>
-      ) : (
-        <button
-          disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
-          onClick={
-            buttonTwoHandler
-              ? buttonTwoHandlerParams && buttonTwoHandlerParams.length > 0
-                ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
-                : buttonTwoHandler()
-              : undefined
-          }
-          style={{ backgroundColor: "tomato" }}
-        >
-          {buttonTwoText}
-        </button>
+        </div>
       )}
     </div>
   );

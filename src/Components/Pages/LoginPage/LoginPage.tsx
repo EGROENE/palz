@@ -22,11 +22,11 @@ const LoginPage = () => {
 
     // Set random color:
     const themeColors: TThemeColor[] = [
-      "var(--theme-blue)",
-      "var(--theme-green)",
-      "var(--theme-pink)",
-      "var(--theme-purple)",
-      "var(--theme-orange)",
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
@@ -37,25 +37,27 @@ const LoginPage = () => {
       <div className="login-greeting-container">
         <h1>Welcome to Palz!</h1>
         <h2>Do fun things, meet fun friends</h2>
-        <button
-          className="theme-toggle-button"
-          style={
-            theme !== "dark"
-              ? { backgroundColor: "black", color: "white" }
-              : { backgroundColor: "white", color: "black" }
-          }
-          onClick={() => toggleTheme()}
-        >
-          {theme === "light" ? (
-            <span>
-              Switch to dark mode <i className="theme-toggle-icon fas fa-moon"></i>
-            </span>
-          ) : (
-            <span>
-              Switch to light mode <i className="theme-toggle-icon fas fa-sun"></i>
-            </span>
-          )}
-        </button>
+        <div className="button-container">
+          <button
+            className="theme-toggle-button"
+            style={
+              theme !== "dark"
+                ? { backgroundColor: "black", color: "white" }
+                : { backgroundColor: "white", color: "black" }
+            }
+            onClick={() => toggleTheme()}
+          >
+            {theme === "light" ? (
+              <span>
+                Switch to dark mode <i className="theme-toggle-icon fas fa-moon"></i>
+              </span>
+            ) : (
+              <span>
+                Switch to light mode <i className="theme-toggle-icon fas fa-sun"></i>
+              </span>
+            )}
+          </button>
+        </div>
       </div>
       <div className="login-form">
         <div className="login-options-container">

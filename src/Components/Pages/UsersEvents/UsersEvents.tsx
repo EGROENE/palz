@@ -25,11 +25,11 @@ const UsersEvents = () => {
 
   useEffect(() => {
     const themeColors: TThemeColor[] = [
-      "var(--theme-blue)",
-      "var(--theme-green)",
-      "var(--theme-pink)",
-      "var(--theme-purple)",
-      "var(--theme-orange)",
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);

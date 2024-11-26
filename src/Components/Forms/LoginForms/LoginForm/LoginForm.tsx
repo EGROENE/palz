@@ -123,17 +123,19 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
           <p className="input-error-message">{passwordError}</p>
         )}
       </label>
-      <button
-        className="login-button"
-        type={areNoLoginErrors ? "submit" : "button"}
-        onClick={(e) =>
-          areNoLoginErrors && allLoginInputsFilled
-            ? handleSignupOrLoginFormSubmission(false, e)
-            : handleFormRejection(e)
-        }
-      >
-        Log In
-      </button>
+      <div className="button-container">
+        <button
+          className="login-button"
+          type={areNoLoginErrors ? "submit" : "button"}
+          onClick={(e) =>
+            areNoLoginErrors && allLoginInputsFilled
+              ? handleSignupOrLoginFormSubmission(false, e)
+              : handleFormRejection(e)
+          }
+        >
+          Log In
+        </button>
+      </div>
     </form>
   );
 };

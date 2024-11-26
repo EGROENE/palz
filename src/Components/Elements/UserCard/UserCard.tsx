@@ -74,11 +74,11 @@ const UserCard = ({ user }: { user: TUser }) => {
   useEffect(() => {
     // Set color of event card's border randomly:
     const themeColors: TThemeColor[] = [
-      "var(--theme-blue)",
-      "var(--theme-green)",
-      "var(--theme-pink)",
-      "var(--theme-purple)",
-      "var(--theme-orange)",
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
@@ -205,45 +205,49 @@ const UserCard = ({ user }: { user: TUser }) => {
           </div>
         )}
         <div className={styles.userCardBtnContainer}>
-          <button
-            onClick={(e) => {
-              if (currentUserAndUserAreFriends) {
-                handleUnfriending(e, currentUser, user);
-              }
-              if (currentUserHasSentUserAFriendRequest && currentUser) {
-                handleRetractFriendRequest(
-                  e,
-                  currentUser,
-                  user,
-                  setUserSentFriendRequestOptimistic,
-                  setUserSentFriendRequestActual
-                );
-              }
-              if (userHasSentCurrentUserAFriendRequest) {
-                setCurrentOtherUser(user);
-                setShowFriendRequestResponseOptions(true);
-              }
-              if (currentUser && noConnectionBetweenUserAndCurrentUser) {
-                handleSendFriendRequest(
-                  currentUser,
-                  user,
-                  setUserSentFriendRequestOptimistic,
-                  setUserSentFriendRequestActual
-                );
-              }
-            }}
-            disabled={buttonsAreDisabled}
-            style={{ backgroundColor: randomColor }}
-          >
-            {buttonOneText}
-          </button>
-          <Link to={`/users/${user.username}`}>
+          <div className="button-container">
             <button
-              onClick={() => setCurrentOtherUser(user)}
+              onClick={(e) => {
+                if (currentUserAndUserAreFriends) {
+                  handleUnfriending(e, currentUser, user);
+                }
+                if (currentUserHasSentUserAFriendRequest && currentUser) {
+                  handleRetractFriendRequest(
+                    e,
+                    currentUser,
+                    user,
+                    setUserSentFriendRequestOptimistic,
+                    setUserSentFriendRequestActual
+                  );
+                }
+                if (userHasSentCurrentUserAFriendRequest) {
+                  setCurrentOtherUser(user);
+                  setShowFriendRequestResponseOptions(true);
+                }
+                if (currentUser && noConnectionBetweenUserAndCurrentUser) {
+                  handleSendFriendRequest(
+                    currentUser,
+                    user,
+                    setUserSentFriendRequestOptimistic,
+                    setUserSentFriendRequestActual
+                  );
+                }
+              }}
               disabled={buttonsAreDisabled}
+              style={{ backgroundColor: randomColor }}
             >
-              View Profile
+              {buttonOneText}
             </button>
+          </div>
+          <Link to={`/users/${user.username}`}>
+            <div className="button-container">
+              <button
+                onClick={() => setCurrentOtherUser(user)}
+                disabled={buttonsAreDisabled}
+              >
+                View Profile
+              </button>
+            </div>
           </Link>
         </div>
       </div>

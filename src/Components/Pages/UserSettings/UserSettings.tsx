@@ -24,11 +24,11 @@ const UserSettings = () => {
     }
 
     const themeColors: TThemeColor[] = [
-      "var(--theme-blue)",
-      "var(--theme-green)",
-      "var(--theme-pink)",
-      "var(--theme-purple)",
-      "var(--theme-orange)",
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
@@ -190,23 +190,27 @@ const UserSettings = () => {
             Any events of which you are the sole organizer will be deleted & all your
             account information will be lost.
           </p>
-          <button
-            onClick={() => setShowAreYouSureInterface(true)}
-            className="delete-button"
-          >
-            Delete Account
-          </button>
+          <div className="button-container">
+            <button
+              onClick={() => setShowAreYouSureInterface(true)}
+              className="delete-button"
+            >
+              Delete Account
+            </button>
+          </div>
         </div>
 
         <div>
           <h3>Change Site Theme</h3>
           <p>{theme === "dark" ? "Theme is set to dark" : "Theme is set to light"}</p>
-          <button
-            style={{ backgroundColor: "rgb(97, 95, 95)" }}
-            onClick={() => toggleTheme()}
-          >
-            {theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-          </button>
+          <div className="button-container">
+            <button
+              style={{ backgroundColor: "rgb(97, 95, 95)" }}
+              onClick={() => toggleTheme()}
+            >
+              {theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+            </button>
+          </div>
         </div>
       </div>
       {showAreYouSureInterface && (

@@ -35,11 +35,11 @@ const TwoOptionsInterface = ({
 
   useEffect(() => {
     const themeColors: TThemeColor[] = [
-      "var(--theme-blue)",
-      "var(--theme-green)",
-      "var(--theme-pink)",
-      "var(--theme-purple)",
-      "var(--theme-orange)",
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
@@ -58,41 +58,24 @@ const TwoOptionsInterface = ({
             <header style={{ color: randomColor }}>{header}</header>
             {subheader && <p>{subheader}</p>}
             <div className={styles.buttonsContainer}>
-              <button
-                onClick={
-                  buttonOneHandler
-                    ? // @ts-ignore
-                      (e) =>
-                        buttonOneHandlerParams
-                          ? buttonOneHandler(e, ...buttonOneHandlerParams)
-                          : buttonOneHandler()
-                    : undefined
-                }
-              >
-                {buttonOneText}
-              </button>
-              <button
-                style={{ backgroundColor: randomColor }}
-                onClick={
-                  buttonTwoHandler
-                    ? (e) =>
-                        buttonTwoHandlerParams
-                          ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
-                          : buttonTwoHandler()
-                    : undefined
-                }
-              >
-                {buttonTwoText}
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <header style={{ color: randomColor }}>{header}</header>
-            {subheader && <p>{subheader}</p>}
-            <div className={styles.buttonsContainer}>
-              {profileImage !== "" && (
+              <div className="button-container">
                 <button
+                  onClick={
+                    buttonOneHandler
+                      ? // @ts-ignore
+                        (e) =>
+                          buttonOneHandlerParams
+                            ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                            : buttonOneHandler()
+                      : undefined
+                  }
+                >
+                  {buttonOneText}
+                </button>
+              </div>
+              <div className="button-container">
+                <button
+                  style={{ backgroundColor: randomColor }}
                   onClick={
                     buttonTwoHandler
                       ? (e) =>
@@ -104,6 +87,29 @@ const TwoOptionsInterface = ({
                 >
                   {buttonTwoText}
                 </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <header style={{ color: randomColor }}>{header}</header>
+            {subheader && <p>{subheader}</p>}
+            <div className={styles.buttonsContainer}>
+              {profileImage !== "" && (
+                <div className="button-container">
+                  <button
+                    onClick={
+                      buttonTwoHandler
+                        ? (e) =>
+                            buttonTwoHandlerParams
+                              ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                              : buttonTwoHandler()
+                        : undefined
+                    }
+                  >
+                    {buttonTwoText}
+                  </button>
+                </div>
               )}
               <FileUploadWithButton
                 addFile={handleProfileImageUpload}

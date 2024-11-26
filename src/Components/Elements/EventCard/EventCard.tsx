@@ -39,11 +39,11 @@ const EventCard = ({ event }: { event: TEvent }) => {
   useEffect(() => {
     // Set color of event card's border randomly:
     const themeColors: TThemeColor[] = [
-      "var(--theme-blue)",
-      "var(--theme-green)",
-      "var(--theme-pink)",
-      "var(--theme-purple)",
-      "var(--theme-orange)",
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
@@ -125,14 +125,25 @@ const EventCard = ({ event }: { event: TEvent }) => {
         !userRSVPdActual &&
         !maxInviteesReached && (
           <div className={styles.eventCardInvitation}>
-            <p style={{ backgroundColor: randomColor }}>You've been invited!</p>
+            <div style={{ boxShadow: "none" }} className="button-container">
+              <p>You've been invited!</p>
+            </div>
             <button
+              style={
+                randomColor === "var(--primary-color)"
+                  ? { backgroundColor: `${randomColor}`, color: "black" }
+                  : { backgroundColor: `${randomColor}`, color: "white" }
+              }
               disabled={isLoading}
               onClick={(e) => handleAddUserRSVP(e, event, setUserRSVPdActual)}
             >
               {rsvpButtonText}
             </button>
             <button
+              style={{
+                backgroundColor: "var(--background-color-opposite",
+                color: "var(--text-color-opposite)",
+              }}
               disabled={isLoading}
               onClick={(e) => handleDeclineInvitation(e, event)}
             >
@@ -142,6 +153,11 @@ const EventCard = ({ event }: { event: TEvent }) => {
         )}
       <div className={styles.eventCardMainInfo}>
         <i
+          style={
+            randomColor === "var(--primary-color)"
+              ? { backgroundColor: randomColor, color: "black" }
+              : { backgroundColor: randomColor, color: "white" }
+          }
           onClick={() => {
             setCurrentEvent(event);
             navigator.clipboard.writeText(`localhost:5173/events/${event._id}`);
@@ -167,7 +183,11 @@ const EventCard = ({ event }: { event: TEvent }) => {
             </p>
             <div className={styles.eventButtonsContainer}>
               <Link
-                style={{ backgroundColor: randomColor }}
+                style={
+                  randomColor === "var(--primary-color)"
+                    ? { backgroundColor: randomColor, color: "black" }
+                    : { backgroundColor: randomColor, color: "white" }
+                }
                 onClick={() => setCurrentEvent(event)}
                 className={styles.eventButtonsContainerButton}
                 to={`/events/${event._id}`}
@@ -179,8 +199,12 @@ const EventCard = ({ event }: { event: TEvent }) => {
                 event.eventEndDateTimeInMS > now) &&
                 (!userIsOrganizer ? (
                   <button
+                    style={{
+                      backgroundColor: "var(--background-color-opposite)",
+                      color: "var(--text-color-opposite)",
+                    }}
                     disabled={maxInviteesReached || isLoading}
-                    className={styles.eventButtonsContainerButton}
+                    className={`${styles.eventButtonsContainerButton}`}
                     onClick={(e) => {
                       if (userRSVPdActual && currentUser) {
                         handleDeleteUserRSVP(e, event, currentUser, setUserRSVPdActual);
@@ -205,7 +229,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
           <div className={styles.eventCardImageContainer}>
             {status && <p style={{ backgroundColor: randomColor }}>{status}</p>}
             {event && event.images && event.images.length > 0 ? (
-              <img src={event.images[0]} />
+              <img style={{ border: `2px solid ${randomColor}` }} src={event.images[0]} />
             ) : (
               <p style={{ border: `1px solid ${randomColor}` }}>Something fun!</p>
             )}

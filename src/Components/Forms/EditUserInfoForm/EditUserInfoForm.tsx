@@ -1118,33 +1118,35 @@ const EditUserInfoForm = ({
               )}
           </p>
           <div className="phone-input-elements">
-            <button
-              disabled={isLoading}
-              className="country-dropdown-button"
-              type="button"
-              onClick={() => setShowCountryPhoneCodes(!showCountryPhoneCodes)}
-            >
-              {phoneCountryCode === "" && phoneCountry === "" ? (
-                "Select country:"
-              ) : (
-                <div className="flag-and-code-container">
-                  <img
-                    src={`/flags/1x1/${
+            <div className="button-container">
+              <button
+                disabled={isLoading}
+                className="country-dropdown-button"
+                type="button"
+                onClick={() => setShowCountryPhoneCodes(!showCountryPhoneCodes)}
+              >
+                {phoneCountryCode === "" && phoneCountry === "" ? (
+                  "Select country:"
+                ) : (
+                  <div className="flag-and-code-container">
+                    <img
+                      src={`/flags/1x1/${
+                        countries.filter((country) => country.country === phoneCountry)[0]
+                          .abbreviation
+                      }.svg`}
+                    />
+                    <span>{`+${
                       countries.filter((country) => country.country === phoneCountry)[0]
-                        .abbreviation
-                    }.svg`}
-                  />
-                  <span>{`+${
-                    countries.filter((country) => country.country === phoneCountry)[0]
-                      .phoneCode
-                  }`}</span>
-                </div>
-              )}
-              <i
-                style={showCountryPhoneCodes ? { "rotate": "180deg" } : undefined}
-                className="fas fa-chevron-down"
-              ></i>
-            </button>
+                        .phoneCode
+                    }`}</span>
+                  </div>
+                )}
+                <i
+                  style={showCountryPhoneCodes ? { "rotate": "180deg" } : undefined}
+                  className="fas fa-chevron-down"
+                ></i>
+              </button>
+            </div>
             <div className="phone-without-country-code-element">
               <input
                 onFocus={() => setFocusedElement("phoneNumber")}
@@ -1266,39 +1268,41 @@ const EditUserInfoForm = ({
           </label>
           <label className="location-countries-dropdown">
             <p>Country:</p>
-            <button
-              disabled={isLoading}
-              className="country-dropdown-button"
-              type="button"
-              onClick={() => setShowUserLocationCountries(!showUserLocationCountries)}
-            >
-              {userCountry === "" ? (
-                "Select country:"
-              ) : (
-                <div className="flag-and-code-container">
-                  <img
-                    src={`/flags/1x1/${
+            <div className="button-container">
+              <button
+                disabled={isLoading}
+                className="country-dropdown-button"
+                type="button"
+                onClick={() => setShowUserLocationCountries(!showUserLocationCountries)}
+              >
+                {userCountry === "" ? (
+                  "Select country:"
+                ) : (
+                  <div className="flag-and-code-container">
+                    <img
+                      src={`/flags/1x1/${
+                        countries.filter((country) => country.country === userCountry)[0]
+                          .abbreviation
+                      }.svg`}
+                    />
+                    <span
+                      style={
+                        userCountry && userCountry.length >= 19
+                          ? { fontSize: "0.75rem" }
+                          : undefined
+                      }
+                    >{`${
                       countries.filter((country) => country.country === userCountry)[0]
-                        .abbreviation
-                    }.svg`}
-                  />
-                  <span
-                    style={
-                      userCountry && userCountry.length >= 19
-                        ? { fontSize: "0.75rem" }
-                        : undefined
-                    }
-                  >{`${
-                    countries.filter((country) => country.country === userCountry)[0]
-                      .country
-                  }`}</span>
-                </div>
-              )}
-              <i
-                style={showUserLocationCountries ? { "rotate": "180deg" } : undefined}
-                className="fas fa-chevron-down"
-              ></i>
-            </button>
+                        .country
+                    }`}</span>
+                  </div>
+                )}
+                <i
+                  style={showUserLocationCountries ? { "rotate": "180deg" } : undefined}
+                  className="fas fa-chevron-down"
+                ></i>
+              </button>
+            </div>
             {showUserLocationCountries && (
               <ul className="dropdown-list">
                 {resortedCountries.map((country) => (
@@ -1660,6 +1664,7 @@ const EditUserInfoForm = ({
         </label>
         <div className="buttons-container">
           <button
+            style={{ backgroundColor: "white", color: "black" }}
             type="reset"
             disabled={!userInfoEdited || isLoading}
             onClick={() => handleEditUserInfoRevert()}
@@ -1669,7 +1674,7 @@ const EditUserInfoForm = ({
           <button
             type="submit"
             disabled={!userInfoEdited || isLoading}
-            style={{ backgroundColor: randomColor }}
+            style={{ backgroundColor: "var(--primary-color)" }}
             onClick={(e) => handleUpdateProfileInfo(e)}
           >
             Save Changes
