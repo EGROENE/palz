@@ -205,40 +205,42 @@ const UserCard = ({ user }: { user: TUser }) => {
           </div>
         )}
         <div className={styles.userCardBtnContainer}>
-          <div className="button-container">
-            <button
-              onClick={(e) => {
-                if (currentUserAndUserAreFriends) {
-                  handleUnfriending(e, currentUser, user);
-                }
-                if (currentUserHasSentUserAFriendRequest && currentUser) {
-                  handleRetractFriendRequest(
-                    e,
-                    currentUser,
-                    user,
-                    setUserSentFriendRequestOptimistic,
-                    setUserSentFriendRequestActual
-                  );
-                }
-                if (userHasSentCurrentUserAFriendRequest) {
-                  setCurrentOtherUser(user);
-                  setShowFriendRequestResponseOptions(true);
-                }
-                if (currentUser && noConnectionBetweenUserAndCurrentUser) {
-                  handleSendFriendRequest(
-                    currentUser,
-                    user,
-                    setUserSentFriendRequestOptimistic,
-                    setUserSentFriendRequestActual
-                  );
-                }
-              }}
-              disabled={buttonsAreDisabled}
-              style={{ backgroundColor: randomColor }}
-            >
-              {buttonOneText}
-            </button>
-          </div>
+          <button
+            style={
+              randomColor === "var(--primary-color)"
+                ? { backgroundColor: `${randomColor}`, color: "black" }
+                : { backgroundColor: `${randomColor}`, color: "white" }
+            }
+            onClick={(e) => {
+              if (currentUserAndUserAreFriends) {
+                handleUnfriending(e, currentUser, user);
+              }
+              if (currentUserHasSentUserAFriendRequest && currentUser) {
+                handleRetractFriendRequest(
+                  e,
+                  currentUser,
+                  user,
+                  setUserSentFriendRequestOptimistic,
+                  setUserSentFriendRequestActual
+                );
+              }
+              if (userHasSentCurrentUserAFriendRequest) {
+                setCurrentOtherUser(user);
+                setShowFriendRequestResponseOptions(true);
+              }
+              if (currentUser && noConnectionBetweenUserAndCurrentUser) {
+                handleSendFriendRequest(
+                  currentUser,
+                  user,
+                  setUserSentFriendRequestOptimistic,
+                  setUserSentFriendRequestActual
+                );
+              }
+            }}
+            disabled={buttonsAreDisabled}
+          >
+            {buttonOneText}
+          </button>
           <Link to={`/users/${user.username}`}>
             <div className="button-container">
               <button

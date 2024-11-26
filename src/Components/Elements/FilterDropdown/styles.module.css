@@ -28,8 +28,6 @@
 
 .button {
   width: 11rem;
-  background-color: var(--background-color-opposite);
-  color: var(--text-color-opposite);
 }
 
 .button i {
