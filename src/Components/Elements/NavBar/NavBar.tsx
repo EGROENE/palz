@@ -36,15 +36,17 @@ const NavBar = () => {
           </Link>
         )}
         <li>
-          <img
-            onClick={() => setShowSidebar(!showSidebar)}
-            className={styles.profileImageNavbar}
-            src={
-              profileImage !== "" && typeof profileImage === "string"
-                ? profileImage
-                : defaultProfileImage
-            }
-          />
+          <div className={styles.profileImageContainer}>
+            <img
+              onClick={() => setShowSidebar(!showSidebar)}
+              className={styles.profileImageNavbar}
+              src={
+                profileImage !== "" && typeof profileImage === "string"
+                  ? profileImage
+                  : defaultProfileImage
+              }
+            />
+          </div>
         </li>
       </ul>
     </nav>
