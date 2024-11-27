@@ -323,10 +323,7 @@ const EventPage = () => {
               ) : (
                 <Link to={`/edit-event/${currentEvent._id}`}>
                   <div className="theme-element-container">
-                    <button
-                      onClick={() => setCurrentEvent(currentEvent)}
-                      style={{ "backgroundColor": randomColor }}
-                    >
+                    <button onClick={() => setCurrentEvent(currentEvent)}>
                       Edit Event
                     </button>
                   </div>
