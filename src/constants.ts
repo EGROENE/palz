@@ -194,7 +194,7 @@ export const countries = [
   { country: "Qatar", abbreviation: "qa", phoneCode: "974" },
   { country: "Réunion", abbreviation: "re", phoneCode: "262" },
   { country: "Romania", abbreviation: "ro", phoneCode: "40" },
-  { country: "Russian Federation", abbreviation: "ru", phoneCode: "7" },
+  { country: "Russia", abbreviation: "ru", phoneCode: "7" },
   { country: "Rwanda", abbreviation: "rw", phoneCode: "250" },
   { country: "Saint Barthelemy", abbreviation: "bl", phoneCode: "590" },
   { country: "Saint Helena", abbreviation: "sh", phoneCode: "290" },
