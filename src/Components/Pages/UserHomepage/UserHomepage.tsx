@@ -26,7 +26,7 @@ const UserHomepage = () => {
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
-      toast.error("Please login before accessing this page");
+      toast.error("Please log in before accessing this page");
       navigation("/");
     } else {
       navigation(`/${currentUser?.username}`);

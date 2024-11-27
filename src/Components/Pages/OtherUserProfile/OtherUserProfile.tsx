@@ -43,7 +43,7 @@ const OtherUserProfile = () => {
   // if currentUser is undefined on initial render, redirect to login page
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
-      toast.error("Please login before accessing this page");
+      toast.error("Please log in before accessing this page");
       navigation("/");
     }
   }, [currentUser, navigation, userCreatedAccount]);
@@ -68,15 +68,18 @@ const OtherUserProfile = () => {
       ? true
       : false;
 
-  const currentOtherUserFriends: TUser[] = allUsers.filter(
-    (user) => user && user._id && currentOtherUser.friends.includes(user._id)
-  );
+  const currentOtherUserFriends: TUser[] =
+    currentOtherUser &&
+    allUsers.filter(
+      (user) => user && user._id && currentOtherUser.friends.includes(user._id)
+    );
 
-  const currentUserIsFriendOfFriend: boolean = currentUser
-    ? currentOtherUserFriends.some(
-        (user) => currentUser._id && user.friends.includes(currentUser._id)
-      )
-    : false;
+  const currentUserIsFriendOfFriend: boolean =
+    currentUser && currentOtherUser
+      ? currentOtherUserFriends.some(
+          (user) => currentUser._id && user.friends.includes(currentUser._id)
+        )
+      : false;
 
   const currentUserMayMessage: boolean =
     currentUser && currentUser._id && currentOtherUser._id
@@ -194,51 +197,53 @@ const OtherUserProfile = () => {
           closeHandler={setShowFriendRequestResponseOptions}
         />
       )}
-      <div
-        className={styles.kopfzeile}
-        style={{ borderBottom: `3px solid ${randomColor}` }}
-      >
-        <div className="theme-element-container">
-          <img
-            src={
-              currentOtherUser.profileImage !== "" &&
-              typeof currentOtherUser.profileImage === "string"
-                ? currentOtherUser.profileImage
-                : defaultProfileImage
-            }
-          />
-        </div>
-        <div className={styles.mainInfoContainer}>
-          <header style={{ color: `${randomColor}` }}>
-            {currentOtherUser.firstName} {currentOtherUser.lastName}
-          </header>
-          <p>{currentOtherUser.username}</p>
-          <div className={styles.actionButtonsContainer}>
-            {displayedButtons.map(
-              (button) =>
-                button && (
-                  <div
-                    key={button.type}
-                    style={{ maxHeight: "3rem", display: "flex" }}
-                    className="theme-element-container"
-                  >
-                    <button
-                      disabled={buttonsAreDisabled}
-                      onClick={
-                        button.paramsIncludeEvent // @ts-expect-error: ...
-                          ? (e) => button.handler(e, ...button.handlerParams)
-                          : // @ts-expect-error: ...
-                            () => button.handler(...button.handlerParams)
-                      }
+      {currentOtherUser && (
+        <div
+          className={styles.kopfzeile}
+          style={{ borderBottom: `3px solid ${randomColor}` }}
+        >
+          <div className="theme-element-container">
+            <img
+              src={
+                currentOtherUser.profileImage !== "" &&
+                typeof currentOtherUser.profileImage === "string"
+                  ? currentOtherUser.profileImage
+                  : defaultProfileImage
+              }
+            />
+          </div>
+          <div className={styles.mainInfoContainer}>
+            <header style={{ color: `${randomColor}` }}>
+              {currentOtherUser.firstName} {currentOtherUser.lastName}
+            </header>
+            <p>{currentOtherUser.username}</p>
+            <div className={styles.actionButtonsContainer}>
+              {displayedButtons.map(
+                (button) =>
+                  button && (
+                    <div
+                      key={button.type}
+                      style={{ maxHeight: "3rem", display: "flex" }}
+                      className="theme-element-container"
                     >
-                      {button.buttonText}
-                    </button>
-                  </div>
-                )
-            )}
+                      <button
+                        disabled={buttonsAreDisabled}
+                        onClick={
+                          button.paramsIncludeEvent // @ts-expect-error: ...
+                            ? (e) => button.handler(e, ...button.handlerParams)
+                            : // @ts-expect-error: ...
+                              () => button.handler(...button.handlerParams)
+                        }
+                      >
+                        {button.buttonText}
+                      </button>
+                    </div>
+                  )
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

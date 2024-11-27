@@ -19,7 +19,7 @@ const UserSettings = () => {
   useEffect(() => {
     // If no current user or whatever, redirect to login
     if (!currentUser) {
-      toast.error("Please login before accessing this page");
+      toast.error("Please log in before accessing this page");
       navigation("/");
     }
 
