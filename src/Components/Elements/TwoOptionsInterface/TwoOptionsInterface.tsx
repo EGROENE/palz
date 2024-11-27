@@ -98,7 +98,7 @@ const TwoOptionsInterface = ({
                       ? (e) =>
                           buttonTwoHandlerParams
                             ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
-                            : buttonTwoHandler()
+                            : buttonTwoHandler(e)
                       : undefined
                   }
                 >
