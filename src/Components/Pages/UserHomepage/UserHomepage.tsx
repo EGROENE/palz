@@ -10,7 +10,7 @@ import { useEventContext } from "../../../Hooks/useEventContext";
 
 const UserHomepage = () => {
   const { showSidebar, setShowSidebar } = useMainContext();
-  const { currentUser, userCreatedAccount } = useUserContext();
+  const { currentUser, userCreatedAccount, username } = useUserContext();
   const { allEvents, fetchAllEvents } = useEventContext();
 
   // On init rendering, hide sidebar, if displayed (better ux when returning to user homepage from Settings, etc.)
@@ -29,7 +29,7 @@ const UserHomepage = () => {
       toast.error("Please log in before accessing this page");
       navigation("/");
     } else {
-      navigation(`/${currentUser?.username}`);
+      navigation(`/${username}`);
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
