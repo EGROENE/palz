@@ -8,7 +8,7 @@ import { TThemeColor } from "../../../../types";
 
 const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
   const { welcomeMessageDisplayTime } = useMainContext();
-  const { currentUser, fetchAllUsers } = useUserContext();
+  const {  fetchAllUsers } = useUserContext();
 
   const {
     passwordIsHidden,
@@ -56,10 +56,7 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
   return (
     <form
       onSubmit={() => {
-        setTimeout(
-          () => navigation(`users/${currentUser?.username}`),
-          welcomeMessageDisplayTime
-        );
+        setTimeout(() => navigation(`${username}`), welcomeMessageDisplayTime);
       }}
       className="login-signup-edit-form"
     >

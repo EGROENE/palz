@@ -10,7 +10,6 @@ import { TThemeColor } from "../../../../types";
 const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
   const { welcomeMessageDisplayTime } = useMainContext();
   const {
-    currentUser,
     fetchAllUsers,
     resetLoginOrSignupFormFieldsAndErrors,
     areNoSignupFormErrors,
@@ -47,10 +46,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
   const navigation = useNavigate();
   const handleSignupFormSubmission = (e: React.FormEvent<HTMLFormElement>) => {
     handleSignupOrLoginFormSubmission(true, e);
-    setTimeout(
-      () => navigation(`users/${currentUser?.username}`),
-      welcomeMessageDisplayTime
-    );
+    setTimeout(() => navigation(`/${username}`), welcomeMessageDisplayTime);
   };
 
   const [focusedElement, setFocusedElement] = useState<
