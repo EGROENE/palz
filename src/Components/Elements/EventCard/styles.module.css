@@ -33,7 +33,7 @@
   float: left;
   width: 10rem;
   height: 7rem;
-  margin-top: 1rem;
+
   object-fit: cover;
 }
 
@@ -69,6 +69,7 @@
 }
 
 .eventCardImageContainer {
+  margin-top: 1rem;
   margin-left: 1rem;
   display: flex;
   flex-direction: column;

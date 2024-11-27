@@ -242,7 +242,7 @@ const UserCard = ({ user }: { user: TUser }) => {
             {buttonOneText}
           </button>
           <Link to={`/users/${user.username}`}>
-            <div className="button-container">
+            <div className="theme-element-container">
               <button
                 onClick={() => setCurrentOtherUser(user)}
                 disabled={buttonsAreDisabled}

@@ -125,7 +125,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
         !userRSVPdActual &&
         !maxInviteesReached && (
           <div className={styles.eventCardInvitation}>
-            <div style={{ boxShadow: "none" }} className="button-container">
+            <div style={{ boxShadow: "none" }} className="theme-element-container">
               <p>You've been invited!</p>
             </div>
             <button

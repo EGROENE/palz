@@ -1251,45 +1251,43 @@ const EventForm = ({
         </label>
         <label className="location-countries-dropdown">
           <p>Country:</p>
-          <div className="button-container">
-            <button
-              disabled={isLoading}
-              className={
-                eventLocationError !== "" && showErrors
-                  ? "country-dropdown-button erroneous-field"
-                  : "country-dropdown-button"
-              }
-              type="button"
-              onClick={() => setShowEventCountries(!showEventCountries)}
-            >
-              {eventCountry === "" ? (
-                "Select country:"
-              ) : (
-                <div className="flag-and-code-container">
-                  <img
-                    src={`/flags/1x1/${
-                      countries.filter((country) => country.country === eventCountry)[0]
-                        .abbreviation
-                    }.svg`}
-                  />
-                  <span
-                    style={
-                      eventCountry && eventCountry.length >= 19
-                        ? { fontSize: "0.75rem" }
-                        : undefined
-                    }
-                  >{`${
+          <button
+            disabled={isLoading}
+            className={
+              eventLocationError !== "" && showErrors
+                ? "country-dropdown-button erroneous-field"
+                : "country-dropdown-button"
+            }
+            type="button"
+            onClick={() => setShowEventCountries(!showEventCountries)}
+          >
+            {eventCountry === "" ? (
+              "Select country:"
+            ) : (
+              <div className="flag-and-code-container">
+                <img
+                  src={`/flags/1x1/${
                     countries.filter((country) => country.country === eventCountry)[0]
-                      .country
-                  }`}</span>
-                </div>
-              )}
-              <i
-                style={showEventCountries ? { "rotate": "180deg" } : undefined}
-                className="fas fa-chevron-down"
-              ></i>
-            </button>
-          </div>
+                      .abbreviation
+                  }.svg`}
+                />
+                <span
+                  style={
+                    eventCountry && eventCountry.length >= 19
+                      ? { fontSize: "0.75rem" }
+                      : undefined
+                  }
+                >{`${
+                  countries.filter((country) => country.country === eventCountry)[0]
+                    .country
+                }`}</span>
+              </div>
+            )}
+            <i
+              style={showEventCountries ? { "rotate": "180deg" } : undefined}
+              className="fas fa-chevron-down"
+            ></i>
+          </button>
           {showEventCountries && (
             <ul className="dropdown-list">
               {resortedCountries.map((country) => (
@@ -1522,11 +1520,10 @@ const EventForm = ({
             style={
               focusedElement === "public"
                 ? {
-                    boxShadow: `0px 0px 10px 2px ${randomColor}`,
                     outline: "none",
                     width: "unset",
                   }
-                : { width: "unset" }
+                : { width: "unset", accentColor: randomColor }
             }
             disabled={isLoading}
             onChange={() => handlePublicPrivateBoxChecking("public")}
@@ -1543,9 +1540,9 @@ const EventForm = ({
             style={
               focusedElement === "private"
                 ? {
-                    boxShadow: `0px 0px 10px 2px ${randomColor}`,
                     outline: "none",
                     width: "unset",
+                    accentColor: randomColor,
                   }
                 : { width: "unset" }
             }
@@ -1651,20 +1648,18 @@ const EventForm = ({
             ></i>
           )}
           <div className={styles.coorganizersInviteesDropdown}>
-            <div className="button-container">
-              <button
-                style={{ backgroundColor: randomColor }}
-                disabled={isLoading}
-                type="button"
-                onClick={() => setShowPotentialCoOrganizers(!showPotentialCoOrganizers)}
-              >
-                Select user:
-                <i
-                  style={showPotentialCoOrganizers ? { "rotate": "180deg" } : undefined}
-                  className="fas fa-chevron-down"
-                ></i>
-              </button>
-            </div>
+            <button
+              style={{ backgroundColor: randomColor }}
+              disabled={isLoading}
+              type="button"
+              onClick={() => setShowPotentialCoOrganizers(!showPotentialCoOrganizers)}
+            >
+              Select user:
+              <i
+                style={showPotentialCoOrganizers ? { "rotate": "180deg" } : undefined}
+                className="fas fa-chevron-down"
+              ></i>
+            </button>
             {showPotentialCoOrganizers && (
               <ul className="dropdown-list">
                 {potentialCoOrganizers.map((user) => (
@@ -1754,20 +1749,18 @@ const EventForm = ({
             ></i>
           )}
           <div className={styles.coorganizersInviteesDropdown}>
-            <div className="button-container">
-              <button
-                style={{ backgroundColor: randomColor }}
-                disabled={isLoading}
-                type="button"
-                onClick={() => setShowPotentialInvitees(!showPotentialInvitees)}
-              >
-                Select user:
-                <i
-                  style={showPotentialInvitees ? { "rotate": "180deg" } : undefined}
-                  className="fas fa-chevron-down"
-                ></i>
-              </button>
-            </div>
+            <button
+              style={{ backgroundColor: randomColor }}
+              disabled={isLoading}
+              type="button"
+              onClick={() => setShowPotentialInvitees(!showPotentialInvitees)}
+            >
+              Select user:
+              <i
+                style={showPotentialInvitees ? { "rotate": "180deg" } : undefined}
+                className="fas fa-chevron-down"
+              ></i>
+            </button>
             {showPotentialInvitees && (
               <ul className="dropdown-list">
                 {potentialInvitees.map((user) => (
@@ -1843,7 +1836,7 @@ const EventForm = ({
         }
       </div>
       {event && event.creator === currentUser?._id && (
-        <div className="button-container">
+        <div className="theme-element-container">
           <button
             type="button"
             onClick={() => setShowAreYouSureDeleteEvent(true)}
@@ -1876,7 +1869,7 @@ const EventForm = ({
         />
       )}
       <div className="buttons-container">
-        <div className="button-container">
+        <div className="theme-element-container">
           <button
             disabled={!changesMade || isLoading}
             type="reset"
@@ -1885,16 +1878,18 @@ const EventForm = ({
             Revert
           </button>
         </div>
-        <div className="button-container">
-          <button
-            disabled={submitButtonIsDisabled}
-            onClick={(e) => handleAddEventFormSubmission(e)}
-            style={{ backgroundColor: randomColor }}
-            type="submit"
-          >
-            {event ? "Save Changes" : "Add Event"}
-          </button>
-        </div>
+        <button
+          disabled={submitButtonIsDisabled}
+          onClick={(e) => handleAddEventFormSubmission(e)}
+          style={
+            randomColor === "var(--primary-color)"
+              ? { backgroundColor: `${randomColor}`, color: "black" }
+              : { backgroundColor: `${randomColor}`, color: "white" }
+          }
+          type="submit"
+        >
+          {event ? "Save Changes" : "Add Event"}
+        </button>
       </div>
     </form>
   );

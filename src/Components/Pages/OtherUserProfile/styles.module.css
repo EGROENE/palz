@@ -1,0 +1,86 @@
+.kopfzeile {
+  width: 90%;
+  display: flex;
+  padding: 2rem 0;
+  justify-content: space-between;
+  height: 17rem;
+  font-size: 3.2em;
+  line-height: 1.5;
+  margin: 0.5rem auto;
+
+  background: linear-gradient(
+    80deg,
+    var(--primary-color),
+    var(--primary-color),
+    var(--secondary-color),
+    var(--secondary-color)
+  );
+  background: -webkit-linear-gradient(
+    34deg,
+    var(--primary-color),
+    var(--primary-color),
+    var(--secondary-color),
+    var(--secondary-color)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 300% !important;
+  -webkit-background-clip: text;
+  animation: animated_header 10s ease-in-out infinite;
+  -moz-animation: animated_header 10s ease-in-out infinite;
+  -webkit-animation: animated_header 10s ease-in-out infinite;
+}
+
+.mainInfoContainer {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+@keyframes animated_header {
+  0% {
+    background-position: 0px 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0px 50%;
+  }
+}
+
+.kopfzeile img {
+  border-radius: 10px;
+  height: 100%;
+}
+
+/* .kopfzeile div {
+  width: 44%;
+  text-align: center;
+  border-radius: 10px;
+  padding: 3rem;
+} */
+
+.kopfzeile header {
+  font-size: 2.5rem;
+  font-weight: 700;
+  -webkit-text-fill-color: transparent;
+}
+
+.kopfzeile p {
+  font-family: var(--header-font);
+  color: var(--text-color-opposite);
+  font-weight: 700;
+  font-size: 1.5rem;
+  -webkit-text-fill-color: transparent;
+}
+
+.kopfzeile .actionButtonsContainer {
+  padding: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 2rem;
+}

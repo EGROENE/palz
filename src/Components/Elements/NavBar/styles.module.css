@@ -30,7 +30,6 @@
   padding: 0px;
   border-radius: 50%;
   cursor: pointer;
-  margin-left: 1.25rem;
 }
 
 .profileImageContainer:hover {
@@ -49,6 +48,7 @@
 .navbar li {
   color: transparent;
   margin-left: 0;
+      font-size: 1.5rem;
 }
 
 .navbar a:hover,

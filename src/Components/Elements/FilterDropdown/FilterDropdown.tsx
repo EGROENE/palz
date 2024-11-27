@@ -24,7 +24,7 @@ const FilterDropdown = ({
   return (
     <div className={styles.filterContainer}>
       <div style={{ display: "flex", alignItems: "flex-end" }}>
-        <div className="button-container">
+        <div className="theme-element-container">
           <button className={styles.button} onClick={() => toggleShowFilterOptions()}>
             {dropdownBtnText}
             <i

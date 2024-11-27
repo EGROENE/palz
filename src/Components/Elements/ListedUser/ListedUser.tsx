@@ -1,10 +1,10 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { TUser } from "../../../types";
+import { TUser, TThemeColor } from "../../../types";
 import styles from "./styles.module.css";
 
 const ListedUser = ({
   user,
-  randomColor,
   buttonOneHandler,
   buttonOneHandlerParams,
   buttonOneIsDisabled,
@@ -15,7 +15,7 @@ const ListedUser = ({
   buttonTwoText,
   buttonTwoIsDisabled,
   buttonTwoLink,
-  objectLink,
+  objectLink, // link that entire component leads to
 }: {
   user?: TUser;
   randomColor?: string;
@@ -31,8 +31,27 @@ const ListedUser = ({
   buttonTwoLink: string | null;
   objectLink?: string | undefined;
 }) => {
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  useEffect(() => {
+    // Set color of event card's border randomly:
+    const themeColors: TThemeColor[] = [
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
+  }, []);
+
   return (
-    <div key={user?._id} className={styles.listedUser}>
+    <div
+      key={user?._id}
+      className={styles.listedUser}
+      style={{ borderColor: randomColor }}
+    >
       <img
         style={{ border: `2px solid ${randomColor}` }}
         src={`${user?.profileImage}`}
@@ -53,25 +72,6 @@ const ListedUser = ({
       )}
       {buttonOneLink !== null ? (
         <Link to={buttonOneLink}>
-          <div className="button-container">
-            <button
-              disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
-              onClick={
-                buttonOneHandler
-                  ? buttonOneHandlerParams && buttonOneHandlerParams.length > 0
-                    ? // @ts-ignore
-                      (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
-                    : () => buttonOneHandler()
-                  : undefined
-              }
-              style={{ backgroundColor: randomColor }}
-            >
-              {buttonOneText}
-            </button>
-          </div>
-        </Link>
-      ) : (
-        <div className="button-container">
           <button
             disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
             onClick={
@@ -82,7 +82,32 @@ const ListedUser = ({
                   : () => buttonOneHandler()
                 : undefined
             }
-            style={{ backgroundColor: randomColor }}
+            style={
+              randomColor === "var(--primary-color)"
+                ? { backgroundColor: `${randomColor}`, color: "black" }
+                : { backgroundColor: `${randomColor}`, color: "white" }
+            }
+          >
+            {buttonOneText}
+          </button>
+        </Link>
+      ) : (
+        <div className="theme-element-container">
+          <button
+            disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
+            onClick={
+              buttonOneHandler
+                ? buttonOneHandlerParams && buttonOneHandlerParams.length > 0
+                  ? // @ts-ignore
+                    (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
+                  : () => buttonOneHandler()
+                : undefined
+            }
+            style={
+              randomColor === "var(--primary-color)"
+                ? { backgroundColor: `${randomColor}`, color: "black" }
+                : { backgroundColor: `${randomColor}`, color: "white" }
+            }
           >
             {buttonOneText}
           </button>
@@ -90,24 +115,6 @@ const ListedUser = ({
       )}
       {buttonTwoLink !== null ? (
         <Link to={buttonTwoLink}>
-          <div className="button-container">
-            <button
-              disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
-              onClick={
-                buttonTwoHandler
-                  ? buttonTwoHandlerParams && buttonTwoHandlerParams.length > 0
-                    ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
-                    : buttonTwoHandler()
-                  : undefined
-              }
-              style={{ backgroundColor: "tomato" }}
-            >
-              {buttonTwoText}
-            </button>
-          </div>
-        </Link>
-      ) : (
-        <div className="button-container">
           <button
             disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
             onClick={
@@ -121,7 +128,21 @@ const ListedUser = ({
           >
             {buttonTwoText}
           </button>
-        </div>
+        </Link>
+      ) : (
+        <button
+          disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
+          onClick={
+            buttonTwoHandler
+              ? buttonTwoHandlerParams && buttonTwoHandlerParams.length > 0
+                ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                : buttonTwoHandler()
+              : undefined
+          }
+          style={{ backgroundColor: "tomato" }}
+        >
+          {buttonTwoText}
+        </button>
       )}
     </div>
   );

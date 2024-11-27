@@ -26,11 +26,9 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }> {
                 Please reload this page or navigate back to the homepage if the issue
                 persists.
               </p>
-              <div className="button-container">
+              <div className="buttons-container">
                 <button onClick={() => window.location.reload()}>Reload Page</button>
-              </div>
-              <div className="button-container">
-                <button style={{ backgroundColor: "var(--theme-orange)" }}>
+                <button style={{ backgroundColor: "var(--secondary-color)" }}>
                   <a href={`${baseURL}`}>Back to Homepage</a>
                 </button>
               </div>

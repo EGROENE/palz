@@ -34,7 +34,11 @@ const Tab = ({
     <div
       title={typeof info !== "string" ? `${info.firstName} ${info.lastName}` : undefined}
       key={typeof info === "string" ? info : info._id}
-      style={{ backgroundColor: randomColor }}
+      style={
+        randomColor === "var(--primary-color)"
+          ? { backgroundColor: `${randomColor}`, color: "black" }
+          : { backgroundColor: `${randomColor}`, color: "white" }
+      }
       className={isDisabled ? `${styles.tab} disabled` : `${styles.tab}`}
     >
       {typeof info !== "string" && (

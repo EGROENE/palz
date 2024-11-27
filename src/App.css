@@ -178,7 +178,7 @@
   width: unset;
 }
 
-.login-signup-edit-form .button-container {
+.login-signup-edit-form .theme-element-container {
   width: 103%;
   margin-top: 1.5rem;
 }
@@ -322,6 +322,12 @@
   display: flex;
 }
 
+.phone-input-elements .theme-element-container {
+  width: unset;
+  margin-top: 0;
+  margin-right: 0.5rem;
+}
+
 .phone-input-elements button ~ div {
   margin-left: 2rem;
 }
@@ -339,6 +345,7 @@
   justify-content: space-around;
   padding: 0.5rem;
   background-color: rgb(75, 75, 75);
+  height: 40.38px;
   max-height: 40.38px;
 }
 
@@ -421,9 +428,20 @@
   /* justify-content: flex-end; */
 }
 
+.location-countries-dropdown .theme-element-container {
+  margin-top: 0;
+  width: unset;
+  max-height: 35.38px;
+}
+
 .location-countries-dropdown .country-dropdown-button,
 .co-organizers-invitees-dropdown button {
   width: 12rem;
+}
+
+.login-signup-edit-form button:active {
+  background: rgb(75, 75, 75);
+  color: white;
 }
 
 .socials-inputs-container {
@@ -483,10 +501,21 @@ form textarea {
 
 .settings-theme-and-delete-account-container div {
   width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.settings-theme-and-delete-account-container div .theme-element-container {
+  width: 38%;
 }
 
 .delete-button {
   background-color: tomato;
+}
+
+.delete-button:hover {
+  opacity: 0.7;
 }
 
 .all-events-container {

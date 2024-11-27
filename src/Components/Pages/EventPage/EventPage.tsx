@@ -289,7 +289,7 @@ const EventPage = () => {
                   Please log in or sign up to edit RSVP or to make changes to this event.
                 </p>
                 <Link to={`/`}>
-                  <div className="button-container">
+                  <div className="theme-element-container">
                     <button style={{ "backgroundColor": randomColor }}>
                       Log in/Sign up
                     </button>
@@ -301,10 +301,9 @@ const EventPage = () => {
               currentUser &&
               userCreatedAccount !== null &&
               (!userIsOrganizer ? (
-                <div className="button-container">
+                <div className="theme-element-container">
                   <button
                     disabled={maxInviteesReached || isLoading}
-                    style={{ "backgroundColor": randomColor }}
                     onClick={(e) => {
                       if (userRSVPdActual && userRSVPdOptimistic && currentUser) {
                         handleDeleteUserRSVP(
@@ -323,7 +322,7 @@ const EventPage = () => {
                 </div>
               ) : (
                 <Link to={`/edit-event/${currentEvent._id}`}>
-                  <div className="button-container">
+                  <div className="theme-element-container">
                     <button
                       onClick={() => setCurrentEvent(currentEvent)}
                       style={{ "backgroundColor": randomColor }}
@@ -339,7 +338,7 @@ const EventPage = () => {
         <>
           <h1>Sorry, this event doesn't exist anymore.</h1>
           <Link to={"/events"}>
-            <div className="button-container">
+            <div className="theme-element-container">
               <button>Back to All Events</button>
             </div>
           </Link>

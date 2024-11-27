@@ -7,11 +7,11 @@ const Welcome = () => {
   return (
     <div className="page-hero">
       <div className={styles.welcomeBox}>
-        <h1 className="animate__animated animate__pulse">
+        <header className="animate__animated animate__pulse">
           {userCreatedAccount
             ? `Welcome to Palz, ${currentUser?.firstName}!`
             : `Welcome back, ${currentUser?.firstName}!`}
-        </h1>
+        </header>
       </div>
     </div>
   );

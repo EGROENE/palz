@@ -123,7 +123,7 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
           <p className="input-error-message">{passwordError}</p>
         )}
       </label>
-      <div className="button-container">
+      <div className="theme-element-container">
         <button
           className="login-button"
           type={areNoLoginErrors ? "submit" : "button"}

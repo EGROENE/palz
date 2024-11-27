@@ -198,27 +198,17 @@ const OtherUserProfile = () => {
         className={styles.kopfzeile}
         style={{ borderBottom: `3px solid ${randomColor}` }}
       >
-        <img
-          style={{
-            border: `3px solid ${randomColor}`,
-            boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
-          }}
-          src={
-            currentOtherUser.profileImage !== "" &&
-            typeof currentOtherUser.profileImage === "string"
-              ? currentOtherUser.profileImage
-              : defaultProfileImage
-          }
-        />
-        <div
-          /* style={{
-            background: `linear-gradient(90deg, rgba(112,106,223,0.03405112044817926) 0%, ${randomColor}  67%)`,
-          }} */
-          style={{
-            background: `radial-gradient(circle, var(--text-color) 10%, #6a6868 70%, ${randomColor} 90%)`,
-            boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
-          }}
-        >
+        <div className="theme-element-container">
+          <img
+            src={
+              currentOtherUser.profileImage !== "" &&
+              typeof currentOtherUser.profileImage === "string"
+                ? currentOtherUser.profileImage
+                : defaultProfileImage
+            }
+          />
+        </div>
+        <div className={styles.mainInfoContainer}>
           <header style={{ color: `${randomColor}` }}>
             {currentOtherUser.firstName} {currentOtherUser.lastName}
           </header>
@@ -227,10 +217,13 @@ const OtherUserProfile = () => {
             {displayedButtons.map(
               (button) =>
                 button && (
-                  <div key={button.type} className="button-container">
+                  <div
+                    key={button.type}
+                    style={{ maxHeight: "3rem", display: "flex" }}
+                    className="theme-element-container"
+                  >
                     <button
                       disabled={buttonsAreDisabled}
-                      style={{ backgroundColor: randomColor }}
                       onClick={
                         button.paramsIncludeEvent // @ts-expect-error: ...
                           ? (e) => button.handler(e, ...button.handlerParams)

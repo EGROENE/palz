@@ -37,7 +37,7 @@ const LoginPage = () => {
       <div className="login-greeting-container">
         <h1>Welcome to Palz!</h1>
         <h2>Do fun things, meet fun friends</h2>
-        <div className="button-container">
+        <div className="theme-element-container">
           <button className="theme-toggle-button" onClick={() => toggleTheme()}>
             {theme === "light" ? (
               <span>

@@ -190,24 +190,19 @@ const UserSettings = () => {
             Any events of which you are the sole organizer will be deleted & all your
             account information will be lost.
           </p>
-          <div className="button-container">
-            <button
-              onClick={() => setShowAreYouSureInterface(true)}
-              className="delete-button"
-            >
-              Delete Account
-            </button>
-          </div>
+          <button
+            onClick={() => setShowAreYouSureInterface(true)}
+            className="delete-button"
+          >
+            Delete Account
+          </button>
         </div>
 
         <div>
           <h3>Change Site Theme</h3>
           <p>{theme === "dark" ? "Theme is set to dark" : "Theme is set to light"}</p>
-          <div className="button-container">
-            <button
-              style={{ backgroundColor: "rgb(97, 95, 95)" }}
-              onClick={() => toggleTheme()}
-            >
+          <div className="theme-element-container">
+            <button onClick={() => toggleTheme()}>
               {theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
             </button>
           </div>
