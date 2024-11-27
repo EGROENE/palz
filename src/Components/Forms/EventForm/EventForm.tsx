@@ -1649,7 +1649,11 @@ const EventForm = ({
           )}
           <div className={styles.coorganizersInviteesDropdown}>
             <button
-              style={{ backgroundColor: randomColor }}
+              style={
+                randomColor === "var(--primary-color)"
+                  ? { backgroundColor: `${randomColor}`, color: "black" }
+                  : { backgroundColor: `${randomColor}`, color: "white" }
+              }
               disabled={isLoading}
               type="button"
               onClick={() => setShowPotentialCoOrganizers(!showPotentialCoOrganizers)}
@@ -1750,7 +1754,11 @@ const EventForm = ({
           )}
           <div className={styles.coorganizersInviteesDropdown}>
             <button
-              style={{ backgroundColor: randomColor }}
+              style={
+                randomColor === "var(--primary-color)"
+                  ? { backgroundColor: `${randomColor}`, color: "black" }
+                  : { backgroundColor: `${randomColor}`, color: "white" }
+              }
               disabled={isLoading}
               type="button"
               onClick={() => setShowPotentialInvitees(!showPotentialInvitees)}
