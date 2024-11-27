@@ -25,12 +25,12 @@ loading {
 .l1 {
   left: 0;
   animation: l1 4s infinite linear;
-  background-color: var(--theme-blue);
+  background-color: var(--fifth-color);
 }
 .l2 {
   right: 0;
   animation: l2 4s infinite linear;
-  background-color: var(--theme-green);
+  background-color: var(--secondary-color);
 }
 .ball {
   width: 15px;
@@ -38,7 +38,7 @@ loading {
   border-radius: 50%;
   position: absolute;
   animation: ball 4s infinite linear;
-  background-color: var(--theme-yellow);
+  background-color: var(--primary-color);
 }
 
 @keyframes l1 {

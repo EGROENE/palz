@@ -20,7 +20,7 @@
 }
 
 .loadingModal header {
-  color: var(--theme-pink);
+  color: var(--primary-color);
   font-weight: 700;
   font-size: 2rem;
 }
