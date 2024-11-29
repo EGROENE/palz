@@ -40,7 +40,7 @@ const OtherUserProfile = () => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
-  // if currentUser is undefined on initial render, redirect to login page
+  // if currentUser is falsy, redirect to login page
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
       toast.error("Please log in before accessing this page");

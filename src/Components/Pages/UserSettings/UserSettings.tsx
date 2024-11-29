@@ -17,10 +17,10 @@ const UserSettings = () => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   const navigation = useNavigate();
   useEffect(() => {
-    // If no current user or whatever, redirect to login
     if (!currentUser) {
-      toast.error("Please log in before accessing this page");
+      toast.error("Please log in before accessing this page.");
       navigation("/");
+      logout();
     }
 
     const themeColors: TThemeColor[] = [

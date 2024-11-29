@@ -13,7 +13,7 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 
 const EventPage = () => {
   const { showSidebar, isLoading, setShowSidebar } = useMainContext();
-  const { allUsers, currentUser, userCreatedAccount, setCurrentOtherUser } =
+  const { allUsers, currentUser, userCreatedAccount, setCurrentOtherUser, logout } =
     useUserContext();
   const {
     userRSVPdOptimistic,
@@ -62,6 +62,7 @@ const EventPage = () => {
       if (currentUser && userCreatedAccount !== null) {
         navigation(`/${currentUser.username}`);
       } else {
+        logout();
         navigation("/");
       }
     }

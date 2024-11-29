@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 const AddEventPage = () => {
   const navigation = useNavigate();
   const { showSidebar, setShowSidebar } = useMainContext();
-  const { currentUser, userCreatedAccount } = useUserContext();
+  const { currentUser, userCreatedAccount, logout } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -30,6 +30,7 @@ const AddEventPage = () => {
     if (!currentUser && userCreatedAccount === null) {
       toast.error("Please log in before accessing this page");
       navigation("/");
+      logout();
     }
   }, [currentUser, navigation, userCreatedAccount]);
 

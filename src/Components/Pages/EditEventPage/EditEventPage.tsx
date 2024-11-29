@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
 const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
   const { showSidebar, setShowSidebar } = useMainContext();
-  const { currentUser, userCreatedAccount } = useUserContext();
+  const { currentUser, userCreatedAccount, logout } = useUserContext();
 
   const navigation = useNavigate();
 
@@ -44,6 +44,7 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
       toast.error("Please log in before accessing this page");
+      logout();
       navigation("/");
     }
   }, [currentEvent, navigation]);

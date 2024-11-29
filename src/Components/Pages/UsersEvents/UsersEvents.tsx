@@ -10,12 +10,13 @@ import { useEventContext } from "../../../Hooks/useEventContext";
 
 const UsersEvents = () => {
   const { showSidebar, setShowSidebar } = useMainContext();
-  const { currentUser, userCreatedAccount } = useUserContext();
+  const { currentUser, userCreatedAccount, logout } = useUserContext();
   const { allEvents, fetchAllEvents } = useEventContext();
 
   const navigation = useNavigate();
   useEffect(() => {
-    if (!currentUser && userCreatedAccount === null) {
+    if (!currentUser) {
+      logout();
       toast.error("Please log in before accessing this page");
       navigation("/");
     }

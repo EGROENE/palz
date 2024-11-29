@@ -17,7 +17,8 @@ const DisplayedCardsPage = ({
   usedFor: "events" | "potential-friends" | "my-friends";
 }) => {
   const { showSidebar, setShowSidebar } = useMainContext();
-  const { allUsers, fetchAllUsers, currentUser, userCreatedAccount } = useUserContext();
+  const { allUsers, fetchAllUsers, currentUser, userCreatedAccount, logout } =
+    useUserContext();
   const { allEvents, fetchAllEvents } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -452,6 +453,7 @@ const DisplayedCardsPage = ({
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
+      logout();
       toast.error("Please log in before accessing this page");
       navigation("/");
     }
