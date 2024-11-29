@@ -2,7 +2,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import styles from "./styles.module.css";
 
 const Welcome = () => {
-  const { userCreatedAccount, firstName, lastName } = useUserContext();
+  const { userCreatedAccount, firstName } = useUserContext();
 
   return (
     <div className="page-hero">
@@ -10,7 +10,7 @@ const Welcome = () => {
         <header className="animate__animated animate__pulse">
           {userCreatedAccount
             ? `Welcome to Palz, ${firstName}!`
-            : `Welcome back, ${lastName}!`}
+            : `Welcome back, ${firstName}!`}
         </header>
       </div>
     </div>
