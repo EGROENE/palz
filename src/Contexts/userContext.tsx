@@ -140,7 +140,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     fetchAllUsers();
-    setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
+    //setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
   }, [allUsers]);
 
   const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
@@ -1152,6 +1152,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
     if (isOnSignup) {
       handleNewAccountCreation(userData);
+      setUserCreatedAccount(true);
       setCurrentUser(userData);
       setFirstName(userData.firstName);
       setLastName(userData.lastName);
