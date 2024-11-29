@@ -20,7 +20,6 @@ import LoadingModal from "./Components/Elements/LoadingModal/LoadingModal";
 import FriendRequests from "./Components/Pages/FriendRequests/FriendRequests";
 import OtherUserProfile from "./Components/Pages/OtherUserProfile/OtherUserProfile";
 import { useEventContext } from "./Hooks/useEventContext";
-import toast from "react-hot-toast";
 
 function App() {
   const { theme, showWelcomeMessage, imageIsUploading, imageIsDeleting, showSidebar } =
@@ -32,7 +31,6 @@ function App() {
     setShowUpdateProfileImageInterface,
     removeProfileImage,
     accountDeletionInProgress,
-    logout,
   } = useUserContext();
   const {
     currentEvent,
@@ -43,15 +41,6 @@ function App() {
 
   const navigation = useNavigate();
   const currentURL = useLocation().pathname;
-
-  // if user is undefined (not null), redirect to homepage & call logout function:
-  useEffect(() => {
-    if (currentUser === undefined) {
-      toast.error("Please log in or create an account before accessing this page.");
-      navigation("/");
-      logout();
-    }
-  }, [currentUser, navigation, userCreatedAccount]);
 
   theme === "dark"
     ? (document.body.style.backgroundColor = "#242424")
