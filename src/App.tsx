@@ -51,7 +51,7 @@ function App() {
       navigation("/");
       logout();
     }
-  }, []);
+  }, [currentUser, navigation, userCreatedAccount]);
 
   theme === "dark"
     ? (document.body.style.backgroundColor = "#242424")
