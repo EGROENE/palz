@@ -27,6 +27,7 @@ import FriendRequests from "./Components/Pages/FriendRequests/FriendRequests";
 import OtherUserProfile from "./Components/Pages/OtherUserProfile/OtherUserProfile";
 import { useEventContext } from "./Hooks/useEventContext";
 import useLocalStorage from "use-local-storage";
+import toast from "react-hot-toast";
 
 function App() {
   const [sessionCount, setSessionCount] = useLocalStorage<number | null>(
@@ -54,11 +55,12 @@ function App() {
   const navigation = useNavigate();
   const currentURL = useLocation().pathname;
 
+  // if user is undefined (not null), redirect to homepage & call logout function:
   useEffect(() => {
-    if (sessionCount === null) {
-      setSessionCount(1);
-    } else {
-      setSessionCount(sessionCount + 1);
+    if (currentUser === undefined) {
+      toast.error("Please log in or create an account before accessing this page.");
+      navigation("/");
+      logout();
     }
   }, []);
 
