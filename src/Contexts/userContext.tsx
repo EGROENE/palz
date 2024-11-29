@@ -1212,11 +1212,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = (): void => {
     setUserCreatedAccount(null);
+    setCurrentUser(null);
+    setCurrentOtherUser(null);
     resetLoginOrSignupFormFieldsAndErrors();
     setProfileImage("");
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("userCreatedAccount");
-    localStorage.removeItem("currentOtherUser");
   };
 
   const userContextValues: TUserContext = {
