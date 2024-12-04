@@ -22,58 +22,28 @@ const UserCard = ({ user }: { user: TUser }) => {
     setCurrentOtherUser,
   } = useUserContext();
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
-  const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
+  const currentUserUpdated: TUser = allUsers.filter(
+    (user) => user._id === currentUser?._id
+  )[0];
 
-  const [
-    currentUserSentFriendRequestOptimistic,
-    setCurrentUserSentFriendRequestOptimistic,
-  ] = useState<boolean>(false);
-  const [currentUserSentFriendRequestActual, setCurrentUserSentFriendRequestActual] =
-    useState<boolean | null>(null);
+  const [currentUserSentFriendRequest, setCurrentUserSentFriendRequest] =
+    useState<boolean>(
+      user && currentUser && currentUser._id && currentUserUpdated._id && user._id
+        ? currentUserUpdated.friendRequestsSent.includes(user._id) &&
+            user.friendRequestsReceived.includes(currentUserUpdated._id)
+        : false
+    );
 
-  const [
-    currentUserReceivedFriendRequestOptimistic,
-    setCurrentUserReceivedFriendRequestOptimistic,
-  ] = useState<boolean>(false);
-  const [
-    currentUserReceivedFriendRequestActual,
-    setCurrentUserReceivedFriendRequestActual,
-  ] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    if (
-      user._id &&
-      currentUserUpdated?._id &&
-      currentUserUpdated?.friendRequestsSent.includes(user._id) &&
-      user.friendRequestsReceived.includes(currentUserUpdated?._id)
-    ) {
-      setCurrentUserSentFriendRequestActual(true);
-      setCurrentUserReceivedFriendRequestOptimistic(true);
-    } else {
-      setCurrentUserSentFriendRequestActual(false);
-      setCurrentUserReceivedFriendRequestOptimistic(false);
-    }
-  }, [currentUserSentFriendRequestOptimistic]);
-
-  useEffect(() => {
-    if (
-      user._id &&
-      currentUserUpdated?._id &&
-      currentUserUpdated?.friendRequestsReceived.includes(user._id) &&
-      user.friendRequestsSent.includes(currentUserUpdated?._id)
-    ) {
-      setCurrentUserReceivedFriendRequestActual(true);
-      setCurrentUserReceivedFriendRequestOptimistic(true);
-    } else {
-      setCurrentUserReceivedFriendRequestActual(false);
-      setCurrentUserReceivedFriendRequestOptimistic(false);
-    }
-  }, [currentUserReceivedFriendRequestOptimistic]);
+  // maybe define as non-state value if setter not used anywhere
+  const [currentUserReceivedFriendRequest, setCurrentUserReceivedFriendRequest] =
+    useState<boolean>(
+      currentUserUpdated._id && user && user._id
+        ? user.friendRequestsSent.includes(currentUserUpdated._id) &&
+            currentUserUpdated.friendRequestsReceived.includes(user._id)
+        : false
+    );
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-
-  /* sender below is absolute most-current version of currentUser. currentUser itself (the state value) doesn't update in time if friend requests are sent/rescinded, but the corresponding user in allUsers does update in time, so sender is simply that value, captured when Add/Retract friend req btn is clicked. */
-  //const sender = allUsers.filter((user) => user._id === currentUser?._id)[0];
 
   useEffect(() => {
     // Set color of event card's border randomly:
@@ -102,15 +72,12 @@ const UserCard = ({ user }: { user: TUser }) => {
       : undefined;
 
   const getButtonOneText = (): JSX.Element | string => {
-    if (
-      currentUserReceivedFriendRequestActual ||
-      currentUserReceivedFriendRequestOptimistic
-    ) {
+    if (currentUserReceivedFriendRequest) {
       return "Accept/Decline Request";
     }
 
     // If currentUser has sent user friend request:
-    if (currentUserSentFriendRequestActual || currentUserSentFriendRequestOptimistic) {
+    if (currentUserSentFriendRequest) {
       return (
         <>
           <i className="fas fa-user-minus"></i>Retract Request
@@ -152,14 +119,10 @@ const UserCard = ({ user }: { user: TUser }) => {
     currentUser?.friends.includes(user._id) &&
     user.friends.includes(currentUser._id);
 
-  const currentUserHasSentUserAFriendRequest = currentUserSentFriendRequestActual;
-
-  const userHasSentCurrentUserAFriendRequest = currentUserReceivedFriendRequestActual;
-
   const noConnectionBetweenUserAndCurrentUser =
     !currentUserAndUserAreFriends &&
-    !currentUserHasSentUserAFriendRequest &&
-    !userHasSentCurrentUserAFriendRequest;
+    !currentUserSentFriendRequest &&
+    !currentUserReceivedFriendRequest;
 
   return (
     <>
@@ -222,16 +185,15 @@ const UserCard = ({ user }: { user: TUser }) => {
               if (currentUserAndUserAreFriends) {
                 handleUnfriending(e, currentUser, user);
               }
-              if (currentUserHasSentUserAFriendRequest && currentUser) {
+              if (currentUserSentFriendRequest && currentUser) {
                 handleRetractFriendRequest(
                   e,
                   currentUserUpdated,
                   user,
-                  setCurrentUserSentFriendRequestOptimistic,
-                  setCurrentUserSentFriendRequestActual
+                  setCurrentUserSentFriendRequest
                 );
               }
-              if (userHasSentCurrentUserAFriendRequest) {
+              if (currentUserReceivedFriendRequest) {
                 setCurrentOtherUser(user);
                 setShowFriendRequestResponseOptions(true);
               }
@@ -239,8 +201,7 @@ const UserCard = ({ user }: { user: TUser }) => {
                 handleSendFriendRequest(
                   currentUserUpdated,
                   user,
-                  setCurrentUserSentFriendRequestOptimistic,
-                  setCurrentUserSentFriendRequestActual
+                  setCurrentUserSentFriendRequest
                 );
               }
             }}
