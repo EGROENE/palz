@@ -135,15 +135,23 @@ export type TUserContext = {
   handleSendFriendRequest: (
     sender: TUser | undefined,
     recipient: TUser,
-    setUserSentFriendRequestOptimistic: React.Dispatch<React.SetStateAction<boolean>>,
-    setUserSentFriendRequestActual: React.Dispatch<React.SetStateAction<boolean | null>>
+    setCurrentUserSentFriendRequestOptimistic: React.Dispatch<
+      React.SetStateAction<boolean>
+    >,
+    setCurrentUserSentFriendRequestActual: React.Dispatch<
+      React.SetStateAction<boolean | null>
+    >
   ) => void;
   handleRetractFriendRequest: (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     sender: TUser,
     recipient: TUser,
-    setUserSentFriendRequestOptimistic?: React.Dispatch<React.SetStateAction<boolean>>,
-    setUserSentFriendRequestActual?: React.Dispatch<React.SetStateAction<boolean | null>>,
+    setCurrentUserSentFriendRequestOptimistic?: React.Dispatch<
+      React.SetStateAction<boolean>
+    >,
+    setCurrentUserSentFriendRequestActual?: React.Dispatch<
+      React.SetStateAction<boolean | null>
+    >,
     usersToWhomCurrentUserSentRequest?: TUser[],
     setUsersToWhomCurrentUserSentRequest?: React.Dispatch<React.SetStateAction<TUser[]>>
   ) => void;

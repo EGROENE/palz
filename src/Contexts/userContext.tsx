@@ -748,11 +748,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleSendFriendRequest = (
     sender: TUser | undefined,
     recipient: TUser,
-    setUserSentFriendRequestOptimistic?: React.Dispatch<React.SetStateAction<boolean>>,
-    setUserSentFriendRequestActual?: React.Dispatch<React.SetStateAction<boolean | null>>
+    setCurrentUserSentFriendRequestOptimistic?: React.Dispatch<
+      React.SetStateAction<boolean>
+    >,
+    setCurrentUserSentFriendRequestActual?: React.Dispatch<
+      React.SetStateAction<boolean | null>
+    >
   ): void => {
-    if (setUserSentFriendRequestOptimistic) {
-      setUserSentFriendRequestOptimistic(true);
+    if (setCurrentUserSentFriendRequestOptimistic) {
+      setCurrentUserSentFriendRequestOptimistic(true);
     }
     setButtonsAreDisabled(true);
 
@@ -781,14 +785,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         })
         .then(() => {
           if (isRequestError) {
-            if (setUserSentFriendRequestOptimistic) {
-              setUserSentFriendRequestOptimistic(false);
+            if (setCurrentUserSentFriendRequestOptimistic) {
+              setCurrentUserSentFriendRequestOptimistic(false);
             }
             toast.error("Couldn't send request. Please try again.");
           } else {
             toast.success("Friend request sent!");
-            if (setUserSentFriendRequestActual) {
-              setUserSentFriendRequestActual(true);
+            if (setCurrentUserSentFriendRequestActual) {
+              setCurrentUserSentFriendRequestActual(true);
             }
           }
         })
@@ -801,8 +805,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     sender: TUser,
     recipient: TUser,
-    setUserSentFriendRequestOptimistic?: React.Dispatch<React.SetStateAction<boolean>>,
-    setUserSentFriendRequestActual?: React.Dispatch<React.SetStateAction<boolean | null>>,
+    setCurrentUserSentFriendRequestOptimistic?: React.Dispatch<
+      React.SetStateAction<boolean>
+    >,
+    setCurrentUserSentFriendRequestActual?: React.Dispatch<
+      React.SetStateAction<boolean | null>
+    >,
     usersToWhomCurrentUserSentRequest?: TUser[],
     setUsersToWhomCurrentUserSentRequest?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
@@ -810,8 +818,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     setButtonsAreDisabled(true);
 
-    if (setUserSentFriendRequestOptimistic) {
-      setUserSentFriendRequestOptimistic(false);
+    if (setCurrentUserSentFriendRequestOptimistic) {
+      setCurrentUserSentFriendRequestOptimistic(false);
     }
 
     if (setUsersToWhomCurrentUserSentRequest && usersToWhomCurrentUserSentRequest) {
@@ -824,8 +832,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
         .then((response) => {
           if (!response.ok) {
-            if (setUserSentFriendRequestOptimistic) {
-              setUserSentFriendRequestOptimistic(true);
+            if (setCurrentUserSentFriendRequestOptimistic) {
+              setCurrentUserSentFriendRequestOptimistic(true);
               if (
                 setUsersToWhomCurrentUserSentRequest &&
                 usersToWhomCurrentUserSentRequest
@@ -839,8 +847,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               Requests.removeFromFriendRequestsSent(sender, recipient._id)
                 .then((response) => {
                   if (!response.ok) {
-                    if (setUserSentFriendRequestOptimistic) {
-                      setUserSentFriendRequestOptimistic(true);
+                    if (setCurrentUserSentFriendRequestOptimistic) {
+                      setCurrentUserSentFriendRequestOptimistic(true);
                     }
                     if (
                       setUsersToWhomCurrentUserSentRequest &&
@@ -853,8 +861,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     toast.error("Could not retract request. Please try again.");
                   } else {
                     toast.error("Friend request retracted");
-                    if (setUserSentFriendRequestActual) {
-                      setUserSentFriendRequestActual(false);
+                    if (setCurrentUserSentFriendRequestActual) {
+                      setCurrentUserSentFriendRequestActual(false);
                     }
                   }
                 })
