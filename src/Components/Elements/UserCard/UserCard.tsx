@@ -218,7 +218,7 @@ const UserCard = ({ user }: { user: TUser }) => {
               if (currentUserHasSentUserAFriendRequest && currentUser) {
                 handleRetractFriendRequest(
                   e,
-                  currentUser,
+                  currentUserUpdated,
                   user,
                   setUserSentFriendRequestOptimistic,
                   setUserSentFriendRequestActual
@@ -230,7 +230,7 @@ const UserCard = ({ user }: { user: TUser }) => {
               }
               if (currentUser && noConnectionBetweenUserAndCurrentUser) {
                 handleSendFriendRequest(
-                  currentUser,
+                  currentUserUpdated,
                   user,
                   setUserSentFriendRequestOptimistic,
                   setUserSentFriendRequestActual

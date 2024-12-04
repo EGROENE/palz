@@ -767,6 +767,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         : undefined;
 
     if (promisesToAwait) {
+      console.log(sender?.friendRequestsSent);
+      console;
       Promise.all(promisesToAwait)
         .then(() => {
           for (const promise of promisesToAwait) {
