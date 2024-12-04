@@ -92,26 +92,24 @@ const ListedUser = ({
           </button>
         </Link>
       ) : (
-        <div className="theme-element-container">
-          <button
-            disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
-            onClick={
-              buttonOneHandler
-                ? buttonOneHandlerParams && buttonOneHandlerParams.length > 0
-                  ? // @ts-ignore
-                    (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
-                  : () => buttonOneHandler()
-                : undefined
-            }
-            style={
-              randomColor === "var(--primary-color)"
-                ? { backgroundColor: `${randomColor}`, color: "black" }
-                : { backgroundColor: `${randomColor}`, color: "white" }
-            }
-          >
-            {buttonOneText}
-          </button>
-        </div>
+        <button
+          disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
+          onClick={
+            buttonOneHandler
+              ? buttonOneHandlerParams && buttonOneHandlerParams.length > 0
+                ? // @ts-ignore
+                  (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
+                : () => buttonOneHandler()
+              : undefined
+          }
+          style={
+            randomColor === "var(--primary-color)"
+              ? { backgroundColor: `${randomColor}`, color: "black" }
+              : { backgroundColor: `${randomColor}`, color: "white" }
+          }
+        >
+          {buttonOneText}
+        </button>
       )}
       {buttonTwoLink !== null ? (
         <Link to={buttonTwoLink}>
