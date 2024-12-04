@@ -72,7 +72,11 @@ const TwoOptionsInterface = ({
                 {buttonOneText}
               </button>
               <button
-                style={{ backgroundColor: randomColor }}
+                style={
+                  randomColor === "var(--primary-color)"
+                    ? { backgroundColor: `${randomColor}`, color: "black" }
+                    : { backgroundColor: `${randomColor}`, color: "white" }
+                }
                 onClick={
                   buttonTwoHandler
                     ? (e) =>
