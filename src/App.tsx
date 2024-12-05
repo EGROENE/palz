@@ -76,7 +76,8 @@ function App() {
 
   return (
     <div className="app" data-theme={theme}>
-      {baseURLElement !== <Welcome /> && baseURLElement !== <LoginPage /> && <NavBar />}
+      {baseURLElement.type.name !== "Welcome" &&
+        baseURLElement.type.name !== "LoginPage" && <NavBar />}
       {showSidebar && <Sidebar />}
       {showUpdateProfileImageInterface && (
         <TwoOptionsInterface
