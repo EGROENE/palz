@@ -110,8 +110,8 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
-  displayedItems: (TUser | TEvent)[];
-  setDisplayedItems: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
+  displayedCards: (TUser | TEvent)[];
+  setDisplayedCards: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   imageIsUploading: boolean;
