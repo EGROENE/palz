@@ -9,9 +9,9 @@ import toast from "react-hot-toast";
 import { TThemeColor } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { useEventContext } from "../../../Hooks/useEventContext";
+import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 
 const UserSettings = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
   // Set random color:
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -41,7 +41,8 @@ const UserSettings = () => {
     }
   }, []);
 
-  const { theme, toggleTheme, showSidebar, setShowSidebar } = useMainContext();
+  const { theme, toggleTheme, showSidebar, setShowSidebar, isLoading, setIsLoading } =
+    useMainContext();
   const {
     currentUser,
     fetchAllUsers,
@@ -170,6 +171,7 @@ const UserSettings = () => {
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
+      {isLoading && <LoadingModal message="Saving changes..." />}
       <h1>Settings</h1>
       <EditUserInfoForm
         randomColor={randomColor}

@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 import EventForm from "../../Forms/EventForm/EventForm";
 import { TThemeColor } from "../../../types";
 import toast from "react-hot-toast";
+import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 
 const AddEventPage = () => {
   const navigation = useNavigate();
-  const { showSidebar, setShowSidebar } = useMainContext();
+  const { showSidebar, setShowSidebar, isLoading } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -36,6 +37,7 @@ const AddEventPage = () => {
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
+      {isLoading && <LoadingModal message="Adding event..." />}
       <h1>Add New Event</h1>
       <EventForm randomColor={randomColor} />
     </div>

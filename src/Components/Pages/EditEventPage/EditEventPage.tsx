@@ -5,10 +5,11 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { TEvent, TThemeColor } from "../../../types";
 import EventForm from "../../Forms/EventForm/EventForm";
 import toast from "react-hot-toast";
+import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
 const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
-  const { showSidebar, setShowSidebar } = useMainContext();
+  const { showSidebar, setShowSidebar, isLoading } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
 
   const navigation = useNavigate();
@@ -51,6 +52,7 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
+      {isLoading && <LoadingModal message="Saving changes..." />}
       <h1>Edit Event</h1>
       <EventForm randomColor={randomColor} event={currentEvent} />
     </div>

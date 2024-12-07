@@ -20,8 +20,14 @@ const EventForm = ({
   randomColor: TThemeColor | undefined;
   event?: TEvent;
 }) => {
-  const { showSidebar, setShowSidebar, setImageIsUploading, setImageIsDeleting } =
-    useMainContext();
+  const {
+    showSidebar,
+    setShowSidebar,
+    setImageIsUploading,
+    setImageIsDeleting,
+    isLoading,
+    setIsLoading,
+  } = useMainContext();
   const { handleCityStateCountryInput, allUsers, currentUser } = useUserContext();
   const {
     allEvents,
@@ -154,8 +160,6 @@ const EventForm = ({
   //////////////////////////////////////////
 
   const [showErrors, setShowErrors] = useState<boolean>(event ? true : false);
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [showAreYouSureDeleteEvent, setShowAreYouSureDeleteEvent] =
     useState<boolean>(false);
@@ -1844,15 +1848,13 @@ const EventForm = ({
         }
       </div>
       {event && event.creator === currentUser?._id && (
-        <div className="theme-element-container">
-          <button
-            type="button"
-            onClick={() => setShowAreYouSureDeleteEvent(true)}
-            className="delete-button"
-          >
-            Delete Event
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowAreYouSureDeleteEvent(true)}
+          className="delete-button"
+        >
+          Delete Event
+        </button>
       )}
       {showAreYouSureDeleteEvent && (
         <TwoOptionsInterface
