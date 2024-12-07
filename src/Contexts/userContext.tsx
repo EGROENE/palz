@@ -324,6 +324,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         setUsernameError("");
       }
     }
+
+    if (inputUsername.toLowerCase() === "undefined") {
+      console.log(1);
+      setUsernameError("Invalid username");
+    }
   };
 
   const handleEmailAddressInput = (
