@@ -27,6 +27,8 @@ const DisplayedCardsPage = ({
   const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
 
   useEffect(() => {
+    resetDisplayedPotentialFriends();
+
     if (showSidebar) {
       setShowSidebar(false);
     }
@@ -167,8 +169,6 @@ const DisplayedCardsPage = ({
             }
           }
         }
-      } else {
-        resetDisplayedPotentialFriends();
       }
     }
 

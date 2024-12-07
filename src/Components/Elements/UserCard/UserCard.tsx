@@ -2,12 +2,14 @@ import styles from "./styles.module.css";
 import { TUser, TThemeColor } from "../../../types";
 import { countries } from "../../../constants";
 import { useState, useEffect } from "react";
+import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import TwoOptionsInterface from "../TwoOptionsInterface/TwoOptionsInterface";
 import { Link } from "react-router-dom";
 
 const UserCard = ({ user }: { user: TUser }) => {
+  const { displayedCards, setDisplayedCards } = useMainContext();
   const { currentUser, allUsers } = useUserContext();
   const {
     handleUnfriending,
@@ -143,7 +145,14 @@ const UserCard = ({ user }: { user: TUser }) => {
             handlerOneNeedsEventParam={true}
             buttonTwoText="Accept"
             buttonTwoHandler={handleAcceptFriendRequest}
-            buttonTwoHandlerParams={[currentOtherUser, currentUser]}
+            buttonTwoHandlerParams={[
+              currentOtherUser,
+              currentUser,
+              undefined,
+              undefined,
+              displayedCards,
+              setDisplayedCards,
+            ]}
             handlerTwoNeedsEventParam={true}
             closeHandler={setShowFriendRequestResponseOptions}
           />

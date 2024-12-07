@@ -873,7 +873,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     sender: TUser,
     receiver: TUser,
     usersWhoSentCurrentUserARequest?: TUser[],
-    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>
+    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>,
+    displayedUsers?: TUser[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
     e.preventDefault();
     setButtonsAreDisabled(true);
@@ -888,30 +890,43 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       );
     }
 
+    if (displayedUsers && setDisplayedUsers) {
+      setDisplayedUsers(displayedUsers.filter((user) => user._id !== sender._id));
+    }
+
     if (sender && sender._id) {
       Requests.addFriendToFriendsArray(receiver, sender._id).then((response) => {
         if (!response.ok) {
+          toast.error("Could not accept friend request. Please try again.");
           if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
             setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
-            toast.error("Could not accept friend request. Please try again.");
+          }
+          if (displayedUsers && setDisplayedUsers) {
+            setDisplayedUsers(displayedUsers);
           }
         } else {
           if (sender && sender._id) {
             Requests.removeFromFriendRequestsReceived(sender._id, receiver)
               .then((response) => {
                 if (!response.ok) {
+                  toast.error("Could not accept friend request. Please try again.");
                   if (
                     setUsersWhoSentCurrentUserARequest &&
                     usersWhoSentCurrentUserARequest
                   ) {
                     setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
-                    toast.error("Could not accept friend request. Please try again.");
+                  }
+                  if (displayedUsers && setDisplayedUsers) {
+                    setDisplayedUsers(displayedUsers);
                   }
                 } else {
                   if (receiver && receiver._id) {
                     Requests.addFriendToFriendsArray(sender, receiver._id).then(
                       (response) => {
                         if (!response.ok) {
+                          toast.error(
+                            "Could not accept friend request. Please try again."
+                          );
                           if (
                             setUsersWhoSentCurrentUserARequest &&
                             usersWhoSentCurrentUserARequest
@@ -919,9 +934,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                             setUsersWhoSentCurrentUserARequest(
                               usersWhoSentCurrentUserARequest
                             );
-                            toast.error(
-                              "Could not accept friend request. Please try again."
-                            );
+                          }
+                          if (displayedUsers && setDisplayedUsers) {
+                            setDisplayedUsers(displayedUsers);
                           }
                         } else {
                           if (receiver && receiver._id) {
@@ -930,6 +945,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                               receiver._id
                             ).then((response) => {
                               if (!response.ok) {
+                                toast.error(
+                                  "Could not accept friend request. Please try again."
+                                );
                                 if (
                                   setUsersWhoSentCurrentUserARequest &&
                                   usersWhoSentCurrentUserARequest
@@ -937,9 +955,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                   setUsersWhoSentCurrentUserARequest(
                                     usersWhoSentCurrentUserARequest
                                   );
-                                  toast.error(
-                                    "Could not accept friend request. Please try again."
-                                  );
+                                }
+                                if (displayedUsers && setDisplayedUsers) {
+                                  setDisplayedUsers(displayedUsers);
                                 }
                               } else {
                                 toast.success(
