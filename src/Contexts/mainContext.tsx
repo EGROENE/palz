@@ -1,5 +1,5 @@
 import { useState, createContext, ReactNode } from "react";
-import { TMainContext } from "../types";
+import { TMainContext, TUser, TEvent } from "../types";
 import useLocalStorage from "use-local-storage";
 
 export const MainContext = createContext<TMainContext | null>(null);
@@ -24,6 +24,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
     useState<number>(2500);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [displayedItems, setDisplayedItems] = useState<(TEvent | TUser)[]>([]);
 
   const handleWelcomeMessage = () => {
     setShowWelcomeMessage(true);
@@ -31,6 +32,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mainContextValues: TMainContext = {
+    displayedItems,
+    setDisplayedItems,
     isLoading,
     setIsLoading,
     showSidebar,

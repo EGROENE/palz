@@ -16,7 +16,8 @@ const DisplayedCardsPage = ({
 }: {
   usedFor: "events" | "potential-friends" | "my-friends";
 }) => {
-  const { showSidebar, setShowSidebar } = useMainContext();
+  const { showSidebar, setShowSidebar, displayedItems, setDisplayedItems } =
+    useMainContext();
   const { allUsers, fetchAllUsers, currentUser, userCreatedAccount, logout } =
     useUserContext();
   const { allEvents, fetchAllEvents } = useEventContext();
@@ -40,8 +41,6 @@ const DisplayedCardsPage = ({
   }, []);
 
   const now = Date.now();
-
-  const [displayedItems, setDisplayedItems] = useState<(TEvent | TUser)[]>([]);
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
