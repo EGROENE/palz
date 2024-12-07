@@ -110,6 +110,8 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  displayedItems: (TUser | TEvent)[];
+  setDisplayedItems: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   imageIsUploading: boolean;
@@ -164,7 +166,8 @@ export type TUserContext = {
     sender: TUser,
     receiver: TUser,
     usersWhoSentCurrentUserARequest?: TUser[],
-    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>
+    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>,
+    setCurrentUserReceivedFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
   accountDeletionInProgress: boolean;
   setAccountDeletionInProgress: React.Dispatch<React.SetStateAction<boolean>>;

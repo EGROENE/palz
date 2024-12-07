@@ -967,7 +967,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     sender: TUser,
     receiver: TUser,
     usersWhoSentCurrentUserARequest?: TUser[],
-    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>
+    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>,
+    setCurrentUserReceivedFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     e.preventDefault();
 
@@ -975,6 +976,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (showFriendRequestResponseOptions) {
       setShowFriendRequestResponseOptions(false);
+    }
+
+    if (setCurrentUserReceivedFriendRequest) {
+      setCurrentUserReceivedFriendRequest(false);
     }
 
     if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
@@ -991,6 +996,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
               setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
             }
+            if (setCurrentUserReceivedFriendRequest) {
+              setCurrentUserReceivedFriendRequest(true);
+            }
           } else {
             if (receiver && receiver._id) {
               Requests.removeFromFriendRequestsSent(sender, receiver._id).then(
@@ -1002,6 +1010,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                       usersWhoSentCurrentUserARequest
                     ) {
                       setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
+                    }
+                    if (setCurrentUserReceivedFriendRequest) {
+                      setCurrentUserReceivedFriendRequest(true);
                     }
                   } else {
                     toast.error(
