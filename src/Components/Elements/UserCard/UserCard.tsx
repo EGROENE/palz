@@ -92,7 +92,7 @@ const UserCard = ({ user }: { user: TUser }) => {
       user &&
       user._id &&
       user.friends.includes(currentUser._id) &&
-      currentUser.friends.includes(user._id)
+      currentUserUpdated.friends.includes(user._id)
     ) {
       return (
         <>
@@ -116,7 +116,7 @@ const UserCard = ({ user }: { user: TUser }) => {
     currentUser._id &&
     user &&
     user._id &&
-    currentUser?.friends.includes(user._id) &&
+    currentUserUpdated?.friends.includes(user._id) &&
     user.friends.includes(currentUser._id);
 
   const noConnectionBetweenUserAndCurrentUser =
