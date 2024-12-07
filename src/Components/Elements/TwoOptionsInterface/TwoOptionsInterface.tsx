@@ -11,8 +11,10 @@ type TTwoOptionsInterfaceProps = {
   buttonOneText: string;
   buttonOneHandler?: Function;
   buttonOneHandlerParams?: any[];
+  handlerOneNeedsEventParam?: boolean;
   buttonTwoHandler?: Function;
   buttonTwoHandlerParams?: any[];
+  handlerTwoNeedsEventParam?: boolean;
   isFileUpload?: boolean;
   closeHandler: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -24,6 +26,8 @@ const TwoOptionsInterface = ({
   buttonOneText,
   buttonOneHandler,
   isFileUpload,
+  handlerOneNeedsEventParam,
+  handlerTwoNeedsEventParam,
   buttonOneHandlerParams,
   buttonTwoHandler,
   buttonTwoHandlerParams,
@@ -62,10 +66,15 @@ const TwoOptionsInterface = ({
                 onClick={
                   buttonOneHandler
                     ? // @ts-ignore
-                      (e) =>
-                        buttonOneHandlerParams
-                          ? buttonOneHandler(e, ...buttonOneHandlerParams)
-                          : buttonOneHandler()
+                      handlerOneNeedsEventParam
+                      ? (e) =>
+                          buttonOneHandlerParams
+                            ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                            : buttonOneHandler(e)
+                      : () =>
+                          buttonOneHandlerParams
+                            ? buttonOneHandler(...buttonOneHandlerParams)
+                            : buttonOneHandler()
                     : undefined
                 }
               >
@@ -79,10 +88,15 @@ const TwoOptionsInterface = ({
                 }
                 onClick={
                   buttonTwoHandler
-                    ? (e) =>
-                        buttonTwoHandlerParams
-                          ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
-                          : buttonTwoHandler()
+                    ? handlerTwoNeedsEventParam
+                      ? (e) =>
+                          buttonTwoHandlerParams
+                            ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                            : buttonTwoHandler(e)
+                      : () =>
+                          buttonTwoHandlerParams
+                            ? buttonTwoHandler(...buttonTwoHandlerParams)
+                            : buttonTwoHandler()
                     : undefined
                 }
               >
@@ -99,10 +113,15 @@ const TwoOptionsInterface = ({
                 <button
                   onClick={
                     buttonTwoHandler
-                      ? (e) =>
-                          buttonTwoHandlerParams
-                            ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
-                            : buttonTwoHandler(e)
+                      ? handlerTwoNeedsEventParam
+                        ? (e) =>
+                            buttonTwoHandlerParams
+                              ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                              : buttonTwoHandler(e)
+                        : () =>
+                            buttonTwoHandlerParams
+                              ? buttonTwoHandler(...buttonTwoHandlerParams)
+                              : buttonTwoHandler()
                       : undefined
                   }
                 >

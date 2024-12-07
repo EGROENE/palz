@@ -1861,8 +1861,10 @@ const EventForm = ({
           header="Are you sure you want to delete this event?"
           buttonOneText="Cancel"
           buttonOneHandler={() => setShowAreYouSureDeleteEvent(false)}
+          handlerOneNeedsEventParam={false}
           buttonTwoText="Delete Event"
           buttonTwoHandler={handleDeleteEvent}
+          handlerTwoNeedsEventParam={true}
           closeHandler={setShowAreYouSureDeleteEvent}
         />
       )}
@@ -1872,10 +1874,12 @@ const EventForm = ({
           subheader="You will no longer be able to make changes to this event, unless another user adds you as a co-organizer."
           buttonOneText="Cancel"
           buttonOneHandler={() => setShowAreYouSureRemoveCurrentUserAsOrganizer(false)}
+          handlerOneNeedsEventParam={false}
           buttonTwoText="Remove Myself as Organizer"
           closeHandler={setShowAreYouSureRemoveCurrentUserAsOrganizer}
           buttonTwoHandler={handleAddRemoveUserAsOrganizer}
           buttonTwoHandlerParams={[currentUser]}
+          handlerTwoNeedsEventParam={true}
         />
       )}
       <div className="buttons-container">

@@ -34,7 +34,7 @@ const UserCard = ({ user }: { user: TUser }) => {
         : false
     );
 
-  // maybe define as non-state value if setter not used anywhere
+  // set this optimistically in function to reject friend request
   const [currentUserReceivedFriendRequest, setCurrentUserReceivedFriendRequest] =
     useState<boolean>(
       currentUserUpdated._id && user && user._id
@@ -134,9 +134,11 @@ const UserCard = ({ user }: { user: TUser }) => {
             buttonOneText="Decline"
             buttonOneHandler={handleRejectFriendRequest}
             buttonOneHandlerParams={[currentOtherUser, currentUser]}
+            handlerOneNeedsEventParam={true}
             buttonTwoText="Accept"
             buttonTwoHandler={handleAcceptFriendRequest}
             buttonTwoHandlerParams={[currentOtherUser, currentUser]}
+            handlerTwoNeedsEventParam={true}
             closeHandler={setShowFriendRequestResponseOptions}
           />
         )}

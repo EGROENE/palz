@@ -82,9 +82,10 @@ function App() {
       {showUpdateProfileImageInterface && (
         <TwoOptionsInterface
           header="Edit Profile Image"
-          buttonTwoHandler={removeProfileImage}
           buttonOneText="Upload New"
           buttonTwoText="Remove Profile Image"
+          buttonTwoHandler={removeProfileImage}
+          handlerTwoNeedsEventParam={true}
           closeHandler={setShowUpdateProfileImageInterface}
           isFileUpload={true}
         />

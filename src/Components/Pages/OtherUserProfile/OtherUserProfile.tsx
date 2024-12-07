@@ -191,9 +191,11 @@ const OtherUserProfile = () => {
           buttonOneText="Decline"
           buttonOneHandler={handleRejectFriendRequest}
           buttonOneHandlerParams={[currentOtherUser, currentUser]}
+          handlerOneNeedsEventParam={true}
           buttonTwoText="Accept"
           buttonTwoHandler={handleAcceptFriendRequest}
           buttonTwoHandlerParams={[currentOtherUser, currentUser]}
+          handlerTwoNeedsEventParam={true}
           closeHandler={setShowFriendRequestResponseOptions}
         />
       )}

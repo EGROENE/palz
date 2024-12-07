@@ -217,8 +217,10 @@ const UserSettings = () => {
             irreversible."
           buttonOneText="Cancel"
           buttonOneHandler={() => setShowAreYouSureInterface(false)}
+          handlerOneNeedsEventParam={false}
           buttonTwoText="Delete Account"
           buttonTwoHandler={handleAccountDeletion}
+          handlerTwoNeedsEventParam={false}
           closeHandler={setShowAreYouSureInterface}
         />
       )}
