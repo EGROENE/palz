@@ -27,8 +27,6 @@ const DisplayedCardsPage = ({
   const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
 
   useEffect(() => {
-    resetDisplayedPotentialFriends();
-
     if (showSidebar) {
       setShowSidebar(false);
     }
@@ -43,6 +41,17 @@ const DisplayedCardsPage = ({
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
   }, []);
+
+  useEffect(() => {
+    // Set displayedCards appropriately, depending on usedFor value
+    if (usedFor === "potential-friends") {
+      resetDisplayedPotentialFriends();
+    }
+
+    if (usedFor === "my-friends") {
+      resetDisplayedFriends();
+    }
+  }, [usedFor]);
 
   const now = Date.now();
 
@@ -205,8 +214,6 @@ const DisplayedCardsPage = ({
             }
           }
         }
-      } else {
-        resetDisplayedFriends();
       }
     }
   }, [allUsers]);

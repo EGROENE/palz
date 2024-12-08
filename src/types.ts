@@ -152,7 +152,9 @@ export type TUserContext = {
   handleUnfriending: (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     user: TUser,
-    friend: TUser
+    friend: TUser,
+    displayedUsers?: (TUser | TEvent)[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<(TUser | TEvent)[]>>
   ) => void;
   handleAcceptFriendRequest: (
     e: React.ChangeEvent<HTMLInputElement>,

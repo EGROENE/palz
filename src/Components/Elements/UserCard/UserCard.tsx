@@ -200,7 +200,13 @@ const UserCard = ({ user }: { user: TUser }) => {
             }
             onClick={(e) => {
               if (currentUserAndUserAreFriends) {
-                handleUnfriending(e, currentUser, user);
+                handleUnfriending(
+                  e,
+                  currentUser,
+                  user,
+                  displayedCards,
+                  setDisplayedCards
+                );
               }
               if (currentUserSentFriendRequest && currentUser) {
                 handleRetractFriendRequest(

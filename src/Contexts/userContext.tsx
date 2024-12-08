@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useState, useEffect } from "react";
-import { TUserContext, TUser, TUserValuesToUpdate } from "../types";
+import { TUserContext, TUser, TUserValuesToUpdate, TEvent } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -1050,9 +1050,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleUnfriending = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     user: TUser,
-    friend: TUser
+    friend: TUser,
+    displayedUsers?: (TUser | TEvent)[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<(TUser | TEvent)[]>>
   ): void => {
     e.preventDefault();
+
+    if (displayedUsers && setDisplayedUsers) {
+      setDisplayedUsers(displayedUsers.filter((user) => user._id !== friend._id));
+    }
+
     const removeUserFromFriendsFriendsArray = friend._id
       ? Requests.deleteFriendFromFriendsArray(user, friend._id)
       : undefined;
@@ -1076,6 +1083,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             promise.then((response) => {
               if (!response.ok) {
                 allRequestsAreOK = false;
+                if (displayedUsers && setDisplayedUsers) {
+                  setDisplayedUsers(displayedUsers);
+                }
               }
             });
           }
@@ -1085,6 +1095,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             toast.error(
               `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`
             );
+            if (displayedUsers && setDisplayedUsers) {
+              setDisplayedUsers(displayedUsers);
+            }
           } else {
             toast.error(`You have unfriended ${friend.firstName} ${friend.lastName}.`);
           }
