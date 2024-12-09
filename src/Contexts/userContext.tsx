@@ -139,15 +139,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const [displayedSentRequests, setDisplayedSentRequests] = useState<TUser[]>([]);
+  const [displayedReceivedRequests, setDisplayedReceivedRequests] = useState<TUser[]>([]);
 
   useEffect(() => {
-    // Initialize displayedSentRequests:
+    // Initialize displayedSent/ReceivedRequests:
+    /* These are defined in state of this context so they can be accessed across sub-components for the purpose of optimistic rendering */
     setDisplayedSentRequests(
       allUsers.filter(
         (user) => user._id && currentUser?.friendRequestsSent.includes(user._id)
       )
     );
-  }, []);
+    setDisplayedReceivedRequests(
+      allUsers.filter(
+        (user) => user._id && currentUser?.friendRequestsReceived.includes(user._id)
+      )
+    );
+  }, [currentUser?._id]);
 
   useEffect(() => {
     fetchAllUsers();
@@ -1288,6 +1295,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const userContextValues: TUserContext = {
     displayedSentRequests,
     setDisplayedSentRequests,
+    displayedReceivedRequests,
+    setDisplayedReceivedRequests,
     whoCanMessage,
     setWhoCanMessage,
     currentOtherUser,
