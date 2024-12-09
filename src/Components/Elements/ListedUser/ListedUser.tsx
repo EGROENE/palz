@@ -9,12 +9,14 @@ const ListedUser = ({
   buttonOneHandlerParams,
   buttonOneIsDisabled,
   buttonOneLink,
+  handlerOneNeedsEventParam,
   buttonTwoHandler,
   buttonTwoHandlerParams,
   buttonOneText,
   buttonTwoText,
   buttonTwoIsDisabled,
   buttonTwoLink,
+  handlerTwoNeedsEventParam,
   objectLink, // link that entire component leads to
 }: {
   user?: TUser;
@@ -22,6 +24,7 @@ const ListedUser = ({
   buttonOneHandler?: Function;
   buttonOneHandlerParams?: any[];
   buttonOneIsDisabled: boolean | null;
+  handlerOneNeedsEventParam: boolean;
   buttonTwoHandler?: Function;
   buttonTwoHandlerParams?: any[];
   buttonOneText: string;
@@ -29,6 +32,7 @@ const ListedUser = ({
   buttonTwoIsDisabled: boolean | null;
   buttonOneLink: string | null;
   buttonTwoLink: string | null;
+  handlerTwoNeedsEventParam: boolean;
   objectLink?: string | undefined;
 }) => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -76,10 +80,15 @@ const ListedUser = ({
             disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
             onClick={
               buttonOneHandler
-                ? buttonOneHandlerParams && buttonOneHandlerParams.length > 0
-                  ? // @ts-ignore
-                    (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
-                  : () => buttonOneHandler()
+                ? handlerOneNeedsEventParam
+                  ? (e) =>
+                      buttonOneHandlerParams
+                        ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                        : buttonOneHandler(e)
+                  : () =>
+                      buttonOneHandlerParams
+                        ? buttonOneHandler(...buttonOneHandlerParams)
+                        : buttonOneHandler()
                 : undefined
             }
             style={
@@ -96,10 +105,15 @@ const ListedUser = ({
           disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
           onClick={
             buttonOneHandler
-              ? buttonOneHandlerParams && buttonOneHandlerParams.length > 0
-                ? // @ts-ignore
-                  (e) => buttonOneHandler(e, ...buttonOneHandlerParams)
-                : () => buttonOneHandler()
+              ? handlerOneNeedsEventParam
+                ? (e) =>
+                    buttonOneHandlerParams
+                      ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                      : buttonOneHandler(e)
+                : () =>
+                    buttonOneHandlerParams
+                      ? buttonOneHandler(...buttonOneHandlerParams)
+                      : buttonOneHandler()
               : undefined
           }
           style={
@@ -117,9 +131,15 @@ const ListedUser = ({
             disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
             onClick={
               buttonTwoHandler
-                ? buttonTwoHandlerParams && buttonTwoHandlerParams.length > 0
-                  ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
-                  : buttonTwoHandler()
+                ? handlerTwoNeedsEventParam
+                  ? (e) =>
+                      buttonTwoHandlerParams
+                        ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                        : buttonTwoHandler(e)
+                  : () =>
+                      buttonTwoHandlerParams
+                        ? buttonTwoHandler(...buttonTwoHandlerParams)
+                        : buttonTwoHandler()
                 : undefined
             }
             style={{ backgroundColor: "tomato" }}
@@ -132,9 +152,15 @@ const ListedUser = ({
           disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
           onClick={
             buttonTwoHandler
-              ? buttonTwoHandlerParams && buttonTwoHandlerParams.length > 0
-                ? (e) => buttonTwoHandler(e, ...buttonTwoHandlerParams)
-                : buttonTwoHandler()
+              ? handlerTwoNeedsEventParam
+                ? (e) =>
+                    buttonTwoHandlerParams
+                      ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                      : buttonTwoHandler(e)
+                : () =>
+                    buttonTwoHandlerParams
+                      ? buttonTwoHandler(...buttonTwoHandlerParams)
+                      : buttonTwoHandler()
               : undefined
           }
           style={{ backgroundColor: "tomato" }}

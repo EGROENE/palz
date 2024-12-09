@@ -22,9 +22,24 @@ const OtherUserProfile = () => {
     setShowFriendRequestResponseOptions,
     handleRejectFriendRequest,
     handleAcceptFriendRequest,
+    displayedSentRequests,
+    setDisplayedSentRequests,
   } = useUserContext();
   const { username } = useParams();
   const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
+  const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
+
+  const [currentUserSentFriendRequest, setCurrentUserSentFriendRequest] =
+    useState<boolean>(
+      currentOtherUser &&
+        currentUser &&
+        currentUser._id &&
+        currentUserUpdated._id &&
+        currentOtherUser._id
+        ? currentUserUpdated.friendRequestsSent.includes(currentOtherUser._id) &&
+            currentOtherUser.friendRequestsReceived.includes(currentUserUpdated._id)
+        : false
+    );
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
@@ -116,7 +131,13 @@ const OtherUserProfile = () => {
             </>
           ),
           handler: handleRetractFriendRequest,
-          handlerParams: [currentUser, currentOtherUser],
+          handlerParams: [
+            currentUser,
+            currentOtherUser,
+            undefined,
+            displayedSentRequests,
+            setDisplayedSentRequests,
+          ],
           paramsIncludeEvent: true,
         };
       }
@@ -137,7 +158,13 @@ const OtherUserProfile = () => {
           </>
         ),
         handler: handleSendFriendRequest,
-        handlerParams: [currentUser, currentOtherUser],
+        handlerParams: [
+          currentUser,
+          currentOtherUser,
+          undefined,
+          displayedSentRequests,
+          setDisplayedSentRequests,
+        ],
         paramsIncludeEvent: false,
       };
     }

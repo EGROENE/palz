@@ -15,6 +15,10 @@ const FriendRequests = () => {
     handleRetractFriendRequest,
     buttonsAreDisabled,
     setCurrentOtherUser,
+    displayedSentRequests,
+    setDisplayedSentRequests,
+    displayedReceivedRequests,
+    setDisplayedReceivedRequests,
   } = useUserContext();
   const { username } = useParams();
 
@@ -26,23 +30,26 @@ const FriendRequests = () => {
 
   const currentUser: TUser = allUsers.filter((user) => user.username === username)[0];
 
-  const [displayedSentRequests, setDisplayedSentRequests] = useState<TUser[]>(
-    allUsers.filter(
-      (user) => user._id && currentUser.friendRequestsSent.includes(user._id)
-    )
-  );
-
-  const [displayedReceivedRequests, setDisplayedReceivedRequests] = useState<TUser[]>(
-    allUsers.filter(
-      (user) => user._id && currentUser.friendRequestsReceived.includes(user._id)
-    )
-  );
-
   const userHasPendingRequests: boolean =
     currentUser.friendRequestsReceived.length > 0 ||
     currentUser.friendRequestsSent.length > 0;
 
   useEffect(() => {
+    // Initialize displayedSent/ReceivedRequests:
+    if (setDisplayedSentRequests && setDisplayedReceivedRequests) {
+      setDisplayedSentRequests(
+        allUsers.filter(
+          (user) => user._id && currentUser.friendRequestsSent.includes(user._id)
+        )
+      );
+      setDisplayedReceivedRequests(
+        allUsers.filter(
+          (user) => user._id && currentUser.friendRequestsReceived.includes(user._id)
+        )
+      );
+    }
+
+    // Determine if sent/received requests should be shown:
     if (
       currentUser.friendRequestsReceived.length > 0 ||
       currentUser.friendRequestsSent.length > 0
@@ -79,58 +86,67 @@ const FriendRequests = () => {
       ) : (
         <>
           <div className={styles.friendRequestFilterHeaders}>
-            {displayedSentRequests.length > 0 && (
+            {displayedSentRequests && displayedSentRequests.length > 0 && (
               <div>
                 <header
                   style={
-                    requestsVisible === "sent" && displayedReceivedRequests.length > 0
+                    requestsVisible === "sent" &&
+                    displayedReceivedRequests &&
+                    displayedReceivedRequests.length > 0
                       ? { color: randomColor }
                       : { color: "var(--text-color)" }
                   }
                   onClick={
-                    displayedReceivedRequests.length > 0
+                    displayedReceivedRequests && displayedReceivedRequests.length > 0
                       ? () => setRequestsVisible("sent")
                       : undefined
                   }
                 >
                   Sent
                 </header>
-                {requestsVisible === "sent" && displayedReceivedRequests.length > 0 && (
-                  <div
-                    className={`${styles.requestTypeUnderline} animate__animated animate__slideInRight`}
-                    style={{ backgroundColor: randomColor }}
-                  ></div>
-                )}
+                {requestsVisible === "sent" &&
+                  displayedReceivedRequests &&
+                  displayedReceivedRequests.length > 0 && (
+                    <div
+                      className={`${styles.requestTypeUnderline} animate__animated animate__slideInRight`}
+                      style={{ backgroundColor: randomColor }}
+                    ></div>
+                  )}
               </div>
             )}
-            {displayedReceivedRequests.length > 0 && (
+            {displayedReceivedRequests && displayedReceivedRequests.length > 0 && (
               <div>
                 <header
                   style={
-                    requestsVisible === "received" && displayedSentRequests.length > 0
+                    requestsVisible === "received" &&
+                    displayedSentRequests &&
+                    displayedSentRequests.length > 0
                       ? { color: randomColor }
                       : { color: "var(--text-color)" }
                   }
                   onClick={
-                    displayedSentRequests.length > 0
+                    displayedSentRequests && displayedSentRequests.length > 0
                       ? () => setRequestsVisible("received")
                       : undefined
                   }
                 >
                   Received
                 </header>
-                {requestsVisible === "received" && displayedSentRequests.length > 0 && (
-                  <div
-                    className={`${styles.requestTypeUnderline} animate__animated animate__slideInLeft`}
-                    style={{ backgroundColor: randomColor }}
-                  ></div>
-                )}
+                {requestsVisible === "received" &&
+                  displayedSentRequests &&
+                  displayedSentRequests.length > 0 && (
+                    <div
+                      className={`${styles.requestTypeUnderline} animate__animated animate__slideInLeft`}
+                      style={{ backgroundColor: randomColor }}
+                    ></div>
+                  )}
               </div>
             )}
           </div>
           <div className={styles.friendRequestUsersContainer}>
             {requestsVisible === "sent"
-              ? displayedSentRequests.map((user) => (
+              ? displayedSentRequests &&
+                displayedSentRequests.map((user) => (
                   <ListedUser
                     key={user._id}
                     user={user}
@@ -139,22 +155,24 @@ const FriendRequests = () => {
                     buttonOneIsDisabled={buttonsAreDisabled}
                     buttonOneLink={`/users/${user?.username}`}
                     buttonOneHandler={() => setCurrentOtherUser(user)}
+                    handlerOneNeedsEventParam={false}
                     buttonTwoText="Retract"
                     buttonTwoHandler={handleRetractFriendRequest}
                     buttonTwoHandlerParams={[
                       currentUser,
                       user,
                       undefined,
-                      undefined,
                       displayedSentRequests,
                       setDisplayedSentRequests,
                     ]}
                     buttonTwoIsDisabled={buttonsAreDisabled}
+                    handlerTwoNeedsEventParam={false}
                     buttonTwoLink={null}
                     objectLink={`/users/${user?.username}`}
                   />
                 ))
-              : displayedReceivedRequests.map((user) => (
+              : displayedReceivedRequests &&
+                displayedReceivedRequests.map((user) => (
                   <ListedUser
                     key={user._id}
                     user={user}
@@ -168,6 +186,7 @@ const FriendRequests = () => {
                       displayedReceivedRequests,
                       setDisplayedReceivedRequests,
                     ]}
+                    handlerOneNeedsEventParam={true}
                     buttonOneIsDisabled={buttonsAreDisabled}
                     buttonTwoText="Reject"
                     buttonTwoHandler={handleRejectFriendRequest}
@@ -177,6 +196,7 @@ const FriendRequests = () => {
                       displayedReceivedRequests,
                       setDisplayedReceivedRequests,
                     ]}
+                    handlerTwoNeedsEventParam={true}
                     buttonTwoIsDisabled={buttonsAreDisabled}
                     buttonTwoLink={null}
                     objectLink={`/users/${user?.username}`}

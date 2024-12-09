@@ -130,6 +130,10 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  displayedSentRequests?: TUser[];
+  setDisplayedSentRequests?: React.Dispatch<React.SetStateAction<TUser[]>>;
+  displayedReceivedRequests?: TUser[];
+  setDisplayedReceivedRequests?: React.Dispatch<React.SetStateAction<TUser[]>>;
   currentOtherUser: TUser | null;
   setCurrentOtherUser: React.Dispatch<React.SetStateAction<TUser | null>>;
   buttonsAreDisabled: boolean;
@@ -137,10 +141,11 @@ export type TUserContext = {
   handleSendFriendRequest: (
     sender: TUser | undefined,
     recipient: TUser,
-    setCurrentUserSentFriendRequest: React.Dispatch<React.SetStateAction<boolean>>
+    setCurrentUserSentFriendRequest: React.Dispatch<React.SetStateAction<boolean>>,
+    senderSentRequests?: TUser[],
+    setSenderSentRequests?: React.Dispatch<React.SetStateAction<TUser[]>>
   ) => void;
   handleRetractFriendRequest: (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     sender: TUser,
     recipient: TUser,
     setCurrentUserSentFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>,

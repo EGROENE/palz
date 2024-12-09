@@ -138,6 +138,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     null
   );
 
+  const [displayedSentRequests, setDisplayedSentRequests] = useState<TUser[]>([]);
+
+  useEffect(() => {
+    // Initialize displayedSent/ReceivedRequests:
+    setDisplayedSentRequests(
+      allUsers.filter(
+        (user) => user._id && currentUser?.friendRequestsSent.includes(user._id)
+      )
+    );
+  }, [currentUser]);
+
   useEffect(() => {
     fetchAllUsers();
     //setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
@@ -750,14 +761,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .finally(() => setImageIsDeleting(false));
   };
 
+  // Delete setCurrentUserSentFriendRequest. Define boolean dependent on if displayedSentRequests contains recipient
   const handleSendFriendRequest = (
     sender: TUser | undefined,
     recipient: TUser,
-    setCurrentUserSentFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>
+    setCurrentUserSentFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>,
+    senderSentRequests?: TUser[],
+    setSenderSentRequests?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
     if (setCurrentUserSentFriendRequest) {
       setCurrentUserSentFriendRequest(true);
     }
+
+    if (senderSentRequests && setSenderSentRequests) {
+      setSenderSentRequests(senderSentRequests.concat(recipient));
+    }
+
     setButtonsAreDisabled(true);
 
     let isRequestError = false;
@@ -786,6 +805,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             if (setCurrentUserSentFriendRequest) {
               setCurrentUserSentFriendRequest(false);
             }
+            if (senderSentRequests && setSenderSentRequests) {
+              setSenderSentRequests(senderSentRequests);
+            }
             toast.error("Couldn't send request. Please try again.");
           } else {
             toast.success("Friend request sent!");
@@ -800,15 +822,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleRetractFriendRequest = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     sender: TUser,
     recipient: TUser,
     setCurrentUserSentFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>,
     usersToWhomCurrentUserSentRequest?: TUser[],
     setUsersToWhomCurrentUserSentRequest?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
-    e.preventDefault();
-
     setButtonsAreDisabled(true);
 
     if (setCurrentUserSentFriendRequest) {
@@ -1266,6 +1285,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    displayedSentRequests,
+    setDisplayedSentRequests,
     whoCanMessage,
     setWhoCanMessage,
     currentOtherUser,
