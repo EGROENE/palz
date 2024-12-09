@@ -141,17 +141,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [displayedSentRequests, setDisplayedSentRequests] = useState<TUser[]>([]);
 
   useEffect(() => {
-    // Initialize displayedSent/ReceivedRequests:
+    // Initialize displayedSentRequests:
     setDisplayedSentRequests(
       allUsers.filter(
         (user) => user._id && currentUser?.friendRequestsSent.includes(user._id)
       )
     );
-  }, [currentUser]);
+  }, []);
 
   useEffect(() => {
     fetchAllUsers();
-    //setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
+    // Ensure currentUser is up-to-date:
+    setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
   }, [allUsers]);
 
   const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
