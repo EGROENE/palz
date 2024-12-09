@@ -27,9 +27,9 @@ const OtherUserProfile = () => {
   } = useUserContext();
   const { username } = useParams();
   const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
-  const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
+  //const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
 
-  const [currentUserSentFriendRequest, setCurrentUserSentFriendRequest] =
+  /*  const [currentUserSentFriendRequest, setCurrentUserSentFriendRequest] =
     useState<boolean>(
       currentOtherUser &&
         currentUser &&
@@ -39,7 +39,7 @@ const OtherUserProfile = () => {
         ? currentUserUpdated.friendRequestsSent.includes(currentOtherUser._id) &&
             currentOtherUser.friendRequestsReceived.includes(currentUserUpdated._id)
         : false
-    );
+    ); */
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
