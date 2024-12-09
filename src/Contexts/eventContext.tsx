@@ -22,9 +22,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventDeletionIsInProgress, setEventDeletionIsInProgress] =
     useState<boolean>(false);
 
-  // Use for optimistic rendering related to event rsvp-ing
-  const [userRSVPdOptimistic, setUserRSVPdOptimistic] = useState<boolean>(false);
-
   useEffect(() => {
     fetchAllEvents();
   }, [allEvents]);
@@ -34,20 +31,24 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
-    setUserRSVPdActual?: React.Dispatch<React.SetStateAction<boolean | null>>
+    setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>
   ): void => {
     e.preventDefault();
     setIsLoading(true);
-    setUserRSVPdOptimistic(true);
+    if (setUserRSVPd) {
+      setUserRSVPd(true);
+    }
     Requests.addUserRSVP(currentUser, event)
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not RSVP to event. Please try again.");
-          setUserRSVPdOptimistic(false);
+          if (setUserRSVPd) {
+            setUserRSVPd(false);
+          }
         } else {
           toast.success("RSVP added");
-          if (setUserRSVPdActual) {
-            setUserRSVPdActual(true);
+          if (setUserRSVPd) {
+            setUserRSVPd(true);
           }
         }
       })
@@ -59,20 +60,24 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     user: TUser,
-    setUserRSVPdActual?: React.Dispatch<React.SetStateAction<boolean | null>>
+    setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>
   ): void => {
     e.preventDefault();
     setIsLoading(true);
-    setUserRSVPdOptimistic(false);
+    if (setUserRSVPd) {
+      setUserRSVPd(false);
+    }
     Requests.deleteUserRSVP(user, event)
       .then((response) => {
         if (!response.ok) {
-          setUserRSVPdOptimistic(true);
+          if (setUserRSVPd) {
+            setUserRSVPd(true);
+          }
           toast.error("Could not remove RSVP. Please try again.");
         } else {
           toast.error("RSVP deleted");
-          if (setUserRSVPdActual) {
-            setUserRSVPdActual(false);
+          if (setUserRSVPd) {
+            setUserRSVPd(false);
           }
         }
       })
@@ -119,8 +124,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventContextValues: TEventContext = {
     handleRemoveInvitee,
     handleDeclineInvitation,
-    userRSVPdOptimistic,
-    setUserRSVPdOptimistic,
     handleAddUserRSVP,
     handleDeleteUserRSVP,
     eventEditIsInProgress,

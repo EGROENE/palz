@@ -12,7 +12,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const { isLoading } = useMainContext();
   const { currentUser, allUsers } = useUserContext();
   const {
-    userRSVPdOptimistic,
     handleAddUserRSVP,
     handleDeleteUserRSVP,
     handleDeclineInvitation,
@@ -20,19 +19,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
   } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-  const [userRSVPdActual, setUserRSVPdActual] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    if (
-      currentUser &&
-      currentUser._id &&
-      event.interestedUsers.includes(currentUser._id)
-    ) {
-      setUserRSVPdActual(true);
-    } else {
-      setUserRSVPdActual(false);
-    }
-  }, [userRSVPdOptimistic]);
+  const [userRSVPd, setUserRSVPd] = useState<boolean | null>(null);
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
 
@@ -47,6 +35,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+    if (currentUser?._id) {
+      setUserRSVPd(event.interestedUsers.includes(currentUser._id));
+    }
   }, []);
 
   const userIsInvitee: boolean = currentUser?._id
@@ -86,7 +77,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const getRSVPButtonText = (): string => {
     if (maxInviteesReached) {
       return "Max participants reached";
-    } else if (userRSVPdActual || userRSVPdOptimistic) {
+    } else if (userRSVPd) {
       return "Remove RSVP";
     }
     return "RSVP";
@@ -120,37 +111,34 @@ const EventCard = ({ event }: { event: TEvent }) => {
         boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
       }}
     >
-      {userIsInvitee &&
-        !userDeclinedInvitation &&
-        !userRSVPdActual &&
-        !maxInviteesReached && (
-          <div className={styles.eventCardInvitation}>
-            <div style={{ boxShadow: "none" }} className="theme-element-container">
-              <p>You've been invited!</p>
-            </div>
-            <button
-              style={
-                randomColor === "var(--primary-color)"
-                  ? { backgroundColor: `${randomColor}`, color: "black" }
-                  : { backgroundColor: `${randomColor}`, color: "white" }
-              }
-              disabled={isLoading}
-              onClick={(e) => handleAddUserRSVP(e, event, setUserRSVPdActual)}
-            >
-              {rsvpButtonText}
-            </button>
-            <button
-              style={{
-                backgroundColor: "var(--background-color-opposite",
-                color: "var(--text-color-opposite)",
-              }}
-              disabled={isLoading}
-              onClick={(e) => handleDeclineInvitation(e, event)}
-            >
-              Decline
-            </button>
+      {userIsInvitee && !userDeclinedInvitation && !userRSVPd && !maxInviteesReached && (
+        <div className={styles.eventCardInvitation}>
+          <div style={{ boxShadow: "none" }} className="theme-element-container">
+            <p>You've been invited!</p>
           </div>
-        )}
+          <button
+            style={
+              randomColor === "var(--primary-color)"
+                ? { backgroundColor: `${randomColor}`, color: "black" }
+                : { backgroundColor: `${randomColor}`, color: "white" }
+            }
+            disabled={isLoading}
+            onClick={(e) => handleAddUserRSVP(e, event, setUserRSVPd)}
+          >
+            {rsvpButtonText}
+          </button>
+          <button
+            style={{
+              backgroundColor: "var(--background-color-opposite",
+              color: "var(--text-color-opposite)",
+            }}
+            disabled={isLoading}
+            onClick={(e) => handleDeclineInvitation(e, event)}
+          >
+            Decline
+          </button>
+        </div>
+      )}
       <div className={styles.eventCardMainInfo}>
         <i
           style={
@@ -206,10 +194,10 @@ const EventCard = ({ event }: { event: TEvent }) => {
                     disabled={maxInviteesReached || isLoading}
                     className={`${styles.eventButtonsContainerButton}`}
                     onClick={(e) => {
-                      if (userRSVPdActual && currentUser) {
-                        handleDeleteUserRSVP(e, event, currentUser, setUserRSVPdActual);
-                      } else if (!userRSVPdActual && !userRSVPdOptimistic) {
-                        handleAddUserRSVP(e, event, setUserRSVPdActual);
+                      if (userRSVPd && currentUser) {
+                        handleDeleteUserRSVP(e, event, currentUser, setUserRSVPd);
+                      } else if (!userRSVPd) {
+                        handleAddUserRSVP(e, event, setUserRSVPd);
                       }
                     }}
                   >

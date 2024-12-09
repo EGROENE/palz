@@ -16,13 +16,14 @@ const EventPage = () => {
   const { allUsers, currentUser, userCreatedAccount, setCurrentOtherUser, logout } =
     useUserContext();
   const {
-    userRSVPdOptimistic,
     handleAddUserRSVP,
     handleDeleteUserRSVP,
     allEvents,
     setCurrentEvent,
     handleRemoveInvitee,
   } = useEventContext();
+
+  const [userRSVPd, setUserRSVPd] = useState<boolean | null>(null);
 
   //const [event, setEvent] = useState<TEvent | undefined>();
   const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
@@ -32,19 +33,6 @@ const EventPage = () => {
   // Get most current version of event to which this page pertains:
   const { eventID } = useParams();
   const currentEvent = allEvents.filter((ev) => ev._id === eventID)[0];
-  const [userRSVPdActual, setUserRSVPdActual] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    if (
-      currentUser &&
-      currentUser._id &&
-      currentEvent.interestedUsers.includes(currentUser._id)
-    ) {
-      setUserRSVPdActual(true);
-    } else {
-      setUserRSVPdActual(false);
-    }
-  }, [allEvents]);
 
   const navigation = useNavigate();
 
@@ -77,6 +65,10 @@ const EventPage = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+
+    if (currentUser?._id) {
+      setUserRSVPd(currentEvent.interestedUsers.includes(currentUser._id));
+    }
   }, []);
 
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
@@ -121,7 +113,7 @@ const EventPage = () => {
   const getRSVPButtonText = (): string => {
     if (maxInviteesReached) {
       return "Max participants reached";
-    } else if (userRSVPdActual || userRSVPdOptimistic) {
+    } else if (userRSVPd) {
       return "Remove RSVP";
     }
     return "RSVP";
@@ -306,15 +298,10 @@ const EventPage = () => {
                   <button
                     disabled={maxInviteesReached || isLoading}
                     onClick={(e) => {
-                      if (userRSVPdActual && userRSVPdOptimistic && currentUser) {
-                        handleDeleteUserRSVP(
-                          e,
-                          currentEvent,
-                          currentUser,
-                          setUserRSVPdActual
-                        );
-                      } else if (!userRSVPdActual && !userRSVPdOptimistic) {
-                        handleAddUserRSVP(e, currentEvent, setUserRSVPdActual);
+                      if (userRSVPd && currentUser) {
+                        handleDeleteUserRSVP(e, currentEvent, currentUser, setUserRSVPd);
+                      } else if (!userRSVPd) {
+                        handleAddUserRSVP(e, currentEvent, setUserRSVPd);
                       }
                     }}
                   >

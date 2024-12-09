@@ -346,17 +346,15 @@ export type TEventContext = {
   fetchAllEvents: () => Promise<void>;
   eventEditIsInProgress: boolean;
   setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
-  userRSVPdOptimistic: boolean;
-  setUserRSVPdOptimistic: React.Dispatch<React.SetStateAction<boolean>>;
   handleAddUserRSVP: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
-    setUserRSVPdActual?: React.Dispatch<React.SetStateAction<boolean | null>>
+    setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>
   ) => void;
   handleDeleteUserRSVP: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     user: TUser,
-    setUserRSVPdActual?: React.Dispatch<React.SetStateAction<boolean | null>>
+    setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>
   ) => void;
 };
