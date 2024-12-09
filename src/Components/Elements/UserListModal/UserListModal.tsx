@@ -57,6 +57,7 @@ const UserListModal = ({
             buttonTwoIsDisabled={null}
             buttonTwoHandler={handleDeletion}
             buttonTwoHandlerParams={[currentEvent, user]}
+            handlerTwoNeedsEventParam={true}
             buttonTwoLink={null}
             objectLink={`/users/${user?.username}`}
           />
