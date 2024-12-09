@@ -35,20 +35,6 @@ const FriendRequests = () => {
     currentUser.friendRequestsSent.length > 0;
 
   useEffect(() => {
-    // Initialize displayedSent/ReceivedRequests:
-    if (setDisplayedSentRequests && setDisplayedReceivedRequests) {
-      setDisplayedSentRequests(
-        allUsers.filter(
-          (user) => user._id && currentUser.friendRequestsSent.includes(user._id)
-        )
-      );
-      setDisplayedReceivedRequests(
-        allUsers.filter(
-          (user) => user._id && currentUser.friendRequestsReceived.includes(user._id)
-        )
-      );
-    }
-
     // Determine if sent/received requests should be shown:
     if (
       currentUser.friendRequestsReceived.length > 0 ||
