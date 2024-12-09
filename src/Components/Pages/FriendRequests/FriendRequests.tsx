@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { TUser, TThemeColor } from "../../../types";
 import ListedUser from "../../Elements/ListedUser/ListedUser";
 import styles from "./styles.module.css";
+import toast from "react-hot-toast";
 
 const FriendRequests = () => {
+  const navigation = useNavigate();
   const { showSidebar, setShowSidebar } = useMainContext();
   const {
     allUsers,
@@ -19,6 +21,8 @@ const FriendRequests = () => {
     setDisplayedSentRequests,
     displayedReceivedRequests,
     setDisplayedReceivedRequests,
+    userCreatedAccount,
+    logout,
   } = useUserContext();
   const { username } = useParams();
 
@@ -35,6 +39,12 @@ const FriendRequests = () => {
     currentUser.friendRequestsSent.length > 0;
 
   useEffect(() => {
+    if (userCreatedAccount === null) {
+      navigation(`/`);
+      logout();
+      toast.error("Please log in before accessing this page.");
+    }
+
     // Determine if sent/received requests should be shown:
     if (
       currentUser.friendRequestsReceived.length > 0 ||
