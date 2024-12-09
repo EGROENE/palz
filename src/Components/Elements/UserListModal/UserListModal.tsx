@@ -40,7 +40,10 @@ const UserListModal = ({
         onClick={() => closeModalMethod(false)}
         className="fas fa-times close-module-icon"
       ></i>
-      <div className={styles.userListContainer}>
+      <div
+        style={{ border: `2px solid ${randomColor}` }}
+        className={styles.userListContainer}
+      >
         <h2>{header}</h2>
         {userArray.map((user) => (
           <ListedUser
