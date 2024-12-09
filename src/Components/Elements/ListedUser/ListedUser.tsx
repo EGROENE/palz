@@ -24,7 +24,7 @@ const ListedUser = ({
   buttonOneHandler?: Function;
   buttonOneHandlerParams?: any[];
   buttonOneIsDisabled: boolean | null;
-  handlerOneNeedsEventParam: boolean;
+  handlerOneNeedsEventParam?: boolean;
   buttonTwoHandler?: Function;
   buttonTwoHandlerParams?: any[];
   buttonOneText: string;
@@ -32,7 +32,7 @@ const ListedUser = ({
   buttonTwoIsDisabled: boolean | null;
   buttonOneLink: string | null;
   buttonTwoLink: string | null;
-  handlerTwoNeedsEventParam: boolean;
+  handlerTwoNeedsEventParam?: boolean;
   objectLink?: string | undefined;
 }) => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
