@@ -1068,6 +1068,8 @@ const EditUserInfoForm = ({
           <label>
             <p>First Name:</p>
             <input
+              name="firstName"
+              id="firstName"
               onFocus={() => setFocusedElement("firstName")}
               onBlur={() => setFocusedElement(undefined)}
               style={
@@ -1092,6 +1094,8 @@ const EditUserInfoForm = ({
           <label>
             <p>Last Name:</p>
             <input
+              name="lastName"
+              id="lastName"
               onFocus={() => setFocusedElement("lastName")}
               onBlur={() => setFocusedElement(undefined)}
               style={
@@ -1131,6 +1135,8 @@ const EditUserInfoForm = ({
             </p>
           )}
           <input
+            name="username"
+            id="username"
             onFocus={() => setFocusedElement("username")}
             onBlur={() => setFocusedElement(undefined)}
             style={
@@ -1154,6 +1160,8 @@ const EditUserInfoForm = ({
         <label>
           <p>E-Mail Address:</p>
           <input
+            name="email"
+            id="email"
             onFocus={() => setFocusedElement("email")}
             onBlur={() => setFocusedElement(undefined)}
             style={
@@ -1215,6 +1223,8 @@ const EditUserInfoForm = ({
             </button>
             <div className="phone-without-country-code-element">
               <input
+                name="phoneNumber"
+                id="phoneNumber"
                 onFocus={() => setFocusedElement("phoneNumber")}
                 onBlur={() => setFocusedElement(undefined)}
                 style={
@@ -1270,6 +1280,8 @@ const EditUserInfoForm = ({
           <label className="location-input">
             <p>City:</p>
             <input
+              name="city"
+              id="city"
               onFocus={() => setFocusedElement("city")}
               onBlur={() => setFocusedElement(undefined)}
               style={
@@ -1303,6 +1315,8 @@ const EditUserInfoForm = ({
           <label className="location-input">
             <p>State/Province:</p>
             <input
+              name="state"
+              id="state"
               onFocus={() => setFocusedElement("state")}
               onBlur={() => setFocusedElement(undefined)}
               style={
@@ -1442,6 +1456,8 @@ const EditUserInfoForm = ({
               )}
             </p>
             <input
+              name="facebook"
+              id="facebook"
               onFocus={() => setFocusedElement("facebook")}
               onBlur={() => setFocusedElement(undefined)}
               style={
@@ -1472,6 +1488,8 @@ const EditUserInfoForm = ({
               )}
             </p>
             <input
+              name="instagram"
+              id="instagram"
               onFocus={() => setFocusedElement("instagram")}
               onBlur={() => setFocusedElement(undefined)}
               style={
@@ -1502,6 +1520,8 @@ const EditUserInfoForm = ({
               )}
             </p>
             <input
+              name="x"
+              id="x"
               onFocus={() => setFocusedElement("x")}
               onBlur={() => setFocusedElement(undefined)}
               style={
@@ -1530,6 +1550,8 @@ const EditUserInfoForm = ({
             )}
           </p>
           <textarea
+            name="user-about"
+            id="user-about"
             onFocus={() => setFocusedElement("about")}
             onBlur={() => setFocusedElement(undefined)}
             style={
@@ -1567,6 +1589,8 @@ const EditUserInfoForm = ({
 
           <div className="password-input">
             <input
+              name="password"
+              id="password"
               onFocus={() => setFocusedElement("password")}
               onBlur={() => setFocusedElement(undefined)}
               style={
@@ -1598,6 +1622,8 @@ const EditUserInfoForm = ({
             <p>Confirm New Password:</p>
             <div className="password-input">
               <input
+                name="confirmPassword"
+                id="confirmPassword"
                 onFocus={() => setFocusedElement("confirmPassword")}
                 onBlur={() => setFocusedElement(undefined)}
                 style={
@@ -1635,6 +1661,7 @@ const EditUserInfoForm = ({
           <div className="radio-inputs-container">
             <div className="radio-input-and-label">
               <input
+                id="anyone-can-add-as-co-organizer"
                 onChange={() => setWhoCanAddUserAsOrganizer("anyone")}
                 checked={whoCanAddUserAsOrganizer === "anyone"}
                 name="who-can-add-as-co-organizer"
@@ -1644,6 +1671,7 @@ const EditUserInfoForm = ({
             </div>
             <div className="radio-input-and-label">
               <input
+                id="friends-can-add-as-organizer"
                 onChange={() => setWhoCanAddUserAsOrganizer("friends")}
                 checked={whoCanAddUserAsOrganizer === "friends"}
                 name="who-can-add-as-co-organizer"
@@ -1653,6 +1681,7 @@ const EditUserInfoForm = ({
             </div>
             <div className="radio-input-and-label">
               <input
+                id="nobody-can-add-as-co-organizer"
                 onChange={() => setWhoCanAddUserAsOrganizer("nobody")}
                 checked={whoCanAddUserAsOrganizer === "nobody"}
                 name="who-can-add-as-co-organizer"
@@ -1667,6 +1696,7 @@ const EditUserInfoForm = ({
           <div className="radio-inputs-container">
             <div className="radio-input-and-label">
               <input
+                id="anyone-can-invite"
                 onChange={() => setWhoCanInviteUser("anyone")}
                 checked={whoCanInviteUser === "anyone"}
                 name="who-can-invite"
@@ -1676,6 +1706,7 @@ const EditUserInfoForm = ({
             </div>
             <div className="radio-input-and-label">
               <input
+                id="friends-can-invite"
                 onChange={() => setWhoCanInviteUser("friends")}
                 checked={whoCanInviteUser === "friends"}
                 name="who-can-invite"
@@ -1685,6 +1716,7 @@ const EditUserInfoForm = ({
             </div>
             <div className="radio-input-and-label">
               <input
+                id="nobody-can-invite"
                 onChange={() => setWhoCanInviteUser("nobody")}
                 checked={whoCanInviteUser === "nobody"}
                 name="who-can-invite"
@@ -1699,6 +1731,7 @@ const EditUserInfoForm = ({
           <div className="radio-inputs-container">
             <div className="radio-input-and-label">
               <input
+                id="anyone-can-see-profile"
                 onChange={() => setProfileVisibleTo("anyone")}
                 checked={profileVisibleTo === "anyone"}
                 name="who-can-see-profile"
@@ -1711,6 +1744,7 @@ const EditUserInfoForm = ({
                 onChange={() => setProfileVisibleTo("friends")}
                 checked={profileVisibleTo === "friends"}
                 name="who-can-see-profile"
+                id="friends-can-see-profile"
                 type="radio"
               />
               <span>Friends</span>
@@ -1720,6 +1754,7 @@ const EditUserInfoForm = ({
                 onChange={() => setProfileVisibleTo("friends of friends")}
                 checked={profileVisibleTo === "friends of friends"}
                 name="who-can-see-profile"
+                id="friends-of-friends-can-see-profile"
                 type="radio"
               />
               <span>Friends of Friends</span>

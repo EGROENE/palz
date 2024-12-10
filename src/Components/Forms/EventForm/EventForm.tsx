@@ -1212,6 +1212,8 @@ const EventForm = ({
       <label>
         <p>Title:</p>
         <input
+          name="event-title"
+          id="event-title"
           ref={titleRef}
           onFocus={() => setFocusedElement("title")}
           onBlur={() => setFocusedElement(undefined)}
@@ -1231,6 +1233,8 @@ const EventForm = ({
       <label>
         <p>Description:</p>
         <textarea
+          name="event-description"
+          id="event-description"
           ref={descriptionRef}
           onFocus={() => setFocusedElement("description")}
           onBlur={() => setFocusedElement(undefined)}
@@ -1252,6 +1256,8 @@ const EventForm = ({
       <label>
         <p>Additional Info: (optional)</p>
         <textarea
+          name="event-additional-info"
+          id="event-additional-info"
           ref={additionalInfoRef}
           onFocus={() => setFocusedElement("additionalInfo")}
           onBlur={() => setFocusedElement(undefined)}
@@ -1274,6 +1280,8 @@ const EventForm = ({
         <label className="location-input">
           <p>City:</p>
           <input
+            name="event-city"
+            id="event-city"
             ref={cityRef}
             onFocus={() => setFocusedElement("city")}
             onBlur={() => setFocusedElement(undefined)}
@@ -1309,6 +1317,8 @@ const EventForm = ({
         <label className="location-input">
           <p>State/Province:</p>
           <input
+            name="event-state-province"
+            id="event-state-province"
             ref={stateRef}
             onFocus={() => setFocusedElement("state")}
             onBlur={() => setFocusedElement(undefined)}
@@ -1417,6 +1427,8 @@ const EventForm = ({
       <label>
         <p>Address:</p>
         <input
+          name="event-address"
+          id="event-address"
           ref={addressRef}
           onFocus={() => setFocusedElement("address")}
           onBlur={() => setFocusedElement(undefined)}
@@ -1441,6 +1453,8 @@ const EventForm = ({
             <label>
               <p>Start Date:</p>{" "}
               <input
+                name="event-start-date"
+                id="event-start-date"
                 value={
                   eventStartDateMidnightUTCInMS > 0
                     ? getDateFieldValue(eventStartDateMidnightUTCInMS)
@@ -1469,6 +1483,8 @@ const EventForm = ({
             <label>
               <p>Start Time:</p>
               <input
+                name="event-start-time"
+                id="event-start-time"
                 value={
                   eventStartTimeAfterMidnightUTCInMS > -1
                     ? getTimeFieldValue(eventStartTimeAfterMidnightUTCInMS)
@@ -1511,6 +1527,8 @@ const EventForm = ({
             <label>
               <p>End Date:</p>{" "}
               <input
+                name="event-end-date"
+                id="event-end-date"
                 value={
                   eventEndDateMidnightUTCInMS > 0
                     ? getDateFieldValue(eventEndDateMidnightUTCInMS)
@@ -1537,6 +1555,8 @@ const EventForm = ({
             <label>
               <p>End Time:</p>
               <input
+                name="event-end-time"
+                id="event-end-time"
                 value={
                   eventEndTimeAfterMidnightUTCInMS > -1
                     ? getTimeFieldValue(eventEndTimeAfterMidnightUTCInMS)
@@ -1576,6 +1596,8 @@ const EventForm = ({
       <label>
         <p>Maximum Participants: (optional, not including organizers)</p>
         <input
+          name="event-max-participants"
+          id="event-max-participants"
           ref={maxParticipantsRef}
           onFocus={() => setFocusedElement("maxParticipants")}
           onBlur={() => setFocusedElement(undefined)}
@@ -1604,6 +1626,8 @@ const EventForm = ({
         <label>
           <span>Public</span>
           <input
+            name="event-privacy-public"
+            id="event-privacy-public"
             ref={publicRef}
             onFocus={() => setFocusedElement("public")}
             onBlur={() => setFocusedElement(undefined)}
@@ -1624,6 +1648,8 @@ const EventForm = ({
         <label>
           <span>Private</span>
           <input
+            name="event-privacy-private"
+            id="event-privacy-private"
             ref={privateRef}
             onFocus={() => setFocusedElement("private")}
             onBlur={() => setFocusedElement(undefined)}
@@ -1701,6 +1727,8 @@ const EventForm = ({
         </div>
         <div className={styles.coorganizersInviteesInputs}>
           <input
+            name="event-co-organizers-search"
+            id="event-co-organizers-search"
             ref={coOrganizersRef}
             onFocus={() => setFocusedElement("coOrganizers")}
             onBlur={() => setFocusedElement(undefined)}
@@ -1763,6 +1791,8 @@ const EventForm = ({
                     className={styles.otherUserOption}
                   >
                     <input
+                      name={`potential-co-organizer-${user._id}`}
+                      id={`potential-co-organizer-${user._id}`}
                       disabled={isLoading}
                       onChange={() => handleAddRemoveUserAsOrganizer(undefined, user)}
                       checked={
@@ -1806,6 +1836,8 @@ const EventForm = ({
         </div>
         <div className={styles.coorganizersInviteesInputs}>
           <input
+            name="potential-invitees-search"
+            id="potential-invitees-search"
             ref={inviteesRef}
             onFocus={() => setFocusedElement("invitees")}
             onBlur={() => setFocusedElement(undefined)}
@@ -1868,6 +1900,8 @@ const EventForm = ({
                     className={styles.otherUserOption}
                   >
                     <input
+                      name={`potential-invitee-${user._id}`}
+                      id={`potential-invitee-${user._id}`}
                       disabled={isLoading}
                       onChange={() => handleAddRemoveUserAsInvitee(undefined, user)}
                       checked={
@@ -1917,12 +1951,12 @@ const EventForm = ({
               ))}
             {eventImages && eventImages.length < 3 && (
               <label>
-                <label title="Add Photo" htmlFor="image-upload">
+                <label title="Add Photo" htmlFor="event-image-upload">
                   <i className="fas fa-plus"></i>
                 </label>
                 <input
-                  id="image-upload"
-                  name="profileImage"
+                  id="event-image-upload"
+                  name="event-image-upload"
                   onChange={(e) => handleAddEventImage(e)}
                   style={{ display: "none" }}
                   type="file"
