@@ -49,7 +49,6 @@ function App() {
 
   // Show notification when user goes offline/online again:
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-  console.log(isOnline);
   useEffect(() => {
     const handleOnlineStatusChange = () => {
       setIsOnline(navigator.onLine);
