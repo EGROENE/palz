@@ -18,7 +18,10 @@ const NavBar = () => {
     <nav>
       <ul className={styles.navbar}>
         <li>
-          <Link to={`/${currentUser?.username}`}>PALZ IMAGE - LINK TO UserHomepage</Link>
+          <Link className="palz-logo" to={`/${currentUser?.username}`}>
+            <img src="../src/assets/palz.png" />
+            <header>PALZ</header>
+          </Link>
         </li>
         <li>
           <Link to={"/settings"}>Settings</Link>
