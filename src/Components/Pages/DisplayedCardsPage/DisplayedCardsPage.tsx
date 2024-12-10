@@ -16,7 +16,7 @@ const DisplayedCardsPage = ({
 }: {
   usedFor: "events" | "potential-friends" | "my-friends";
 }) => {
-  const { showSidebar, setShowSidebar, displayedCards, setDisplayedCards } =
+  const { showSidebar, setShowSidebar, displayedCards, setDisplayedCards, theme } =
     useMainContext();
   const { allUsers, fetchAllUsers, currentUser, userCreatedAccount, logout } =
     useUserContext();
@@ -462,7 +462,13 @@ const DisplayedCardsPage = ({
   useEffect(() => {
     if (!currentUserUpdated && userCreatedAccount === null) {
       logout();
-      toast.error("Please log in before accessing this page");
+      toast.error("Please log in before accessing this page", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
       navigation("/");
     }
   }, [currentUserUpdated, navigation, userCreatedAccount]);

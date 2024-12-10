@@ -9,7 +9,7 @@ import styles from "./styles.module.css";
 import { useMainContext } from "../../../Hooks/useMainContext";
 
 const EventCard = ({ event }: { event: TEvent }) => {
-  const { isLoading } = useMainContext();
+  const { isLoading, theme } = useMainContext();
   const { currentUser, allUsers } = useUserContext();
   const {
     handleAddUserRSVP,
@@ -149,7 +149,13 @@ const EventCard = ({ event }: { event: TEvent }) => {
           onClick={() => {
             setCurrentEvent(event);
             navigator.clipboard.writeText(`localhost:5173/events/${event._id}`);
-            toast.success("Link copied!");
+            toast.success("Link copied!", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid green",
+              },
+            });
           }}
           className="fas fa-link"
           title="Copy link to event page to clipboard"

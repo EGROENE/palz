@@ -9,7 +9,7 @@ import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 
 const AddEventPage = () => {
   const navigation = useNavigate();
-  const { showSidebar, setShowSidebar, isLoading } = useMainContext();
+  const { showSidebar, setShowSidebar, isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -29,7 +29,13 @@ const AddEventPage = () => {
 
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
-      toast.error("Please log in before accessing this page");
+      toast.error("Please log in before accessing this page", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
       navigation("/");
       logout();
     }

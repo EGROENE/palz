@@ -265,10 +265,22 @@ const EditUserInfoForm = ({
       Requests.patchUpdatedUserInfo(currentUser, valuesToUpdate)
         .then((response) => {
           if (!response.ok) {
-            toast.error("Could not update profile info. Please try again.");
+            toast.error("Could not update profile info. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
             fetchAllUsers();
           } else {
-            toast.success("Profile info updated");
+            toast.success("Profile info updated", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid green",
+              },
+            });
 
             /* Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first, which won't happen) */
             if (valuesToUpdate.firstName) {
@@ -860,10 +872,22 @@ const EditUserInfoForm = ({
     Requests.deletePhoneNumber(currentUser)
       .then((response) => {
         if (!response.ok) {
-          toast.error("Could not delete phone number. Please try again.");
+          toast.error("Could not delete phone number. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           fetchAllUsers();
         } else {
-          toast.success("Phone number deleted");
+          toast("Phone number deleted", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           setPhoneCountry("");
           setPhoneCountryCode("");
           setPhoneNumberWithoutCountryCode("");
@@ -881,10 +905,22 @@ const EditUserInfoForm = ({
     Requests.deleteLocation(currentUser)
       .then((response) => {
         if (!response.ok) {
-          toast.error("Could not delete location. Please try again.");
+          toast.error("Could not delete location. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           fetchAllUsers();
         } else {
-          toast.success("Location deleted");
+          toast("Location deleted", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           setUserCity("");
           setUserState("");
           setUserCountry("");
@@ -904,10 +940,25 @@ const EditUserInfoForm = ({
     Requests.deleteSocialMedium(currentUser, medium)
       .then((response) => {
         if (!response.ok) {
-          toast.error(`Could not delete ${medium.toUpperCase()} link. Please try again.`);
+          toast.error(
+            `Could not delete ${medium.toUpperCase()} link. Please try again.`,
+            {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            }
+          );
           fetchAllUsers();
         } else {
-          toast.success(`${medium.toUpperCase()} link deleted`);
+          toast(`${medium.toUpperCase()} link deleted`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           if (medium === "facebook") {
             setFacebook("");
           } else if (medium === "instagram") {
@@ -927,10 +978,22 @@ const EditUserInfoForm = ({
     Requests.deleteUserAbout(currentUser)
       .then((response) => {
         if (!response.ok) {
-          toast.error(`Could not delete 'About' section. Please try again.`);
+          toast.error(`Could not delete 'About' section. Please try again.`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           fetchAllUsers();
         } else {
-          toast.success(`'About' section deleted`);
+          toast(`'About' section deleted`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           setUserAbout("");
         }
       })

@@ -10,7 +10,7 @@ import Methods from "../methods";
 export const UserContext = createContext<TUserContext | null>(null);
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
-  const { handleWelcomeMessage, setImageIsUploading, setImageIsDeleting } =
+  const { handleWelcomeMessage, setImageIsUploading, setImageIsDeleting, theme } =
     useMainContext();
 
   const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
@@ -721,7 +721,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         }
       })
       .catch((error) => {
-        toast.error("Could not create account. Please try again later.");
+        toast.error("Could not create account. Please try again later.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
         console.log(error);
       });
   };
@@ -739,12 +745,30 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .then((response) => {
         if (!response.ok) {
           if (response.status === 413) {
-            toast.error("Max file size is 50MB.");
+            toast.error("Max file size is 50MB.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
           } else {
-            toast.error("Could not update profile image. Please try again.");
+            toast.error("Could not update profile image. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
           }
         } else {
-          toast.success("Profile image updated");
+          toast.success("Profile image updated", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid green",
+            },
+          });
           setProfileImage(base64);
         }
       })
@@ -759,9 +783,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     Requests.updateUserProfileImage(currentUser, "")
       .then((response) => {
         if (!response.ok) {
-          toast.error("Could not remove profile image. Please try again.");
+          toast.error("Could not remove profile image. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         } else {
-          toast.error("Profile image removed");
+          toast("Profile image removed", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           setProfileImage("");
         }
       })
@@ -816,9 +852,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             if (senderSentRequests && setSenderSentRequests) {
               setSenderSentRequests(senderSentRequests);
             }
-            toast.error("Couldn't send request. Please try again.");
+            toast.error("Couldn't send request. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
           } else {
-            toast.success("Friend request sent!");
+            toast.success("Friend request sent!", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid green",
+              },
+            });
             if (setCurrentUserSentFriendRequest) {
               setCurrentUserSentFriendRequest(true);
             }
@@ -861,7 +909,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 setUsersToWhomCurrentUserSentRequest(usersToWhomCurrentUserSentRequest);
               }
             }
-            toast.error("Could not retract request. Please try again.");
+            toast.error("Could not retract request. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
           } else {
             if (sender && recipient._id) {
               Requests.removeFromFriendRequestsSent(sender, recipient._id)
@@ -878,9 +932,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         usersToWhomCurrentUserSentRequest
                       );
                     }
-                    toast.error("Could not retract request. Please try again.");
+                    toast.error("Could not retract request. Please try again.", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    });
                   } else {
-                    toast.error("Friend request retracted");
+                    toast("Friend request retracted", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    });
                     if (setCurrentUserSentFriendRequest) {
                       setCurrentUserSentFriendRequest(false);
                     }
@@ -924,7 +990,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (sender && sender._id) {
       Requests.addFriendToFriendsArray(receiver, sender._id).then((response) => {
         if (!response.ok) {
-          toast.error("Could not accept friend request. Please try again.");
+          toast.error("Could not accept friend request. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
             setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
           }
@@ -936,7 +1008,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             Requests.removeFromFriendRequestsReceived(sender._id, receiver)
               .then((response) => {
                 if (!response.ok) {
-                  toast.error("Could not accept friend request. Please try again.");
+                  toast.error("Could not accept friend request. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
                   if (
                     setUsersWhoSentCurrentUserARequest &&
                     usersWhoSentCurrentUserARequest
@@ -952,7 +1030,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                       (response) => {
                         if (!response.ok) {
                           toast.error(
-                            "Could not accept friend request. Please try again."
+                            "Could not accept friend request. Please try again.",
+                            {
+                              style: {
+                                background:
+                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                                color: theme === "dark" ? "black" : "white",
+                                border: "2px solid red",
+                              },
+                            }
                           );
                           if (
                             setUsersWhoSentCurrentUserARequest &&
@@ -973,7 +1059,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                             ).then((response) => {
                               if (!response.ok) {
                                 toast.error(
-                                  "Could not accept friend request. Please try again."
+                                  "Could not accept friend request. Please try again.",
+                                  {
+                                    style: {
+                                      background:
+                                        theme === "light"
+                                          ? "#242424"
+                                          : "rgb(233, 231, 228)",
+                                      color: theme === "dark" ? "black" : "white",
+                                      border: "2px solid red",
+                                    },
+                                  }
                                 );
                                 if (
                                   setUsersWhoSentCurrentUserARequest &&
@@ -988,7 +1084,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                 }
                               } else {
                                 toast.success(
-                                  `You are now friends with ${sender.firstName} ${sender.lastName}!`
+                                  `You are now friends with ${sender.firstName} ${sender.lastName}!`,
+                                  {
+                                    style: {
+                                      background:
+                                        theme === "light"
+                                          ? "#242424"
+                                          : "rgb(233, 231, 228)",
+                                      color: theme === "dark" ? "black" : "white",
+                                      border: "2px solid green",
+                                    },
+                                  }
                                 );
                               }
                             });
@@ -1037,7 +1143,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.removeFromFriendRequestsReceived(sender._id, receiver)
         .then((response) => {
           if (!response.ok) {
-            toast.error("Could not reject friend request. Please try again.");
+            toast.error("Could not reject friend request. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
             if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
               setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
             }
@@ -1049,7 +1161,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               Requests.removeFromFriendRequestsSent(sender, receiver._id).then(
                 (response) => {
                   if (!response.ok) {
-                    toast.error("Could not reject friend request. Please try again.");
+                    toast.error("Could not reject friend request. Please try again.", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    });
                     if (
                       setUsersWhoSentCurrentUserARequest &&
                       usersWhoSentCurrentUserARequest
@@ -1060,8 +1178,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                       setCurrentUserReceivedFriendRequest(true);
                     }
                   } else {
-                    toast.error(
-                      `Rejected friend request from ${sender.firstName} ${sender.lastName}.`
+                    toast(
+                      `Rejected friend request from ${sender.firstName} ${sender.lastName}.`,
+                      {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid red",
+                        },
+                      }
                     );
                   }
                 }
@@ -1120,13 +1246,26 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         .then(() => {
           if (!allRequestsAreOK) {
             toast.error(
-              `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`
+              `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`,
+              {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              }
             );
             if (displayedUsers && setDisplayedUsers) {
               setDisplayedUsers(displayedUsers);
             }
           } else {
-            toast.error(`You have unfriended ${friend.firstName} ${friend.lastName}.`);
+            toast(`You have unfriended ${friend.firstName} ${friend.lastName}.`, {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
           }
         })
         .catch((error) => console.log(error))

@@ -12,8 +12,14 @@ import ErrorBoundary from "./Components/Pages/ErrorBoundary/ErrorBoundary.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <Toaster />
     <MainContextProvider>
+      <Toaster
+        toastOptions={{
+          style: {
+            fontFamily: "var(--text-font)",
+          },
+        }}
+      />
       <UserContextProvider>
         <EventContextProvider>
           <BrowserRouter>

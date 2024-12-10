@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 export const EventContext = createContext<TEventContext | null>(null);
 
 export const EventContextProvider = ({ children }: { children: ReactNode }) => {
-  const { setIsLoading } = useMainContext();
+  const { setIsLoading, theme } = useMainContext();
   const { currentUser } = useUserContext();
 
   const [currentEvent, setCurrentEvent] = useLocalStorage<TEvent | undefined>(
@@ -41,12 +41,24 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     Requests.addUserRSVP(currentUser, event)
       .then((response) => {
         if (!response.ok) {
-          toast.error("Could not RSVP to event. Please try again.");
+          toast.error("Could not RSVP to event. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           if (setUserRSVPd) {
             setUserRSVPd(false);
           }
         } else {
-          toast.success("RSVP added");
+          toast.success("RSVP added!", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid green",
+            },
+          });
           if (setUserRSVPd) {
             setUserRSVPd(true);
           }
@@ -73,9 +85,21 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           if (setUserRSVPd) {
             setUserRSVPd(true);
           }
-          toast.error("Could not remove RSVP. Please try again.");
+          toast.error("Could not remove RSVP. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         } else {
-          toast.error("RSVP deleted");
+          toast("RSVP deleted", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           if (setUserRSVPd) {
             setUserRSVPd(false);
           }
@@ -94,9 +118,21 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     Requests.addToDisinterestedUsers(currentUser, event)
       .then((response) => {
         if (!response.ok) {
-          toast.error("Could not decline invitation. Please try again.");
+          toast.error("Could not decline invitation. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         } else {
-          toast.error("Invitation declined.");
+          toast("Invitation declined.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         }
       })
       .catch((error) => console.log(error))
@@ -113,9 +149,21 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     Requests.removeInvitee(event, user)
       .then((response) => {
         if (!response.ok) {
-          toast.error("Could not remove invitee. Please try again.");
+          toast.error("Could not remove invitee. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         } else {
-          toast.error("Invitee removed.");
+          toast("Invitee removed.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         }
       })
       .catch((error) => console.log(error));

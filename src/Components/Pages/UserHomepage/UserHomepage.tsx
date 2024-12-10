@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
 
 const UserHomepage = () => {
-  const { showSidebar, setShowSidebar } = useMainContext();
+  const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, username } = useUserContext();
   const { allEvents, fetchAllEvents } = useEventContext();
 
@@ -25,7 +25,13 @@ const UserHomepage = () => {
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
-      toast.error("You must be logged in to access this page.");
+      toast.error("You must be logged in to access this page.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
       navigation("/");
     } else {
       navigation(`/${username}`);

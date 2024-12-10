@@ -10,7 +10,7 @@ import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsIn
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
-  const { showSidebar, setShowSidebar } = useMainContext();
+  const { showSidebar, setShowSidebar, theme } = useMainContext();
   const {
     allUsers,
     currentUser,
@@ -58,7 +58,13 @@ const OtherUserProfile = () => {
   // if currentUser is falsy, redirect to login page
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
-      toast.error("Please log in before accessing this page");
+      toast.error("Please log in before accessing this page", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
       navigation("/");
     }
   }, [currentUser, navigation, userCreatedAccount]);

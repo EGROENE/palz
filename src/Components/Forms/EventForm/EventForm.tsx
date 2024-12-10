@@ -27,6 +27,7 @@ const EventForm = ({
     setImageIsDeleting,
     isLoading,
     setIsLoading,
+    theme,
   } = useMainContext();
   const { handleCityStateCountryInput, allUsers, currentUser } = useUserContext();
   const {
@@ -539,19 +540,43 @@ const EventForm = ({
               e.preventDefault();
               setEventImages(eventImages?.filter((image) => image !== base64));
               if (response.status === 413) {
-                toast.error("Max file size is 50MB.");
+                toast.error("Max file size is 50MB.", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
               } else {
-                toast.error("Could not add event image. Please try again.");
+                toast.error("Could not add event image. Please try again.", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
               }
             } else {
-              toast.success("Event image added");
+              toast.success("Event image added", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid green",
+                },
+              });
             }
           })
           .catch((error) => console.log(error))
           .finally(() => setImageIsUploading(false));
       } else {
         if (event?.images?.includes(base64) || eventImages?.includes(base64)) {
-          toast.error("Cannot upload same image more than once.");
+          toast.error("Cannot upload same image more than once.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         } else {
           setEventImages(eventImages?.concat(base64));
         }
@@ -571,9 +596,21 @@ const EventForm = ({
         .then((response) => {
           if (!response.ok) {
             setEventImages(eventImages);
-            toast.error("Could not remove event image. Please try again.");
+            toast.error("Could not remove event image. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
           } else {
-            toast.error("Event image removed");
+            toast("Event image removed", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
             let newEventImages = [];
             if (eventImages) {
               for (const image of eventImages) {
@@ -686,10 +723,23 @@ const EventForm = ({
       Requests.removeOrganizer(event, currentUser)
         .then((response) => {
           if (!response.ok) {
-            toast.error("Could not remove you as user. Please try again.");
+            toast.error("Could not remove you as user. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
           } else {
-            toast.error(
-              "You have removed yourself as an organizer & are no longer able to make changes to that event."
+            toast(
+              "You have removed yourself as an organizer & are no longer able to make changes to that event.",
+              {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              }
             );
             navigation(`/${currentUser?.username}`);
           }
@@ -806,10 +856,22 @@ const EventForm = ({
         Requests.updateEvent(event, valuesToUpdate)
           .then((response) => {
             if (!response.ok) {
-              toast.error("Could not update event. Please try again.");
+              toast.error("Could not update event. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
               fetchAllEvents();
             } else {
-              toast.success("Event updated!");
+              toast.success("Event updated!", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid green",
+                },
+              });
 
               /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
               if (valuesToUpdate?.title) {
@@ -861,9 +923,21 @@ const EventForm = ({
         Requests.createEvent(eventInfos)
           .then((response) => {
             if (!response.ok) {
-              toast.error("Could not create event. Please try again.");
+              toast.error("Could not create event. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
             } else {
-              toast.success("Event created!");
+              toast.success("Event created!", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid green",
+                },
+              });
               navigation(`/${currentUser?.username}/events`);
             }
           })
@@ -890,9 +964,21 @@ const EventForm = ({
       .then((response) => {
         setShowAreYouSureDeleteEvent(false);
         if (!response.ok) {
-          toast.error("Could not delete event. Please try again.");
+          toast.error("Could not delete event. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         } else {
-          toast.error("Event deleted");
+          toast("Event deleted", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           navigation(`/${currentUser?.username}`); // redirect to user homepage after del event
         }
       })

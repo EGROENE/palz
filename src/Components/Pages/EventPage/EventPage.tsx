@@ -12,7 +12,7 @@ import styles from "./styles.module.css";
 import { useMainContext } from "../../../Hooks/useMainContext";
 
 const EventPage = () => {
-  const { showSidebar, isLoading, setShowSidebar } = useMainContext();
+  const { showSidebar, isLoading, setShowSidebar, theme } = useMainContext();
   const { allUsers, currentUser, userCreatedAccount, setCurrentOtherUser, logout } =
     useUserContext();
   const {
@@ -46,7 +46,13 @@ const EventPage = () => {
       !currentEvent?.invitees.includes(currentUser._id) &&
       !currentEvent?.organizers.includes(currentUser._id)
     ) {
-      toast.error("You do not have permission to edit or view this event.");
+      toast.error("You do not have permission to edit or view this event.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
       if (currentUser && userCreatedAccount !== null) {
         navigation(`/${currentUser.username}`);
       } else {

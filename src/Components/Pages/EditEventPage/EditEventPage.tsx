@@ -9,7 +9,7 @@ import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
 const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
-  const { showSidebar, setShowSidebar, isLoading } = useMainContext();
+  const { showSidebar, setShowSidebar, isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
 
   const navigation = useNavigate();
@@ -20,13 +20,25 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
     const now = Date.now();
     if (currentEvent?.eventEndDateTimeInMS && currentEvent.eventEndDateTimeInMS < now) {
       navigation(`/${currentUser?.username}`);
-      toast.error("Event is finished, so it's no longer editable.");
+      toast.error("Event is finished, so it's no longer editable.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
 
     /* If user access event's edit page, but is not an organizer, redirect to their homepage & tell them they don't have permission to edit event */
     if (currentUser?._id && !currentEvent?.organizers.includes(currentUser._id)) {
       navigation(`/${currentUser.username}`);
-      toast.error("You do not have permission to edit this event.");
+      toast.error("You do not have permission to edit this event.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
 
     // Set random color:
@@ -44,7 +56,13 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
   // Bring user to homepage if not logged in:
   useEffect(() => {
     if (!currentUser && userCreatedAccount === null) {
-      toast.error("Please log in before accessing this page");
+      toast.error("Please log in before accessing this page", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
       logout();
       navigation("/");
     }

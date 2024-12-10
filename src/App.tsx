@@ -52,7 +52,21 @@ function App() {
   useEffect(() => {
     const handleOnlineStatusChange = () => {
       setIsOnline(navigator.onLine);
-      isOnline ? toast.error("You are offline") : toast.success("Back online");
+      isOnline
+        ? toast("You are offline", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          })
+        : toast("Back online!", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid green",
+            },
+          });
     };
 
     // Listen for status changes:

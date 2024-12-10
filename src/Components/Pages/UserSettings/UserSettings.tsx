@@ -18,7 +18,13 @@ const UserSettings = () => {
   const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser) {
-      toast.error("Please log in before accessing this page.");
+      toast.error("Please log in before accessing this page.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
       navigation("/");
       logout();
     }
@@ -63,10 +69,22 @@ const UserSettings = () => {
     Requests.addUserInterest(currentUser, interest.trim())
       .then((response) => {
         if (!response.ok) {
-          toast.error("Could not add interest. Please try again.");
+          toast.error("Could not add interest. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           fetchAllUsers();
         } else {
-          toast.success(`'${interest}' added to interests`);
+          toast.success(`'${interest}' added to interests`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid green",
+            },
+          });
         }
       })
       .catch((error) => console.log(error))
@@ -82,10 +100,22 @@ const UserSettings = () => {
     Requests.deleteUserInterest(currentUser, interest)
       .then((response) => {
         if (!response.ok) {
-          toast.error("Could not delete interest. Please try again.");
+          toast.error("Could not delete interest. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
           fetchAllUsers();
         } else {
-          toast.success(`'${interest}' removed from interests`);
+          toast(`'${interest}' removed from interests`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         }
       })
       .catch((error) => console.log(error))
@@ -147,16 +177,34 @@ const UserSettings = () => {
       .then(() => {
         // run after the others have finished
         if (!requestToDeleteUserIDFromAllArraysIsOK) {
-          toast.error("Account deletion incomplete; please try again.");
+          toast.error("Account deletion incomplete; please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         } else {
           Requests.deleteUser(currentUser?._id)
             .then((response) => {
               if (!response.ok) {
-                toast.error("Account deletion incomplete; please try again.");
+                toast.error("Account deletion incomplete; please try again.", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
                 fetchAllEvents();
                 fetchAllUsers();
               } else {
-                toast.error("You have deleted your account. We're sorry to see you go!");
+                toast("You have deleted your account. We're sorry to see you go!", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
                 logout();
                 navigation("/");
                 fetchAllEvents();

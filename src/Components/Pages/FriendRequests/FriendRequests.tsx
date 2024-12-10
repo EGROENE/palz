@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 
 const FriendRequests = () => {
   const navigation = useNavigate();
-  const { showSidebar, setShowSidebar } = useMainContext();
+  const { showSidebar, setShowSidebar, theme } = useMainContext();
   const {
     allUsers,
     handleAcceptFriendRequest,
@@ -42,7 +42,13 @@ const FriendRequests = () => {
     if (userCreatedAccount === null) {
       navigation(`/`);
       logout();
-      toast.error("Please log in before accessing this page.");
+      toast.error("Please log in before accessing this page.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
 
     // Determine if sent/received requests should be shown:
