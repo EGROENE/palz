@@ -49,6 +49,8 @@ const FilterDropdown = ({
             <label key={option}>
               <span>{option}</span>
               <input
+                name={option}
+                id={option}
                 type="checkbox"
                 style={{ accentColor: randomColor }}
                 onChange={() => handleAddDeleteFilter(option)}

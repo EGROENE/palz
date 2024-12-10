@@ -82,6 +82,8 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
         <label>
           <p>First Name:</p>
           <input
+            name="first-name-signup"
+            id="first-name-signup"
             ref={firstNameRef}
             onFocus={() => setFocusedElement("firstName")}
             onBlur={() => setFocusedElement(undefined)}
@@ -107,6 +109,8 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
         <label>
           <p>Last Name:</p>
           <input
+            name="last-name-signup"
+            id="last-name-signup"
             ref={lastNameRef}
             onFocus={() => setFocusedElement("lastName")}
             onBlur={() => setFocusedElement(undefined)}
@@ -145,6 +149,8 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
           </p>
         )}
         <input
+          name="username-signup"
+          id="username-signup"
           ref={usernameRef}
           onFocus={() => setFocusedElement("username")}
           onBlur={() => setFocusedElement(undefined)}
@@ -169,6 +175,8 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
       <label>
         <p>E-Mail Address:</p>
         <input
+          name="email-signup"
+          id="email-signup"
           ref={emailRef}
           onFocus={() => setFocusedElement("email")}
           onBlur={() => setFocusedElement(undefined)}
@@ -210,6 +218,8 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
 
         <div className="password-input">
           <input
+            name="password-signup"
+            id="password-signup"
             ref={passwordRef}
             onFocus={() => setFocusedElement("password")}
             onBlur={() => setFocusedElement(undefined)}
@@ -241,6 +251,8 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
         <p>Confirm Password: </p>
         <div className="password-input">
           <input
+            name="confirm-password-signup"
+            id="confirm-password-signup"
             ref={confirmPasswordRef}
             onFocus={() => setFocusedElement("confirmPassword")}
             onBlur={() => setFocusedElement(undefined)}

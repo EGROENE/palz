@@ -8,7 +8,7 @@ import { TThemeColor } from "../../../../types";
 
 const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
   const { welcomeMessageDisplayTime } = useMainContext();
-  const {  fetchAllUsers } = useUserContext();
+  const { fetchAllUsers } = useUserContext();
 
   const {
     passwordIsHidden,
@@ -63,6 +63,8 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
       <label>
         <p>Username or E-Mail Address:</p>
         <input
+          name="username-or-email-login"
+          id="username-or-email-login"
           onFocus={() => setFocusedElement("emailUsername")}
           onBlur={() => setFocusedElement(undefined)}
           ref={emailUsernameRef}
@@ -94,6 +96,8 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
         <p>Password:</p>
         <div className="password-input">
           <input
+            name="password-login"
+            id="password-login"
             ref={passwordRef}
             onFocus={() => setFocusedElement("password")}
             onBlur={() => setFocusedElement(undefined)}

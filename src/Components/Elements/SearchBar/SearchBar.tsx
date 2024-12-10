@@ -36,6 +36,8 @@ const SearchBar = ({
     <div className={styles.searchBarContainer}>
       <div className={styles.bar}>
         <input
+          name="search-bar"
+          id="search-bar"
           ref={searchBoxRef}
           title={title ? title : undefined}
           value={input}
