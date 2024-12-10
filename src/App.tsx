@@ -1,5 +1,5 @@
 import "./App.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LoginPage from "./Components/Pages/LoginPage/LoginPage";
 import Welcome from "./Components/Elements/Welcome/Welcome";
 import Sidebar from "./Components/Elements/Sidebar/Sidebar";
@@ -20,6 +20,7 @@ import LoadingModal from "./Components/Elements/LoadingModal/LoadingModal";
 import FriendRequests from "./Components/Pages/FriendRequests/FriendRequests";
 import OtherUserProfile from "./Components/Pages/OtherUserProfile/OtherUserProfile";
 import { useEventContext } from "./Hooks/useEventContext";
+import toast from "react-hot-toast";
 
 function App() {
   const { theme, showWelcomeMessage, imageIsUploading, imageIsDeleting, showSidebar } =
@@ -45,6 +46,26 @@ function App() {
   theme === "dark"
     ? (document.body.style.backgroundColor = "#242424")
     : (document.body.style.backgroundColor = "rgb(233, 231, 228)");
+
+  // Show notification when user goes offline/online again:
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+  console.log(isOnline);
+  useEffect(() => {
+    const handleOnlineStatusChange = () => {
+      setIsOnline(navigator.onLine);
+      isOnline ? toast.error("You are offline") : toast.success("Back online");
+    };
+
+    // Listen for status changes:
+    window.addEventListener("online", handleOnlineStatusChange);
+    window.addEventListener("offline", handleOnlineStatusChange);
+
+    // Clean up event listeners:
+    return () => {
+      window.removeEventListener("online", handleOnlineStatusChange);
+      window.removeEventListener("offline", handleOnlineStatusChange);
+    };
+  }, [isOnline]);
 
   /* Redirect to user homepage if user has logged in or created account, welcome message not shown (user not able to nav back to login once logged in) */
   /* userCreatedAccount is checked for non-null values, since currentUser may be set before submission of login form, causing user's homepage to display before they actually log in */
