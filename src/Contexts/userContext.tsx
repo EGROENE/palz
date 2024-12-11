@@ -1420,7 +1420,34 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // handleUnblockUser
+  const handleUnblockUser = (blocker: TUser, blockee: TUser): void => {
+    setButtonsAreDisabled(true);
+
+    if (blockee._id) {
+      Requests.removeFromBlockedUsers(blocker, blockee._id)
+        .then((response) => {
+          if (!response.ok) {
+            toast.error(`Unable to unblock ${blockee.username}. Please try again.`, {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          } else {
+            toast.success(`Unblocked ${blockee.username}.`, {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid green",
+              },
+            });
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setButtonsAreDisabled(false));
+    }
+  };
 
   // Defined here, as it's used in methods that are used in multiple components
   const allSignupFormFieldsFilled: boolean =
@@ -1581,6 +1608,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    handleUnblockUser,
     handleBlockUser,
     displayedSentRequests,
     setDisplayedSentRequests,
