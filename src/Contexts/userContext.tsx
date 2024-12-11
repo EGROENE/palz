@@ -345,7 +345,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (inputUsername.toLowerCase() === "undefined") {
-      console.log(1);
       setUsernameError("Invalid username");
     }
   };
@@ -1275,7 +1274,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   // maybe pass in a TUser[] & its setter in order to optimistically render UserCards on FindPalz/MyPalz, FriendRequests
   const handleBlockUser = (blocker: TUser, blockee: TUser): void => {
-    console.log(1);
     let requestsAreOK: boolean = true;
     /* Main requests: add to blocker's blockedUsers, remove from each other's friends arrays, remove from each other's friendRequestsSent/Received arrays. */
     /* Promise.all() could be used, but could take longer. Chaining requests could save time, since the whole process will stop if the one before that in the chain fails, and the user will be prompted to try it again. */
@@ -1355,14 +1353,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     if (!response.ok) {
                       requestsAreOK = false;
                     } else {
-                      console.log(2);
                       if (blocker._id) {
                         Requests.removeFromFriendRequestsSent(blockee, blocker._id)
                           .then((response) => {
                             if (!response.ok) {
                               requestsAreOK = false;
-                            } else {
-                              console.log(3);
                             }
                           })
                           .catch((error) => console.log(error));
