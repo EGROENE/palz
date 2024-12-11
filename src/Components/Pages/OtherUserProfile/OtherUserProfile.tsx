@@ -25,6 +25,7 @@ const OtherUserProfile = () => {
     displayedSentRequests,
     setDisplayedSentRequests,
     handleBlockUser,
+    handleUnblockUser,
   } = useUserContext();
   const { username } = useParams();
   const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
@@ -196,17 +197,37 @@ const OtherUserProfile = () => {
     handlerParams: [],
     paramsIncludeEvent: false,
   };
-  const blockButton = {
-    type: "block",
-    buttonText: (
-      <>
-        <i className="fas fa-user-minus"></i> Block
-      </>
-    ),
-    buttonHandler: handleBlockUser,
-    handlerParams: [currentUser, currentOtherUser],
-    paramsIncludeEvent: false,
+
+  const getBlockButton = () => {
+    if (
+      currentOtherUser._id &&
+      currentUser?.blockedUsers.includes(currentOtherUser._id)
+    ) {
+      return {
+        type: "unblock",
+        buttonText: (
+          <>
+            <i className="fas fa-lock-open"></i> Unblock
+          </>
+        ),
+        buttonHandler: handleUnblockUser,
+        handlerParams: [currentUser, currentOtherUser],
+        paramsIncludeEvent: false,
+      };
+    }
+    return {
+      type: "block",
+      buttonText: (
+        <>
+          <i className="fas fa-lock"></i> Block
+        </>
+      ),
+      buttonHandler: handleBlockUser,
+      handlerParams: [currentUser, currentOtherUser],
+      paramsIncludeEvent: false,
+    };
   };
+  const blockButton = getBlockButton();
 
   const getDisplayedButtons = () => {
     return [
