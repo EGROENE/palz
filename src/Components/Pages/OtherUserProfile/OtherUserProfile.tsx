@@ -24,6 +24,7 @@ const OtherUserProfile = () => {
     handleAcceptFriendRequest,
     displayedSentRequests,
     setDisplayedSentRequests,
+    handleBlockUser,
   } = useUserContext();
   const { username } = useParams();
   const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
@@ -202,8 +203,8 @@ const OtherUserProfile = () => {
         <i className="fas fa-user-minus"></i> Block
       </>
     ),
-    buttonHandler: undefined,
-    handlerParams: [],
+    buttonHandler: handleBlockUser,
+    handlerParams: [currentUser, currentOtherUser],
     paramsIncludeEvent: false,
   };
 
@@ -265,9 +266,9 @@ const OtherUserProfile = () => {
                         disabled={buttonsAreDisabled}
                         onClick={
                           button.paramsIncludeEvent // @ts-expect-error: ...
-                            ? (e) => button.handler(e, ...button.handlerParams)
+                            ? (e) => button.buttonHandler(e, ...button.handlerParams)
                             : // @ts-expect-error: ...
-                              () => button.handler(...button.handlerParams)
+                              () => button.buttonHandler(...button.handlerParams)
                         }
                       >
                         {button.buttonText}
