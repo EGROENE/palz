@@ -79,6 +79,29 @@ const addToBlockedUsers = (blocker: TUser, blockeeID: string): Promise<Response>
   });
 };
 
+const removeFromBlockedUsers = (blocker: TUser, blockeeID: string): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  let updatedBlockedUsersArray = blocker.blockedUsers.filter(
+    (userID) => userID !== blockeeID
+  );
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "blockedUsers": updatedBlockedUsersArray,
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:4000/palz/users/${blocker?._id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const patchUpdatedUserInfo = (
   user: TUser | null,
   valuesToUpdate: TUserValuesToUpdate
@@ -705,6 +728,7 @@ const deleteFriendFromFriendsArray = (user: TUser, friend: string): Promise<Resp
 };
 
 const Requests = {
+  removeFromBlockedUsers,
   addToBlockedUsers,
   removeEventImage,
   addEventImage,
