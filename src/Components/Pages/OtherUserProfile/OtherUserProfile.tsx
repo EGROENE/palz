@@ -29,19 +29,14 @@ const OtherUserProfile = () => {
   } = useUserContext();
   const { username } = useParams();
   const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
-  //const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
 
-  /*  const [currentUserSentFriendRequest, setCurrentUserSentFriendRequest] =
-    useState<boolean>(
-      currentOtherUser &&
-        currentUser &&
-        currentUser._id &&
-        currentUserUpdated._id &&
-        currentOtherUser._id
-        ? currentUserUpdated.friendRequestsSent.includes(currentOtherUser._id) &&
-            currentOtherUser.friendRequestsReceived.includes(currentUserUpdated._id)
-        : false
-    ); */
+  const [currentOtherUserIsBlocked, setCurrentOtherUserIsBlocked] = useState<boolean>(
+    currentUser &&
+      currentOtherUser._id &&
+      currentUser?.blockedUsers.includes(currentOtherUser._id)
+      ? true
+      : false
+  );
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
@@ -205,25 +200,33 @@ const OtherUserProfile = () => {
     ) {
       return {
         type: "unblock",
-        buttonText: (
+        buttonText: currentOtherUserIsBlocked ? (
           <>
             <i className="fas fa-lock-open"></i> Unblock
           </>
+        ) : (
+          <>
+            <i className="fas fa-lock"></i> Block
+          </>
         ),
-        buttonHandler: handleUnblockUser,
-        handlerParams: [currentUser, currentOtherUser],
+        buttonHandler: currentOtherUserIsBlocked ? handleUnblockUser : handleBlockUser,
+        handlerParams: [currentUser, currentOtherUser, setCurrentOtherUserIsBlocked],
         paramsIncludeEvent: false,
       };
     }
     return {
       type: "block",
-      buttonText: (
+      buttonText: !currentOtherUserIsBlocked ? (
         <>
           <i className="fas fa-lock"></i> Block
         </>
+      ) : (
+        <>
+          <i className="fas fa-lock-open"></i> Unblock
+        </>
       ),
-      buttonHandler: handleBlockUser,
-      handlerParams: [currentUser, currentOtherUser],
+      buttonHandler: !currentOtherUserIsBlocked ? handleBlockUser : handleUnblockUser,
+      handlerParams: [currentUser, currentOtherUser, setCurrentOtherUserIsBlocked],
       paramsIncludeEvent: false,
     };
   };

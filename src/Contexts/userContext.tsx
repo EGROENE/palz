@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState, useEffect } from "react";
+import { createContext, ReactNode, useState, useEffect, SetStateAction } from "react";
 import { TUserContext, TUser, TUserValuesToUpdate, TEvent } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
@@ -1273,12 +1273,20 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // maybe pass in a TUser[] & its setter in order to optimistically render UserCards on FindPalz/MyPalz, FriendRequests
-  const handleBlockUser = (blocker: TUser, blockee: TUser): void => {
+  const handleBlockUser = (
+    blocker: TUser,
+    blockee: TUser,
+    setBlockeeIsBlocked?: React.Dispatch<React.SetStateAction<boolean>>
+  ): void => {
     let requestsAreOK: boolean = true;
     /* Main requests: add to blocker's blockedUsers, remove from each other's friends arrays, remove from each other's friendRequestsSent/Received arrays. */
     /* Promise.all() could be used, but could take longer. Chaining requests could save time, since the whole process will stop if the one before that in the chain fails, and the user will be prompted to try it again. */
 
     setButtonsAreDisabled(true);
+
+    if (setBlockeeIsBlocked) {
+      setBlockeeIsBlocked(true);
+    }
 
     // Remove each from any friend request arrays:
     if (blockee._id) {
@@ -1286,6 +1294,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addToBlockedUsers(blocker, blockee._id)
         .then((response) => {
           if (!response.ok) {
+            if (setBlockeeIsBlocked) {
+              setBlockeeIsBlocked(false);
+            }
             toast.error(`Unable to block ${blockee.username}. Please try again.`, {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -1303,6 +1314,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 Requests.deleteFriendFromFriendsArray(blocker, blockee._id)
                   .then((response) => {
                     if (!response.ok) {
+                      if (setBlockeeIsBlocked) {
+                        setBlockeeIsBlocked(false);
+                      }
                       requestsAreOK = false;
                       toast.error(
                         `Unable to block ${blockee.username}. Please try again.`,
@@ -1321,6 +1335,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                           .then((response) => {
                             if (!response.ok) {
                               requestsAreOK = false;
+                              if (setBlockeeIsBlocked) {
+                                setBlockeeIsBlocked(false);
+                              }
                               toast.error(
                                 `Unable to block ${blockee.username}. Please try again.`,
                                 {
@@ -1415,18 +1432,33 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 border: "2px solid red",
               },
             });
+          } else {
+            if (setBlockeeIsBlocked) {
+              setBlockeeIsBlocked(false);
+            }
           }
         });
     }
   };
 
-  const handleUnblockUser = (blocker: TUser, blockee: TUser): void => {
+  const handleUnblockUser = (
+    blocker: TUser,
+    blockee: TUser,
+    setBlockeeIsBlocked?: React.Dispatch<SetStateAction<boolean>>
+  ): void => {
     setButtonsAreDisabled(true);
+
+    if (setBlockeeIsBlocked) {
+      setBlockeeIsBlocked(false);
+    }
 
     if (blockee._id) {
       Requests.removeFromBlockedUsers(blocker, blockee._id)
         .then((response) => {
           if (!response.ok) {
+            if (setBlockeeIsBlocked) {
+              setBlockeeIsBlocked(true);
+            }
             toast.error(`Unable to unblock ${blockee.username}. Please try again.`, {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
