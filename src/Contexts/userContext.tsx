@@ -1273,6 +1273,160 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // maybe pass in a TUser[] & its setter in order to optimistically render UserCards on FindPalz/MyPalz, FriendRequests
+  const handleBlockUser = (blocker: TUser, blockee: TUser): void => {
+    console.log(1);
+    let requestsAreOK: boolean = true;
+    /* Main requests: add to blocker's blockedUsers, remove from each other's friends arrays, remove from each other's friendRequestsSent/Received arrays. */
+    /* Promise.all() could be used, but could take longer. Chaining requests could save time, since the whole process will stop if the one before that in the chain fails, and the user will be prompted to try it again. */
+
+    setButtonsAreDisabled(true);
+
+    // Remove each from any friend request arrays:
+    if (blockee._id) {
+      // Add blockee to blocker's blockedUsers array:
+      Requests.addToBlockedUsers(blocker, blockee._id)
+        .then((response) => {
+          if (!response.ok) {
+            toast.error(`Unable to block ${blockee.username}. Please try again.`, {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          } else {
+            // If friends, remove from each other's friends arrays:
+            if (blockee._id && blocker._id) {
+              if (
+                blocker.friends.includes(blockee._id) &&
+                blockee.friends.includes(blocker._id)
+              ) {
+                Requests.deleteFriendFromFriendsArray(blocker, blockee._id)
+                  .then((response) => {
+                    if (!response.ok) {
+                      requestsAreOK = false;
+                      toast.error(
+                        `Unable to block ${blockee.username}. Please try again.`,
+                        {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        }
+                      );
+                    } else {
+                      if (blocker._id) {
+                        Requests.deleteFriendFromFriendsArray(blockee, blocker._id)
+                          .then((response) => {
+                            if (!response.ok) {
+                              requestsAreOK = false;
+                              toast.error(
+                                `Unable to block ${blockee.username}. Please try again.`,
+                                {
+                                  style: {
+                                    background:
+                                      theme === "light"
+                                        ? "#242424"
+                                        : "rgb(233, 231, 228)",
+                                    color: theme === "dark" ? "black" : "white",
+                                    border: "2px solid red",
+                                  },
+                                }
+                              );
+                            }
+                          })
+                          .catch((error) => console.log(error));
+                      }
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              }
+            }
+
+            // Delete any friend requests between the blocker and blockee:
+            // If blocker has received FR from blockee:
+            if (blockee._id && requestsAreOK) {
+              if (blocker.friendRequestsReceived.includes(blockee._id)) {
+                Requests.removeFromFriendRequestsReceived(blockee._id, blocker)
+                  .then((response) => {
+                    if (!response.ok) {
+                      requestsAreOK = false;
+                    } else {
+                      console.log(2);
+                      if (blocker._id) {
+                        Requests.removeFromFriendRequestsSent(blockee, blocker._id)
+                          .then((response) => {
+                            if (!response.ok) {
+                              requestsAreOK = false;
+                            } else {
+                              console.log(3);
+                            }
+                          })
+                          .catch((error) => console.log(error));
+                      }
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              }
+
+              // If blockee has received FR from blocker:
+              if (blocker._id && requestsAreOK) {
+                if (blockee.friendRequestsReceived.includes(blocker._id)) {
+                  Requests.removeFromFriendRequestsReceived(blocker._id, blockee)
+                    .then((response) => {
+                      if (!response.ok) {
+                        requestsAreOK = false;
+                      } else {
+                        if (blockee._id) {
+                          Requests.removeFromFriendRequestsSent(blocker, blockee._id)
+                            .then((response) => {
+                              if (!response.ok) {
+                                toast.error(
+                                  `Unable to block ${blockee.username}. Please try again.`,
+                                  {
+                                    style: {
+                                      background:
+                                        theme === "light"
+                                          ? "#242424"
+                                          : "rgb(233, 231, 228)",
+                                      color: theme === "dark" ? "black" : "white",
+                                      border: "2px solid red",
+                                    },
+                                  }
+                                );
+                              }
+                            })
+                            .catch((error) => console.log(error));
+                        }
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                }
+              }
+            }
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => {
+          setButtonsAreDisabled(false);
+          if (requestsAreOK) {
+            toast(`You have blocked ${blockee.username}.`, {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        });
+    }
+  };
+
+  // handleUnblockUser
+
   // Defined here, as it's used in methods that are used in multiple components
   const allSignupFormFieldsFilled: boolean =
     firstName !== "" &&
@@ -1432,6 +1586,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    handleBlockUser,
     displayedSentRequests,
     setDisplayedSentRequests,
     displayedReceivedRequests,
