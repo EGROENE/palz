@@ -4,6 +4,7 @@ import { TUser, TThemeColor } from "../../../types";
 import styles from "./styles.module.css";
 
 const ListedUser = ({
+  renderButtonOne,
   user,
   buttonOneHandler,
   buttonOneHandlerParams,
@@ -19,6 +20,7 @@ const ListedUser = ({
   handlerTwoNeedsEventParam,
   objectLink, // link that entire component leads to
 }: {
+  renderButtonOne: boolean;
   user?: TUser;
   randomColor?: string;
   buttonOneHandler?: Function;
@@ -75,7 +77,7 @@ const ListedUser = ({
         </div>
       )}
       {buttonOneLink !== null ? (
-        <Link to={buttonOneLink}>
+        renderButtonOne && <Link to={buttonOneLink}>
           <button
             disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
             onClick={
@@ -101,7 +103,7 @@ const ListedUser = ({
           </button>
         </Link>
       ) : (
-        <button
+        renderButtonOne && <button
           disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
           onClick={
             buttonOneHandler
