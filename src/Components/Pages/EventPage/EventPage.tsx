@@ -156,7 +156,7 @@ const EventPage = () => {
               header="Invitees"
               handleDeletion={handleRemoveInvitee}
               userIDArray={currentEvent.invitees}
-              event={currentEvent}
+              deleteFrom="event-list"
               randomColor={randomColor}
             />
           )}
@@ -166,7 +166,7 @@ const EventPage = () => {
               header="RSVPs"
               handleDeletion={handleDeleteUserRSVP}
               userIDArray={refinedInterestedUsers.map((user) => user._id)}
-              event={currentEvent}
+              deleteFrom="event-list"
               randomColor={randomColor}
             />
           )}
