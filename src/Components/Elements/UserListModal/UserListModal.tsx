@@ -4,6 +4,7 @@ import { TUser } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import styles from "./styles.module.css";
+import { useMainContext } from "../../../Hooks/useMainContext";
 
 /* Component contains a modal w/ background, as well as a list of users. In every user box, there is user image, name, username, & button that will eventually make it possible to message user & a button that removes user from list. To be used on event pages to show list of RSVPs & list of invitees. */
 const UserListModal = ({
@@ -25,6 +26,7 @@ const UserListModal = ({
   randomColor?: string;
   buttonTwoText?: string;
 }) => {
+  const {buttonsAreDisabled} = useMainContext()
   const { allUsers, currentUser } = useUserContext();
   const { currentEvent } = useEventContext();
 
@@ -73,9 +75,9 @@ const UserListModal = ({
             user={user}
             buttonOneText="Message"
             buttonOneLink={null}
-            buttonOneIsDisabled={null}
+            buttonOneIsDisabled={buttonsAreDisabled}
             buttonTwoText={buttonTwoText ? buttonTwoText :"Remove"}
-            buttonTwoIsDisabled={null}
+            buttonTwoIsDisabled={buttonsAreDisabled}
             buttonTwoHandler={handleDeletion}
             buttonTwoHandlerParams={getButtonTwoHandlerParams(user)}
             handlerTwoNeedsEventParam={deleteFrom === "blocked-users" ? false : true}
