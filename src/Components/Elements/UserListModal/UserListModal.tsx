@@ -21,7 +21,7 @@ const UserListModal = ({
   header: string;
   handleDeletion: Function;
   userIDArray: (string | undefined)[] | undefined;
-  deleteFrom: "event-list" | "blocked-users";
+  deleteFrom: "invitee-list" | "rsvp-list" | "blocked-users";
   randomColor?: string;
   buttonTwoText?: string;
 }) => {
@@ -39,6 +39,19 @@ const UserListModal = ({
     return userArray;
   }
   const [userArray, setUserArray] = useState<TUser[]>(getUserArray());
+
+  const getButtonTwoHandlerParams = (user: TUser ) => {
+    if (deleteFrom === "blocked-users") {
+      return [currentUser, user, undefined, userArray, setUserArray];
+    }
+
+    if (deleteFrom === "invitee-list") {
+      return [currentEvent, user, userArray, setUserArray];
+
+    }
+    // if deleteFrom === "rsvp-list"
+    return [currentEvent, user, undefined, userArray, setUserArray]
+  }
 
   return (
     <div className={styles.modalBackground}>
@@ -64,7 +77,7 @@ const UserListModal = ({
             buttonTwoText={buttonTwoText ? buttonTwoText :"Remove"}
             buttonTwoIsDisabled={null}
             buttonTwoHandler={handleDeletion}
-            buttonTwoHandlerParams={deleteFrom === "blocked-users" ? [currentUser, user, undefined, userArray, setUserArray] : [currentEvent, user]}
+            buttonTwoHandlerParams={getButtonTwoHandlerParams(user)}
             handlerTwoNeedsEventParam={deleteFrom === "blocked-users" ? false : true}
             buttonTwoLink={null}
             objectLink={`/users/${user?.username}`}
