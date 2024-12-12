@@ -245,8 +245,9 @@ const OtherUserProfile = () => {
 
   const getDisplayedButtons = () => {
     return [
-      currentUserMayMessage && messageButton,
-      !usersAreFriends ? friendRequestButton : unfriendButton,
+      currentUserMayMessage && !currentOtherUserIsBlocked && messageButton,
+      !currentOtherUserIsBlocked &&
+        (!usersAreFriends ? friendRequestButton : unfriendButton),
       blockButton,
     ];
   };
