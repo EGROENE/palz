@@ -6,6 +6,7 @@ import styles from "./styles.module.css";
 
 /* Component contains a modal w/ background, as well as a list of users. In every user box, there is user image, name, username, & button that will eventually make it possible to message user & a button that removes user from list. To be used on event pages to show list of RSVPs & list of invitees. */
 const UserListModal = ({
+  renderButtonOne,
   closeModalMethod,
   header,
   handleDeletion,
@@ -14,6 +15,7 @@ const UserListModal = ({
   randomColor,
   buttonTwoText
 }: {
+  renderButtonOne: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
   header: string;
   handleDeletion: Function;
@@ -48,6 +50,7 @@ const UserListModal = ({
         {userArray.map((user) => (
           <ListedUser
             key={user._id}
+            renderButtonOne={renderButtonOne}
             randomColor={randomColor}
             user={user}
             buttonOneText="Message"
