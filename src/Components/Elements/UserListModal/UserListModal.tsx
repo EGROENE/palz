@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { TUser } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
@@ -27,13 +28,17 @@ const UserListModal = ({
   const { allUsers, currentUser } = useUserContext();
   const { currentEvent } = useEventContext();
 
-  const userArray: TUser[] = [];
-  if (userIDArray) {
-    for (const userID of userIDArray) {
-      const matchingUser = allUsers.filter((user) => user._id === userID)[0];
-      userArray.push(matchingUser);
+  const getUserArray = ():TUser[] => {
+    const userArray: TUser[] = [];
+    if (userIDArray) {
+      for (const userID of userIDArray) {
+        const matchingUser = allUsers.filter((user) => user._id === userID)[0];
+        userArray.push(matchingUser);
+      }
     }
+    return userArray;
   }
+  const [userArray, setUserArray] = useState<TUser[]>(getUserArray());
 
   return (
     <div className={styles.modalBackground}>
@@ -59,7 +64,7 @@ const UserListModal = ({
             buttonTwoText={buttonTwoText ? buttonTwoText :"Remove"}
             buttonTwoIsDisabled={null}
             buttonTwoHandler={handleDeletion}
-            buttonTwoHandlerParams={deleteFrom === "blocked-users" ? [currentUser, user] : [currentEvent, user]}
+            buttonTwoHandlerParams={deleteFrom === "blocked-users" ? [currentUser, user, undefined, userArray, setUserArray] : [currentEvent, user]}
             handlerTwoNeedsEventParam={deleteFrom === "blocked-users" ? false : true}
             buttonTwoLink={null}
             objectLink={`/users/${user?.username}`}
