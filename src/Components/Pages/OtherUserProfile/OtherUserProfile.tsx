@@ -40,6 +40,17 @@ const OtherUserProfile = () => {
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
+    if (currentOtherUserIsBlocked) {
+      toast("You have blocked this user; click 'unblock' to unblock them."),
+        {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        };
+    }
+
     // Set color of event card's border randomly:
     const themeColors: TThemeColor[] = [
       "var(--primary-color)",
