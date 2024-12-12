@@ -9,7 +9,7 @@ import TwoOptionsInterface from "../TwoOptionsInterface/TwoOptionsInterface";
 import { Link } from "react-router-dom";
 
 const UserCard = ({ user }: { user: TUser }) => {
-  const { displayedCards, setDisplayedCards } = useMainContext();
+  const { displayedCards, setDisplayedCards, buttonsAreDisabled } = useMainContext();
   const { currentUser, allUsers } = useUserContext();
   const {
     handleUnfriending,
@@ -19,7 +19,6 @@ const UserCard = ({ user }: { user: TUser }) => {
     setShowFriendRequestResponseOptions,
     handleRetractFriendRequest,
     handleSendFriendRequest,
-    buttonsAreDisabled,
     currentOtherUser,
     setCurrentOtherUser,
     displayedSentRequests,
