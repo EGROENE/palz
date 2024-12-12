@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 export const EventContext = createContext<TEventContext | null>(null);
 
 export const EventContextProvider = ({ children }: { children: ReactNode }) => {
-  const { setIsLoading, theme, setButtonsAreDisabled } = useMainContext();
+  const { setIsLoading, theme } = useMainContext();
   const { currentUser } = useUserContext();
 
   const [currentEvent, setCurrentEvent] = useLocalStorage<TEvent | undefined>(
@@ -78,7 +78,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     e.preventDefault();
 
-    setButtonsAreDisabled(true);
+    setIsLoading(true);
 
     if (setUserRSVPd) {
       setUserRSVPd(false);
@@ -118,7 +118,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
         }
       })
       .catch((error) => console.log(error))
-      .finally(() => setButtonsAreDisabled(false));
+      .finally(() => setIsLoading(false));
   };
 
   const handleDeclineInvitation = (
@@ -161,7 +161,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     e.preventDefault();
 
-    setButtonsAreDisabled(true)
+    setIsLoading(true)
 
     if (displayedUsers && setDisplayedUsers) {
       setDisplayedUsers(displayedUsers.filter((u) => user?._id !== u._id))
@@ -190,7 +190,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           });
         }
       })
-      .catch((error) => console.log(error)).finally(() => setButtonsAreDisabled(false))
+      .catch((error) => console.log(error)).finally(() => setIsLoading(false))
   };
 
   const eventContextValues: TEventContext = {

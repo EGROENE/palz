@@ -110,8 +110,6 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
-  buttonsAreDisabled: boolean;
-  setButtonsAreDisabled: React.Dispatch<React.SetStateAction<boolean>>;
   displayedCards: (TUser | TEvent)[];
   setDisplayedCards: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
   showSidebar: boolean;

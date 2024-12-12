@@ -9,7 +9,7 @@ import TwoOptionsInterface from "../TwoOptionsInterface/TwoOptionsInterface";
 import { Link } from "react-router-dom";
 
 const UserCard = ({ user }: { user: TUser }) => {
-  const { displayedCards, setDisplayedCards, buttonsAreDisabled } = useMainContext();
+  const { displayedCards, setDisplayedCards, isLoading } = useMainContext();
   const { currentUser, allUsers } = useUserContext();
   const {
     handleUnfriending,
@@ -232,7 +232,7 @@ const UserCard = ({ user }: { user: TUser }) => {
                 );
               }
             }}
-            disabled={buttonsAreDisabled}
+            disabled={isLoading}
           >
             {buttonOneText}
           </button>
@@ -240,7 +240,7 @@ const UserCard = ({ user }: { user: TUser }) => {
             <div className="theme-element-container">
               <button
                 onClick={() => setCurrentOtherUser(user)}
-                disabled={buttonsAreDisabled}
+                disabled={isLoading}
               >
                 View Profile
               </button>

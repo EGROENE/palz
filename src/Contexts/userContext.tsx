@@ -10,7 +10,7 @@ import Methods from "../methods";
 export const UserContext = createContext<TUserContext | null>(null);
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
-  const { handleWelcomeMessage, setImageIsUploading, setImageIsDeleting, theme, setButtonsAreDisabled } =
+  const { handleWelcomeMessage, setImageIsUploading, setImageIsDeleting, theme, setIsLoading } =
     useMainContext();
 
   const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
@@ -819,7 +819,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setSenderSentRequests(senderSentRequests.concat(recipient));
     }
 
-    setButtonsAreDisabled(true);
+    setIsLoading(true);
 
     let isRequestError = false;
 
@@ -871,7 +871,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           }
         })
         .catch((error) => console.log(error))
-        .finally(() => setButtonsAreDisabled(false));
+        .finally(() => setIsLoading(false));
     }
   };
 
@@ -882,7 +882,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     usersToWhomCurrentUserSentRequest?: TUser[],
     setUsersToWhomCurrentUserSentRequest?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
-    setButtonsAreDisabled(true);
+    setIsLoading(true);
 
     if (setCurrentUserSentFriendRequest) {
       setCurrentUserSentFriendRequest(false);
@@ -955,7 +955,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           }
         })
         .catch((error) => console.log(error))
-        .finally(() => setButtonsAreDisabled(false));
+        .finally(() => setIsLoading(false));
     }
   };
 
@@ -969,7 +969,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
     e.preventDefault();
-    setButtonsAreDisabled(true);
+    setIsLoading(true);
 
     if (showFriendRequestResponseOptions) {
       setShowFriendRequestResponseOptions(false);
@@ -1104,7 +1104,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 }
               })
               .catch((error) => console.log(error))
-              .finally(() => setButtonsAreDisabled(false));
+              .finally(() => setIsLoading(false));
           }
         }
       });
@@ -1121,7 +1121,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     e.preventDefault();
 
-    setButtonsAreDisabled(true);
+    setIsLoading(true);
 
     if (showFriendRequestResponseOptions) {
       setShowFriendRequestResponseOptions(false);
@@ -1194,7 +1194,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           }
         })
         .catch((error) => console.log(error))
-        .finally(() => setButtonsAreDisabled(false));
+        .finally(() => setIsLoading(false));
     }
   };
 
@@ -1227,7 +1227,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     let allRequestsAreOK = true;
 
     if (promisesToAwait) {
-      setButtonsAreDisabled(true);
+      setIsLoading(true);
       Promise.all(promisesToAwait)
         .then(() => {
           for (const promise of promisesToAwait) {
@@ -1267,7 +1267,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           }
         })
         .catch((error) => console.log(error))
-        .finally(() => setButtonsAreDisabled(false));
+        .finally(() => setIsLoading(false));
     }
   };
 
@@ -1281,7 +1281,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     /* Main requests: add to blocker's blockedUsers, remove from each other's friends arrays, remove from each other's friendRequestsSent/Received arrays. */
     /* Promise.all() could be used, but could take longer. Chaining requests could save time, since the whole process will stop if the one before that in the chain fails, and the user will be prompted to try it again. */
 
-    setButtonsAreDisabled(true);
+    setIsLoading(true);
 
     if (setBlockeeIsBlocked) {
       setBlockeeIsBlocked(true);
@@ -1422,7 +1422,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         })
         .catch((error) => console.log(error))
         .finally(() => {
-          setButtonsAreDisabled(false);
+          setIsLoading(false);
           if (requestsAreOK) {
             toast(`You have blocked ${blockee.username}.`, {
               style: {
@@ -1447,7 +1447,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     displayedUsers?: TUser[],
     setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
-    setButtonsAreDisabled(true);
+    setIsLoading(true);
 
     if (setBlockeeIsBlocked) {
       setBlockeeIsBlocked(false);
@@ -1485,7 +1485,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           }
         })
         .catch((error) => console.log(error))
-        .finally(() => setButtonsAreDisabled(false));
+        .finally(() => setIsLoading(false));
     }
   };
 

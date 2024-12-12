@@ -26,7 +26,7 @@ const UserListModal = ({
   randomColor?: string;
   buttonTwoText?: string;
 }) => {
-  const {buttonsAreDisabled} = useMainContext()
+  const {isLoading} = useMainContext()
   const { allUsers, currentUser } = useUserContext();
   const { currentEvent } = useEventContext();
 
@@ -75,9 +75,9 @@ const UserListModal = ({
             user={user}
             buttonOneText="Message"
             buttonOneLink={null}
-            buttonOneIsDisabled={buttonsAreDisabled}
+            buttonOneIsDisabled={isLoading}
             buttonTwoText={buttonTwoText ? buttonTwoText :"Remove"}
-            buttonTwoIsDisabled={buttonsAreDisabled}
+            buttonTwoIsDisabled={isLoading}
             buttonTwoHandler={handleDeletion}
             buttonTwoHandlerParams={getButtonTwoHandlerParams(user)}
             handlerTwoNeedsEventParam={deleteFrom === "blocked-users" ? false : true}
