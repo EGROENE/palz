@@ -1,5 +1,5 @@
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TUser, TEvent } from "../../../types";
+import { TUser } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import styles from "./styles.module.css";
@@ -10,27 +10,27 @@ const UserListModal = ({
   header,
   handleDeletion,
   userIDArray,
+  deleteFrom,
   randomColor,
+  buttonTwoText
 }: {
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
   header: string;
-  handleDeletion: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-
-    event: TEvent,
-    user: TUser
-  ) => void;
-  userIDArray: (string | undefined)[];
-  event?: TEvent;
+  handleDeletion: Function;
+  userIDArray: (string | undefined)[] | undefined;
+  deleteFrom: "event-list" | "blocked-users";
   randomColor?: string;
+  buttonTwoText?: string;
 }) => {
-  const { allUsers } = useUserContext();
+  const { allUsers, currentUser } = useUserContext();
   const { currentEvent } = useEventContext();
 
   const userArray: TUser[] = [];
-  for (const userID of userIDArray) {
-    const matchingUser = allUsers.filter((user) => user._id === userID)[0];
-    userArray.push(matchingUser);
+  if (userIDArray) {
+    for (const userID of userIDArray) {
+      const matchingUser = allUsers.filter((user) => user._id === userID)[0];
+      userArray.push(matchingUser);
+    }
   }
 
   return (
@@ -53,11 +53,11 @@ const UserListModal = ({
             buttonOneText="Message"
             buttonOneLink={null}
             buttonOneIsDisabled={null}
-            buttonTwoText="Remove"
+            buttonTwoText={buttonTwoText ? buttonTwoText :"Remove"}
             buttonTwoIsDisabled={null}
             buttonTwoHandler={handleDeletion}
-            buttonTwoHandlerParams={[currentEvent, user]}
-            handlerTwoNeedsEventParam={true}
+            buttonTwoHandlerParams={deleteFrom === "blocked-users" ? [currentUser, user] : [currentEvent, user]}
+            handlerTwoNeedsEventParam={deleteFrom === "blocked-users" ? false : true}
             buttonTwoLink={null}
             objectLink={`/users/${user?.username}`}
           />
