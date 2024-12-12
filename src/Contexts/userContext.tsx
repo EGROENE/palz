@@ -10,7 +10,7 @@ import Methods from "../methods";
 export const UserContext = createContext<TUserContext | null>(null);
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
-  const { handleWelcomeMessage, setImageIsUploading, setImageIsDeleting, theme } =
+  const { handleWelcomeMessage, setImageIsUploading, setImageIsDeleting, theme, setButtonsAreDisabled } =
     useMainContext();
 
   const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
@@ -29,7 +29,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     useState<boolean>(false);
   const [showFriendRequestResponseOptions, setShowFriendRequestResponseOptions] =
     useState<boolean>(false);
-  const [buttonsAreDisabled, setButtonsAreDisabled] = useState<boolean>(false);
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
@@ -1659,8 +1658,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setWhoCanMessage,
     currentOtherUser,
     setCurrentOtherUser,
-    buttonsAreDisabled,
-    setButtonsAreDisabled,
     showFriendRequestResponseOptions,
     setShowFriendRequestResponseOptions,
     handleSendFriendRequest,
