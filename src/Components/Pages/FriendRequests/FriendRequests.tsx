@@ -9,13 +9,12 @@ import toast from "react-hot-toast";
 
 const FriendRequests = () => {
   const navigation = useNavigate();
-  const { showSidebar, setShowSidebar, theme } = useMainContext();
+  const { showSidebar, setShowSidebar, theme, isLoading, } = useMainContext();
   const {
     allUsers,
     handleAcceptFriendRequest,
     handleRejectFriendRequest,
     handleRetractFriendRequest,
-    buttonsAreDisabled,
     setCurrentOtherUser,
     displayedSentRequests,
     setDisplayedSentRequests,
@@ -155,7 +154,7 @@ const FriendRequests = () => {
                     user={user}
                     randomColor={randomColor}
                     buttonOneText="See Profile"
-                    buttonOneIsDisabled={buttonsAreDisabled}
+                    buttonOneIsDisabled={isLoading}
                     buttonOneLink={`/users/${user?.username}`}
                     buttonOneHandler={() => setCurrentOtherUser(user)}
                     handlerOneNeedsEventParam={false}
@@ -168,7 +167,7 @@ const FriendRequests = () => {
                       displayedSentRequests,
                       setDisplayedSentRequests,
                     ]}
-                    buttonTwoIsDisabled={buttonsAreDisabled}
+                    buttonTwoIsDisabled={isLoading}
                     handlerTwoNeedsEventParam={false}
                     buttonTwoLink={null}
                     objectLink={`/users/${user?.username}`}
@@ -191,7 +190,7 @@ const FriendRequests = () => {
                       setDisplayedReceivedRequests,
                     ]}
                     handlerOneNeedsEventParam={true}
-                    buttonOneIsDisabled={buttonsAreDisabled}
+                    buttonOneIsDisabled={isLoading}
                     buttonTwoText="Reject"
                     buttonTwoHandler={handleRejectFriendRequest}
                     buttonTwoHandlerParams={[
@@ -201,7 +200,7 @@ const FriendRequests = () => {
                       setDisplayedReceivedRequests,
                     ]}
                     handlerTwoNeedsEventParam={true}
-                    buttonTwoIsDisabled={buttonsAreDisabled}
+                    buttonTwoIsDisabled={isLoading}
                     buttonTwoLink={null}
                     objectLink={`/users/${user?.username}`}
                   />

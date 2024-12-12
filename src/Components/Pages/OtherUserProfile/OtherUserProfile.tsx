@@ -10,13 +10,12 @@ import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsIn
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
-  const { showSidebar, setShowSidebar, theme } = useMainContext();
+  const { showSidebar, setShowSidebar, theme, isLoading } = useMainContext();
   const {
     allUsers,
     currentUser,
     userCreatedAccount,
     handleSendFriendRequest,
-    buttonsAreDisabled,
     handleRetractFriendRequest,
     showFriendRequestResponseOptions,
     setShowFriendRequestResponseOptions,
@@ -299,7 +298,7 @@ const OtherUserProfile = () => {
                       className="theme-element-container"
                     >
                       <button
-                        disabled={buttonsAreDisabled}
+                        disabled={isLoading}
                         onClick={
                           button.paramsIncludeEvent // @ts-expect-error: ...
                             ? (e) => button.buttonHandler(e, ...button.handlerParams)
