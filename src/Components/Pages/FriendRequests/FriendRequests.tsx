@@ -151,6 +151,7 @@ const FriendRequests = () => {
                 displayedSentRequests.map((user) => (
                   <ListedUser
                     key={user._id}
+                    renderButtonOne={true}
                     user={user}
                     randomColor={randomColor}
                     buttonOneText="See Profile"
@@ -177,6 +178,7 @@ const FriendRequests = () => {
                 displayedReceivedRequests.map((user) => (
                   <ListedUser
                     key={user._id}
+                    renderButtonOne={true}
                     user={user}
                     randomColor={randomColor}
                     buttonOneText="Accept"

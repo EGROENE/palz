@@ -226,6 +226,7 @@ const UserSettings = () => {
       {isLoading && <LoadingModal message="Saving changes..." />}
       {showBlockedUsers && (
             <UserListModal
+            renderButtonOne={false}
               closeModalMethod={setShowBlockedUsers}
               header="Blocked Users"
               handleDeletion={handleUnblockUser}
