@@ -110,6 +110,8 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  buttonsAreDisabled: boolean;
+  setButtonsAreDisabled: React.Dispatch<React.SetStateAction<boolean>>;
   displayedCards: (TUser | TEvent)[];
   setDisplayedCards: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
   showSidebar: boolean;
@@ -138,8 +140,6 @@ export type TUserContext = {
   setDisplayedReceivedRequests?: React.Dispatch<React.SetStateAction<TUser[]>>;
   currentOtherUser: TUser | null;
   setCurrentOtherUser: React.Dispatch<React.SetStateAction<TUser | null>>;
-  buttonsAreDisabled: boolean;
-  setButtonsAreDisabled: React.Dispatch<React.SetStateAction<boolean>>;
   handleSendFriendRequest: (
     sender: TUser | undefined,
     recipient: TUser,

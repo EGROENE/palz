@@ -24,6 +24,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
     useState<number>(2500);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [buttonsAreDisabled, setButtonsAreDisabled] = useState<boolean>(false);
   const [displayedCards, setDisplayedCards] = useState<(TEvent | TUser)[]>([]);
 
   const handleWelcomeMessage = () => {
@@ -32,6 +33,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mainContextValues: TMainContext = {
+    buttonsAreDisabled, setButtonsAreDisabled,
     displayedCards,
     setDisplayedCards,
     isLoading,
