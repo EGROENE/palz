@@ -1444,12 +1444,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleUnblockUser = (
     blocker: TUser,
     blockee: TUser,
-    setBlockeeIsBlocked?: React.Dispatch<SetStateAction<boolean>>
+    setBlockeeIsBlocked?: React.Dispatch<SetStateAction<boolean>>,
+    displayedUsers?: TUser[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
     setButtonsAreDisabled(true);
 
     if (setBlockeeIsBlocked) {
       setBlockeeIsBlocked(false);
+    }
+
+    if (displayedUsers && setDisplayedUsers) {
+      setDisplayedUsers(displayedUsers.filter((user) => user._id !== blockee._id))
     }
 
     if (blockee._id) {
@@ -1459,6 +1465,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             if (setBlockeeIsBlocked) {
               setBlockeeIsBlocked(true);
             }
+            if (displayedUsers && setDisplayedUsers) {
+      setDisplayedUsers(displayedUsers)
+    }
             toast.error(`Unable to unblock ${blockee.username}. Please try again.`, {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
