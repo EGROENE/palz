@@ -72,18 +72,30 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     user: TUser,
-    setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>
+    setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>,
+    displayedUsers?: TUser[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
     e.preventDefault();
+
     setIsLoading(true);
+
     if (setUserRSVPd) {
       setUserRSVPd(false);
     }
+
+    if (displayedUsers && setDisplayedUsers) {
+      setDisplayedUsers(displayedUsers.filter((u) => u._id !== user._id));
+    }
+
     Requests.deleteUserRSVP(user, event)
       .then((response) => {
         if (!response.ok) {
           if (setUserRSVPd) {
             setUserRSVPd(true);
+          }
+          if (displayedUsers && setDisplayedUsers) {
+            setDisplayedUsers(displayedUsers);
           }
           toast.error("Could not remove RSVP. Please try again.", {
             style: {
@@ -143,12 +155,22 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleRemoveInvitee = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
-    user: TUser | null
+    user: TUser | null,
+    displayedUsers?: TUser[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
     e.preventDefault();
+
+    if (displayedUsers && setDisplayedUsers) {
+      setDisplayedUsers(displayedUsers.filter((u) => user?._id !== u._id))
+    }
+
     Requests.removeInvitee(event, user)
       .then((response) => {
         if (!response.ok) {
+          if (displayedUsers && setDisplayedUsers) {
+            setDisplayedUsers(displayedUsers)
+          }
           toast.error("Could not remove invitee. Please try again.", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -157,7 +179,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             },
           });
         } else {
-          toast("Invitee removed.", {
+          toast("Invitee removed", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
               color: theme === "dark" ? "black" : "white",
