@@ -130,8 +130,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
-  handleBlockUser: (blocker: TUser, blockee: TUser) => void;
-  handleUnblockUser: (blocker: TUser, blockee: TUser) => void;
+  handleBlockUser: (blocker: TUser, blockee: TUser, setBlockeeIsBlocked?: React.Dispatch<React.SetStateAction<boolean>>) => void
+  handleUnblockUser: (blocker: TUser, blockee: TUser, setBlockeeIsBlocked?: React.Dispatch<React.SetStateAction<boolean>>) => void;
   displayedSentRequests?: TUser[];
   setDisplayedSentRequests?: React.Dispatch<React.SetStateAction<TUser[]>>;
   displayedReceivedRequests?: TUser[];
