@@ -40,14 +40,13 @@ const OtherUserProfile = () => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
     if (currentOtherUserIsBlocked) {
-      toast("You have blocked this user; click 'unblock' to unblock them."),
-        {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        };
+      toast("You have blocked this user", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
 
     // Set color of event card's border randomly:
@@ -73,6 +72,18 @@ const OtherUserProfile = () => {
         },
       });
       navigation("/");
+    }
+
+    // If logged-in user is blocked by currentOtherUser:
+    if (currentUser?._id && currentOtherUser.blockedUsers.includes(currentUser._id)) {
+      toast("You do not have access to this page", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+      navigation(`/${currentUser?.username}`);
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
