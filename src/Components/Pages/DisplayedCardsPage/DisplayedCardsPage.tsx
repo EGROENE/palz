@@ -308,12 +308,15 @@ const DisplayedCardsPage = ({
   //////////////////////////////////////////
 
   // POTENTIAL-FRIENDS VARIABLES
-  // display only users whose profile is visible to anyone, to friends & currentUser is friend, and friends of friends & currentUser is a friend of a user's friend
+  /* display only users whose profile is visible to anyone, to friends & currentUser is friend, and friends of friends & currentUser is a friend of a user's friend, and who hasn't blocked currentUser, and whom currentUser hasn't blocked. */
   const allOtherNonFriendUsers: TUser[] = allUsers.filter(
     (user) =>
       currentUserUpdated?._id &&
+      user._id &&
       user._id !== currentUserUpdated._id &&
-      !user.friends.includes(currentUserUpdated._id)
+      !user.friends.includes(currentUserUpdated._id) &&
+      !user.blockedUsers.includes(currentUserUpdated._id) &&
+      !currentUserUpdated.blockedUsers.includes(user._id)
   );
   const nonFriendUsersVisibleToAnyone: TUser[] = allOtherNonFriendUsers.filter(
     (user) => user.profileVisibleTo === "anyone"
