@@ -1752,6 +1752,7 @@ const EventForm = ({
             </button>
             {showPotentialCoOrganizers && (
               <DropdownChecklist
+                usedFor="potential-co-organizers"
                 displayedItemsArray={potentialCoOrganizers}
                 storageArray={organizers}
                 setStorageArray={setOrganizers}
@@ -1846,6 +1847,7 @@ const EventForm = ({
             </button>
             {showPotentialInvitees && (
               <DropdownChecklist
+                usedFor="potential-invitees"
                 displayedItemsArray={potentialInvitees}
                 storageArray={invitees}
                 setStorageArray={setInvitees}
