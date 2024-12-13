@@ -6,15 +6,15 @@ const FilterDropdown = ({
   dropdownBtnText,
   filterOptions,
   activeFilters,
-  setActiveFilters,
   handleAddDeleteFilter,
+  handleClearActiveFilters,
   randomColor,
 }: {
   dropdownBtnText: string;
   filterOptions: string[];
   activeFilters: string[];
-  setActiveFilters: React.Dispatch<React.SetStateAction<string[]>>;
   handleAddDeleteFilter: (option: string) => void;
+  handleClearActiveFilters: () => void;
   randomColor?: TThemeColor;
 }) => {
   const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
@@ -35,7 +35,7 @@ const FilterDropdown = ({
         </div>
         {activeFilters.length > 0 && (
           <span
-            onClick={() => setActiveFilters([])}
+            onClick={() => handleClearActiveFilters()}
             style={{ marginLeft: "0.5rem" }}
             className="remove-data"
           >
