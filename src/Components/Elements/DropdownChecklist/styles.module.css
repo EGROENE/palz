@@ -10,6 +10,8 @@
   display: flex;
   align-items: center;
   width: 100%;
+  padding: 0.5rem 0;
+  font-family: var(--text-font);
 }
 
 .otherUserOption:hover {
@@ -23,11 +25,35 @@
   width: unset !important;
 }
 
+.dropdownList {
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: gray;
+  max-height: 50vh;
+  overflow-y: scroll;
+}
+
+.dropdownList li {
+  display: flex;
+  align-items: center;
+}
+
 .dropdownList li:hover {
   background-color: unset;
   opacity: 1;
 }
 
+.dropdownList li span {
+  margin-left: 0.5rem;
+}
+
+.dropdownList li img {
+  aspect-ratio: 1;
+  width: 1.5rem;
+  border-radius: 4px;
+}
+
 .otherUserOption input {
-  margin-right: 0.5rem;
+  margin-right: 1.5rem;
+  margin-left: 1rem;
 }
