@@ -1,0 +1,33 @@
+.dropdownList {
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: gray;
+  max-height: 50vh;
+  overflow-y: scroll;
+}
+
+.otherUserOption {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.otherUserOption:hover {
+  cursor: pointer;
+  background-color: rgb(75, 75, 75);
+  opacity: 0.8;
+}
+
+.otherUserOption input {
+  margin-right: 0;
+  width: unset !important;
+}
+
+.dropdownList li:hover {
+  background-color: unset;
+  opacity: 1;
+}
+
+.otherUserOption input {
+  margin-right: 0.5rem;
+}
