@@ -12,23 +12,23 @@ import ErrorBoundary from "./Components/Pages/ErrorBoundary/ErrorBoundary.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <MainContextProvider>
-      <Toaster
-        toastOptions={{
-          style: {
-            fontFamily: "var(--text-font)",
-          },
-        }}
-      />
-      <UserContextProvider>
-        <EventContextProvider>
-          <BrowserRouter>
+    <BrowserRouter>
+      <MainContextProvider>
+        <Toaster
+          toastOptions={{
+            style: {
+              fontFamily: "var(--text-font)",
+            },
+          }}
+        />
+        <UserContextProvider>
+          <EventContextProvider>
             <ErrorBoundary>
               <App />
             </ErrorBoundary>
-          </BrowserRouter>
-        </EventContextProvider>
-      </UserContextProvider>
-    </MainContextProvider>
+          </EventContextProvider>
+        </UserContextProvider>
+      </MainContextProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
