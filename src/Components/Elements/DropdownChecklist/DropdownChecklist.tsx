@@ -56,7 +56,7 @@ const DropdownChecklist = ({
   };
 
   return (
-    <ul onScroll={(e) => handleScroll(e)} className={styles.dropdownList}>
+    <ul onScroll={(e) => handleScroll(e)} className={styles.dropdownChecklist}>
       {displayedItemsArrayFiltered.map((user) => (
         <div
           key={user._id}

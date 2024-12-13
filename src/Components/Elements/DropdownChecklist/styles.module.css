@@ -1,4 +1,4 @@
-.dropdownList {
+.dropdownChecklist {
   flex-direction: column;
   align-items: flex-start;
   background-color: gray;
@@ -25,7 +25,7 @@
   width: unset !important;
 }
 
-.dropdownList {
+.dropdownChecklist {
   flex-direction: column;
   align-items: flex-start;
   background-color: gray;
@@ -33,21 +33,21 @@
   overflow-y: scroll;
 }
 
-.dropdownList li {
+.dropdownChecklist li {
   display: flex;
   align-items: center;
 }
 
-.dropdownList li:hover {
+.dropdownChecklist li:hover {
   background-color: unset;
   opacity: 1;
 }
 
-.dropdownList li span {
+.dropdownChecklist li span {
   margin-left: 0.5rem;
 }
 
-.dropdownList li img {
+.dropdownChecklist li img {
   aspect-ratio: 1;
   width: 1.5rem;
   border-radius: 4px;
