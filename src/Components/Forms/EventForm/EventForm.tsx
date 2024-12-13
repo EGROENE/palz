@@ -595,9 +595,9 @@ const EventForm = ({
     imageToBeRemoved: string
   ): Promise<void> => {
     e.preventDefault();
-    setImageIsDeleting(true);
     setEventImages(eventImages?.filter((image) => image !== imageToBeRemoved));
     if (event) {
+      setImageIsDeleting(true);
       Requests.removeEventImage(event, imageToBeRemoved)
         .then((response) => {
           if (!response.ok) {
@@ -617,19 +617,18 @@ const EventForm = ({
                 border: "2px solid red",
               },
             });
-            let newEventImages = [];
-            if (eventImages) {
-              for (const image of eventImages) {
-                if (image !== imageToBeRemoved) {
-                  newEventImages.push(image);
-                }
-              }
-            }
-            setEventImages(newEventImages);
           }
         })
         .catch((error) => console.log(error))
         .finally(() => setImageIsDeleting(false));
+    } else {
+      toast("Event image removed", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
   };
 
