@@ -130,8 +130,25 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
-  handleBlockUser: (blocker: TUser, blockee: TUser, setBlockeeIsBlocked?: React.Dispatch<React.SetStateAction<boolean>>) => void
-  handleUnblockUser: (blocker: TUser, blockee: TUser, setBlockeeIsBlocked?: React.Dispatch<React.SetStateAction<boolean>>, displayedUsers?: TUser[], setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>) => void
+  handleAddRemoveUserAsOrganizer: (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.ChangeEvent<HTMLInputElement>,
+    organizers: string[],
+    setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
+    user: TUser,
+    event?: TEvent
+  ) => void;
+  handleBlockUser: (
+    blocker: TUser,
+    blockee: TUser,
+    setBlockeeIsBlocked?: React.Dispatch<React.SetStateAction<boolean>>
+  ) => void;
+  handleUnblockUser: (
+    blocker: TUser,
+    blockee: TUser,
+    setBlockeeIsBlocked?: React.Dispatch<React.SetStateAction<boolean>>,
+    displayedUsers?: TUser[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+  ) => void;
   displayedSentRequests?: TUser[];
   setDisplayedSentRequests?: React.Dispatch<React.SetStateAction<TUser[]>>;
   displayedReceivedRequests?: TUser[];
@@ -326,7 +343,13 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
-  handleRemoveInvitee: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>, event: TEvent, user: TUser | null, displayedUsers?: TUser[], setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>) => void
+  handleRemoveInvitee: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent,
+    user: TUser | null,
+    displayedUsers?: TUser[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+  ) => void;
   handleDeclineInvitation: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent
@@ -347,5 +370,12 @@ export type TEventContext = {
     event: TEvent,
     setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>
   ) => void;
-  handleDeleteUserRSVP: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>, event: TEvent, user: TUser, setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>, displayedUsers?: TUser[], setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>) => void
+  handleDeleteUserRSVP: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent,
+    user: TUser,
+    setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>,
+    displayedUsers?: TUser[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+  ) => void;
 };

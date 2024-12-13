@@ -6,12 +6,20 @@ import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
 import Requests from "../requests";
 import toast from "react-hot-toast";
 import Methods from "../methods";
+import { useNavigate } from "react-router-dom";
 
 export const UserContext = createContext<TUserContext | null>(null);
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
-  const { handleWelcomeMessage, setImageIsUploading, setImageIsDeleting, theme, setIsLoading } =
-    useMainContext();
+  const navigation = useNavigate();
+
+  const {
+    handleWelcomeMessage,
+    setImageIsUploading,
+    setImageIsDeleting,
+    theme,
+    setIsLoading,
+  } = useMainContext();
 
   const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
   const [currentUser, setCurrentUser] = useLocalStorage<TUser | null>(
@@ -1271,6 +1279,53 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Defined here, since used in DropdownChecklist & EventForm
+  const handleAddRemoveUserAsOrganizer = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.ChangeEvent<HTMLInputElement>,
+    organizers: string[],
+    setOrganizers: React.Dispatch<SetStateAction<string[]>>,
+    user: TUser,
+    event?: TEvent
+  ): void => {
+    e?.preventDefault();
+    if (user && user._id) {
+      if (organizers.includes(user._id)) {
+        // Remove non-current user who isn't currentUser
+        setOrganizers(organizers.filter((organizerID) => organizerID !== user._id));
+      } else {
+        // Add non-current user as organizer
+        setOrganizers(organizers.concat(user._id));
+      }
+    } else {
+      // Remove currentUser as organizer
+      Requests.removeOrganizer(event, currentUser)
+        .then((response) => {
+          if (!response.ok) {
+            toast.error("Could not remove you as user. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          } else {
+            toast(
+              "You have removed yourself as an organizer & are no longer able to make changes to that event.",
+              {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              }
+            );
+            navigation(`/${currentUser?.username}`);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+  };
+
   // maybe pass in a TUser[] & its setter in order to optimistically render UserCards on FindPalz/MyPalz, FriendRequests
   const handleBlockUser = (
     blocker: TUser,
@@ -1454,7 +1509,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (displayedUsers && setDisplayedUsers) {
-      setDisplayedUsers(displayedUsers.filter((user) => user._id !== blockee._id))
+      setDisplayedUsers(displayedUsers.filter((user) => user._id !== blockee._id));
     }
 
     if (blockee._id) {
@@ -1465,8 +1520,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               setBlockeeIsBlocked(true);
             }
             if (displayedUsers && setDisplayedUsers) {
-      setDisplayedUsers(displayedUsers)
-    }
+              setDisplayedUsers(displayedUsers);
+            }
             toast.error(`Unable to unblock ${blockee.username}. Please try again.`, {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -1648,6 +1703,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    handleAddRemoveUserAsOrganizer,
     handleUnblockUser,
     handleBlockUser,
     displayedSentRequests,
