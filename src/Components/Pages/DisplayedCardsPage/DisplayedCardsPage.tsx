@@ -756,22 +756,25 @@ const DisplayedCardsPage = ({
             to find some!
           </h2>
         )}
-      {displayedCards.length === 0 && usedFor === "events" && (
-        <h2>
-          No events to be found.{" "}
-          <Link
-            style={{
-              textDecoration: "underline",
-              color: "var(--header-one-color)",
-              fontWeight: "bold",
-            }}
-            to={"/add-event"}
-          >
-            Create your own
-          </Link>{" "}
-          or wait for others to do so.
-        </h2>
-      )}
+      {displayedCards.length === 0 &&
+        usedFor === "events" &&
+        searchTerm === "" &&
+        activeFilters.length === 0 && (
+          <h2>
+            No events to be found.{" "}
+            <Link
+              style={{
+                textDecoration: "underline",
+                color: "var(--header-one-color)",
+                fontWeight: "bold",
+              }}
+              to={"/add-event"}
+            >
+              Create your own
+            </Link>{" "}
+            or wait for others to do so.
+          </h2>
+        )}
       {(displayedCards.length > 0 ||
         (displayedCards.length === 0 && searchTerm !== "") ||
         (displayedCards.length === 0 && activeFilters.length > 0)) && (
