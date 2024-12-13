@@ -541,7 +541,29 @@ const DisplayedCardsPage = ({
       }
       setDisplayedCards(newDisplayedItems);
     } else {
+      // Reset displayedCards if there are no longer any active filters:
+      if (usedFor === "events") {
+        resetDisplayedEvents();
+      }
+      if (usedFor === "my-friends") {
+        resetDisplayedFriends();
+      }
+      if (usedFor === "potential-friends") {
+        resetDisplayedPotentialFriends();
+      }
+    }
+  };
+
+  const handleClearActiveFilters = (): void => {
+    setActiveFilters([]);
+    if (usedFor === "events") {
       resetDisplayedEvents();
+    }
+    if (usedFor === "my-friends") {
+      resetDisplayedFriends();
+    }
+    if (usedFor === "potential-friends") {
+      resetDisplayedPotentialFriends();
     }
   };
 
@@ -660,7 +682,15 @@ const DisplayedCardsPage = ({
 
   const handleClearSearchTerm = (): void => {
     setSearchTerm("");
-    resetDisplayedEvents();
+    if (usedFor === "events") {
+      resetDisplayedEvents();
+    }
+    if (usedFor === "my-friends") {
+      resetDisplayedFriends();
+    }
+    if (usedFor === "potential-friends") {
+      resetDisplayedPotentialFriends();
+    }
   };
   //////////////////////////////////////////////
 
@@ -701,9 +731,12 @@ const DisplayedCardsPage = ({
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>{pageHeading}</h1>
-      {displayedCards.length === 0 && usedFor === "potential-friends" && (
-        <h2>No more potential friends. You must be popular!</h2>
-      )}
+      {displayedCards.length === 0 &&
+        usedFor === "potential-friends" &&
+        searchTerm === "" &&
+        activeFilters.length === 0 && (
+          <h2>No more potential friends. You must be popular!</h2>
+        )}
       {displayedCards.length === 0 && usedFor === "my-friends" && (
         <h2>
           No friends yet. Click{" "}
@@ -736,7 +769,9 @@ const DisplayedCardsPage = ({
           or wait for others to do so.
         </h2>
       )}
-      {displayedCards.length > 0 && (
+      {(displayedCards.length > 0 ||
+        (displayedCards.length === 0 && searchTerm !== "") ||
+        (displayedCards.length === 0 && activeFilters.length > 0)) && (
         <div className="search-tools-container">
           <SearchBar
             input={searchTerm}
@@ -759,8 +794,8 @@ const DisplayedCardsPage = ({
             dropdownBtnText="Filters"
             filterOptions={filterOptions}
             activeFilters={activeFilters}
-            setActiveFilters={setActiveFilters}
             handleAddDeleteFilter={handleAddDeleteFilter}
+            handleClearActiveFilters={handleClearActiveFilters}
             randomColor={randomColor}
           />
         </div>
