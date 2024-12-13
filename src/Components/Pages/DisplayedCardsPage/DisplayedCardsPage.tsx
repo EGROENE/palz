@@ -737,22 +737,25 @@ const DisplayedCardsPage = ({
         activeFilters.length === 0 && (
           <h2>No more potential friends. You must be popular!</h2>
         )}
-      {displayedCards.length === 0 && usedFor === "my-friends" && (
-        <h2>
-          No friends yet. Click{" "}
-          <Link
-            style={{
-              textDecoration: "underline",
-              color: "var(--header-one-color)",
-              fontWeight: "bold",
-            }}
-            to="/find-palz"
-          >
-            here
-          </Link>{" "}
-          to find some!
-        </h2>
-      )}
+      {displayedCards.length === 0 &&
+        usedFor === "my-friends" &&
+        searchTerm === "" &&
+        activeFilters.length === 0 && (
+          <h2>
+            No friends yet. Click{" "}
+            <Link
+              style={{
+                textDecoration: "underline",
+                color: "var(--header-one-color)",
+                fontWeight: "bold",
+              }}
+              to="/find-palz"
+            >
+              here
+            </Link>{" "}
+            to find some!
+          </h2>
+        )}
       {displayedCards.length === 0 && usedFor === "events" && (
         <h2>
           No events to be found.{" "}
