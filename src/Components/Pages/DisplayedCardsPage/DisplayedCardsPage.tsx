@@ -22,15 +22,14 @@ const DisplayedCardsPage = ({
     useUserContext();
   const { allEvents, fetchAllEvents } = useEventContext();
 
+  const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
+  const toggleShowFilterOptions = (): void => setShowFilterOptions(!showFilterOptions);
+
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
 
   useEffect(() => {
-    if (showSidebar) {
-      setShowSidebar(false);
-    }
-
     const themeColors: TThemeColor[] = [
       "var(--primary-color)",
       "var(--secondary-color)",
@@ -54,6 +53,22 @@ const DisplayedCardsPage = ({
 
     if (usedFor === "events") {
       resetDisplayedEvents();
+    }
+
+    if (showSidebar) {
+      setShowSidebar(false);
+    }
+
+    if (searchTerm !== "") {
+      setSearchTerm("");
+    }
+
+    if (activeFilters.length !== 0) {
+      setActiveFilters([]);
+    }
+
+    if (showFilterOptions) {
+      setShowFilterOptions(false);
     }
   }, [usedFor]);
 
@@ -805,6 +820,8 @@ const DisplayedCardsPage = ({
             filterOptions={filterOptions}
             activeFilters={activeFilters}
             handleAddDeleteFilter={handleAddDeleteFilter}
+            showFilterOptions={showFilterOptions}
+            toggleShowFilterOptions={toggleShowFilterOptions}
             handleClearActiveFilters={handleClearActiveFilters}
             randomColor={randomColor}
           />

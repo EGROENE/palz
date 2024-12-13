@@ -1,4 +1,3 @@
-import { useState } from "react";
 import styles from "./styles.module.css";
 import { TThemeColor } from "../../../types";
 
@@ -8,6 +7,8 @@ const FilterDropdown = ({
   activeFilters,
   handleAddDeleteFilter,
   handleClearActiveFilters,
+  showFilterOptions,
+  toggleShowFilterOptions,
   randomColor,
 }: {
   dropdownBtnText: string;
@@ -15,12 +16,10 @@ const FilterDropdown = ({
   activeFilters: string[];
   handleAddDeleteFilter: (option: string) => void;
   handleClearActiveFilters: () => void;
+  showFilterOptions: boolean;
+  toggleShowFilterOptions: () => void;
   randomColor?: TThemeColor;
 }) => {
-  const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
-
-  const toggleShowFilterOptions = (): void => setShowFilterOptions(!showFilterOptions);
-
   return (
     <div className={styles.filterContainer}>
       <div style={{ display: "flex", alignItems: "flex-end" }}>
