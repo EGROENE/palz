@@ -4,6 +4,7 @@ import { TUser, TEvent } from "../../../types";
 import styles from "./styles.module.css";
 
 const DropdownChecklist = ({
+  usedFor,
   displayedItemsArray,
   storageArray,
   setStorageArray,
@@ -12,6 +13,7 @@ const DropdownChecklist = ({
   displayCountInterval,
   event,
 }: {
+  usedFor: string;
   displayedItemsArray: TUser[]; // type can be changed later if used for non-user lists
   storageArray: string[];
   setStorageArray: React.Dispatch<React.SetStateAction<string[]>>;
@@ -64,8 +66,8 @@ const DropdownChecklist = ({
           className={styles.otherUserOption}
         >
           <input
-            name={`listed-user-${user._id}`}
-            id={`listed-user-${user._id}`}
+            name={`${usedFor}-${user._id}`}
+            id={`${usedFor}-${user._id}`}
             disabled={isLoading}
             onChange={(e) =>
               handleAddRemoveUserAsOrganizer(
