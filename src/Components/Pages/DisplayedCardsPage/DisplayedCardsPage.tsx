@@ -51,6 +51,10 @@ const DisplayedCardsPage = ({
     if (usedFor === "my-friends") {
       resetDisplayedFriends();
     }
+
+    if (usedFor === "events") {
+      resetDisplayedEvents();
+    }
   }, [usedFor]);
 
   const now = Date.now();
