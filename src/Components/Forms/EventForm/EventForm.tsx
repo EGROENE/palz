@@ -175,6 +175,11 @@ const EventForm = ({
     setShowAreYouSureRemoveCurrentUserAsOrganizer,
   ] = useState<boolean>(false);
 
+  const [displayedPotentialInviteeCount, setDisplayedPotentialInviteeCount] =
+    useState<number>(10);
+  const [displayedPotentialCoOrganizerCount, setDisplayedPotentialCoOrganizerCount] =
+    useState<number>(10);
+
   useEffect(() => {
     setCurrentEvent(allEvents.filter((ev) => ev._id === event?._id)[0]);
   }, [allEvents]);
@@ -1750,6 +1755,9 @@ const EventForm = ({
                 displayedItemsArray={potentialCoOrganizers}
                 storageArray={organizers}
                 setStorageArray={setOrganizers}
+                displayCount={displayedPotentialCoOrganizerCount}
+                setDisplayCount={setDisplayedPotentialCoOrganizerCount}
+                displayCountInterval={10}
                 event={event}
               />
             )}
@@ -1841,6 +1849,9 @@ const EventForm = ({
                 displayedItemsArray={potentialInvitees}
                 storageArray={invitees}
                 setStorageArray={setInvitees}
+                displayCount={displayedPotentialInviteeCount}
+                setDisplayCount={setDisplayedPotentialInviteeCount}
+                displayCountInterval={10}
                 event={event}
               />
             )}
