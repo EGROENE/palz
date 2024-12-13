@@ -12,6 +12,7 @@ import Tab from "../../Elements/Tab/Tab";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { useEventContext } from "../../../Hooks/useEventContext";
+import DropdownChecklist from "../../Elements/DropdownChecklist/DropdownChecklist";
 
 const EventForm = ({
   randomColor,
@@ -29,7 +30,12 @@ const EventForm = ({
     setIsLoading,
     theme,
   } = useMainContext();
-  const { handleCityStateCountryInput, allUsers, currentUser } = useUserContext();
+  const {
+    handleCityStateCountryInput,
+    allUsers,
+    currentUser,
+    handleAddRemoveUserAsOrganizer,
+  } = useUserContext();
   const {
     allEvents,
     currentEvent,
@@ -702,49 +708,6 @@ const EventForm = ({
           })
         );
       }
-    }
-  };
-
-  const handleAddRemoveUserAsOrganizer = (
-    e?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    user?: TUser
-  ): void => {
-    e?.preventDefault();
-    if (user && user._id) {
-      if (organizers.includes(user._id)) {
-        // Remove non-current user who isn't currentUser
-        setOrganizers(organizers.filter((organizerID) => organizerID !== user._id));
-      } else {
-        // Add non-current user as organizer
-        setOrganizers(organizers.concat(user._id));
-      }
-    } else {
-      // Remove currentUser as organizer
-      Requests.removeOrganizer(event, currentUser)
-        .then((response) => {
-          if (!response.ok) {
-            toast.error("Could not remove you as user. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          } else {
-            toast(
-              "You have removed yourself as an organizer & are no longer able to make changes to that event.",
-              {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid red",
-                },
-              }
-            );
-            navigation(`/${currentUser?.username}`);
-          }
-        })
-        .catch((error) => console.log(error));
     }
   };
 
@@ -1729,6 +1692,7 @@ const EventForm = ({
           <input
             name="event-co-organizers-search"
             id="event-co-organizers-search"
+            className={styles.eventCoOrganizersSearch}
             ref={coOrganizersRef}
             onFocus={() => setFocusedElement("coOrganizers")}
             onBlur={() => setFocusedElement(undefined)}
@@ -1783,31 +1747,12 @@ const EventForm = ({
               ></i>
             </button>
             {showPotentialCoOrganizers && (
-              <ul className="dropdown-list">
-                {potentialCoOrganizers.map((user) => (
-                  <div
-                    key={user._id}
-                    onClick={() => handleAddRemoveUserAsOrganizer(undefined, user)}
-                    className={styles.otherUserOption}
-                  >
-                    <input
-                      name={`potential-co-organizer-${user._id}`}
-                      id={`potential-co-organizer-${user._id}`}
-                      disabled={isLoading}
-                      onChange={() => handleAddRemoveUserAsOrganizer(undefined, user)}
-                      checked={
-                        (typeof user._id === "string" || typeof user._id === "number") &&
-                        organizers.includes(user._id)
-                      }
-                      type="checkbox"
-                    />
-                    <li title={`${user.firstName} ${user.lastName}`}>
-                      <img src={`${user.profileImage}`} />
-                      <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
-                    </li>
-                  </div>
-                ))}
-              </ul>
+              <DropdownChecklist
+                displayedItemsArray={potentialCoOrganizers}
+                storageArray={organizers}
+                setStorageArray={setOrganizers}
+                event={event}
+              />
             )}
           </div>
         </div>
@@ -1838,6 +1783,7 @@ const EventForm = ({
           <input
             name="potential-invitees-search"
             id="potential-invitees-search"
+            className={styles.potentialInviteesSearch}
             ref={inviteesRef}
             onFocus={() => setFocusedElement("invitees")}
             onBlur={() => setFocusedElement(undefined)}
@@ -1892,31 +1838,12 @@ const EventForm = ({
               ></i>
             </button>
             {showPotentialInvitees && (
-              <ul className="dropdown-list">
-                {potentialInvitees.map((user) => (
-                  <div
-                    key={user._id}
-                    onClick={() => handleAddRemoveUserAsInvitee(undefined, user)}
-                    className={styles.otherUserOption}
-                  >
-                    <input
-                      name={`potential-invitee-${user._id}`}
-                      id={`potential-invitee-${user._id}`}
-                      disabled={isLoading}
-                      onChange={() => handleAddRemoveUserAsInvitee(undefined, user)}
-                      checked={
-                        (typeof user._id === "string" || typeof user._id === "number") &&
-                        invitees.includes(user._id)
-                      }
-                      type="checkbox"
-                    />
-                    <li title={`${user.firstName} ${user.lastName}`}>
-                      <img src={`${user.profileImage}`} />
-                      <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
-                    </li>
-                  </div>
-                ))}
-              </ul>
+              <DropdownChecklist
+                displayedItemsArray={potentialInvitees}
+                storageArray={organizers}
+                setStorageArray={setOrganizers}
+                event={event}
+              />
             )}
           </div>
         </div>

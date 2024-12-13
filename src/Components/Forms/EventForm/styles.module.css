@@ -72,25 +72,12 @@
   align-items: baseline;
 }
 
-form .coorganizersInviteesInputs input {
-  width: 37%;
-  height: calc(28px - 0.45rem);
-  max-height: calc(28px - 0.45rem);
-  margin-right: 4rem;
-}
-
-.coorganizersInviteesInputs .other-user-option input {
-  margin-right: 0.5rem;
-}
-
-.coorganizersInviteesInputs .dropdown-list li:hover {
-  background-color: unset;
-  opacity: 1;
-}
-
-.coorganizersInviteesInputs .dropdown-list li:hover {
-  background-color: unset;
-  opacity: 1;
+.potentialInviteesSearch,
+.eventCoOrganizersSearch {
+  width: 37% !important;
+  /* height: calc(28px - 0.45rem); */
+  /* max-height: calc(28px - 0.45rem); */
+  margin-right: 1rem;
 }
 
 .coorganizersInviteesDropdown {
@@ -104,21 +91,6 @@ form .coorganizersInviteesInputs input {
 
 .coorganizersInviteesDropdown button {
   width: 12rem;
-}
-
-.otherUserOption {
-  display: flex;
-  align-items: center;
-}
-
-.otherUserOption:hover {
-  cursor: pointer;
-  background-color: rgb(75, 75, 75);
-  opacity: 0.8;
-}
-
-form .otherUserOption input {
-  margin-right: 0;
 }
 
 .eventImagesField {
