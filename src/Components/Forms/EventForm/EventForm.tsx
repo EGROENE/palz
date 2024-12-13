@@ -1840,8 +1840,8 @@ const EventForm = ({
             {showPotentialInvitees && (
               <DropdownChecklist
                 displayedItemsArray={potentialInvitees}
-                storageArray={organizers}
-                setStorageArray={setOrganizers}
+                storageArray={invitees}
+                setStorageArray={setInvitees}
                 event={event}
               />
             )}
