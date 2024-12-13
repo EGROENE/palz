@@ -131,7 +131,10 @@ export type TMainContext = {
 
 export type TUserContext = {
   handleAddRemoveUserAsOrganizer: (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.ChangeEvent<HTMLInputElement>,
+    e:
+      | React.MouseEvent<HTMLDivElement, MouseEvent>
+      | React.ChangeEvent<HTMLInputElement>
+      | React.MouseEvent<HTMLLIElement, MouseEvent>,
     organizers: string[],
     setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
     user: TUser,

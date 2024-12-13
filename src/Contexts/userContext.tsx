@@ -1281,7 +1281,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Defined here, since used in DropdownChecklist & EventForm
   const handleAddRemoveUserAsOrganizer = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.ChangeEvent<HTMLInputElement>,
+    e:
+      | React.MouseEvent<HTMLDivElement, MouseEvent>
+      | React.ChangeEvent<HTMLInputElement>
+      | React.MouseEvent<HTMLLIElement, MouseEvent>,
     organizers: string[],
     setOrganizers: React.Dispatch<SetStateAction<string[]>>,
     user: TUser,

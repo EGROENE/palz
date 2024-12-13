@@ -58,7 +58,7 @@ const DropdownChecklist = ({
   return (
     <ul onScroll={(e) => handleScroll(e)} className={styles.dropdownChecklist}>
       {displayedItemsArrayFiltered.map((user) => (
-        <div
+        <li
           key={user._id}
           onClick={(e) =>
             handleAddRemoveUserAsOrganizer(e, storageArray, setStorageArray, user, event)
@@ -81,11 +81,11 @@ const DropdownChecklist = ({
             checked={typeof user._id === "string" && storageArray.includes(user._id)}
             type="checkbox"
           />
-          <li title={`${user.firstName} ${user.lastName}`}>
+          <div title={`${user.firstName} ${user.lastName}`}>
             <img src={`${user.profileImage}`} />
             <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
-          </li>
-        </div>
+          </div>
+        </li>
       ))}
     </ul>
   );
