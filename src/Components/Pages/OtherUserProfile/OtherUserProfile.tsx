@@ -25,17 +25,22 @@ const OtherUserProfile = () => {
     setDisplayedSentRequests,
     handleBlockUser,
     handleUnblockUser,
+    blockedUsers,
+    setBlockedUsers,
   } = useUserContext();
   const { username } = useParams();
   const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
 
-  const [currentOtherUserIsBlocked, setCurrentOtherUserIsBlocked] = useState<boolean>(
+  /* const [currentOtherUserIsBlocked, setCurrentOtherUserIsBlocked] = useState<boolean>(
     currentUser &&
       currentOtherUser._id &&
       currentUser?.blockedUsers.includes(currentOtherUser._id)
       ? true
       : false
-  );
+  ); */
+
+  const currentOtherUserIsBlocked =
+    blockedUsers && currentOtherUser._id && blockedUsers.includes(currentOtherUser._id);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
@@ -231,7 +236,7 @@ const OtherUserProfile = () => {
           </>
         ),
         buttonHandler: currentOtherUserIsBlocked ? handleUnblockUser : handleBlockUser,
-        handlerParams: [currentUser, currentOtherUser, setCurrentOtherUserIsBlocked],
+        handlerParams: [currentUser, currentOtherUser, blockedUsers, setBlockedUsers],
         paramsIncludeEvent: false,
       };
     }
@@ -247,7 +252,7 @@ const OtherUserProfile = () => {
         </>
       ),
       buttonHandler: !currentOtherUserIsBlocked ? handleBlockUser : handleUnblockUser,
-      handlerParams: [currentUser, currentOtherUser, setCurrentOtherUserIsBlocked],
+      handlerParams: [currentUser, currentOtherUser, blockedUsers, setBlockedUsers],
       paramsIncludeEvent: false,
     };
   };
