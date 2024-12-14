@@ -11,7 +11,7 @@ import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsIn
 import { useEventContext } from "../../../Hooks/useEventContext";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
-import styles from "./styles.module.css"
+import styles from "./styles.module.css";
 
 const UserSettings = () => {
   const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
@@ -60,7 +60,8 @@ const UserSettings = () => {
     passwordIsHidden,
     setPasswordIsHidden,
     setAccountDeletionInProgress,
-    handleUnblockUser
+    handleUnblockUser,
+    blockedUsers,
   } = useUserContext();
   const { fetchAllEvents, allEvents } = useEventContext();
 
@@ -225,17 +226,17 @@ const UserSettings = () => {
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       {isLoading && <LoadingModal message="Saving changes..." />}
       {showBlockedUsers && (
-            <UserListModal
-            renderButtonOne={false}
-              closeModalMethod={setShowBlockedUsers}
-              header="Blocked Users"
-              handleDeletion={handleUnblockUser}
-              userIDArray={currentUser?.blockedUsers && currentUser.blockedUsers}
-              deleteFrom="blocked-users"
-              randomColor={randomColor}
-              buttonTwoText="Unblock"
-            />
-          )}
+        <UserListModal
+          renderButtonOne={false}
+          closeModalMethod={setShowBlockedUsers}
+          header="Blocked Users"
+          handleDeletion={handleUnblockUser}
+          userIDArray={blockedUsers}
+          deleteFrom="blocked-users"
+          randomColor={randomColor}
+          buttonTwoText="Unblock"
+        />
+      )}
       <h1>Settings</h1>
       <EditUserInfoForm
         randomColor={randomColor}
@@ -249,14 +250,18 @@ const UserSettings = () => {
         handleAddInterest={handleAddUserInterest}
         handleRemoveInterest={handleDeleteUserInterest}
       />
-      {currentUser && currentUser.blockedUsers.length > 0 && <p style={{width: "76%",
-    textAlign: "left"}}>Blocked Users <span
+      {currentUser && currentUser.blockedUsers.length > 0 && (
+        <p style={{ width: "76%", textAlign: "left" }}>
+          Blocked Users{" "}
+          <span
             style={{ "color": randomColor }}
             className={styles.showModule}
             onClick={() => setShowBlockedUsers(!showBlockedUsers)}
           >
             See List
-          </span></p>}
+          </span>
+        </p>
+      )}
       <div className="settings-theme-and-delete-account-container">
         <div>
           <h3>Delete Account</h3>

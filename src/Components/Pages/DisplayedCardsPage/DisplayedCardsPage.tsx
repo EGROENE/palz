@@ -18,8 +18,14 @@ const DisplayedCardsPage = ({
 }) => {
   const { showSidebar, setShowSidebar, displayedCards, setDisplayedCards, theme } =
     useMainContext();
-  const { allUsers, fetchAllUsers, currentUser, userCreatedAccount, logout } =
-    useUserContext();
+  const {
+    allUsers,
+    fetchAllUsers,
+    currentUser,
+    userCreatedAccount,
+    blockedUsers,
+    logout,
+  } = useUserContext();
   const { allEvents, fetchAllEvents } = useEventContext();
 
   const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
@@ -335,7 +341,7 @@ const DisplayedCardsPage = ({
       user._id !== currentUserUpdated._id &&
       !user.friends.includes(currentUserUpdated._id) &&
       !user.blockedUsers.includes(currentUserUpdated._id) &&
-      !currentUserUpdated.blockedUsers.includes(user._id)
+      !blockedUsers?.includes(user._id)
   );
   const nonFriendUsersVisibleToAnyone: TUser[] = allOtherNonFriendUsers.filter(
     (user) => user.profileVisibleTo === "anyone"

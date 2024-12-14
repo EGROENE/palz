@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { TUser } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
@@ -15,22 +15,22 @@ const UserListModal = ({
   userIDArray,
   deleteFrom,
   randomColor,
-  buttonTwoText
+  buttonTwoText,
 }: {
   renderButtonOne: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
   header: string;
   handleDeletion: Function;
-  userIDArray: (string | undefined)[] | undefined;
+  userIDArray: (string | undefined)[] | undefined | null;
   deleteFrom: "invitee-list" | "rsvp-list" | "blocked-users";
   randomColor?: string;
   buttonTwoText?: string;
 }) => {
-  const {isLoading} = useMainContext()
-  const { allUsers, currentUser } = useUserContext();
+  const { isLoading } = useMainContext();
+  const { allUsers, currentUser, blockedUsers, setBlockedUsers } = useUserContext();
   const { currentEvent } = useEventContext();
 
-  const getUserArray = ():TUser[] => {
+  const getUserArray = (): TUser[] => {
     const userArray: TUser[] = [];
     if (userIDArray) {
       for (const userID of userIDArray) {
@@ -39,21 +39,24 @@ const UserListModal = ({
       }
     }
     return userArray;
-  }
+  };
   const [userArray, setUserArray] = useState<TUser[]>(getUserArray());
 
-  const getButtonTwoHandlerParams = (user: TUser ) => {
+  useEffect(() => {
+    setUserArray(getUserArray());
+  }, [blockedUsers]);
+
+  const getButtonTwoHandlerParams = (user: TUser) => {
     if (deleteFrom === "blocked-users") {
-      return [currentUser, user, undefined, userArray, setUserArray];
+      return [currentUser, user, blockedUsers, setBlockedUsers];
     }
 
     if (deleteFrom === "invitee-list") {
       return [currentEvent, user, userArray, setUserArray];
-
     }
     // if deleteFrom === "rsvp-list"
-    return [currentEvent, user, undefined, userArray, setUserArray]
-  }
+    return [currentEvent, user, undefined, userArray, setUserArray];
+  };
 
   return (
     <div className={styles.modalBackground}>
@@ -76,7 +79,7 @@ const UserListModal = ({
             buttonOneText="Message"
             buttonOneLink={null}
             buttonOneIsDisabled={isLoading}
-            buttonTwoText={buttonTwoText ? buttonTwoText :"Remove"}
+            buttonTwoText={buttonTwoText ? buttonTwoText : "Remove"}
             buttonTwoIsDisabled={isLoading}
             buttonTwoHandler={handleDeletion}
             buttonTwoHandlerParams={getButtonTwoHandlerParams(user)}
