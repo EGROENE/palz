@@ -104,14 +104,6 @@ const OtherUserProfile = () => {
       ? true
       : false;
 
-  const currentUserIsBlocked: boolean =
-    currentUser &&
-    currentUser._id &&
-    currentOtherUser &&
-    currentOtherUser.blockedUsers.includes(currentUser._id)
-      ? true
-      : false;
-
   const currentOtherUserFriends: TUser[] =
     currentOtherUser &&
     allUsers.filter(
