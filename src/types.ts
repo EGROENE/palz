@@ -130,6 +130,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  blockedUsers: string[] | null;
+  setBlockedUsers: React.Dispatch<React.SetStateAction<string[] | null>>;
   handleAddRemoveUserAsOrganizer: (
     e:
       | React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -143,14 +145,14 @@ export type TUserContext = {
   handleBlockUser: (
     blocker: TUser,
     blockee: TUser,
-    setBlockeeIsBlocked?: React.Dispatch<React.SetStateAction<boolean>>
+    blockedUsers?: string[] | null,
+    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | null>>
   ) => void;
   handleUnblockUser: (
     blocker: TUser,
     blockee: TUser,
-    setBlockeeIsBlocked?: React.Dispatch<React.SetStateAction<boolean>>,
-    displayedUsers?: TUser[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+    blockedUsers?: string[] | null,
+    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | null>>
   ) => void;
   displayedSentRequests?: TUser[];
   setDisplayedSentRequests?: React.Dispatch<React.SetStateAction<TUser[]>>;

@@ -108,6 +108,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [whoCanMessage, setWhoCanMessage] = useSessionStorage<
     "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanMessage", "anyone");
+  const [blockedUsers, setBlockedUsers] = useSessionStorage<string[] | null>(
+    "blockedUsers",
+    currentUser && currentUser.blockedUsers
+  );
   /////////////////////////////////////////////////////////////////////////////////
 
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
@@ -1333,7 +1337,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleBlockUser = (
     blocker: TUser,
     blockee: TUser,
-    setBlockeeIsBlocked?: React.Dispatch<React.SetStateAction<boolean>>
+    blockedUsers?: string[] | null,
+    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | null>>
   ): void => {
     let requestsAreOK: boolean = true;
     /* Main requests: add to blocker's blockedUsers, remove from each other's friends arrays, remove from each other's friendRequestsSent/Received arrays. */
@@ -1341,8 +1346,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     setIsLoading(true);
 
-    if (setBlockeeIsBlocked) {
-      setBlockeeIsBlocked(true);
+    if (setBlockedUsers && blockedUsers && blockee._id) {
+      setBlockedUsers(blockedUsers.concat(blockee._id));
     }
 
     // Remove each from any friend request arrays:
@@ -1351,8 +1356,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addToBlockedUsers(blocker, blockee._id)
         .then((response) => {
           if (!response.ok) {
-            if (setBlockeeIsBlocked) {
-              setBlockeeIsBlocked(false);
+            if (setBlockedUsers && blockedUsers && blockee._id) {
+              setBlockedUsers(blockedUsers);
             }
             toast.error(`Unable to block ${blockee.username}. Please try again.`, {
               style: {
@@ -1371,8 +1376,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 Requests.deleteFriendFromFriendsArray(blocker, blockee._id)
                   .then((response) => {
                     if (!response.ok) {
-                      if (setBlockeeIsBlocked) {
-                        setBlockeeIsBlocked(false);
+                      if (setBlockedUsers && blockedUsers && blockee._id) {
+                        setBlockedUsers(blockedUsers);
                       }
                       requestsAreOK = false;
                       toast.error(
@@ -1392,8 +1397,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                           .then((response) => {
                             if (!response.ok) {
                               requestsAreOK = false;
-                              if (setBlockeeIsBlocked) {
-                                setBlockeeIsBlocked(false);
+                              if (setBlockedUsers && blockedUsers && blockee._id) {
+                                setBlockedUsers(blockedUsers);
                               }
                               toast.error(
                                 `Unable to block ${blockee.username}. Please try again.`,
@@ -1490,8 +1495,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               },
             });
           } else {
-            if (setBlockeeIsBlocked) {
-              setBlockeeIsBlocked(false);
+            if (setBlockedUsers && blockedUsers && blockee._id) {
+              setBlockedUsers(blockedUsers);
             }
           }
         });
@@ -1501,29 +1506,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleUnblockUser = (
     blocker: TUser,
     blockee: TUser,
-    setBlockeeIsBlocked?: React.Dispatch<SetStateAction<boolean>>,
-    displayedUsers?: TUser[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+    blockedUsers?: string[] | null,
+    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | null>>
   ): void => {
     setIsLoading(true);
 
-    if (setBlockeeIsBlocked) {
-      setBlockeeIsBlocked(false);
-    }
-
-    if (displayedUsers && setDisplayedUsers) {
-      setDisplayedUsers(displayedUsers.filter((user) => user._id !== blockee._id));
+    if (blockedUsers && setBlockedUsers) {
+      setBlockedUsers(blockedUsers.filter((userID) => userID !== blockee._id));
     }
 
     if (blockee._id) {
       Requests.removeFromBlockedUsers(blocker, blockee._id)
         .then((response) => {
           if (!response.ok) {
-            if (setBlockeeIsBlocked) {
-              setBlockeeIsBlocked(true);
-            }
-            if (displayedUsers && setDisplayedUsers) {
-              setDisplayedUsers(displayedUsers);
+            if (blockedUsers && setBlockedUsers) {
+              setBlockedUsers(blockedUsers);
             }
             toast.error(`Unable to unblock ${blockee.username}. Please try again.`, {
               style: {
@@ -1706,6 +1703,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    blockedUsers,
+    setBlockedUsers,
     handleAddRemoveUserAsOrganizer,
     handleUnblockUser,
     handleBlockUser,
