@@ -18,8 +18,8 @@ const DropdownChecklist = ({
   displayedItemsArray: TUser[]; // type can be changed later if used for non-user lists
   storageArray: string[];
   setStorageArray: React.Dispatch<React.SetStateAction<string[]>>;
-  displayCount?: number;
-  setDisplayCount?: React.Dispatch<React.SetStateAction<number>>;
+  displayCount: number | undefined;
+  setDisplayCount: React.Dispatch<React.SetStateAction<number | undefined>>;
   displayCountInterval?: number;
   event?: TEvent;
 }) => {
@@ -40,12 +40,12 @@ const DropdownChecklist = ({
     <ul
       onScroll={(e) =>
         handleLoadMoreOnScroll(
-          e,
           displayCount,
           setDisplayCount,
           displayedItemsArray,
           displayedItemsArrayFiltered,
-          displayCountInterval
+          displayCountInterval,
+          e
         )
       }
       className={styles.dropdownChecklist}
