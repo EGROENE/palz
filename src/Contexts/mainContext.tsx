@@ -24,7 +24,12 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
     useState<number>(2500);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [displayCount, setDisplayCount] = useState<number | undefined>();
+  const [displayCountInterval, setDisplayCountInterval] = useState<number | undefined>();
   const [displayedCards, setDisplayedCards] = useState<(TEvent | TUser)[]>([]);
+  const [displayedItemsFiltered, setDisplayedItemsFiltered] = useState<
+    (TEvent | TUser)[]
+  >(displayedCards.slice(0, displayCount));
 
   const handleWelcomeMessage = () => {
     setShowWelcomeMessage(true);
@@ -32,15 +37,23 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleLoadMoreOnScroll = (
-    e: React.UIEvent<HTMLUListElement, UIEvent>,
     displayCount: number | undefined,
-    setDisplayCount: React.Dispatch<React.SetStateAction<number>> | undefined,
+    setDisplayCount: React.Dispatch<React.SetStateAction<number | undefined>>,
     displayedItemsArray: any[],
     displayedItemsArrayFiltered: any[],
-    displayCountInterval: number | undefined
+    displayCountInterval: number | undefined,
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ): void => {
-    const { scrollTop, scrollHeight, clientHeight } = e.target as HTMLElement;
-    const bottomReached = scrollTop + clientHeight === scrollHeight;
+    const eHTMLElement = e?.target as HTMLElement;
+    const scrollTop = e ? eHTMLElement.scrollTop : null;
+    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
+    const clientHeight = e ? eHTMLElement.clientHeight : null;
+
+    const bottomReached =
+      e && scrollTop && clientHeight
+        ? scrollTop + clientHeight === scrollHeight
+        : window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
+
     if (displayCount && displayCountInterval && setDisplayCount) {
       if (bottomReached) {
         if (
@@ -59,6 +72,12 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mainContextValues: TMainContext = {
+    displayCountInterval,
+    setDisplayCountInterval,
+    displayedItemsFiltered,
+    setDisplayedItemsFiltered,
+    displayCount,
+    setDisplayCount,
     handleLoadMoreOnScroll,
     displayedCards,
     setDisplayedCards,

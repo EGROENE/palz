@@ -110,13 +110,19 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  displayCount: number | undefined;
+  setDisplayCount: React.Dispatch<React.SetStateAction<number | undefined>>;
+  displayCountInterval: number | undefined;
+  setDisplayCountInterval: React.Dispatch<React.SetStateAction<number | undefined>>;
+  displayedItemsFiltered: (TUser | TEvent)[];
+  setDisplayedItemsFiltered: React.Dispatch<React.SetStateAction<(TUser | TEvent)[]>>;
   handleLoadMoreOnScroll: (
-    e: React.UIEvent<HTMLUListElement, UIEvent>,
     displayCount: number | undefined,
-    setDisplayCount: React.Dispatch<React.SetStateAction<number>> | undefined,
+    setDisplayCount: React.Dispatch<React.SetStateAction<number | undefined>>,
     displayedItemsArray: any[],
     displayedItemsArrayFiltered: any[],
-    displayCountInterval?: number
+    displayCountInterval: number | undefined,
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ) => void;
   displayedCards: (TUser | TEvent)[];
   setDisplayedCards: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
