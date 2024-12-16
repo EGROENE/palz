@@ -23,8 +23,19 @@ import { useEventContext } from "./Hooks/useEventContext";
 import toast from "react-hot-toast";
 
 function App() {
-  const { theme, showWelcomeMessage, imageIsUploading, imageIsDeleting, showSidebar } =
-    useMainContext();
+  const {
+    theme,
+    showWelcomeMessage,
+    imageIsUploading,
+    imageIsDeleting,
+    showSidebar,
+    handleLoadMoreOnScroll,
+    displayCount,
+    setDisplayCount,
+    displayedCards,
+    displayedItemsFiltered,
+    displayCountInterval,
+  } = useMainContext();
   const {
     userCreatedAccount,
     currentUser,
@@ -42,6 +53,36 @@ function App() {
 
   const navigation = useNavigate();
   const currentURL = useLocation().pathname;
+
+  useEffect(() => {
+    window.addEventListener("scroll", () =>
+      handleLoadMoreOnScroll(
+        displayCount,
+        setDisplayCount,
+        displayedCards,
+        displayedItemsFiltered,
+        displayCountInterval
+      )
+    );
+
+    return () => {
+      window.removeEventListener("scroll", () =>
+        handleLoadMoreOnScroll(
+          displayCount,
+          setDisplayCount,
+          displayedCards,
+          displayedItemsFiltered,
+          displayCountInterval
+        )
+      );
+    };
+  }, [
+    displayCount,
+    setDisplayCount,
+    displayedCards,
+    displayedItemsFiltered,
+    displayCountInterval,
+  ]);
 
   theme === "dark"
     ? (document.body.style.backgroundColor = "#242424")
