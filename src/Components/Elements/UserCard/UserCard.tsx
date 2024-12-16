@@ -9,7 +9,7 @@ import TwoOptionsInterface from "../TwoOptionsInterface/TwoOptionsInterface";
 import { Link } from "react-router-dom";
 
 const UserCard = ({ user }: { user: TUser }) => {
-  const { displayedCards, setDisplayedCards, isLoading } = useMainContext();
+  const { displayedItems, setDisplayedItems, isLoading } = useMainContext();
   const { currentUser, allUsers } = useUserContext();
   const {
     handleUnfriending,
@@ -151,8 +151,8 @@ const UserCard = ({ user }: { user: TUser }) => {
               currentUser,
               undefined,
               undefined,
-              displayedCards,
-              setDisplayedCards,
+              displayedItems,
+              setDisplayedItems,
             ]}
             handlerTwoNeedsEventParam={true}
             closeHandler={setShowFriendRequestResponseOptions}
@@ -205,8 +205,8 @@ const UserCard = ({ user }: { user: TUser }) => {
                   e,
                   currentUser,
                   user,
-                  displayedCards,
-                  setDisplayedCards
+                  displayedItems,
+                  setDisplayedItems
                 );
               }
               if (currentUserSentFriendRequest && currentUser) {
@@ -238,10 +238,7 @@ const UserCard = ({ user }: { user: TUser }) => {
           </button>
           <Link to={`/users/${user.username}`}>
             <div className="theme-element-container">
-              <button
-                onClick={() => setCurrentOtherUser(user)}
-                disabled={isLoading}
-              >
+              <button onClick={() => setCurrentOtherUser(user)} disabled={isLoading}>
                 View Profile
               </button>
             </div>

@@ -26,10 +26,10 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [displayCount, setDisplayCount] = useState<number | undefined>();
   const [displayCountInterval, setDisplayCountInterval] = useState<number | undefined>();
-  const [displayedCards, setDisplayedCards] = useState<(TEvent | TUser)[]>([]);
+  const [displayedItems, setDisplayedItems] = useState<(TEvent | TUser)[]>([]);
   const [displayedItemsFiltered, setDisplayedItemsFiltered] = useState<
     (TEvent | TUser)[]
-  >(displayedCards.slice(0, displayCount));
+  >(displayedItems.slice(0, displayCount));
 
   const handleWelcomeMessage = () => {
     setShowWelcomeMessage(true);
@@ -79,8 +79,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     displayCount,
     setDisplayCount,
     handleLoadMoreOnScroll,
-    displayedCards,
-    setDisplayedCards,
+    displayedItems,
+    setDisplayedItems,
     isLoading,
     setIsLoading,
     showSidebar,

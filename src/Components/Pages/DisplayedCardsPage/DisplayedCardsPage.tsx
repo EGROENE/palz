@@ -22,8 +22,8 @@ const DisplayedCardsPage = ({
     theme,
     displayCount,
     setDisplayCount,
-    displayedCards,
-    setDisplayedCards,
+    displayedItems,
+    setDisplayedItems,
     setDisplayCountInterval,
   } = useMainContext();
   const {
@@ -56,7 +56,7 @@ const DisplayedCardsPage = ({
   }, []);
 
   useEffect(() => {
-    // Set displayedCards appropriately, depending on usedFor value
+    // Set displayedItems appropriately, depending on usedFor value
     if (usedFor === "potential-friends") {
       setDisplayCount(9);
       setDisplayCountInterval(9);
@@ -156,7 +156,7 @@ const DisplayedCardsPage = ({
             newDisplayedEvents.push(event);
           }
         }
-        setDisplayedCards(newDisplayedEvents);
+        setDisplayedItems(newDisplayedEvents);
       } else if (activeFilters.length > 0) {
         let newDisplayedEvents: TEvent[] = [];
         for (const filter of activeFilters) {
@@ -173,7 +173,7 @@ const DisplayedCardsPage = ({
             }
           }
         }
-        setDisplayedCards(newDisplayedEvents);
+        setDisplayedItems(newDisplayedEvents);
       } else {
         resetDisplayedEvents();
       }
@@ -198,7 +198,7 @@ const DisplayedCardsPage = ({
             newDisplayedPotentialFriends.push(potentialFriend);
           }
         }
-        setDisplayedCards(newDisplayedPotentialFriends);
+        setDisplayedItems(newDisplayedPotentialFriends);
       } else if (activeFilters.length > 0) {
         for (const filter of activeFilters) {
           const indexOfArrayInFilterOptions = Object.keys(
@@ -236,7 +236,7 @@ const DisplayedCardsPage = ({
             newDisplayedFriends.push(pal);
           }
         }
-        setDisplayedCards(newDisplayedFriends);
+        setDisplayedItems(newDisplayedFriends);
       } else if (activeFilters.length > 0) {
         for (const filter of activeFilters) {
           const indexOfArrayInFilterOptions =
@@ -343,7 +343,7 @@ const DisplayedCardsPage = ({
     }),
   };
 
-  const resetDisplayedEvents = (): void => setDisplayedCards(displayableEvents);
+  const resetDisplayedEvents = (): void => setDisplayedItems(displayableEvents);
   //////////////////////////////////////////
 
   // POTENTIAL-FRIENDS VARIABLES
@@ -457,7 +457,7 @@ const DisplayedCardsPage = ({
   };
 
   const resetDisplayedPotentialFriends = (): void =>
-    setDisplayedCards(displayablePotentialFriends);
+    setDisplayedItems(displayablePotentialFriends);
   //////////////////////////////////////////////////////////////
 
   // FRIENDS VARIABLES
@@ -497,7 +497,7 @@ const DisplayedCardsPage = ({
     }),
   };
 
-  const resetDisplayedFriends = (): void => setDisplayedCards(currentUserPalz);
+  const resetDisplayedFriends = (): void => setDisplayedItems(currentUserPalz);
   ////////////////////////////////////////////////////////////
 
   const navigation = useNavigate();
@@ -578,9 +578,9 @@ const DisplayedCardsPage = ({
           }
         }
       }
-      setDisplayedCards(newDisplayedItems);
+      setDisplayedItems(newDisplayedItems);
     } else {
-      // Reset displayedCards if there are no longer any active filters:
+      // Reset displayedItems if there are no longer any active filters:
       if (usedFor === "events") {
         resetDisplayedEvents();
       }
@@ -660,7 +660,7 @@ const DisplayedCardsPage = ({
             newDisplayedEvents.push(event);
           }
         }
-        setDisplayedCards(newDisplayedEvents);
+        setDisplayedItems(newDisplayedEvents);
       }
 
       if (usedFor === "potential-friends") {
@@ -686,7 +686,7 @@ const DisplayedCardsPage = ({
             newDisplayedPotentialFriends.push(potentialFriend);
           }
         }
-        setDisplayedCards(newDisplayedPotentialFriends);
+        setDisplayedItems(newDisplayedPotentialFriends);
       }
 
       if (usedFor === "my-friends") {
@@ -704,7 +704,7 @@ const DisplayedCardsPage = ({
             newDisplayedFriends.push(pal);
           }
         }
-        setDisplayedCards(newDisplayedFriends);
+        setDisplayedItems(newDisplayedFriends);
       }
     } else {
       if (usedFor === "events") {
@@ -770,13 +770,13 @@ const DisplayedCardsPage = ({
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>{pageHeading}</h1>
-      {displayedCards.length === 0 &&
+      {displayedItems.length === 0 &&
         usedFor === "potential-friends" &&
         searchTerm === "" &&
         activeFilters.length === 0 && (
           <h2>No more potential friends. You must be popular!</h2>
         )}
-      {displayedCards.length === 0 &&
+      {displayedItems.length === 0 &&
         usedFor === "my-friends" &&
         searchTerm === "" &&
         activeFilters.length === 0 && (
@@ -795,7 +795,7 @@ const DisplayedCardsPage = ({
             to find some!
           </h2>
         )}
-      {displayedCards.length === 0 &&
+      {displayedItems.length === 0 &&
         usedFor === "events" &&
         searchTerm === "" &&
         activeFilters.length === 0 && (
@@ -814,9 +814,9 @@ const DisplayedCardsPage = ({
             or wait for others to do so.
           </h2>
         )}
-      {(displayedCards.length > 0 ||
-        (displayedCards.length === 0 && searchTerm !== "") ||
-        (displayedCards.length === 0 && activeFilters.length > 0)) && (
+      {(displayedItems.length > 0 ||
+        (displayedItems.length === 0 && searchTerm !== "") ||
+        (displayedItems.length === 0 && activeFilters.length > 0)) && (
         <div className="search-tools-container">
           <SearchBar
             input={searchTerm}
@@ -833,7 +833,7 @@ const DisplayedCardsPage = ({
             setSearchBoxIsFocused={setSearchBoxIsFocused}
             searchBoxIsFocused={searchBoxIsFocused}
             randomColor={randomColor}
-            numberOfResults={displayedCards.length}
+            numberOfResults={displayedItems.length}
           />
           <FilterDropdown
             dropdownBtnText="Filters"
@@ -849,11 +849,11 @@ const DisplayedCardsPage = ({
       )}
       <div className="all-cards-container">
         {usedFor === "events" &&
-          displayedCards
+          displayedItems
             .slice(0, displayCount)
             .map((item) => isTEvent(item) && <EventCard key={item._id} event={item} />)}
         {(usedFor === "potential-friends" || usedFor === "my-friends") &&
-          displayedCards
+          displayedItems
             .slice(0, displayCount)
             .map((item) => isTUser(item) && <UserCard key={item._id} user={item} />)}
       </div>

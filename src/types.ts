@@ -124,8 +124,8 @@ export type TMainContext = {
     displayCountInterval: number | undefined,
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ) => void;
-  displayedCards: (TUser | TEvent)[];
-  setDisplayedCards: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
+  displayedItems: (TUser | TEvent)[];
+  setDisplayedItems: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   imageIsUploading: boolean;

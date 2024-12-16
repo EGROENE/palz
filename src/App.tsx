@@ -32,7 +32,7 @@ function App() {
     handleLoadMoreOnScroll,
     displayCount,
     setDisplayCount,
-    displayedCards,
+    displayedItems,
     displayedItemsFiltered,
     displayCountInterval,
   } = useMainContext();
@@ -59,7 +59,7 @@ function App() {
       handleLoadMoreOnScroll(
         displayCount,
         setDisplayCount,
-        displayedCards,
+        displayedItems,
         displayedItemsFiltered,
         displayCountInterval
       )
@@ -70,7 +70,7 @@ function App() {
         handleLoadMoreOnScroll(
           displayCount,
           setDisplayCount,
-          displayedCards,
+          displayedItems,
           displayedItemsFiltered,
           displayCountInterval
         )
@@ -79,7 +79,7 @@ function App() {
   }, [
     displayCount,
     setDisplayCount,
-    displayedCards,
+    displayedItems,
     displayedItemsFiltered,
     displayCountInterval,
   ]);
