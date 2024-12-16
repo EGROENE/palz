@@ -833,7 +833,7 @@ const DisplayedCardsPage = ({
           />
         </div>
       )}
-      <div className="all-events-container">
+      <div className="all-cards-container">
         {usedFor === "events" &&
           displayedCards.map(
             (item) => isTEvent(item) && <EventCard key={item._id} event={item} />

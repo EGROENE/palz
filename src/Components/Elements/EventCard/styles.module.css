@@ -115,11 +115,11 @@
   padding: unset;
 }
 
-.user-events-section .all-events-container .eventCard {
+.user-events-section .all-cards-container .eventCard {
   margin: 1rem 3rem 2rem 0;
 }
 
-.all-events-container .eventCard {
+.all-cards-container .eventCard {
   /* width: calc(50% - 4rem); */
   margin: 2rem 5rem;
 }

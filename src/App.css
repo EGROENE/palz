@@ -564,7 +564,7 @@ form textarea {
   opacity: 0.7;
 }
 
-.all-events-container {
+.all-cards-container {
   display: flex;
   flex-wrap: wrap;
   margin: 0 2rem;
