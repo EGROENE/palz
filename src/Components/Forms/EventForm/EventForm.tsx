@@ -176,10 +176,11 @@ const EventForm = ({
     setShowAreYouSureRemoveCurrentUserAsOrganizer,
   ] = useState<boolean>(false);
 
-  const [displayedPotentialInviteeCount, setDisplayedPotentialInviteeCount] =
-    useState<number>(10);
+  const [displayedPotentialInviteeCount, setDisplayedPotentialInviteeCount] = useState<
+    number | undefined
+  >(10);
   const [displayedPotentialCoOrganizerCount, setDisplayedPotentialCoOrganizerCount] =
-    useState<number>(10);
+    useState<number | undefined>(10);
 
   useEffect(() => {
     setCurrentEvent(allEvents.filter((ev) => ev._id === event?._id)[0]);
