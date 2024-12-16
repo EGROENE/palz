@@ -31,7 +31,35 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setTimeout(() => setShowWelcomeMessage(false), welcomeMessageDisplayTime);
   };
 
+  const handleScroll = (
+    e: React.UIEvent<HTMLUListElement, UIEvent>,
+    displayCount: number | undefined,
+    setDisplayCount: React.Dispatch<React.SetStateAction<number>> | undefined,
+    displayedItemsArray: any[],
+    displayedItemsArrayFiltered: any[],
+    displayCountInterval: number | undefined
+  ): void => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target as HTMLElement;
+    const bottomReached = scrollTop + clientHeight === scrollHeight;
+    if (displayCount && displayCountInterval && setDisplayCount) {
+      if (bottomReached) {
+        if (
+          displayedItemsArray.length - displayedItemsArrayFiltered.length >=
+          displayCountInterval
+        ) {
+          setDisplayCount(displayCount + displayCountInterval);
+        } else {
+          setDisplayCount(
+            displayCount +
+              (displayedItemsArray.length - displayedItemsArrayFiltered.length)
+          );
+        }
+      }
+    }
+  };
+
   const mainContextValues: TMainContext = {
+    handleScroll,
     displayedCards,
     setDisplayedCards,
     isLoading,

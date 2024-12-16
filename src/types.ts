@@ -110,6 +110,14 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  handleScroll: (
+    e: React.UIEvent<HTMLUListElement, UIEvent>,
+    displayCount: number | undefined,
+    setDisplayCount: React.Dispatch<React.SetStateAction<number>> | undefined,
+    displayedItemsArray: any[],
+    displayedItemsArrayFiltered: any[],
+    displayCountInterval?: number
+  ) => void;
   displayedCards: (TUser | TEvent)[];
   setDisplayedCards: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
   showSidebar: boolean;

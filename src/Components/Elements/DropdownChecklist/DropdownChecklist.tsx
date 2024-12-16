@@ -1,3 +1,4 @@
+import React from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { TUser, TEvent } from "../../../types";
@@ -22,7 +23,7 @@ const DropdownChecklist = ({
   displayCountInterval?: number;
   event?: TEvent;
 }) => {
-  const { isLoading } = useMainContext();
+  const { isLoading, handleScroll } = useMainContext();
 
   const { handleAddRemoveUserAsOrganizer } = useUserContext();
 
@@ -35,28 +36,20 @@ const DropdownChecklist = ({
     displayedItemsArrayFiltered = displayedItemsArray;
   }
 
-  const handleScroll = (e: React.UIEvent<HTMLUListElement, UIEvent>): void => {
-    const { scrollTop, scrollHeight, clientHeight } = e.target as HTMLElement;
-    const bottomReached = scrollTop + clientHeight === scrollHeight;
-    if (displayCount && displayCountInterval && setDisplayCount) {
-      if (bottomReached) {
-        if (
-          displayedItemsArray.length - displayedItemsArrayFiltered.length >=
-          displayCountInterval
-        ) {
-          setDisplayCount(displayCount + displayCountInterval);
-        } else {
-          setDisplayCount(
-            displayCount +
-              (displayedItemsArray.length - displayedItemsArrayFiltered.length)
-          );
-        }
-      }
-    }
-  };
-
   return (
-    <ul onScroll={(e) => handleScroll(e)} className={styles.dropdownChecklist}>
+    <ul
+      onScroll={(e) =>
+        handleScroll(
+          e,
+          displayCount,
+          setDisplayCount,
+          displayedItemsArray,
+          displayedItemsArrayFiltered,
+          displayCountInterval
+        )
+      }
+      className={styles.dropdownChecklist}
+    >
       {displayedItemsArrayFiltered.map((user) => (
         <li
           key={user._id}
