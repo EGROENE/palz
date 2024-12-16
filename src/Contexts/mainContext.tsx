@@ -31,7 +31,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setTimeout(() => setShowWelcomeMessage(false), welcomeMessageDisplayTime);
   };
 
-  const handleScroll = (
+  const handleLoadMoreOnScroll = (
     e: React.UIEvent<HTMLUListElement, UIEvent>,
     displayCount: number | undefined,
     setDisplayCount: React.Dispatch<React.SetStateAction<number>> | undefined,
@@ -59,7 +59,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mainContextValues: TMainContext = {
-    handleScroll,
+    handleLoadMoreOnScroll,
     displayedCards,
     setDisplayedCards,
     isLoading,

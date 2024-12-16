@@ -110,7 +110,7 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
-  handleScroll: (
+  handleLoadMoreOnScroll: (
     e: React.UIEvent<HTMLUListElement, UIEvent>,
     displayCount: number | undefined,
     setDisplayCount: React.Dispatch<React.SetStateAction<number>> | undefined,

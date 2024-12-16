@@ -23,7 +23,7 @@ const DropdownChecklist = ({
   displayCountInterval?: number;
   event?: TEvent;
 }) => {
-  const { isLoading, handleScroll } = useMainContext();
+  const { isLoading, handleLoadMoreOnScroll } = useMainContext();
 
   const { handleAddRemoveUserAsOrganizer } = useUserContext();
 
@@ -39,7 +39,7 @@ const DropdownChecklist = ({
   return (
     <ul
       onScroll={(e) =>
-        handleScroll(
+        handleLoadMoreOnScroll(
           e,
           displayCount,
           setDisplayCount,
