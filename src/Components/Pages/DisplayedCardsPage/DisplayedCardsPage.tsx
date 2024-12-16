@@ -16,8 +16,16 @@ const DisplayedCardsPage = ({
 }: {
   usedFor: "events" | "potential-friends" | "my-friends";
 }) => {
-  const { showSidebar, setShowSidebar, displayedCards, setDisplayedCards, theme } =
-    useMainContext();
+  const {
+    showSidebar,
+    setShowSidebar,
+    theme,
+    displayCount,
+    setDisplayCount,
+    displayedCards,
+    setDisplayedCards,
+    setDisplayCountInterval,
+  } = useMainContext();
   const {
     allUsers,
     fetchAllUsers,
@@ -50,14 +58,20 @@ const DisplayedCardsPage = ({
   useEffect(() => {
     // Set displayedCards appropriately, depending on usedFor value
     if (usedFor === "potential-friends") {
+      setDisplayCount(9);
+      setDisplayCountInterval(9);
       resetDisplayedPotentialFriends();
     }
 
     if (usedFor === "my-friends") {
+      setDisplayCount(9);
+      setDisplayCountInterval(9);
       resetDisplayedFriends();
     }
 
     if (usedFor === "events") {
+      setDisplayCount(8);
+      setDisplayCountInterval(8);
       resetDisplayedEvents();
     }
 
@@ -835,13 +849,13 @@ const DisplayedCardsPage = ({
       )}
       <div className="all-cards-container">
         {usedFor === "events" &&
-          displayedCards.map(
-            (item) => isTEvent(item) && <EventCard key={item._id} event={item} />
-          )}
+          displayedCards
+            .slice(0, displayCount)
+            .map((item) => isTEvent(item) && <EventCard key={item._id} event={item} />)}
         {(usedFor === "potential-friends" || usedFor === "my-friends") &&
-          displayedCards.map(
-            (item) => isTUser(item) && <UserCard key={item._id} user={item} />
-          )}
+          displayedCards
+            .slice(0, displayCount)
+            .map((item) => isTUser(item) && <UserCard key={item._id} user={item} />)}
       </div>
     </div>
   );
