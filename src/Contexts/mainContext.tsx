@@ -1,4 +1,4 @@
-import { useState, createContext, ReactNode } from "react";
+import { useState, createContext, ReactNode, useEffect } from "react";
 import { TMainContext, TUser, TEvent } from "../types";
 import useLocalStorage from "use-local-storage";
 
@@ -31,6 +31,10 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     (TEvent | TUser)[]
   >(displayedItems.slice(0, displayCount));
 
+  useEffect(() => {
+    setDisplayedItemsFiltered(displayedItems.slice(0, displayCount));
+  }, [displayedItems]);
+
   const handleWelcomeMessage = () => {
     setShowWelcomeMessage(true);
     setTimeout(() => setShowWelcomeMessage(false), welcomeMessageDisplayTime);
@@ -56,16 +60,23 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (displayCount && displayCountInterval && setDisplayCount) {
       if (bottomReached) {
+        console.log(displayedItemsArray.length);
+        console.log(displayedItemsArrayFiltered.length);
+        console.log(displayCountInterval);
+
         if (
           displayedItemsArray.length - displayedItemsArrayFiltered.length >=
           displayCountInterval
         ) {
-          setDisplayCount(displayCount + displayCountInterval);
+          const newDisplayCount = displayCount + displayCountInterval;
+          setDisplayCount(newDisplayCount);
+          setDisplayedItemsFiltered(displayedItems.slice(0, newDisplayCount));
         } else {
-          setDisplayCount(
+          const newDisplayCount =
             displayCount +
-              (displayedItemsArray.length - displayedItemsArrayFiltered.length)
-          );
+            (displayedItemsArray.length - displayedItemsArrayFiltered.length);
+          setDisplayCount(newDisplayCount);
+          setDisplayedItemsFiltered(displayedItems.slice(0, newDisplayCount));
         }
       }
     }
