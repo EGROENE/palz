@@ -24,15 +24,15 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
     useState<number>(2500);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [displayCount, setDisplayCount] = useState<number | undefined>();
-  const [displayCountInterval, setDisplayCountInterval] = useState<number | undefined>();
+  const [displayedItemsCount, setDisplayedItemsCount] = useState<number | undefined>();
+  const [displayedItemsCountInterval, setDisplayedItemsCountInterval] = useState<number | undefined>();
   const [displayedItems, setDisplayedItems] = useState<(TEvent | TUser)[]>([]);
   const [displayedItemsFiltered, setDisplayedItemsFiltered] = useState<
     (TEvent | TUser)[]
-  >(displayedItems.slice(0, displayCount));
+  >(displayedItems.slice(0, displayedItemsCount));
 
   useEffect(() => {
-    setDisplayedItemsFiltered(displayedItems.slice(0, displayCount));
+    setDisplayedItemsFiltered(displayedItems.slice(0, displayedItemsCount));
   }, [displayedItems]);
 
   const handleWelcomeMessage = () => {
@@ -41,11 +41,11 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleLoadMoreOnScroll = (
-    displayCount: number | undefined,
-    setDisplayCount: React.Dispatch<React.SetStateAction<number | undefined>>,
+    displayedItemsCount: number | undefined,
+    setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>,
     displayedItemsArray: any[],
     displayedItemsArrayFiltered: any[],
-    displayCountInterval: number | undefined,
+    displayedItemsCountInterval: number | undefined,
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ): void => {
     const eHTMLElement = e?.target as HTMLElement;
@@ -58,20 +58,20 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
         ? scrollTop + clientHeight === scrollHeight
         : window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
 
-    if (displayCount && displayCountInterval && setDisplayCount) {
+    if (displayedItemsCount && displayedItemsCountInterval && setDisplayedItemsCount) {
       if (bottomReached) {
         if (
           displayedItemsArray.length - displayedItemsArrayFiltered.length >=
-          displayCountInterval
+          displayedItemsCountInterval
         ) {
-          const newDisplayCount = displayCount + displayCountInterval;
-          setDisplayCount(newDisplayCount);
+          const newDisplayCount = displayedItemsCount + displayedItemsCountInterval;
+          setDisplayedItemsCount(newDisplayCount);
           setDisplayedItemsFiltered(displayedItems.slice(0, newDisplayCount));
         } else {
           const newDisplayCount =
-            displayCount +
+            displayedItemsCount +
             (displayedItemsArray.length - displayedItemsArrayFiltered.length);
-          setDisplayCount(newDisplayCount);
+          setDisplayedItemsCount(newDisplayCount);
           setDisplayedItemsFiltered(displayedItems.slice(0, newDisplayCount));
         }
       }
@@ -79,12 +79,12 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mainContextValues: TMainContext = {
-    displayCountInterval,
-    setDisplayCountInterval,
+    displayedItemsCountInterval,
+    setDisplayedItemsCountInterval,
     displayedItemsFiltered,
     setDisplayedItemsFiltered,
-    displayCount,
-    setDisplayCount,
+    displayedItemsCount,
+    setDisplayedItemsCount,
     handleLoadMoreOnScroll,
     displayedItems,
     setDisplayedItems,

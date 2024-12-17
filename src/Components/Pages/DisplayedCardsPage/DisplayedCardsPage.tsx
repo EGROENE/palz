@@ -20,10 +20,10 @@ const DisplayedCardsPage = ({
     showSidebar,
     setShowSidebar,
     theme,
-    setDisplayCount,
+    setDisplayedItemsCount,
     displayedItems,
     setDisplayedItems,
-    setDisplayCountInterval,
+    setDisplayedItemsCountInterval,
     displayedItemsFiltered,
   } = useMainContext();
   const {
@@ -58,20 +58,20 @@ const DisplayedCardsPage = ({
   useEffect(() => {
     // Set displayedItems appropriately, depending on usedFor value
     if (usedFor === "potential-friends") {
-      setDisplayCount(9);
-      setDisplayCountInterval(9);
+      setDisplayedItemsCount(9);
+      setDisplayedItemsCountInterval(9);
       resetDisplayedPotentialFriends();
     }
 
     if (usedFor === "my-friends") {
-      setDisplayCount(9);
-      setDisplayCountInterval(9);
+      setDisplayedItemsCount(9);
+      setDisplayedItemsCountInterval(9);
       resetDisplayedFriends();
     }
 
     if (usedFor === "events") {
-      setDisplayCount(8);
-      setDisplayCountInterval(8);
+      setDisplayedItemsCount(8);
+      setDisplayedItemsCountInterval(8);
       resetDisplayedEvents();
     }
 

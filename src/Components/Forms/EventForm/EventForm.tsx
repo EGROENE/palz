@@ -1764,9 +1764,9 @@ const EventForm = ({
                 displayedItemsArray={potentialCoOrganizers}
                 storageArray={organizers}
                 setStorageArray={setOrganizers}
-                displayCount={displayedPotentialCoOrganizerCount}
-                setDisplayCount={setDisplayedPotentialCoOrganizerCount}
-                displayCountInterval={10}
+                displayedItemsCount={displayedPotentialCoOrganizerCount}
+                setDisplayedItemsCount={setDisplayedPotentialCoOrganizerCount}
+                displayedItemsCountInterval={10}
                 event={event}
               />
             )}
@@ -1859,9 +1859,9 @@ const EventForm = ({
                 displayedItemsArray={potentialInvitees}
                 storageArray={invitees}
                 setStorageArray={setInvitees}
-                displayCount={displayedPotentialInviteeCount}
-                setDisplayCount={setDisplayedPotentialInviteeCount}
-                displayCountInterval={10}
+                displayedItemsCount={displayedPotentialInviteeCount}
+                setDisplayedItemsCount={setDisplayedPotentialInviteeCount}
+                displayedItemsCountInterval={10}
                 event={event}
               />
             )}

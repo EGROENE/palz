@@ -9,18 +9,18 @@ const DropdownChecklist = ({
   displayedItemsArray,
   storageArray,
   setStorageArray,
-  displayCount,
+  displayedItemsCount,
   setDisplayCount,
-  displayCountInterval,
+  displayedItemsCountInterval,
   event,
 }: {
   usedFor: string;
   displayedItemsArray: TUser[]; // type can be changed later if used for non-user lists
   storageArray: string[];
   setStorageArray: React.Dispatch<React.SetStateAction<string[]>>;
-  displayCount: number | undefined;
+  displayedItemsCount: number | undefined;
   setDisplayCount: React.Dispatch<React.SetStateAction<number | undefined>>;
-  displayCountInterval?: number;
+  displayedItemsCountInterval?: number;
   event?: TEvent;
 }) => {
   const { isLoading, handleLoadMoreOnScroll } = useMainContext();
@@ -28,8 +28,8 @@ const DropdownChecklist = ({
   const { handleAddRemoveUserAsOrganizer } = useUserContext();
 
   let displayedItemsArrayFiltered: TUser[] = [];
-  if (displayCount) {
-    for (let i = 0; i < displayCount; i++) {
+  if (displayedItemsCount) {
+    for (let i = 0; i < displayedItemsCount; i++) {
       displayedItemsArrayFiltered.push(displayedItemsArray[i]);
     }
   } else {
@@ -40,11 +40,11 @@ const DropdownChecklist = ({
     <ul
       onScroll={(e) =>
         handleLoadMoreOnScroll(
-          displayCount,
+          displayedItemsCount,
           setDisplayCount,
           displayedItemsArray,
           displayedItemsArrayFiltered,
-          displayCountInterval,
+          displayedItemsCountInterval,
           e
         )
       }

@@ -30,11 +30,11 @@ function App() {
     imageIsDeleting,
     showSidebar,
     handleLoadMoreOnScroll,
-    displayCount,
-    setDisplayCount,
+    displayedItemsCount,
+    setDisplayedItemsCount,
     displayedItems,
     displayedItemsFiltered,
-    displayCountInterval,
+    displayedItemsCountInterval,
   } = useMainContext();
   const {
     userCreatedAccount,
@@ -57,31 +57,31 @@ function App() {
   useEffect(() => {
     window.addEventListener("scroll", () =>
       handleLoadMoreOnScroll(
-        displayCount,
-        setDisplayCount,
+        displayedItemsCount,
+        setDisplayedItemsCount,
         displayedItems,
         displayedItemsFiltered,
-        displayCountInterval
+        displayedItemsCountInterval
       )
     );
 
     return () => {
       window.removeEventListener("scroll", () =>
         handleLoadMoreOnScroll(
-          displayCount,
-          setDisplayCount,
+          displayedItemsCount,
+          setDisplayedItemsCount,
           displayedItems,
           displayedItemsFiltered,
-          displayCountInterval
+          displayedItemsCountInterval
         )
       );
     };
   }, [
-    displayCount,
-    setDisplayCount,
+    displayedItemsCount,
+    setDisplayedItemsCount,
     displayedItems,
     displayedItemsFiltered,
-    displayCountInterval,
+    displayedItemsCountInterval,
   ]);
 
   theme === "dark"
