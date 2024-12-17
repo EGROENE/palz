@@ -197,13 +197,7 @@ export type TUserContext = {
     displayedUsers?: (TUser | TEvent)[],
     setDisplayedUsers?: React.Dispatch<React.SetStateAction<(TUser | TEvent)[]>>
   ) => void;
-  handleAcceptFriendRequest: (
-    e: React.ChangeEvent<HTMLInputElement>,
-    sender: TUser,
-    receiver: TUser,
-    usersWhoSentCurrentUserARequest?: TUser[],
-    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>
-  ) => void;
+  handleAcceptFriendRequest: (e: React.ChangeEvent<HTMLInputElement>, sender: TUser, receiver: TUser, displayedUsers?: TUser[], setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>) => void
   handleRejectFriendRequest: (
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,

@@ -975,8 +975,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
-    usersWhoSentCurrentUserARequest?: TUser[],
-    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>,
     displayedUsers?: TUser[],
     setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
@@ -985,12 +983,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (showFriendRequestResponseOptions) {
       setShowFriendRequestResponseOptions(false);
-    }
-
-    if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
-      setUsersWhoSentCurrentUserARequest(
-        usersWhoSentCurrentUserARequest.filter((user) => user._id !== sender._id)
-      );
     }
 
     if (displayedUsers && setDisplayedUsers) {
@@ -1007,9 +999,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               border: "2px solid red",
             },
           });
-          if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
-            setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
-          }
           if (displayedUsers && setDisplayedUsers) {
             setDisplayedUsers(displayedUsers);
           }
@@ -1025,12 +1014,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                       border: "2px solid red",
                     },
                   });
-                  if (
-                    setUsersWhoSentCurrentUserARequest &&
-                    usersWhoSentCurrentUserARequest
-                  ) {
-                    setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
-                  }
                   if (displayedUsers && setDisplayedUsers) {
                     setDisplayedUsers(displayedUsers);
                   }
@@ -1050,14 +1033,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                               },
                             }
                           );
-                          if (
-                            setUsersWhoSentCurrentUserARequest &&
-                            usersWhoSentCurrentUserARequest
-                          ) {
-                            setUsersWhoSentCurrentUserARequest(
-                              usersWhoSentCurrentUserARequest
-                            );
-                          }
                           if (displayedUsers && setDisplayedUsers) {
                             setDisplayedUsers(displayedUsers);
                           }
@@ -1081,14 +1056,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                     },
                                   }
                                 );
-                                if (
-                                  setUsersWhoSentCurrentUserARequest &&
-                                  usersWhoSentCurrentUserARequest
-                                ) {
-                                  setUsersWhoSentCurrentUserARequest(
-                                    usersWhoSentCurrentUserARequest
-                                  );
-                                }
                                 if (displayedUsers && setDisplayedUsers) {
                                   setDisplayedUsers(displayedUsers);
                                 }
