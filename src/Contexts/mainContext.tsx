@@ -60,10 +60,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (displayCount && displayCountInterval && setDisplayCount) {
       if (bottomReached) {
-        console.log(displayedItemsArray.length);
-        console.log(displayedItemsArrayFiltered.length);
-        console.log(displayCountInterval);
-
         if (
           displayedItemsArray.length - displayedItemsArrayFiltered.length >=
           displayCountInterval
