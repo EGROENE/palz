@@ -149,8 +149,6 @@ const UserCard = ({ user }: { user: TUser }) => {
             buttonTwoHandlerParams={[
               currentOtherUser,
               currentUser,
-              undefined,
-              undefined,
               displayedItems,
               setDisplayedItems,
             ]}
