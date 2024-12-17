@@ -54,6 +54,9 @@ function App() {
   const navigation = useNavigate();
   const currentURL = useLocation().pathname;
 
+  /* 
+  Add/remove event listeners to/from window, which call handleLoadMoreOnScroll, dependent on changes to state values related to items that should be displayed. Allows for controlling how many items display at once on pages like FindPalz, MyPalz, & Explore Events. As user scrolls to bottom of page, a certain amount of new items is loaded.
+  */
   useEffect(() => {
     window.addEventListener("scroll", () =>
       handleLoadMoreOnScroll(
