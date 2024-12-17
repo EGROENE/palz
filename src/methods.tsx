@@ -1,5 +1,19 @@
 // @ts-nocheck
-import { TEvent } from "./types";
+import { TEvent, TUser } from "./types";
+
+const isTEvent = (value: any): value is TEvent => {
+  if (value.eventStartDateTimeInMS) {
+    return true;
+  }
+  return false;
+};
+
+const isTUser = (value: any): value is TUser => {
+  if (value.username) {
+    return true;
+  }
+  return false;
+};
 
 const arraysAreIdentical = (array1: any[], array2: any[]) => {
   if (array1.sort().join(",") === array2.sort().join(",")) {
@@ -132,6 +146,8 @@ const convertToBase64 = (file: File): Promise<unknown> => {
 };
 
 const Methods = {
+  isTEvent,
+  isTUser,
   convertToBase64,
   arraysAreIdentical,
   sortEventsSoonestToLatest,

@@ -733,20 +733,6 @@ const DisplayedCardsPage = ({
   };
   //////////////////////////////////////////////
 
-  const isTEvent = (value: any): value is TEvent => {
-    if (value.eventStartDateTimeInMS) {
-      return true;
-    }
-    return false;
-  };
-
-  const isTUser = (value: any): value is TUser => {
-    if (value.username) {
-      return true;
-    }
-    return false;
-  };
-
   const getPageHeading = (): string => {
     if (usedFor === "events") {
       return "Events";
@@ -850,11 +836,11 @@ const DisplayedCardsPage = ({
       <div className="all-cards-container">
         {usedFor === "events" &&
           displayedItemsFiltered.map(
-            (item) => isTEvent(item) && <EventCard key={item._id} event={item} />
+            (item) => Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
           )}
         {(usedFor === "potential-friends" || usedFor === "my-friends") &&
           displayedItemsFiltered.map(
-            (item) => isTUser(item) && <UserCard key={item._id} user={item} />
+            (item) => Methods.isTUser(item) && <UserCard key={item._id} user={item} />
           )}
       </div>
     </div>
