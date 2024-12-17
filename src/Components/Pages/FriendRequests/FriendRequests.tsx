@@ -6,10 +6,23 @@ import { TUser, TThemeColor } from "../../../types";
 import ListedUser from "../../Elements/ListedUser/ListedUser";
 import styles from "./styles.module.css";
 import toast from "react-hot-toast";
+import Methods from "../../../methods";
 
 const FriendRequests = () => {
   const navigation = useNavigate();
-  const { showSidebar, setShowSidebar, theme, isLoading, } = useMainContext();
+  const {
+    showSidebar,
+    setShowSidebar,
+    theme,
+    isLoading,
+    setDisplayedItemsCount,
+    setDisplayedItemsCountInterval,
+    displayedItems,
+    setDisplayedItems,
+    displayedItemsFiltered,
+    setDisplayedItemsFiltered,
+    displayedItemsCount,
+  } = useMainContext();
   const {
     allUsers,
     handleAcceptFriendRequest,
@@ -28,6 +41,25 @@ const FriendRequests = () => {
   const [requestsVisible, setRequestsVisible] = useState<"sent" | "received" | null>(
     null
   );
+
+  // Upon page init render only, set displayedItemsCount/Interval:
+  useEffect(() => {
+    setDisplayedItemsCount(4);
+    setDisplayedItemsCountInterval(4);
+  }, []);
+
+  // Upon change of requestsVisible, set displayedItems & displayedItemsFiltered arrays:
+  /* Remember, these 2 arrays must both exist so the amount of items displayed can be compared to how many items there are in total. */
+  useEffect(() => {
+    if (requestsVisible === "received" && displayedReceivedRequests) {
+      setDisplayedItems(displayedReceivedRequests);
+      setDisplayedItemsFiltered(displayedReceivedRequests.slice(0, displayedItemsCount));
+    }
+    if (requestsVisible === "sent" && displayedSentRequests) {
+      setDisplayedItems(displayedSentRequests);
+      setDisplayedItemsFiltered(displayedItems.slice(0, displayedItemsCount));
+    }
+  }, [requestsVisible]);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -146,65 +178,69 @@ const FriendRequests = () => {
           </div>
           <div className={styles.friendRequestUsersContainer}>
             {requestsVisible === "sent"
-              ? displayedSentRequests &&
-                displayedSentRequests.map((user) => (
-                  <ListedUser
-                    key={user._id}
-                    renderButtonOne={true}
-                    user={user}
-                    randomColor={randomColor}
-                    buttonOneText="See Profile"
-                    buttonOneIsDisabled={isLoading}
-                    buttonOneLink={`/users/${user?.username}`}
-                    buttonOneHandler={() => setCurrentOtherUser(user)}
-                    handlerOneNeedsEventParam={false}
-                    buttonTwoText="Retract"
-                    buttonTwoHandler={handleRetractFriendRequest}
-                    buttonTwoHandlerParams={[
-                      currentUser,
-                      user,
-                      undefined,
-                      displayedSentRequests,
-                      setDisplayedSentRequests,
-                    ]}
-                    buttonTwoIsDisabled={isLoading}
-                    handlerTwoNeedsEventParam={false}
-                    buttonTwoLink={null}
-                    objectLink={`/users/${user?.username}`}
-                  />
-                ))
-              : displayedReceivedRequests &&
-                displayedReceivedRequests.map((user) => (
-                  <ListedUser
-                    key={user._id}
-                    renderButtonOne={true}
-                    user={user}
-                    randomColor={randomColor}
-                    buttonOneText="Accept"
-                    buttonOneLink={null}
-                    buttonOneHandler={handleAcceptFriendRequest}
-                    buttonOneHandlerParams={[
-                      user,
-                      currentUser,
-                      displayedReceivedRequests,
-                      setDisplayedReceivedRequests,
-                    ]}
-                    handlerOneNeedsEventParam={true}
-                    buttonOneIsDisabled={isLoading}
-                    buttonTwoText="Reject"
-                    buttonTwoHandler={handleRejectFriendRequest}
-                    buttonTwoHandlerParams={[
-                      user,
-                      currentUser,
-                      displayedReceivedRequests,
-                      setDisplayedReceivedRequests,
-                    ]}
-                    handlerTwoNeedsEventParam={true}
-                    buttonTwoIsDisabled={isLoading}
-                    buttonTwoLink={null}
-                    objectLink={`/users/${user?.username}`}
-                  />
-                ))}
+              ? displayedItemsFiltered &&
+                displayedItemsFiltered.map(
+                  (user) =>
+                    Methods.isTUser(user) && (
+                      <ListedUser
+                        key={user._id}
+                        renderButtonOne={true}
+                        user={user}
+                        buttonOneText="See Profile"
+                        buttonOneIsDisabled={isLoading}
+                        buttonOneLink={`/users/${user?.username}`}
+                        buttonOneHandler={() => setCurrentOtherUser(user)}
+                        handlerOneNeedsEventParam={false}
+                        buttonTwoText="Retract"
+                        buttonTwoHandler={handleRetractFriendRequest}
+                        buttonTwoHandlerParams={[
+                          currentUser,
+                          user,
+                          undefined,
+                          displayedSentRequests,
+                          setDisplayedSentRequests,
+                        ]}
+                        buttonTwoIsDisabled={isLoading}
+                        handlerTwoNeedsEventParam={false}
+                        buttonTwoLink={null}
+                        objectLink={`/users/${user?.username}`}
+                      />
+                    )
+                )
+              : displayedItemsFiltered &&
+                displayedItemsFiltered.map(
+                  (user) =>
+                    Methods.isTUser(user) && (
+                      <ListedUser
+                        key={user._id}
+                        renderButtonOne={true}
+                        user={user}
+                        buttonOneText="Accept"
+                        buttonOneLink={null}
+                        buttonOneHandler={handleAcceptFriendRequest}
+                        buttonOneHandlerParams={[
+                          user,
+                          currentUser,
+                          displayedReceivedRequests,
+                          setDisplayedReceivedRequests,
+                        ]}
+                        handlerOneNeedsEventParam={true}
+                        buttonOneIsDisabled={isLoading}
+                        buttonTwoText="Reject"
+                        buttonTwoHandler={handleRejectFriendRequest}
+                        buttonTwoHandlerParams={[
+                          user,
+                          currentUser,
+                          displayedReceivedRequests,
+                          setDisplayedReceivedRequests,
+                        ]}
+                        handlerTwoNeedsEventParam={true}
+                        buttonTwoIsDisabled={isLoading}
+                        buttonTwoLink={null}
+                        objectLink={`/users/${user?.username}`}
+                      />
+                    )
+                )}
           </div>
         </>
       )}
