@@ -20,11 +20,11 @@ const DisplayedCardsPage = ({
     showSidebar,
     setShowSidebar,
     theme,
-    displayCount,
     setDisplayCount,
     displayedItems,
     setDisplayedItems,
     setDisplayCountInterval,
+    displayedItemsFiltered,
   } = useMainContext();
   const {
     allUsers,
@@ -849,13 +849,13 @@ const DisplayedCardsPage = ({
       )}
       <div className="all-cards-container">
         {usedFor === "events" &&
-          displayedItems
-            .slice(0, displayCount)
-            .map((item) => isTEvent(item) && <EventCard key={item._id} event={item} />)}
+          displayedItemsFiltered.map(
+            (item) => isTEvent(item) && <EventCard key={item._id} event={item} />
+          )}
         {(usedFor === "potential-friends" || usedFor === "my-friends") &&
-          displayedItems
-            .slice(0, displayCount)
-            .map((item) => isTUser(item) && <UserCard key={item._id} user={item} />)}
+          displayedItemsFiltered.map(
+            (item) => isTUser(item) && <UserCard key={item._id} user={item} />
+          )}
       </div>
     </div>
   );
