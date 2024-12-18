@@ -10,7 +10,7 @@ const DropdownChecklist = ({
   storageArray,
   setStorageArray,
   displayedItemsCount,
-  setDisplayCount,
+  setDisplayedItemsCount,
   displayedItemsCountInterval,
   event,
 }: {
@@ -19,7 +19,7 @@ const DropdownChecklist = ({
   storageArray: string[];
   setStorageArray: React.Dispatch<React.SetStateAction<string[]>>;
   displayedItemsCount: number | undefined;
-  setDisplayCount: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>;
   displayedItemsCountInterval?: number;
   event?: TEvent;
 }) => {
@@ -41,7 +41,7 @@ const DropdownChecklist = ({
       onScroll={(e) =>
         handleLoadMoreOnScroll(
           displayedItemsCount,
-          setDisplayCount,
+          setDisplayedItemsCount,
           displayedItemsArray,
           displayedItemsArrayFiltered,
           displayedItemsCountInterval,
