@@ -19,7 +19,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setImageIsDeleting,
     theme,
     setIsLoading,
-    displayedItems,
   } = useMainContext();
 
   const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
