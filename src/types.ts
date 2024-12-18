@@ -146,10 +146,10 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
-  friendRequestsSent: string[] | null;
-  setFriendRequestsSent: React.Dispatch<React.SetStateAction<string[] | null>>;
-  friendRequestsReceived: string[] | null;
-  setFriendRequestsReceived: React.Dispatch<React.SetStateAction<string[] | null>>;
+  friendRequestsSent: string[] | undefined;
+  setFriendRequestsSent: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+  friendRequestsReceived: string[] | undefined;
+  setFriendRequestsReceived: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   blockedUsers: string[] | null;
   setBlockedUsers: React.Dispatch<React.SetStateAction<string[] | null>>;
   handleAddRemoveUserAsOrganizer: (
@@ -174,23 +174,19 @@ export type TUserContext = {
     blockedUsers?: string[] | null,
     setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | null>>
   ) => void;
-  displayedSentRequests?: TUser[];
-  setDisplayedSentRequests?: React.Dispatch<React.SetStateAction<TUser[]>>;
-  displayedReceivedRequests?: TUser[];
-  setDisplayedReceivedRequests?: React.Dispatch<React.SetStateAction<TUser[]>>;
   currentOtherUser: TUser | null;
   setCurrentOtherUser: React.Dispatch<React.SetStateAction<TUser | null>>;
   handleSendFriendRequest: (
     sender: TUser | undefined,
     recipient: TUser,
-    senderSentRequests?: TUser[],
-    setSenderSentRequests?: React.Dispatch<React.SetStateAction<TUser[]>>
+    friendRequestsSent?: string[],
+    setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   handleRetractFriendRequest: (
     sender: TUser,
     recipient: TUser,
-    usersToWhomCurrentUserSentRequest?: TUser[],
-    setUsersToWhomCurrentUserSentRequest?: React.Dispatch<React.SetStateAction<TUser[]>>
+    friendRequestsSent?: string[],
+    setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   showFriendRequestResponseOptions: boolean;
   setShowFriendRequestResponseOptions: React.Dispatch<React.SetStateAction<boolean>>;
@@ -205,15 +201,15 @@ export type TUserContext = {
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
-    displayedUsers?: TUser[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+    friendRequestsReceived?: string[],
+    setFriendRequestsReceived?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   handleRejectFriendRequest: (
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
-    displayedUsers?: TUser[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+    friendRequestsReceived?: string[],
+    setFriendRequestsReceived?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   accountDeletionInProgress: boolean;
   setAccountDeletionInProgress: React.Dispatch<React.SetStateAction<boolean>>;

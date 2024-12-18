@@ -19,6 +19,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setImageIsDeleting,
     theme,
     setIsLoading,
+    displayedItems,
   } = useMainContext();
 
   const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
@@ -112,13 +113,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     "blockedUsers",
     currentUser && currentUser.blockedUsers
   );
-  const [friendRequestsSent, setFriendRequestsSent] = useSessionStorage<string[] | null>(
-    "friendRequestsSent",
-    currentUser && currentUser.friendRequestsSent
-  );
+  const [friendRequestsSent, setFriendRequestsSent] = useSessionStorage<
+    string[] | undefined
+  >("friendRequestsSent", currentUser?.friendRequestsSent);
   const [friendRequestsReceived, setFriendRequestsReceived] = useSessionStorage<
-    string[] | null
-  >("friendRequestsReceived", currentUser && currentUser.friendRequestsReceived);
+    string[] | undefined
+  >("friendRequestsReceived", currentUser?.friendRequestsReceived);
   /////////////////////////////////////////////////////////////////////////////////
 
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
@@ -156,22 +156,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     null
   );
 
-  const [displayedSentRequests, setDisplayedSentRequests] = useState<TUser[]>([]);
-  const [displayedReceivedRequests, setDisplayedReceivedRequests] = useState<TUser[]>([]);
-
   useEffect(() => {
-    // Initialize displayedSent/ReceivedRequests:
-    /* These are defined in state of this context so they can be accessed across sub-components for the purpose of optimistic rendering */
-    setDisplayedSentRequests(
-      allUsers.filter(
-        (user) => user._id && currentUser?.friendRequestsSent.includes(user._id)
-      )
-    );
-    setDisplayedReceivedRequests(
-      allUsers.filter(
-        (user) => user._id && currentUser?.friendRequestsReceived.includes(user._id)
-      )
-    );
+    setFriendRequestsSent(currentUser?.friendRequestsSent);
+    setFriendRequestsReceived(currentUser?.friendRequestsReceived);
   }, [currentUser?._id]);
 
   useEffect(() => {
@@ -822,15 +809,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .finally(() => setImageIsDeleting(false));
   };
 
-  // Delete setCurrentUserSentFriendRequest. Define boolean dependent on if displayedSentRequests contains recipient
   const handleSendFriendRequest = (
     sender: TUser | undefined,
     recipient: TUser,
-    senderSentRequests?: TUser[],
-    setSenderSentRequests?: React.Dispatch<React.SetStateAction<TUser[]>>
+    friendRequestsSent?: string[],
+    setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ): void => {
-    if (senderSentRequests && setSenderSentRequests) {
-      setSenderSentRequests(senderSentRequests.concat(recipient));
+    if (friendRequestsSent && setFriendRequestsSent && recipient._id) {
+      setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
     }
 
     setIsLoading(true);
@@ -858,8 +844,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         })
         .then(() => {
           if (isRequestError) {
-            if (senderSentRequests && setSenderSentRequests) {
-              setSenderSentRequests(senderSentRequests);
+            if (friendRequestsSent && setFriendRequestsSent) {
+              setFriendRequestsSent(friendRequestsSent);
             }
             toast.error("Couldn't send request. Please try again.", {
               style: {
@@ -886,14 +872,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleRetractFriendRequest = (
     sender: TUser,
     recipient: TUser,
-    usersToWhomCurrentUserSentRequest?: TUser[],
-    setUsersToWhomCurrentUserSentRequest?: React.Dispatch<React.SetStateAction<TUser[]>>
+    friendRequestsSent?: string[],
+    setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ): void => {
     setIsLoading(true);
 
-    if (setUsersToWhomCurrentUserSentRequest && usersToWhomCurrentUserSentRequest) {
-      setUsersToWhomCurrentUserSentRequest(
-        usersToWhomCurrentUserSentRequest.filter((user) => user._id !== recipient._id)
+    if (setFriendRequestsSent && friendRequestsSent) {
+      setFriendRequestsSent(
+        friendRequestsSent.filter((userID) => userID !== recipient._id)
       );
     }
 
@@ -901,11 +887,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
         .then((response) => {
           if (!response.ok) {
-            if (
-              setUsersToWhomCurrentUserSentRequest &&
-              usersToWhomCurrentUserSentRequest
-            ) {
-              setUsersToWhomCurrentUserSentRequest(usersToWhomCurrentUserSentRequest);
+            if (setFriendRequestsSent && friendRequestsSent) {
+              setFriendRequestsSent(
+                friendRequestsSent.filter((userID) => userID !== recipient._id)
+              );
             }
             toast.error("Could not retract request. Please try again.", {
               style: {
@@ -919,12 +904,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               Requests.removeFromFriendRequestsSent(sender, recipient._id)
                 .then((response) => {
                   if (!response.ok) {
-                    if (
-                      setUsersToWhomCurrentUserSentRequest &&
-                      usersToWhomCurrentUserSentRequest
-                    ) {
-                      setUsersToWhomCurrentUserSentRequest(
-                        usersToWhomCurrentUserSentRequest
+                    if (setFriendRequestsSent && friendRequestsSent) {
+                      setFriendRequestsSent(
+                        friendRequestsSent.filter((userID) => userID !== recipient._id)
                       );
                     }
                     toast.error("Could not retract request. Please try again.", {
@@ -957,8 +939,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
-    displayedUsers?: TUser[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+    friendRequestsReceived?: string[],
+    setFriendRequestsReceived?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ): void => {
     e.preventDefault();
     setIsLoading(true);
@@ -967,8 +949,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setShowFriendRequestResponseOptions(false);
     }
 
-    if (displayedUsers && setDisplayedUsers) {
-      setDisplayedUsers(displayedUsers.filter((user) => user._id !== sender._id));
+    if (friendRequestsReceived && setFriendRequestsReceived) {
+      setFriendRequestsReceived(
+        friendRequestsReceived.filter((userID) => userID !== sender._id)
+      );
     }
 
     if (sender && sender._id) {
@@ -981,8 +965,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               border: "2px solid red",
             },
           });
-          if (displayedUsers && setDisplayedUsers) {
-            setDisplayedUsers(displayedUsers);
+          if (friendRequestsReceived && setFriendRequestsReceived) {
+            setFriendRequestsReceived(friendRequestsReceived);
           }
         } else {
           if (sender && sender._id) {
@@ -996,8 +980,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                       border: "2px solid red",
                     },
                   });
-                  if (displayedUsers && setDisplayedUsers) {
-                    setDisplayedUsers(displayedUsers);
+                  if (friendRequestsReceived && setFriendRequestsReceived) {
+                    setFriendRequestsReceived(friendRequestsReceived);
                   }
                 } else {
                   if (receiver && receiver._id) {
@@ -1015,8 +999,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                               },
                             }
                           );
-                          if (displayedUsers && setDisplayedUsers) {
-                            setDisplayedUsers(displayedUsers);
+                          if (friendRequestsReceived && setFriendRequestsReceived) {
+                            setFriendRequestsReceived(friendRequestsReceived);
                           }
                         } else {
                           if (receiver && receiver._id) {
@@ -1038,8 +1022,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                     },
                                   }
                                 );
-                                if (displayedUsers && setDisplayedUsers) {
-                                  setDisplayedUsers(displayedUsers);
+                                if (friendRequestsReceived && setFriendRequestsReceived) {
+                                  setFriendRequestsReceived(friendRequestsReceived);
                                 }
                               } else {
                                 toast.success(
@@ -1076,8 +1060,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
-    displayedUsers?: TUser[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+    friendRequestsReceived?: string[],
+    setFriendRequestsReceived?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => {
     e.preventDefault();
 
@@ -1087,8 +1071,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setShowFriendRequestResponseOptions(false);
     }
 
-    if (setDisplayedUsers && displayedUsers) {
-      setDisplayedUsers(displayedUsers.filter((user) => user._id !== sender._id));
+    if (setFriendRequestsReceived && friendRequestsReceived) {
+      setFriendRequestsReceived(
+        friendRequestsReceived.filter((userID) => userID !== sender._id)
+      );
     }
 
     if (sender && sender._id) {
@@ -1102,8 +1088,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 border: "2px solid red",
               },
             });
-            if (setDisplayedUsers && displayedUsers) {
-              setDisplayedUsers(displayedUsers);
+            if (setFriendRequestsReceived && friendRequestsReceived) {
+              setFriendRequestsReceived(friendRequestsReceived);
             }
           } else {
             if (receiver && receiver._id) {
@@ -1117,8 +1103,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         border: "2px solid red",
                       },
                     });
-                    if (setDisplayedUsers && displayedUsers) {
-                      setDisplayedUsers(displayedUsers);
+                    if (setFriendRequestsReceived && friendRequestsReceived) {
+                      setFriendRequestsReceived(friendRequestsReceived);
                     }
                   } else {
                     toast(
@@ -1645,10 +1631,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     handleAddRemoveUserAsOrganizer,
     handleUnblockUser,
     handleBlockUser,
-    displayedSentRequests,
-    setDisplayedSentRequests,
-    displayedReceivedRequests,
-    setDisplayedReceivedRequests,
     whoCanMessage,
     setWhoCanMessage,
     currentOtherUser,
