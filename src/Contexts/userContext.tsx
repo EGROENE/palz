@@ -1094,8 +1094,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
-    usersWhoSentCurrentUserARequest?: TUser[],
-    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>,
+    displayedUsers?: TUser[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>,
     setCurrentUserReceivedFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     e.preventDefault();
@@ -1110,10 +1110,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setCurrentUserReceivedFriendRequest(false);
     }
 
-    if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
-      setUsersWhoSentCurrentUserARequest(
-        usersWhoSentCurrentUserARequest.filter((user) => user._id !== sender._id)
-      );
+    if (setDisplayedUsers && displayedUsers) {
+      setDisplayedUsers(displayedUsers.filter((user) => user._id !== sender._id));
     }
 
     if (sender && sender._id) {
@@ -1127,8 +1125,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 border: "2px solid red",
               },
             });
-            if (setUsersWhoSentCurrentUserARequest && usersWhoSentCurrentUserARequest) {
-              setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
+            if (setDisplayedUsers && displayedUsers) {
+              setDisplayedUsers(displayedUsers);
             }
             if (setCurrentUserReceivedFriendRequest) {
               setCurrentUserReceivedFriendRequest(true);
@@ -1145,11 +1143,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         border: "2px solid red",
                       },
                     });
-                    if (
-                      setUsersWhoSentCurrentUserARequest &&
-                      usersWhoSentCurrentUserARequest
-                    ) {
-                      setUsersWhoSentCurrentUserARequest(usersWhoSentCurrentUserARequest);
+                    if (setDisplayedUsers && displayedUsers) {
+                      setDisplayedUsers(displayedUsers);
                     }
                     if (setCurrentUserReceivedFriendRequest) {
                       setCurrentUserReceivedFriendRequest(true);
