@@ -183,7 +183,6 @@ export type TUserContext = {
   handleSendFriendRequest: (
     sender: TUser | undefined,
     recipient: TUser,
-    setCurrentUserSentFriendRequest: React.Dispatch<React.SetStateAction<boolean>>,
     senderSentRequests?: TUser[],
     setSenderSentRequests?: React.Dispatch<React.SetStateAction<TUser[]>>
   ) => void;

@@ -826,14 +826,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleSendFriendRequest = (
     sender: TUser | undefined,
     recipient: TUser,
-    setCurrentUserSentFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>,
     senderSentRequests?: TUser[],
     setSenderSentRequests?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
-    if (setCurrentUserSentFriendRequest) {
-      setCurrentUserSentFriendRequest(true);
-    }
-
     if (senderSentRequests && setSenderSentRequests) {
       setSenderSentRequests(senderSentRequests.concat(recipient));
     }
@@ -863,9 +858,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         })
         .then(() => {
           if (isRequestError) {
-            if (setCurrentUserSentFriendRequest) {
-              setCurrentUserSentFriendRequest(false);
-            }
             if (senderSentRequests && setSenderSentRequests) {
               setSenderSentRequests(senderSentRequests);
             }
@@ -884,9 +876,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 border: "2px solid green",
               },
             });
-            if (setCurrentUserSentFriendRequest) {
-              setCurrentUserSentFriendRequest(true);
-            }
           }
         })
         .catch((error) => console.log(error))
