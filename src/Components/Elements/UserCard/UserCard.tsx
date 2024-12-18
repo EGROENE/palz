@@ -23,28 +23,19 @@ const UserCard = ({ user }: { user: TUser }) => {
     setCurrentOtherUser,
     displayedSentRequests,
     setDisplayedSentRequests,
+    friendRequestsSent,
+    friendRequestsReceived,
   } = useUserContext();
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
   const currentUserUpdated: TUser = allUsers.filter(
     (user) => user._id === currentUser?._id
   )[0];
 
-  const [currentUserSentFriendRequest, setCurrentUserSentFriendRequest] =
-    useState<boolean>(
-      user && currentUser && currentUser._id && currentUserUpdated._id && user._id
-        ? currentUserUpdated.friendRequestsSent.includes(user._id) &&
-            user.friendRequestsReceived.includes(currentUserUpdated._id)
-        : false
-    );
+  const currentUserReceivedFriendRequest =
+    user._id && friendRequestsReceived && friendRequestsReceived.includes(user._id);
 
-  // set this optimistically in function to reject friend request
-  const [currentUserReceivedFriendRequest, setCurrentUserReceivedFriendRequest] =
-    useState<boolean>(
-      currentUserUpdated._id && user && user._id
-        ? user.friendRequestsSent.includes(currentUserUpdated._id) &&
-            currentUserUpdated.friendRequestsReceived.includes(user._id)
-        : false
-    );
+  const currentUserSentFriendRequest =
+    user._id && friendRequestsSent && friendRequestsSent.includes(user._id);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -139,9 +130,8 @@ const UserCard = ({ user }: { user: TUser }) => {
             buttonOneHandlerParams={[
               currentOtherUser,
               currentUser,
-              undefined,
-              undefined,
-              setCurrentUserReceivedFriendRequest,
+              displayedItems,
+              setDisplayedItems,
             ]}
             handlerOneNeedsEventParam={true}
             buttonTwoText="Accept"
