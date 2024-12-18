@@ -41,8 +41,6 @@ const DisplayedCardsPage = ({
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
-  const currentUserUpdated = allUsers.filter((user) => user._id === currentUser?._id)[0];
-
   useEffect(() => {
     const themeColors: TThemeColor[] = [
       "var(--primary-color)",
@@ -262,9 +260,9 @@ const DisplayedCardsPage = ({
     (event) =>
       (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
       (event.publicity === "public" ||
-        (currentUserUpdated?._id &&
-          (event.invitees.includes(currentUserUpdated._id) ||
-            event.organizers.includes(currentUserUpdated._id))))
+        (currentUser?._id &&
+          (event.invitees.includes(currentUser._id) ||
+            event.organizers.includes(currentUser._id))))
   );
 
   const getEventsByCurrentUserInterests = (): TEvent[] => {
@@ -350,11 +348,11 @@ const DisplayedCardsPage = ({
   /* display only users whose profile is visible to anyone, to friends & currentUser is friend, and friends of friends & currentUser is a friend of a user's friend, and who hasn't blocked currentUser, and whom currentUser hasn't blocked. */
   const allOtherNonFriendUsers: TUser[] = allUsers.filter(
     (user) =>
-      currentUserUpdated?._id &&
+      currentUser?._id &&
       user._id &&
-      user._id !== currentUserUpdated._id &&
-      !user.friends.includes(currentUserUpdated._id) &&
-      !user.blockedUsers.includes(currentUserUpdated._id) &&
+      user._id !== currentUser._id &&
+      !user.friends.includes(currentUser._id) &&
+      !user.blockedUsers.includes(currentUser._id) &&
       !blockedUsers?.includes(user._id)
   );
   const nonFriendUsersVisibleToAnyone: TUser[] = allOtherNonFriendUsers.filter(
@@ -378,7 +376,7 @@ const DisplayedCardsPage = ({
       }
       /* for every friend of userFriends, check if their friends list includes currentUser._id & push to displayablePotentialFriends if it does */
       for (const friend of userFriends) {
-        if (currentUserUpdated?._id && friend.friends.includes(currentUserUpdated._id)) {
+        if (currentUser?._id && friend.friends.includes(currentUser._id)) {
           displayablePotentialFriends.push(friend);
         }
       }
@@ -390,8 +388,8 @@ const DisplayedCardsPage = ({
   const getFriendsOfFriends = (): TUser[] => {
     // get TUser object that matches each id in currentUser.friends:
     let currentUserFriends: TUser[] = [];
-    if (currentUserUpdated?.friends) {
-      for (const friendID of currentUserUpdated.friends) {
+    if (currentUser?.friends) {
+      for (const friendID of currentUser.friends) {
         currentUserFriends.push(allUsers.filter((u) => u._id === friendID)[0]);
       }
     }
@@ -402,8 +400,8 @@ const DisplayedCardsPage = ({
         for (const friendID of friend.friends) {
           const friendOfFriend: TUser | undefined = allUsers.filter(
             (u) =>
-              friendID !== currentUserUpdated?._id &&
-              !currentUserUpdated?.friends.includes(friendID) &&
+              friendID !== currentUser?._id &&
+              !currentUser?.friends.includes(friendID) &&
               u._id === friendID
           )[0];
           /* Necessary to check that friendOfFriend is truthy b/c it would sometimes be undefined if no user in allUsers fit the criteria (without this check, undefined would be pushed to friendsOfFriends) */
@@ -462,16 +460,16 @@ const DisplayedCardsPage = ({
 
   // FRIENDS VARIABLES
   const currentUserPalz: TUser[] = [];
-  if (currentUserUpdated?.friends) {
-    for (const id of currentUserUpdated.friends) {
+  if (currentUser?.friends) {
+    for (const id of currentUser.friends) {
       currentUserPalz.push(allUsers.filter((user) => user._id === id)[0]);
     }
   }
 
   const friendsWithCommonInterests: TUser[] = [];
   for (const pal of currentUserPalz) {
-    if (currentUserUpdated?.interests) {
-      for (const interest of currentUserUpdated.interests) {
+    if (currentUser?.interests) {
+      for (const interest of currentUser.interests) {
         if (pal && pal.interests.includes(interest)) {
           friendsWithCommonInterests.push(pal);
         }
@@ -502,7 +500,7 @@ const DisplayedCardsPage = ({
 
   const navigation = useNavigate();
   useEffect(() => {
-    if (!currentUserUpdated && userCreatedAccount === null) {
+    if (!currentUser && userCreatedAccount === null) {
       logout();
       toast.error("Please log in before accessing this page", {
         style: {
@@ -513,7 +511,7 @@ const DisplayedCardsPage = ({
       });
       navigation("/");
     }
-  }, [currentUserUpdated, navigation, userCreatedAccount]);
+  }, [currentUser, navigation, userCreatedAccount]);
 
   // HANDLERS
   const handleAddDeleteFilter = (option: string): void => {
