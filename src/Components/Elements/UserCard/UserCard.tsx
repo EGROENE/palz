@@ -21,9 +21,8 @@ const UserCard = ({ user }: { user: TUser }) => {
     handleSendFriendRequest,
     currentOtherUser,
     setCurrentOtherUser,
-    displayedSentRequests,
-    setDisplayedSentRequests,
     friendRequestsSent,
+    setFriendRequestsSent,
     friendRequestsReceived,
   } = useUserContext();
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
@@ -201,8 +200,8 @@ const UserCard = ({ user }: { user: TUser }) => {
                 handleRetractFriendRequest(
                   currentUserUpdated,
                   user,
-                  displayedSentRequests,
-                  setDisplayedSentRequests
+                  friendRequestsSent,
+                  setFriendRequestsSent
                 );
               }
               if (currentUserReceivedFriendRequest) {
@@ -213,8 +212,8 @@ const UserCard = ({ user }: { user: TUser }) => {
                 handleSendFriendRequest(
                   currentUserUpdated,
                   user,
-                  displayedSentRequests,
-                  setDisplayedSentRequests
+                  friendRequestsSent,
+                  setFriendRequestsSent
                 );
               }
             }}
