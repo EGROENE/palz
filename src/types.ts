@@ -113,7 +113,9 @@ export type TMainContext = {
   displayedItemsCount: number | undefined;
   setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>;
   displayedItemsCountInterval: number | undefined;
-  setDisplayedItemsCountInterval: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setDisplayedItemsCountInterval: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
   displayedItemsFiltered: (TUser | TEvent)[];
   setDisplayedItemsFiltered: React.Dispatch<React.SetStateAction<(TUser | TEvent)[]>>;
   handleLoadMoreOnScroll: (
@@ -144,6 +146,10 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  friendRequestsSent: string[] | null;
+  setFriendRequestsSent: React.Dispatch<React.SetStateAction<string[] | null>>;
+  friendRequestsReceived: string[] | null;
+  setFriendRequestsReceived: React.Dispatch<React.SetStateAction<string[] | null>>;
   blockedUsers: string[] | null;
   setBlockedUsers: React.Dispatch<React.SetStateAction<string[] | null>>;
   handleAddRemoveUserAsOrganizer: (
@@ -197,14 +203,19 @@ export type TUserContext = {
     displayedUsers?: (TUser | TEvent)[],
     setDisplayedUsers?: React.Dispatch<React.SetStateAction<(TUser | TEvent)[]>>
   ) => void;
-  handleAcceptFriendRequest: (e: React.ChangeEvent<HTMLInputElement>, sender: TUser, receiver: TUser, displayedUsers?: TUser[], setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>) => void
+  handleAcceptFriendRequest: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    sender: TUser,
+    receiver: TUser,
+    displayedUsers?: TUser[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+  ) => void;
   handleRejectFriendRequest: (
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
-    usersWhoSentCurrentUserARequest?: TUser[],
-    setUsersWhoSentCurrentUserARequest?: React.Dispatch<React.SetStateAction<TUser[]>>,
-    setCurrentUserReceivedFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>
+    displayedUsers?: TUser[],
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
   ) => void;
   accountDeletionInProgress: boolean;
   setAccountDeletionInProgress: React.Dispatch<React.SetStateAction<boolean>>;

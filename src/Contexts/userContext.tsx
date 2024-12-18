@@ -112,6 +112,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     "blockedUsers",
     currentUser && currentUser.blockedUsers
   );
+  const [friendRequestsSent, setFriendRequestsSent] = useSessionStorage<string[] | null>(
+    "friendRequestsSent",
+    currentUser && currentUser.friendRequestsSent
+  );
+  const [friendRequestsReceived, setFriendRequestsReceived] = useSessionStorage<
+    string[] | null
+  >("friendRequestsReceived", currentUser && currentUser.friendRequestsReceived);
   /////////////////////////////////////////////////////////////////////////////////
 
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
@@ -1095,8 +1102,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     sender: TUser,
     receiver: TUser,
     displayedUsers?: TUser[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>,
-    setCurrentUserReceivedFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>
+    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
   ) => {
     e.preventDefault();
 
@@ -1104,10 +1110,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (showFriendRequestResponseOptions) {
       setShowFriendRequestResponseOptions(false);
-    }
-
-    if (setCurrentUserReceivedFriendRequest) {
-      setCurrentUserReceivedFriendRequest(false);
     }
 
     if (setDisplayedUsers && displayedUsers) {
@@ -1128,9 +1130,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             if (setDisplayedUsers && displayedUsers) {
               setDisplayedUsers(displayedUsers);
             }
-            if (setCurrentUserReceivedFriendRequest) {
-              setCurrentUserReceivedFriendRequest(true);
-            }
           } else {
             if (receiver && receiver._id) {
               Requests.removeFromFriendRequestsSent(sender, receiver._id).then(
@@ -1145,9 +1144,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     });
                     if (setDisplayedUsers && displayedUsers) {
                       setDisplayedUsers(displayedUsers);
-                    }
-                    if (setCurrentUserReceivedFriendRequest) {
-                      setCurrentUserReceivedFriendRequest(true);
                     }
                   } else {
                     toast(
@@ -1665,6 +1661,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    friendRequestsSent,
+    setFriendRequestsSent,
+    friendRequestsReceived,
+    setFriendRequestsReceived,
     blockedUsers,
     setBlockedUsers,
     handleAddRemoveUserAsOrganizer,
