@@ -201,7 +201,6 @@ const UserCard = ({ user }: { user: TUser }) => {
                 handleRetractFriendRequest(
                   currentUserUpdated,
                   user,
-                  setCurrentUserSentFriendRequest,
                   displayedSentRequests,
                   setDisplayedSentRequests
                 );
@@ -214,7 +213,6 @@ const UserCard = ({ user }: { user: TUser }) => {
                 handleSendFriendRequest(
                   currentUserUpdated,
                   user,
-                  setCurrentUserSentFriendRequest,
                   displayedSentRequests,
                   setDisplayedSentRequests
                 );
