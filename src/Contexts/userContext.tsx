@@ -897,15 +897,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleRetractFriendRequest = (
     sender: TUser,
     recipient: TUser,
-    setCurrentUserSentFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>,
     usersToWhomCurrentUserSentRequest?: TUser[],
     setUsersToWhomCurrentUserSentRequest?: React.Dispatch<React.SetStateAction<TUser[]>>
   ): void => {
     setIsLoading(true);
-
-    if (setCurrentUserSentFriendRequest) {
-      setCurrentUserSentFriendRequest(false);
-    }
 
     if (setUsersToWhomCurrentUserSentRequest && usersToWhomCurrentUserSentRequest) {
       setUsersToWhomCurrentUserSentRequest(
@@ -917,14 +912,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
         .then((response) => {
           if (!response.ok) {
-            if (setCurrentUserSentFriendRequest) {
-              setCurrentUserSentFriendRequest(true);
-              if (
-                setUsersToWhomCurrentUserSentRequest &&
-                usersToWhomCurrentUserSentRequest
-              ) {
-                setUsersToWhomCurrentUserSentRequest(usersToWhomCurrentUserSentRequest);
-              }
+            if (
+              setUsersToWhomCurrentUserSentRequest &&
+              usersToWhomCurrentUserSentRequest
+            ) {
+              setUsersToWhomCurrentUserSentRequest(usersToWhomCurrentUserSentRequest);
             }
             toast.error("Could not retract request. Please try again.", {
               style: {
@@ -938,9 +930,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               Requests.removeFromFriendRequestsSent(sender, recipient._id)
                 .then((response) => {
                   if (!response.ok) {
-                    if (setCurrentUserSentFriendRequest) {
-                      setCurrentUserSentFriendRequest(true);
-                    }
                     if (
                       setUsersToWhomCurrentUserSentRequest &&
                       usersToWhomCurrentUserSentRequest
@@ -964,9 +953,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         border: "2px solid red",
                       },
                     });
-                    if (setCurrentUserSentFriendRequest) {
-                      setCurrentUserSentFriendRequest(false);
-                    }
                   }
                 })
                 .catch((error) => console.log(error));

@@ -190,7 +190,6 @@ export type TUserContext = {
   handleRetractFriendRequest: (
     sender: TUser,
     recipient: TUser,
-    setCurrentUserSentFriendRequest?: React.Dispatch<React.SetStateAction<boolean>>,
     usersToWhomCurrentUserSentRequest?: TUser[],
     setUsersToWhomCurrentUserSentRequest?: React.Dispatch<React.SetStateAction<TUser[]>>
   ) => void;
