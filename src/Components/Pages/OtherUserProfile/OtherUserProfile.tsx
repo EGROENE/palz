@@ -21,12 +21,14 @@ const OtherUserProfile = () => {
     setShowFriendRequestResponseOptions,
     handleRejectFriendRequest,
     handleAcceptFriendRequest,
-    displayedSentRequests,
-    setDisplayedSentRequests,
+    friendRequestsSent,
+    setFriendRequestsSent,
     handleBlockUser,
     handleUnblockUser,
     blockedUsers,
     setBlockedUsers,
+    friendRequestsReceived,
+    setFriendRequestsReceived,
   } = useUserContext();
   const { username } = useParams();
   const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
@@ -155,11 +157,10 @@ const OtherUserProfile = () => {
           handlerParams: [
             currentUser,
             currentOtherUser,
-            undefined,
-            displayedSentRequests,
-            setDisplayedSentRequests,
+            friendRequestsSent,
+            setFriendRequestsSent,
           ],
-          paramsIncludeEvent: true,
+          paramsIncludeEvent: false,
         };
       }
       if (currentUserHasReceivedFriendRequest) {
@@ -182,9 +183,8 @@ const OtherUserProfile = () => {
         handlerParams: [
           currentUser,
           currentOtherUser,
-          undefined,
-          displayedSentRequests,
-          setDisplayedSentRequests,
+          friendRequestsSent,
+          setFriendRequestsSent,
         ],
         paramsIncludeEvent: false,
       };
@@ -267,11 +267,21 @@ const OtherUserProfile = () => {
           header={`Respond to friend request from ${currentOtherUser.firstName} ${currentOtherUser.lastName} (${currentOtherUser.username})`}
           buttonOneText="Decline"
           buttonOneHandler={handleRejectFriendRequest}
-          buttonOneHandlerParams={[currentOtherUser, currentUser]}
+          buttonOneHandlerParams={[
+            currentOtherUser,
+            currentUser,
+            friendRequestsReceived,
+            setFriendRequestsReceived,
+          ]}
           handlerOneNeedsEventParam={true}
           buttonTwoText="Accept"
           buttonTwoHandler={handleAcceptFriendRequest}
-          buttonTwoHandlerParams={[currentOtherUser, currentUser]}
+          buttonTwoHandlerParams={[
+            currentOtherUser,
+            currentUser,
+            friendRequestsReceived,
+            setFriendRequestsReceived,
+          ]}
           handlerTwoNeedsEventParam={true}
           closeHandler={setShowFriendRequestResponseOptions}
         />
