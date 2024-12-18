@@ -317,9 +317,9 @@ const OtherUserProfile = () => {
                         disabled={isLoading}
                         onClick={
                           button.paramsIncludeEvent // @ts-expect-error: ...
-                            ? (e) => button.buttonHandler(e, ...button.handlerParams)
+                            ? (e) => button.handler(e, ...button.handlerParams)
                             : // @ts-expect-error: ...
-                              () => button.buttonHandler(...button.handlerParams)
+                              () => button.handler(...button.handlerParams)
                         }
                       >
                         {button.buttonText}
