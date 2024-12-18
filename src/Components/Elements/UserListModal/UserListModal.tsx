@@ -48,13 +48,16 @@ const UserListModal = ({
 
   const getButtonTwoHandlerParams = (user: TUser) => {
     if (deleteFrom === "blocked-users") {
+      // params in handleUnblockUser()
       return [currentUser, user, blockedUsers, setBlockedUsers];
     }
 
     if (deleteFrom === "invitee-list") {
+      // params in handleRemoveInvitee()
       return [currentEvent, user, userArray, setUserArray];
     }
     // if deleteFrom === "rsvp-list"
+    // params in handleDeleteUserRSVP()
     return [currentEvent, user, undefined, userArray, setUserArray];
   };
 
