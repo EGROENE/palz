@@ -33,14 +33,6 @@ const OtherUserProfile = () => {
   const { username } = useParams();
   const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
 
-  /* const [currentOtherUserIsBlocked, setCurrentOtherUserIsBlocked] = useState<boolean>(
-    currentUser &&
-      currentOtherUser._id &&
-      currentUser?.blockedUsers.includes(currentOtherUser._id)
-      ? true
-      : false
-  ); */
-
   const currentOtherUserIsBlocked =
     blockedUsers && currentOtherUser._id && blockedUsers.includes(currentOtherUser._id);
 
