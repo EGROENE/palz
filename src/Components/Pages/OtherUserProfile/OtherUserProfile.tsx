@@ -89,17 +89,8 @@ const OtherUserProfile = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
-  /* Buttons at top - If currentUser has been blocked by currentOtherUser, show "The page you were looking for does not exist." (only should appear if user goes directly to that user's page). If currentUser has been blocked by another user, this user should not appear anywhere on the site (FindPalz, Palz lists of other users). When blocking, make TwoOptionsModal appear, warning that any friendship will be lost & that they won't be able to see each other's events. */
-
   const usersAreFriends: boolean =
-    currentUser &&
-    currentUser?._id &&
-    currentOtherUser &&
-    currentOtherUser?._id &&
-    currentOtherUser.friends.includes(currentUser._id) &&
-    friends?.includes(currentOtherUser._id)
-      ? true
-      : false;
+    currentOtherUser?._id && friends?.includes(currentOtherUser._id) ? true : false;
 
   const currentOtherUserFriends: TUser[] =
     currentOtherUser &&
