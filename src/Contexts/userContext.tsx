@@ -118,6 +118,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [friendRequestsReceived, setFriendRequestsReceived] = useSessionStorage<
     string[] | undefined
   >("friendRequestsReceived", currentUser?.friendRequestsReceived);
+  const [friends, setFriends] = useSessionStorage<string[] | undefined>(
+    "friends",
+    currentUser?.friends
+  );
   /////////////////////////////////////////////////////////////////////////////////
 
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
@@ -158,6 +162,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     setFriendRequestsSent(currentUser?.friendRequestsSent);
     setFriendRequestsReceived(currentUser?.friendRequestsReceived);
+    setFriends(currentUser?.friends);
   }, [currentUser?._id]);
 
   useEffect(() => {
@@ -939,13 +944,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     sender: TUser,
     receiver: TUser,
     friendRequestsReceived?: string[],
-    setFriendRequestsReceived?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    setFriendRequestsReceived?: React.Dispatch<
+      React.SetStateAction<string[] | undefined>
+    >,
+    friends?: string[],
+    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ): void => {
     e.preventDefault();
     setIsLoading(true);
 
     if (showFriendRequestResponseOptions) {
       setShowFriendRequestResponseOptions(false);
+    }
+
+    if (friends && setFriends && sender._id) {
+      setFriends(friends.concat(sender._id));
     }
 
     if (friendRequestsReceived && setFriendRequestsReceived) {
@@ -964,6 +977,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               border: "2px solid red",
             },
           });
+
+          if (friends && setFriends && sender._id) {
+            setFriends(friends);
+          }
+
           if (friendRequestsReceived && setFriendRequestsReceived) {
             setFriendRequestsReceived(friendRequestsReceived);
           }
@@ -979,6 +997,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                       border: "2px solid red",
                     },
                   });
+
+                  if (friends && setFriends && sender._id) {
+                    setFriends(friends);
+                  }
+
                   if (friendRequestsReceived && setFriendRequestsReceived) {
                     setFriendRequestsReceived(friendRequestsReceived);
                   }
@@ -998,6 +1021,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                               },
                             }
                           );
+
+                          if (friends && setFriends && sender._id) {
+                            setFriends(friends);
+                          }
+
                           if (friendRequestsReceived && setFriendRequestsReceived) {
                             setFriendRequestsReceived(friendRequestsReceived);
                           }
@@ -1021,6 +1049,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                     },
                                   }
                                 );
+
+                                if (friends && setFriends && sender._id) {
+                                  setFriends(friends);
+                                }
+
                                 if (friendRequestsReceived && setFriendRequestsReceived) {
                                   setFriendRequestsReceived(friendRequestsReceived);
                                 }
@@ -1132,13 +1165,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     user: TUser,
     friend: TUser,
-    displayedUsers?: (TUser | TEvent)[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<(TUser | TEvent)[]>>
+    friends?: string[],
+    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ): void => {
     e.preventDefault();
 
-    if (displayedUsers && setDisplayedUsers) {
-      setDisplayedUsers(displayedUsers.filter((user) => user._id !== friend._id));
+    if (friends && setFriends) {
+      setFriends(friends.filter((userID) => userID !== friend._id));
     }
 
     const removeUserFromFriendsFriendsArray = friend._id
@@ -1164,8 +1197,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             promise.then((response) => {
               if (!response.ok) {
                 allRequestsAreOK = false;
-                if (displayedUsers && setDisplayedUsers) {
-                  setDisplayedUsers(displayedUsers);
+                if (friends && setFriends) {
+                  setFriends(friends);
                 }
               }
             });
@@ -1183,8 +1216,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 },
               }
             );
-            if (displayedUsers && setDisplayedUsers) {
-              setDisplayedUsers(displayedUsers);
+            if (friends && setFriends) {
+              setFriends(friends);
             }
           } else {
             toast(`You have unfriended ${friend.firstName} ${friend.lastName}.`, {
@@ -1621,6 +1654,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    friends,
+    setFriends,
     friendRequestsSent,
     setFriendRequestsSent,
     friendRequestsReceived,

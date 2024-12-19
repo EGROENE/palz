@@ -146,6 +146,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  friends: string[] | undefined;
+  setFriends: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   friendRequestsSent: string[] | undefined;
   setFriendRequestsSent: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   friendRequestsReceived: string[] | undefined;
@@ -194,15 +196,19 @@ export type TUserContext = {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     user: TUser,
     friend: TUser,
-    displayedUsers?: (TUser | TEvent)[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<(TUser | TEvent)[]>>
+    friends?: string[],
+    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   handleAcceptFriendRequest: (
     e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
     friendRequestsReceived?: string[],
-    setFriendRequestsReceived?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    setFriendRequestsReceived?: React.Dispatch<
+      React.SetStateAction<string[] | undefined>
+    >,
+    friends?: string[],
+    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   handleRejectFriendRequest: (
     e: React.ChangeEvent<HTMLInputElement>,
