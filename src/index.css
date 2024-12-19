@@ -175,7 +175,7 @@ button {
   transition: border-color 0.25s;
   border: none;
   outline: none;
-  color: white;
+  color: var(--text-color);
   /* background-color: #111; */
   cursor: pointer;
   position: relative;
@@ -186,7 +186,7 @@ button {
   outline: none;
   position: relative;
   z-index: 1;
-  background: black;
+  background: var(--text-color-opposite);
 }
 
 .theme-element-container:hover {
