@@ -134,15 +134,42 @@ const OtherUserProfile = () => {
 
   // account for if user sent currentUser a FR
   const getFriendRequestButton = () => {
-    if (currentUserHasSentFriendRequest) {
+    if (!usersAreFriends) {
+      if (currentUserHasSentFriendRequest) {
+        return {
+          type: "retract request",
+          buttonText: (
+            <>
+              <i className="fas fa-user-minus"></i> Retract Request
+            </>
+          ),
+          handler: handleRetractFriendRequest,
+          handlerParams: [
+            currentUser,
+            currentOtherUser,
+            friendRequestsSent,
+            setFriendRequestsSent,
+          ],
+          paramsIncludeEvent: false,
+        };
+      }
+      if (currentUserHasReceivedFriendRequest) {
+        return {
+          type: "respond to friend request",
+          buttonText: "Accept/Decline Request",
+          handler: setShowFriendRequestResponseOptions,
+          handlerParams: [!showFriendRequestResponseOptions],
+          paramsIncludeEvent: false,
+        };
+      }
       return {
-        type: "retract request",
+        type: "add friend",
         buttonText: (
           <>
-            <i className="fas fa-user-minus"></i> Retract Request
+            <i className="fas fa-user-plus"></i> Add Friend
           </>
         ),
-        handler: handleRetractFriendRequest,
+        handler: handleSendFriendRequest,
         handlerParams: [
           currentUser,
           currentOtherUser,
@@ -152,31 +179,6 @@ const OtherUserProfile = () => {
         paramsIncludeEvent: false,
       };
     }
-    if (currentUserHasReceivedFriendRequest) {
-      return {
-        type: "respond to friend request",
-        buttonText: "Accept/Decline Request",
-        handler: setShowFriendRequestResponseOptions,
-        handlerParams: [!showFriendRequestResponseOptions],
-        paramsIncludeEvent: false,
-      };
-    }
-    return {
-      type: "add friend",
-      buttonText: (
-        <>
-          <i className="fas fa-user-plus"></i> Add Friend
-        </>
-      ),
-      handler: handleSendFriendRequest,
-      handlerParams: [
-        currentUser,
-        currentOtherUser,
-        friendRequestsSent,
-        setFriendRequestsSent,
-      ],
-      paramsIncludeEvent: false,
-    };
   };
   const friendRequestButton = getFriendRequestButton();
 
