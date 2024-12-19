@@ -123,15 +123,13 @@ const OtherUserProfile = () => {
       : false;
 
   const currentUserHasSentFriendRequest: boolean =
-    currentOtherUser && currentOtherUser._id && currentUser && currentUser._id
-      ? currentOtherUser.friendRequestsReceived.includes(currentUser._id) &&
-        currentUser.friendRequestsSent.includes(currentOtherUser._id)
+    currentOtherUser._id && friendRequestsSent?.includes(currentOtherUser._id)
+      ? true
       : false;
 
   const currentUserHasReceivedFriendRequest: boolean =
-    currentOtherUser && currentOtherUser._id && currentUser && currentUser._id
-      ? currentOtherUser.friendRequestsSent.includes(currentUser._id) &&
-        currentUser.friendRequestsReceived.includes(currentOtherUser._id)
+    currentOtherUser._id && friendRequestsReceived?.includes(currentOtherUser._id)
+      ? true
       : false;
 
   // account for if user sent currentUser a FR
@@ -180,6 +178,8 @@ const OtherUserProfile = () => {
       paramsIncludeEvent: false,
     };
   };
+  const friendRequestButton = getFriendRequestButton();
+
   // have array with msg btn, array with FR button, array w/ block button
   const messageButton = {
     type: "message",
@@ -188,7 +188,7 @@ const OtherUserProfile = () => {
     handlerParams: [],
     paramsIncludeEvent: false,
   };
-  const friendRequestButton = getFriendRequestButton();
+
   const unfriendButton = {
     type: "unfriend",
     buttonText: (
