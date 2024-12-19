@@ -29,6 +29,7 @@ const OtherUserProfile = () => {
     setBlockedUsers,
     friendRequestsReceived,
     setFriendRequestsReceived,
+    handleUnfriending,
   } = useUserContext();
   const { username } = useParams();
   const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
@@ -198,8 +199,8 @@ const OtherUserProfile = () => {
         <i className="fas fa-user-minus"></i> Unfriend
       </>
     ),
-    handler: undefined,
-    handlerParams: [],
+    handler: handleUnfriending,
+    handlerParams: [currentUser, currentOtherUser],
     paramsIncludeEvent: false,
   };
 
