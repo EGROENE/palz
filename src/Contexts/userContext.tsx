@@ -41,7 +41,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
 
-  /* Some values on currentUser are kept separately from currentUser. These will be compared to values on currentUser when user changes these in Settings to render certain form UI. User can reset these to original values. */
+  /* Some values on currentUser are kept separately from currentUser. These are initialized to corresponding values from DB. These will be compared to values in DB when user changes these in Settings to render certain form UI. They can also be used for optimistic rendering, in that they update quicker than state values that depend on request to DB going thru, then state values being set after that. Corresponding values in DB are still updated in the background; if these requests fail, then these parallel state values below will reset to what they were before the change.*/
   const [firstName, setFirstName, removeFirstName] = useSessionStorage<
     string | undefined
   >("firstName", "");
