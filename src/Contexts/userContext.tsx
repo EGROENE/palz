@@ -1651,6 +1651,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setCurrentOtherUser(null);
     resetLoginOrSignupFormFieldsAndErrors();
     setProfileImage("");
+    window.location.reload(); // reload pg in order to reduce memory usage
   };
 
   const userContextValues: TUserContext = {
