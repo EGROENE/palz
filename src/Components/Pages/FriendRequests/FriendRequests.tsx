@@ -35,6 +35,8 @@ const FriendRequests = () => {
     userCreatedAccount,
     logout,
     currentUser,
+    friends,
+    setFriends,
   } = useUserContext();
 
   const friendRequestsReceivedUSERS: TUser[] = allUsers.filter(
@@ -239,6 +241,8 @@ const FriendRequests = () => {
                           currentUser,
                           friendRequestsReceived,
                           setFriendRequestsReceived,
+                          friends,
+                          setFriends,
                         ]}
                         handlerOneNeedsEventParam={true}
                         buttonOneIsDisabled={isLoading}

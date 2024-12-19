@@ -30,6 +30,8 @@ const OtherUserProfile = () => {
     friendRequestsReceived,
     setFriendRequestsReceived,
     handleUnfriending,
+    friends,
+    setFriends,
   } = useUserContext();
   const { username } = useParams();
   const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
@@ -95,7 +97,7 @@ const OtherUserProfile = () => {
     currentOtherUser &&
     currentOtherUser?._id &&
     currentOtherUser.friends.includes(currentUser._id) &&
-    currentUser.friends.includes(currentOtherUser._id)
+    friends?.includes(currentOtherUser._id)
       ? true
       : false;
 
@@ -135,42 +137,15 @@ const OtherUserProfile = () => {
 
   // account for if user sent currentUser a FR
   const getFriendRequestButton = () => {
-    if (!usersAreFriends) {
-      if (currentUserHasSentFriendRequest) {
-        return {
-          type: "retract request",
-          buttonText: (
-            <>
-              <i className="fas fa-user-minus"></i> Retract Request
-            </>
-          ),
-          handler: handleRetractFriendRequest,
-          handlerParams: [
-            currentUser,
-            currentOtherUser,
-            friendRequestsSent,
-            setFriendRequestsSent,
-          ],
-          paramsIncludeEvent: false,
-        };
-      }
-      if (currentUserHasReceivedFriendRequest) {
-        return {
-          type: "respond to friend request",
-          buttonText: "Accept/Decline Request",
-          handler: setShowFriendRequestResponseOptions,
-          handlerParams: [!showFriendRequestResponseOptions],
-          paramsIncludeEvent: false,
-        };
-      }
+    if (currentUserHasSentFriendRequest) {
       return {
-        type: "add friend",
+        type: "retract request",
         buttonText: (
           <>
-            <i className="fas fa-user-plus"></i> Add Friend
+            <i className="fas fa-user-minus"></i> Retract Request
           </>
         ),
-        handler: handleSendFriendRequest,
+        handler: handleRetractFriendRequest,
         handlerParams: [
           currentUser,
           currentOtherUser,
@@ -180,6 +155,31 @@ const OtherUserProfile = () => {
         paramsIncludeEvent: false,
       };
     }
+    if (currentUserHasReceivedFriendRequest) {
+      return {
+        type: "respond to friend request",
+        buttonText: "Accept/Decline Request",
+        handler: setShowFriendRequestResponseOptions,
+        handlerParams: [!showFriendRequestResponseOptions],
+        paramsIncludeEvent: false,
+      };
+    }
+    return {
+      type: "add friend",
+      buttonText: (
+        <>
+          <i className="fas fa-user-plus"></i> Add Friend
+        </>
+      ),
+      handler: handleSendFriendRequest,
+      handlerParams: [
+        currentUser,
+        currentOtherUser,
+        friendRequestsSent,
+        setFriendRequestsSent,
+      ],
+      paramsIncludeEvent: false,
+    };
   };
   const friendRequestButton = getFriendRequestButton();
 
@@ -200,8 +200,8 @@ const OtherUserProfile = () => {
       </>
     ),
     handler: handleUnfriending,
-    handlerParams: [currentUser, currentOtherUser],
-    paramsIncludeEvent: false,
+    handlerParams: [currentUser, currentOtherUser, friends, setFriends],
+    paramsIncludeEvent: true,
   };
 
   const getBlockButton = () => {
@@ -274,6 +274,8 @@ const OtherUserProfile = () => {
             currentUser,
             friendRequestsReceived,
             setFriendRequestsReceived,
+            friends,
+            setFriends,
           ]}
           handlerTwoNeedsEventParam={true}
           closeHandler={setShowFriendRequestResponseOptions}

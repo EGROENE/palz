@@ -33,6 +33,7 @@ const DisplayedCardsPage = ({
     userCreatedAccount,
     blockedUsers,
     logout,
+    friends,
   } = useUserContext();
   const { allEvents, fetchAllEvents } = useEventContext();
 
@@ -351,7 +352,7 @@ const DisplayedCardsPage = ({
       currentUser?._id &&
       user._id &&
       user._id !== currentUser._id &&
-      !user.friends.includes(currentUser._id) &&
+      !friends?.includes(user._id) &&
       !user.blockedUsers.includes(currentUser._id) &&
       !blockedUsers?.includes(user._id)
   );
@@ -460,8 +461,8 @@ const DisplayedCardsPage = ({
 
   // FRIENDS VARIABLES
   const currentUserPalz: TUser[] = [];
-  if (currentUser?.friends) {
-    for (const id of currentUser.friends) {
+  if (friends) {
+    for (const id of friends) {
       currentUserPalz.push(allUsers.filter((user) => user._id === id)[0]);
     }
   }
@@ -496,6 +497,18 @@ const DisplayedCardsPage = ({
   };
 
   const resetDisplayedFriends = (): void => setDisplayedItems(currentUserPalz);
+
+  // Upon change of friends, resetDisplayedFriends or -PotentialFriends, depending on usedFor. Account in resetDisplayedFriends for any existing filters or search terms, or clear all filters & search terms when resetting
+  useEffect(() => {
+    handleClearActiveFilters();
+    handleClearSearchTerm();
+    if (usedFor === "my-friends") {
+      resetDisplayedFriends();
+    }
+    if (usedFor === "potential-friends") {
+      resetDisplayedPotentialFriends();
+    }
+  }, [friends]);
   ////////////////////////////////////////////////////////////
 
   const navigation = useNavigate();

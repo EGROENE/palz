@@ -9,9 +9,11 @@ import TwoOptionsInterface from "../TwoOptionsInterface/TwoOptionsInterface";
 import { Link } from "react-router-dom";
 
 const UserCard = ({ user }: { user: TUser }) => {
-  const { displayedItems, setDisplayedItems, isLoading } = useMainContext();
+  const { isLoading } = useMainContext();
   const { currentUser, allUsers } = useUserContext();
   const {
+    friends,
+    setFriends,
     handleUnfriending,
     handleRejectFriendRequest,
     handleAcceptFriendRequest,
@@ -24,6 +26,7 @@ const UserCard = ({ user }: { user: TUser }) => {
     friendRequestsSent,
     setFriendRequestsSent,
     friendRequestsReceived,
+    setFriendRequestsReceived,
   } = useUserContext();
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
   const currentUserUpdated: TUser = allUsers.filter(
@@ -85,7 +88,7 @@ const UserCard = ({ user }: { user: TUser }) => {
       user &&
       user._id &&
       user.friends.includes(currentUser._id) &&
-      currentUserUpdated.friends.includes(user._id)
+      friends?.includes(user._id)
     ) {
       return (
         <>
@@ -109,7 +112,7 @@ const UserCard = ({ user }: { user: TUser }) => {
     currentUser._id &&
     user &&
     user._id &&
-    currentUserUpdated?.friends.includes(user._id) &&
+    friends?.includes(user._id) &&
     user.friends.includes(currentUser._id);
 
   const noConnectionBetweenUserAndCurrentUser =
@@ -129,8 +132,8 @@ const UserCard = ({ user }: { user: TUser }) => {
             buttonOneHandlerParams={[
               currentOtherUser,
               currentUser,
-              displayedItems,
-              setDisplayedItems,
+              friendRequestsReceived,
+              setFriendRequestsReceived,
             ]}
             handlerOneNeedsEventParam={true}
             buttonTwoText="Accept"
@@ -138,8 +141,10 @@ const UserCard = ({ user }: { user: TUser }) => {
             buttonTwoHandlerParams={[
               currentOtherUser,
               currentUser,
-              displayedItems,
-              setDisplayedItems,
+              friendRequestsReceived,
+              setFriendRequestsReceived,
+              friends,
+              setFriends,
             ]}
             handlerTwoNeedsEventParam={true}
             closeHandler={setShowFriendRequestResponseOptions}
@@ -188,13 +193,7 @@ const UserCard = ({ user }: { user: TUser }) => {
             }
             onClick={(e) => {
               if (currentUserAndUserAreFriends) {
-                handleUnfriending(
-                  e,
-                  currentUser,
-                  user,
-                  displayedItems,
-                  setDisplayedItems
-                );
+                handleUnfriending(e, currentUser, user, friends, setFriends);
               }
               if (currentUserSentFriendRequest && currentUser) {
                 handleRetractFriendRequest(
