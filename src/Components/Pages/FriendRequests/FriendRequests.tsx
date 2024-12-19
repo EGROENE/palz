@@ -154,7 +154,7 @@ const FriendRequests = () => {
                       : undefined
                   }
                 >
-                  Sent
+                  {`Sent (${friendRequestsSent.length})`}
                 </header>
                 {requestsVisible === "sent" &&
                   friendRequestsReceived &&
@@ -182,7 +182,7 @@ const FriendRequests = () => {
                       : undefined
                   }
                 >
-                  Received
+                  {`Received (${friendRequestsReceived.length})`}
                 </header>
                 {requestsVisible === "received" &&
                   friendRequestsSent &&
