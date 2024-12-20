@@ -100,6 +100,27 @@ const EditUserInfoForm = ({
     setUserAbout,
     userAboutError,
     setUserAboutError,
+    whoCanSeeLocation,
+    displayFriendCount,
+    whoCanSeeFriendsList,
+    whoCanSeePhoneNumber,
+    whoCanSeeEmailAddress,
+    whoCanSeeFacebook,
+    whoCanSeeX,
+    whoCanSeeInstagram,
+    whoCanSeeEventsOrganized,
+    whoCanSeeEventsInterestedIn,
+    setWhoCanMessage,
+    setDisplayFriendCount,
+    setWhoCanSeeLocation,
+    setWhoCanSeeFriendsList,
+    setWhoCanSeePhoneNumber,
+    setWhoCanSeeEmailAddress,
+    setWhoCanSeeFacebook,
+    setWhoCanSeeX,
+    setWhoCanSeeInstagram,
+    setWhoCanSeeEventsOrganized,
+    setWhoCanSeeEventsInterestedIn,
   } = useUserContext();
 
   // REFS
@@ -203,6 +224,17 @@ const EditUserInfoForm = ({
     setWhoCanAddUserAsOrganizer(currentUser?.whoCanAddUserAsOrganizer);
     setWhoCanInviteUser(currentUser?.whoCanInviteUser);
     setProfileVisibleTo(currentUser?.profileVisibleTo);
+    setWhoCanMessage(currentUser?.whoCanMessage);
+    setDisplayFriendCount(currentUser?.displayFriendCount);
+    setWhoCanSeeLocation(currentUser?.whoCanSeeLocation);
+    setWhoCanSeeFriendsList(currentUser?.whoCanSeeFriendsList);
+    setWhoCanSeePhoneNumber(currentUser?.whoCanSeePhoneNumber);
+    setWhoCanSeeEmailAddress(currentUser?.whoCanSeeEmailAddress);
+    setWhoCanSeeFacebook(currentUser?.whoCanSeeFacebook);
+    setWhoCanSeeX(currentUser?.whoCanSeeX);
+    setWhoCanSeeInstagram(currentUser?.whoCanSeeInstagram);
+    setWhoCanSeeEventsOrganized(currentUser?.whoCanSeeEventsOrganized);
+    setWhoCanSeeEventsInterestedIn(currentUser?.whoCanSeeEventsInterestedIn);
   };
 
   // If currentUser has given a phone code, set limits for length of rest of number based on that
@@ -1055,7 +1087,17 @@ const EditUserInfoForm = ({
     userAbout !== currentUser?.about ||
     whoCanAddUserAsOrganizer !== currentUser?.whoCanAddUserAsOrganizer ||
     whoCanInviteUser !== currentUser?.whoCanInviteUser ||
-    profileVisibleTo !== currentUser?.profileVisibleTo;
+    profileVisibleTo !== currentUser?.profileVisibleTo ||
+    whoCanSeeLocation !== currentUser?.whoCanSeeLocation ||
+    displayFriendCount !== currentUser?.displayFriendCount ||
+    whoCanSeeFriendsList !== currentUser?.whoCanSeeFriendsList ||
+    whoCanSeePhoneNumber !== currentUser?.whoCanSeePhoneNumber ||
+    whoCanSeeEmailAddress !== currentUser?.whoCanSeeEmailAddress ||
+    whoCanSeeFacebook !== currentUser?.whoCanSeeFacebook ||
+    whoCanSeeX !== currentUser?.whoCanSeeX ||
+    whoCanSeeInstagram !== currentUser?.whoCanSeeInstagram ||
+    whoCanSeeEventsOrganized !== currentUser?.whoCanSeeEventsOrganized ||
+    whoCanSeeEventsInterestedIn !== currentUser?.whoCanSeeEventsInterestedIn;
 
   return (
     <>
