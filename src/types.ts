@@ -194,9 +194,7 @@ export type TMainContext = {
     displayedItemsArray: any[],
     displayedItemsArrayFiltered: any[],
     displayedItemsCountInterval: number | undefined,
-    e?:
-      | React.UIEvent<HTMLUListElement, React.UIEvent>
-      | React.UIEvent<HTMLDivElement, React.UIEvent>
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ) => void;
   displayedItems: (TUser | TEvent)[];
   setDisplayedItems: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
@@ -521,14 +519,14 @@ export type TUserContext = {
 
 export type TEventContext = {
   handleRemoveInvitee: (
-    e: React.MouseEvent<HTMLSpanElement, React.MouseEvent>,
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     user: TUser | null,
     displayedUsers?: TUser[],
     setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
   ) => void;
   handleDeclineInvitation: (
-    e: React.MouseEvent<HTMLSpanElement, React.MouseEvent>,
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent
   ) => void;
   eventDeletionIsInProgress: boolean;
@@ -543,12 +541,12 @@ export type TEventContext = {
   eventEditIsInProgress: boolean;
   setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   handleAddUserRSVP: (
-    e: React.MouseEvent<HTMLSpanElement, React.MouseEvent>,
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>
   ) => void;
   handleDeleteUserRSVP: (
-    e: React.MouseEvent<HTMLSpanElement, React.MouseEvent>,
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     user: TUser,
     setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>,
