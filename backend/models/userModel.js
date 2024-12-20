@@ -111,6 +111,16 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  whoCanSeeLocation: { type: String, required: true },
+  displayFriendCount: { type: Boolean, required: true },
+  whoCanSeeFriendsList: { type: String, required: true },
+  whoCanSeePhoneNumber: { type: String, required: true },
+  whoCanSeeEmailAddress: { type: String, required: true },
+  whoCanSeeFacebook: { type: String, required: true },
+  whoCanSeeX: { type: String, required: true },
+  whoCanSeeInstagram: { type: String, required: true },
+  whoCanSeeEventsOrganized: { type: String, required: true },
+  whoCanSeeEventsInterestedIn: { type: String, required: true },
 });
 
 module.exports = mongoose.model("User", userSchema);
