@@ -48,6 +48,16 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "whoCanAddUserAsOrganizer": newUserData.whoCanAddUserAsOrganizer,
     "whoCanMessage": newUserData.whoCanMessage,
     "whoCanInviteUser": newUserData.whoCanInviteUser,
+    "whoCanSeeLocation": newUserData.whoCanSeeLocation,
+    "displayFriendCount": newUserData.displayFriendCount,
+    "whoCanSeeFriendsList": newUserData.whoCanSeeFriendsList,
+    "whoCanSeePhoneNumber": newUserData.whoCanSeePhoneNumber,
+    "whoCanSeeEmailAddress": newUserData.whoCanSeeEmailAddress,
+    "whoCanSeeFacebook": newUserData.whoCanSeeFacebook,
+    "whoCanSeeX": newUserData.whoCanSeeX,
+    "whoCanSeeInstagram": newUserData.whoCanSeeInstagram,
+    "whoCanSeeEventsOrganized": newUserData.whoCanSeeEventsOrganized,
+    "whoCanSeeEventsInterestedIn": newUserData.whoCanSeeEventsInterestedIn,
   });
 
   return fetch("http://localhost:4000/palz/users/", {
