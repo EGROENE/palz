@@ -65,6 +65,16 @@ const createNewUser = async (req, res) => {
     username,
     friends,
     emailAddress,
+    whoCanSeeLocation,
+    displayFriendCount,
+    whoCanSeeFriendsList,
+    whoCanSeePhoneNumber,
+    whoCanSeeEmailAddress,
+    whoCanSeeFacebook,
+    whoCanSeeX,
+    whoCanSeeInstagram,
+    whoCanSeeEventsOrganized,
+    whoCanSeeEventsInterestedIn,
   } = req.body;
 
   // add document to DB:
@@ -97,6 +107,16 @@ const createNewUser = async (req, res) => {
       username,
       friends,
       emailAddress,
+      whoCanSeeLocation,
+      displayFriendCount,
+      whoCanSeeFriendsList,
+      whoCanSeePhoneNumber,
+      whoCanSeeEmailAddress,
+      whoCanSeeFacebook,
+      whoCanSeeX,
+      whoCanSeeInstagram,
+      whoCanSeeEventsOrganized,
+      whoCanSeeEventsInterestedIn,
     });
     res.status(200).json(user);
   } catch (error) {
