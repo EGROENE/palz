@@ -36,6 +36,41 @@ export type TUser = {
   friendRequestsSent: string[];
   blockedUsers: string[];
   whoCanMessage: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  whoCanSeeLocation: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  displayFriendCount: boolean;
+  whoCanSeeFriendsList:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  whoCanSeePhoneNumber:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  whoCanSeeEmailAddress:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  whoCanSeeFacebook: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  whoCanSeeX: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  whoCanSeeInstagram: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  whoCanSeeEventsOrganized:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  whoCanSeeEventsInterestedIn:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
 };
 
 export type TEvent = {
@@ -85,6 +120,41 @@ export type TUserValuesToUpdate = {
   whoCanInviteUser?: "anyone" | "friends" | "nobody" | undefined;
   profileVisibleTo?: "anyone" | "friends" | "friends of friends" | undefined;
   whoCanMessage?: "anyone" | "friends" | "nobody" | "friends of friends" | undefined;
+  whoCanSeeLocation?: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  displayFriendCount?: boolean;
+  whoCanSeeFriendsList?:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  whoCanSeePhoneNumber?:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  whoCanSeeEmailAddress?:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  whoCanSeeFacebook?: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  whoCanSeeX?: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  whoCanSeeInstagram?: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  whoCanSeeEventsOrganized?:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  whoCanSeeEventsInterestedIn?:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
 };
 
 export type TEventValuesToUpdate = {
@@ -124,7 +194,9 @@ export type TMainContext = {
     displayedItemsArray: any[],
     displayedItemsArrayFiltered: any[],
     displayedItemsCountInterval: number | undefined,
-    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
+    e?:
+      | React.UIEvent<HTMLUListElement, React.UIEvent>
+      | React.UIEvent<HTMLDivElement, React.UIEvent>
   ) => void;
   displayedItems: (TUser | TEvent)[];
   setDisplayedItems: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
@@ -358,6 +430,87 @@ export type TUserContext = {
       "anyone" | "friends" | "friends of friends" | "nobody" | undefined
     >
   >;
+  whoCanSeeLocation: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  setWhoCanSeeLocation: React.Dispatch<
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
+  >;
+  displayFriendCount: boolean | undefined;
+  setDisplayFriendCount: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  whoCanSeeFriendsList:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  setWhoCanSeeFriendsList: React.Dispatch<
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
+  >;
+  whoCanSeePhoneNumber:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  setWhoCanSeePhoneNumber: React.Dispatch<
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
+  >;
+  whoCanSeeEmailAddress:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  setWhoCanSeeEmailAddress: React.Dispatch<
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
+  >;
+  whoCanSeeFacebook: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  setWhoCanSeeFacebook: React.Dispatch<
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
+  >;
+  whoCanSeeX: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  setWhoCanSeeX: React.Dispatch<
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
+  >;
+  whoCanSeeInstagram: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
+  setWhoCanSeeInstagram: React.Dispatch<
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
+  >;
+  whoCanSeeEventsOrganized:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  setWhoCanSeeEventsOrganized: React.Dispatch<
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
+  >;
+  whoCanSeeEventsInterestedIn:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  setWhoCanSeeEventsInterestedIn: React.Dispatch<
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
+  >;
   fetchAllUsers: () => Promise<void>;
   userCreatedAccount: null | boolean;
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
@@ -368,14 +521,14 @@ export type TUserContext = {
 
 export type TEventContext = {
   handleRemoveInvitee: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    e: React.MouseEvent<HTMLSpanElement, React.MouseEvent>,
     event: TEvent,
     user: TUser | null,
     displayedUsers?: TUser[],
     setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
   ) => void;
   handleDeclineInvitation: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    e: React.MouseEvent<HTMLSpanElement, React.MouseEvent>,
     event: TEvent
   ) => void;
   eventDeletionIsInProgress: boolean;
@@ -390,12 +543,12 @@ export type TEventContext = {
   eventEditIsInProgress: boolean;
   setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   handleAddUserRSVP: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    e: React.MouseEvent<HTMLSpanElement, React.MouseEvent>,
     event: TEvent,
     setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>
   ) => void;
   handleDeleteUserRSVP: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    e: React.MouseEvent<HTMLSpanElement, React.MouseEvent>,
     event: TEvent,
     user: TUser,
     setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>,
