@@ -108,6 +108,36 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [whoCanMessage, setWhoCanMessage] = useSessionStorage<
     "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanMessage", "anyone");
+  const [displayFriendCount, setDisplayFriendCount] = useSessionStorage<
+    boolean | undefined
+  >("displayFriendCount", true);
+  const [whoCanSeeLocation, setWhoCanSeeLocation] = useSessionStorage<
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+  >("whoCanSeeLocation", "nobody");
+  const [whoCanSeeFriendsList, setWhoCanSeeFriendsList] = useSessionStorage<
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+  >("whoCanSeeFriendsList", "nobody");
+  const [whoCanSeePhoneNumber, setWhoCanSeePhoneNumber] = useSessionStorage<
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+  >("whoCanSeePhoneNumber", "nobody");
+  const [whoCanSeeEmailAddress, setWhoCanSeeEmailAddress] = useSessionStorage<
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+  >("whoCanSeeEmailAddress", "nobody");
+  const [whoCanSeeFacebook, setWhoCanSeeFacebook] = useSessionStorage<
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+  >("whoCanSeeFacebook", "nobody");
+  const [whoCanSeeX, setWhoCanSeeX] = useSessionStorage<
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+  >("whoCanSeeX", "nobody");
+  const [whoCanSeeInstagram, setWhoCanSeeInstagram] = useSessionStorage<
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+  >("whoCanSeeInstagram", "nobody");
+  const [whoCanSeeEventsOrganized, setWhoCanSeeEventsOrganized] = useSessionStorage<
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+  >("whoCanSeeEventsOrganized", "nobody");
+  const [whoCanSeeEventsInterestedIn, setWhoCanSeeEventsInterestedIn] = useSessionStorage<
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+  >("whoCanSeeEventsInterestedIn", "nobody");
   const [blockedUsers, setBlockedUsers] = useSessionStorage<string[] | null>(
     "blockedUsers",
     currentUser && currentUser.blockedUsers
@@ -202,6 +232,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     whoCanInviteUser: "anyone",
     profileVisibleTo: "anyone",
     whoCanMessage: "anyone",
+    whoCanSeeLocation: "nobody",
+    displayFriendCount: true,
+    whoCanSeeFriendsList: "nobody",
+    whoCanSeePhoneNumber: "nobody",
+    whoCanSeeEmailAddress: "nobody",
+    whoCanSeeFacebook: "nobody",
+    whoCanSeeX: "nobody",
+    whoCanSeeInstagram: "nobody",
+    whoCanSeeEventsOrganized: "nobody",
+    whoCanSeeEventsInterestedIn: "nobody",
     friendRequestsReceived: [],
     friendRequestsSent: [],
     blockedUsers: [],
@@ -1571,6 +1611,36 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     ...(whoCanMessage !== currentUser?.whoCanMessage && {
       whoCanMessage: whoCanMessage,
     }),
+    ...(whoCanSeeLocation !== currentUser?.whoCanSeeLocation && {
+      whoCanSeeLocation: whoCanSeeLocation,
+    }),
+    ...(displayFriendCount !== currentUser?.displayFriendCount && {
+      displayFriendCount: displayFriendCount,
+    }),
+    ...(whoCanSeeFriendsList !== currentUser?.whoCanSeeFriendsList && {
+      whoCanSeeFriendsList: whoCanSeeFriendsList,
+    }),
+    ...(whoCanSeePhoneNumber !== currentUser?.whoCanSeePhoneNumber && {
+      whoCanSeePhoneNumber: whoCanSeePhoneNumber,
+    }),
+    ...(whoCanSeeEmailAddress !== currentUser?.whoCanSeeEmailAddress && {
+      whoCanSeeEmailAddress: whoCanSeeEmailAddress,
+    }),
+    ...(whoCanSeeFacebook !== currentUser?.whoCanSeeFacebook && {
+      whoCanSeeFacebook: whoCanSeeFacebook,
+    }),
+    ...(whoCanSeeX !== currentUser?.whoCanSeeX && {
+      whoCanSeeX: whoCanSeeX,
+    }),
+    ...(whoCanSeeInstagram !== currentUser?.whoCanSeeInstagram && {
+      whoCanSeeInstagram: whoCanSeeInstagram,
+    }),
+    ...(whoCanSeeEventsOrganized !== currentUser?.whoCanSeeEventsOrganized && {
+      whoCanSeeEventsOrganized: whoCanSeeEventsOrganized,
+    }),
+    ...(whoCanSeeEventsInterestedIn !== currentUser?.whoCanSeeEventsInterestedIn && {
+      whoCanSeeEventsInterestedIn: whoCanSeeEventsInterestedIn,
+    }),
   };
 
   const handleSignupOrLoginFormSubmission = (
@@ -1603,6 +1673,20 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setInstagram(userData.instagram);
       setX(userData.x);
       setUserAbout(userData.about);
+      setWhoCanAddUserAsOrganizer(userData.whoCanAddUserAsOrganizer);
+      setWhoCanInviteUser(userData.whoCanInviteUser);
+      setProfileVisibleTo(userData.profileVisibleTo);
+      setWhoCanMessage(userData.whoCanMessage);
+      setDisplayFriendCount(userData.displayFriendCount);
+      setWhoCanSeeLocation(userData.whoCanSeeLocation);
+      setWhoCanSeeFriendsList(userData.whoCanSeeFriendsList);
+      setWhoCanSeePhoneNumber(userData.whoCanSeePhoneNumber);
+      setWhoCanSeeEmailAddress(userData.whoCanSeeEmailAddress);
+      setWhoCanSeeFacebook(userData.whoCanSeeFacebook);
+      setWhoCanSeeX(userData.whoCanSeeX);
+      setWhoCanSeeInstagram(userData.whoCanSeeInstagram);
+      setWhoCanSeeEventsOrganized(userData.whoCanSeeEventsOrganized);
+      setWhoCanSeeEventsInterestedIn(userData.whoCanSeeEventsInterestedIn);
     } else {
       setUserCreatedAccount(false);
       if (emailAddress !== "") {
@@ -1626,6 +1710,19 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setInstagram(currentUser?.instagram);
       setX(currentUser?.x);
       setUserAbout(currentUser?.about);
+      setWhoCanAddUserAsOrganizer(currentUser?.whoCanAddUserAsOrganizer);
+      setProfileVisibleTo(currentUser?.profileVisibleTo);
+      setWhoCanMessage(currentUser?.whoCanMessage);
+      setDisplayFriendCount(currentUser?.displayFriendCount);
+      setWhoCanSeeLocation(currentUser?.whoCanSeeLocation);
+      setWhoCanSeeFriendsList(currentUser?.whoCanSeeFriendsList);
+      setWhoCanSeePhoneNumber(currentUser?.whoCanSeePhoneNumber);
+      setWhoCanSeeEmailAddress(currentUser?.whoCanSeeEmailAddress);
+      setWhoCanSeeFacebook(currentUser?.whoCanSeeFacebook);
+      setWhoCanSeeX(currentUser?.whoCanSeeX);
+      setWhoCanSeeInstagram(currentUser?.whoCanSeeInstagram);
+      setWhoCanSeeEventsOrganized(currentUser?.whoCanSeeEventsOrganized);
+      setWhoCanSeeEventsInterestedIn(currentUser?.whoCanSeeEventsInterestedIn);
     }
     setFirstNameError("");
     setLastNameError("");
@@ -1655,6 +1752,26 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    displayFriendCount,
+    setDisplayFriendCount,
+    whoCanSeeLocation,
+    setWhoCanSeeLocation,
+    whoCanSeeFriendsList,
+    setWhoCanSeeFriendsList,
+    whoCanSeePhoneNumber,
+    setWhoCanSeePhoneNumber,
+    whoCanSeeEmailAddress,
+    setWhoCanSeeEmailAddress,
+    whoCanSeeFacebook,
+    setWhoCanSeeFacebook,
+    whoCanSeeX,
+    setWhoCanSeeX,
+    whoCanSeeInstagram,
+    setWhoCanSeeInstagram,
+    whoCanSeeEventsOrganized,
+    setWhoCanSeeEventsOrganized,
+    whoCanSeeEventsInterestedIn,
+    setWhoCanSeeEventsInterestedIn,
     friends,
     setFriends,
     friendRequestsSent,
