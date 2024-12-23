@@ -30,13 +30,6 @@
   top: 12.5rem;
 }
 
-.sidebar img {
-  max-height: 15rem;
-  height: 15rem;
-  width: 100%;
-  object-fit: cover;
-}
-
 .sidebarOption {
   font-weight: 700;
   font-size: 1.1rem;
@@ -53,6 +46,10 @@
 
 .profileImageSidebar {
   width: 18rem;
+  max-height: 15rem;
+  height: 15rem;
+  width: 100%;
+  object-fit: cover;
 }
 
 .sidebarNamesContainer {
