@@ -53,7 +53,10 @@
 
 .kopfzeile img {
   border-radius: 10px;
+  width: 18rem;
   height: 100%;
+  width: 30rem;
+  object-fit: cover;
 }
 
 /* .kopfzeile div {
