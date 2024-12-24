@@ -196,9 +196,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   }, [currentUser?._id]);
 
   useEffect(() => {
-    fetchAllUsers();
     // Ensure currentUser is up-to-date:
-    setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
+    fetchAllUsers().then(() => {
+      if (currentUser) {
+        setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
+      }
+    });
   }, [allUsers]);
 
   const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
@@ -1654,6 +1657,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       toggleHidePassword();
     }
     if (isOnSignup) {
+      console.log(userData);
       handleNewAccountCreation(userData);
       setUserCreatedAccount(true);
       setCurrentUser(userData);
