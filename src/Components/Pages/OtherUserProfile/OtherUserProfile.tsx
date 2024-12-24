@@ -7,6 +7,7 @@ import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import styles from "./styles.module.css";
 import { TThemeColor, TUser } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
+import { countries } from "../../../constants";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
@@ -244,6 +245,48 @@ const OtherUserProfile = () => {
   };
   const displayedButtons = getDisplayedButtons();
 
+  const matchingCountryObject:
+    | {
+        country: string;
+        abbreviation: string;
+        phoneCode: string;
+      }
+    | undefined = countries.filter(
+    (country) => country.country === currentOtherUser.country
+  )[0];
+
+  const userCountryAbbreviation: string | undefined =
+    currentOtherUser.country !== "" && matchingCountryObject
+      ? matchingCountryObject.abbreviation
+      : undefined;
+
+  // get TUser object that matches each id in currentUser.friends:
+  let currentUserFriends: TUser[] = [];
+  if (currentUser?.friends) {
+    for (const friendID of currentUser.friends) {
+      currentUserFriends.push(allUsers.filter((u) => u._id === friendID)[0]);
+    }
+  }
+  // get TUser object that matches each id in friends array of each of currentUser's friends
+  let friendsOfCurrentUserFriends: TUser[] = [];
+  for (const friend of currentUserFriends) {
+    if (friend && friend.friends.length > 0) {
+      for (const friendID of friend.friends) {
+        const friendOfFriend: TUser | undefined = allUsers.filter(
+          (u) =>
+            friendID !== currentUser?._id &&
+            !currentUser?.friends.includes(friendID) &&
+            u._id === friendID
+        )[0];
+        /* Necessary to check that friendOfFriend is truthy b/c it would sometimes be undefined if no user in allUsers fit the criteria (without this check, undefined would be pushed to friendsOfFriends) */
+        if (friendOfFriend) {
+          friendsOfCurrentUserFriends.push(friendOfFriend);
+        }
+      }
+    }
+  }
+  const usersAreFriendsOfFriends = friendsOfCurrentUserFriends.includes(currentOtherUser);
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       {showFriendRequestResponseOptions && (
@@ -277,7 +320,7 @@ const OtherUserProfile = () => {
           className={styles.kopfzeile}
           style={{ borderBottom: `3px solid ${randomColor}` }}
         >
-          <div className="theme-element-container">
+          <div style={{ boxShadow: "unset" }} className="theme-element-container">
             <img
               src={
                 currentOtherUser.profileImage !== "" &&
@@ -292,6 +335,18 @@ const OtherUserProfile = () => {
               {currentOtherUser.firstName} {currentOtherUser.lastName}
             </header>
             <p>{currentOtherUser.username}</p>
+            {currentUser?._id &&
+              currentOtherUser.whoCanSeeLocation !== "nobody" &&
+              (currentOtherUser.whoCanSeeLocation === "anyone" ||
+                (currentOtherUser.whoCanSeeLocation === "friends of friends" &&
+                  usersAreFriendsOfFriends) ||
+                (currentOtherUser.whoCanSeeLocation === "friends" &&
+                  currentOtherUser.friends.includes(currentUser._id))) && (
+                <div className={styles.userLocationContainer}>
+                  <p>{`${currentOtherUser.city}, ${currentOtherUser.stateProvince}`}</p>
+                  <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
+                </div>
+              )}
             <div className={styles.actionButtonsContainer}>
               {displayedButtons.map(
                 (button) =>
