@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { TUser, TThemeColor } from "../../../types";
@@ -9,7 +8,6 @@ import toast from "react-hot-toast";
 import Methods from "../../../methods";
 
 const FriendRequests = () => {
-  const navigation = useNavigate();
   const {
     showSidebar,
     setShowSidebar,
@@ -89,7 +87,6 @@ const FriendRequests = () => {
 
   useEffect(() => {
     if (userCreatedAccount === null) {
-      navigation(`/`);
       logout();
       toast.error("Please log in before accessing this page.", {
         style: {

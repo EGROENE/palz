@@ -1747,6 +1747,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = (): void => {
+    navigation("/");
     setUserCreatedAccount(null);
     setCurrentUser(null);
     setCurrentOtherUser(null);

@@ -57,7 +57,6 @@ const EventPage = () => {
         navigation(`/${currentUser.username}`);
       } else {
         logout();
-        navigation("/");
       }
     }
 
@@ -152,7 +151,7 @@ const EventPage = () => {
         <>
           {showInvitees && (
             <UserListModal
-            renderButtonOne={true}
+              renderButtonOne={true}
               closeModalMethod={setShowInvitees}
               header="Invitees"
               handleDeletion={handleRemoveInvitee}
@@ -163,7 +162,7 @@ const EventPage = () => {
           )}
           {showRSVPs && (
             <UserListModal
-            renderButtonOne={true}
+              renderButtonOne={true}
               closeModalMethod={setShowRSVPs}
               header="RSVPs"
               handleDeletion={handleDeleteUserRSVP}

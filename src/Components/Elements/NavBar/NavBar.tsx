@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import styles from "./styles.module.css";
@@ -7,10 +7,8 @@ import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 const NavBar = () => {
   const { showSidebar, setShowSidebar } = useMainContext();
   const { logout, profileImage, currentUser, userCreatedAccount } = useUserContext();
-  const navigation = useNavigate();
 
   const handleLogout = () => {
-    navigation("/");
     logout();
   };
 

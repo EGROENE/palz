@@ -36,7 +36,6 @@ const AddEventPage = () => {
           border: "2px solid red",
         },
       });
-      navigation("/");
       logout();
     }
   }, [currentUser, navigation, userCreatedAccount]);

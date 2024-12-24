@@ -24,7 +24,6 @@ const UsersEvents = () => {
           border: "2px solid red",
         },
       });
-      navigation("/");
     }
   }, [currentUser, navigation, userCreatedAccount]);
 

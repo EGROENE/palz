@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import EditUserInfoForm from "../../Forms/EditUserInfoForm/EditUserInfoForm";
@@ -18,7 +17,6 @@ const UserSettings = () => {
   const [showBlockedUsers, setShowBlockedUsers] = useState<boolean>(false);
   // Set random color:
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-  const navigation = useNavigate();
   useEffect(() => {
     if (!currentUser) {
       toast.error("Please log in before accessing this page.", {
@@ -28,7 +26,6 @@ const UserSettings = () => {
           border: "2px solid red",
         },
       });
-      navigation("/");
       logout();
     }
 
@@ -211,7 +208,6 @@ const UserSettings = () => {
                   },
                 });
                 logout();
-                navigation("/");
                 fetchAllEvents();
               }
             })

@@ -64,7 +64,6 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
         },
       });
       logout();
-      navigation("/");
     }
   }, [currentEvent, navigation]);
 
