@@ -8,10 +8,6 @@ const NavBar = () => {
   const { showSidebar, setShowSidebar } = useMainContext();
   const { logout, profileImage, currentUser, userCreatedAccount } = useUserContext();
 
-  const handleLogout = () => {
-    logout();
-  };
-
   return (
     <nav>
       <ul className={styles.navbar}>
@@ -28,7 +24,7 @@ const NavBar = () => {
           <Link to={""}>Terms & Conditions</Link>
         </li>
         {userCreatedAccount !== null ? (
-          <li onClick={() => handleLogout()}>
+          <li onClick={() => logout()}>
             Log Out<i className="fas fa-sign-out-alt"></i>
           </li>
         ) : (
