@@ -24,7 +24,6 @@ const EditUserInfoForm = ({
   const {
     currentUser,
     setCurrentUser,
-    fetchAllUsers,
     allUsers,
     valuesToUpdate,
     whoCanAddUserAsOrganizer,
@@ -163,11 +162,14 @@ const EditUserInfoForm = ({
   >();
 
   // If user data has changed, setCurrentUser:
+  // Every item on TUser object that can be changed in this form should be in dependency array
   useEffect(() => {
-    if (username === currentUser?.username) {
-      setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
-    } else {
-      setCurrentUser(allUsers.filter((user) => user.emailAddress === emailAddress)[0]);
+    if (allUsers) {
+      if (username === currentUser?.username) {
+        setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+      } else {
+        setCurrentUser(allUsers.filter((user) => user.emailAddress === emailAddress)[0]);
+      }
     }
   }, [
     setCurrentUser,
@@ -254,14 +256,16 @@ const EditUserInfoForm = ({
     e.preventDefault(); // prevent page from auto-reloading after submitting edit form
 
     /* Get most-current allUsers (in case other users have updated their un or email after current user logged in & before they submitted changes to their info).*/
-    fetchAllUsers();
+    //fetchAllUsers();
 
     /* If un or email address already exists & doesn't belong to current user, set error for that field saying as much. If not, make patch request w/ updated infos (done below) */
     const usernameExists =
+      allUsers &&
       allUsers.map((user) => user.username).includes(username) &&
       currentUser?.username !== username;
 
     const emailAddressExists =
+      allUsers &&
       allUsers.map((user) => user.emailAddress).includes(emailAddress) &&
       currentUser?.emailAddress !== emailAddress;
 
@@ -269,17 +273,18 @@ const EditUserInfoForm = ({
       phoneCountryCode && phoneNumberWithoutCountryCode
         ? phoneCountryCode + phoneNumberWithoutCountryCode
         : undefined;
-    const phoneNumberExists = fullPhoneNumber
-      ? allUsers
-          .map((user) => {
-            return user.phoneCountryCode + user.phoneNumberWithoutCountryCode;
-          })
-          .includes(fullPhoneNumber) &&
-        currentUser?.phoneCountryCode &&
-        currentUser.phoneNumberWithoutCountryCode &&
-        currentUser?.phoneCountryCode + currentUser?.phoneNumberWithoutCountryCode !==
-          fullPhoneNumber
-      : undefined;
+    const phoneNumberExists =
+      fullPhoneNumber && allUsers
+        ? allUsers
+            .map((user) => {
+              return user.phoneCountryCode + user.phoneNumberWithoutCountryCode;
+            })
+            .includes(fullPhoneNumber) &&
+          currentUser?.phoneCountryCode &&
+          currentUser.phoneNumberWithoutCountryCode &&
+          currentUser?.phoneCountryCode + currentUser?.phoneNumberWithoutCountryCode !==
+            fullPhoneNumber
+        : undefined;
 
     if (usernameExists) {
       setUsernameError("Username already exists");
@@ -304,7 +309,7 @@ const EditUserInfoForm = ({
                 border: "2px solid red",
               },
             });
-            fetchAllUsers();
+            //fetchAllUsers();
           } else {
             toast.success("Profile info updated", {
               style: {
@@ -381,11 +386,13 @@ const EditUserInfoForm = ({
     value: string | undefined,
     countryCode: string // used instead of phoneCountryCode b/c it's more current
   ): void => {
-    fetchAllUsers();
-    const phoneNumberTaken: boolean = allUsers
-      .filter((user) => user._id !== currentUser?._id)
-      .map((user) => user.phoneCountryCode + user.phoneNumberWithoutCountryCode)
-      .includes(countryCode + value);
+    //fetchAllUsers();
+    const phoneNumberTaken: boolean | undefined =
+      allUsers &&
+      allUsers
+        .filter((user) => user._id !== currentUser?._id)
+        .map((user) => user.phoneCountryCode + user.phoneNumberWithoutCountryCode)
+        .includes(countryCode + value);
     // If input doesn't meet length req or if it doesn't meet length req and countryCode is blank:
     if (
       !(typeof value === "string" && value?.length >= min && value?.length <= max) ||
@@ -911,7 +918,7 @@ const EditUserInfoForm = ({
               border: "2px solid red",
             },
           });
-          fetchAllUsers();
+          //fetchAllUsers();
         } else {
           toast("Phone number deleted", {
             style: {
@@ -944,7 +951,7 @@ const EditUserInfoForm = ({
               border: "2px solid red",
             },
           });
-          fetchAllUsers();
+          //fetchAllUsers();
         } else {
           toast("Location deleted", {
             style: {
@@ -982,7 +989,7 @@ const EditUserInfoForm = ({
               },
             }
           );
-          fetchAllUsers();
+          //fetchAllUsers();
         } else {
           toast(`${medium.toUpperCase()} link deleted`, {
             style: {
@@ -1017,7 +1024,7 @@ const EditUserInfoForm = ({
               border: "2px solid red",
             },
           });
-          fetchAllUsers();
+          //fetchAllUsers();
         } else {
           toast(`'About' section deleted`, {
             style: {
