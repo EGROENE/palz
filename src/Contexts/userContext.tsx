@@ -7,6 +7,12 @@ import Requests from "../requests";
 import toast from "react-hot-toast";
 import Methods from "../methods";
 import { useNavigate } from "react-router-dom";
+import {
+  useQueryClient,
+  useMutation,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 export const UserContext = createContext<TUserContext | null>(null);
 
@@ -21,7 +27,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading,
   } = useMainContext();
 
-  const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
+  //const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
+
   const [currentUser, setCurrentUser] = useLocalStorage<TUser | null>(
     "currentUser",
     null
@@ -189,23 +196,34 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     null
   );
 
-  useEffect(() => {
-    setFriendRequestsSent(currentUser?.friendRequestsSent);
-    setFriendRequestsReceived(currentUser?.friendRequestsReceived);
-    setFriends(currentUser?.friends);
-  }, [currentUser?._id]);
+  // For every mutation made to a query, the query will need to be invalidated so that the data refreshes
+  // Mutations can be used anywhere in app
+  // If cached data exists, this is shown until data is updated after a mutation (automatically renders then)
 
-  useEffect(() => {
-    // Ensure currentUser is up-to-date:
-    fetchAllUsers().then(() => {
-      if (currentUser) {
-        setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
-      }
-    });
-  }, [allUsers]);
+  // Examples of keys:
+  // /posts ---> ["posts"]
+  // /posts/1 ---> ["posts", post.id]
+  // /posts?authorId=1 ---> ["posts", {authorId: 1}]
+  // /posts/2/comments ---> ["posts", post.id, "comments"]
 
-  const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
+  const queryClient = useQueryClient();
 
+  const fetchAllUsersQuery: UseQueryResult<TUser[], Error> = useQuery({
+    queryKey: ["allUsers"],
+    // queryFn can be a callback that takes an object that can be logged to the console, where queryKey can be seen (put console log in .then() of promise)
+    queryFn: Requests.getAllUsers,
+    // enabled: boolean,
+    // staleTime: number,
+    // refetchInterval: number
+  });
+  const allUsers: TUser[] | undefined = fetchAllUsersQuery.data;
+
+  // Only display login/signup form if !allUserDataIsLoading
+  // If fetchAllUsersQuery.isError, show message where login form would be, w/ btn to reload page
+  let allUserDataIsLoading: boolean = fetchAllUsersQuery.isLoading;
+  let isErrorFetchingAllUserData: boolean = fetchAllUsersQuery.isError;
+
+  // Rename to 'newUserData'
   const userData: TUser = {
     firstName: Methods.formatHyphensAndSpacesInString(
       Methods.formatCapitalizedName(firstName)
@@ -249,6 +267,41 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     friendRequestsSent: [],
     blockedUsers: [],
   };
+
+  const newUserMutation = useMutation({
+    mutationFn: (userData: TUser) => Requests.createUser(userData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+      setUserCreatedAccount(true);
+    },
+    onError: () => {
+      setUserCreatedAccount(false);
+      toast.error("Could not create account. Please try again later.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+  });
+
+  useEffect(() => {
+    setFriendRequestsSent(currentUser?.friendRequestsSent);
+    setFriendRequestsReceived(currentUser?.friendRequestsReceived);
+    setFriends(currentUser?.friends);
+  }, [currentUser?._id]);
+
+  /* useEffect(() => {
+    // Ensure currentUser is up-to-date:
+    fetchAllUsers().then(() => {
+      if (currentUser) {
+        setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
+      }
+    });
+  }, [allUsers]); */
+
+  //const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
 
   // Called when user switches b/t login & signup forms & when user logs out
   // Only necessary to reset errors for fields on login and/or signup form
@@ -367,10 +420,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     /* Get most-current version of allUsers (in case another user has changed their username, so username user inputs may become available or in available. Fetching allUsers onChange of username field ensures most-current data on users exists. This is also checked onSubmit of EditUserInfoForm.) */
-    fetchAllUsers();
+    //fetchAllUsers();
 
-    const usernameIsTaken: boolean =
-      allUsers.filter((user) => user.username === inputUsername).length > 0;
+    const usernameIsTaken: boolean | null = allUsers
+      ? allUsers.filter((user) => user.username === inputUsername).length > 0
+      : null;
 
     if (formType === "signup") {
       if (usernameIsTaken) {
@@ -420,12 +474,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     /* Get most-current version of allUsers (in case another user has changed their email, so email user inputs may become available or in available. Fetching allUsers onChange of email field ensures most-current data on users exists. This is also checked onSubmit of EditUserInfoForm.) */
-    fetchAllUsers();
+    //fetchAllUsers();
 
-    const emailIsTaken: boolean =
-      allUsers.filter(
-        (user) => user.emailAddress === inputEmailAddressNoWhitespaces.toLowerCase()
-      ).length > 0;
+    const emailIsTaken: boolean | null = allUsers
+      ? allUsers.filter(
+          (user) => user.emailAddress === inputEmailAddressNoWhitespaces.toLowerCase()
+        ).length > 0
+      : null;
 
     if (formType === "signup") {
       if (emailIsTaken) {
@@ -471,10 +526,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     // Handle input pw on login form:
     if (formType === "login") {
       // Get current user (if username/email has been entered) so that its password can be compared to input pw:
-      const currentUser: TUser =
+      const currentUser: TUser | null =
         loginMethod === "username"
-          ? allUsers.filter((user) => user.username === username)[0]
-          : allUsers.filter((user) => user.emailAddress === emailAddress)[0];
+          ? allUsers
+            ? allUsers.filter((user) => user.username === username)[0]
+            : null
+          : allUsers
+          ? allUsers.filter((user) => user.emailAddress === emailAddress)[0]
+          : null;
 
       // If currentUser exists & there is non-whitespace input in password field:
       if (currentUser) {
@@ -608,20 +667,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   // This method is used on login form, where user can input either their username or email to log in
   const handleUsernameOrEmailInput = (input: string): void => {
     const inputNoWhitespaces = input.replace(/\s/g, "");
-    fetchAllUsers();
+    //fetchAllUsers();
 
-    const usernameExists: boolean = allUsers
-      .map((user) => user.username)
-      .includes(inputNoWhitespaces);
-    const emailExists: boolean = allUsers
-      .map((user) => user.emailAddress)
-      .includes(inputNoWhitespaces.toLowerCase());
+    const usernameExists: boolean | null = allUsers
+      ? allUsers.map((user) => user.username).includes(inputNoWhitespaces)
+      : null;
+    const emailExists: boolean | null = allUsers
+      ? allUsers
+          .map((user) => user.emailAddress)
+          .includes(inputNoWhitespaces.toLowerCase())
+      : null;
 
     // If input matches pattern for an email:
     if (emailIsValid(inputNoWhitespaces.toLowerCase())) {
-      const currentUser = allUsers.filter(
-        (user) => user.emailAddress === inputNoWhitespaces
-      )[0];
+      const currentUser = allUsers
+        ? allUsers.filter((user) => user.emailAddress === inputNoWhitespaces)[0]
+        : null;
       setCurrentUser(currentUser);
       setUsername("");
       setUsernameError("");
@@ -656,7 +717,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
       // When user input is not an email address (aka, it's a username):
     } else {
-      const currentUser = allUsers.filter((user) => user.username === input)[0];
+      const currentUser = allUsers
+        ? allUsers.filter((user) => user.username === input)[0]
+        : null;
       setCurrentUser(currentUser);
       setEmailAddress("");
       setEmailError("");
@@ -762,7 +825,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Handler for creating new user account. Should make request w/ object containing user data, then handle errors in case it fails. If it fails, notify user somehow.
-  const handleNewAccountCreation = (userData: TUser) => {
+  /*  const handleNewAccountCreation = (userData: TUser): void => {
+    if (newUserMutation.isError) {
+      setUserCreatedAccount(false);
+      toast.error("Could not create account. Please try again later.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+      console.log(newUserMutation.error);
+    } else {
+      setUserCreatedAccount(true);
+    }
+
+    // Request not needed if React Query mutation is used
     Requests.createUser(userData)
       .then((response) => {
         if (!response.ok) {
@@ -781,7 +859,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         });
         console.log(error);
       });
-  };
+  }; */
 
   // maybe create separate request to update user profile img
   const handleProfileImageUpload = async (
@@ -1657,8 +1735,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       toggleHidePassword();
     }
     if (isOnSignup) {
-      console.log(userData);
-      handleNewAccountCreation(userData);
+      newUserMutation.mutate(userData);
       setUserCreatedAccount(true);
       setCurrentUser(userData);
       setFirstName(userData.firstName);
@@ -1693,10 +1770,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setWhoCanSeeEventsInterestedIn(userData.whoCanSeeEventsInterestedIn);
     } else {
       setUserCreatedAccount(false);
-      if (emailAddress !== "") {
-        setCurrentUser(allUsers.filter((user) => user.emailAddress === emailAddress)[0]);
-      } else if (username !== "") {
-        setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+      if (allUsers) {
+        if (emailAddress !== "") {
+          setCurrentUser(
+            allUsers.filter((user) => user.emailAddress === emailAddress)[0]
+          );
+        } else if (username !== "") {
+          setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+        }
       }
       setFirstName(currentUser?.firstName);
       setLastName(currentUser?.lastName);
@@ -1757,6 +1838,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    fetchAllUsersQuery,
     displayFriendCount,
     setDisplayFriendCount,
     whoCanSeeLocation,
@@ -1897,7 +1979,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setProfileVisibleTo,
     showUpdateProfileImageInterface,
     setShowUpdateProfileImageInterface,
-    fetchAllUsers,
+    //fetchAllUsers,
     allUsers,
     currentUser,
     setCurrentUser,
