@@ -8,7 +8,7 @@ import { TThemeColor } from "../../../../types";
 
 const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
   const { welcomeMessageDisplayTime } = useMainContext();
-  const { fetchAllUsers } = useUserContext();
+  //const { fetchAllUsers } = useUserContext();
 
   const {
     passwordIsHidden,
@@ -39,7 +39,7 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    fetchAllUsers(); // get most up-to-date allUsers
+    //fetchAllUsers(); // get most up-to-date allUsers
 
     // Handle inputs that are autocompleted on initial render:
     if (emailAddress && emailAddress !== "") {

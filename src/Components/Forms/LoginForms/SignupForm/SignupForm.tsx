@@ -10,7 +10,7 @@ import { TThemeColor } from "../../../../types";
 const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
   const { welcomeMessageDisplayTime } = useMainContext();
   const {
-    fetchAllUsers,
+    //fetchAllUsers,
     resetLoginOrSignupFormFieldsAndErrors,
     areNoSignupFormErrors,
     passwordIsHidden,
@@ -69,7 +69,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
   ////////
 
   useEffect(() => {
-    fetchAllUsers();
+    //fetchAllUsers();
     resetLoginOrSignupFormFieldsAndErrors();
   }, []);
 
