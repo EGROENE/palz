@@ -1,4 +1,5 @@
 import React from "react";
+import { UseQueryResult } from "@tanstack/react-query";
 
 export type TThemeColor =
   | "var(--primary-color)"
@@ -216,6 +217,7 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  fetchAllUsersQuery: UseQueryResult<TUser[], Error>;
   friends: string[] | undefined;
   setFriends: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   friendRequestsSent: string[] | undefined;
@@ -509,10 +511,10 @@ export type TUserContext = {
       "anyone" | "friends" | "nobody" | "friends of friends" | undefined
     >
   >;
-  fetchAllUsers: () => Promise<void>;
+  //fetchAllUsers: () => Promise<void>;
   userCreatedAccount: null | boolean;
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
-  allUsers: TUser[];
+  allUsers: TUser[] | undefined;
   currentUser: TUser | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser | null>>;
 };
