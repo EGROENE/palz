@@ -41,26 +41,31 @@ const InterestsSection = ({
   const [inputInterest, setInputInterest] = useState<string>("");
 
   const noAdditionalInterestsAndInputInterest =
-    displayedAdditionalInterests.length === 0 && inputInterest !== "";
+    displayedAdditionalInterests &&
+    displayedAdditionalInterests.length === 0 &&
+    inputInterest !== "";
 
   const noAdditionalInterestsAndNoInputInterest =
-    displayedAdditionalInterests.length === 0 && inputInterest === "";
+    displayedAdditionalInterests &&
+    displayedAdditionalInterests.length === 0 &&
+    inputInterest === "";
 
   const disableAddInterestsButton =
-    (displayedAdditionalInterests.length === 1 &&
+    (displayedAdditionalInterests &&
+      displayedAdditionalInterests.length === 1 &&
       inputInterest === displayedAdditionalInterests[0]) ||
     inputInterest === "";
 
-  const { currentUser, allUsers } = useUserContext();
+  const { currentUser, allUsers, fetchAllUsersQuery } = useUserContext();
   const { allEvents } = useEventContext();
 
   // Get array of interests that are not present on user/event object
   // This will be passed to InterestsModal; for each item in array, an addable interest displays
   /* Users can add interests to an existing event (on EditEventPage), a new event (on AddEventPage), or to their own profile (on UserSettings). These conditions are handled respectively in function below. */
   const getAddableInterests = (): string[] => {
-    const allUserInterests: string[] = Methods.removeDuplicatesFromArray(
-      allUsers.map((user) => user.interests).flat()
-    );
+    const allUserInterests: string[] = allUsers
+      ? Methods.removeDuplicatesFromArray(allUsers.map((user) => user.interests).flat())
+      : [];
     const allEventInterests: string[] = Methods.removeDuplicatesFromArray(
       allEvents.map((event) => event.relatedInterests).flat()
     );
@@ -89,19 +94,23 @@ const InterestsSection = ({
     }
     // Default case; if updating user interests:
     // Returns allOtherUserInterests + allEventInterests - interests that exist on currentUser
-    const allOtherUserInterests: string[] = Methods.removeDuplicatesFromArray(
-      allUsers
-        .filter((user) => user.username !== currentUser?.username)
-        .map((user) => user.interests)
-        .flat()
-    );
+    const allOtherUserInterests: string[] = allUsers
+      ? Methods.removeDuplicatesFromArray(
+          allUsers
+            .filter((user) => user.username !== currentUser?.username)
+            .map((user) => user.interests)
+            .flat()
+        )
+      : [];
     return Methods.removeDuplicatesFromArray(
       allOtherUserInterests
         .concat(allEventInterests)
         .filter((int) => !currentUser?.interests.includes(int))
     );
   };
-  const addableInterests = getAddableInterests();
+  const addableInterests: string[] | null = fetchAllUsersQuery.isSuccess
+    ? getAddableInterests()
+    : null;
 
   // Get array of interests that exist on user/event object, whether event is being edited or added (interests on user obj are always edited)
   const getSavedInterests = () => {
@@ -141,7 +150,9 @@ const InterestsSection = ({
 
   const handleClearAddInterestInput = (): void => {
     setInputInterest("");
-    setDisplayedAdditionalInterests(addableInterests);
+    if (addableInterests !== null) {
+      setDisplayedAdditionalInterests(addableInterests);
+    }
   };
 
   /* Create new add-interest handler that makes appropriate request in method passed to prop handleAddInterest, clears interest-input field if it's not empty (displaying all non-saved interests again), & updates all non-saved interests after user adds a particular interest */
@@ -157,12 +168,14 @@ const InterestsSection = ({
   };
 
   useEffect(() => {
-    setDisplayedAdditionalInterests(addableInterests);
+    if (addableInterests !== null) {
+      setDisplayedAdditionalInterests(addableInterests);
+    }
   }, []);
 
   useEffect(() => {
     /* Ensure that, whenever current-user/event interests or newEventInterests change, & inputInterest if empty string (which is always the case, whether b/c InterestModal isn't rendered, user hasn't input anything, or it was cleared after user input something & then added an interest), displayedAdditionalInterests is updated. */
-    if (inputInterest === "") {
+    if (inputInterest === "" && addableInterests !== null) {
       setDisplayedAdditionalInterests(addableInterests);
     }
   }, [currentUser?.interests, currentEvent?.relatedInterests, newEventInterests]);
