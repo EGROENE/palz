@@ -7,8 +7,12 @@ import { TThemeColor } from "../../../types";
 
 const LoginPage = () => {
   const { theme, toggleTheme } = useMainContext();
-  const { signupIsSelected, toggleSignupLogin, resetLoginOrSignupFormFieldsAndErrors } =
-    useUserContext();
+  const {
+    signupIsSelected,
+    toggleSignupLogin,
+    resetLoginOrSignupFormFieldsAndErrors,
+    fetchAllUsersQuery,
+  } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -52,37 +56,50 @@ const LoginPage = () => {
           </button>
         </div>
       </div>
-      <div className="login-form">
-        <div className="login-options-container">
-          <div>
-            <header onClick={!signupIsSelected ? () => toggleSignupLogin() : undefined}>
-              Sign Up
-            </header>
-            {signupIsSelected && (
-              <div className="form-type-underline animate__animated animate__slideInRight"></div>
-            )}
-          </div>
-          <div>
-            <header onClick={signupIsSelected ? () => toggleSignupLogin() : undefined}>
-              Log In
-            </header>
-            {!signupIsSelected && (
-              <div className="form-type-underline animate__animated animate__slideInLeft"></div>
-            )}
+      {fetchAllUsersQuery.isError && (
+        <div className="login-form-loading-error-container">
+          <header className="login-form-loading-or-error-text">Error loading form</header>
+          <div className="theme-element-container">
+            <button onClick={() => window.location.reload()}>Retry</button>
           </div>
         </div>
-        {signupIsSelected ? (
-          <SignupForm randomColor={randomColor} />
-        ) : (
-          <LoginForm randomColor={randomColor} />
-        )}
-        <p>
-          {!signupIsSelected ? "Don't have an account?" : "Already have an account?"}
-          <span className="link-to-other-form" onClick={() => toggleSignupLogin()}>
-            {!signupIsSelected ? " Sign Up" : " Log In"}
-          </span>
-        </p>
-      </div>
+      )}
+      {fetchAllUsersQuery.isLoading && !fetchAllUsersQuery.isError && (
+        <header className="login-form-loading-or-error-text">Loading...</header>
+      )}
+      {!fetchAllUsersQuery.isLoading && !fetchAllUsersQuery.isError && (
+        <div className="login-form">
+          <div className="login-options-container">
+            <div>
+              <header onClick={!signupIsSelected ? () => toggleSignupLogin() : undefined}>
+                Sign Up
+              </header>
+              {signupIsSelected && (
+                <div className="form-type-underline animate__animated animate__slideInRight"></div>
+              )}
+            </div>
+            <div>
+              <header onClick={signupIsSelected ? () => toggleSignupLogin() : undefined}>
+                Log In
+              </header>
+              {!signupIsSelected && (
+                <div className="form-type-underline animate__animated animate__slideInLeft"></div>
+              )}
+            </div>
+          </div>
+          {signupIsSelected ? (
+            <SignupForm randomColor={randomColor} />
+          ) : (
+            <LoginForm randomColor={randomColor} />
+          )}
+          <p>
+            {!signupIsSelected ? "Don't have an account?" : "Already have an account?"}
+            <span className="link-to-other-form" onClick={() => toggleSignupLogin()}>
+              {!signupIsSelected ? " Sign Up" : " Log In"}
+            </span>
+          </p>
+        </div>
+      )}
     </div>
   );
 };
