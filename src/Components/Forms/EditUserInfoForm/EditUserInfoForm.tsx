@@ -191,6 +191,9 @@ const EditUserInfoForm = ({
     currentUser?.instagram,
     currentUser?.x,
     currentUser?.about,
+    currentUser?.whoCanAddUserAsOrganizer,
+    currentUser?.whoCanInviteUser,
+    currentUser?.profileVisibleTo,
   ]);
 
   // Function that resets form values to what they are in currentUser
