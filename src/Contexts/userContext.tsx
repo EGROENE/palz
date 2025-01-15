@@ -218,11 +218,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   });
   const allUsers: TUser[] | undefined = fetchAllUsersQuery.data;
 
-  // Only display login/signup form if !allUserDataIsLoading
-  // If fetchAllUsersQuery.isError, show message where login form would be, w/ btn to reload page
-  let allUserDataIsLoading: boolean = fetchAllUsersQuery.isLoading;
-  let isErrorFetchingAllUserData: boolean = fetchAllUsersQuery.isError;
-
   // Rename to 'newUserData'
   const userData: TUser = {
     firstName: Methods.formatHyphensAndSpacesInString(
@@ -669,14 +664,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     const inputNoWhitespaces = input.replace(/\s/g, "");
     //fetchAllUsers();
 
-    const usernameExists: boolean | null = allUsers
-      ? allUsers.map((user) => user.username).includes(inputNoWhitespaces)
-      : null;
-    const emailExists: boolean | null = allUsers
-      ? allUsers
-          .map((user) => user.emailAddress)
-          .includes(inputNoWhitespaces.toLowerCase())
-      : null;
+    const usernameExists: boolean | null =
+      allUsers && !fetchAllUsersQuery.isLoading
+        ? allUsers.map((user) => user.username).includes(inputNoWhitespaces)
+        : null;
+
+    const emailExists: boolean | null =
+      allUsers && !fetchAllUsersQuery.isLoading
+        ? allUsers
+            .map((user) => user.emailAddress)
+            .includes(inputNoWhitespaces.toLowerCase())
+        : null;
 
     // If input matches pattern for an email:
     if (emailIsValid(inputNoWhitespaces.toLowerCase())) {
