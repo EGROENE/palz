@@ -49,16 +49,22 @@ const EventCard = ({ event }: { event: TEvent }) => {
     : false;
 
   const refinedOrganizers: string[] = [];
-  for (const organizer of event.organizers) {
-    if (allUsers.map((user) => user._id).includes(organizer)) {
-      refinedOrganizers.push(organizer);
+  if (allUsers) {
+    for (const organizer of event.organizers) {
+      if (allUsers.map((user) => user._id).includes(organizer)) {
+        refinedOrganizers.push(organizer);
+      }
     }
   }
 
   const getOrganizersUsernames = (): (string | undefined)[] => {
     const usernameArray: Array<string | undefined> = [];
-    for (const organizerID of refinedOrganizers) {
-      usernameArray.push(allUsers.filter((user) => user._id === organizerID)[0].username);
+    if (allUsers) {
+      for (const organizerID of refinedOrganizers) {
+        usernameArray.push(
+          allUsers.filter((user) => user._id === organizerID)[0].username
+        );
+      }
     }
     return usernameArray;
   };
