@@ -295,24 +295,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             border: "2px solid green",
           },
         });
-      } else {
-        if (data.status === 413) {
-          toast.error("Max file size is 50MB.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        } else {
-          toast.error("Could not update profile image. Please try again.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        }
       }
     },
     onError: (error) => {
