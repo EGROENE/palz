@@ -35,10 +35,11 @@ const OtherUserProfile = () => {
     setFriends,
   } = useUserContext();
   const { username } = useParams();
-  const currentOtherUser = allUsers.filter((user) => user.username === username)[0];
+  const currentOtherUser =
+    allUsers && allUsers.filter((user) => user.username === username)[0];
 
   const currentOtherUserIsBlocked =
-    blockedUsers && currentOtherUser._id && blockedUsers.includes(currentOtherUser._id);
+    blockedUsers && currentOtherUser?._id && blockedUsers.includes(currentOtherUser._id);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
@@ -78,7 +79,7 @@ const OtherUserProfile = () => {
     }
 
     // If logged-in user is blocked by currentOtherUser:
-    if (currentUser?._id && currentOtherUser.blockedUsers.includes(currentUser._id)) {
+    if (currentUser?._id && currentOtherUser?.blockedUsers.includes(currentUser._id)) {
       toast("You do not have access to this page", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -93,21 +94,21 @@ const OtherUserProfile = () => {
   const usersAreFriends: boolean =
     currentOtherUser?._id && friends?.includes(currentOtherUser._id) ? true : false;
 
-  const currentOtherUserFriends: TUser[] =
+  const currentOtherUserFriends: TUser[] | undefined =
     currentOtherUser &&
     allUsers.filter(
       (user) => user && user._id && currentOtherUser.friends.includes(user._id)
     );
 
   const currentUserIsFriendOfFriend: boolean =
-    currentUser && currentOtherUser
+    currentUser && currentOtherUser && currentOtherUserFriends
       ? currentOtherUserFriends.some(
           (user) => currentUser._id && user.friends.includes(currentUser._id)
         )
       : false;
 
   const currentUserMayMessage: boolean =
-    currentUser && currentUser._id && currentOtherUser._id
+    currentUser && currentUser._id && currentOtherUser?._id
       ? currentOtherUser.whoCanMessage === "anyone" ||
         (currentUser._id &&
           currentOtherUser.whoCanMessage === "friends" &&
@@ -118,12 +119,14 @@ const OtherUserProfile = () => {
       : false;
 
   const currentUserHasSentFriendRequest: boolean =
-    currentOtherUser._id && friendRequestsSent?.includes(currentOtherUser._id)
+    currentOtherUser?._id && friendRequestsSent?.includes(currentOtherUser._id)
       ? true
       : false;
 
   const currentUserHasReceivedFriendRequest: boolean =
-    currentOtherUser._id && friendRequestsReceived?.includes(currentOtherUser._id)
+    currentOtherUser?._id &&
+    currentOtherUser &&
+    friendRequestsReceived?.includes(currentOtherUser._id)
       ? true
       : false;
 
@@ -198,6 +201,7 @@ const OtherUserProfile = () => {
 
   const getBlockButton = () => {
     if (
+      currentOtherUser &&
       currentOtherUser._id &&
       currentUser?.blockedUsers.includes(currentOtherUser._id)
     ) {
@@ -252,17 +256,17 @@ const OtherUserProfile = () => {
         phoneCode: string;
       }
     | undefined = countries.filter(
-    (country) => country.country === currentOtherUser.country
+    (country) => country.country === currentOtherUser?.country
   )[0];
 
   const userCountryAbbreviation: string | undefined =
-    currentOtherUser.country !== "" && matchingCountryObject
+    currentOtherUser?.country !== "" && matchingCountryObject
       ? matchingCountryObject.abbreviation
       : undefined;
 
   // get TUser object that matches each id in currentUser.friends:
   let currentUserFriends: TUser[] = [];
-  if (currentUser?.friends) {
+  if (currentUser?.friends && allUsers) {
     for (const friendID of currentUser.friends) {
       currentUserFriends.push(allUsers.filter((u) => u._id === friendID)[0]);
     }
@@ -270,7 +274,7 @@ const OtherUserProfile = () => {
   // get TUser object that matches each id in friends array of each of currentUser's friends
   let friendsOfCurrentUserFriends: TUser[] = [];
   for (const friend of currentUserFriends) {
-    if (friend && friend.friends.length > 0) {
+    if (friend && friend.friends.length > 0 && allUsers) {
       for (const friendID of friend.friends) {
         const friendOfFriend: TUser | undefined = allUsers.filter(
           (u) =>
@@ -285,11 +289,13 @@ const OtherUserProfile = () => {
       }
     }
   }
-  const usersAreFriendsOfFriends = friendsOfCurrentUserFriends.includes(currentOtherUser);
+  const usersAreFriendsOfFriends = currentOtherUser
+    ? friendsOfCurrentUserFriends.includes(currentOtherUser)
+    : false;
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
-      {showFriendRequestResponseOptions && (
+      {showFriendRequestResponseOptions && currentOtherUser && (
         <TwoOptionsInterface
           header={`Respond to friend request from ${currentOtherUser.firstName} ${currentOtherUser.lastName} (${currentOtherUser.username})`}
           buttonOneText="Decline"

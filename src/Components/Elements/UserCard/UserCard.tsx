@@ -29,9 +29,8 @@ const UserCard = ({ user }: { user: TUser }) => {
     setFriendRequestsReceived,
   } = useUserContext();
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
-  const currentUserUpdated: TUser = allUsers.filter(
-    (user) => user._id === currentUser?._id
-  )[0];
+  const currentUserUpdated: TUser | undefined =
+    allUsers && allUsers.filter((user) => user._id === currentUser?._id)[0];
 
   const currentUserReceivedFriendRequest =
     user._id && friendRequestsReceived && friendRequestsReceived.includes(user._id);
@@ -195,7 +194,7 @@ const UserCard = ({ user }: { user: TUser }) => {
               if (currentUserAndUserAreFriends) {
                 handleUnfriending(e, currentUser, user, friends, setFriends);
               }
-              if (currentUserSentFriendRequest && currentUser) {
+              if (currentUserSentFriendRequest && currentUser && currentUserUpdated) {
                 handleRetractFriendRequest(
                   currentUserUpdated,
                   user,
