@@ -281,6 +281,61 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  // make sure updateProfileImageMutation.isPending is used in UI in place of imageIsUploading
+  const updateProfileImageMutation = useMutation({
+    mutationFn: ({
+      currentUser,
+      base64,
+    }: {
+      currentUser: TUser | null;
+      base64: unknown;
+    }) => Requests.updateUserProfileImage(currentUser, base64),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+      if (data.ok) {
+        setProfileImage(variables.base64);
+        toast.success("Profile image updated", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid green",
+          },
+        });
+      } else {
+        if (data.status === 413) {
+          toast.error("Max file size is 50MB.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        } else {
+          toast.error("Could not update profile image. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error(
+        "Could not update profile image. Please make sure the image is 50MB or less & try again.",
+        {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        }
+      );
+    },
+  });
+
   useEffect(() => {
     setFriendRequestsSent(currentUser?.friendRequestsSent);
     setFriendRequestsReceived(currentUser?.friendRequestsReceived);
@@ -868,7 +923,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setShowUpdateProfileImageInterface(false);
     const file = e.target.files && e.target.files[0];
     const base64 = file && (await Methods.convertToBase64(file));
-    Requests.updateUserProfileImage(currentUser, base64)
+    updateProfileImageMutation.mutate({ currentUser, base64 });
+    /* Requests.updateUserProfileImage(currentUser, base64)
       .then((response) => {
         if (!response.ok) {
           if (response.status === 413) {
@@ -900,7 +956,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         }
       })
       .catch((error) => console.log(error))
-      .finally(() => setImageIsUploading(false));
+      .finally(() => setImageIsUploading(false)); */
   };
 
   const removeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1836,6 +1892,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    updateProfileImageMutation,
     fetchAllUsersQuery,
     displayFriendCount,
     setDisplayFriendCount,

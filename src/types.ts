@@ -1,5 +1,5 @@
 import React from "react";
-import { UseQueryResult } from "@tanstack/react-query";
+import { UseQueryResult, UseMutationResult } from "@tanstack/react-query";
 
 export type TThemeColor =
   | "var(--primary-color)"
@@ -517,6 +517,15 @@ export type TUserContext = {
   allUsers: TUser[] | undefined;
   currentUser: TUser | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser | null>>;
+  updateProfileImageMutation: UseMutationResult<
+    Response,
+    Error,
+    {
+      currentUser: TUser | null;
+      base64: unknown;
+    },
+    unknown
+  >;
 };
 
 export type TEventContext = {
