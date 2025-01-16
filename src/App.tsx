@@ -26,7 +26,6 @@ function App() {
   const {
     theme,
     showWelcomeMessage,
-    imageIsDeleting,
     showSidebar,
     handleLoadMoreOnScroll,
     displayedItemsCount,
@@ -43,6 +42,7 @@ function App() {
     removeProfileImage,
     accountDeletionInProgress,
     updateProfileImageMutation,
+    removeProfileImageMutation,
   } = useUserContext();
   const {
     currentEvent,
@@ -175,7 +175,9 @@ function App() {
       {updateProfileImageMutation.isPending && (
         <LoadingModal message="Uploading image..." />
       )}
-      {imageIsDeleting && <LoadingModal message="Removing image..." />}
+      {removeProfileImageMutation.isPending && (
+        <LoadingModal message="Removing image..." />
+      )}
       <Routes>
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />
