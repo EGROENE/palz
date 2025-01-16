@@ -26,7 +26,6 @@ function App() {
   const {
     theme,
     showWelcomeMessage,
-    imageIsUploading,
     imageIsDeleting,
     showSidebar,
     handleLoadMoreOnScroll,
@@ -43,6 +42,7 @@ function App() {
     setShowUpdateProfileImageInterface,
     removeProfileImage,
     accountDeletionInProgress,
+    updateProfileImageMutation,
   } = useUserContext();
   const {
     currentEvent,
@@ -172,7 +172,9 @@ function App() {
       {addEventIsInProgress && <LoadingModal message="Adding event..." />}
       {eventEditIsInProgress && <LoadingModal message="Updating event..." />}
       {eventDeletionIsInProgress && <LoadingModal message="Deleting event..." />}
-      {imageIsUploading && <LoadingModal message="Uploading image..." />}
+      {updateProfileImageMutation.isPending && (
+        <LoadingModal message="Uploading image..." />
+      )}
       {imageIsDeleting && <LoadingModal message="Removing image..." />}
       <Routes>
         <Route path="/" element={baseURLElement} />
