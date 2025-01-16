@@ -524,6 +524,15 @@ export type TUserContext = {
     },
     unknown
   >;
+  removeProfileImageMutation: UseMutationResult<
+    Response,
+    Error,
+    {
+      currentUser: TUser | null;
+      placeholder: string;
+    },
+    unknown
+  >;
 };
 
 export type TEventContext = {

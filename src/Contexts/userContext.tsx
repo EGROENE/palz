@@ -276,7 +276,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
-  // make sure updateProfileImageMutation.isPending is used in UI in place of imageIsUploading
   const updateProfileImageMutation = useMutation({
     mutationFn: ({
       currentUser,
@@ -328,6 +327,37 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           },
         }
       );
+    },
+  });
+
+  const removeProfileImageMutation = useMutation({
+    mutationFn: ({
+      currentUser,
+      placeholder,
+    }: {
+      currentUser: TUser | null;
+      placeholder: string;
+    }) => Requests.updateUserProfileImage(currentUser, placeholder),
+    onSuccess: () => {
+      toast("Profile image removed", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+      setProfileImage("");
+      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Could not remove profile image. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     },
   });
 
@@ -957,7 +987,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e.preventDefault();
     setImageIsDeleting(true);
     setShowUpdateProfileImageInterface(false);
-    Requests.updateUserProfileImage(currentUser, "")
+    const placeholder = "";
+    removeProfileImageMutation.mutate({ currentUser, placeholder });
+    /* Requests.updateUserProfileImage(currentUser, "")
       .then((response) => {
         if (!response.ok) {
           toast.error("Could not remove profile image. Please try again.", {
@@ -979,7 +1011,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         }
       })
       .catch((error) => console.log(error))
-      .finally(() => setImageIsDeleting(false));
+      .finally(() => setImageIsDeleting(false)); */
   };
 
   const handleSendFriendRequest = (
@@ -1886,6 +1918,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    removeProfileImageMutation,
     updateProfileImageMutation,
     fetchAllUsersQuery,
     displayFriendCount,
