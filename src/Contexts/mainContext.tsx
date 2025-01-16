@@ -19,13 +19,14 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
-  const [imageIsUploading, setImageIsUploading] = useState<boolean>(false);
   const [imageIsDeleting, setImageIsDeleting] = useState<boolean>(false);
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
     useState<number>(2500);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [displayedItemsCount, setDisplayedItemsCount] = useState<number | undefined>();
-  const [displayedItemsCountInterval, setDisplayedItemsCountInterval] = useState<number | undefined>();
+  const [displayedItemsCountInterval, setDisplayedItemsCountInterval] = useState<
+    number | undefined
+  >();
   const [displayedItems, setDisplayedItems] = useState<(TEvent | TUser)[]>([]);
   const [displayedItemsFiltered, setDisplayedItemsFiltered] = useState<
     (TEvent | TUser)[]
@@ -92,8 +93,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading,
     showSidebar,
     setShowSidebar,
-    imageIsUploading,
-    setImageIsUploading,
     imageIsDeleting,
     setImageIsDeleting,
     theme,

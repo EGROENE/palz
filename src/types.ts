@@ -201,8 +201,6 @@ export type TMainContext = {
   setDisplayedItems: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
-  imageIsUploading: boolean;
-  setImageIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
   imageIsDeleting: boolean;
   setImageIsDeleting: React.Dispatch<React.SetStateAction<boolean>>;
   theme: "dark" | "light";

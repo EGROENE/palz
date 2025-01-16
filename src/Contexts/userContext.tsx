@@ -19,13 +19,8 @@ export const UserContext = createContext<TUserContext | null>(null);
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const navigation = useNavigate();
 
-  const {
-    handleWelcomeMessage,
-    setImageIsUploading,
-    setImageIsDeleting,
-    theme,
-    setIsLoading,
-  } = useMainContext();
+  const { handleWelcomeMessage, setImageIsDeleting, theme, setIsLoading } =
+    useMainContext();
 
   //const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
 
@@ -919,7 +914,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.ChangeEvent<HTMLInputElement>
   ): Promise<void> => {
     e.preventDefault();
-    setImageIsUploading(true);
     setShowUpdateProfileImageInterface(false);
     const file = e.target.files && e.target.files[0];
     const base64 = file && (await Methods.convertToBase64(file));
