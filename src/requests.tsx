@@ -554,7 +554,7 @@ const removeOrganizer = (
 };
 
 const addToFriendRequestsReceived = (
-  senderID: string,
+  sender: TUser,
   recipient: TUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
@@ -566,7 +566,7 @@ const addToFriendRequestsReceived = (
       updatedFriendRequestsReceivedArray.push(existingSenderID);
     }
   }
-  updatedFriendRequestsReceivedArray.push(senderID);
+  updatedFriendRequestsReceivedArray.push(sender._id);
 
   const getRaw = () => {
     return JSON.stringify({
@@ -583,14 +583,12 @@ const addToFriendRequestsReceived = (
   });
 };
 
-const addToFriendRequestsSent = (
-  sender: TUser,
-  recipientID: string
-): Promise<Response> => {
+const addToFriendRequestsSent = (sender: TUser, recipient: TUser): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedFriendRequestsSentArray = sender.friendRequestsSent.concat(recipientID);
+  let updatedFriendRequestsSentArray =
+    recipient._id && sender.friendRequestsSent.concat(recipient._id);
   /* if (sender?.friendRequestsSent) {
     for (const existingRecipientID of sender.friendRequestsSent) {
       updatedFriendRequestsSentArray.push(existingRecipientID);
