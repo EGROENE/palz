@@ -19,8 +19,7 @@ export const UserContext = createContext<TUserContext | null>(null);
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const navigation = useNavigate();
 
-  const { handleWelcomeMessage, setImageIsDeleting, theme, setIsLoading } =
-    useMainContext();
+  const { handleWelcomeMessage, theme, setIsLoading } = useMainContext();
 
   //const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
 
@@ -967,7 +966,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const removeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    setImageIsDeleting(true);
     setShowUpdateProfileImageInterface(false);
     const placeholder = "";
     removeProfileImageMutation.mutate({ currentUser, placeholder });

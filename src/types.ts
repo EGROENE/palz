@@ -201,7 +201,6 @@ export type TMainContext = {
   setDisplayedItems: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
-  setImageIsDeleting: React.Dispatch<React.SetStateAction<boolean>>;
   theme: "dark" | "light";
   toggleTheme: () => void;
   showWelcomeMessage: boolean;
