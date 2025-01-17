@@ -28,12 +28,12 @@ const DisplayedCardsPage = ({
   } = useMainContext();
   const {
     allUsers,
-    fetchAllUsers,
     currentUser,
     userCreatedAccount,
     blockedUsers,
     logout,
     friends,
+    fetchAllUsersQuery,
   } = useUserContext();
   const { allEvents, fetchAllEvents } = useEventContext();
 
@@ -91,6 +91,20 @@ const DisplayedCardsPage = ({
     }
   }, [usedFor]);
 
+  useEffect(() => {
+    if (usedFor === "potential-friends") {
+      resetDisplayedPotentialFriends();
+    }
+
+    if (usedFor === "my-friends") {
+      resetDisplayedFriends();
+    }
+
+    if (usedFor === "events") {
+      resetDisplayedEvents();
+    }
+  }, [fetchAllUsersQuery.isLoading]);
+
   const now = Date.now();
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -118,12 +132,14 @@ const DisplayedCardsPage = ({
           let eventOrganizerNames: string[] = [];
           let eventOrganizerUsernames: string[] = [];
           for (const id of event.organizers) {
-            const matchingUser: TUser = allUsers.filter((user) => user?._id === id)[0];
+            const matchingUser: TUser | undefined = allUsers?.filter(
+              (user) => user?._id === id
+            )[0];
 
-            const fullName: string = `${matchingUser.firstName?.toLowerCase()} ${matchingUser.lastName?.toLowerCase()}`;
+            const fullName: string = `${matchingUser?.firstName?.toLowerCase()} ${matchingUser?.lastName?.toLowerCase()}`;
             eventOrganizerNames.push(fullName);
 
-            if (matchingUser.username) {
+            if (matchingUser?.username) {
               eventOrganizerUsernames.push(matchingUser.username);
             }
           }
@@ -179,8 +195,7 @@ const DisplayedCardsPage = ({
     }
   }, [allEvents]);
 
-  useEffect(() => {
-    fetchAllUsers();
+  /* useEffect(() => {
     if (usedFor === "potential-friends") {
       let newDisplayedPotentialFriends: TUser[] = [];
       if (searchTerm.trim() !== "") {
@@ -254,7 +269,7 @@ const DisplayedCardsPage = ({
         }
       }
     }
-  }, [allUsers]);
+  }, [allUsers]); */
 
   // EVENTS VARIABLES
   const displayableEvents = allEvents.filter(
@@ -347,7 +362,7 @@ const DisplayedCardsPage = ({
 
   // POTENTIAL-FRIENDS VARIABLES
   /* display only users whose profile is visible to anyone, to friends & currentUser is friend, and friends of friends & currentUser is a friend of a user's friend, and who hasn't blocked currentUser, and whom currentUser hasn't blocked. */
-  const allOtherNonFriendUsers: TUser[] = allUsers.filter(
+  const allOtherNonFriendUsers: TUser[] | undefined = allUsers?.filter(
     (user) =>
       currentUser?._id &&
       user._id &&
@@ -356,40 +371,47 @@ const DisplayedCardsPage = ({
       !user.blockedUsers.includes(currentUser._id) &&
       !blockedUsers?.includes(user._id)
   );
-  const nonFriendUsersVisibleToAnyone: TUser[] = allOtherNonFriendUsers.filter(
-    (user) => user.profileVisibleTo === "anyone"
-  );
-  const nonFriendUsersVisibleToFriendsOfFriends: TUser[] = allOtherNonFriendUsers.filter(
-    (user) => user.profileVisibleTo === "friends of friends"
-  );
+  const nonFriendUsersVisibleToAnyone: TUser[] | undefined =
+    allOtherNonFriendUsers?.filter((user) => user.profileVisibleTo === "anyone");
+  const nonFriendUsersVisibleToFriendsOfFriends: TUser[] | undefined =
+    allOtherNonFriendUsers?.filter(
+      (user) => user.profileVisibleTo === "friends of friends"
+    );
 
   /* Function to return for display an array of users whose profiles are visible to anyone, or to friends of friends & currentUser is a friend of a friend */
   const getDisplayablePotentialFriends = (): TUser[] => {
     let displayablePotentialFriends = nonFriendUsersVisibleToAnyone;
 
-    for (const user of nonFriendUsersVisibleToFriendsOfFriends) {
-      // for each friend of user, check if their friends arr includes currentUser._id
-      // will need to get TUser of friend, not just id
-      const userFriends: TUser[] = []; // array of user's friends in TUser form
-      // Push user in allUsers w/ id that matches friendID into userFriends
-      for (const friendID of user.friends) {
-        userFriends.push(allUsers.filter((u) => u._id === friendID)[0]);
-      }
-      /* for every friend of userFriends, check if their friends list includes currentUser._id & push to displayablePotentialFriends if it does */
-      for (const friend of userFriends) {
-        if (currentUser?._id && friend.friends.includes(currentUser._id)) {
-          displayablePotentialFriends.push(friend);
+    if (
+      nonFriendUsersVisibleToFriendsOfFriends &&
+      allUsers &&
+      displayablePotentialFriends
+    ) {
+      for (const user of nonFriendUsersVisibleToFriendsOfFriends) {
+        // for each friend of user, check if their friends arr includes currentUser._id
+        // will need to get TUser of friend, not just id
+        const userFriends: TUser[] = []; // array of user's friends in TUser form
+        // Push user in allUsers w/ id that matches friendID into userFriends
+        for (const friendID of user.friends) {
+          userFriends.push(allUsers.filter((u) => u._id === friendID)[0]);
+        }
+        /* for every friend of userFriends, check if their friends list includes currentUser._id & push to displayablePotentialFriends if it does */
+        for (const friend of userFriends) {
+          if (currentUser?._id && friend.friends.includes(currentUser._id)) {
+            displayablePotentialFriends.push(friend);
+          }
         }
       }
+      return displayablePotentialFriends;
     }
-    return displayablePotentialFriends;
+    return [];
   };
   const displayablePotentialFriends = getDisplayablePotentialFriends();
 
   const getFriendsOfFriends = (): TUser[] => {
     // get TUser object that matches each id in currentUser.friends:
     let currentUserFriends: TUser[] = [];
-    if (currentUser?.friends) {
+    if (currentUser?.friends && allUsers) {
       for (const friendID of currentUser.friends) {
         currentUserFriends.push(allUsers.filter((u) => u._id === friendID)[0]);
       }
@@ -397,7 +419,7 @@ const DisplayedCardsPage = ({
     // get TUser object that matches each id in friends array of each of currentUser's friends
     let friendsOfFriends: TUser[] = [];
     for (const friend of currentUserFriends) {
-      if (friend && friend.friends.length > 0) {
+      if (friend && friend.friends.length > 0 && allUsers) {
         for (const friendID of friend.friends) {
           const friendOfFriend: TUser | undefined = allUsers.filter(
             (u) =>
@@ -418,7 +440,7 @@ const DisplayedCardsPage = ({
 
   const getPotentialFriendsWithCommonInterests = (): TUser[] => {
     let potentialFriendsWithCommonInterests: TUser[] = [];
-    if (currentUser?.interests) {
+    if (currentUser?.interests && displayablePotentialFriends) {
       for (const interest of currentUser.interests) {
         for (const potentialFriend of displayablePotentialFriends) {
           if (potentialFriend.interests.includes(interest)) {
@@ -461,11 +483,13 @@ const DisplayedCardsPage = ({
 
   // FRIENDS VARIABLES
   const currentUserPalz: TUser[] = [];
-  if (friends) {
+  if (friends && allUsers) {
     for (const id of friends) {
       currentUserPalz.push(allUsers.filter((user) => user._id === id)[0]);
     }
   }
+  console.log(fetchAllUsersQuery.status);
+  console.log(currentUserPalz);
 
   const friendsWithCommonInterests: TUser[] = [];
   for (const pal of currentUserPalz) {
@@ -633,13 +657,14 @@ const DisplayedCardsPage = ({
           let eventOrganizerNames: string[] = [];
           let eventOrganizerUsernames: string[] = [];
           for (const id of event.organizers) {
-            const matchingUser: TUser = allUsers.filter((user) => user?._id === id)[0];
+            const matchingUser: TUser | undefined =
+              allUsers && allUsers.filter((user) => user?._id === id)[0];
 
-            const fullName: string = `${matchingUser.firstName?.toLowerCase()} ${matchingUser.lastName?.toLowerCase()}`;
+            const fullName: string = `${matchingUser?.firstName?.toLowerCase()} ${matchingUser?.lastName?.toLowerCase()}`;
             eventOrganizerNames.push(fullName);
 
-            if (matchingUser.username) {
-              eventOrganizerUsernames.push(matchingUser.username);
+            if (matchingUser?.username) {
+              eventOrganizerUsernames.push(matchingUser?.username);
             }
           }
           let isOrganizerNameMatch: boolean = false;
@@ -761,18 +786,25 @@ const DisplayedCardsPage = ({
     }
     return Object.keys(friendFilterOptions);
   };
-  const filterOptions = getFilterOptions();
+  const filterOptions = !fetchAllUsersQuery.isLoading ? getFilterOptions() : [];
+
+  // Display "loading..." if query is still loading; if not loading & displayed items is empty, show related message. If not loading & displayed items isn't empty, render those items.
+  // Get values only if query isn't loading
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>{pageHeading}</h1>
-      {displayedItems.length === 0 &&
+      {!fetchAllUsersQuery.isLoading &&
+        !fetchAllUsersQuery.isError &&
+        displayedItems.length === 0 &&
         usedFor === "potential-friends" &&
         searchTerm === "" &&
         activeFilters.length === 0 && (
           <h2>No more potential friends. You must be popular!</h2>
         )}
-      {displayedItems.length === 0 &&
+      {!fetchAllUsersQuery.isLoading &&
+        !fetchAllUsersQuery.isError &&
+        displayedItems.length === 0 &&
         usedFor === "my-friends" &&
         searchTerm === "" &&
         activeFilters.length === 0 && (
@@ -791,7 +823,9 @@ const DisplayedCardsPage = ({
             to find some!
           </h2>
         )}
-      {displayedItems.length === 0 &&
+      {!fetchAllUsersQuery.isLoading &&
+        !fetchAllUsersQuery.isError &&
+        displayedItems.length === 0 &&
         usedFor === "events" &&
         searchTerm === "" &&
         activeFilters.length === 0 && (
@@ -810,49 +844,72 @@ const DisplayedCardsPage = ({
             or wait for others to do so.
           </h2>
         )}
-      {(displayedItems.length > 0 ||
-        (displayedItems.length === 0 && searchTerm !== "") ||
-        (displayedItems.length === 0 && activeFilters.length > 0)) && (
-        <div className="search-tools-container">
-          <SearchBar
-            input={searchTerm}
-            placeholder={usedFor === "events" ? "Search events" : "Search potential palz"}
-            inputHandler={handleSearchTermInput}
-            clearInputHandler={handleClearSearchTerm}
-            isSideButton={false}
-            title={
-              usedFor === "events"
-                ? "Search by title, organizers, description, related interests, or location"
-                : "Search by first/last name, username, or location"
-            }
-            searchBoxRef={searchBoxRef}
-            setSearchBoxIsFocused={setSearchBoxIsFocused}
-            searchBoxIsFocused={searchBoxIsFocused}
-            randomColor={randomColor}
-            numberOfResults={displayedItems.length}
-          />
-          <FilterDropdown
-            dropdownBtnText="Filters"
-            filterOptions={filterOptions}
-            activeFilters={activeFilters}
-            handleAddDeleteFilter={handleAddDeleteFilter}
-            showFilterOptions={showFilterOptions}
-            toggleShowFilterOptions={toggleShowFilterOptions}
-            handleClearActiveFilters={handleClearActiveFilters}
-            randomColor={randomColor}
-          />
+      {!fetchAllUsersQuery.isLoading &&
+        !fetchAllUsersQuery.isError &&
+        (displayedItems.length > 0 ||
+          (displayedItems.length === 0 && searchTerm !== "") ||
+          (displayedItems.length === 0 && activeFilters.length > 0)) && (
+          <search className="search-tools-container">
+            <SearchBar
+              input={searchTerm}
+              placeholder={
+                usedFor === "events" ? "Search events" : "Search potential palz"
+              }
+              inputHandler={handleSearchTermInput}
+              clearInputHandler={handleClearSearchTerm}
+              isSideButton={false}
+              title={
+                usedFor === "events"
+                  ? "Search by title, organizers, description, related interests, or location"
+                  : "Search by first/last name, username, or location"
+              }
+              searchBoxRef={searchBoxRef}
+              setSearchBoxIsFocused={setSearchBoxIsFocused}
+              searchBoxIsFocused={searchBoxIsFocused}
+              randomColor={randomColor}
+              numberOfResults={displayedItems.length}
+            />
+            <FilterDropdown
+              dropdownBtnText="Filters"
+              filterOptions={filterOptions}
+              activeFilters={activeFilters}
+              handleAddDeleteFilter={handleAddDeleteFilter}
+              showFilterOptions={showFilterOptions}
+              toggleShowFilterOptions={toggleShowFilterOptions}
+              handleClearActiveFilters={handleClearActiveFilters}
+              randomColor={randomColor}
+            />
+          </search>
+        )}
+      {!fetchAllUsersQuery.isLoading && !fetchAllUsersQuery.isError && (
+        <div className="all-cards-container">
+          {usedFor === "events" &&
+            displayedItemsFiltered.map(
+              (item) =>
+                Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
+            )}
+          {(usedFor === "potential-friends" || usedFor === "my-friends") &&
+            displayedItemsFiltered.map(
+              (item) => Methods.isTUser(item) && <UserCard key={item._id} user={item} />
+            )}
         </div>
       )}
-      <div className="all-cards-container">
-        {usedFor === "events" &&
-          displayedItemsFiltered.map(
-            (item) => Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
-          )}
-        {(usedFor === "potential-friends" || usedFor === "my-friends") &&
-          displayedItemsFiltered.map(
-            (item) => Methods.isTUser(item) && <UserCard key={item._id} user={item} />
-          )}
-      </div>
+      {fetchAllUsersQuery.isLoading && (
+        <header
+          style={{ marginTop: "3rem" }}
+          className="login-form-loading-or-error-text"
+        >
+          Loading...
+        </header>
+      )}
+      {fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && (
+        <div className="login-form-loading-error-container">
+          <header className="login-form-loading-or-error-text">Error loading data</header>
+          <div className="theme-element-container">
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
