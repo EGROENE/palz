@@ -388,7 +388,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         );
         Requests.removeFromFriendRequestsSent(
           variables.sender,
-          variables.recipient._id
+          variables.recipient
         ).catch((error) => console.log(error));
       }
       toast.error("Couldn't send request. Please try again.", {
@@ -1193,7 +1193,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           }
         } else {
           if (sender && sender._id) {
-            Requests.removeFromFriendRequestsReceived(sender._id, receiver)
+            Requests.removeFromFriendRequestsReceived(sender, receiver)
               .then((response) => {
                 if (!response.ok) {
                   toast.error("Could not accept friend request. Please try again.", {
@@ -1237,48 +1237,50 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                           }
                         } else {
                           if (receiver && receiver._id) {
-                            Requests.removeFromFriendRequestsSent(
-                              sender,
-                              receiver._id
-                            ).then((response) => {
-                              if (!response.ok) {
-                                toast.error(
-                                  "Could not accept friend request. Please try again.",
-                                  {
-                                    style: {
-                                      background:
-                                        theme === "light"
-                                          ? "#242424"
-                                          : "rgb(233, 231, 228)",
-                                      color: theme === "dark" ? "black" : "white",
-                                      border: "2px solid red",
-                                    },
-                                  }
-                                );
+                            Requests.removeFromFriendRequestsSent(sender, receiver).then(
+                              (response) => {
+                                if (!response.ok) {
+                                  toast.error(
+                                    "Could not accept friend request. Please try again.",
+                                    {
+                                      style: {
+                                        background:
+                                          theme === "light"
+                                            ? "#242424"
+                                            : "rgb(233, 231, 228)",
+                                        color: theme === "dark" ? "black" : "white",
+                                        border: "2px solid red",
+                                      },
+                                    }
+                                  );
 
-                                if (friends && setFriends && sender._id) {
-                                  setFriends(friends);
-                                }
-
-                                if (friendRequestsReceived && setFriendRequestsReceived) {
-                                  setFriendRequestsReceived(friendRequestsReceived);
-                                }
-                              } else {
-                                toast.success(
-                                  `You are now friends with ${sender.firstName} ${sender.lastName}!`,
-                                  {
-                                    style: {
-                                      background:
-                                        theme === "light"
-                                          ? "#242424"
-                                          : "rgb(233, 231, 228)",
-                                      color: theme === "dark" ? "black" : "white",
-                                      border: "2px solid green",
-                                    },
+                                  if (friends && setFriends && sender._id) {
+                                    setFriends(friends);
                                   }
-                                );
+
+                                  if (
+                                    friendRequestsReceived &&
+                                    setFriendRequestsReceived
+                                  ) {
+                                    setFriendRequestsReceived(friendRequestsReceived);
+                                  }
+                                } else {
+                                  toast.success(
+                                    `You are now friends with ${sender.firstName} ${sender.lastName}!`,
+                                    {
+                                      style: {
+                                        background:
+                                          theme === "light"
+                                            ? "#242424"
+                                            : "rgb(233, 231, 228)",
+                                        color: theme === "dark" ? "black" : "white",
+                                        border: "2px solid green",
+                                      },
+                                    }
+                                  );
+                                }
                               }
-                            });
+                            );
                           }
                         }
                       }
@@ -1316,7 +1318,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (sender && sender._id) {
-      Requests.removeFromFriendRequestsReceived(sender._id, receiver)
+      Requests.removeFromFriendRequestsReceived(sender, receiver)
         .then((response) => {
           if (!response.ok) {
             toast.error("Could not reject friend request. Please try again.", {
@@ -1331,34 +1333,31 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             }
           } else {
             if (receiver && receiver._id) {
-              Requests.removeFromFriendRequestsSent(sender, receiver._id).then(
-                (response) => {
-                  if (!response.ok) {
-                    toast.error("Could not reject friend request. Please try again.", {
+              Requests.removeFromFriendRequestsSent(sender, receiver).then((response) => {
+                if (!response.ok) {
+                  toast.error("Could not reject friend request. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                  if (setFriendRequestsReceived && friendRequestsReceived) {
+                    setFriendRequestsReceived(friendRequestsReceived);
+                  }
+                } else {
+                  toast(
+                    `Rejected friend request from ${sender.firstName} ${sender.lastName}.`,
+                    {
                       style: {
                         background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
                         color: theme === "dark" ? "black" : "white",
                         border: "2px solid red",
                       },
-                    });
-                    if (setFriendRequestsReceived && friendRequestsReceived) {
-                      setFriendRequestsReceived(friendRequestsReceived);
                     }
-                  } else {
-                    toast(
-                      `Rejected friend request from ${sender.firstName} ${sender.lastName}.`,
-                      {
-                        style: {
-                          background:
-                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                          color: theme === "dark" ? "black" : "white",
-                          border: "2px solid red",
-                        },
-                      }
-                    );
-                  }
+                  );
                 }
-              );
+              });
             }
           }
         })
@@ -1584,13 +1583,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             // If blocker has received FR from blockee:
             if (blockee._id && requestsAreOK) {
               if (blocker.friendRequestsReceived.includes(blockee._id)) {
-                Requests.removeFromFriendRequestsReceived(blockee._id, blocker)
+                Requests.removeFromFriendRequestsReceived(blockee, blocker)
                   .then((response) => {
                     if (!response.ok) {
                       requestsAreOK = false;
                     } else {
                       if (blocker._id) {
-                        Requests.removeFromFriendRequestsSent(blockee, blocker._id)
+                        Requests.removeFromFriendRequestsSent(blockee, blocker)
                           .then((response) => {
                             if (!response.ok) {
                               requestsAreOK = false;
@@ -1606,13 +1605,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               // If blockee has received FR from blocker:
               if (blocker._id && requestsAreOK) {
                 if (blockee.friendRequestsReceived.includes(blocker._id)) {
-                  Requests.removeFromFriendRequestsReceived(blocker._id, blockee)
+                  Requests.removeFromFriendRequestsReceived(blocker, blockee)
                     .then((response) => {
                       if (!response.ok) {
                         requestsAreOK = false;
                       } else {
                         if (blockee._id) {
-                          Requests.removeFromFriendRequestsSent(blocker, blockee._id)
+                          Requests.removeFromFriendRequestsSent(blocker, blockee)
                             .then((response) => {
                               if (!response.ok) {
                                 toast.error(
