@@ -342,6 +342,66 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  /* 
+  Success of a sent friend request depends on if both of the mutations below are successful, so call second mutation in onSuccess of mutation that runs first. Display toast of send-friend-request success or failure in onSuccess/onError of second mutation that runs. setIsLoading(false) upon settling of second mutation that runs.
+  */
+  const sendFriendRequestMutation = useMutation({
+    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
+      Requests.addToFriendRequestsSent(sender, recipient),
+    onSuccess: (data, variables) => {
+      if (data.ok) {
+        const sender = variables.sender;
+        const recipient = variables.recipient;
+        receiveFriendRequestMutation.mutate({ sender, recipient });
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Couldn't send request. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+  });
+
+  const receiveFriendRequestMutation = useMutation({
+    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
+      Requests.addToFriendRequestsReceived(sender, recipient),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+      toast.success("Friend request sent!", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid green",
+        },
+      });
+    },
+    onError: (error, variables) => {
+      console.log(error);
+      if (variables.recipient._id && friendRequestsSent) {
+        setFriendRequestsSent(
+          friendRequestsSent.filter((id) => id !== variables.recipient._id)
+        );
+        Requests.removeFromFriendRequestsSent(
+          variables.sender,
+          variables.recipient._id
+        ).catch((error) => console.log(error));
+      }
+      toast.error("Couldn't send request. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => setIsLoading(false),
+  });
+
   useEffect(() => {
     setFriendRequestsSent(currentUser?.friendRequestsSent);
     setFriendRequestsReceived(currentUser?.friendRequestsReceived);
@@ -1004,53 +1064,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
     }
 
-    setIsLoading(true);
-
-    let isRequestError = false;
-
-    const promisesToAwait =
-      sender && sender._id && recipient._id
-        ? [
-            Requests.addToFriendRequestsReceived(sender?._id, recipient),
-            Requests.addToFriendRequestsSent(sender, recipient._id),
-          ]
-        : undefined;
-
-    if (promisesToAwait) {
-      Promise.all(promisesToAwait)
-        .then(() => {
-          for (const promise of promisesToAwait) {
-            promise.then((response) => {
-              if (!response.ok) {
-                isRequestError = true;
-              }
-            });
-          }
-        })
-        .then(() => {
-          if (isRequestError) {
-            if (friendRequestsSent && setFriendRequestsSent) {
-              setFriendRequestsSent(friendRequestsSent);
-            }
-            toast.error("Couldn't send request. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          } else {
-            toast.success("Friend request sent!", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid green",
-              },
-            });
-          }
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setIsLoading(false));
+    if (sender) {
+      setIsLoading(true);
+      sendFriendRequestMutation.mutate({ sender, recipient });
     }
   };
 
