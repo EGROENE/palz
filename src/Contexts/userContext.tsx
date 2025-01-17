@@ -402,6 +402,64 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
+  const removeSentFriendRequestMutation = useMutation({
+    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
+      Requests.removeFromFriendRequestsSent(sender, recipient),
+    onSuccess: (data, variables) => {
+      if (data.ok) {
+        const sender = variables.sender;
+        const recipient = variables.recipient;
+        removeReceivedFriendRequestMutation.mutate({ sender, recipient });
+      }
+    },
+    onError: (error, variables) => {
+      const recipient = variables.recipient;
+      // Optimistic rendering: add recipient back to friendRequestsSent if request fails
+      if (setFriendRequestsSent && friendRequestsSent && recipient._id) {
+        setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
+      }
+      console.log(error);
+      toast.error("Couldn't retract request. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+  });
+
+  const removeReceivedFriendRequestMutation = useMutation({
+    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
+      Requests.removeFromFriendRequestsReceived(sender, recipient),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+      toast("Friend request retracted", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onError: (error, variables) => {
+      console.log(error);
+      const recipient = variables.recipient;
+      // Optimistic rendering: add recipient back to friendRequestsSent if request fails
+      if (setFriendRequestsSent && friendRequestsSent && recipient._id) {
+        setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
+      }
+      toast.error("Could not retract request. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => setIsLoading(false),
+  });
+
   useEffect(() => {
     setFriendRequestsSent(currentUser?.friendRequestsSent);
     setFriendRequestsReceived(currentUser?.friendRequestsReceived);
@@ -1084,56 +1142,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       );
     }
 
-    if (sender && sender._id) {
-      Requests.removeFromFriendRequestsReceived(sender?._id, recipient)
-        .then((response) => {
-          if (!response.ok) {
-            if (setFriendRequestsSent && friendRequestsSent) {
-              setFriendRequestsSent(
-                friendRequestsSent.filter((userID) => userID !== recipient._id)
-              );
-            }
-            toast.error("Could not retract request. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          } else {
-            if (sender && recipient._id) {
-              Requests.removeFromFriendRequestsSent(sender, recipient._id)
-                .then((response) => {
-                  if (!response.ok) {
-                    if (setFriendRequestsSent && friendRequestsSent) {
-                      setFriendRequestsSent(
-                        friendRequestsSent.filter((userID) => userID !== recipient._id)
-                      );
-                    }
-                    toast.error("Could not retract request. Please try again.", {
-                      style: {
-                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                        color: theme === "dark" ? "black" : "white",
-                        border: "2px solid red",
-                      },
-                    });
-                  } else {
-                    toast("Friend request retracted", {
-                      style: {
-                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                        color: theme === "dark" ? "black" : "white",
-                        border: "2px solid red",
-                      },
-                    });
-                  }
-                })
-                .catch((error) => console.log(error));
-            }
-          }
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setIsLoading(false));
-    }
+    removeSentFriendRequestMutation.mutate({ sender, recipient });
   };
 
   const handleAcceptFriendRequest = (
