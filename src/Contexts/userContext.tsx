@@ -355,8 +355,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         receiveFriendRequestMutation.mutate({ sender, recipient });
       }
     },
-    onError: (error) => {
+    onError: (error, variables) => {
       console.log(error);
+      // Optimistic rendering: if request fails, remove recipient from friendRequestsSent
+      if (variables.recipient._id && friendRequestsSent) {
+        setFriendRequestsSent(
+          friendRequestsSent.filter((id) => id !== variables.recipient._id)
+        );
+        Requests.removeFromFriendRequestsSent(
+          variables.sender,
+          variables.recipient
+        ).catch((error) => console.log(error));
+      }
       toast.error("Couldn't send request. Please try again.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -382,6 +392,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
     onError: (error, variables) => {
       console.log(error);
+      // Optimistic rendering: if request fails, remove recipient from friendRequestsSent
       if (variables.recipient._id && friendRequestsSent) {
         setFriendRequestsSent(
           friendRequestsSent.filter((id) => id !== variables.recipient._id)
