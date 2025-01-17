@@ -37,11 +37,11 @@ const FriendRequests = () => {
     setFriends,
   } = useUserContext();
 
-  const friendRequestsReceivedUSERS: TUser[] = allUsers.filter(
+  const friendRequestsReceivedUSERS: TUser[] | undefined = allUsers?.filter(
     (user) => user._id && friendRequestsReceived?.includes(user._id)
   );
 
-  const friendRequestsSentUSERS: TUser[] = allUsers.filter(
+  const friendRequestsSentUSERS: TUser[] | undefined = allUsers?.filter(
     (user) => user._id && friendRequestsSent?.includes(user._id)
   );
 
@@ -58,13 +58,17 @@ const FriendRequests = () => {
   // Upon change of requestsVisible, set displayedItems & displayedItemsFiltered arrays:
   /* Remember, these 2 arrays must both exist so the amount of items displayed can be compared to how many items there are in total. */
   useEffect(() => {
-    if (requestsVisible === "received" && friendRequestsReceived) {
+    if (
+      requestsVisible === "received" &&
+      friendRequestsReceived &&
+      friendRequestsReceivedUSERS
+    ) {
       setDisplayedItems(friendRequestsReceivedUSERS);
       setDisplayedItemsFiltered(
         friendRequestsReceivedUSERS.slice(0, displayedItemsCount)
       );
     }
-    if (requestsVisible === "sent" && friendRequestsSent) {
+    if (requestsVisible === "sent" && friendRequestsSent && friendRequestsSentUSERS) {
       setDisplayedItems(friendRequestsSentUSERS);
       setDisplayedItemsFiltered(friendRequestsSentUSERS.slice(0, displayedItemsCount));
     }
