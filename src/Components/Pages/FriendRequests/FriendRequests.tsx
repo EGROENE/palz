@@ -199,7 +199,7 @@ const FriendRequests = () => {
           <div className={styles.friendRequestUsersContainer}>
             {requestsVisible === "sent"
               ? displayedItemsFiltered &&
-                displayedItemsFiltered.map(
+                Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
                   (user) =>
                     Methods.isTUser(user) && (
                       <ListedUser
@@ -227,7 +227,7 @@ const FriendRequests = () => {
                     )
                 )
               : displayedItemsFiltered &&
-                displayedItemsFiltered.map(
+                Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
                   (user) =>
                     Methods.isTUser(user) && (
                       <ListedUser
