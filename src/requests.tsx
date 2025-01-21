@@ -693,11 +693,11 @@ const removeFromFriendRequestsSent = (
   });
 }; */
 
-const addFriendToFriendsArray = (user: TUser, friend: string): Promise<Response> => {
+const addFriendToFriendsArray = (user: TUser, friend: TUser): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedFriendsArray = user?.friends.concat(friend);
+  let updatedFriendsArray = friend._id && user?.friends.concat(friend._id);
   /* if (user?.friends) {
     for (const existingFriendID of user.friendRequestsSent) {
       updatedFriendsArray.push(existingFriendID);
@@ -717,11 +717,11 @@ const addFriendToFriendsArray = (user: TUser, friend: string): Promise<Response>
   });
 };
 
-const deleteFriendFromFriendsArray = (user: TUser, friend: string): Promise<Response> => {
+const deleteFriendFromFriendsArray = (user: TUser, friend: TUser): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendsArray = user.friends.filter((f) => f !== friend);
+  const updatedFriendsArray = user.friends.filter((f) => f !== friend._id);
 
   var raw = JSON.stringify({
     "friends": updatedFriendsArray,
