@@ -586,6 +586,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.removeFromFriendRequestsSent(sender, receiver),
     onSuccess: (data, variables) => {
       if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: ["allUsers"] });
         toast.success(
           `You are now friends with ${variables.sender.firstName} ${variables.sender.lastName}!`,
           {
