@@ -414,35 +414,82 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const removeSentFriendRequestMutation = useMutation({
-    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
-      Requests.removeFromFriendRequestsSent(sender, recipient),
+    mutationFn: ({
+      sender,
+      recipient,
+      event,
+    }: {
+      sender: TUser;
+      recipient: TUser;
+      event: "becoming-friends" | "retract-request";
+    }) => {
+      return Requests.removeFromFriendRequestsSent(sender, recipient);
+    },
     onSuccess: (data, variables) => {
       if (data.ok) {
         const sender = variables.sender;
         const recipient = variables.recipient;
-        removeReceivedFriendRequestMutation.mutate({ sender, recipient });
+        const event = variables.event;
+        removeReceivedFriendRequestMutation.mutate({ sender, recipient, event });
       }
     },
     onError: (error, variables) => {
-      const recipient = variables.recipient;
-      // Optimistic rendering: add recipient back to friendRequestsSent if request fails
-      if (setFriendRequestsSent && friendRequestsSent && recipient._id) {
-        setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
+      if (variables.event === "becoming-friends") {
+        // Remove sender & receiver from each other's 'friends' array, add sender back to receivers FR-received array:
+        Promise.all([
+          Requests.deleteFriendFromFriendsArray(variables.sender, variables.recipient),
+          Requests.deleteFriendFromFriendsArray(variables.recipient, variables.sender),
+          Requests.addToFriendRequestsSent(variables.sender, variables.recipient),
+        ]).catch((error) => console.log(error));
+
+        // Revert surface-level state values (Remove sender from friends, add sender back to receivedFRs):
+        if (friends) {
+          setFriends(friends.filter((friend) => friend !== variables.sender._id));
+        }
+
+        if (variables.sender._id) {
+          setFriendRequestsReceived(friendRequestsReceived?.concat(variables.sender._id));
+        }
+
+        console.log(error);
+
+        toast.error("Could not accept friend request. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
-      console.log(error);
-      toast.error("Couldn't retract request. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
+
+      if (variables.event === "retract-request") {
+        const recipient = variables.recipient;
+        // Optimistic rendering: add recipient back to friendRequestsSent if request fails
+        if (setFriendRequestsSent && friendRequestsSent && recipient._id) {
+          setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
+        }
+        console.log(error);
+        toast.error("Couldn't retract request. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
     },
   });
 
   const removeReceivedFriendRequestMutation = useMutation({
-    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
-      Requests.removeFromFriendRequestsReceived(sender, recipient),
+    mutationFn: ({
+      sender,
+      recipient,
+      event,
+    }: {
+      sender: TUser;
+      recipient: TUser;
+      event: "becoming-friends" | "retract-request";
+    }) => Requests.removeFromFriendRequestsReceived(sender, recipient),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allUsers"] });
       toast("Friend request retracted", {
@@ -510,11 +557,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addFriendToFriendsArray(receiver, sender),
     onSuccess: (data, variables) => {
       if (data.ok) {
-        const receiver = variables.receiver;
+        const recipient = variables.receiver;
         const sender = variables.sender;
-        removeSentFriendRequestAfterBecomingFriendsMutation.mutate({
+        const event = "becoming-friends";
+        removeSentFriendRequestMutation.mutate({
           sender,
-          receiver,
+          recipient,
+          event,
         });
       }
     },
@@ -540,48 +589,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       if (friendRequestsReceived && variables.sender._id) {
         setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
       }
-    },
-  });
-
-  const removeSentFriendRequestAfterBecomingFriendsMutation = useMutation({
-    mutationFn: ({ sender, receiver }: { sender: TUser; receiver: TUser }) =>
-      Requests.removeFromFriendRequestsSent(sender, receiver),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        const sender = variables.sender;
-        const receiver = variables.receiver;
-        removeReceivedFriendRequestAfterBecomingFriendsMutation.mutate({
-          sender,
-          receiver,
-        });
-      }
-    },
-    onError: (error, variables) => {
-      // Remove sender & receiver from each other's 'friends' array, add sender back to receivers FR-received array:
-      Promise.all([
-        Requests.deleteFriendFromFriendsArray(variables.sender, variables.receiver),
-        Requests.deleteFriendFromFriendsArray(variables.receiver, variables.sender),
-        Requests.addToFriendRequestsSent(variables.sender, variables.receiver),
-      ]).catch((error) => console.log(error));
-
-      // Revert surface-level state values (Remove sender from friends, add sender back to receivedFRs):
-      if (friends) {
-        setFriends(friends.filter((friend) => friend !== variables.sender._id));
-      }
-
-      if (variables.sender._id) {
-        setFriendRequestsReceived(friendRequestsReceived?.concat(variables.sender._id));
-      }
-
-      console.log(error);
-
-      toast.error("Could not accept friend request. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
     },
   });
 
@@ -1319,7 +1326,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       );
     }
 
-    removeSentFriendRequestMutation.mutate({ sender, recipient });
+    const event = "retract-request";
+    removeSentFriendRequestMutation.mutate({ sender, recipient, event });
   };
 
   const handleAcceptFriendRequest = (
