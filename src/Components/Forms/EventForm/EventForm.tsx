@@ -24,7 +24,7 @@ const EventForm = ({
   const {
     showSidebar,
     setShowSidebar,
-    setImageIsUploading,
+    setImageIsUploading, // use updateEventImagesMutation.isPending instead of imageIsDeleting
     setImageIsDeleting,
     isLoading,
     setIsLoading,
@@ -201,47 +201,54 @@ const EventForm = ({
   }, []);
 
   useEffect(() => {
-    setPotentialCoOrganizers(
-      allOtherUsers.filter((user) => {
-        if (user._id) {
-          return (
-            (user.whoCanAddUserAsOrganizer === "anyone" ||
-              (user.whoCanAddUserAsOrganizer === "friends" &&
-                currentUser?.friends.includes(user._id))) &&
-            !invitees.includes(user._id) &&
-            !blockedUsers?.includes(user._id) &&
-            currentUser?._id &&
-            !user.blockedUsers.includes(currentUser._id)
-          );
-        }
-      })
-    );
+    if (allOtherUsers) {
+      setPotentialCoOrganizers(
+        allOtherUsers.filter((user) => {
+          if (user._id) {
+            return (
+              (user.whoCanAddUserAsOrganizer === "anyone" ||
+                (user.whoCanAddUserAsOrganizer === "friends" &&
+                  currentUser?.friends.includes(user._id))) &&
+              !invitees.includes(user._id) &&
+              !blockedUsers?.includes(user._id) &&
+              currentUser?._id &&
+              !user.blockedUsers.includes(currentUser._id)
+            );
+          }
+        })
+      );
 
-    setPotentialInvitees(
-      allOtherUsers.filter((user) => {
-        if (user._id) {
-          return (
-            (user.whoCanInviteUser === "anyone" ||
-              (user.whoCanInviteUser === "friends" &&
-                currentUser?.friends.includes(user._id))) &&
-            !organizers.includes(user._id) &&
-            !blockedUsers?.includes(user._id) &&
-            currentUser?._id &&
-            !user.blockedUsers.includes(currentUser._id)
-          );
-        }
-      })
-    );
+      setPotentialInvitees(
+        allOtherUsers.filter((user) => {
+          if (user._id) {
+            return (
+              (user.whoCanInviteUser === "anyone" ||
+                (user.whoCanInviteUser === "friends" &&
+                  currentUser?.friends.includes(user._id))) &&
+              !organizers.includes(user._id) &&
+              !blockedUsers?.includes(user._id) &&
+              currentUser?._id &&
+              !user.blockedUsers.includes(currentUser._id)
+            );
+          }
+        })
+      );
+    }
   }, [invitees, organizers]);
 
   // Make allOtherUsers consist first of currentUser's friends, then all others
-  const currentUserFriends = allUsers.filter(
-    (user) => user._id && currentUser?.friends.includes(user._id)
-  );
+  const currentUserFriends = allUsers
+    ? allUsers.filter((user) => user._id && currentUser?.friends.includes(user._id))
+    : undefined;
   const currentUserNonFriends = allUsers
-    .filter((user) => user._id !== currentUser?._id)
-    .filter((user) => user._id && !currentUser?.friends.includes(user._id));
-  const allOtherUsers = currentUserFriends.concat(currentUserNonFriends);
+    ? allUsers
+        .filter((user) => user._id !== currentUser?._id)
+        .filter((user) => user._id && !currentUser?.friends.includes(user._id))
+    : undefined;
+  const allOtherUsers =
+    currentUserFriends &&
+    currentUserNonFriends &&
+    currentUserFriends.concat(currentUserNonFriends);
 
   // INPUT HANDLERS
   const handleEventTitleInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -650,71 +657,77 @@ const EventForm = ({
   ): void => {
     e.preventDefault();
     const inputCleaned = e.target.value.replace(/\s+/g, " ");
-    if (field === "co-organizers") {
-      setCoOrganizersSearchQuery(inputCleaned);
-      setShowPotentialCoOrganizers(true);
-      if (inputCleaned.replace(/\s+/g, "") !== "") {
-        // If input w/o spaces is not empty string
-        const matchingUsers: TUser[] = [];
-        for (const user of allOtherUsers) {
-          if (
-            user.firstName &&
-            user.lastName &&
-            user.username &&
-            (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-              user?.lastName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-              user?.username.includes(inputCleaned.toLowerCase()))
-          ) {
-            matchingUsers.push(user);
-          }
-        }
-        setPotentialCoOrganizers(matchingUsers);
-      } else {
-        // setPotentialCoOrganizers to original value
-        setPotentialCoOrganizers(
-          allOtherUsers.filter((user) => {
-            if (user._id) {
-              return (
-                (user.whoCanAddUserAsOrganizer === "anyone" ||
-                  (user.whoCanAddUserAsOrganizer === "friends" &&
-                    currentUser?.friends.includes(user._id))) &&
-                !invitees.includes(user._id)
-              );
+    if (allOtherUsers) {
+      if (field === "co-organizers") {
+        setCoOrganizersSearchQuery(inputCleaned);
+        setShowPotentialCoOrganizers(true);
+        if (inputCleaned.replace(/\s+/g, "") !== "") {
+          // If input w/o spaces is not empty string
+          const matchingUsers: TUser[] = [];
+          for (const user of allOtherUsers) {
+            if (
+              user.firstName &&
+              user.lastName &&
+              user.username &&
+              (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+                user?.lastName
+                  .toLowerCase()
+                  .includes(inputCleaned.toLowerCase().trim()) ||
+                user?.username.includes(inputCleaned.toLowerCase()))
+            ) {
+              matchingUsers.push(user);
             }
-          })
-        );
-      }
-    } else {
-      setInviteesSearchQuery(inputCleaned);
-      setShowPotentialInvitees(true);
-      if (inputCleaned.replace(/\s+/g, "") !== "") {
-        const matchingUsers: TUser[] = [];
-        for (const user of allOtherUsers) {
-          if (
-            user.firstName &&
-            user.lastName &&
-            user.username &&
-            (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-              user?.lastName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-              user?.username.includes(inputCleaned.toLowerCase()))
-          ) {
-            matchingUsers.push(user);
           }
+          setPotentialCoOrganizers(matchingUsers);
+        } else {
+          // setPotentialCoOrganizers to original value
+          setPotentialCoOrganizers(
+            allOtherUsers.filter((user) => {
+              if (user._id) {
+                return (
+                  (user.whoCanAddUserAsOrganizer === "anyone" ||
+                    (user.whoCanAddUserAsOrganizer === "friends" &&
+                      currentUser?.friends.includes(user._id))) &&
+                  !invitees.includes(user._id)
+                );
+              }
+            })
+          );
         }
-        setPotentialInvitees(matchingUsers);
       } else {
-        setPotentialInvitees(
-          allOtherUsers.filter((user) => {
-            if (user._id) {
-              return (
-                (user.whoCanInviteUser === "anyone" ||
-                  (user.whoCanInviteUser === "friends" &&
-                    currentUser?.friends.includes(user._id))) &&
-                !organizers.includes(user._id)
-              );
+        setInviteesSearchQuery(inputCleaned);
+        setShowPotentialInvitees(true);
+        if (inputCleaned.replace(/\s+/g, "") !== "") {
+          const matchingUsers: TUser[] = [];
+          for (const user of allOtherUsers) {
+            if (
+              user.firstName &&
+              user.lastName &&
+              user.username &&
+              (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+                user?.lastName
+                  .toLowerCase()
+                  .includes(inputCleaned.toLowerCase().trim()) ||
+                user?.username.includes(inputCleaned.toLowerCase()))
+            ) {
+              matchingUsers.push(user);
             }
-          })
-        );
+          }
+          setPotentialInvitees(matchingUsers);
+        } else {
+          setPotentialInvitees(
+            allOtherUsers.filter((user) => {
+              if (user._id) {
+                return (
+                  (user.whoCanInviteUser === "anyone" ||
+                    (user.whoCanInviteUser === "friends" &&
+                      currentUser?.friends.includes(user._id))) &&
+                  !organizers.includes(user._id)
+                );
+              }
+            })
+          );
+        }
       }
     }
   };
@@ -1057,9 +1070,11 @@ const EventForm = ({
 
   const getUsersWhoAreOrganizers = (): TUser[] => {
     const usersWhoAreOrganizers: TUser[] = [];
-    for (const organizer of organizers) {
-      const user = allUsers.filter((user) => user._id === organizer)[0];
-      usersWhoAreOrganizers.push(user);
+    if (allUsers) {
+      for (const organizer of organizers) {
+        const user = allUsers.filter((user) => user._id === organizer)[0];
+        usersWhoAreOrganizers.push(user);
+      }
     }
     return usersWhoAreOrganizers;
   };
@@ -1067,9 +1082,11 @@ const EventForm = ({
 
   const getUsersWhoAreInvitees = (): TUser[] => {
     const usersWhoAreInvitees: TUser[] = [];
-    for (const invitee of invitees) {
-      const user = allUsers.filter((user) => user._id === invitee)[0];
-      usersWhoAreInvitees.push(user);
+    if (allUsers) {
+      for (const invitee of invitees) {
+        const user = allUsers.filter((user) => user._id === invitee)[0];
+        usersWhoAreInvitees.push(user);
+      }
     }
     return usersWhoAreInvitees;
   };
@@ -1721,18 +1738,20 @@ const EventForm = ({
             <i
               onClick={() => {
                 setCoOrganizersSearchQuery("");
-                setPotentialCoOrganizers(
-                  allOtherUsers.filter((user) => {
-                    if (user._id) {
-                      return (
-                        (user.whoCanAddUserAsOrganizer === "anyone" ||
-                          (user.whoCanAddUserAsOrganizer === "friends" &&
-                            currentUser?.friends.includes(user._id))) &&
-                        !invitees.includes(user._id)
-                      );
-                    }
-                  })
-                );
+                if (allOtherUsers) {
+                  setPotentialCoOrganizers(
+                    allOtherUsers.filter((user) => {
+                      if (user._id) {
+                        return (
+                          (user.whoCanAddUserAsOrganizer === "anyone" ||
+                            (user.whoCanAddUserAsOrganizer === "friends" &&
+                              currentUser?.friends.includes(user._id))) &&
+                          !invitees.includes(user._id)
+                        );
+                      }
+                    })
+                  );
+                }
               }}
               className="clear-other-users-search-query fas fa-times"
             ></i>
@@ -1816,18 +1835,20 @@ const EventForm = ({
             <i
               onClick={() => {
                 setInviteesSearchQuery("");
-                setPotentialInvitees(
-                  allOtherUsers.filter((user) => {
-                    if (user._id) {
-                      return (
-                        (user.whoCanInviteUser === "anyone" ||
-                          (user.whoCanInviteUser === "friends" &&
-                            currentUser?.friends.includes(user._id))) &&
-                        !organizers.includes(user._id)
-                      );
-                    }
-                  })
-                );
+                if (allOtherUsers) {
+                  setPotentialInvitees(
+                    allOtherUsers.filter((user) => {
+                      if (user._id) {
+                        return (
+                          (user.whoCanInviteUser === "anyone" ||
+                            (user.whoCanInviteUser === "friends" &&
+                              currentUser?.friends.includes(user._id))) &&
+                          !organizers.includes(user._id)
+                        );
+                      }
+                    })
+                  );
+                }
               }}
               className="clear-other-users-search-query fas fa-times"
             ></i>
