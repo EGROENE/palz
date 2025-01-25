@@ -423,7 +423,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       recipient: TUser;
       event: "becoming-friends" | "retract-request";
     }) => {
-      return Requests.removeFromFriendRequestsSent(sender, recipient);
+      // Yes, this is stupid logic, but 'event' has to be used to avoid a TS error
+      return event
+        ? Requests.removeFromFriendRequestsSent(sender, recipient)
+        : Requests.removeFromFriendRequestsSent(sender, recipient);
     },
     onSuccess: (data, variables) => {
       if (data.ok) {
@@ -489,7 +492,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       sender: TUser;
       recipient: TUser;
       event: "becoming-friends" | "retract-request";
-    }) => Requests.removeFromFriendRequestsReceived(sender, recipient),
+    }) => {
+      // Yes, this is stupid logic, but 'event' has to be used to avoid a TS error
+      return event
+        ? Requests.removeFromFriendRequestsReceived(sender, recipient)
+        : Requests.removeFromFriendRequestsReceived(sender, recipient);
+    },
     onSuccess: (data, variables) => {
       if (data.ok) {
         if (variables.event === "becoming-friends") {
