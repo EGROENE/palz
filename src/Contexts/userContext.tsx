@@ -421,7 +421,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }: {
       sender: TUser;
       recipient: TUser;
-      event: "accept-request" | "retract-request";
+      event: "accept-request" | "retract-request" | "reject-request";
     }) => {
       // Yes, this is stupid logic, but 'event' has to be used to avoid a TS error
       return event
@@ -480,6 +480,20 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           },
         });
       }
+
+      if (variables.event === "reject-request") {
+        if (setFriendRequestsReceived && friendRequestsReceived && variables.sender._id) {
+          setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
+        }
+
+        toast.error("Could not reject friend request. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
     },
   });
 
@@ -491,7 +505,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }: {
       sender: TUser;
       recipient: TUser;
-      event: "accept-request" | "retract-request";
+      event: "accept-request" | "retract-request" | "reject-request";
     }) => {
       // Yes, this is stupid logic, but 'event' has to be used to avoid a TS error
       return event
@@ -521,6 +535,19 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               border: "2px solid red",
             },
           });
+        }
+
+        if (variables.event === "reject-request") {
+          toast(
+            `Rejected friend request from ${variables.sender.firstName} ${variables.sender.lastName}.`,
+            {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            }
+          );
         }
       }
       queryClient.invalidateQueries({ queryKey: ["allUsers"] });
@@ -566,6 +593,20 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             border: "2px solid red",
           },
         });
+      }
+
+      if (variables.event === "reject-request") {
+        toast.error("Could not reject friend request. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+
+        if (setFriendRequestsReceived && friendRequestsReceived && variables.sender._id) {
+          setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
+        }
       }
     },
     onSettled: () => setIsLoading(false),
@@ -1387,53 +1428,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       );
     }
 
-    if (sender && sender._id) {
-      Requests.removeFromFriendRequestsReceived(sender, receiver)
-        .then((response) => {
-          if (!response.ok) {
-            toast.error("Could not reject friend request. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-            if (setFriendRequestsReceived && friendRequestsReceived) {
-              setFriendRequestsReceived(friendRequestsReceived);
-            }
-          } else {
-            if (receiver && receiver._id) {
-              Requests.removeFromFriendRequestsSent(sender, receiver).then((response) => {
-                if (!response.ok) {
-                  toast.error("Could not reject friend request. Please try again.", {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid red",
-                    },
-                  });
-                  if (setFriendRequestsReceived && friendRequestsReceived) {
-                    setFriendRequestsReceived(friendRequestsReceived);
-                  }
-                } else {
-                  toast(
-                    `Rejected friend request from ${sender.firstName} ${sender.lastName}.`,
-                    {
-                      style: {
-                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                        color: theme === "dark" ? "black" : "white",
-                        border: "2px solid red",
-                      },
-                    }
-                  );
-                }
-              });
-            }
-          }
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setIsLoading(false));
-    }
+    const event = "reject-request";
+    const recipient = receiver;
+    removeSentFriendRequestMutation.mutate({ sender, recipient, event });
   };
 
   const handleUnfriending = (
