@@ -30,13 +30,8 @@ const EventForm = ({
     setIsLoading,
     theme,
   } = useMainContext();
-  const {
-    handleCityStateCountryInput,
-    allUsers,
-    currentUser,
-    handleAddRemoveUserAsOrganizer,
-    blockedUsers,
-  } = useUserContext();
+  const { handleCityStateCountryInput, allUsers, currentUser, blockedUsers } =
+    useUserContext();
   const {
     allEvents,
     currentEvent,
@@ -45,6 +40,7 @@ const EventForm = ({
     setAddEventIsInProgress,
     setEventDeletionIsInProgress,
     setEventEditIsInProgress,
+    handleAddRemoveUserAsOrganizer,
   } = useEventContext();
 
   const navigation = useNavigate();

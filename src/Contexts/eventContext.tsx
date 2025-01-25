@@ -5,6 +5,7 @@ import Requests from "../requests";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useUserContext } from "../Hooks/useUserContext";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export const EventContext = createContext<TEventContext | null>(null);
 
@@ -161,17 +162,17 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     e.preventDefault();
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     if (displayedUsers && setDisplayedUsers) {
-      setDisplayedUsers(displayedUsers.filter((u) => user?._id !== u._id))
+      setDisplayedUsers(displayedUsers.filter((u) => user?._id !== u._id));
     }
 
     Requests.removeInvitee(event, user)
       .then((response) => {
         if (!response.ok) {
           if (displayedUsers && setDisplayedUsers) {
-            setDisplayedUsers(displayedUsers)
+            setDisplayedUsers(displayedUsers);
           }
           toast.error("Could not remove invitee. Please try again.", {
             style: {
@@ -190,10 +191,63 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           });
         }
       })
-      .catch((error) => console.log(error)).finally(() => setIsLoading(false))
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
+  };
+
+  const navigation = useNavigate();
+
+  const handleAddRemoveUserAsOrganizer = (
+    e:
+      | React.MouseEvent<HTMLDivElement, MouseEvent>
+      | React.ChangeEvent<HTMLInputElement>
+      | React.MouseEvent<HTMLLIElement, MouseEvent>,
+    organizers: string[],
+    setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
+    user: TUser,
+    event?: TEvent
+  ): void => {
+    e?.preventDefault();
+    if (user && user._id) {
+      if (organizers.includes(user._id)) {
+        // Remove non-current user who isn't currentUser
+        setOrganizers(organizers.filter((organizerID) => organizerID !== user._id));
+      } else {
+        // Add non-current user as organizer
+        setOrganizers(organizers.concat(user._id));
+      }
+    } else {
+      // Remove currentUser as organizer
+      Requests.removeOrganizer(event, currentUser)
+        .then((response) => {
+          if (!response.ok) {
+            toast.error("Could not remove you as user. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          } else {
+            toast(
+              "You have removed yourself as an organizer & are no longer able to make changes to that event.",
+              {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              }
+            );
+            navigation(`/${currentUser?.username}`);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
   };
 
   const eventContextValues: TEventContext = {
+    handleAddRemoveUserAsOrganizer,
     handleRemoveInvitee,
     handleDeclineInvitation,
     handleAddUserRSVP,

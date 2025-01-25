@@ -222,16 +222,6 @@ export type TUserContext = {
   setFriendRequestsReceived: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   blockedUsers: string[] | null;
   setBlockedUsers: React.Dispatch<React.SetStateAction<string[] | null>>;
-  handleAddRemoveUserAsOrganizer: (
-    e:
-      | React.MouseEvent<HTMLDivElement, MouseEvent>
-      | React.ChangeEvent<HTMLInputElement>
-      | React.MouseEvent<HTMLLIElement, MouseEvent>,
-    organizers: string[],
-    setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
-    user: TUser,
-    event?: TEvent
-  ) => void;
   handleBlockUser: (
     blocker: TUser,
     blockee: TUser,
@@ -534,6 +524,16 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  handleAddRemoveUserAsOrganizer: (
+    e:
+      | React.MouseEvent<HTMLDivElement, MouseEvent>
+      | React.ChangeEvent<HTMLInputElement>
+      | React.MouseEvent<HTMLLIElement, MouseEvent>,
+    organizers: string[],
+    setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
+    user: TUser,
+    event?: TEvent
+  ) => void;
   handleRemoveInvitee: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,

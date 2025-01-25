@@ -1,6 +1,6 @@
 import React from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
-import { useUserContext } from "../../../Hooks/useUserContext";
+import { useEventContext } from "../../../Hooks/useEventContext";
 import { TUser, TEvent } from "../../../types";
 import styles from "./styles.module.css";
 
@@ -25,7 +25,7 @@ const DropdownChecklist = ({
 }) => {
   const { isLoading, handleLoadMoreOnScroll } = useMainContext();
 
-  const { handleAddRemoveUserAsOrganizer } = useUserContext();
+  const { handleAddRemoveUserAsOrganizer } = useEventContext();
 
   let displayedItemsArrayFiltered: TUser[] = [];
   if (displayedItemsCount) {

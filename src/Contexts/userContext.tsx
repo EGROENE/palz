@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useState, useEffect, SetStateAction } from "react";
-import { TUserContext, TUser, TUserValuesToUpdate, TEvent } from "../types";
+import { TUserContext, TUser, TUserValuesToUpdate } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -1507,54 +1507,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Defined here, since used in DropdownChecklist & EventForm
-  const handleAddRemoveUserAsOrganizer = (
-    e:
-      | React.MouseEvent<HTMLDivElement, MouseEvent>
-      | React.ChangeEvent<HTMLInputElement>
-      | React.MouseEvent<HTMLLIElement, MouseEvent>,
-    organizers: string[],
-    setOrganizers: React.Dispatch<SetStateAction<string[]>>,
-    user: TUser,
-    event?: TEvent
-  ): void => {
-    e?.preventDefault();
-    if (user && user._id) {
-      if (organizers.includes(user._id)) {
-        // Remove non-current user who isn't currentUser
-        setOrganizers(organizers.filter((organizerID) => organizerID !== user._id));
-      } else {
-        // Add non-current user as organizer
-        setOrganizers(organizers.concat(user._id));
-      }
-    } else {
-      // Remove currentUser as organizer
-      Requests.removeOrganizer(event, currentUser)
-        .then((response) => {
-          if (!response.ok) {
-            toast.error("Could not remove you as user. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          } else {
-            toast(
-              "You have removed yourself as an organizer & are no longer able to make changes to that event.",
-              {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid red",
-                },
-              }
-            );
-            navigation(`/${currentUser?.username}`);
-          }
-        })
-        .catch((error) => console.log(error));
-    }
-  };
 
   // maybe pass in a TUser[] & its setter in order to optimistically render UserCards on FindPalz/MyPalz, FriendRequests
   const handleBlockUser = (
@@ -2020,7 +1972,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setFriendRequestsReceived,
     blockedUsers,
     setBlockedUsers,
-    handleAddRemoveUserAsOrganizer,
     handleUnblockUser,
     handleBlockUser,
     whoCanMessage,
