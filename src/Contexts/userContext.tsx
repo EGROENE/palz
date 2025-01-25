@@ -421,7 +421,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }: {
       sender: TUser;
       recipient: TUser;
-      event: "becoming-friends" | "retract-request";
+      event: "accept-request" | "retract-request";
     }) => {
       // Yes, this is stupid logic, but 'event' has to be used to avoid a TS error
       return event
@@ -437,7 +437,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     },
     onError: (error, variables) => {
-      if (variables.event === "becoming-friends") {
+      if (variables.event === "accept-request") {
         // Remove sender & receiver from each other's 'friends' array, add sender back to receivers FR-received array:
         Promise.all([
           Requests.deleteFriendFromFriendsArray(variables.sender, variables.recipient),
@@ -491,7 +491,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }: {
       sender: TUser;
       recipient: TUser;
-      event: "becoming-friends" | "retract-request";
+      event: "accept-request" | "retract-request";
     }) => {
       // Yes, this is stupid logic, but 'event' has to be used to avoid a TS error
       return event
@@ -500,7 +500,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
     onSuccess: (data, variables) => {
       if (data.ok) {
-        if (variables.event === "becoming-friends") {
+        if (variables.event === "accept-request") {
           toast.success(
             `You are now friends with ${variables.sender.firstName} ${variables.sender.lastName}!`,
             {
@@ -527,7 +527,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
     onError: (error, variables) => {
       console.log(error);
-      if (variables.event === "becoming-friends") {
+      if (variables.event === "accept-request") {
         // Remove sender & receiver from each other's 'friends' array, add back to 'received' array:
         Promise.all([
           Requests.deleteFriendFromFriendsArray(variables.sender, variables.recipient),
@@ -612,7 +612,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       if (data.ok) {
         const recipient = variables.receiver;
         const sender = variables.sender;
-        const event = "becoming-friends";
+        const event = "accept-request";
         removeSentFriendRequestMutation.mutate({
           sender,
           recipient,
