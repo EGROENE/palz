@@ -1736,6 +1736,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         .finally(() => {
           setIsLoading(false);
           if (requestsAreOK) {
+            queryClient.invalidateQueries({ queryKey: ["allUsers"] });
             toast(`You have blocked ${blockee.username}.`, {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -1779,6 +1780,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               },
             });
           } else {
+            queryClient.invalidateQueries({ queryKey: ["allUsers"] });
             toast.success(`Unblocked ${blockee.username}.`, {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
