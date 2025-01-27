@@ -686,9 +686,82 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
-  /* const removeFromFriendsMutation = useMutation({
-    mutationFn:
-  }) */
+  /* const unfriendMutation = useMutation({
+    mutationFn: ({ user, friend }: { user: TUser; friend: TUser }) =>
+      Requests.deleteFriendFromFriendsArray(user, friend),
+    onSuccess: (data, variables) => {
+      if (data.ok) {
+        // If deleted from user's friends, delete user from former friend's friends, too:
+        Requests.deleteFriendFromFriendsArray(variables.friend, variables.user)
+          .then(() => {
+            // If requests to mutually delete from friends are both successful...
+            queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+            setIsLoading(false);
+            toast(
+              `You have unfriended ${variables.friend.firstName} ${variables.friend.lastName}.`,
+              {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              }
+            );
+          })
+          .catch((error) => {
+            // If request to delete user from former friend's friends fails...
+            // For optimistic-rendering purposes, re-add ex friend back to 'friends' array in state:
+            if (friends && variables.friend._id) {
+              setFriends(friends.concat(variables.friend._id));
+            }
+
+            // Reset user's 'friends' array in DB:
+            const reAddExFriend = () =>
+              Requests.addFriendToFriendsArray(variables.user, variables.friend).catch(
+                (error) => {
+                  // Log error & keep trying if adding ex friend back to users friends in DB fails:
+                  console.log(error);
+                  reAddExFriend();
+                }
+              );
+            reAddExFriend();
+
+            console.log(error);
+
+            toast.error(
+              `Couldn't unfriend ${variables.friend.firstName} ${variables.friend.lastName}. Please try again.`,
+              {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              }
+            );
+          })
+          .finally(() => setIsLoading(false));
+      }
+    },
+    onError: (error, variables) => {
+      if (friends && variables.friend._id) {
+        setFriends(friends.concat(variables.friend._id));
+      }
+
+      console.log(error);
+
+      toast.error(
+        `Couldn't unfriend ${variables.friend.firstName} ${variables.friend.lastName}. Please try again.`,
+        {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        }
+      );
+    },
+    onSettled: () => setIsLoading(false),
+  }); */
 
   useEffect(() => {
     setFriendRequestsSent(currentUser?.friendRequestsSent);
@@ -1492,6 +1565,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               setFriends(friends);
             }
           } else {
+            queryClient.invalidateQueries({ queryKey: ["allUsers"] });
             toast(`You have unfriended ${friend.firstName} ${friend.lastName}.`, {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
