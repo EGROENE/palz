@@ -51,7 +51,6 @@ const UserSettings = () => {
     useMainContext();
   const {
     currentUser,
-    fetchAllUsers,
     allUsers,
     logout,
     passwordIsHidden,
@@ -78,7 +77,6 @@ const UserSettings = () => {
               border: "2px solid red",
             },
           });
-          fetchAllUsers();
         } else {
           toast.success(`'${interest}' added to interests`, {
             style: {
@@ -109,7 +107,6 @@ const UserSettings = () => {
               border: "2px solid red",
             },
           });
-          fetchAllUsers();
         } else {
           toast(`'${interest}' removed from interests`, {
             style: {
@@ -155,11 +152,11 @@ const UserSettings = () => {
     }
 
     // Delete user from friendRequestsReceived & friends arrays in other users' DB documents:
-    if (currentUser && currentUser._id) {
+    if (currentUser && allUsers) {
       for (const user of allUsers) {
         promisesToAwait.push(
-          Requests.removeFromFriendRequestsReceived(currentUser?._id, user),
-          Requests.deleteFriendFromFriendsArray(user, currentUser?._id)
+          Requests.removeFromFriendRequestsReceived(currentUser, user),
+          Requests.deleteFriendFromFriendsArray(user, currentUser)
         );
       }
     }
@@ -198,7 +195,6 @@ const UserSettings = () => {
                   },
                 });
                 fetchAllEvents();
-                fetchAllUsers();
               } else {
                 toast("You have deleted your account. We're sorry to see you go!", {
                   style: {
