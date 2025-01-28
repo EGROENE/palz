@@ -419,7 +419,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   // change both below to "retract...."
-  const removeSentFriendRequestMutation = useMutation({
+  const retractSentFriendRequestMutation = useMutation({
     mutationFn: ({
       sender,
       recipient,
@@ -439,7 +439,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         const sender = variables.sender;
         const recipient = variables.recipient;
         const event = variables.event;
-        removeReceivedFriendRequestMutation.mutate({ sender, recipient, event });
+        retractReceivedFriendRequestMutation.mutate({ sender, recipient, event });
       }
     },
     onError: (error, variables) => {
@@ -503,7 +503,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
-  const removeReceivedFriendRequestMutation = useMutation({
+  const retractReceivedFriendRequestMutation = useMutation({
     mutationFn: ({
       sender,
       recipient,
@@ -660,7 +660,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         const recipient = variables.receiver;
         const sender = variables.sender;
         const event = "accept-request";
-        removeSentFriendRequestMutation.mutate({
+        retractSentFriendRequestMutation.mutate({
           sender,
           recipient,
           event,
@@ -1452,7 +1452,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const event = "retract-request";
-    removeSentFriendRequestMutation.mutate({ sender, recipient, event });
+    retractSentFriendRequestMutation.mutate({ sender, recipient, event });
   };
 
   const handleAcceptFriendRequest = (
@@ -1509,7 +1509,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     const event = "reject-request";
     const recipient = receiver;
-    removeSentFriendRequestMutation.mutate({ sender, recipient, event });
+    retractSentFriendRequestMutation.mutate({ sender, recipient, event });
   };
 
   const handleUnfriending = (
