@@ -11,6 +11,7 @@ import { useEventContext } from "../../../Hooks/useEventContext";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
 import styles from "./styles.module.css";
+import { useQueryClient } from "@tanstack/react-query";
 
 const UserSettings = () => {
   const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
@@ -61,6 +62,8 @@ const UserSettings = () => {
   } = useUserContext();
   const { fetchAllEvents, allEvents } = useEventContext();
 
+  const queryClient = useQueryClient();
+
   const handleAddUserInterest = (
     interest: string,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
@@ -78,6 +81,7 @@ const UserSettings = () => {
             },
           });
         } else {
+          queryClient.invalidateQueries({queryKey: ["allUsers"]});
           toast.success(`'${interest}' added to interests`, {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
