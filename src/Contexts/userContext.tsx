@@ -362,10 +362,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         setFriendRequestsSent(
           friendRequestsSent.filter((id) => id !== variables.recipient._id)
         );
-        Requests.removeFromFriendRequestsSent(
-          variables.sender,
-          variables.recipient
-        ).catch((error) => console.log(error));
       }
       toast.error("Couldn't send request. Please try again.", {
         style: {
@@ -392,16 +388,25 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
     onError: (error, variables) => {
       console.log(error);
-      // Optimistic rendering: if request fails, remove recipient from friendRequestsSent
       if (variables.recipient._id && friendRequestsSent) {
+        // Optimistic rendering: if request fails, remove recipient from friendRequestsSent:
         setFriendRequestsSent(
           friendRequestsSent.filter((id) => id !== variables.recipient._id)
         );
-        Requests.removeFromFriendRequestsSent(
-          variables.sender,
-          variables.recipient
-        ).catch((error) => console.log(error));
+
+        // If FR was sent, but recipient didn't receive it (request failed), delete sent FR from sender:
+        const removeSentFriendRequest = () =>
+          Requests.removeFromFriendRequestsSent(
+            variables.sender,
+            variables.recipient
+          ).catch((error) => {
+            // If request to remove sent FR fails, keep trying:
+            console.log(error);
+            removeSentFriendRequest();
+          });
+        removeSentFriendRequest();
       }
+
       toast.error("Couldn't send request. Please try again.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -413,6 +418,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
+  // change both below to "retract...."
   const removeSentFriendRequestMutation = useMutation({
     mutationFn: ({
       sender,
