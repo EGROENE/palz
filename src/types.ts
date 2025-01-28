@@ -547,13 +547,10 @@ export type TEventContext = {
   ) => void;
   eventDeletionIsInProgress: boolean;
   setEventDeletionIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
-  allEvents: TEvent[];
-  setAllEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
   addEventIsInProgress: boolean;
   setAddEventIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   currentEvent: TEvent | undefined;
   setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
-  fetchAllEvents: () => Promise<void>;
   eventEditIsInProgress: boolean;
   setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   handleAddUserRSVP: (
