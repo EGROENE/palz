@@ -81,7 +81,7 @@ const UserSettings = () => {
             },
           });
         } else {
-          queryClient.invalidateQueries({queryKey: ["allUsers"]});
+          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
           toast.success(`'${interest}' added to interests`, {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -112,6 +112,7 @@ const UserSettings = () => {
             },
           });
         } else {
+          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
           toast(`'${interest}' removed from interests`, {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
