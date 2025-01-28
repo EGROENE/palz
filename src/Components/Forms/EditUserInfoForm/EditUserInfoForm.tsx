@@ -320,6 +320,8 @@ const EditUserInfoForm = ({
                   },
                 });
               } else {
+                queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+
                 toast.success("Profile info updated", {
                   style: {
                     background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -381,10 +383,7 @@ const EditUserInfoForm = ({
               }
             })
             .catch((error) => console.log(error))
-            .finally(() => {
-              setIsLoading(false);
-              queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-            });
+            .finally(() => setIsLoading(false));
         } else {
           window.alert("Please fix any form errors, then try again");
         }
