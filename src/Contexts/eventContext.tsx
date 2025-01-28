@@ -1,4 +1,4 @@
-import { useState, createContext, ReactNode, useEffect } from "react";
+import { useState, createContext, ReactNode } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { TEventContext, TUser, TEvent } from "../types";
 import Requests from "../requests";
@@ -6,6 +6,7 @@ import { useMainContext } from "../Hooks/useMainContext";
 import { useUserContext } from "../Hooks/useUserContext";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 export const EventContext = createContext<TEventContext | null>(null);
 
@@ -17,17 +18,16 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     "currentEvent",
     undefined
   ); // event user is editing or viewing
-  const [allEvents, setAllEvents] = useLocalStorage<TEvent[]>("allEvents", []);
   const [addEventIsInProgress, setAddEventIsInProgress] = useState<boolean>(false);
   const [eventEditIsInProgress, setEventEditIsInProgress] = useState<boolean>(false);
   const [eventDeletionIsInProgress, setEventDeletionIsInProgress] =
     useState<boolean>(false);
 
-  useEffect(() => {
-    fetchAllEvents();
-  }, [allEvents]);
-
-  const fetchAllEvents = (): Promise<void> => Requests.getAllEvents().then(setAllEvents);
+  const fetchAllEventsQuery: UseQueryResult<TEvent[], Error> = useQuery({
+    queryKey: ["allEvents"],
+    queryFn: Requests.getAllEvents,
+  });
+  const allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
 
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
@@ -254,9 +254,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     handleDeleteUserRSVP,
     eventEditIsInProgress,
     setEventEditIsInProgress,
-    fetchAllEvents,
-    allEvents,
-    setAllEvents,
     currentEvent,
     setCurrentEvent,
     addEventIsInProgress,
