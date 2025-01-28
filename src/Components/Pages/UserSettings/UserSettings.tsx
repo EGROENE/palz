@@ -201,6 +201,7 @@ const UserSettings = () => {
                 });
                 fetchAllEvents();
               } else {
+                queryClient.invalidateQueries({ queryKey: ["allUsers"] });
                 toast("You have deleted your account. We're sorry to see you go!", {
                   style: {
                     background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
