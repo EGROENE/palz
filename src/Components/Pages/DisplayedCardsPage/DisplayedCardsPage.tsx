@@ -488,8 +488,6 @@ const DisplayedCardsPage = ({
       currentUserPalz.push(allUsers.filter((user) => user._id === id)[0]);
     }
   }
-  console.log(fetchAllUsersQuery.status);
-  console.log(currentUserPalz);
 
   const friendsWithCommonInterests: TUser[] = [];
   for (const pal of currentUserPalz) {
