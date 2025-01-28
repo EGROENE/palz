@@ -1014,8 +1014,8 @@ const EditUserInfoForm = ({
               },
             }
           );
-          //fetchAllUsers();
         } else {
+          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
           toast(`${medium.toUpperCase()} link deleted`, {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
