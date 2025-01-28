@@ -669,9 +669,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
     onError: (error, variables) => {
       // Make request to delete receiver from sender's friends array:
-      Requests.deleteFriendFromFriendsArray(variables.sender, variables.receiver).catch(
-        (error) => console.log(error)
-      );
+      const deleteFromUserFriends = () =>
+        Requests.deleteFriendFromFriendsArray(variables.sender, variables.receiver).catch(
+          (error) => {
+            console.log(error);
+            deleteFromUserFriends();
+          }
+        );
+
       console.log(error);
       toast.error("Could not accept friend request. Please try again.", {
         style: {
