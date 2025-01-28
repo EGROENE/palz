@@ -943,8 +943,8 @@ const EditUserInfoForm = ({
               border: "2px solid red",
             },
           });
-          //fetchAllUsers();
         } else {
+          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
           toast("Phone number deleted", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
