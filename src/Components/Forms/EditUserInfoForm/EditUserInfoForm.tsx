@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import Methods from "../../../methods";
 import { TThemeColor } from "../../../types";
 import { useMainContext } from "../../../Hooks/useMainContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EditUserInfoForm = ({
   randomColor,
@@ -196,6 +197,8 @@ const EditUserInfoForm = ({
     currentUser?.profileVisibleTo,
   ]);
 
+  const queryClient = useQueryClient();
+
   // Function that resets form values to what they are in currentUser
   // Called upon first render of this component or if user cancels changes they made to edit-user-info form
   const handleEditUserInfoRevert = (): void => {
@@ -258,127 +261,147 @@ const EditUserInfoForm = ({
   ): void => {
     e.preventDefault(); // prevent page from auto-reloading after submitting edit form
 
-    /* Get most-current allUsers (in case other users have updated their un or email after current user logged in & before they submitted changes to their info).*/
-    //fetchAllUsers();
+    setIsLoading(true);
 
-    /* If un or email address already exists & doesn't belong to current user, set error for that field saying as much. If not, make patch request w/ updated infos (done below) */
-    const usernameExists =
-      allUsers &&
-      allUsers.map((user) => user.username).includes(username) &&
-      currentUser?.username !== username;
+    // Get most current allUsers, then check unique values against those in allOtherUsers one last time
+    // If invalidation fails, user is notified of an error, then page is reloaded automatically
+    queryClient
+      .invalidateQueries({ queryKey: ["allUsers"] })
+      .then(() => {
+        const allOtherUsers =
+          allUsers && currentUser
+            ? allUsers.filter((user) => user._id !== currentUser._id)
+            : undefined;
 
-    const emailAddressExists =
-      allUsers &&
-      allUsers.map((user) => user.emailAddress).includes(emailAddress) &&
-      currentUser?.emailAddress !== emailAddress;
+        /* If un or email address already exists & doesn't belong to current user, set error for that field saying as much. If not, make patch request w/ updated infos (done below) */
+        const usernameExists = allOtherUsers
+          ? allOtherUsers.map((user) => user.username).includes(username)
+          : false;
 
-    const fullPhoneNumber =
-      phoneCountryCode && phoneNumberWithoutCountryCode
-        ? phoneCountryCode + phoneNumberWithoutCountryCode
-        : undefined;
-    const phoneNumberExists =
-      fullPhoneNumber && allUsers
-        ? allUsers
-            .map((user) => {
-              return user.phoneCountryCode + user.phoneNumberWithoutCountryCode;
+        const emailAddressExists = allOtherUsers
+          ? allOtherUsers.map((user) => user.emailAddress).includes(emailAddress) &&
+            currentUser?.emailAddress !== emailAddress
+          : false;
+
+        const fullPhoneNumber =
+          phoneCountryCode && phoneNumberWithoutCountryCode
+            ? phoneCountryCode + phoneNumberWithoutCountryCode
+            : undefined;
+
+        const phoneNumberExists =
+          fullPhoneNumber && allOtherUsers
+            ? allOtherUsers
+                .map((user) => {
+                  return user.phoneCountryCode + user.phoneNumberWithoutCountryCode;
+                })
+                .includes(fullPhoneNumber)
+            : false;
+
+        if (usernameExists) {
+          setUsernameError("Username already exists");
+        }
+        if (emailAddressExists) {
+          setEmailError("E-mail address already exists");
+        }
+        if (phoneNumberExists) {
+          setPhoneNumberError("Phone number is already in use");
+        }
+
+        // Only if there are no errors & infos that must be unique aren't already in use, patch changes to user data object:
+        if (areNoEditFormErrors && !phoneNumberExists) {
+          Requests.patchUpdatedUserInfo(currentUser, valuesToUpdate)
+            .then((response) => {
+              if (!response.ok) {
+                toast.error("Could not update profile info. Please try again.", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
+              } else {
+                toast.success("Profile info updated", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid green",
+                  },
+                });
+
+                /* Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first, which won't happen) */
+                if (valuesToUpdate.firstName) {
+                  setFirstName(valuesToUpdate.firstName);
+                }
+                if (valuesToUpdate.lastName) {
+                  setLastName(valuesToUpdate.lastName);
+                }
+                if (valuesToUpdate.emailAddress) {
+                  setEmailAddress(valuesToUpdate.emailAddress);
+                }
+                if (valuesToUpdate.password) {
+                  setPassword(valuesToUpdate.password);
+                }
+                if (valuesToUpdate.phoneCountry) {
+                  setPhoneCountry(valuesToUpdate.phoneCountry);
+                }
+                if (valuesToUpdate.phoneCountryCode) {
+                  setPhoneCountryCode(valuesToUpdate.phoneCountryCode);
+                }
+                if (valuesToUpdate.phoneNumberWithoutCountryCode) {
+                  setPhoneNumberWithoutCountryCode(
+                    valuesToUpdate.phoneNumberWithoutCountryCode
+                  );
+                }
+                if (valuesToUpdate.city) {
+                  setUserCity(valuesToUpdate.city);
+                }
+                if (valuesToUpdate.stateProvince) {
+                  setUserState(valuesToUpdate.stateProvince);
+                }
+                if (valuesToUpdate.country) {
+                  setUserCountry(valuesToUpdate.country);
+                }
+                if (valuesToUpdate.facebook) {
+                  setFacebook(valuesToUpdate.facebook);
+                }
+                if (valuesToUpdate.instagram) {
+                  setInstagram(valuesToUpdate.instagram);
+                }
+                if (valuesToUpdate.x) {
+                  setX(valuesToUpdate.x);
+                }
+                if (valuesToUpdate.about) {
+                  setUserAbout(valuesToUpdate.about);
+                }
+
+                // Hide PW again if unhidden on submit of edit-user-info form
+                if (!passwordIsHidden) {
+                  toggleHidePassword();
+                }
+              }
             })
-            .includes(fullPhoneNumber) &&
-          currentUser?.phoneCountryCode &&
-          currentUser.phoneNumberWithoutCountryCode &&
-          currentUser?.phoneCountryCode + currentUser?.phoneNumberWithoutCountryCode !==
-            fullPhoneNumber
-        : undefined;
-
-    if (usernameExists) {
-      setUsernameError("Username already exists");
-    }
-    if (emailAddressExists) {
-      setEmailError("E-mail address already exists");
-    }
-    if (phoneNumberExists) {
-      setPhoneNumberError("Phone number is already in use");
-    }
-
-    // Only if there are no errors & infos that must be unique aren't already in use, patch changes to user data object:
-    if (areNoEditFormErrors && !phoneNumberExists) {
-      setIsLoading(true);
-      Requests.patchUpdatedUserInfo(currentUser, valuesToUpdate)
-        .then((response) => {
-          if (!response.ok) {
-            toast.error("Could not update profile info. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
+            .catch((error) => console.log(error))
+            .finally(() => {
+              setIsLoading(false);
+              queryClient.invalidateQueries({ queryKey: ["allUsers"] });
             });
-            //fetchAllUsers();
-          } else {
-            toast.success("Profile info updated", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid green",
-              },
-            });
-
-            /* Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first, which won't happen) */
-            if (valuesToUpdate.firstName) {
-              setFirstName(valuesToUpdate.firstName);
-            }
-            if (valuesToUpdate.lastName) {
-              setLastName(valuesToUpdate.lastName);
-            }
-            if (valuesToUpdate.emailAddress) {
-              setEmailAddress(valuesToUpdate.emailAddress);
-            }
-            if (valuesToUpdate.password) {
-              setPassword(valuesToUpdate.password);
-            }
-            if (valuesToUpdate.phoneCountry) {
-              setPhoneCountry(valuesToUpdate.phoneCountry);
-            }
-            if (valuesToUpdate.phoneCountryCode) {
-              setPhoneCountryCode(valuesToUpdate.phoneCountryCode);
-            }
-            if (valuesToUpdate.phoneNumberWithoutCountryCode) {
-              setPhoneNumberWithoutCountryCode(
-                valuesToUpdate.phoneNumberWithoutCountryCode
-              );
-            }
-            if (valuesToUpdate.city) {
-              setUserCity(valuesToUpdate.city);
-            }
-            if (valuesToUpdate.stateProvince) {
-              setUserState(valuesToUpdate.stateProvince);
-            }
-            if (valuesToUpdate.country) {
-              setUserCountry(valuesToUpdate.country);
-            }
-            if (valuesToUpdate.facebook) {
-              setFacebook(valuesToUpdate.facebook);
-            }
-            if (valuesToUpdate.instagram) {
-              setInstagram(valuesToUpdate.instagram);
-            }
-            if (valuesToUpdate.x) {
-              setX(valuesToUpdate.x);
-            }
-            if (valuesToUpdate.about) {
-              setUserAbout(valuesToUpdate.about);
-            }
-
-            // Hide PW again if unhidden on submit of edit-user-info form
-            if (!passwordIsHidden) {
-              toggleHidePassword();
-            }
-          }
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setIsLoading(false));
-    } else {
-      window.alert("Please fix any form errors, then try again");
-    }
+        } else {
+          window.alert("Please fix any form errors, then try again");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Error saving data. Page will reload automatically.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      });
+    setTimeout(() => {
+      window.location.reload();
+    }, 3500);
   };
 
   // INPUT HANDLERS (and methods used in them):
