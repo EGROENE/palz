@@ -524,6 +524,8 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  allEvents: TEvent[] | undefined;
+  fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
     e:
       | React.MouseEvent<HTMLDivElement, MouseEvent>

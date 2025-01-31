@@ -247,6 +247,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const eventContextValues: TEventContext = {
+    allEvents,
+    fetchAllEventsQuery,
     handleAddRemoveUserAsOrganizer,
     handleRemoveInvitee,
     handleDeclineInvitation,
