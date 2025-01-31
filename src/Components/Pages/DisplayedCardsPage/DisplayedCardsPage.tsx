@@ -10,6 +10,7 @@ import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
+import QueryError from "../../Elements/QueryError/QueryError";
 
 const DisplayedCardsPage = ({
   usedFor,
@@ -35,7 +36,7 @@ const DisplayedCardsPage = ({
     friends,
     fetchAllUsersQuery,
   } = useUserContext();
-  const { allEvents, fetchAllEvents } = useEventContext();
+  const { allEvents } = useEventContext();
 
   const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
   const toggleShowFilterOptions = (): void => setShowFilterOptions(!showFilterOptions);
@@ -893,21 +894,11 @@ const DisplayedCardsPage = ({
         </div>
       )}
       {fetchAllUsersQuery.isLoading && (
-        <header
-          style={{ marginTop: "3rem" }}
-          className="login-form-loading-or-error-text"
-        >
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
           Loading...
         </header>
       )}
-      {fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && (
-        <div className="login-form-loading-error-container">
-          <header className="login-form-loading-or-error-text">Error loading data</header>
-          <div className="theme-element-container">
-            <button onClick={() => window.location.reload()}>Retry</button>
-          </div>
-        </div>
-      )}
+      {fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && <QueryError />}
     </div>
   );
 };
