@@ -24,7 +24,7 @@
   align-items: center;
 }
 
-.login-form-loading-error-container {
+.query-error-container {
   display: flex;
   flex-direction: column;
   align-items: center;
