@@ -61,17 +61,23 @@ const UserHomepage = () => {
     currentUser && (
       <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
         {fetchAllEventsQuery.isLoading && (
-          <header className="login-form-loading-or-error-text">Loading...</header>
+          <>
+            <h1>Upcoming Events</h1>
+            <header className="login-form-loading-or-error-text">Loading...</header>
+          </>
         )}
         {fetchAllEventsQuery.isError && !fetchAllEventsQuery.isLoading && (
-          <div className="login-form-loading-error-container">
-            <header className="login-form-loading-or-error-text">
-              Error loading data
-            </header>
-            <div className="theme-element-container">
-              <button onClick={() => window.location.reload()}>Retry</button>
+          <>
+            <h1>Upcoming Events</h1>
+            <div className="login-form-loading-error-container">
+              <header className="login-form-loading-or-error-text">
+                Error loading data
+              </header>
+              <div className="theme-element-container">
+                <button onClick={() => window.location.reload()}>Retry</button>
+              </div>
             </div>
-          </div>
+          </>
         )}
         {allCurrentUserEvents &&
           allCurrentUserEvents.length &&
