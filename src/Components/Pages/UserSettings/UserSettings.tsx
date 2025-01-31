@@ -60,7 +60,7 @@ const UserSettings = () => {
     handleUnblockUser,
     blockedUsers,
   } = useUserContext();
-  const { fetchAllEvents, allEvents } = useEventContext();
+  const { allEvents } = useEventContext();
 
   const queryClient = useQueryClient();
 
@@ -137,22 +137,24 @@ const UserSettings = () => {
     const promisesToAwait: Promise<Response>[] = [];
 
     // Delete user from event invitees/organizers/RSVP arrays:
-    for (const event of allEvents) {
-      // Delete any user RSVPs:
-      promisesToAwait.push(Requests.deleteUserRSVP(currentUser, event));
+    if (allEvents) {
+      for (const event of allEvents) {
+        // Delete any user RSVPs:
+        promisesToAwait.push(Requests.deleteUserRSVP(currentUser, event));
 
-      // Delete user from events they've been invited to:
-      promisesToAwait.push(Requests.removeInvitee(event, currentUser));
+        // Delete user from events they've been invited to:
+        promisesToAwait.push(Requests.removeInvitee(event, currentUser));
 
-      // Delete user from events they've organized or delete events of which user is sole organizer:
-      if (
-        currentUser?._id &&
-        event.organizers.length === 1 &&
-        event.organizers.includes(currentUser._id)
-      ) {
-        promisesToAwait.push(Requests.deleteEvent(event));
-      } else {
-        promisesToAwait.push(Requests.removeOrganizer(event, currentUser));
+        // Delete user from events they've organized or delete events of which user is sole organizer:
+        if (
+          currentUser?._id &&
+          event.organizers.length === 1 &&
+          event.organizers.includes(currentUser._id)
+        ) {
+          promisesToAwait.push(Requests.deleteEvent(event));
+        } else {
+          promisesToAwait.push(Requests.removeOrganizer(event, currentUser));
+        }
       }
     }
 
@@ -199,7 +201,6 @@ const UserSettings = () => {
                     border: "2px solid red",
                   },
                 });
-                fetchAllEvents();
               } else {
                 queryClient.invalidateQueries({ queryKey: ["allUsers"] });
                 toast("You have deleted your account. We're sorry to see you go!", {
@@ -210,7 +211,6 @@ const UserSettings = () => {
                   },
                 });
                 logout();
-                fetchAllEvents();
               }
             })
             .catch((error) => console.log(error));

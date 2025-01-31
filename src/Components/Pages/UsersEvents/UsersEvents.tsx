@@ -11,7 +11,7 @@ import { useEventContext } from "../../../Hooks/useEventContext";
 const UsersEvents = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
-  const { allEvents, fetchAllEvents } = useEventContext();
+  const { allEvents } = useEventContext();
 
   const navigation = useNavigate();
   useEffect(() => {
@@ -40,7 +40,6 @@ const UsersEvents = () => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
 
-    fetchAllEvents();
     if (showSidebar) {
       setShowSidebar(false);
     }
@@ -48,7 +47,7 @@ const UsersEvents = () => {
 
   const now = Date.now();
 
-  const pastEventsUserOrganized: TEvent[] = allEvents.filter(
+  const pastEventsUserOrganized: TEvent[] | undefined = allEvents?.filter(
     (event) =>
       currentUser?._id &&
       event.creator !== currentUser?._id &&
@@ -56,14 +55,14 @@ const UsersEvents = () => {
       event.eventEndDateTimeInMS < now
   );
 
-  const pastEventsUserRSVPd: TEvent[] = allEvents.filter(
+  const pastEventsUserRSVPd: TEvent[] | undefined = allEvents?.filter(
     (event) =>
       currentUser?._id &&
       event.interestedUsers.includes(currentUser._id) &&
       event.eventEndDateTimeInMS < now
   );
 
-  const upcomingEventsUserOrganizes: TEvent[] = allEvents.filter(
+  const upcomingEventsUserOrganizes: TEvent[] | undefined = allEvents?.filter(
     (event) =>
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
@@ -71,7 +70,7 @@ const UsersEvents = () => {
       event.organizers.includes(currentUser._id)
   );
 
-  const upcomingEventsUserInvitedTo: TEvent[] = allEvents.filter(
+  const upcomingEventsUserInvitedTo: TEvent[] | undefined = allEvents?.filter(
     (event) =>
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
@@ -79,7 +78,7 @@ const UsersEvents = () => {
       event.invitees.includes(currentUser._id)
   );
 
-  const upcomingEventsUserRSVPdTo: TEvent[] = allEvents.filter(
+  const upcomingEventsUserRSVPdTo: TEvent[] | undefined = allEvents?.filter(
     (event) =>
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
@@ -87,7 +86,7 @@ const UsersEvents = () => {
       event.interestedUsers.includes(currentUser._id)
   );
 
-  const ongoingEvents: TEvent[] = allEvents.filter((event) => {
+  const ongoingEvents: TEvent[] | undefined = allEvents?.filter((event) => {
     event.eventStartDateTimeInMS < now &&
       event.eventEndDateTimeInMS > now &&
       currentUser?._id &&
@@ -115,7 +114,7 @@ const UsersEvents = () => {
 
   const userEventsExist = usersEvents
     .map((event) => event.array)
-    .some((eventArray) => eventArray.length > 0);
+    .some((eventArray) => eventArray && eventArray.length > 0);
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
@@ -123,6 +122,8 @@ const UsersEvents = () => {
       {userEventsExist ? (
         usersEvents.map(
           (event) =>
+            event &&
+            event.array &&
             event.array.length > 0 && (
               <UserEventsSection
                 key={event.header}

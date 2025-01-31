@@ -36,7 +36,6 @@ const EventForm = ({
     allEvents,
     currentEvent,
     setCurrentEvent,
-    fetchAllEvents,
     setAddEventIsInProgress,
     setEventDeletionIsInProgress,
     setEventEditIsInProgress,
@@ -179,7 +178,9 @@ const EventForm = ({
     useState<number | undefined>(10);
 
   useEffect(() => {
-    setCurrentEvent(allEvents.filter((ev) => ev._id === event?._id)[0]);
+    if (allEvents) {
+      setCurrentEvent(allEvents.filter((ev) => ev._id === event?._id)[0]);
+    }
   }, [allEvents]);
 
   useEffect(() => {
@@ -189,7 +190,7 @@ const EventForm = ({
     }
 
     // If event passed to this component, setCurrentEvent in mainContext to that:
-    if (event) {
+    if (event && allEvents) {
       setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
       setEventImages(event.images);
     } else {
@@ -847,7 +848,6 @@ const EventForm = ({
                   border: "2px solid red",
                 },
               });
-              fetchAllEvents();
             } else {
               toast.success("Event updated!", {
                 style: {
