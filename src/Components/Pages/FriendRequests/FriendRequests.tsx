@@ -6,6 +6,7 @@ import ListedUser from "../../Elements/ListedUser/ListedUser";
 import styles from "./styles.module.css";
 import toast from "react-hot-toast";
 import Methods from "../../../methods";
+import QueryError from "../../Elements/QueryError/QueryError";
 
 const FriendRequests = () => {
   const {
@@ -142,14 +143,7 @@ const FriendRequests = () => {
           Loading...
         </header>
       )}
-      {!fetchAllUsersQuery.isLoading && fetchAllUsersQuery.isError && (
-        <div className="login-form-loading-error-container">
-          <header className="login-form-loading-or-error-text">Error loading data</header>
-          <div className="theme-element-container">
-            <button onClick={() => window.location.reload()}>Retry</button>
-          </div>
-        </div>
-      )}
+      {!fetchAllUsersQuery.isLoading && fetchAllUsersQuery.isError && <QueryError />}
       {!fetchAllUsersQuery.isLoading &&
         !fetchAllUsersQuery.isError &&
         (userHasPendingRequests === null ||

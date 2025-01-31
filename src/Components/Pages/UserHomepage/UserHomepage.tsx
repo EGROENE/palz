@@ -7,6 +7,7 @@ import { TEvent } from "../../../types";
 import Methods from "../../../methods";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
+import QueryError from "../../Elements/QueryError/QueryError";
 
 const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
@@ -69,14 +70,7 @@ const UserHomepage = () => {
         {fetchAllEventsQuery.isError && !fetchAllEventsQuery.isLoading && (
           <>
             <h1>Upcoming Events</h1>
-            <div className="login-form-loading-error-container">
-              <header className="login-form-loading-or-error-text">
-                Error loading data
-              </header>
-              <div className="theme-element-container">
-                <button onClick={() => window.location.reload()}>Retry</button>
-              </div>
-            </div>
+            <QueryError />
           </>
         )}
         {allCurrentUserEvents &&

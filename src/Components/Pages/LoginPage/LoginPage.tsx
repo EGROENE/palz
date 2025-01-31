@@ -4,6 +4,7 @@ import SignupForm from "../../Forms/LoginForms/SignupForm/SignupForm";
 import LoginForm from "../../Forms/LoginForms/LoginForm/LoginForm";
 import { useEffect, useState } from "react";
 import { TThemeColor } from "../../../types";
+import QueryError from "../../Elements/QueryError/QueryError";
 
 const LoginPage = () => {
   const { theme, toggleTheme } = useMainContext();
@@ -56,14 +57,7 @@ const LoginPage = () => {
           </button>
         </div>
       </div>
-      {fetchAllUsersQuery.isError && (
-        <div className="login-form-loading-error-container">
-          <header className="login-form-loading-or-error-text">Error loading form</header>
-          <div className="theme-element-container">
-            <button onClick={() => window.location.reload()}>Retry</button>
-          </div>
-        </div>
-      )}
+      {fetchAllUsersQuery.isError && <QueryError />}
       {fetchAllUsersQuery.isLoading && !fetchAllUsersQuery.isError && (
         <header className="login-form-loading-or-error-text">Loading...</header>
       )}
