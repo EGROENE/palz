@@ -118,58 +118,60 @@ const DisplayedCardsPage = ({
   /* Before, when RSVPing/de-RSVPing, RSVP button text wasn't updating properly b/c component didn't have access to updated events in allEvents (which were updating properly) until a page refresh, but now, this UI will hot update b/c of functionality in a useEffect that updates displayedEvents that depends on allEvents. UI would not update properly if this functionality were inside a useEffect w/ an empty dependency array. */
   useEffect(() => {
     if (usedFor === "events") {
-      fetchAllEvents();
       if (searchTerm.trim() !== "") {
         let newDisplayedEvents: TEvent[] = [];
 
-        const allPublicEventsThatStartOrEndInFuture: TEvent[] = allEvents.filter(
-          (event) =>
-            (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
-            event.publicity === "public"
-        );
+        const allPublicEventsThatStartOrEndInFuture: TEvent[] | undefined =
+          allEvents?.filter(
+            (event) =>
+              (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
+              event.publicity === "public"
+          );
 
-        for (const event of allPublicEventsThatStartOrEndInFuture) {
-          // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
-          let eventOrganizerNames: string[] = [];
-          let eventOrganizerUsernames: string[] = [];
-          for (const id of event.organizers) {
-            const matchingUser: TUser | undefined = allUsers?.filter(
-              (user) => user?._id === id
-            )[0];
+        if (allPublicEventsThatStartOrEndInFuture) {
+          for (const event of allPublicEventsThatStartOrEndInFuture) {
+            // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
+            let eventOrganizerNames: string[] = [];
+            let eventOrganizerUsernames: string[] = [];
+            for (const id of event.organizers) {
+              const matchingUser: TUser | undefined = allUsers?.filter(
+                (user) => user?._id === id
+              )[0];
 
-            const fullName: string = `${matchingUser?.firstName?.toLowerCase()} ${matchingUser?.lastName?.toLowerCase()}`;
-            eventOrganizerNames.push(fullName);
+              const fullName: string = `${matchingUser?.firstName?.toLowerCase()} ${matchingUser?.lastName?.toLowerCase()}`;
+              eventOrganizerNames.push(fullName);
 
-            if (matchingUser?.username) {
-              eventOrganizerUsernames.push(matchingUser.username);
+              if (matchingUser?.username) {
+                eventOrganizerUsernames.push(matchingUser.username);
+              }
             }
-          }
-          let isOrganizerNameMatch: boolean = false;
-          for (const name of eventOrganizerNames) {
-            if (name.includes(searchTerm.toLowerCase())) {
-              isOrganizerNameMatch = true;
+            let isOrganizerNameMatch: boolean = false;
+            for (const name of eventOrganizerNames) {
+              if (name.includes(searchTerm.toLowerCase())) {
+                isOrganizerNameMatch = true;
+              }
             }
-          }
 
-          let isUsernameMatch: boolean = false;
-          for (const username of eventOrganizerUsernames) {
-            if (username.includes(searchTerm.toLowerCase())) {
-              isUsernameMatch = true;
+            let isUsernameMatch: boolean = false;
+            for (const username of eventOrganizerUsernames) {
+              if (username.includes(searchTerm.toLowerCase())) {
+                isUsernameMatch = true;
+              }
             }
-          }
 
-          if (
-            event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            event.additionalInfo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            event.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            event.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            event.country?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            isOrganizerNameMatch ||
-            isUsernameMatch ||
-            event.stateProvince?.toLowerCase().includes(searchTerm.toLowerCase())
-          ) {
-            newDisplayedEvents.push(event);
+            if (
+              event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              event.additionalInfo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              event.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              event.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              event.country?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              isOrganizerNameMatch ||
+              isUsernameMatch ||
+              event.stateProvince?.toLowerCase().includes(searchTerm.toLowerCase())
+            ) {
+              newDisplayedEvents.push(event);
+            }
           }
         }
         setDisplayedItems(newDisplayedEvents);
@@ -273,7 +275,7 @@ const DisplayedCardsPage = ({
   }, [allUsers]); */
 
   // EVENTS VARIABLES
-  const displayableEvents = allEvents.filter(
+  const displayableEvents: TEvent[] | undefined = allEvents?.filter(
     (event) =>
       (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
       (event.publicity === "public" ||
@@ -285,7 +287,7 @@ const DisplayedCardsPage = ({
   const getEventsByCurrentUserInterests = (): TEvent[] => {
     let eventsByCurrentUserInterests = [];
     const updatedDisplayedEvents = displayableEvents;
-    if (currentUser?.interests) {
+    if (currentUser?.interests && updatedDisplayedEvents) {
       for (const interest of currentUser?.interests) {
         for (const event of updatedDisplayedEvents) {
           if (event.relatedInterests.includes(interest)) {
@@ -301,7 +303,7 @@ const DisplayedCardsPage = ({
   const getEventsOrganizedByCurrentUserFriends = (): TEvent[] => {
     let eventsOrganizedByCurrentUserFriends = [];
     const updatedDisplayedEvents = displayableEvents;
-    if (currentUser?.friends) {
+    if (currentUser?.friends && updatedDisplayedEvents) {
       for (const friend of currentUser.friends) {
         for (const event of updatedDisplayedEvents) {
           if (event.organizers.includes(friend)) {
@@ -318,7 +320,7 @@ const DisplayedCardsPage = ({
   const getEventsRSVPdByCurrentUserFriends = (): TEvent[] => {
     let eventsRSVPdByCurrentUserFriends = [];
     const updatedDisplayedEvents = displayableEvents;
-    if (currentUser?.friends) {
+    if (currentUser?.friends && updatedDisplayedEvents) {
       for (const friend of currentUser.friends) {
         for (const event of updatedDisplayedEvents) {
           if (event.interestedUsers.includes(friend)) {
@@ -335,15 +337,15 @@ const DisplayedCardsPage = ({
   // for pot. friends, filter by city, state, country, friends of friends, common interests. put in var potentialFriendsFilterOptions
   const eventFilterOptions = {
     ...(currentUser?.city !== "" && {
-      "my city": displayableEvents.filter((event) => event.city === currentUser?.city),
+      "my city": displayableEvents?.filter((event) => event.city === currentUser?.city),
     }),
     ...(currentUser?.stateProvince !== "" && {
-      "my state": displayableEvents.filter(
+      "my state": displayableEvents?.filter(
         (event) => event.stateProvince === currentUser?.stateProvince
       ),
     }),
     ...(currentUser?.country !== "" && {
-      "my country": displayableEvents.filter(
+      "my country": displayableEvents?.filter(
         (event) => event.country === currentUser?.country
       ),
     }),
@@ -358,7 +360,11 @@ const DisplayedCardsPage = ({
     }),
   };
 
-  const resetDisplayedEvents = (): void => setDisplayedItems(displayableEvents);
+  const resetDisplayedEvents = (): void => {
+    if (displayableEvents) {
+      setDisplayedItems(displayableEvents);
+    }
+  };
   //////////////////////////////////////////
 
   // POTENTIAL-FRIENDS VARIABLES
@@ -647,7 +653,7 @@ const DisplayedCardsPage = ({
     const inputCleaned = input.replace(/\s+/g, " ");
     setSearchTerm(inputCleaned);
 
-    if (inputCleaned.trim() !== "") {
+    if (inputCleaned.trim() !== "" && displayableEvents) {
       if (usedFor === "events") {
         let newDisplayedEvents: TEvent[] = [];
 
