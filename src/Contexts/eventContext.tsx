@@ -12,7 +12,7 @@ export const EventContext = createContext<TEventContext | null>(null);
 
 export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const { setIsLoading, theme } = useMainContext();
-  const { currentUser } = useUserContext();
+  const { currentUser, userCreatedAccount } = useUserContext();
 
   const [currentEvent, setCurrentEvent] = useLocalStorage<TEvent | undefined>(
     "currentEvent",
@@ -23,9 +23,11 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventDeletionIsInProgress, setEventDeletionIsInProgress] =
     useState<boolean>(false);
 
+  const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
   const fetchAllEventsQuery: UseQueryResult<TEvent[], Error> = useQuery({
     queryKey: ["allEvents"],
     queryFn: Requests.getAllEvents,
+    enabled: userHasLoggedIn,
   });
   const allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
 
