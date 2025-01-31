@@ -11,11 +11,10 @@ import { useEventContext } from "../../../Hooks/useEventContext";
 const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, username } = useUserContext();
-  const { allEvents, fetchAllEvents } = useEventContext();
+  const { allEvents, fetchAllEventsQuery } = useEventContext();
 
   // On init rendering, hide sidebar, if displayed (better ux when returning to user homepage from Settings, etc.)
   useEffect(() => {
-    fetchAllEvents();
     if (showSidebar) {
       setShowSidebar(false);
     }
@@ -38,51 +37,73 @@ const UserHomepage = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
-  const userRSVPDEvents: TEvent[] = allEvents.filter(
+  const userRSVPDEvents: TEvent[] | undefined = allEvents?.filter(
     (ev) => currentUser?._id && ev.interestedUsers.includes(currentUser._id)
   );
-  const userOrganizedEvents: TEvent[] = allEvents.filter(
+  const userOrganizedEvents: TEvent[] | undefined = allEvents?.filter(
     (ev) => currentUser?._id && ev.organizers.includes(currentUser._id)
   );
-  const eventsUserIsInvitedTo = allEvents.filter(
+  const eventsUserIsInvitedTo: TEvent[] | undefined = allEvents?.filter(
     (ev) =>
       currentUser?._id &&
       ev.invitees.includes(currentUser._id) &&
       !ev.disinterestedUsers.includes(currentUser._id)
   );
-  const allCurrentUserEvents = Methods.removeDuplicatesFromArray(
-    userRSVPDEvents.concat(userOrganizedEvents).concat(eventsUserIsInvitedTo)
-  );
+  const allCurrentUserEvents: any[] | undefined =
+    userRSVPDEvents &&
+    userOrganizedEvents &&
+    eventsUserIsInvitedTo &&
+    Methods.removeDuplicatesFromArray(
+      userRSVPDEvents.concat(userOrganizedEvents).concat(eventsUserIsInvitedTo)
+    );
 
   return (
     currentUser && (
       <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
-        {allCurrentUserEvents.length ? (
-          <div className="upcoming-events-hero">
-            <h1>Upcoming Events ({allCurrentUserEvents.length})</h1>
-            <div
-              style={
-                Methods.sortEventsSoonestToLatest(allCurrentUserEvents).length < 3
-                  ? { justifyContent: "center", overflowX: "unset" }
-                  : undefined
-              }
-              className="rsvpd-events-container"
-            >
-              {Methods.sortEventsSoonestToLatest(allCurrentUserEvents).map(
-                (event: TEvent) => (
-                  <EventCard key={event._id} event={event} />
-                )
-              )}
+        {fetchAllEventsQuery.isLoading && (
+          <header className="login-form-loading-or-error-text">Loading...</header>
+        )}
+        {fetchAllEventsQuery.isError && !fetchAllEventsQuery.isLoading && (
+          <div className="login-form-loading-error-container">
+            <header className="login-form-loading-or-error-text">
+              Error loading data
+            </header>
+            <div className="theme-element-container">
+              <button onClick={() => window.location.reload()}>Retry</button>
             </div>
           </div>
-        ) : (
-          <div className="upcoming-events-hero">
-            <h1>No upcoming events</h1>
-            <p>
-              Click <Link to={"/events"}>here</Link> to find something fun to do
-            </p>
-          </div>
         )}
+        {allCurrentUserEvents &&
+          allCurrentUserEvents.length &&
+          !fetchAllEventsQuery.isLoading && (
+            <div className="upcoming-events-hero">
+              <h1>Upcoming Events ({allCurrentUserEvents.length})</h1>
+              <div
+                style={
+                  Methods.sortEventsSoonestToLatest(allCurrentUserEvents).length < 3
+                    ? { justifyContent: "center", overflowX: "unset" }
+                    : undefined
+                }
+                className="rsvpd-events-container"
+              >
+                {Methods.sortEventsSoonestToLatest(allCurrentUserEvents).map(
+                  (event: TEvent) => (
+                    <EventCard key={event._id} event={event} />
+                  )
+                )}
+              </div>
+            </div>
+          )}
+        {allCurrentUserEvents &&
+          !allCurrentUserEvents.length &&
+          !fetchAllEventsQuery.isLoading && (
+            <div className="upcoming-events-hero">
+              <h1>No upcoming events</h1>
+              <p>
+                Click <Link to={"/events"}>here</Link> to find something fun to do
+              </p>
+            </div>
+          )}
         <div className="site-links-container">
           <Link to={"/add-event"}>
             <div className="theme-element-container">
