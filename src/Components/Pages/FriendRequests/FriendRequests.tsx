@@ -136,7 +136,7 @@ const FriendRequests = () => {
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Friend Requests</h1>
       {fetchAllUsersQuery.isLoading && (
-        <header style={{ marginTop: "3rem" }} className="query-error-text">
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
           Loading...
         </header>
       )}

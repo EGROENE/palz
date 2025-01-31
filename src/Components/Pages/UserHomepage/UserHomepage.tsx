@@ -64,7 +64,7 @@ const UserHomepage = () => {
         {fetchAllEventsQuery.isLoading && (
           <>
             <h1>Upcoming Events</h1>
-            <header className="query-error-text">Loading...</header>
+            <header className="query-status-text">Loading...</header>
           </>
         )}
         {fetchAllEventsQuery.isError && !fetchAllEventsQuery.isLoading && (
