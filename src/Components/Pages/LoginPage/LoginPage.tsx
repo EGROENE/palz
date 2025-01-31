@@ -59,7 +59,7 @@ const LoginPage = () => {
       </div>
       {fetchAllUsersQuery.isError && <QueryError />}
       {fetchAllUsersQuery.isLoading && !fetchAllUsersQuery.isError && (
-        <header className="login-form-loading-or-error-text">Loading...</header>
+        <header className="query-error-text">Loading...</header>
       )}
       {!fetchAllUsersQuery.isLoading && !fetchAllUsersQuery.isError && (
         <div className="login-form">
