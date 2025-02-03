@@ -50,6 +50,7 @@ function App() {
     addEventIsInProgress,
     eventDeletionIsInProgress,
     addEventImageMutation,
+    removeEventImageMutation,
   } = useEventContext();
 
   const navigation = useNavigate();
@@ -177,9 +178,10 @@ function App() {
         (addEventImageMutation.isPending && (
           <LoadingModal message="Uploading image..." />
         ))}
-      {removeProfileImageMutation.isPending && (
-        <LoadingModal message="Removing image..." />
-      )}
+      {removeProfileImageMutation.isPending ||
+        (removeEventImageMutation.isPending && (
+          <LoadingModal message="Removing image..." />
+        ))}
       <Routes>
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />
