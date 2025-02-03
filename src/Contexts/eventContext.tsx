@@ -6,7 +6,12 @@ import { useMainContext } from "../Hooks/useMainContext";
 import { useUserContext } from "../Hooks/useUserContext";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useQuery, UseQueryResult, useMutation } from "@tanstack/react-query";
+import {
+  useQuery,
+  UseQueryResult,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 export const EventContext = createContext<TEventContext | null>(null);
 
@@ -32,10 +37,13 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   });
   const allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
 
+  const queryClient = useQueryClient();
+
   const addEventImageMutation = useMutation({
     mutationFn: ({ event, base64 }: { event: TEvent; base64: string }) =>
       Requests.addEventImage(event, base64),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allEvents"] });
       toast.success("Event image added", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -69,6 +77,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       imageToBeRemoved: string;
     }) => Requests.removeEventImage(event, imageToBeRemoved),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allEvents"] });
       toast("Event image removed", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
