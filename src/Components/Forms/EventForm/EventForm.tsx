@@ -40,6 +40,9 @@ const EventForm = ({
     setEventDeletionIsInProgress,
     setEventEditIsInProgress,
     handleAddRemoveUserAsOrganizer,
+    eventImages,
+    setEventImages,
+    addEventImageMutation,
   } = useEventContext();
 
   const navigation = useNavigate();
@@ -147,9 +150,6 @@ const EventForm = ({
   const [maxParticipants, setMaxParticipants] = useState<number | null>(
     event ? event.maxParticipants : null
   );
-  const [eventImages, setEventImages] = useState<string[] | undefined>(
-    event ? event.images : []
-  );
   const [publicity, setPublicity] = useState<"public" | "private">(
     event ? event.publicity : "public"
   );
@@ -179,7 +179,9 @@ const EventForm = ({
 
   useEffect(() => {
     if (allEvents) {
-      setCurrentEvent(allEvents.filter((ev) => ev._id === event?._id)[0]);
+      const currentEventInAllEvents = allEvents.filter((ev) => ev._id === event?._id)[0];
+      setCurrentEvent(currentEventInAllEvents);
+      setEventImages(currentEventInAllEvents.images);
     }
   }, [allEvents]);
 
@@ -555,42 +557,8 @@ const EventForm = ({
         !event.images.includes(base64) &&
         !eventImages?.includes(base64)
       ) {
-        setImageIsUploading(true);
         setEventImages(eventImages?.concat(base64));
-        Requests.addEventImage(event, base64)
-          .then((response) => {
-            if (!response.ok) {
-              e.preventDefault();
-              setEventImages(eventImages?.filter((image) => image !== base64));
-              if (response.status === 413) {
-                toast.error("Max file size is 50MB.", {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid red",
-                  },
-                });
-              } else {
-                toast.error("Could not add event image. Please try again.", {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid red",
-                  },
-                });
-              }
-            } else {
-              toast.success("Event image added", {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid green",
-                },
-              });
-            }
-          })
-          .catch((error) => console.log(error))
-          .finally(() => setImageIsUploading(false));
+        addEventImageMutation.mutate({ event, base64 });
       } else {
         if (event?.images?.includes(base64) || eventImages?.includes(base64)) {
           toast.error("Cannot upload same image more than once.", {
