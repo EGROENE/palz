@@ -49,6 +49,7 @@ function App() {
     eventEditIsInProgress,
     addEventIsInProgress,
     eventDeletionIsInProgress,
+    addEventImageMutation,
   } = useEventContext();
 
   const navigation = useNavigate();
@@ -172,9 +173,10 @@ function App() {
       {addEventIsInProgress && <LoadingModal message="Adding event..." />}
       {eventEditIsInProgress && <LoadingModal message="Updating event..." />}
       {eventDeletionIsInProgress && <LoadingModal message="Deleting event..." />}
-      {updateProfileImageMutation.isPending && (
-        <LoadingModal message="Uploading image..." />
-      )}
+      {updateProfileImageMutation.isPending ||
+        (addEventImageMutation.isPending && (
+          <LoadingModal message="Uploading image..." />
+        ))}
       {removeProfileImageMutation.isPending && (
         <LoadingModal message="Removing image..." />
       )}
