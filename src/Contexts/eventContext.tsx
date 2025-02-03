@@ -60,6 +60,36 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  const removeEventImageMutation = useMutation({
+    mutationFn: ({
+      event,
+      imageToBeRemoved,
+    }: {
+      event: TEvent;
+      imageToBeRemoved: string;
+    }) => Requests.removeEventImage(event, imageToBeRemoved),
+    onSuccess: () => {
+      toast("Event image removed", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onError: (error, variables) => {
+      setEventImages(eventImages?.concat(variables.imageToBeRemoved));
+      console.log(error);
+      toast.error("Could not remove event image. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+  });
+
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
@@ -279,6 +309,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const eventContextValues: TEventContext = {
     addEventImageMutation,
+    removeEventImageMutation,
     eventImages,
     setEventImages,
     allEvents,

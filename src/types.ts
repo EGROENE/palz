@@ -533,6 +533,15 @@ export type TEventContext = {
     },
     unknown
   >;
+  removeEventImageMutation: UseMutationResult<
+    Response,
+    Error,
+    {
+      event: TEvent;
+      imageToBeRemoved: string;
+    },
+    unknown
+  >;
   eventImages: string[] | undefined;
   setEventImages: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   allEvents: TEvent[] | undefined;
