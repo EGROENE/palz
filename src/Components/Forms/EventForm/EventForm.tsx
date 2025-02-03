@@ -21,15 +21,8 @@ const EventForm = ({
   randomColor: TThemeColor | undefined;
   event?: TEvent;
 }) => {
-  const {
-    showSidebar,
-    setShowSidebar,
-    setImageIsUploading, // use updateEventImagesMutation.isPending instead of imageIsDeleting
-    setImageIsDeleting,
-    isLoading,
-    setIsLoading,
-    theme,
-  } = useMainContext();
+  const { showSidebar, setShowSidebar, isLoading, setIsLoading, theme } =
+    useMainContext();
   const { handleCityStateCountryInput, allUsers, currentUser, blockedUsers } =
     useUserContext();
   const {
@@ -43,6 +36,7 @@ const EventForm = ({
     eventImages,
     setEventImages,
     addEventImageMutation,
+    removeEventImageMutation,
   } = useEventContext();
 
   const navigation = useNavigate();
@@ -582,30 +576,7 @@ const EventForm = ({
     e.preventDefault();
     setEventImages(eventImages?.filter((image) => image !== imageToBeRemoved));
     if (event) {
-      setImageIsDeleting(true);
-      Requests.removeEventImage(event, imageToBeRemoved)
-        .then((response) => {
-          if (!response.ok) {
-            setEventImages(eventImages);
-            toast.error("Could not remove event image. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          } else {
-            toast("Event image removed", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          }
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setImageIsDeleting(false));
+      removeEventImageMutation.mutate({ event, imageToBeRemoved });
     } else {
       toast("Event image removed", {
         style: {
