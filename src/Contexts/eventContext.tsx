@@ -6,7 +6,7 @@ import { useMainContext } from "../Hooks/useMainContext";
 import { useUserContext } from "../Hooks/useUserContext";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { useQuery, UseQueryResult, useMutation } from "@tanstack/react-query";
 
 export const EventContext = createContext<TEventContext | null>(null);
 
@@ -22,6 +22,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventEditIsInProgress, setEventEditIsInProgress] = useState<boolean>(false);
   const [eventDeletionIsInProgress, setEventDeletionIsInProgress] =
     useState<boolean>(false);
+  const [eventImages, setEventImages] = useState<string[] | undefined>([]);
 
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
   const fetchAllEventsQuery: UseQueryResult<TEvent[], Error> = useQuery({
@@ -30,6 +31,34 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     enabled: userHasLoggedIn,
   });
   const allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
+
+  const addEventImageMutation = useMutation({
+    mutationFn: ({ event, base64 }: { event: TEvent; base64: string }) =>
+      Requests.addEventImage(event, base64),
+    onSuccess: () => {
+      toast.success("Event image added", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid green",
+        },
+      });
+    },
+    onError: (error, variables) => {
+      console.log(error);
+      setEventImages(eventImages?.filter((image) => image !== variables.base64));
+      toast.error(
+        "Could not add event image. Please ensure image is size is 50MB or less & try again.",
+        {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        }
+      );
+    },
+  });
 
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
@@ -249,6 +278,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const eventContextValues: TEventContext = {
+    addEventImageMutation,
+    eventImages,
+    setEventImages,
     allEvents,
     fetchAllEventsQuery,
     handleAddRemoveUserAsOrganizer,

@@ -524,6 +524,17 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  addEventImageMutation: UseMutationResult<
+    Response,
+    Error,
+    {
+      event: TEvent;
+      base64: string;
+    },
+    unknown
+  >;
+  eventImages: string[] | undefined;
+  setEventImages: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   allEvents: TEvent[] | undefined;
   fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
