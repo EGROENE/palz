@@ -16,11 +16,11 @@ const EventCard = ({ event }: { event: TEvent }) => {
     handleDeleteUserRSVP,
     handleDeclineInvitation,
     setCurrentEvent,
+    userRSVPd,
+    setUserRSVPd,
   } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-
-  const [userRSVPd, setUserRSVPd] = useState<boolean | null>(null);
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
 

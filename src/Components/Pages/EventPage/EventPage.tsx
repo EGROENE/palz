@@ -1,4 +1,4 @@
-import { TThemeColor, TUser } from "../../../types";
+import { TThemeColor, TUser, TEvent } from "../../../types";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -21,9 +21,9 @@ const EventPage = () => {
     allEvents,
     setCurrentEvent,
     handleRemoveInvitee,
+    userRSVPd,
+    setUserRSVPd,
   } = useEventContext();
-
-  const [userRSVPd, setUserRSVPd] = useState<boolean | null>(null);
 
   //const [event, setEvent] = useState<TEvent | undefined>();
   const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
@@ -32,7 +32,9 @@ const EventPage = () => {
 
   // Get most current version of event to which this page pertains:
   const { eventID } = useParams();
-  const currentEvent = allEvents.filter((ev) => ev._id === eventID)[0];
+  const currentEvent: TEvent | undefined = allEvents
+    ? allEvents.filter((ev) => ev._id === eventID)[0]
+    : undefined;
 
   const navigation = useNavigate();
 
@@ -71,7 +73,7 @@ const EventPage = () => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
 
-    if (currentUser?._id) {
+    if (currentUser?._id && currentEvent) {
       setUserRSVPd(currentEvent.interestedUsers.includes(currentUser._id));
     }
   }, []);
@@ -79,7 +81,7 @@ const EventPage = () => {
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
   useEffect(() => {
     const refIntUsers = [];
-    if (currentEvent) {
+    if (currentEvent && allUsers) {
       for (const userID of currentEvent.interestedUsers) {
         for (const user of allUsers) {
           if (user._id === userID) {
@@ -96,7 +98,7 @@ const EventPage = () => {
     : undefined;
 
   let organizers: TUser[] = [];
-  if (currentEvent?.organizers) {
+  if (currentEvent?.organizers && allUsers) {
     for (const id of currentEvent.organizers) {
       const organizerUserObject = allUsers.filter((user) => user._id === id)[0];
       organizers.push(organizerUserObject);
