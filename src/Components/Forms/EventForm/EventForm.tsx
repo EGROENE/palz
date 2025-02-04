@@ -134,10 +134,6 @@ const EventForm = ({
 
   const [showEventCountries, setShowEventCountries] = useState<boolean>(false);
 
-  // STATE VALUES CORRESPONDING TO EDITABLE PROPERTIES OF TEvent, ALONG W/ CORRESPONDING FIELDS' ERROR STATES:
-
-  //////////////////////////////////////////
-
   const [showErrors, setShowErrors] = useState<boolean>(event ? true : false);
 
   const [showAreYouSureDeleteEvent, setShowAreYouSureDeleteEvent] =
@@ -157,7 +153,6 @@ const EventForm = ({
     if (allEvents) {
       const currentEventInAllEvents = allEvents.filter((ev) => ev._id === event?._id)[0];
       setCurrentEvent(currentEventInAllEvents);
-      setEventImages(currentEventInAllEvents.images);
     }
   }, [allEvents]);
 

@@ -780,17 +780,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setFriends(currentUser?.friends);
   }, [currentUser?._id]);
 
-  /* useEffect(() => {
-    // Ensure currentUser is up-to-date:
-    fetchAllUsers().then(() => {
-      if (currentUser) {
-        setCurrentUser(allUsers.filter((user) => user._id === currentUser?._id)[0]);
-      }
-    });
-  }, [allUsers]); */
-
-  //const fetchAllUsers = (): Promise<void> => Requests.getAllUsers().then(setAllUsers);
-
   // Called when user switches b/t login & signup forms & when user logs out
   // Only necessary to reset errors for fields on login and/or signup form
   const resetLoginOrSignupFormFieldsAndErrors = (): void => {
@@ -1314,43 +1303,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   };
-
-  // Handler for creating new user account. Should make request w/ object containing user data, then handle errors in case it fails. If it fails, notify user somehow.
-  /*  const handleNewAccountCreation = (userData: TUser): void => {
-    if (newUserMutation.isError) {
-      setUserCreatedAccount(false);
-      toast.error("Could not create account. Please try again later.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-      console.log(newUserMutation.error);
-    } else {
-      setUserCreatedAccount(true);
-    }
-
-    // Request not needed if React Query mutation is used
-    Requests.createUser(userData)
-      .then((response) => {
-        if (!response.ok) {
-          setUserCreatedAccount(false);
-        } else {
-          setUserCreatedAccount(true);
-        }
-      })
-      .catch((error) => {
-        toast.error("Could not create account. Please try again later.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-        console.log(error);
-      });
-  }; */
 
   // maybe create separate request to update user profile img
   const handleProfileImageUpload = async (
