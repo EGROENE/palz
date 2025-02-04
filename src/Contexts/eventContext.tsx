@@ -1,6 +1,7 @@
 import { useState, createContext, ReactNode, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { TEventContext, TUser, TEvent } from "../types";
+import { TEventContext, TUser, TEvent, TEventValuesToUpdate } from "../types";
+import Methods from "../methods";
 import Requests from "../requests";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useUserContext } from "../Hooks/useUserContext";
@@ -421,7 +422,88 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  /* valuesToUpdate is to be used on EventForm. It's an object that represents updated values on event, which are sent to the event in the DB in a PATCH request
+   */
+  const getValuesToUpdate = (): TEventValuesToUpdate | undefined => {
+    // interestedUsers omitted from type b/c that is not controllable with this form, rather changes depending on other users RSVPing or de-RSVPing.
+    if (currentEvent) {
+      return {
+        ...(eventTitle?.trim() !== "" &&
+          eventTitle.trim() !== currentEvent.title && {
+            title: eventTitle,
+          }),
+        ...(eventStartDateMidnightUTCInMS !==
+          currentEvent.eventStartDateMidnightUTCInMS && {
+          eventStartDateMidnightUTCInMS: eventStartDateMidnightUTCInMS,
+        }),
+        ...(eventStartTimeAfterMidnightUTCInMS !==
+          currentEvent.eventStartTimeAfterMidnightUTCInMS && {
+          eventStartTimeAfterMidnightUTCInMS: eventStartTimeAfterMidnightUTCInMS,
+        }),
+        ...(eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS !==
+          currentEvent.eventStartDateTimeInMS && {
+          eventStartDateTimeInMS:
+            eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS,
+        }),
+        ...(eventEndDateMidnightUTCInMS !== currentEvent.eventEndDateMidnightUTCInMS && {
+          eventEndDateMidnightUTCInMS: eventEndDateMidnightUTCInMS,
+        }),
+        ...(eventEndTimeAfterMidnightUTCInMS !==
+          currentEvent.eventEndTimeAfterMidnightUTCInMS && {
+          eventEndTimeAfterMidnightUTCInMS: eventEndTimeAfterMidnightUTCInMS,
+        }),
+        ...(eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS !==
+          currentEvent.eventEndDateTimeInMS && {
+          eventEndDateTimeInMS:
+            eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS,
+        }),
+        ...(organizers !== currentEvent.organizers && {
+          organizers: organizers,
+        }),
+        ...(invitees !== currentEvent.invitees && { invitees: invitees }),
+        ...(eventDescription !== "" &&
+          eventDescription !== currentEvent.description && {
+            description: eventDescription.trim(),
+          }),
+        ...(eventAdditionalInfo !== currentEvent.additionalInfo && {
+          additionalInfo: eventAdditionalInfo.trim(),
+        }),
+        ...(eventCity !== "" &&
+          eventCity?.trim() !== currentEvent.city && {
+            city: Methods.formatHyphensAndSpacesInString(
+              Methods.formatCapitalizedName(eventCity)
+            ),
+          }),
+        ...(eventState !== "" &&
+          eventState?.trim() !== currentEvent.stateProvince && {
+            stateProvince: Methods.formatHyphensAndSpacesInString(
+              Methods.formatCapitalizedName(eventState)
+            ),
+          }),
+        ...(eventCountry !== "" &&
+          eventCountry !== currentEvent.country && {
+            country: eventCountry,
+          }),
+        ...(publicity !== currentEvent.publicity && {
+          publicity: publicity,
+        }),
+        ...(maxParticipants !== currentEvent.maxParticipants && {
+          maxParticipants: maxParticipants,
+        }),
+        ...(eventAddress?.trim() !== "" &&
+          eventAddress?.trim() !== currentEvent.address && {
+            address: eventAddress?.trim(),
+          }),
+        ...(relatedInterests !== currentEvent.relatedInterests && {
+          relatedInterests: relatedInterests,
+        }),
+      };
+    }
+  };
+  const valuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
+
   const eventContextValues: TEventContext = {
+    valuesToUpdate,
     userRSVPd,
     setUserRSVPd,
     eventTitle,
