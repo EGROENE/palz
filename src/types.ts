@@ -524,6 +524,8 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  userRSVPd: boolean | null;
+  setUserRSVPd: React.Dispatch<React.SetStateAction<boolean | null>>;
   eventTitle: string;
   setEventTitle: React.Dispatch<React.SetStateAction<string>>;
   eventTitleError: string;

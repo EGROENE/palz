@@ -112,8 +112,11 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventImages, setEventImages] = useState<string[] | undefined>([]);
   ///////////////////////
 
+  const [userRSVPd, setUserRSVPd] = useState<boolean | null>(null);
+
   useEffect(() => {
-    if (currentEvent) {
+    if (currentEvent && currentUser?._id) {
+      setUserRSVPd(currentEvent.interestedUsers.includes(currentUser._id));
       setEventTitle(currentEvent.title);
       setEventDescription(currentEvent.description);
       setEventAdditionalInfo(currentEvent.additionalInfo);
@@ -416,6 +419,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const eventContextValues: TEventContext = {
+    userRSVPd,
+    setUserRSVPd,
     eventTitle,
     setEventTitle,
     eventTitleError,
