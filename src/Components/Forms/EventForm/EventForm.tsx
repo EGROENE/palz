@@ -744,7 +744,7 @@ const EventForm = ({
     }
   };
 
-  const handleAddEventFormSubmission = (
+  const handleEventFormSubmission = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
@@ -1759,7 +1759,7 @@ const EventForm = ({
         </div>
         <button
           disabled={submitButtonIsDisabled}
-          onClick={(e) => handleAddEventFormSubmission(e)}
+          onClick={(e) => handleEventFormSubmission(e)}
           style={
             randomColor === "var(--primary-color)"
               ? { backgroundColor: `${randomColor}`, color: "black" }
