@@ -37,6 +37,52 @@ const EventForm = ({
     setEventImages,
     addEventImageMutation,
     removeEventImageMutation,
+    eventTitle,
+    setEventTitle,
+    eventTitleError,
+    setEventTitleError,
+    eventDescription,
+    setEventDescription,
+    eventDescriptionError,
+    setEventDescriptionError,
+    eventAdditionalInfo,
+    setEventAdditionalInfo,
+    eventAdditionalInfoError,
+    setEventAdditionalInfoError,
+    eventCity,
+    setEventCity,
+    eventState,
+    setEventState,
+    eventCountry,
+    setEventCountry,
+    eventLocationError,
+    setEventLocationError,
+    eventStartDateMidnightUTCInMS,
+    setEventStartDateMidnightUTCInMS,
+    eventStartTimeAfterMidnightUTCInMS,
+    setEventStartTimeAfterMidnightUTCInMS,
+    eventStartDateTimeError,
+    setEventStartDateTimeError,
+    eventEndDateMidnightUTCInMS,
+    setEventEndDateMidnightUTCInMS,
+    eventEndTimeAfterMidnightUTCInMS,
+    setEventEndTimeAfterMidnightUTCInMS,
+    eventEndDateTimeError,
+    setEventEndDateTimeError,
+    eventAddress,
+    setEventAddress,
+    eventAddressError,
+    setEventAddressError,
+    maxParticipants,
+    setMaxParticipants,
+    publicity,
+    setPublicity,
+    organizers,
+    setOrganizers,
+    invitees,
+    setInvitees,
+    relatedInterests,
+    setRelatedInterests,
   } = useEventContext();
 
   const navigation = useNavigate();
@@ -89,71 +135,7 @@ const EventForm = ({
   const [showEventCountries, setShowEventCountries] = useState<boolean>(false);
 
   // STATE VALUES CORRESPONDING TO EDITABLE PROPERTIES OF TEvent, ALONG W/ CORRESPONDING FIELDS' ERROR STATES:
-  const [eventTitle, setEventTitle] = useState<string>(event ? event.title : "");
-  const [eventTitleError, setEventTitleError] = useState<string>(
-    !event ? "Please fill out this field" : ""
-  );
-  const [eventDescription, setEventDescription] = useState<string>(
-    event ? event.description : ""
-  );
-  const [eventDescriptionError, setEventDescriptionError] = useState<string>(
-    !event ? "Please fill out this field" : ""
-  );
-  const [eventAdditionalInfo, setEventAdditionalInfo] = useState<string>(
-    event ? event.additionalInfo : ""
-  );
-  const [eventAdditionalInfoError, setEventAdditionalInfoError] = useState<string>("");
-  const [eventCity, setEventCity] = useState<string | undefined>(event ? event.city : "");
-  const [eventState, setEventState] = useState<string | undefined>(
-    event ? event.stateProvince : ""
-  );
-  const [eventCountry, setEventCountry] = useState<string | undefined>(
-    event ? event.country : ""
-  );
-  const [eventLocationError, setEventLocationError] = useState<string>(
-    !event ? "Please fill out all 3 location fields" : ""
-  );
-  const [eventStartDateMidnightUTCInMS, setEventStartDateMidnightUTCInMS] = useState(
-    event ? event.eventStartDateMidnightUTCInMS : 0
-  );
-  const [eventStartTimeAfterMidnightUTCInMS, setEventStartTimeAfterMidnightUTCInMS] =
-    useState(event ? event.eventStartTimeAfterMidnightUTCInMS : -1); // set to this instead of undefined or null in order to avoid TS errors
-  const [eventStartDateTimeError, setEventStartDateTimeError] = useState<string>(
-    !event ? "Please specify when event begins" : ""
-  );
-  const [eventEndDateMidnightUTCInMS, setEventEndDateMidnightUTCInMS] = useState(
-    event && event.eventEndDateMidnightUTCInMS !== undefined
-      ? event.eventEndDateMidnightUTCInMS
-      : 0
-  );
-  const [eventEndTimeAfterMidnightUTCInMS, setEventEndTimeAfterMidnightUTCInMS] =
-    useState(
-      event && event.eventEndTimeAfterMidnightUTCInMS !== undefined
-        ? event.eventEndTimeAfterMidnightUTCInMS
-        : -1 // set to this instead of undefined or null in order to avoid TS errors
-    );
-  const [eventEndDateTimeError, setEventEndDateTimeError] = useState<string>(
-    !event ? "Please specify when event ends" : ""
-  );
-  const [eventAddress, setEventAddress] = useState<string | undefined>(
-    event ? event.address : ""
-  );
-  const [eventAddressError, setEventAddressError] = useState<string | undefined>(
-    !event ? "Please fill out this field" : ""
-  );
-  const [maxParticipants, setMaxParticipants] = useState<number | null>(
-    event ? event.maxParticipants : null
-  );
-  const [publicity, setPublicity] = useState<"public" | "private">(
-    event ? event.publicity : "public"
-  );
-  const [organizers, setOrganizers] = useState<string[]>(
-    event ? event.organizers : [`${currentUser?._id}`]
-  );
-  const [invitees, setInvitees] = useState<string[]>(event ? event.invitees : []);
-  const [relatedInterests, setRelatedInterests] = useState<string[]>(
-    event ? event.relatedInterests : []
-  );
+
   //////////////////////////////////////////
 
   const [showErrors, setShowErrors] = useState<boolean>(event ? true : false);
