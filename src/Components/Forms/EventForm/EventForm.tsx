@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
-import { TUser, TEvent, TEventValuesToUpdate, TThemeColor } from "../../../types";
+import { TUser, TEvent, TThemeColor } from "../../../types";
 import Methods from "../../../methods";
 import { countries } from "../../../constants";
 import Requests from "../../../requests";
@@ -83,6 +83,7 @@ const EventForm = ({
     setInvitees,
     relatedInterests,
     setRelatedInterests,
+    valuesToUpdate,
   } = useEventContext();
 
   const navigation = useNavigate();
@@ -754,6 +755,9 @@ const EventForm = ({
       if (event) {
         // When updating an existing event:
         setEventEditIsInProgress(true);
+        /*
+         Use plain request, not a React Query mutation to update event because values kept in state that are used for optimistic rendering should be updated immediately upon successful request.
+        */
         Requests.updateEvent(event, valuesToUpdate)
           .then((response) => {
             if (!response.ok) {
@@ -888,83 +892,6 @@ const EventForm = ({
         setIsLoading(false);
       });
   };
-
-  const getValuesToUpdate = (): TEventValuesToUpdate | undefined => {
-    // interestedUsers omitted from type b/c that is not controllable with this form, rather changes depending on other users RSVPing or de-RSVPing.
-    if (event) {
-      return {
-        ...(eventTitle?.trim() !== "" &&
-          eventTitle.trim() !== event.title && {
-            title: eventTitle,
-          }),
-        ...(eventStartDateMidnightUTCInMS !== event.eventStartDateMidnightUTCInMS && {
-          eventStartDateMidnightUTCInMS: eventStartDateMidnightUTCInMS,
-        }),
-        ...(eventStartTimeAfterMidnightUTCInMS !==
-          event.eventStartTimeAfterMidnightUTCInMS && {
-          eventStartTimeAfterMidnightUTCInMS: eventStartTimeAfterMidnightUTCInMS,
-        }),
-        ...(eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS !==
-          event.eventStartDateTimeInMS && {
-          eventStartDateTimeInMS:
-            eventStartDateMidnightUTCInMS + eventStartTimeAfterMidnightUTCInMS,
-        }),
-        ...(eventEndDateMidnightUTCInMS !== event.eventEndDateMidnightUTCInMS && {
-          eventEndDateMidnightUTCInMS: eventEndDateMidnightUTCInMS,
-        }),
-        ...(eventEndTimeAfterMidnightUTCInMS !==
-          event.eventEndTimeAfterMidnightUTCInMS && {
-          eventEndTimeAfterMidnightUTCInMS: eventEndTimeAfterMidnightUTCInMS,
-        }),
-        ...(eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS !==
-          event.eventEndDateTimeInMS && {
-          eventEndDateTimeInMS:
-            eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS,
-        }),
-        ...(organizers !== event.organizers && {
-          organizers: organizers,
-        }),
-        ...(invitees !== event.invitees && { invitees: invitees }),
-        ...(eventDescription !== "" &&
-          eventDescription !== event.description && {
-            description: eventDescription.trim(),
-          }),
-        ...(eventAdditionalInfo !== event.additionalInfo && {
-          additionalInfo: eventAdditionalInfo.trim(),
-        }),
-        ...(eventCity !== "" &&
-          eventCity?.trim() !== event.city && {
-            city: Methods.formatHyphensAndSpacesInString(
-              Methods.formatCapitalizedName(eventCity)
-            ),
-          }),
-        ...(eventState !== "" &&
-          eventState?.trim() !== event.stateProvince && {
-            stateProvince: Methods.formatHyphensAndSpacesInString(
-              Methods.formatCapitalizedName(eventState)
-            ),
-          }),
-        ...(eventCountry !== "" &&
-          eventCountry !== event.country && {
-            country: eventCountry,
-          }),
-        ...(publicity !== event.publicity && {
-          publicity: publicity,
-        }),
-        ...(maxParticipants !== event.maxParticipants && {
-          maxParticipants: maxParticipants,
-        }),
-        ...(eventAddress?.trim() !== "" &&
-          eventAddress?.trim() !== event.address && {
-            address: eventAddress?.trim(),
-          }),
-        ...(relatedInterests !== event.relatedInterests && {
-          relatedInterests: relatedInterests,
-        }),
-      };
-    }
-  };
-  const valuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   // Create array in which certain countries from countries array will be placed on top
   const topCountryNames = ["United States", "Canada", "United Kingdom", "Australia"];
