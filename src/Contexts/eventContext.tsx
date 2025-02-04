@@ -229,6 +229,79 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
+  const updateEventMutation = useMutation({
+    mutationFn: ({
+      event,
+      valuesToUpdate,
+    }: {
+      event: TEvent;
+      valuesToUpdate: TEventValuesToUpdate;
+    }) => Requests.updateEvent(event, valuesToUpdate),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: "allEvents" });
+
+      toast.success("Event updated!", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid green",
+        },
+      });
+
+      /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
+      if (valuesToUpdate?.title) {
+        setEventTitle(valuesToUpdate.title);
+      }
+      if (valuesToUpdate?.organizers) {
+        setOrganizers(valuesToUpdate.organizers);
+      }
+      if (valuesToUpdate?.invitees) {
+        setInvitees(valuesToUpdate.invitees);
+      }
+      if (valuesToUpdate?.description) {
+        setEventDescription(valuesToUpdate.description);
+      }
+      if (valuesToUpdate?.additionalInfo) {
+        setEventAdditionalInfo(valuesToUpdate.additionalInfo);
+      }
+      if (valuesToUpdate?.city) {
+        setEventCity(valuesToUpdate.city);
+      }
+      if (valuesToUpdate?.stateProvince) {
+        setEventState(valuesToUpdate.stateProvince);
+      }
+      if (valuesToUpdate?.country) {
+        setEventCountry(valuesToUpdate.country);
+      }
+      if (valuesToUpdate?.publicity) {
+        setPublicity(valuesToUpdate.publicity);
+      }
+      if (valuesToUpdate?.maxParticipants) {
+        setMaxParticipants(valuesToUpdate.maxParticipants);
+      }
+      if (valuesToUpdate?.address) {
+        setEventAddress(valuesToUpdate.address);
+      }
+      if (valuesToUpdate?.relatedInterests) {
+        setRelatedInterests(valuesToUpdate.relatedInterests);
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Could not update event. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => {
+      setEventEditIsInProgress(false);
+      setIsLoading(false);
+    },
+  });
+
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
@@ -503,6 +576,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const valuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    updateEventMutation,
     valuesToUpdate,
     userRSVPd,
     setUserRSVPd,

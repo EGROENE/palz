@@ -524,6 +524,15 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  updateEventMutation: UseMutationResult<
+    Response,
+    Error,
+    {
+      event: TEvent;
+      valuesToUpdate: TEventValuesToUpdate;
+    },
+    unknown
+  >;
   valuesToUpdate: TEventValuesToUpdate | undefined;
   userRSVPd: boolean | null;
   setUserRSVPd: React.Dispatch<React.SetStateAction<boolean | null>>;
