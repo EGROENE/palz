@@ -524,6 +524,52 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  eventTitle: string;
+  setEventTitle: React.Dispatch<React.SetStateAction<string>>;
+  eventTitleError: string;
+  setEventTitleError: React.Dispatch<React.SetStateAction<string>>;
+  eventDescription: string;
+  setEventDescription: React.Dispatch<React.SetStateAction<string>>;
+  eventDescriptionError: string;
+  setEventDescriptionError: React.Dispatch<React.SetStateAction<string>>;
+  eventAdditionalInfo: string;
+  setEventAdditionalInfo: React.Dispatch<React.SetStateAction<string>>;
+  eventAdditionalInfoError: string;
+  setEventAdditionalInfoError: React.Dispatch<React.SetStateAction<string>>;
+  eventCity: string | undefined;
+  setEventCity: React.Dispatch<React.SetStateAction<string | undefined>>;
+  eventState: string | undefined;
+  setEventState: React.Dispatch<React.SetStateAction<string | undefined>>;
+  eventCountry: string | undefined;
+  setEventCountry: React.Dispatch<React.SetStateAction<string | undefined>>;
+  eventLocationError: string;
+  setEventLocationError: React.Dispatch<React.SetStateAction<string>>;
+  eventStartDateMidnightUTCInMS: number;
+  setEventStartDateMidnightUTCInMS: React.Dispatch<React.SetStateAction<number>>;
+  eventStartTimeAfterMidnightUTCInMS: number;
+  setEventStartTimeAfterMidnightUTCInMS: React.Dispatch<React.SetStateAction<number>>;
+  eventStartDateTimeError: string;
+  setEventStartDateTimeError: React.Dispatch<React.SetStateAction<string>>;
+  eventEndDateMidnightUTCInMS: number;
+  setEventEndDateMidnightUTCInMS: React.Dispatch<React.SetStateAction<number>>;
+  eventEndTimeAfterMidnightUTCInMS: number;
+  setEventEndTimeAfterMidnightUTCInMS: React.Dispatch<React.SetStateAction<number>>;
+  eventEndDateTimeError: string;
+  setEventEndDateTimeError: React.Dispatch<React.SetStateAction<string>>;
+  eventAddress: string | undefined;
+  setEventAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
+  eventAddressError: string;
+  setEventAddressError: React.Dispatch<React.SetStateAction<string>>;
+  maxParticipants: number | null;
+  setMaxParticipants: React.Dispatch<React.SetStateAction<number | null>>;
+  publicity: "public" | "private";
+  setPublicity: React.Dispatch<React.SetStateAction<"public" | "private">>;
+  organizers: string[];
+  setOrganizers: React.Dispatch<React.SetStateAction<string[]>>;
+  invitees: string[];
+  setInvitees: React.Dispatch<React.SetStateAction<string[]>>;
+  relatedInterests: string[];
+  setRelatedInterests: React.Dispatch<React.SetStateAction<string[]>>;
   addEventImageMutation: UseMutationResult<
     Response,
     Error,

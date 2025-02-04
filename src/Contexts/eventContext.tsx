@@ -1,4 +1,4 @@
-import { useState, createContext, ReactNode } from "react";
+import { useState, createContext, ReactNode, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { TEventContext, TUser, TEvent } from "../types";
 import Requests from "../requests";
@@ -19,6 +19,15 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const { setIsLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount } = useUserContext();
 
+  const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
+  const fetchAllEventsQuery: UseQueryResult<TEvent[], Error> = useQuery({
+    queryKey: ["allEvents"],
+    queryFn: Requests.getAllEvents,
+    enabled: userHasLoggedIn,
+  });
+
+  const allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
+
   const [currentEvent, setCurrentEvent] = useLocalStorage<TEvent | undefined>(
     "currentEvent",
     undefined
@@ -27,15 +36,105 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventEditIsInProgress, setEventEditIsInProgress] = useState<boolean>(false);
   const [eventDeletionIsInProgress, setEventDeletionIsInProgress] =
     useState<boolean>(false);
-  const [eventImages, setEventImages] = useState<string[] | undefined>([]);
 
-  const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
-  const fetchAllEventsQuery: UseQueryResult<TEvent[], Error> = useQuery({
-    queryKey: ["allEvents"],
-    queryFn: Requests.getAllEvents,
-    enabled: userHasLoggedIn,
-  });
-  const allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
+  // State values  pertaining to properties on TEvent, along w/ error values to be used on EventForm:
+  // Initialize these to characteristics of currentEvent if defined; update in useEffect dependent on currentEvent, allEvents, maybe more
+  const [eventTitle, setEventTitle] = useState<string>(
+    currentEvent ? currentEvent.title : ""
+  );
+  const [eventTitleError, setEventTitleError] = useState<string>(
+    !currentEvent ? "Please fill out this field" : ""
+  );
+  const [eventDescription, setEventDescription] = useState<string>(
+    currentEvent ? currentEvent.description : ""
+  );
+  const [eventDescriptionError, setEventDescriptionError] = useState<string>(
+    !currentEvent ? "Please fill out this field" : ""
+  );
+  const [eventAdditionalInfo, setEventAdditionalInfo] = useState<string>(
+    currentEvent ? currentEvent.additionalInfo : ""
+  );
+  const [eventAdditionalInfoError, setEventAdditionalInfoError] = useState<string>("");
+  const [eventCity, setEventCity] = useState<string | undefined>(
+    currentEvent ? currentEvent.city : ""
+  );
+  const [eventState, setEventState] = useState<string | undefined>(
+    currentEvent ? currentEvent.stateProvince : ""
+  );
+  const [eventCountry, setEventCountry] = useState<string | undefined>(
+    currentEvent ? currentEvent.country : ""
+  );
+  const [eventLocationError, setEventLocationError] = useState<string>(
+    !currentEvent ? "Please fill out all 3 location fields" : ""
+  );
+  const [eventStartDateMidnightUTCInMS, setEventStartDateMidnightUTCInMS] =
+    useState<number>(currentEvent ? currentEvent.eventStartDateMidnightUTCInMS : 0);
+  const [eventStartTimeAfterMidnightUTCInMS, setEventStartTimeAfterMidnightUTCInMS] =
+    useState(currentEvent ? currentEvent.eventStartTimeAfterMidnightUTCInMS : -1); // set to this instead of undefined or null in order to avoid TS errors
+  const [eventStartDateTimeError, setEventStartDateTimeError] = useState<string>(
+    !currentEvent ? "Please specify when event begins" : ""
+  );
+  const [eventEndDateMidnightUTCInMS, setEventEndDateMidnightUTCInMS] = useState<number>(
+    currentEvent && currentEvent.eventEndDateMidnightUTCInMS !== undefined
+      ? currentEvent.eventEndDateMidnightUTCInMS
+      : 0
+  );
+  const [eventEndTimeAfterMidnightUTCInMS, setEventEndTimeAfterMidnightUTCInMS] =
+    useState(
+      currentEvent && currentEvent.eventEndTimeAfterMidnightUTCInMS !== undefined
+        ? currentEvent.eventEndTimeAfterMidnightUTCInMS
+        : -1 // set to this instead of undefined or null in order to avoid TS errors
+    );
+  const [eventEndDateTimeError, setEventEndDateTimeError] = useState<string>(
+    !currentEvent ? "Please specify when event ends" : ""
+  );
+  const [eventAddress, setEventAddress] = useState<string | undefined>(
+    currentEvent ? currentEvent.address : ""
+  );
+  const [eventAddressError, setEventAddressError] = useState<string>(
+    !currentEvent ? "Please fill out this field" : ""
+  );
+  const [maxParticipants, setMaxParticipants] = useState<number | null>(
+    currentEvent ? currentEvent.maxParticipants : null
+  );
+  const [publicity, setPublicity] = useState<"public" | "private">(
+    currentEvent ? currentEvent.publicity : "public"
+  );
+  const [organizers, setOrganizers] = useState<string[]>(
+    currentEvent ? currentEvent.organizers : [`${currentUser?._id}`]
+  );
+  const [invitees, setInvitees] = useState<string[]>(
+    currentEvent ? currentEvent.invitees : []
+  );
+  const [relatedInterests, setRelatedInterests] = useState<string[]>(
+    currentEvent ? currentEvent.relatedInterests : []
+  );
+  const [eventImages, setEventImages] = useState<string[] | undefined>([]);
+  ///////////////////////
+
+  useEffect(() => {
+    if (currentEvent) {
+      setEventTitle(currentEvent.title);
+      setEventDescription(currentEvent.description);
+      setEventAdditionalInfo(currentEvent.additionalInfo);
+      setEventCity(currentEvent.city);
+      setEventState(currentEvent.stateProvince);
+      setEventCountry(currentEvent.country);
+      setEventStartDateMidnightUTCInMS(currentEvent.eventStartDateMidnightUTCInMS);
+      setEventStartTimeAfterMidnightUTCInMS(
+        currentEvent.eventStartTimeAfterMidnightUTCInMS
+      );
+      setEventEndDateMidnightUTCInMS(currentEvent.eventEndDateMidnightUTCInMS);
+      setEventEndTimeAfterMidnightUTCInMS(currentEvent.eventEndTimeAfterMidnightUTCInMS);
+      setEventAddress(currentEvent.address);
+      setMaxParticipants(currentEvent.maxParticipants);
+      setPublicity(currentEvent.publicity);
+      setOrganizers(currentEvent.organizers);
+      setInvitees(currentEvent.invitees);
+      setRelatedInterests(currentEvent.relatedInterests);
+      setEventImages(currentEvent.images);
+    }
+  }, [currentEvent, allEvents]);
 
   const queryClient = useQueryClient();
 
@@ -317,6 +416,52 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const eventContextValues: TEventContext = {
+    eventTitle,
+    setEventTitle,
+    eventTitleError,
+    setEventTitleError,
+    eventDescription,
+    setEventDescription,
+    eventDescriptionError,
+    setEventDescriptionError,
+    eventAdditionalInfo,
+    setEventAdditionalInfo,
+    eventAdditionalInfoError,
+    setEventAdditionalInfoError,
+    eventCity,
+    setEventCity,
+    eventState,
+    setEventState,
+    eventCountry,
+    setEventCountry,
+    eventLocationError,
+    setEventLocationError,
+    eventStartDateMidnightUTCInMS,
+    setEventStartDateMidnightUTCInMS,
+    eventStartTimeAfterMidnightUTCInMS,
+    setEventStartTimeAfterMidnightUTCInMS,
+    eventStartDateTimeError,
+    setEventStartDateTimeError,
+    eventEndDateMidnightUTCInMS,
+    setEventEndDateMidnightUTCInMS,
+    eventEndTimeAfterMidnightUTCInMS,
+    setEventEndTimeAfterMidnightUTCInMS,
+    eventEndDateTimeError,
+    setEventEndDateTimeError,
+    eventAddress,
+    setEventAddress,
+    eventAddressError,
+    setEventAddressError,
+    maxParticipants,
+    setMaxParticipants,
+    publicity,
+    setPublicity,
+    organizers,
+    setOrganizers,
+    invitees,
+    setInvitees,
+    relatedInterests,
+    setRelatedInterests,
     addEventImageMutation,
     removeEventImageMutation,
     eventImages,
