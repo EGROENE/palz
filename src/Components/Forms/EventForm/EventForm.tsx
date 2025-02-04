@@ -84,6 +84,7 @@ const EventForm = ({
     relatedInterests,
     setRelatedInterests,
     valuesToUpdate,
+    updateEventMutation,
   } = useEventContext();
 
   const navigation = useNavigate();
@@ -755,72 +756,9 @@ const EventForm = ({
       if (event) {
         // When updating an existing event:
         setEventEditIsInProgress(true);
-        /*
-         Use plain request, not a React Query mutation to update event because values kept in state that are used for optimistic rendering should be updated immediately upon successful request.
-        */
-        Requests.updateEvent(event, valuesToUpdate)
-          .then((response) => {
-            if (!response.ok) {
-              toast.error("Could not update event. Please try again.", {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid red",
-                },
-              });
-            } else {
-              toast.success("Event updated!", {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid green",
-                },
-              });
-
-              /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
-              if (valuesToUpdate?.title) {
-                setEventTitle(valuesToUpdate.title);
-              }
-              if (valuesToUpdate?.organizers) {
-                setOrganizers(valuesToUpdate.organizers);
-              }
-              if (valuesToUpdate?.invitees) {
-                setInvitees(valuesToUpdate.invitees);
-              }
-              if (valuesToUpdate?.description) {
-                setEventDescription(valuesToUpdate.description);
-              }
-              if (valuesToUpdate?.additionalInfo) {
-                setEventAdditionalInfo(valuesToUpdate.additionalInfo);
-              }
-              if (valuesToUpdate?.city) {
-                setEventCity(valuesToUpdate.city);
-              }
-              if (valuesToUpdate?.stateProvince) {
-                setEventState(valuesToUpdate.stateProvince);
-              }
-              if (valuesToUpdate?.country) {
-                setEventCountry(valuesToUpdate.country);
-              }
-              if (valuesToUpdate?.publicity) {
-                setPublicity(valuesToUpdate.publicity);
-              }
-              if (valuesToUpdate?.maxParticipants) {
-                setMaxParticipants(valuesToUpdate.maxParticipants);
-              }
-              if (valuesToUpdate?.address) {
-                setEventAddress(valuesToUpdate.address);
-              }
-              if (valuesToUpdate?.relatedInterests) {
-                setRelatedInterests(valuesToUpdate.relatedInterests);
-              }
-            }
-          })
-          .catch((error) => console.log(error))
-          .finally(() => {
-            setIsLoading(false);
-            setEventEditIsInProgress(false);
-          });
+        if (valuesToUpdate) {
+          updateEventMutation.mutate({ event, valuesToUpdate });
+        }
       } else {
         // When adding a newly created event:
         setAddEventIsInProgress(true);
