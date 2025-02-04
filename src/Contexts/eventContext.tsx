@@ -201,6 +201,33 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  const addUserRSVPMutation = useMutation({
+    mutationFn: ({ user, event }: { user: TUser; event: TEvent }) =>
+      Requests.addUserRSVP(user, event),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: "allEvents" });
+      toast.success("RSVP added!", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid green",
+        },
+      });
+    },
+    onError: (error) => {
+      setUserRSVPd(false);
+      console.log(error);
+      toast.error("Could not RSVP to event. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => setIsLoading(false),
+  });
+
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
@@ -211,34 +238,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     if (setUserRSVPd) {
       setUserRSVPd(true);
     }
-    Requests.addUserRSVP(currentUser, event)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not RSVP to event. Please try again.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          if (setUserRSVPd) {
-            setUserRSVPd(false);
-          }
-        } else {
-          toast.success("RSVP added!", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid green",
-            },
-          });
-          if (setUserRSVPd) {
-            setUserRSVPd(true);
-          }
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
+    if (currentUser) {
+      const user = currentUser;
+      addUserRSVPMutation.mutate({ user, event });
+    }
   };
 
   const handleDeleteUserRSVP = (
