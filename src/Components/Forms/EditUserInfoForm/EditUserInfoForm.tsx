@@ -123,6 +123,8 @@ const EditUserInfoForm = ({
     setWhoCanSeeEventsInterestedIn,
   } = useUserContext();
 
+  const [showPrivacySettings, setShowPrivacySettings] = useState<boolean>(false);
+
   // REFS
   const firstNameRef = useRef<HTMLInputElement | null>(null);
   const lastNameRef = useRef<HTMLInputElement | null>(null);
@@ -1730,516 +1732,528 @@ const EditUserInfoForm = ({
             )}
           </label>
         )}
-        <label>
-          <p>Who can see your profile:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-see-profile"
-                onChange={() => setProfileVisibleTo("anyone")}
-                checked={profileVisibleTo === "anyone"}
-                name="who-can-see-profile"
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setProfileVisibleTo("friends")}
-                checked={profileVisibleTo === "friends"}
-                name="who-can-see-profile"
-                id="friends-can-see-profile"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setProfileVisibleTo("friends of friends")}
-                checked={profileVisibleTo === "friends of friends"}
-                name="who-can-see-profile"
-                id="friends-of-friends-can-see-profile"
-                type="radio"
-              />
-              <span>Friends of Friends</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can see your location:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-see-location"
-                onChange={() => setWhoCanSeeLocation("anyone")}
-                checked={whoCanSeeLocation === "anyone"}
-                name="who-can-see-location"
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeLocation("friends")}
-                checked={whoCanSeeLocation === "friends"}
-                name="who-can-see-location"
-                id="friends-can-see-location"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeLocation("friends of friends")}
-                checked={whoCanSeeLocation === "friends of friends"}
-                name="who-can-see-location"
-                id="friends-of-friends-can-see-location"
-                type="radio"
-              />
-              <span>Friends of Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeLocation("nobody")}
-                checked={whoCanSeeLocation === "nobody"}
-                name="who-can-see-location"
-                id="nobody-can-see-location"
-                type="radio"
-              />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can see your friends list:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-see-friends-list"
-                onChange={() => setWhoCanSeeFriendsList("anyone")}
-                checked={whoCanSeeFriendsList === "anyone"}
-                name="who-can-see-friends-list"
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeFriendsList("friends")}
-                checked={whoCanSeeFriendsList === "friends"}
-                name="who-can-see-friends-list"
-                id="friends-can-see-friends-list"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeFriendsList("friends of friends")}
-                checked={whoCanSeeFriendsList === "friends of friends"}
-                name="who-can-see-friends-list"
-                id="friends-of-friends-can-see-friends-list"
-                type="radio"
-              />
-              <span>Friends of Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeFriendsList("nobody")}
-                checked={whoCanSeeFriendsList === "nobody"}
-                name="who-can-see-friends-list"
-                id="nobody-can-see-friends-list"
-                type="radio"
-              />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can see your phone number:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-see-phone-number"
-                onChange={() => setWhoCanSeePhoneNumber("anyone")}
-                checked={whoCanSeePhoneNumber === "anyone"}
-                name="who-can-see-phone-number"
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeePhoneNumber("friends")}
-                checked={whoCanSeePhoneNumber === "friends"}
-                name="who-can-see-phone-number"
-                id="friends-can-see-phone-number"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeePhoneNumber("friends of friends")}
-                checked={whoCanSeePhoneNumber === "friends of friends"}
-                name="who-can-see-phone-number"
-                id="friends-of-friends-can-see-phone-number"
-                type="radio"
-              />
-              <span>Friends of Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeePhoneNumber("nobody")}
-                checked={whoCanSeePhoneNumber === "nobody"}
-                name="who-can-see-phone-number"
-                id="nobody-can-see-phone-number"
-                type="radio"
-              />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can see your email address:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-see-email-address"
-                onChange={() => setWhoCanSeeEmailAddress("anyone")}
-                checked={whoCanSeeEmailAddress === "anyone"}
-                name="who-can-see-email-address"
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeEmailAddress("friends")}
-                checked={whoCanSeeEmailAddress === "friends"}
-                name="who-can-see-email-address"
-                id="friends-can-see-email-address"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeEmailAddress("friends of friends")}
-                checked={whoCanSeeEmailAddress === "friends of friends"}
-                name="who-can-see-email-address"
-                id="friends-of-friends-can-see-email-address"
-                type="radio"
-              />
-              <span>Friends of Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeEmailAddress("nobody")}
-                checked={whoCanSeeEmailAddress === "nobody"}
-                name="who-can-see-email-address"
-                id="nobody-can-see-email-address"
-                type="radio"
-              />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can see your Facebook:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-see-facebook"
-                name="who-can-see-facebook"
-                onChange={() => setWhoCanSeeFacebook("anyone")}
-                checked={whoCanSeeFacebook === "anyone"}
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeFacebook("friends")}
-                checked={whoCanSeeFacebook === "friends"}
-                name="who-can-see-facebook"
-                id="friends-can-see-facebook"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeFacebook("friends of friends")}
-                checked={whoCanSeeFacebook === "friends of friends"}
-                name="who-can-see-facebook"
-                id="friends-of-friends-can-see-facebook"
-                type="radio"
-              />
-              <span>Friends of Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeFacebook("nobody")}
-                checked={whoCanSeeFacebook === "nobody"}
-                name="who-can-see-facebook"
-                id="nobody-can-see-facebook"
-                type="radio"
-              />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can see your X:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-see-x"
-                name="who-can-see-x"
-                onChange={() => setWhoCanSeeX("anyone")}
-                checked={whoCanSeeX === "anyone"}
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeX("friends")}
-                checked={whoCanSeeX === "friends"}
-                name="who-can-see-x"
-                id="friends-can-see-x"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeX("friends of friends")}
-                checked={whoCanSeeX === "friends of friends"}
-                name="who-can-see-x"
-                id="friends-of-friends-can-see-x"
-                type="radio"
-              />
-              <span>Friends of Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeX("nobody")}
-                checked={whoCanSeeX === "nobody"}
-                name="who-can-see-x"
-                id="nobody-can-see-x"
-                type="radio"
-              />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can see your Instagram:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-see-instagram"
-                name="who-can-see-instagram"
-                onChange={() => setWhoCanSeeInstagram("anyone")}
-                checked={whoCanSeeInstagram === "anyone"}
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeInstagram("friends")}
-                checked={whoCanSeeInstagram === "friends"}
-                name="who-can-see-instagram"
-                id="friends-can-see-instagram"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeInstagram("friends of friends")}
-                checked={whoCanSeeInstagram === "friends of friends"}
-                name="who-can-see-instagram"
-                id="friends-of-friends-can-see-instagram"
-                type="radio"
-              />
-              <span>Friends of Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeInstagram("nobody")}
-                checked={whoCanSeeInstagram === "nobody"}
-                name="who-can-see-instagram"
-                id="nobody-can-see-instagram"
-                type="radio"
-              />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can see events you RSVP to:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-see-rsvpd-events"
-                name="who-can-see-rsvpd-events"
-                onChange={() => setWhoCanSeeEventsInterestedIn("anyone")}
-                checked={whoCanSeeEventsInterestedIn === "anyone"}
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeEventsInterestedIn("friends")}
-                checked={whoCanSeeEventsInterestedIn === "friends"}
-                name="who-can-see-rsvpd-events"
-                id="friends-can-see-rsvpd-events"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeEventsInterestedIn("friends of friends")}
-                checked={whoCanSeeEventsInterestedIn === "friends of friends"}
-                name="who-can-see-rsvpd-events"
-                id="friends-of-friends-can-see-rsvpd-events"
-                type="radio"
-              />
-              <span>Friends of Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeEventsInterestedIn("nobody")}
-                checked={whoCanSeeEventsInterestedIn === "nobody"}
-                name="who-can-see-rsvpd-events"
-                id="nobody-can-see-rsvpd-events"
-                type="radio"
-              />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can see events you organize:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-see-events"
-                name="who-can-see-events"
-                onChange={() => setWhoCanSeeEventsOrganized("anyone")}
-                checked={whoCanSeeEventsOrganized === "anyone"}
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeEventsOrganized("friends")}
-                checked={whoCanSeeEventsOrganized === "friends"}
-                name="who-can-see-events"
-                id="friends-can-see-events"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeEventsOrganized("friends of friends")}
-                checked={whoCanSeeEventsOrganized === "friends of friends"}
-                name="who-can-see-events"
-                id="friends-of-friends-can-see-events"
-                type="radio"
-              />
-              <span>Friends of Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setWhoCanSeeEventsOrganized("nobody")}
-                checked={whoCanSeeEventsOrganized === "nobody"}
-                name="who-can-see-events"
-                id="nobody-can-see-events"
-                type="radio"
-              />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can add you as co-organizer of events:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-add-as-co-organizer"
-                onChange={() => setWhoCanAddUserAsOrganizer("anyone")}
-                checked={whoCanAddUserAsOrganizer === "anyone"}
-                name="who-can-add-as-co-organizer"
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                id="friends-can-add-as-organizer"
-                onChange={() => setWhoCanAddUserAsOrganizer("friends")}
-                checked={whoCanAddUserAsOrganizer === "friends"}
-                name="who-can-add-as-co-organizer"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                id="nobody-can-add-as-co-organizer"
-                onChange={() => setWhoCanAddUserAsOrganizer("nobody")}
-                checked={whoCanAddUserAsOrganizer === "nobody"}
-                name="who-can-add-as-co-organizer"
-                type="radio"
-              />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can invite you to events:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-invite"
-                onChange={() => setWhoCanInviteUser("anyone")}
-                checked={whoCanInviteUser === "anyone"}
-                name="who-can-invite"
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                id="friends-can-invite"
-                onChange={() => setWhoCanInviteUser("friends")}
-                checked={whoCanInviteUser === "friends"}
-                name="who-can-invite"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                id="nobody-can-invite"
-                onChange={() => setWhoCanInviteUser("nobody")}
-                checked={whoCanInviteUser === "nobody"}
-                name="who-can-invite"
-                type="radio"
-              />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
+        <header className="input-label">
+          Privacy Settings{" "}
+          <i
+            onClick={() => setShowPrivacySettings(!showPrivacySettings)}
+            className="fas fa-chevron-down"
+            style={showPrivacySettings ? { rotate: "180deg" } : undefined}
+          ></i>
+        </header>
+        {showPrivacySettings && (
+          <>
+            <label>
+              <p>Who can see your profile:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-see-profile"
+                    onChange={() => setProfileVisibleTo("anyone")}
+                    checked={profileVisibleTo === "anyone"}
+                    name="who-can-see-profile"
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setProfileVisibleTo("friends")}
+                    checked={profileVisibleTo === "friends"}
+                    name="who-can-see-profile"
+                    id="friends-can-see-profile"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setProfileVisibleTo("friends of friends")}
+                    checked={profileVisibleTo === "friends of friends"}
+                    name="who-can-see-profile"
+                    id="friends-of-friends-can-see-profile"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can see your location:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-see-location"
+                    onChange={() => setWhoCanSeeLocation("anyone")}
+                    checked={whoCanSeeLocation === "anyone"}
+                    name="who-can-see-location"
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeLocation("friends")}
+                    checked={whoCanSeeLocation === "friends"}
+                    name="who-can-see-location"
+                    id="friends-can-see-location"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeLocation("friends of friends")}
+                    checked={whoCanSeeLocation === "friends of friends"}
+                    name="who-can-see-location"
+                    id="friends-of-friends-can-see-location"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeLocation("nobody")}
+                    checked={whoCanSeeLocation === "nobody"}
+                    name="who-can-see-location"
+                    id="nobody-can-see-location"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can see your friends list:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-see-friends-list"
+                    onChange={() => setWhoCanSeeFriendsList("anyone")}
+                    checked={whoCanSeeFriendsList === "anyone"}
+                    name="who-can-see-friends-list"
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeFriendsList("friends")}
+                    checked={whoCanSeeFriendsList === "friends"}
+                    name="who-can-see-friends-list"
+                    id="friends-can-see-friends-list"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeFriendsList("friends of friends")}
+                    checked={whoCanSeeFriendsList === "friends of friends"}
+                    name="who-can-see-friends-list"
+                    id="friends-of-friends-can-see-friends-list"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeFriendsList("nobody")}
+                    checked={whoCanSeeFriendsList === "nobody"}
+                    name="who-can-see-friends-list"
+                    id="nobody-can-see-friends-list"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can see your phone number:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-see-phone-number"
+                    onChange={() => setWhoCanSeePhoneNumber("anyone")}
+                    checked={whoCanSeePhoneNumber === "anyone"}
+                    name="who-can-see-phone-number"
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeePhoneNumber("friends")}
+                    checked={whoCanSeePhoneNumber === "friends"}
+                    name="who-can-see-phone-number"
+                    id="friends-can-see-phone-number"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeePhoneNumber("friends of friends")}
+                    checked={whoCanSeePhoneNumber === "friends of friends"}
+                    name="who-can-see-phone-number"
+                    id="friends-of-friends-can-see-phone-number"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeePhoneNumber("nobody")}
+                    checked={whoCanSeePhoneNumber === "nobody"}
+                    name="who-can-see-phone-number"
+                    id="nobody-can-see-phone-number"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can see your email address:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-see-email-address"
+                    onChange={() => setWhoCanSeeEmailAddress("anyone")}
+                    checked={whoCanSeeEmailAddress === "anyone"}
+                    name="who-can-see-email-address"
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEmailAddress("friends")}
+                    checked={whoCanSeeEmailAddress === "friends"}
+                    name="who-can-see-email-address"
+                    id="friends-can-see-email-address"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEmailAddress("friends of friends")}
+                    checked={whoCanSeeEmailAddress === "friends of friends"}
+                    name="who-can-see-email-address"
+                    id="friends-of-friends-can-see-email-address"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEmailAddress("nobody")}
+                    checked={whoCanSeeEmailAddress === "nobody"}
+                    name="who-can-see-email-address"
+                    id="nobody-can-see-email-address"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can see your Facebook:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-see-facebook"
+                    name="who-can-see-facebook"
+                    onChange={() => setWhoCanSeeFacebook("anyone")}
+                    checked={whoCanSeeFacebook === "anyone"}
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeFacebook("friends")}
+                    checked={whoCanSeeFacebook === "friends"}
+                    name="who-can-see-facebook"
+                    id="friends-can-see-facebook"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeFacebook("friends of friends")}
+                    checked={whoCanSeeFacebook === "friends of friends"}
+                    name="who-can-see-facebook"
+                    id="friends-of-friends-can-see-facebook"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeFacebook("nobody")}
+                    checked={whoCanSeeFacebook === "nobody"}
+                    name="who-can-see-facebook"
+                    id="nobody-can-see-facebook"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can see your X:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-see-x"
+                    name="who-can-see-x"
+                    onChange={() => setWhoCanSeeX("anyone")}
+                    checked={whoCanSeeX === "anyone"}
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeX("friends")}
+                    checked={whoCanSeeX === "friends"}
+                    name="who-can-see-x"
+                    id="friends-can-see-x"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeX("friends of friends")}
+                    checked={whoCanSeeX === "friends of friends"}
+                    name="who-can-see-x"
+                    id="friends-of-friends-can-see-x"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeX("nobody")}
+                    checked={whoCanSeeX === "nobody"}
+                    name="who-can-see-x"
+                    id="nobody-can-see-x"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can see your Instagram:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-see-instagram"
+                    name="who-can-see-instagram"
+                    onChange={() => setWhoCanSeeInstagram("anyone")}
+                    checked={whoCanSeeInstagram === "anyone"}
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeInstagram("friends")}
+                    checked={whoCanSeeInstagram === "friends"}
+                    name="who-can-see-instagram"
+                    id="friends-can-see-instagram"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeInstagram("friends of friends")}
+                    checked={whoCanSeeInstagram === "friends of friends"}
+                    name="who-can-see-instagram"
+                    id="friends-of-friends-can-see-instagram"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeInstagram("nobody")}
+                    checked={whoCanSeeInstagram === "nobody"}
+                    name="who-can-see-instagram"
+                    id="nobody-can-see-instagram"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can see events you RSVP to:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-see-rsvpd-events"
+                    name="who-can-see-rsvpd-events"
+                    onChange={() => setWhoCanSeeEventsInterestedIn("anyone")}
+                    checked={whoCanSeeEventsInterestedIn === "anyone"}
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEventsInterestedIn("friends")}
+                    checked={whoCanSeeEventsInterestedIn === "friends"}
+                    name="who-can-see-rsvpd-events"
+                    id="friends-can-see-rsvpd-events"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEventsInterestedIn("friends of friends")}
+                    checked={whoCanSeeEventsInterestedIn === "friends of friends"}
+                    name="who-can-see-rsvpd-events"
+                    id="friends-of-friends-can-see-rsvpd-events"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEventsInterestedIn("nobody")}
+                    checked={whoCanSeeEventsInterestedIn === "nobody"}
+                    name="who-can-see-rsvpd-events"
+                    id="nobody-can-see-rsvpd-events"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can see events you organize:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-see-events"
+                    name="who-can-see-events"
+                    onChange={() => setWhoCanSeeEventsOrganized("anyone")}
+                    checked={whoCanSeeEventsOrganized === "anyone"}
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEventsOrganized("friends")}
+                    checked={whoCanSeeEventsOrganized === "friends"}
+                    name="who-can-see-events"
+                    id="friends-can-see-events"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEventsOrganized("friends of friends")}
+                    checked={whoCanSeeEventsOrganized === "friends of friends"}
+                    name="who-can-see-events"
+                    id="friends-of-friends-can-see-events"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEventsOrganized("nobody")}
+                    checked={whoCanSeeEventsOrganized === "nobody"}
+                    name="who-can-see-events"
+                    id="nobody-can-see-events"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can add you as co-organizer of events:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-add-as-co-organizer"
+                    onChange={() => setWhoCanAddUserAsOrganizer("anyone")}
+                    checked={whoCanAddUserAsOrganizer === "anyone"}
+                    name="who-can-add-as-co-organizer"
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    id="friends-can-add-as-organizer"
+                    onChange={() => setWhoCanAddUserAsOrganizer("friends")}
+                    checked={whoCanAddUserAsOrganizer === "friends"}
+                    name="who-can-add-as-co-organizer"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    id="nobody-can-add-as-co-organizer"
+                    onChange={() => setWhoCanAddUserAsOrganizer("nobody")}
+                    checked={whoCanAddUserAsOrganizer === "nobody"}
+                    name="who-can-add-as-co-organizer"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can invite you to events:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-invite"
+                    onChange={() => setWhoCanInviteUser("anyone")}
+                    checked={whoCanInviteUser === "anyone"}
+                    name="who-can-invite"
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    id="friends-can-invite"
+                    onChange={() => setWhoCanInviteUser("friends")}
+                    checked={whoCanInviteUser === "friends"}
+                    name="who-can-invite"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    id="nobody-can-invite"
+                    onChange={() => setWhoCanInviteUser("nobody")}
+                    checked={whoCanInviteUser === "nobody"}
+                    name="who-can-invite"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+          </>
+        )}
         <div className="buttons-container">
           <button
             style={
