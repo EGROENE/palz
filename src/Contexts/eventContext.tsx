@@ -332,6 +332,33 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  const deleteEventMutation = useMutation({
+    mutationFn: ({ event }: { event: TEvent }) => Requests.deleteEvent(event),
+    onSuccess: () => {
+      toast("Event deleted", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+      navigation(`/${currentUser?.username}`);
+    },
+    onError: () => {
+      toast.error("Could not delete event. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => {
+      setEventDeletionIsInProgress(false);
+      setIsLoading(false);
+    },
+  });
+
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
@@ -606,6 +633,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const valuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    deleteEventMutation,
     createEventMutation,
     updateEventMutation,
     valuesToUpdate,
