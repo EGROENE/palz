@@ -1835,6 +1835,51 @@ const EditUserInfoForm = ({
             </div>
           </div>
         </label>
+        <label>
+          <p>People who can see your friends list (besides profiles you block):</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                id="anyone-can-see-friends-list"
+                onChange={() => setWhoCanSeeFriendsList("anyone")}
+                checked={whoCanSeeFriendsList === "anyone"}
+                name="who-can-see-friends-list"
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeFriendsList("friends")}
+                checked={whoCanSeeFriendsList === "friends"}
+                name="who-can-see-friends-list"
+                id="friends-can-see-friends-list"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeFriendsList("friends of friends")}
+                checked={whoCanSeeFriendsList === "friends of friends"}
+                name="who-can-see-friends-list"
+                id="friends-of-friends-can-see-friends-list"
+                type="radio"
+              />
+              <span>Friends of Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeFriendsList("nobody")}
+                checked={whoCanSeeFriendsList === "nobody"}
+                name="who-can-see-friends-list"
+                id="nobody-can-see-friends-list"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
         <div className="buttons-container">
           <button
             style={
