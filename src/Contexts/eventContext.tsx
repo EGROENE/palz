@@ -306,6 +306,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     mutationFn: ({ eventInfos }: { eventInfos: TEvent }) =>
       Requests.createEvent(eventInfos),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: "allEvents" });
       toast.success("Event created!", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
