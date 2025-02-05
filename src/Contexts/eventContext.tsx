@@ -546,6 +546,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
               },
             });
           } else {
+            queryClient.invalidateQueries({ queryKey: "allEvents" });
             toast(
               "You have removed yourself as an organizer & are no longer able to make changes to that event.",
               {
