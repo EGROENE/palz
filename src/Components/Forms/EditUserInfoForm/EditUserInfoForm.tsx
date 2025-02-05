@@ -1801,6 +1801,51 @@ const EditUserInfoForm = ({
           </div>
         </label>
         <label>
+          <p>Who can see your location:</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                id="anyone-can-see-location"
+                onChange={() => setWhoCanSeeLocation("anyone")}
+                checked={whoCanSeeLocation === "anyone"}
+                name="who-can-see-location"
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeLocation("friends")}
+                checked={whoCanSeeLocation === "friends"}
+                name="who-can-see-location"
+                id="friends-can-see-location"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeLocation("friends of friends")}
+                checked={whoCanSeeLocation === "friends of friends"}
+                name="who-can-see-location"
+                id="friends-of-friends-can-see-location"
+                type="radio"
+              />
+              <span>Friends of Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeLocation("nobody")}
+                checked={whoCanSeeLocation === "nobody"}
+                name="who-can-see-location"
+                id="nobody-can-see-location"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
+        <label>
           <p>People who can see your profile (besides profiles you block):</p>
           <div className="radio-inputs-container">
             <div className="radio-input-and-label">
