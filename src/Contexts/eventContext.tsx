@@ -527,7 +527,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     e?.preventDefault();
     if (user && user._id) {
       if (organizers.includes(user._id)) {
-        // Remove non-current user who isn't currentUser
+        // Only state values are updated for now; DB updated when form is saved
+        // Remove user who isn't currentUser
         setOrganizers(organizers.filter((organizerID) => organizerID !== user._id));
       } else {
         // Add non-current user as organizer
