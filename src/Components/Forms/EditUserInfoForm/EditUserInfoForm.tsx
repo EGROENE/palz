@@ -1970,6 +1970,51 @@ const EditUserInfoForm = ({
             </div>
           </div>
         </label>
+        <label>
+          <p>Who can see your email address:</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                id="anyone-can-see-email-address"
+                onChange={() => setWhoCanSeeEmailAddress("anyone")}
+                checked={whoCanSeeEmailAddress === "anyone"}
+                name="who-can-see-email-address"
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeEmailAddress("friends")}
+                checked={whoCanSeeEmailAddress === "friends"}
+                name="who-can-see-email-address"
+                id="friends-can-see-email-address"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeEmailAddress("friends of friends")}
+                checked={whoCanSeeEmailAddress === "friends of friends"}
+                name="who-can-see-email-address"
+                id="friends-of-friends-can-see-email-address"
+                type="radio"
+              />
+              <span>Friends of Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeEmailAddress("nobody")}
+                checked={whoCanSeeEmailAddress === "nobody"}
+                name="who-can-see-email-address"
+                id="nobody-can-see-email-address"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
         <div className="buttons-container">
           <button
             style={
