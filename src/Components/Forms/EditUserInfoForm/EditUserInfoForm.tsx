@@ -2015,6 +2015,51 @@ const EditUserInfoForm = ({
             </div>
           </div>
         </label>
+        <label>
+          <p>Who can see your Facebook:</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                id="anyone-can-see-facebook"
+                name="who-can-see-facebook"
+                onChange={() => setWhoCanSeeFacebook("anyone")}
+                checked={whoCanSeeFacebook === "anyone"}
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeFacebook("friends")}
+                checked={whoCanSeeFacebook === "friends"}
+                name="who-can-see-facebook"
+                id="friends-can-see-facebook"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeFacebook("friends of friends")}
+                checked={whoCanSeeFacebook === "friends of friends"}
+                name="who-can-see-facebook"
+                id="friends-of-friends-can-see-facebook"
+                type="radio"
+              />
+              <span>Friends of Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeFacebook("nobody")}
+                checked={whoCanSeeFacebook === "nobody"}
+                name="who-can-see-facebook"
+                id="nobody-can-see-facebook"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
         <div className="buttons-container">
           <button
             style={
