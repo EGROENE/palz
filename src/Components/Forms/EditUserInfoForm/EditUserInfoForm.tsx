@@ -1731,7 +1731,7 @@ const EditUserInfoForm = ({
           </label>
         )}
         <label>
-          <p>People who can add you as co-organizer of events:</p>
+          <p>Who can add you as co-organizer of events:</p>
           <div className="radio-inputs-container">
             <div className="radio-input-and-label">
               <input
@@ -1766,7 +1766,7 @@ const EditUserInfoForm = ({
           </div>
         </label>
         <label>
-          <p>People who can invite you to events:</p>
+          <p>Who can invite you to events:</p>
           <div className="radio-inputs-container">
             <div className="radio-input-and-label">
               <input
@@ -1846,7 +1846,7 @@ const EditUserInfoForm = ({
           </div>
         </label>
         <label>
-          <p>People who can see your profile (besides profiles you block):</p>
+          <p>Who can see your profile:</p>
           <div className="radio-inputs-container">
             <div className="radio-input-and-label">
               <input
@@ -1881,7 +1881,7 @@ const EditUserInfoForm = ({
           </div>
         </label>
         <label>
-          <p>People who can see your friends list (besides profiles you block):</p>
+          <p>Who can see your friends list:</p>
           <div className="radio-inputs-container">
             <div className="radio-input-and-label">
               <input
