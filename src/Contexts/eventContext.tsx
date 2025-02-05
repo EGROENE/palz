@@ -332,10 +332,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
-  // invalidate allEvents onSuccess
   const deleteEventMutation = useMutation({
     mutationFn: ({ event }: { event: TEvent }) => Requests.deleteEvent(event),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: "allEvents" });
       toast("Event deleted", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
