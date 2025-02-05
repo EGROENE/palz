@@ -2081,6 +2081,51 @@ const EditUserInfoForm = ({
           </div>
         </label>
         <label>
+          <p>Who can see events you RSVP to:</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                id="anyone-can-see-rsvpd-events"
+                name="who-can-see-rsvpd-events"
+                onChange={() => setWhoCanSeeEventsInterestedIn("anyone")}
+                checked={whoCanSeeEventsInterestedIn === "anyone"}
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeEventsInterestedIn("friends")}
+                checked={whoCanSeeEventsInterestedIn === "friends"}
+                name="who-can-see-rsvpd-events"
+                id="friends-can-see-rsvpd-events"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeEventsInterestedIn("friends of friends")}
+                checked={whoCanSeeEventsInterestedIn === "friends of friends"}
+                name="who-can-see-rsvpd-events"
+                id="friends-of-friends-can-see-rsvpd-events"
+                type="radio"
+              />
+              <span>Friends of Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeEventsInterestedIn("nobody")}
+                checked={whoCanSeeEventsInterestedIn === "nobody"}
+                name="who-can-see-rsvpd-events"
+                id="nobody-can-see-rsvpd-events"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
+        <label>
           <p>Who can see events you organize:</p>
           <div className="radio-inputs-container">
             <div className="radio-input-and-label">
