@@ -1731,72 +1731,37 @@ const EditUserInfoForm = ({
           </label>
         )}
         <label>
-          <p>Who can add you as co-organizer of events:</p>
+          <p>Who can see your profile:</p>
           <div className="radio-inputs-container">
             <div className="radio-input-and-label">
               <input
-                id="anyone-can-add-as-co-organizer"
-                onChange={() => setWhoCanAddUserAsOrganizer("anyone")}
-                checked={whoCanAddUserAsOrganizer === "anyone"}
-                name="who-can-add-as-co-organizer"
+                id="anyone-can-see-profile"
+                onChange={() => setProfileVisibleTo("anyone")}
+                checked={profileVisibleTo === "anyone"}
+                name="who-can-see-profile"
                 type="radio"
               />
               <span>Anyone</span>
             </div>
             <div className="radio-input-and-label">
               <input
-                id="friends-can-add-as-organizer"
-                onChange={() => setWhoCanAddUserAsOrganizer("friends")}
-                checked={whoCanAddUserAsOrganizer === "friends"}
-                name="who-can-add-as-co-organizer"
+                onChange={() => setProfileVisibleTo("friends")}
+                checked={profileVisibleTo === "friends"}
+                name="who-can-see-profile"
+                id="friends-can-see-profile"
                 type="radio"
               />
               <span>Friends</span>
             </div>
             <div className="radio-input-and-label">
               <input
-                id="nobody-can-add-as-co-organizer"
-                onChange={() => setWhoCanAddUserAsOrganizer("nobody")}
-                checked={whoCanAddUserAsOrganizer === "nobody"}
-                name="who-can-add-as-co-organizer"
+                onChange={() => setProfileVisibleTo("friends of friends")}
+                checked={profileVisibleTo === "friends of friends"}
+                name="who-can-see-profile"
+                id="friends-of-friends-can-see-profile"
                 type="radio"
               />
-              <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can invite you to events:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-invite"
-                onChange={() => setWhoCanInviteUser("anyone")}
-                checked={whoCanInviteUser === "anyone"}
-                name="who-can-invite"
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                id="friends-can-invite"
-                onChange={() => setWhoCanInviteUser("friends")}
-                checked={whoCanInviteUser === "friends"}
-                name="who-can-invite"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                id="nobody-can-invite"
-                onChange={() => setWhoCanInviteUser("nobody")}
-                checked={whoCanInviteUser === "nobody"}
-                name="who-can-invite"
-                type="radio"
-              />
-              <span>Nobody</span>
+              <span>Friends of Friends</span>
             </div>
           </div>
         </label>
@@ -1842,41 +1807,6 @@ const EditUserInfoForm = ({
                 type="radio"
               />
               <span>Nobody</span>
-            </div>
-          </div>
-        </label>
-        <label>
-          <p>Who can see your profile:</p>
-          <div className="radio-inputs-container">
-            <div className="radio-input-and-label">
-              <input
-                id="anyone-can-see-profile"
-                onChange={() => setProfileVisibleTo("anyone")}
-                checked={profileVisibleTo === "anyone"}
-                name="who-can-see-profile"
-                type="radio"
-              />
-              <span>Anyone</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setProfileVisibleTo("friends")}
-                checked={profileVisibleTo === "friends"}
-                name="who-can-see-profile"
-                id="friends-can-see-profile"
-                type="radio"
-              />
-              <span>Friends</span>
-            </div>
-            <div className="radio-input-and-label">
-              <input
-                onChange={() => setProfileVisibleTo("friends of friends")}
-                checked={profileVisibleTo === "friends of friends"}
-                name="who-can-see-profile"
-                id="friends-of-friends-can-see-profile"
-                type="radio"
-              />
-              <span>Friends of Friends</span>
             </div>
           </div>
         </label>
@@ -2144,6 +2074,121 @@ const EditUserInfoForm = ({
                 checked={whoCanSeeInstagram === "nobody"}
                 name="who-can-see-instagram"
                 id="nobody-can-see-instagram"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
+        <label>
+          <p>Who can see events you organize:</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                id="anyone-can-see-events"
+                name="who-can-see-events"
+                onChange={() => setWhoCanSeeEventsOrganized("anyone")}
+                checked={whoCanSeeEventsOrganized === "anyone"}
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeEventsOrganized("friends")}
+                checked={whoCanSeeEventsOrganized === "friends"}
+                name="who-can-see-events"
+                id="friends-can-see-events"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeEventsOrganized("friends of friends")}
+                checked={whoCanSeeEventsOrganized === "friends of friends"}
+                name="who-can-see-events"
+                id="friends-of-friends-can-see-events"
+                type="radio"
+              />
+              <span>Friends of Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeEventsOrganized("nobody")}
+                checked={whoCanSeeEventsOrganized === "nobody"}
+                name="who-can-see-events"
+                id="nobody-can-see-events"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
+        <label>
+          <p>Who can add you as co-organizer of events:</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                id="anyone-can-add-as-co-organizer"
+                onChange={() => setWhoCanAddUserAsOrganizer("anyone")}
+                checked={whoCanAddUserAsOrganizer === "anyone"}
+                name="who-can-add-as-co-organizer"
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                id="friends-can-add-as-organizer"
+                onChange={() => setWhoCanAddUserAsOrganizer("friends")}
+                checked={whoCanAddUserAsOrganizer === "friends"}
+                name="who-can-add-as-co-organizer"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                id="nobody-can-add-as-co-organizer"
+                onChange={() => setWhoCanAddUserAsOrganizer("nobody")}
+                checked={whoCanAddUserAsOrganizer === "nobody"}
+                name="who-can-add-as-co-organizer"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
+        <label>
+          <p>Who can invite you to events:</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                id="anyone-can-invite"
+                onChange={() => setWhoCanInviteUser("anyone")}
+                checked={whoCanInviteUser === "anyone"}
+                name="who-can-invite"
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                id="friends-can-invite"
+                onChange={() => setWhoCanInviteUser("friends")}
+                checked={whoCanInviteUser === "friends"}
+                name="who-can-invite"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                id="nobody-can-invite"
+                onChange={() => setWhoCanInviteUser("nobody")}
+                checked={whoCanInviteUser === "nobody"}
+                name="who-can-invite"
                 type="radio"
               />
               <span>Nobody</span>
