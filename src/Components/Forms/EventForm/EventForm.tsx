@@ -2,11 +2,9 @@ import styles from "./styles.module.css";
 import { useState, useEffect, useRef } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { useNavigate } from "react-router-dom";
 import { TUser, TEvent, TThemeColor } from "../../../types";
 import Methods from "../../../methods";
 import { countries } from "../../../constants";
-import Requests from "../../../requests";
 import toast from "react-hot-toast";
 import Tab from "../../Elements/Tab/Tab";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
@@ -86,9 +84,8 @@ const EventForm = ({
     valuesToUpdate,
     updateEventMutation,
     createEventMutation,
+    deleteEventMutation,
   } = useEventContext();
-
-  const navigation = useNavigate();
 
   const [focusedElement, setFocusedElement] = useState<
     | "title"
@@ -778,33 +775,10 @@ const EventForm = ({
     e.preventDefault();
     setIsLoading(true);
     setEventDeletionIsInProgress(true);
-    Requests.deleteEvent(event)
-      .then((response) => {
-        setShowAreYouSureDeleteEvent(false);
-        if (!response.ok) {
-          toast.error("Could not delete event. Please try again.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        } else {
-          toast("Event deleted", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          navigation(`/${currentUser?.username}`); // redirect to user homepage after del event
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => {
-        setEventDeletionIsInProgress(false);
-        setIsLoading(false);
-      });
+    setShowAreYouSureDeleteEvent(false);
+    if (event) {
+      deleteEventMutation.mutate({ event });
+    }
   };
 
   // Create array in which certain countries from countries array will be placed on top
