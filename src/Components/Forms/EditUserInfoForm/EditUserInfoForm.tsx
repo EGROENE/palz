@@ -397,10 +397,10 @@ const EditUserInfoForm = ({
             border: "2px solid red",
           },
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 3500);
       });
-    setTimeout(() => {
-      window.location.reload();
-    }, 3500);
   };
 
   // INPUT HANDLERS (and methods used in them):
