@@ -1925,6 +1925,51 @@ const EditUserInfoForm = ({
             </div>
           </div>
         </label>
+        <label>
+          <p>Who can see your phone number:</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                id="anyone-can-see-phone-number"
+                onChange={() => setWhoCanSeePhoneNumber("anyone")}
+                checked={whoCanSeePhoneNumber === "anyone"}
+                name="who-can-see-phone-number"
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeePhoneNumber("friends")}
+                checked={whoCanSeePhoneNumber === "friends"}
+                name="who-can-see-phone-number"
+                id="friends-can-see-phone-number"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeePhoneNumber("friends of friends")}
+                checked={whoCanSeePhoneNumber === "friends of friends"}
+                name="who-can-see-phone-number"
+                id="friends-of-friends-can-see-phone-number"
+                type="radio"
+              />
+              <span>Friends of Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeePhoneNumber("nobody")}
+                checked={whoCanSeePhoneNumber === "nobody"}
+                name="who-can-see-phone-number"
+                id="nobody-can-see-phone-number"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
         <div className="buttons-container">
           <button
             style={
