@@ -302,6 +302,35 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  const createEventMutation = useMutation({
+    mutationFn: ({ eventInfos }: { eventInfos: TEvent }) =>
+      Requests.createEvent(eventInfos),
+    onSuccess: () => {
+      toast.success("Event created!", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid green",
+        },
+      });
+      navigation(`/${currentUser?.username}/events`);
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Could not create event. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => {
+      setAddEventIsInProgress(false);
+      setIsLoading(false);
+    },
+  });
+
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
@@ -576,6 +605,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const valuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    createEventMutation,
     updateEventMutation,
     valuesToUpdate,
     userRSVPd,
