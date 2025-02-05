@@ -248,6 +248,11 @@
   font-family: var(--text-font);
 }
 
+.input-label {
+  font-size: 1.25rem;
+  font-family: var(--text-font);
+}
+
 .erroneous-field {
   outline: 2px solid red;
   border: none;
