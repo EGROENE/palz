@@ -1142,7 +1142,7 @@ const EditUserInfoForm = ({
       <form className="login-signup-edit-form">
         <div>
           <label>
-            <p>First Name:</p>
+            <header className="input-label">First Name:</header>
             <input
               name="firstName"
               id="firstName"
@@ -1168,7 +1168,7 @@ const EditUserInfoForm = ({
             )}
           </label>
           <label>
-            <p>Last Name:</p>
+            <header className="input-label">Last Name:</header>
             <input
               name="lastName"
               id="lastName"
@@ -1195,7 +1195,7 @@ const EditUserInfoForm = ({
           </label>
         </div>
         <label>
-          <p>
+          <header className="input-label">
             Username:{" "}
             <span>
               <i
@@ -1204,7 +1204,7 @@ const EditUserInfoForm = ({
                 title="Must be 4-20 characters long & contain only alphanumeric characters"
               ></i>
             </span>
-          </p>
+          </header>
           {showUsernameCriteria && (
             <p className="input-criteria">
               Must be 4-20 characters long & contain only alphanumeric characters
@@ -1234,7 +1234,7 @@ const EditUserInfoForm = ({
           {usernameError !== "" && <p className="input-error-message">{usernameError}</p>}
         </label>
         <label>
-          <p>E-Mail Address:</p>
+          <header className="input-label">E-Mail Address:</header>
           <input
             name="email"
             id="email"
@@ -1258,7 +1258,7 @@ const EditUserInfoForm = ({
           {emailError !== "" && <p className="input-error-message">{emailError}</p>}
         </label>
         <label>
-          <p>
+          <header className="input-label">
             Phone Number:{" "}
             {(currentUser?.phoneCountry !== "" ||
               currentUser?.phoneCountryCode !== "" ||
@@ -1268,7 +1268,7 @@ const EditUserInfoForm = ({
                   Remove
                 </span>
               )}
-          </p>
+          </header>
           <div className="phone-input-elements">
             <button
               disabled={isLoading}
@@ -1354,7 +1354,7 @@ const EditUserInfoForm = ({
         </label>
         <div className="location-inputs">
           <label className="location-input">
-            <p>City:</p>
+            <header className="input-label">City:</header>
             <input
               name="city"
               id="city"
@@ -1389,7 +1389,7 @@ const EditUserInfoForm = ({
             {locationError !== "" && <p>{locationError}</p>}
           </label>
           <label className="location-input">
-            <p>State/Province:</p>
+            <header className="input-label">State/Province:</header>
             <input
               name="state"
               id="state"
@@ -1423,7 +1423,7 @@ const EditUserInfoForm = ({
             ></input>
           </label>
           <label className="location-countries-dropdown">
-            <p>Country:</p>
+            <header className="input-label">Country:</header>
             <button
               disabled={isLoading}
               className="country-dropdown-button"
@@ -1520,7 +1520,7 @@ const EditUserInfoForm = ({
         </div>
         <div className="socials-inputs-container">
           <label>
-            <p>
+            <header className="input-label">
               Facebook:{" "}
               {currentUser?.facebook !== "" && !isLoading && (
                 <span
@@ -1530,7 +1530,7 @@ const EditUserInfoForm = ({
                   Remove
                 </span>
               )}
-            </p>
+            </header>
             <input
               name="facebook"
               id="facebook"
@@ -1552,7 +1552,7 @@ const EditUserInfoForm = ({
             {facebookError !== "" && <p>{facebookError}</p>}
           </label>
           <label>
-            <p>
+            <header className="input-label">
               Instagram:{" "}
               {currentUser?.instagram !== "" && !isLoading && (
                 <span
@@ -1562,7 +1562,7 @@ const EditUserInfoForm = ({
                   Remove
                 </span>
               )}
-            </p>
+            </header>
             <input
               name="instagram"
               id="instagram"
@@ -1584,7 +1584,7 @@ const EditUserInfoForm = ({
             {instagramError !== "" && <p>{instagramError}</p>}
           </label>
           <label>
-            <p>
+            <header className="input-label">
               X:{" "}
               {currentUser?.x !== "" && !isLoading && (
                 <span
@@ -1594,7 +1594,7 @@ const EditUserInfoForm = ({
                   Remove
                 </span>
               )}
-            </p>
+            </header>
             <input
               name="x"
               id="x"
@@ -1617,14 +1617,14 @@ const EditUserInfoForm = ({
           </label>
         </div>
         <label>
-          <p>
+          <header className="input-label">
             About:{" "}
             {currentUser?.about !== "" && !isLoading && (
               <span onClick={(e) => handleDeleteUserAbout(e)} className="remove-data">
                 Remove
               </span>
             )}
-          </p>
+          </header>
           <textarea
             name="user-about"
             id="user-about"
@@ -1645,7 +1645,7 @@ const EditUserInfoForm = ({
           {userAboutError !== "" && <p>{userAboutError}</p>}
         </label>
         <label>
-          <p>
+          <header className="input-label">
             Password:{" "}
             <span>
               <i
@@ -1654,7 +1654,7 @@ const EditUserInfoForm = ({
                 title="Must contain at least one uppercase & one lowercase English letter, at least one digit, at least one special character, & be 8-50 characters long. No spaces allowed."
               ></i>
             </span>
-          </p>
+          </header>
           {showPasswordCriteria && (
             <p className="input-criteria">
               Must contain at least one uppercase & one lowercase English letter, at least
@@ -1695,7 +1695,7 @@ const EditUserInfoForm = ({
         {/* Render 'confirm pw' field only if form is on signup or if it's form to edit user info, & pw has been changed */}
         {password !== currentUser?.password && password !== "" && (
           <label>
-            <p>Confirm New Password:</p>
+            <header className="input-label">Confirm New Password:</header>
             <div className="password-input">
               <input
                 name="confirmPassword"
