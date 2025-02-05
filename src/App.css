@@ -468,6 +468,7 @@
 
 .location-inputs {
   display: flex;
+  margin: 1rem auto;
 }
 
 .location-input:first-child {
@@ -512,6 +513,7 @@
 .socials-inputs-container {
   display: flex;
   justify-content: flex-start;
+  margin: 1rem auto;
 }
 
 .socials-inputs-container label {
