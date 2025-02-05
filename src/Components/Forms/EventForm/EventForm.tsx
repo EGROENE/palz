@@ -85,6 +85,7 @@ const EventForm = ({
     setRelatedInterests,
     valuesToUpdate,
     updateEventMutation,
+    createEventMutation,
   } = useEventContext();
 
   const navigation = useNavigate();
@@ -762,32 +763,7 @@ const EventForm = ({
       } else {
         // When adding a newly created event:
         setAddEventIsInProgress(true);
-        Requests.createEvent(eventInfos)
-          .then((response) => {
-            if (!response.ok) {
-              toast.error("Could not create event. Please try again.", {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid red",
-                },
-              });
-            } else {
-              toast.success("Event created!", {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid green",
-                },
-              });
-              navigation(`/${currentUser?.username}/events`);
-            }
-          })
-          .catch((error) => console.log(error))
-          .finally(() => {
-            setAddEventIsInProgress(false);
-            setIsLoading(false);
-          });
+        createEventMutation.mutate({ eventInfos });
       }
     } else {
       window.alert(
