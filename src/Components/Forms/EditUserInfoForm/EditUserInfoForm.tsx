@@ -2105,6 +2105,51 @@ const EditUserInfoForm = ({
             </div>
           </div>
         </label>
+        <label>
+          <p>Who can see your Instagram:</p>
+          <div className="radio-inputs-container">
+            <div className="radio-input-and-label">
+              <input
+                id="anyone-can-see-instagram"
+                name="who-can-see-instagram"
+                onChange={() => setWhoCanSeeInstagram("anyone")}
+                checked={whoCanSeeInstagram === "anyone"}
+                type="radio"
+              />
+              <span>Anyone</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeInstagram("friends")}
+                checked={whoCanSeeInstagram === "friends"}
+                name="who-can-see-instagram"
+                id="friends-can-see-instagram"
+                type="radio"
+              />
+              <span>Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeInstagram("friends of friends")}
+                checked={whoCanSeeInstagram === "friends of friends"}
+                name="who-can-see-instagram"
+                id="friends-of-friends-can-see-instagram"
+                type="radio"
+              />
+              <span>Friends of Friends</span>
+            </div>
+            <div className="radio-input-and-label">
+              <input
+                onChange={() => setWhoCanSeeInstagram("nobody")}
+                checked={whoCanSeeInstagram === "nobody"}
+                name="who-can-see-instagram"
+                id="nobody-can-see-instagram"
+                type="radio"
+              />
+              <span>Nobody</span>
+            </div>
+          </div>
+        </label>
         <div className="buttons-container">
           <button
             style={
