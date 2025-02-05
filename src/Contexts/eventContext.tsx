@@ -360,6 +360,32 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  const addToDisinterestedUsersMutation = useMutation({
+    mutationFn: ({ user, event }: { user: TUser; event: TEvent }) =>
+      Requests.addToDisinterestedUsers(user, event),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: "allEvents" });
+      toast("Invitation declined.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Could not decline invitation. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => setIsLoading(false),
+  });
+
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
@@ -436,28 +462,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     e.preventDefault();
     setIsLoading(true);
-    Requests.addToDisinterestedUsers(currentUser, event)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not decline invitation. Please try again.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        } else {
-          toast("Invitation declined.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
+    if (currentUser) {
+      const user = currentUser;
+      addToDisinterestedUsersMutation.mutate({ user, event });
+    }
   };
 
   // Handler for user to decline invitation. Should remove them from invitees array.
