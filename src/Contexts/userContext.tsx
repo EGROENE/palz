@@ -1794,96 +1794,145 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
-    handleWelcomeMessage();
-    // If user had pw visible when logging in/signing up, hide it again, so it's hidden by default on edit-user-info form in Settings
-    if (!passwordIsHidden) {
-      toggleHidePassword();
-    }
-    if (isOnSignup) {
-      newUserMutation.mutate(userData);
-      setUserCreatedAccount(true);
-      setCurrentUser(userData);
-      setFirstName(userData.firstName);
-      setLastName(userData.lastName);
-      setUsername(userData.username);
-      setProfileImage(userData.profileImage);
-      setEmailAddress(userData.emailAddress);
-      setPassword(userData.password);
-      setPhoneCountry(userData.phoneCountry);
-      setPhoneCountryCode(userData.phoneCountryCode);
-      setPhoneNumberWithoutCountryCode(userData.phoneNumberWithoutCountryCode);
-      setUserCity(userData.city);
-      setUserState(userData.stateProvince);
-      setUserCountry(userData.country);
-      setFacebook(userData.facebook);
-      setInstagram(userData.instagram);
-      setX(userData.x);
-      setUserAbout(userData.about);
-      setWhoCanAddUserAsOrganizer(userData.whoCanAddUserAsOrganizer);
-      setWhoCanInviteUser(userData.whoCanInviteUser);
-      setProfileVisibleTo(userData.profileVisibleTo);
-      setWhoCanMessage(userData.whoCanMessage);
-      setDisplayFriendCount(userData.displayFriendCount);
-      setWhoCanSeeLocation(userData.whoCanSeeLocation);
-      setWhoCanSeeFriendsList(userData.whoCanSeeFriendsList);
-      setWhoCanSeePhoneNumber(userData.whoCanSeePhoneNumber);
-      setWhoCanSeeEmailAddress(userData.whoCanSeeEmailAddress);
-      setWhoCanSeeFacebook(userData.whoCanSeeFacebook);
-      setWhoCanSeeX(userData.whoCanSeeX);
-      setWhoCanSeeInstagram(userData.whoCanSeeInstagram);
-      setWhoCanSeeEventsOrganized(userData.whoCanSeeEventsOrganized);
-      setWhoCanSeeEventsInterestedIn(userData.whoCanSeeEventsInterestedIn);
-    } else {
-      setUserCreatedAccount(false);
-      if (allUsers) {
-        if (emailAddress !== "") {
-          setCurrentUser(
-            allUsers.filter((user) => user.emailAddress === emailAddress)[0]
-          );
-        } else if (username !== "") {
-          setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+    /*
+     Check input data against most-recent allUsers. It will only be necessary to check if username or email address already exist in allUsers, as errors & completion are checked in onClick, and this function is only called if there are no errors and if all forms are complete. If username or email address do exist, alert user & reject submission; else, accept submission.
+    */
+    queryClient
+      .invalidateQueries({ queryKey: "allUsers" })
+      .then(() => {
+        /* 
+        When signing up, it's necessary to check username & emailAddress against those already in allUsers. When logging in, it's necessary to check these against all OTHER users in allUsers.
+        */
+        let usernameIsUnique: boolean = false;
+        let emailAddressIsUnique: boolean = false;
+        if (isOnSignup) {
+          if (allUsers) {
+            usernameIsUnique = !allUsers.map((user) => user.username).includes(username);
+            emailAddressIsUnique = !allUsers
+              .map((user) => user.emailAddress)
+              .includes(emailAddress);
+          }
+        } else {
+          if (allUsers) {
+            const allOtherUsers =
+              loginMethod === "email"
+                ? allUsers.filter((user) => user.emailAddress !== emailAddress)
+                : allUsers.filter((user) => user.username !== username);
+            usernameIsUnique = !allOtherUsers
+              .map((user) => user.username)
+              .includes(username);
+            emailAddressIsUnique = !allOtherUsers
+              .map((user) => user.emailAddress)
+              .includes(emailAddress);
+          }
         }
-      }
-      setFirstName(currentUser?.firstName);
-      setLastName(currentUser?.lastName);
-      setUsername(currentUser?.username);
-      setProfileImage(currentUser?.profileImage);
-      setEmailAddress(currentUser?.emailAddress);
-      setPassword(currentUser?.password);
-      setPhoneCountry(currentUser?.phoneCountry);
-      setPhoneCountryCode(currentUser?.phoneCountryCode);
-      setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
-      setUserCity(currentUser?.city);
-      setUserState(currentUser?.stateProvince);
-      setUserCountry(currentUser?.country);
-      setFacebook(currentUser?.facebook);
-      setInstagram(currentUser?.instagram);
-      setX(currentUser?.x);
-      setUserAbout(currentUser?.about);
-      setWhoCanAddUserAsOrganizer(currentUser?.whoCanAddUserAsOrganizer);
-      setProfileVisibleTo(currentUser?.profileVisibleTo);
-      setWhoCanMessage(currentUser?.whoCanMessage);
-      setDisplayFriendCount(currentUser?.displayFriendCount);
-      setWhoCanSeeLocation(currentUser?.whoCanSeeLocation);
-      setWhoCanSeeFriendsList(currentUser?.whoCanSeeFriendsList);
-      setWhoCanSeePhoneNumber(currentUser?.whoCanSeePhoneNumber);
-      setWhoCanSeeEmailAddress(currentUser?.whoCanSeeEmailAddress);
-      setWhoCanSeeFacebook(currentUser?.whoCanSeeFacebook);
-      setWhoCanSeeX(currentUser?.whoCanSeeX);
-      setWhoCanSeeInstagram(currentUser?.whoCanSeeInstagram);
-      setWhoCanSeeEventsOrganized(currentUser?.whoCanSeeEventsOrganized);
-      setWhoCanSeeEventsInterestedIn(currentUser?.whoCanSeeEventsInterestedIn);
-    }
-    setFirstNameError("");
-    setLastNameError("");
-    setUsernameError("");
-    setEmailError("");
-    setPasswordError("");
-    setConfirmationPasswordError("");
+
+        if (usernameIsUnique && emailAddressIsUnique) {
+          handleWelcomeMessage();
+          // If user had pw visible when logging in/signing up, hide it again, so it's hidden by default on edit-user-info form in Settings
+          if (!passwordIsHidden) {
+            toggleHidePassword();
+          }
+          if (isOnSignup) {
+            newUserMutation.mutate(userData);
+            setUserCreatedAccount(true);
+            setCurrentUser(userData);
+            setFirstName(userData.firstName);
+            setLastName(userData.lastName);
+            setUsername(userData.username);
+            setProfileImage(userData.profileImage);
+            setEmailAddress(userData.emailAddress);
+            setPassword(userData.password);
+            setPhoneCountry(userData.phoneCountry);
+            setPhoneCountryCode(userData.phoneCountryCode);
+            setPhoneNumberWithoutCountryCode(userData.phoneNumberWithoutCountryCode);
+            setUserCity(userData.city);
+            setUserState(userData.stateProvince);
+            setUserCountry(userData.country);
+            setFacebook(userData.facebook);
+            setInstagram(userData.instagram);
+            setX(userData.x);
+            setUserAbout(userData.about);
+            setWhoCanAddUserAsOrganizer(userData.whoCanAddUserAsOrganizer);
+            setWhoCanInviteUser(userData.whoCanInviteUser);
+            setProfileVisibleTo(userData.profileVisibleTo);
+            setWhoCanMessage(userData.whoCanMessage);
+            setDisplayFriendCount(userData.displayFriendCount);
+            setWhoCanSeeLocation(userData.whoCanSeeLocation);
+            setWhoCanSeeFriendsList(userData.whoCanSeeFriendsList);
+            setWhoCanSeePhoneNumber(userData.whoCanSeePhoneNumber);
+            setWhoCanSeeEmailAddress(userData.whoCanSeeEmailAddress);
+            setWhoCanSeeFacebook(userData.whoCanSeeFacebook);
+            setWhoCanSeeX(userData.whoCanSeeX);
+            setWhoCanSeeInstagram(userData.whoCanSeeInstagram);
+            setWhoCanSeeEventsOrganized(userData.whoCanSeeEventsOrganized);
+            setWhoCanSeeEventsInterestedIn(userData.whoCanSeeEventsInterestedIn);
+          } else {
+            setUserCreatedAccount(false);
+            if (allUsers) {
+              if (emailAddress !== "") {
+                setCurrentUser(
+                  allUsers.filter((user) => user.emailAddress === emailAddress)[0]
+                );
+              } else if (username !== "") {
+                setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+              }
+            }
+            setFirstName(currentUser?.firstName);
+            setLastName(currentUser?.lastName);
+            setUsername(currentUser?.username);
+            setProfileImage(currentUser?.profileImage);
+            setEmailAddress(currentUser?.emailAddress);
+            setPassword(currentUser?.password);
+            setPhoneCountry(currentUser?.phoneCountry);
+            setPhoneCountryCode(currentUser?.phoneCountryCode);
+            setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
+            setUserCity(currentUser?.city);
+            setUserState(currentUser?.stateProvince);
+            setUserCountry(currentUser?.country);
+            setFacebook(currentUser?.facebook);
+            setInstagram(currentUser?.instagram);
+            setX(currentUser?.x);
+            setUserAbout(currentUser?.about);
+            setWhoCanAddUserAsOrganizer(currentUser?.whoCanAddUserAsOrganizer);
+            setProfileVisibleTo(currentUser?.profileVisibleTo);
+            setWhoCanMessage(currentUser?.whoCanMessage);
+            setDisplayFriendCount(currentUser?.displayFriendCount);
+            setWhoCanSeeLocation(currentUser?.whoCanSeeLocation);
+            setWhoCanSeeFriendsList(currentUser?.whoCanSeeFriendsList);
+            setWhoCanSeePhoneNumber(currentUser?.whoCanSeePhoneNumber);
+            setWhoCanSeeEmailAddress(currentUser?.whoCanSeeEmailAddress);
+            setWhoCanSeeFacebook(currentUser?.whoCanSeeFacebook);
+            setWhoCanSeeX(currentUser?.whoCanSeeX);
+            setWhoCanSeeInstagram(currentUser?.whoCanSeeInstagram);
+            setWhoCanSeeEventsOrganized(currentUser?.whoCanSeeEventsOrganized);
+            setWhoCanSeeEventsInterestedIn(currentUser?.whoCanSeeEventsInterestedIn);
+          }
+          setFirstNameError("");
+          setLastNameError("");
+          setUsernameError("");
+          setEmailError("");
+          setPasswordError("");
+          setConfirmationPasswordError("");
+        } else {
+          handleFormRejection(e);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (isOnSignup) {
+          window.alert("Could not complete signup; please try again.");
+        } else {
+          window.alert("Could not complete login; please try again.");
+        }
+      });
   };
 
   const handleFormRejection = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.FormEvent<HTMLFormElement>
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
     window.alert(
