@@ -151,6 +151,9 @@ const EventForm = ({
     useState<number | undefined>(10);
 
   useEffect(() => {
+    /* 
+    currentEvent is not set simply to event passed in; it is set to event in allEvents that has same _id, as this will be the most current version of the event in question
+    */
     if (allEvents && event) {
       const currentEventInAllEvents = allEvents.filter((ev) => ev._id === event?._id)[0];
       setCurrentEvent(currentEventInAllEvents);
