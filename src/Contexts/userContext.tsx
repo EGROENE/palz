@@ -139,9 +139,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [whoCanSeeEventsInterestedIn, setWhoCanSeeEventsInterestedIn] = useSessionStorage<
     "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanSeeEventsInterestedIn", "nobody");
-  const [blockedUsers, setBlockedUsers] = useSessionStorage<string[] | null>(
+  const [blockedUsers, setBlockedUsers] = useSessionStorage<string[] | undefined>(
     "blockedUsers",
-    currentUser && currentUser.blockedUsers
+    currentUser?.blockedUsers
   );
   const [friendRequestsSent, setFriendRequestsSent] = useSessionStorage<
     string[] | undefined
@@ -1548,6 +1548,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                   },
                                 }
                               );
+                            } else {
+                              queryClient
+                                .invalidateQueries({ queryKey: "allUsers" })
+                                .then(() => {
+                                  if (allUsers && currentUser) {
+                                    setCurrentUser(
+                                      allUsers.filter(
+                                        (user) => user._id === currentUser._id
+                                      )[0]
+                                    );
+                                  }
+                                });
                             }
                           })
                           .catch((error) => console.log(error));
@@ -1666,7 +1678,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               },
             });
           } else {
-            queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+            queryClient.invalidateQueries({ queryKey: ["allUsers"] }).then(() => {
+              if (allUsers && currentUser) {
+                setCurrentUser(
+                  allUsers.filter((user) => user._id === currentUser._id)[0]
+                );
+              }
+            });
             toast.success(`Unblocked ${blockee.username}.`, {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
