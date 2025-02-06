@@ -56,7 +56,6 @@ const DisplayedCardsPage = ({
   }, []);
 
   useEffect(() => {
-    // Set displayedItems appropriately, depending on usedFor value
     if (usedFor === "potential-friends") {
       setDisplayedItemsCount(9);
       setDisplayedItemsCountInterval(9);
@@ -90,21 +89,7 @@ const DisplayedCardsPage = ({
     if (showFilterOptions) {
       setShowFilterOptions(false);
     }
-  }, [usedFor]);
-
-  useEffect(() => {
-    if (usedFor === "potential-friends") {
-      resetDisplayedPotentialFriends();
-    }
-
-    if (usedFor === "my-friends") {
-      resetDisplayedFriends();
-    }
-
-    if (usedFor === "events") {
-      resetDisplayedEvents();
-    }
-  }, [fetchAllUsersQuery.isLoading]);
+  }, [fetchAllUsersQuery.isLoading, usedFor]);
 
   const now = Date.now();
 
@@ -378,8 +363,10 @@ const DisplayedCardsPage = ({
       !user.blockedUsers.includes(currentUser._id) &&
       !blockedUsers?.includes(user._id)
   );
+
   const nonFriendUsersVisibleToAnyone: TUser[] | undefined =
     allOtherNonFriendUsers?.filter((user) => user.profileVisibleTo === "anyone");
+
   const nonFriendUsersVisibleToFriendsOfFriends: TUser[] | undefined =
     allOtherNonFriendUsers?.filter(
       (user) => user.profileVisibleTo === "friends of friends"
