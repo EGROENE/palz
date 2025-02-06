@@ -140,27 +140,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [currentEvent, allEvents]);
 
-  const clearCurrentEventValues = () => {
-    setUserRSVPd(null);
-    setEventTitle("");
-    setEventDescription("");
-    setEventAdditionalInfo("");
-    setEventCity("");
-    setEventState("");
-    setEventCountry("");
-    setEventStartDateMidnightUTCInMS(-1);
-    setEventStartTimeAfterMidnightUTCInMS(-1);
-    setEventEndDateMidnightUTCInMS(-1);
-    setEventEndTimeAfterMidnightUTCInMS(-1);
-    setEventAddress("");
-    setMaxParticipants(null);
-    setPublicity("public");
-    setOrganizers([]);
-    setInvitees([]);
-    setRelatedInterests([]);
-    setEventImages([]);
-  };
-
   const queryClient = useQueryClient();
 
   const addEventImageMutation = useMutation({
@@ -667,7 +646,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const valuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
-    clearCurrentEventValues,
     deleteEventMutation,
     createEventMutation,
     updateEventMutation,

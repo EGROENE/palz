@@ -524,7 +524,6 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
-  clearCurrentEventValues: () => void;
   updateEventMutation: UseMutationResult<
     Response,
     Error,

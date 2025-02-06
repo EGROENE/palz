@@ -24,7 +24,6 @@ const EventForm = ({
   const { handleCityStateCountryInput, allUsers, currentUser, blockedUsers } =
     useUserContext();
   const {
-    clearCurrentEventValues,
     allEvents,
     currentEvent,
     setCurrentEvent,
@@ -176,7 +175,7 @@ const EventForm = ({
         setEventImages([]);
       }
       setCurrentEvent(undefined);
-      clearCurrentEventValues();
+      handleRevert();
     }
   }, []);
 
