@@ -66,20 +66,24 @@ const InterestsSection = ({
     const allUserInterests: string[] = allUsers
       ? Methods.removeDuplicatesFromArray(allUsers.map((user) => user.interests).flat())
       : [];
-    const allEventInterests: string[] = Methods.removeDuplicatesFromArray(
-      allEvents.map((event) => event.relatedInterests).flat()
-    );
+    const allEventInterests: string[] = allEvents
+      ? Methods.removeDuplicatesFromArray(
+          allEvents.map((event) => event.relatedInterests).flat()
+        )
+      : [];
 
     if (interestsRelation === "event" && currentEvent) {
       // In the case of editing an already-existing event:
       // Returns allOtherEventInterests + allUserInterests - interests that exist on currentEvent
-      const allOtherEventInterests: string[] = Methods.removeDuplicatesFromArray(
-        allEvents
-          .filter((ev) => ev._id !== currentEvent?._id)
-          .map((ev) => ev.relatedInterests)
-          .flat()
-          .filter((int) => !currentEvent.relatedInterests.includes(int))
-      );
+      const allOtherEventInterests: string[] = allEvents
+        ? Methods.removeDuplicatesFromArray(
+            allEvents
+              .filter((ev) => ev._id !== currentEvent?._id)
+              .map((ev) => ev.relatedInterests)
+              .flat()
+              .filter((int) => !currentEvent.relatedInterests.includes(int))
+          )
+        : [];
       return Methods.removeDuplicatesFromArray(
         allOtherEventInterests.concat(allUserInterests)
       );
