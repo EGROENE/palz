@@ -74,7 +74,7 @@ const UserHomepage = () => {
           </>
         )}
         {allCurrentUserEvents &&
-          allCurrentUserEvents.length &&
+          allCurrentUserEvents.length > 0 &&
           !fetchAllEventsQuery.isLoading && (
             <div className="upcoming-events-hero">
               <h1>Upcoming Events ({allCurrentUserEvents.length})</h1>
