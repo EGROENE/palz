@@ -182,7 +182,7 @@ const InterestsSection = ({
 
   return (
     <div className={styles.interestsSection}>
-      <p>
+      <header className="input-label">
         {interestsRelation === "user" ? "Interests: " : "Related Interests: "}
         {!isDisabled && (
           <span
@@ -193,7 +193,7 @@ const InterestsSection = ({
             Browse
           </span>
         )}
-      </p>
+      </header>
       <div className={styles.interestsContainer}>
         {savedInterests?.length ? (
           Methods.getStringArraySortedAlphabetically(savedInterests)?.map((interest) => (

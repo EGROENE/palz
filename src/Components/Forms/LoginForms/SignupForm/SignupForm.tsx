@@ -80,7 +80,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
     >
       <div>
         <label>
-          <p>First Name:</p>
+          <header className="input-label">First Name:</header>
           <input
             name="first-name-signup"
             id="first-name-signup"
@@ -107,7 +107,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
           )}
         </label>
         <label>
-          <p>Last Name:</p>
+          <header className="input-label">Last Name:</header>
           <input
             name="last-name-signup"
             id="last-name-signup"
@@ -173,7 +173,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
         )}
       </label>
       <label>
-        <p>E-Mail Address:</p>
+        <header className="input-label">E-Mail Address:</header>
         <input
           name="email-signup"
           id="email-signup"
@@ -198,8 +198,8 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
         )}
       </label>
       <label>
-        <p>
-          Choose a Password:
+        <header className="input-label">
+          Create a Password:
           <span>
             <i
               onClick={() => setShowPasswordCriteria(!showPasswordCriteria)}
@@ -207,7 +207,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
               title="Must contain at least one uppercase & one lowercase English letter, at least one digit, at least one special character, & be 8-50 characters long. No spaces allowed."
             ></i>
           </span>
-        </p>
+        </header>
         {showPasswordCriteria && (
           <p className="input-criteria">
             Must contain at least one uppercase & one lowercase English letter, at least
@@ -248,7 +248,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
       </label>
       {/* Render 'confirm pw' field only if form is on signup or if it's form to edit user info, & pw has been changed */}
       <label>
-        <p>Confirm Password: </p>
+        <header className="input-label">Confirm Password: </header>
         <div className="password-input">
           <input
             name="confirm-password-signup"

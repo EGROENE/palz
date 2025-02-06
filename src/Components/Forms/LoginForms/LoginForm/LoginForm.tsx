@@ -61,7 +61,7 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
       className="login-signup-edit-form"
     >
       <label>
-        <p>Username or E-Mail Address:</p>
+        <header className="input-label">Username or E-Mail Address:</header>
         <input
           name="username-or-email-login"
           id="username-or-email-login"
@@ -93,7 +93,7 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
         )}
       </label>
       <label>
-        <p>Password:</p>
+        <header className="input-label">Password:</header>
         <div className="password-input">
           <input
             name="password-login"

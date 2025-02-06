@@ -929,7 +929,7 @@ const EventForm = ({
   return (
     <form className={styles.eventForm}>
       <label>
-        <p>Title:</p>
+        <header className="input-label">Title:</header>
         <input
           name="event-title"
           id="event-title"
@@ -950,7 +950,7 @@ const EventForm = ({
         {eventTitleError !== "" && showErrors && <p>{eventTitleError}</p>}
       </label>
       <label>
-        <p>Description:</p>
+        <header className="input-label">Description:</header>
         <textarea
           name="event-description"
           id="event-description"
@@ -973,7 +973,7 @@ const EventForm = ({
         {eventDescriptionError !== "" && showErrors && <p>{eventDescriptionError}</p>}
       </label>
       <label>
-        <p>Additional Info: (optional)</p>
+        <header className="input-label">Additional Info: (optional)</header>
         <textarea
           name="event-additional-info"
           id="event-additional-info"
@@ -997,7 +997,7 @@ const EventForm = ({
       </label>
       <div className="location-inputs">
         <label className="location-input">
-          <p>City:</p>
+          <header className="input-label">City:</header>
           <input
             name="event-city"
             id="event-city"
@@ -1034,7 +1034,7 @@ const EventForm = ({
           {eventLocationError !== "" && showErrors && <p>{eventLocationError}</p>}
         </label>
         <label className="location-input">
-          <p>State/Province:</p>
+          <header className="input-label">State/Province:</header>
           <input
             name="event-state-province"
             id="event-state-province"
@@ -1069,7 +1069,7 @@ const EventForm = ({
           />
         </label>
         <label className="location-countries-dropdown">
-          <p>Country:</p>
+          <header className="input-label">Country:</header>
           <button
             disabled={isLoading}
             className={
@@ -1144,7 +1144,7 @@ const EventForm = ({
         </label>
       </div>
       <label>
-        <p>Address:</p>
+        <header className="input-label">Address:</header>
         <input
           name="event-address"
           id="event-address"
@@ -1170,7 +1170,7 @@ const EventForm = ({
         <div className={styles.dateTimeGroupContainer}>
           <div className={styles.dateTimeInputsContainer}>
             <label>
-              <p>Start Date:</p>{" "}
+              <header className="input-label">Start Date:</header>{" "}
               <input
                 name="event-start-date"
                 id="event-start-date"
@@ -1200,7 +1200,7 @@ const EventForm = ({
               />
             </label>
             <label>
-              <p>Start Time:</p>
+              <header className="input-label">Start Time:</header>
               <input
                 name="event-start-time"
                 id="event-start-time"
@@ -1244,7 +1244,7 @@ const EventForm = ({
         <div className={styles.dateTimeGroupContainer}>
           <div className={styles.dateTimeInputsContainer}>
             <label>
-              <p>End Date:</p>{" "}
+              <header className="input-label">End Date:</header>{" "}
               <input
                 name="event-end-date"
                 id="event-end-date"
@@ -1272,7 +1272,7 @@ const EventForm = ({
               />
             </label>
             <label>
-              <p>End Time:</p>
+              <header className="input-label">End Time:</header>
               <input
                 name="event-end-time"
                 id="event-end-time"
@@ -1313,7 +1313,9 @@ const EventForm = ({
         </div>
       </div>
       <label>
-        <p>Maximum Participants: (optional, not including organizers)</p>
+        <header className="input-label">
+          Maximum Participants: (optional, not including organizers)
+        </header>
         <input
           name="event-max-participants"
           id="event-max-participants"
@@ -1343,7 +1345,7 @@ const EventForm = ({
       </label>
       <div className={styles.eventFormCheckboxContainer}>
         <label>
-          <span>Public</span>
+          <span className="input-label">Public</span>
           <input
             name="event-privacy-public"
             id="event-privacy-public"
@@ -1365,7 +1367,7 @@ const EventForm = ({
           />
         </label>
         <label>
-          <span>Private</span>
+          <span className="input-label">Private</span>
           <input
             name="event-privacy-private"
             id="event-privacy-private"
@@ -1389,7 +1391,7 @@ const EventForm = ({
         </label>
       </div>
       <div className={styles.addOtherUsersArea}>
-        <p>
+        <header className="input-label">
           Co-organizers: (optional){" "}
           {currentUser &&
             !isLoading &&
@@ -1413,7 +1415,7 @@ const EventForm = ({
                 )}
               </>
             )}
-        </p>
+        </header>
         <div className={styles.coorganizersInviteesContainer}>
           {currentUser &&
             usersWhoAreOrganizers.filter(
@@ -1520,14 +1522,14 @@ const EventForm = ({
         </div>
       </div>
       <div className={styles.addOtherUsersArea}>
-        <p>
+        <header className="input-label">
           Invitees: (recommended if event is private){" "}
           {currentUser && usersWhoAreInvitees.length > 0 && (
             <span style={{ color: randomColor }} onClick={() => setInvitees([])}>
               Remove All
             </span>
           )}
-        </p>
+        </header>
         <div className={styles.coorganizersInviteesContainer}>
           {currentUser &&
             usersWhoAreInvitees.length > 0 &&
@@ -1625,7 +1627,7 @@ const EventForm = ({
         isDisabled={isLoading}
       />
       <div className={styles.eventImagesField}>
-        <p>Images:</p>
+        <header className="input-label">Images:</header>
         {
           <div className={styles.eventImagesContainer}>
             {eventImages &&
