@@ -71,7 +71,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventStartDateMidnightUTCInMS, setEventStartDateMidnightUTCInMS] =
     useState<number>(currentEvent ? currentEvent.eventStartDateMidnightUTCInMS : 0);
   const [eventStartTimeAfterMidnightUTCInMS, setEventStartTimeAfterMidnightUTCInMS] =
-    useState(currentEvent ? currentEvent.eventStartTimeAfterMidnightUTCInMS : -1); // set to this instead of undefined or null in order to avoid TS errors
+    useState<number>(currentEvent ? currentEvent.eventStartTimeAfterMidnightUTCInMS : -1); // set to this instead of undefined or null in order to avoid TS errors
   const [eventStartDateTimeError, setEventStartDateTimeError] = useState<string>(
     !currentEvent ? "Please specify when event begins" : ""
   );
@@ -81,7 +81,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       : 0
   );
   const [eventEndTimeAfterMidnightUTCInMS, setEventEndTimeAfterMidnightUTCInMS] =
-    useState(
+    useState<number>(
       currentEvent && currentEvent.eventEndTimeAfterMidnightUTCInMS !== undefined
         ? currentEvent.eventEndTimeAfterMidnightUTCInMS
         : -1 // set to this instead of undefined or null in order to avoid TS errors
@@ -110,7 +110,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [relatedInterests, setRelatedInterests] = useState<string[]>(
     currentEvent ? currentEvent.relatedInterests : []
   );
-  const [eventImages, setEventImages] = useState<string[] | undefined>([]);
+  const [eventImages, setEventImages] = useState<string[]>([]);
   ///////////////////////
 
   const [userRSVPd, setUserRSVPd] = useState<boolean | null>(null);
@@ -139,6 +139,27 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       setEventImages(currentEvent.images);
     }
   }, [currentEvent, allEvents]);
+
+  const clearCurrentEventValues = () => {
+    setUserRSVPd(null);
+    setEventTitle("");
+    setEventDescription("");
+    setEventAdditionalInfo("");
+    setEventCity("");
+    setEventState("");
+    setEventCountry("");
+    setEventStartDateMidnightUTCInMS(-1);
+    setEventStartTimeAfterMidnightUTCInMS(-1);
+    setEventEndDateMidnightUTCInMS(-1);
+    setEventEndTimeAfterMidnightUTCInMS(-1);
+    setEventAddress("");
+    setMaxParticipants(null);
+    setPublicity("public");
+    setOrganizers([]);
+    setInvitees([]);
+    setRelatedInterests([]);
+    setEventImages([]);
+  };
 
   const queryClient = useQueryClient();
 
@@ -646,6 +667,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const valuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    clearCurrentEventValues,
     deleteEventMutation,
     createEventMutation,
     updateEventMutation,
