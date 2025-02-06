@@ -250,6 +250,7 @@
 .input-label {
   font-size: 1.25rem;
   font-family: var(--text-font);
+  color: var(--text-color);
 }
 
 .erroneous-field {
@@ -374,7 +375,7 @@
 }
 
 .buttons-container button {
-  color: white;
+  color: var(--text-color);
 }
 
 /* .buttons-container button:first-child {
