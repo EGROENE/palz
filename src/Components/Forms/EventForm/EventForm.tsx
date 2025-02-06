@@ -24,6 +24,7 @@ const EventForm = ({
   const { handleCityStateCountryInput, allUsers, currentUser, blockedUsers } =
     useUserContext();
   const {
+    clearCurrentEventValues,
     allEvents,
     currentEvent,
     setCurrentEvent,
@@ -150,7 +151,7 @@ const EventForm = ({
     useState<number | undefined>(10);
 
   useEffect(() => {
-    if (allEvents) {
+    if (allEvents && event) {
       const currentEventInAllEvents = allEvents.filter((ev) => ev._id === event?._id)[0];
       setCurrentEvent(currentEventInAllEvents);
     }
@@ -171,6 +172,8 @@ const EventForm = ({
         // Remove any previously added event images (like if user added some on new event, but didn't submit form)
         setEventImages([]);
       }
+      setCurrentEvent(undefined);
+      clearCurrentEventValues();
     }
   }, []);
 
@@ -1096,10 +1099,12 @@ const EventForm = ({
                       ? { fontSize: "0.75rem" }
                       : undefined
                   }
-                >{`${
-                  countries.filter((country) => country.country === eventCountry)[0]
-                    .country
-                }`}</span>
+                >
+                  {`${
+                    countries.filter((country) => country.country === eventCountry)[0]
+                      .country
+                  }`}
+                </span>
               </div>
             )}
             <i
