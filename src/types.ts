@@ -89,7 +89,7 @@ export type TEvent = {
   eventEndDateTimeInMS: number;
   publicity: "public" | "private";
   maxParticipants: number | null;
-  images: string[] | undefined;
+  images: string[];
   city: string | undefined;
   stateProvince: string | undefined;
   country: string | undefined;
@@ -616,8 +616,8 @@ export type TEventContext = {
     },
     unknown
   >;
-  eventImages: string[] | undefined;
-  setEventImages: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+  eventImages: string[];
+  setEventImages: React.Dispatch<React.SetStateAction<string[]>>;
   allEvents: TEvent[] | undefined;
   fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
