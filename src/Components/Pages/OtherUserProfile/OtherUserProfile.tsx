@@ -216,7 +216,7 @@ const OtherUserProfile = () => {
             <i className="fas fa-lock"></i> Block
           </>
         ),
-        buttonHandler: currentOtherUserIsBlocked ? handleUnblockUser : handleBlockUser,
+        handler: currentOtherUserIsBlocked ? handleUnblockUser : handleBlockUser,
         handlerParams: [currentUser, currentOtherUser, blockedUsers, setBlockedUsers],
         paramsIncludeEvent: false,
       };
@@ -232,7 +232,7 @@ const OtherUserProfile = () => {
           <i className="fas fa-lock-open"></i> Unblock
         </>
       ),
-      buttonHandler: !currentOtherUserIsBlocked ? handleBlockUser : handleUnblockUser,
+      handler: !currentOtherUserIsBlocked ? handleBlockUser : handleUnblockUser,
       handlerParams: [currentUser, currentOtherUser, blockedUsers, setBlockedUsers],
       paramsIncludeEvent: false,
     };
