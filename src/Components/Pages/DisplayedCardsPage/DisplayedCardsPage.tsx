@@ -876,12 +876,12 @@ const DisplayedCardsPage = ({
       {!fetchAllUsersQuery.isLoading && !fetchAllUsersQuery.isError && (
         <div className="all-cards-container">
           {usedFor === "events" &&
-            displayedItemsFiltered.map(
+            Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
               (item) =>
                 Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
             )}
           {(usedFor === "potential-friends" || usedFor === "my-friends") &&
-            displayedItemsFiltered.map(
+            Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
               (item) => Methods.isTUser(item) && <UserCard key={item._id} user={item} />
             )}
         </div>
