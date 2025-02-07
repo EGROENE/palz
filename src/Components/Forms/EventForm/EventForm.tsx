@@ -14,9 +14,14 @@ import DropdownChecklist from "../../Elements/DropdownChecklist/DropdownChecklis
 
 const EventForm = ({
   randomColor,
+  usedFor,
+  /*
+  event is only used to set currentEvent, which will persist through renders. The truthiness of currentEvent is used to determine if form is used to create an event or to edit an existing one.
+  */
   event,
 }: {
   randomColor: TThemeColor | undefined;
+  usedFor: "add-event" | "edit-event";
   event?: TEvent;
 }) => {
   const { showSidebar, setShowSidebar, isLoading, setIsLoading, theme } =
@@ -86,6 +91,7 @@ const EventForm = ({
     createEventMutation,
     deleteEventMutation,
   } = useEventContext();
+  console.log(currentEvent);
 
   const [focusedElement, setFocusedElement] = useState<
     | "title"
@@ -134,7 +140,7 @@ const EventForm = ({
 
   const [showEventCountries, setShowEventCountries] = useState<boolean>(false);
 
-  const [showErrors, setShowErrors] = useState<boolean>(event ? true : false);
+  const [showErrors, setShowErrors] = useState<boolean>(currentEvent ? true : false);
 
   const [showAreYouSureDeleteEvent, setShowAreYouSureDeleteEvent] =
     useState<boolean>(false);
@@ -153,8 +159,10 @@ const EventForm = ({
     /* 
     currentEvent is not set simply to event passed in; it is set to event in allEvents that has same _id, as this will be the most current version of the event in question
     */
-    if (allEvents && event) {
-      const currentEventInAllEvents = allEvents.filter((ev) => ev._id === event?._id)[0];
+    if (allEvents && currentEvent) {
+      const currentEventInAllEvents = allEvents.filter(
+        (ev) => ev._id === currentEvent._id
+      )[0];
       setCurrentEvent(currentEventInAllEvents);
     }
   }, [allEvents]);
@@ -165,11 +173,14 @@ const EventForm = ({
       setShowSidebar(false);
     }
 
-    // If event passed to this component, setCurrentEvent in mainContext to that:
-    if (event && allEvents) {
+    /* 
+    If event passed to this component, setCurrentEvent in mainContext to that (after which it will stay in localStorage until changed):
+    */
+    if (event && allEvents && usedFor === "edit-event") {
       setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
       setEventImages(event.images);
-    } else {
+    }
+    if (usedFor === "add-event") {
       if (eventImages && eventImages.length > 0) {
         // Remove any previously added event images (like if user added some on new event, but didn't submit form)
         setEventImages([]);
@@ -536,15 +547,16 @@ const EventForm = ({
     passed into database when user submits form successfully */
     if (base64) {
       if (
-        event &&
-        event.images &&
-        !event.images.includes(base64) &&
+        currentEvent &&
+        currentEvent.images &&
+        !currentEvent.images.includes(base64) &&
         !eventImages?.includes(base64)
       ) {
         setEventImages(eventImages?.concat(base64));
+        const event = currentEvent;
         addEventImageMutation.mutate({ event, base64 });
       } else {
-        if (event?.images?.includes(base64) || eventImages?.includes(base64)) {
+        if (currentEvent?.images?.includes(base64) || eventImages?.includes(base64)) {
           toast.error("Cannot upload same image more than once.", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -565,7 +577,8 @@ const EventForm = ({
   ): Promise<void> => {
     e.preventDefault();
     setEventImages(eventImages?.filter((image) => image !== imageToBeRemoved));
-    if (event) {
+    if (currentEvent) {
+      const event = currentEvent;
       removeEventImageMutation.mutate({ event, imageToBeRemoved });
     } else {
       toast("Event image removed", {
@@ -692,30 +705,32 @@ const EventForm = ({
     setRelatedInterests(relatedInterests.filter((int) => int !== interest));
 
   const handleRevert = (): void => {
-    if (event) {
-      setEventTitle(event.title);
+    if (currentEvent) {
+      setEventTitle(currentEvent.title);
       setEventTitleError("");
-      setEventDescription(event.description);
+      setEventDescription(currentEvent.description);
       setEventDescriptionError("");
-      setEventAdditionalInfo(event.additionalInfo);
+      setEventAdditionalInfo(currentEvent.additionalInfo);
       setEventAdditionalInfoError("");
-      setEventCity(event.city);
-      setEventState(event.stateProvince);
-      setEventCountry(event.country);
+      setEventCity(currentEvent.city);
+      setEventState(currentEvent.stateProvince);
+      setEventCountry(currentEvent.country);
       setEventLocationError("");
-      setEventStartDateMidnightUTCInMS(event.eventStartDateMidnightUTCInMS);
-      setEventStartTimeAfterMidnightUTCInMS(event.eventStartTimeAfterMidnightUTCInMS);
+      setEventStartDateMidnightUTCInMS(currentEvent.eventStartDateMidnightUTCInMS);
+      setEventStartTimeAfterMidnightUTCInMS(
+        currentEvent.eventStartTimeAfterMidnightUTCInMS
+      );
       setEventStartDateTimeError("");
-      setEventEndDateMidnightUTCInMS(event.eventEndDateMidnightUTCInMS);
-      setEventEndTimeAfterMidnightUTCInMS(event.eventEndTimeAfterMidnightUTCInMS);
+      setEventEndDateMidnightUTCInMS(currentEvent.eventEndDateMidnightUTCInMS);
+      setEventEndTimeAfterMidnightUTCInMS(currentEvent.eventEndTimeAfterMidnightUTCInMS);
       setEventEndDateTimeError("");
-      setEventAddress(event.address);
+      setEventAddress(currentEvent.address);
       setEventAddressError("");
-      setMaxParticipants(event.maxParticipants);
+      setMaxParticipants(currentEvent.maxParticipants);
       setPublicity("public");
-      setOrganizers(event.organizers);
-      setInvitees(event.invitees);
-      setRelatedInterests(event.relatedInterests);
+      setOrganizers(currentEvent.organizers);
+      setInvitees(currentEvent.invitees);
+      setRelatedInterests(currentEvent.relatedInterests);
     } else {
       setEventTitle("");
       setEventTitleError("");
@@ -747,11 +762,11 @@ const EventForm = ({
     if (isStartDateTime) {
       setEventStartDateMidnightUTCInMS(0);
       setEventStartTimeAfterMidnightUTCInMS(-1);
-      setEventStartDateTimeError(!event ? "Please specify when event starts" : "");
+      setEventStartDateTimeError(currentEvent ? "Please specify when event starts" : "");
     } else {
       setEventEndDateMidnightUTCInMS(0);
       setEventEndTimeAfterMidnightUTCInMS(-1);
-      setEventEndDateTimeError(!event ? "Please specify when event ends" : "");
+      setEventEndDateTimeError(currentEvent ? "Please specify when event ends" : "");
     }
   };
 
@@ -764,10 +779,11 @@ const EventForm = ({
     }
     if (areNoErrors) {
       setIsLoading(true);
-      if (event) {
+      if (currentEvent) {
         // When updating an existing event:
         setEventEditIsInProgress(true);
         if (valuesToUpdate) {
+          const event = currentEvent;
           updateEventMutation.mutate({ event, valuesToUpdate });
         }
       } else {
@@ -789,7 +805,8 @@ const EventForm = ({
     setIsLoading(true);
     setEventDeletionIsInProgress(true);
     setShowAreYouSureDeleteEvent(false);
-    if (event) {
+    if (currentEvent) {
+      const event = currentEvent;
       deleteEventMutation.mutate({ event });
     }
   };
@@ -837,7 +854,7 @@ const EventForm = ({
   const usersWhoAreInvitees = getUsersWhoAreInvitees();
 
   const getChangesMade = (): boolean => {
-    if (event) {
+    if (currentEvent) {
       return (
         eventTitle !== currentEvent?.title ||
         eventDescription !== currentEvent?.description ||
@@ -845,10 +862,12 @@ const EventForm = ({
         eventCity !== currentEvent?.city ||
         eventState !== currentEvent?.stateProvince ||
         eventCountry !== currentEvent?.country ||
-        eventStartDateMidnightUTCInMS !== event.eventStartDateMidnightUTCInMS ||
-        eventStartTimeAfterMidnightUTCInMS !== event.eventStartTimeAfterMidnightUTCInMS ||
-        eventEndDateMidnightUTCInMS !== event.eventEndDateMidnightUTCInMS ||
-        eventEndTimeAfterMidnightUTCInMS !== event.eventEndTimeAfterMidnightUTCInMS ||
+        eventStartDateMidnightUTCInMS !== currentEvent.eventStartDateMidnightUTCInMS ||
+        eventStartTimeAfterMidnightUTCInMS !==
+          currentEvent.eventStartTimeAfterMidnightUTCInMS ||
+        eventEndDateMidnightUTCInMS !== currentEvent.eventEndDateMidnightUTCInMS ||
+        eventEndTimeAfterMidnightUTCInMS !==
+          currentEvent.eventEndTimeAfterMidnightUTCInMS ||
         eventAddress !== currentEvent?.address ||
         maxParticipants !== currentEvent?.maxParticipants ||
         publicity !== currentEvent?.publicity ||
@@ -887,20 +906,10 @@ const EventForm = ({
     eventEndDateTimeError === "" &&
     eventAddressError === "";
 
-  /* const allRequiredFieldsFilled: boolean =
-    eventTitle !== "" &&
-    eventDescription !== "" &&
-    eventCity !== "" &&
-    eventState !== "" &&
-    eventCountry !== "" &&
-    eventStartDateMidnightUTCInMS !== 0 &&
-    eventStartTimeAfterMidnightUTCInMS !== 0 &&
-    eventAddress !== ""; */
-
   const getSubmitButtonIsDisabled = (): boolean => {
     if (isLoading) {
       return true;
-    } else if (event) {
+    } else if (currentEvent) {
       // return !(changesMade && allRequiredFieldsFilled && areNoErrors);
       return !changesMade;
     }
@@ -1420,7 +1429,7 @@ const EventForm = ({
                 >
                   Remove Yourself
                 </span>
-                {event?.creator === currentUser?._id && (
+                {currentEvent?.creator === currentUser?._id && (
                   <span
                     style={{ color: randomColor }}
                     onClick={() => setOrganizers([`${currentUser?._id}`])}
@@ -1445,9 +1454,9 @@ const EventForm = ({
                   removeHandler={handleAddRemoveUserAsOrganizer}
                   randomColor={randomColor}
                   isDisabled={isLoading}
-                  userMayNotDelete={event?.creator === user._id}
+                  userMayNotDelete={currentEvent?.creator === user._id}
                   specialIcon={
-                    event?.creator === user._id ? (
+                    currentEvent?.creator === user._id ? (
                       <i
                         style={{
                           color: "rgb(253, 255, 8)",
@@ -1530,7 +1539,7 @@ const EventForm = ({
                 displayedItemsCount={displayedPotentialCoOrganizerCount}
                 setDisplayedItemsCount={setDisplayedPotentialCoOrganizerCount}
                 displayedItemsCountInterval={10}
-                event={event}
+                event={currentEvent}
               />
             )}
           </div>
@@ -1627,7 +1636,7 @@ const EventForm = ({
                 displayedItemsCount={displayedPotentialInviteeCount}
                 setDisplayedItemsCount={setDisplayedPotentialInviteeCount}
                 displayedItemsCountInterval={10}
-                event={event}
+                event={currentEvent}
               />
             )}
           </div>
@@ -1679,7 +1688,7 @@ const EventForm = ({
           </div>
         }
       </div>
-      {event && event.creator === currentUser?._id && (
+      {currentEvent && currentEvent.creator === currentUser?._id && (
         <button
           type="button"
           onClick={() => setShowAreYouSureDeleteEvent(true)}
@@ -1734,7 +1743,7 @@ const EventForm = ({
           }
           type="submit"
         >
-          {event ? "Save Changes" : "Add Event"}
+          {currentEvent ? "Save Changes" : "Add Event"}
         </button>
       </div>
     </form>
