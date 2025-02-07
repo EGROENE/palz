@@ -1657,6 +1657,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           setIsLoading(false);
           if (requestsAreOK) {
             queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+            if (fetchAllUsersQuery.data && currentUser) {
+              allUsers = fetchAllUsersQuery.data;
+              setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+            }
             toast(`You have blocked ${blockee.username}.`, {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
