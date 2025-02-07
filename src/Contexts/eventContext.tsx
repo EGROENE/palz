@@ -185,6 +185,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }) => Requests.removeEventImage(event, imageToBeRemoved),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allEvents"] });
+      allEvents = fetchAllEventsQuery.data;
+      if (currentEvent) {
+        setCurrentEvent(allEvents?.filter((event) => event._id === currentEvent._id)[0]);
+      }
       toast("Event image removed", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
