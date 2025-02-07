@@ -569,6 +569,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         }
       }
       queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+      if (fetchAllUsersQuery.data && currentUser) {
+        allUsers = fetchAllUsersQuery.data;
+        setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+      }
     },
     onError: (error, variables) => {
       console.log(error);
