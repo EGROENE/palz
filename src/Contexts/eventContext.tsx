@@ -27,7 +27,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     enabled: userHasLoggedIn,
   });
 
-  const allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
+  let allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
 
   const [currentEvent, setCurrentEvent] = useLocalStorage<TEvent | undefined>(
     "currentEvent",
