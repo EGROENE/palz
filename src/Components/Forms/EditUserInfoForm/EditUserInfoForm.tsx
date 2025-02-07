@@ -22,7 +22,8 @@ const EditUserInfoForm = ({
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { theme } = useMainContext();
-  const {
+  let {
+    fetchAllUsersQuery,
     currentUser,
     setCurrentUser,
     allUsers,
@@ -323,6 +324,12 @@ const EditUserInfoForm = ({
                 });
               } else {
                 queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+                if (fetchAllUsersQuery.data && currentUser) {
+                  allUsers = fetchAllUsersQuery.data;
+                  setCurrentUser(
+                    allUsers.filter((user) => user._id === currentUser._id)[0]
+                  );
+                }
 
                 toast.success("Profile info updated", {
                   style: {
