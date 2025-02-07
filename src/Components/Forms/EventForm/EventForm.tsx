@@ -419,6 +419,14 @@ const EventForm = ({
             setEventEndDateTimeError("Please specify when event ends");
           }
         }
+
+        if (
+          eventEndDateTimeError === "" &&
+          (eventStartDateMidnightUTCInMS === -1 ||
+            eventStartTimeAfterMidnightUTCInMS === -1)
+        ) {
+          setEventStartDateTimeError("Please specify when event begins");
+        }
       }
     }
     if (input === "start-time" || input === "end-time") {
