@@ -210,7 +210,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     // staleTime: number,
     // refetchInterval: number
   });
-  const allUsers: TUser[] | undefined = fetchAllUsersQuery.data;
+  let allUsers: TUser[] | undefined = fetchAllUsersQuery.data;
 
   // Rename to 'newUserData'
   const userData: TUser = {
@@ -378,6 +378,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addToFriendRequestsReceived(sender, recipient),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+      if (fetchAllUsersQuery.data && currentUser) {
+        allUsers = fetchAllUsersQuery.data;
+        setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+      }
       toast.success("Friend request sent!", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -618,9 +622,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
-  /*
-  Call addToSenderFriendsMutation, addToReceiverFriendsMutation, removeReceivedFriendRequestAfterBecomingFriendsMutation, &removeSentFriendRequestAfterBecomingFriendsMutation in that order. Successive mutations are called in onSuccess of previous mutation. If a mutation fails, requests are made to revert data in database, and surface-level state values (used for optimistic rendering) are reverted.
-  */
   const addToSenderFriendsMutation = useMutation({
     mutationFn: ({ sender, receiver }: { sender: TUser; receiver: TUser }) =>
       Requests.addFriendToFriendsArray(sender, receiver),
@@ -656,6 +657,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     mutationFn: ({ receiver, sender }: { receiver: TUser; sender: TUser }) =>
       Requests.addFriendToFriendsArray(receiver, sender),
     onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: "allUsers" }).then(() => {
+        if (allUsers && currentUser) {
+          setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+        }
+      });
       if (data.ok) {
         const recipient = variables.receiver;
         const sender = variables.sender;
@@ -1678,13 +1684,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               },
             });
           } else {
-            queryClient.invalidateQueries({ queryKey: ["allUsers"] }).then(() => {
-              if (allUsers && currentUser) {
-                setCurrentUser(
-                  allUsers.filter((user) => user._id === currentUser._id)[0]
-                );
-              }
-            });
+            queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+            if (allUsers && currentUser) {
+              setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+            }
             toast.success(`Unblocked ${blockee.username}.`, {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
