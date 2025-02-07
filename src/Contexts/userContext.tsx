@@ -285,6 +285,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }) => Requests.updateUserProfileImage(currentUser, base64),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+      if (fetchAllUsersQuery.data && currentUser) {
+        allUsers = fetchAllUsersQuery.data;
+        setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+      }
       if (data.ok) {
         setProfileImage(variables.base64);
         toast.success("Profile image updated", {
