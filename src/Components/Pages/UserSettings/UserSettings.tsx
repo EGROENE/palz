@@ -213,6 +213,9 @@ const UserSettings = () => {
                 });
               } else {
                 queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+                if (fetchAllUsersQuery.data) {
+                  allUsers = fetchAllUsersQuery.data;
+                }
                 toast("You have deleted your account. We're sorry to see you go!", {
                   style: {
                     background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
