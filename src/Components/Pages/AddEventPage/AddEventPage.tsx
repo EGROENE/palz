@@ -44,7 +44,7 @@ const AddEventPage = () => {
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       {isLoading && <LoadingModal message="Adding event..." />}
       <h1>Add New Event</h1>
-      <EventForm randomColor={randomColor} />
+      <EventForm randomColor={randomColor} usedFor="add-event" />
     </div>
   );
 };

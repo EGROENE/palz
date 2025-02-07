@@ -71,7 +71,7 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       {isLoading && <LoadingModal message="Saving changes..." />}
       <h1>Edit Event</h1>
-      <EventForm randomColor={randomColor} event={currentEvent} />
+      <EventForm randomColor={randomColor} usedFor="edit-event" event={currentEvent} />
     </div>
   );
 };
