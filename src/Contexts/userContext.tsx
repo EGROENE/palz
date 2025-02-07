@@ -1705,7 +1705,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             });
           } else {
             queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-            if (allUsers && currentUser) {
+            if (fetchAllUsersQuery.data && currentUser) {
+              allUsers = fetchAllUsersQuery.data;
               setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
             }
             toast.success(`Unblocked ${blockee.username}.`, {
