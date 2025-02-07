@@ -147,6 +147,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addEventImage(event, base64),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allEvents"] });
+      allEvents = fetchAllEventsQuery.data;
+      if (currentEvent) {
+        setCurrentEvent(allEvents?.filter((event) => event._id === currentEvent._id)[0]);
+      }
       toast.success("Event image added", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
