@@ -119,6 +119,10 @@ const UserSettings = () => {
           });
         } else {
           queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+          if (fetchAllUsersQuery.data && currentUser) {
+            allUsers = fetchAllUsersQuery.data;
+            setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+          }
           toast(`'${interest}' removed from interests`, {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
