@@ -15,9 +15,6 @@ import DropdownChecklist from "../../Elements/DropdownChecklist/DropdownChecklis
 const EventForm = ({
   randomColor,
   usedFor,
-  /*
-  event is only used to set currentEvent, which will persist through renders. The truthiness of currentEvent is used to determine if form is used to create an event or to edit an existing one.
-  */
   event,
 }: {
   randomColor: TThemeColor | undefined;
@@ -29,8 +26,9 @@ const EventForm = ({
   const { handleCityStateCountryInput, allUsers, currentUser, blockedUsers } =
     useUserContext();
   const {
+    eventBeingEdited,
+    setEventBeingEdited,
     allEvents,
-    currentEvent,
     setCurrentEvent,
     setAddEventIsInProgress,
     setEventDeletionIsInProgress,
@@ -91,7 +89,6 @@ const EventForm = ({
     createEventMutation,
     deleteEventMutation,
   } = useEventContext();
-  console.log(currentEvent);
 
   const [focusedElement, setFocusedElement] = useState<
     | "title"
@@ -140,7 +137,7 @@ const EventForm = ({
 
   const [showEventCountries, setShowEventCountries] = useState<boolean>(false);
 
-  const [showErrors, setShowErrors] = useState<boolean>(currentEvent ? true : false);
+  const [showErrors, setShowErrors] = useState<boolean>(eventBeingEdited ? true : false);
 
   const [showAreYouSureDeleteEvent, setShowAreYouSureDeleteEvent] =
     useState<boolean>(false);
@@ -156,30 +153,21 @@ const EventForm = ({
     useState<number | undefined>(10);
 
   useEffect(() => {
-    /* 
-    currentEvent is not set simply to event passed in; it is set to event in allEvents that has same _id, as this will be the most current version of the event in question
-    */
-    if (allEvents && currentEvent) {
-      const currentEventInAllEvents = allEvents.filter(
-        (ev) => ev._id === currentEvent._id
-      )[0];
-      setCurrentEvent(currentEventInAllEvents);
-    }
-  }, [allEvents]);
-
-  useEffect(() => {
     // Hide Sidebar if showing:
     if (showSidebar) {
       setShowSidebar(false);
     }
 
-    /* 
-    If event passed to this component, setCurrentEvent in mainContext to that (after which it will stay in localStorage until changed):
-    */
     if (event && allEvents && usedFor === "edit-event") {
       setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
+      setEventBeingEdited(allEvents.filter((ev) => ev._id === event._id)[0]);
       setEventImages(event.images);
+      if (!event && eventBeingEdited) {
+        setCurrentEvent(eventBeingEdited);
+        setEventImages(eventBeingEdited.images);
+      }
     }
+
     if (usedFor === "add-event") {
       if (eventImages && eventImages.length > 0) {
         // Remove any previously added event images (like if user added some on new event, but didn't submit form)
@@ -546,17 +534,33 @@ const EventForm = ({
     /* If !event (component is used to add new event), only add image to state value eventImages, which will be 
     passed into database when user submits form successfully */
     if (base64) {
-      if (
-        currentEvent &&
-        currentEvent.images &&
-        !currentEvent.images.includes(base64) &&
-        !eventImages?.includes(base64)
-      ) {
-        setEventImages(eventImages?.concat(base64));
-        const event = currentEvent;
-        addEventImageMutation.mutate({ event, base64 });
-      } else {
-        if (currentEvent?.images?.includes(base64) || eventImages?.includes(base64)) {
+      if (usedFor === "edit-event") {
+        if (eventBeingEdited) {
+          if (
+            eventBeingEdited &&
+            usedFor === "edit-event" &&
+            eventBeingEdited.images &&
+            !eventBeingEdited.images.includes(base64) &&
+            !eventImages?.includes(base64)
+          ) {
+            setEventImages(eventImages?.concat(base64));
+            const event = eventBeingEdited;
+            addEventImageMutation.mutate({ event, base64 });
+          }
+          if (eventImages.includes(base64) || eventBeingEdited.images.includes(base64)) {
+            toast.error("Cannot upload same image more than once.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        }
+      }
+
+      if (usedFor === "add-event") {
+        if (eventImages.includes(base64)) {
           toast.error("Cannot upload same image more than once.", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -577,10 +581,15 @@ const EventForm = ({
   ): Promise<void> => {
     e.preventDefault();
     setEventImages(eventImages?.filter((image) => image !== imageToBeRemoved));
-    if (currentEvent) {
-      const event = currentEvent;
-      removeEventImageMutation.mutate({ event, imageToBeRemoved });
-    } else {
+
+    if (usedFor === "edit-event") {
+      if (eventBeingEdited) {
+        const event = eventBeingEdited;
+        removeEventImageMutation.mutate({ event, imageToBeRemoved });
+      }
+    }
+
+    if (usedFor === "add-event") {
       toast("Event image removed", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -705,32 +714,34 @@ const EventForm = ({
     setRelatedInterests(relatedInterests.filter((int) => int !== interest));
 
   const handleRevert = (): void => {
-    if (currentEvent) {
-      setEventTitle(currentEvent.title);
+    if (eventBeingEdited) {
+      setEventTitle(eventBeingEdited.title);
       setEventTitleError("");
-      setEventDescription(currentEvent.description);
+      setEventDescription(eventBeingEdited.description);
       setEventDescriptionError("");
-      setEventAdditionalInfo(currentEvent.additionalInfo);
+      setEventAdditionalInfo(eventBeingEdited.additionalInfo);
       setEventAdditionalInfoError("");
-      setEventCity(currentEvent.city);
-      setEventState(currentEvent.stateProvince);
-      setEventCountry(currentEvent.country);
+      setEventCity(eventBeingEdited.city);
+      setEventState(eventBeingEdited.stateProvince);
+      setEventCountry(eventBeingEdited.country);
       setEventLocationError("");
-      setEventStartDateMidnightUTCInMS(currentEvent.eventStartDateMidnightUTCInMS);
+      setEventStartDateMidnightUTCInMS(eventBeingEdited.eventStartDateMidnightUTCInMS);
       setEventStartTimeAfterMidnightUTCInMS(
-        currentEvent.eventStartTimeAfterMidnightUTCInMS
+        eventBeingEdited.eventStartTimeAfterMidnightUTCInMS
       );
       setEventStartDateTimeError("");
-      setEventEndDateMidnightUTCInMS(currentEvent.eventEndDateMidnightUTCInMS);
-      setEventEndTimeAfterMidnightUTCInMS(currentEvent.eventEndTimeAfterMidnightUTCInMS);
+      setEventEndDateMidnightUTCInMS(eventBeingEdited.eventEndDateMidnightUTCInMS);
+      setEventEndTimeAfterMidnightUTCInMS(
+        eventBeingEdited.eventEndTimeAfterMidnightUTCInMS
+      );
       setEventEndDateTimeError("");
-      setEventAddress(currentEvent.address);
+      setEventAddress(eventBeingEdited.address);
       setEventAddressError("");
-      setMaxParticipants(currentEvent.maxParticipants);
+      setMaxParticipants(eventBeingEdited.maxParticipants);
       setPublicity("public");
-      setOrganizers(currentEvent.organizers);
-      setInvitees(currentEvent.invitees);
-      setRelatedInterests(currentEvent.relatedInterests);
+      setOrganizers(eventBeingEdited.organizers);
+      setInvitees(eventBeingEdited.invitees);
+      setRelatedInterests(eventBeingEdited.relatedInterests);
     } else {
       setEventTitle("");
       setEventTitleError("");
@@ -762,11 +773,15 @@ const EventForm = ({
     if (isStartDateTime) {
       setEventStartDateMidnightUTCInMS(0);
       setEventStartTimeAfterMidnightUTCInMS(-1);
-      setEventStartDateTimeError(currentEvent ? "Please specify when event starts" : "");
+      setEventStartDateTimeError(
+        usedFor === "edit-event" ? "Please specify when event starts" : ""
+      );
     } else {
       setEventEndDateMidnightUTCInMS(0);
       setEventEndTimeAfterMidnightUTCInMS(-1);
-      setEventEndDateTimeError(currentEvent ? "Please specify when event ends" : "");
+      setEventEndDateTimeError(
+        usedFor === "edit-event" ? "Please specify when event ends" : ""
+      );
     }
   };
 
@@ -779,11 +794,11 @@ const EventForm = ({
     }
     if (areNoErrors) {
       setIsLoading(true);
-      if (currentEvent) {
+      if (eventBeingEdited && usedFor === "edit-event") {
         // When updating an existing event:
         setEventEditIsInProgress(true);
         if (valuesToUpdate) {
-          const event = currentEvent;
+          const event = eventBeingEdited;
           updateEventMutation.mutate({ event, valuesToUpdate });
         }
       } else {
@@ -805,8 +820,8 @@ const EventForm = ({
     setIsLoading(true);
     setEventDeletionIsInProgress(true);
     setShowAreYouSureDeleteEvent(false);
-    if (currentEvent) {
-      const event = currentEvent;
+    if (eventBeingEdited && usedFor === "edit-event") {
+      const event = eventBeingEdited;
       deleteEventMutation.mutate({ event });
     }
   };
@@ -854,26 +869,27 @@ const EventForm = ({
   const usersWhoAreInvitees = getUsersWhoAreInvitees();
 
   const getChangesMade = (): boolean => {
-    if (currentEvent) {
+    if (eventBeingEdited && usedFor === "edit-event") {
       return (
-        eventTitle !== currentEvent?.title ||
-        eventDescription !== currentEvent?.description ||
-        eventAdditionalInfo !== currentEvent?.additionalInfo ||
-        eventCity !== currentEvent?.city ||
-        eventState !== currentEvent?.stateProvince ||
-        eventCountry !== currentEvent?.country ||
-        eventStartDateMidnightUTCInMS !== currentEvent.eventStartDateMidnightUTCInMS ||
+        eventTitle !== eventBeingEdited?.title ||
+        eventDescription !== eventBeingEdited?.description ||
+        eventAdditionalInfo !== eventBeingEdited?.additionalInfo ||
+        eventCity !== eventBeingEdited?.city ||
+        eventState !== eventBeingEdited?.stateProvince ||
+        eventCountry !== eventBeingEdited?.country ||
+        eventStartDateMidnightUTCInMS !==
+          eventBeingEdited.eventStartDateMidnightUTCInMS ||
         eventStartTimeAfterMidnightUTCInMS !==
-          currentEvent.eventStartTimeAfterMidnightUTCInMS ||
-        eventEndDateMidnightUTCInMS !== currentEvent.eventEndDateMidnightUTCInMS ||
+          eventBeingEdited.eventStartTimeAfterMidnightUTCInMS ||
+        eventEndDateMidnightUTCInMS !== eventBeingEdited.eventEndDateMidnightUTCInMS ||
         eventEndTimeAfterMidnightUTCInMS !==
-          currentEvent.eventEndTimeAfterMidnightUTCInMS ||
-        eventAddress !== currentEvent?.address ||
-        maxParticipants !== currentEvent?.maxParticipants ||
-        publicity !== currentEvent?.publicity ||
-        !Methods.arraysAreIdentical(organizers, currentEvent?.organizers) ||
-        !Methods.arraysAreIdentical(currentEvent?.invitees, invitees) ||
-        !Methods.arraysAreIdentical(currentEvent?.relatedInterests, relatedInterests)
+          eventBeingEdited.eventEndTimeAfterMidnightUTCInMS ||
+        eventAddress !== eventBeingEdited?.address ||
+        maxParticipants !== eventBeingEdited?.maxParticipants ||
+        publicity !== eventBeingEdited?.publicity ||
+        !Methods.arraysAreIdentical(organizers, eventBeingEdited?.organizers) ||
+        !Methods.arraysAreIdentical(eventBeingEdited?.invitees, invitees) ||
+        !Methods.arraysAreIdentical(eventBeingEdited?.relatedInterests, relatedInterests)
       );
     }
     return (
@@ -909,7 +925,7 @@ const EventForm = ({
   const getSubmitButtonIsDisabled = (): boolean => {
     if (isLoading) {
       return true;
-    } else if (currentEvent) {
+    } else if (usedFor === "edit-event") {
       // return !(changesMade && allRequiredFieldsFilled && areNoErrors);
       return !changesMade;
     }
@@ -1429,7 +1445,7 @@ const EventForm = ({
                 >
                   Remove Yourself
                 </span>
-                {currentEvent?.creator === currentUser?._id && (
+                {eventBeingEdited?.creator === currentUser?._id && (
                   <span
                     style={{ color: randomColor }}
                     onClick={() => setOrganizers([`${currentUser?._id}`])}
@@ -1454,9 +1470,9 @@ const EventForm = ({
                   removeHandler={handleAddRemoveUserAsOrganizer}
                   randomColor={randomColor}
                   isDisabled={isLoading}
-                  userMayNotDelete={currentEvent?.creator === user._id}
+                  userMayNotDelete={eventBeingEdited?.creator === user._id}
                   specialIcon={
-                    currentEvent?.creator === user._id ? (
+                    eventBeingEdited?.creator === user._id ? (
                       <i
                         style={{
                           color: "rgb(253, 255, 8)",
@@ -1539,7 +1555,7 @@ const EventForm = ({
                 displayedItemsCount={displayedPotentialCoOrganizerCount}
                 setDisplayedItemsCount={setDisplayedPotentialCoOrganizerCount}
                 displayedItemsCountInterval={10}
-                event={currentEvent}
+                event={eventBeingEdited}
               />
             )}
           </div>
@@ -1636,7 +1652,7 @@ const EventForm = ({
                 displayedItemsCount={displayedPotentialInviteeCount}
                 setDisplayedItemsCount={setDisplayedPotentialInviteeCount}
                 displayedItemsCountInterval={10}
-                event={currentEvent}
+                event={eventBeingEdited}
               />
             )}
           </div>
@@ -1688,7 +1704,7 @@ const EventForm = ({
           </div>
         }
       </div>
-      {currentEvent && currentEvent.creator === currentUser?._id && (
+      {eventBeingEdited && eventBeingEdited.creator === currentUser?._id && (
         <button
           type="button"
           onClick={() => setShowAreYouSureDeleteEvent(true)}
@@ -1743,7 +1759,7 @@ const EventForm = ({
           }
           type="submit"
         >
-          {currentEvent ? "Save Changes" : "Add Event"}
+          {usedFor === "edit-event" ? "Save Changes" : "Add Event"}
         </button>
       </div>
     </form>
