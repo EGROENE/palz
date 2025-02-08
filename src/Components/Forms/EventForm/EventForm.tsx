@@ -158,14 +158,16 @@ const EventForm = ({
       setShowSidebar(false);
     }
 
-    if (event && allEvents && usedFor === "edit-event") {
-      setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
-      setEventBeingEdited(allEvents.filter((ev) => ev._id === event._id)[0]);
-      setEventImages(event.images);
-      if (!event && eventBeingEdited) {
+    if (allEvents && usedFor === "edit-event") {
+      if (event) {
+        setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
+        setEventBeingEdited(allEvents.filter((ev) => ev._id === event._id)[0]);
+        setEventImages(event.images);
+      } else if (!event && eventBeingEdited) {
         setCurrentEvent(eventBeingEdited);
         setEventImages(eventBeingEdited.images);
       }
+      handleRevert();
     }
 
     if (usedFor === "add-event") {
@@ -176,7 +178,7 @@ const EventForm = ({
       setCurrentEvent(undefined);
       handleRevert();
     }
-  }, []);
+  }, [usedFor]);
 
   useEffect(() => {
     if (allOtherUsers) {
@@ -714,7 +716,7 @@ const EventForm = ({
     setRelatedInterests(relatedInterests.filter((int) => int !== interest));
 
   const handleRevert = (): void => {
-    if (eventBeingEdited) {
+    if (eventBeingEdited && usedFor === "edit-event") {
       setEventTitle(eventBeingEdited.title);
       setEventTitleError("");
       setEventDescription(eventBeingEdited.description);
