@@ -40,14 +40,45 @@ const EventPage = () => {
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
+  /* 
+  If event is private & currentUser isn't organizer or invitee, or if currentUser was blocked by one of the organizers, currentUser doesn't have access to event
+  */
+  const getUserDoesNotHaveAccess = (): boolean => {
+    if (currentUser && currentUser._id) {
+      if (currentEvent) {
+        const eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee =
+          currentEvent.publicity === "private" &&
+          (currentEvent.invitees.includes(currentUser._id) ||
+            currentEvent.organizers.includes(currentUser._id));
+
+        const eventOrganizersID: string[] = currentEvent.organizers.map((org) => org);
+        const eventOrganizers: TUser[] = [];
+        if (allUsers) {
+          for (const org of eventOrganizersID) {
+            eventOrganizers.push(allUsers?.filter((user) => user._id === org)[0]);
+          }
+        }
+
+        const currentUserHasBeenBlockedByAnOrganizer: boolean = eventOrganizers
+          .map((org) => org.blockedUsers)
+          .flat()
+          .includes(currentUser._id);
+
+        if (
+          eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee ||
+          currentUserHasBeenBlockedByAnOrganizer
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  const userDoesNotHaveAccess = getUserDoesNotHaveAccess();
+
   useEffect(() => {
     // Redirect user to their homepage or to login page if event is private & they are not an invitee or organizer
-    if (
-      currentEvent?.publicity === "private" &&
-      currentUser?._id &&
-      !currentEvent?.invitees.includes(currentUser._id) &&
-      !currentEvent?.organizers.includes(currentUser._id)
-    ) {
+    if (userDoesNotHaveAccess) {
       toast.error("You do not have permission to edit or view this event.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
