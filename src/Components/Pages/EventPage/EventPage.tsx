@@ -107,6 +107,8 @@ const EventPage = () => {
     if (currentUser?._id && currentEvent) {
       setUserRSVPd(currentEvent.interestedUsers.includes(currentUser._id));
     }
+
+    setCurrentEvent(currentEvent);
   }, []);
 
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
