@@ -146,6 +146,17 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [currentEvent, allEvents]);
 
+  // Update currentEvent, eventImages w/ most recent info after fetchAllEventsQuery.data changes
+  useEffect(() => {
+    if (fetchAllEventsQuery.data && currentEvent) {
+      const updatedEvent = fetchAllEventsQuery.data.filter(
+        (ev) => ev._id === currentEvent._id
+      )[0];
+      setCurrentEvent(updatedEvent);
+      setEventImages(updatedEvent.images);
+    }
+  }, [fetchAllEventsQuery.data]);
+
   const queryClient = useQueryClient();
 
   const addEventImageMutation = useMutation({
