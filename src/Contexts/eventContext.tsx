@@ -29,13 +29,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   let allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
 
-  /* 
-  eventBeingEdited was made after it was noticed that, after being on edit-event page, going to add-event page, then using browser navigation to return to edit-event page, the event being used to populate EventForm was being set to undefined when going to add-event page. So, the below value is set to the event that originally populates EventForm, and it is not reset when going to add-event page, only if going to another edit-event page, and it persists through renders. It is used along w/ usedFor (if equal to "edit-event") to populate EventForm on edit-event page. If usedFor === "add-event", eventBeingEdited stays the same, but form will be empty so that user can add new event.
-  */
-  const [eventBeingEdited, setEventBeingEdited] = useLocalStorage<TEvent | undefined>(
-    "eventBeingEdited",
-    undefined
-  );
   const [currentEvent, setCurrentEvent] = useLocalStorage<TEvent | undefined>(
     "currentEvent",
     undefined
@@ -678,8 +671,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const valuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
-    eventBeingEdited,
-    setEventBeingEdited,
     deleteEventMutation,
     createEventMutation,
     updateEventMutation,

@@ -524,8 +524,6 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
-  eventBeingEdited: TEvent | undefined;
-  setEventBeingEdited: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
   updateEventMutation: UseMutationResult<
     Response,
     Error,
