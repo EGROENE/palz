@@ -315,15 +315,15 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       valuesToUpdate: TEventValuesToUpdate;
     }) => Requests.updateEvent(event, valuesToUpdate),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: "allEvents" });
-
-      if (currentEvent && fetchAllEventsQuery.data) {
-        allEvents = fetchAllEventsQuery.data;
-        const updatedEvent = allEvents.filter(
-          (event) => event._id === currentEvent._id
-        )[0];
-        setCurrentEvent(updatedEvent);
-      }
+      queryClient.invalidateQueries({ queryKey: "allEvents" }).then(() => {
+        if (currentEvent && fetchAllEventsQuery.data) {
+          allEvents = fetchAllEventsQuery.data;
+          const updatedEvent = allEvents.filter(
+            (event) => event._id === currentEvent._id
+          )[0];
+          setCurrentEvent(updatedEvent);
+        }
+      });
 
       toast.success("Event updated!", {
         style: {
