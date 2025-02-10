@@ -143,7 +143,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       setOrganizers(currentEvent.organizers);
       setInvitees(currentEvent.invitees);
       setRelatedInterests(currentEvent.relatedInterests);
-      setEventImages(currentEvent.images);
     }
   }, [currentEvent, allEvents]);
 
@@ -154,9 +153,12 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addEventImage(event, base64),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-      allEvents = fetchAllEventsQuery.data;
-      if (currentEvent) {
-        setCurrentEvent(allEvents?.filter((event) => event._id === currentEvent._id)[0]);
+      if (currentEvent && fetchAllEventsQuery.data) {
+        allEvents = fetchAllEventsQuery.data;
+        const updatedEvent = allEvents.filter(
+          (event) => event._id === currentEvent._id
+        )[0];
+        setCurrentEvent(updatedEvent);
       }
       toast.success("Event image added", {
         style: {
@@ -193,8 +195,12 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allEvents"] });
       allEvents = fetchAllEventsQuery.data;
-      if (currentEvent) {
-        setCurrentEvent(allEvents?.filter((event) => event._id === currentEvent._id)[0]);
+      if (currentEvent && fetchAllEventsQuery.data) {
+        allEvents = fetchAllEventsQuery.data;
+        const updatedEvent = allEvents.filter(
+          (event) => event._id === currentEvent._id
+        )[0];
+        setCurrentEvent(updatedEvent);
       }
       toast("Event image removed", {
         style: {
