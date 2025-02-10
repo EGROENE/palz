@@ -471,6 +471,42 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
+  const removeInviteeMutation = useMutation({
+    mutationFn: ({ event, user }: { event: TEvent; user: TUser }) =>
+      Requests.removeInvitee(event, user),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: "allEvents" });
+
+      if (currentEvent && fetchAllEventsQuery.data) {
+        allEvents = fetchAllEventsQuery.data;
+        const updatedEvent = allEvents.filter(
+          (event) => event._id === currentEvent._id
+        )[0];
+        console.log(updatedEvent.invitees);
+        setCurrentEvent(updatedEvent);
+      }
+
+      toast("Invitee removed", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Could not remove invitee. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => setIsLoading(false),
+  });
+
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
@@ -520,44 +556,15 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleRemoveInvitee = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
-    user: TUser | null,
-    displayedUsers?: TUser[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+    user: TUser | null
   ): void => {
     e.preventDefault();
 
     setIsLoading(true);
 
-    if (displayedUsers && setDisplayedUsers) {
-      setDisplayedUsers(displayedUsers.filter((u) => user?._id !== u._id));
+    if (user) {
+      removeInviteeMutation.mutate({ event, user });
     }
-
-    Requests.removeInvitee(event, user)
-      .then((response) => {
-        if (!response.ok) {
-          if (displayedUsers && setDisplayedUsers) {
-            setDisplayedUsers(displayedUsers);
-          }
-          toast.error("Could not remove invitee. Please try again.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        } else {
-          queryClient.invalidateQueries({ queryKey: "allEvents" });
-          toast("Invitee removed", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
   };
 
   const navigation = useNavigate();
