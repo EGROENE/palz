@@ -21,8 +21,6 @@ const EventPage = () => {
     allEvents,
     setCurrentEvent,
     handleRemoveInvitee,
-    userRSVPd,
-    setUserRSVPd,
   } = useEventContext();
 
   //const [event, setEvent] = useState<TEvent | undefined>();
@@ -35,6 +33,11 @@ const EventPage = () => {
   const currentEvent: TEvent | undefined = allEvents
     ? allEvents.filter((ev) => ev._id === eventID)[0]
     : undefined;
+
+  const userRSVPd: boolean =
+    currentUser && currentUser._id && currentEvent
+      ? currentEvent.interestedUsers.includes(currentUser._id)
+      : false;
 
   const navigation = useNavigate();
 
@@ -103,10 +106,6 @@ const EventPage = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
-
-    if (currentUser?._id && currentEvent) {
-      setUserRSVPd(currentEvent.interestedUsers.includes(currentUser._id));
-    }
 
     setCurrentEvent(currentEvent);
   }, []);
@@ -341,9 +340,9 @@ const EventPage = () => {
                     disabled={maxInviteesReached || isLoading}
                     onClick={(e) => {
                       if (userRSVPd && currentUser) {
-                        handleDeleteUserRSVP(currentEvent, currentUser, setUserRSVPd, e);
+                        handleDeleteUserRSVP(currentEvent, currentUser, e);
                       } else if (!userRSVPd) {
-                        handleAddUserRSVP(e, currentEvent, setUserRSVPd);
+                        handleAddUserRSVP(e, currentEvent);
                       }
                     }}
                   >

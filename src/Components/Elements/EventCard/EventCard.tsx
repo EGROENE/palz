@@ -16,11 +16,14 @@ const EventCard = ({ event }: { event: TEvent }) => {
     handleDeleteUserRSVP,
     handleDeclineInvitation,
     setCurrentEvent,
-    userRSVPd,
-    setUserRSVPd,
   } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  const userRSVPd: boolean =
+    currentUser && currentUser._id
+      ? event.interestedUsers.includes(currentUser._id)
+      : false;
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
 
@@ -35,9 +38,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
-    if (currentUser?._id) {
-      setUserRSVPd(event.interestedUsers.includes(currentUser._id));
-    }
   }, []);
 
   const userIsInvitee: boolean = currentUser?._id
@@ -129,7 +129,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                 : { backgroundColor: `${randomColor}`, color: "white" }
             }
             disabled={isLoading}
-            onClick={(e) => handleAddUserRSVP(e, event, setUserRSVPd)}
+            onClick={(e) => handleAddUserRSVP(e, event)}
           >
             {rsvpButtonText}
           </button>
@@ -207,9 +207,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
                     className={`${styles.eventButtonsContainerButton}`}
                     onClick={(e) => {
                       if (userRSVPd && currentUser) {
-                        handleDeleteUserRSVP(event, currentUser, setUserRSVPd, e);
+                        handleDeleteUserRSVP(event, currentUser, e);
                       } else if (!userRSVPd) {
-                        handleAddUserRSVP(e, event, setUserRSVPd);
+                        handleAddUserRSVP(e, event);
                       }
                     }}
                   >
