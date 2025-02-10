@@ -147,25 +147,25 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       )[0];
       setCurrentEvent(updatedEvent);
       setEventImages(updatedEvent.images);
-      setUserRSVPd(currentEvent.interestedUsers.includes(currentUser._id));
-      setEventTitle(currentEvent.title);
-      setEventDescription(currentEvent.description);
-      setEventAdditionalInfo(currentEvent.additionalInfo);
-      setEventCity(currentEvent.city);
-      setEventState(currentEvent.stateProvince);
-      setEventCountry(currentEvent.country);
-      setEventStartDateMidnightUTCInMS(currentEvent.eventStartDateMidnightUTCInMS);
+      setUserRSVPd(updatedEvent.interestedUsers.includes(currentUser._id));
+      setEventTitle(updatedEvent.title);
+      setEventDescription(updatedEvent.description);
+      setEventAdditionalInfo(updatedEvent.additionalInfo);
+      setEventCity(updatedEvent.city);
+      setEventState(updatedEvent.stateProvince);
+      setEventCountry(updatedEvent.country);
+      setEventStartDateMidnightUTCInMS(updatedEvent.eventStartDateMidnightUTCInMS);
       setEventStartTimeAfterMidnightUTCInMS(
-        currentEvent.eventStartTimeAfterMidnightUTCInMS
+        updatedEvent.eventStartTimeAfterMidnightUTCInMS
       );
-      setEventEndDateMidnightUTCInMS(currentEvent.eventEndDateMidnightUTCInMS);
-      setEventEndTimeAfterMidnightUTCInMS(currentEvent.eventEndTimeAfterMidnightUTCInMS);
-      setEventAddress(currentEvent.address);
-      setMaxParticipants(currentEvent.maxParticipants);
-      setPublicity(currentEvent.publicity);
-      setOrganizers(currentEvent.organizers);
-      setInvitees(currentEvent.invitees);
-      setRelatedInterests(currentEvent.relatedInterests);
+      setEventEndDateMidnightUTCInMS(updatedEvent.eventEndDateMidnightUTCInMS);
+      setEventEndTimeAfterMidnightUTCInMS(updatedEvent.eventEndTimeAfterMidnightUTCInMS);
+      setEventAddress(updatedEvent.address);
+      setMaxParticipants(updatedEvent.maxParticipants);
+      setPublicity(updatedEvent.publicity);
+      setOrganizers(updatedEvent.organizers);
+      setInvitees(updatedEvent.invitees);
+      setRelatedInterests(updatedEvent.relatedInterests);
     }
   }, [fetchAllEventsQuery.data]);
 
