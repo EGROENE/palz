@@ -9,10 +9,10 @@ import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 import { useEventContext } from "../../../Hooks/useEventContext";
 
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
-const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
+const EditEventPage = ({ event }: { event?: TEvent }) => {
   const { showSidebar, setShowSidebar, isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
-  const { eventBeingEdited } = useEventContext();
+  const { currentEvent } = useEventContext();
 
   const navigation = useNavigate();
 
@@ -21,7 +21,7 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
   useEffect(() => {
     /* Redirect to user homepage if event has ended (no longer editable). Should only happen if user pastes in url of event's edit page, as navigation options won't exist anymore */
     const now = Date.now();
-    if (currentEvent?.eventEndDateTimeInMS && currentEvent.eventEndDateTimeInMS < now) {
+    if (event?.eventEndDateTimeInMS && event.eventEndDateTimeInMS < now) {
       navigation(`/${currentUser?.username}`);
       toast.error("Event is finished, so it's no longer editable.", {
         style: {
@@ -33,7 +33,7 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
     }
 
     /* If user access event's edit page, but is not an organizer, redirect to their homepage & tell them they don't have permission to edit event */
-    if (currentUser?._id && !eventBeingEdited?.organizers.includes(currentUser._id)) {
+    if (currentUser?._id && !currentEvent?.organizers.includes(currentUser._id)) {
       navigation(`/${currentUser.username}`);
       toast.error("You do not have permission to edit this event.", {
         style: {
@@ -68,13 +68,13 @@ const EditEventPage = ({ currentEvent }: { currentEvent?: TEvent }) => {
       });
       logout();
     }
-  }, [currentEvent, navigation]);
+  }, [event, navigation]);
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       {isLoading && <LoadingModal message="Saving changes..." />}
       <h1>Edit Event</h1>
-      <EventForm randomColor={randomColor} usedFor="edit-event" event={currentEvent} />
+      <EventForm randomColor={randomColor} usedFor="edit-event" event={event} />
     </div>
   );
 };
