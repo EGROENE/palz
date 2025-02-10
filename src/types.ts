@@ -550,8 +550,6 @@ export type TEventContext = {
     unknown
   >;
   valuesToUpdate: TEventValuesToUpdate | undefined;
-  userRSVPd: boolean | null;
-  setUserRSVPd: React.Dispatch<React.SetStateAction<boolean | null>>;
   eventTitle: string;
   setEventTitle: React.Dispatch<React.SetStateAction<string>>;
   eventTitleError: string;
@@ -651,13 +649,11 @@ export type TEventContext = {
   setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   handleAddUserRSVP: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent,
-    setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>
+    event: TEvent
   ) => void;
   handleDeleteUserRSVP: (
     event: TEvent,
     user: TUser,
-    setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent> | undefined
   ) => void;
 };

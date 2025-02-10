@@ -113,8 +113,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventImages, setEventImages] = useState<string[]>([]);
   ///////////////////////
 
-  const [userRSVPd, setUserRSVPd] = useState<boolean | null>(null);
-
   /* useEffect(() => {
     if (currentEvent && currentUser?._id) {
       setUserRSVPd(currentEvent.interestedUsers.includes(currentUser._id));
@@ -147,7 +145,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       )[0];
       setCurrentEvent(updatedEvent);
       setEventImages(updatedEvent.images);
-      setUserRSVPd(updatedEvent.interestedUsers.includes(currentUser._id));
       setEventTitle(updatedEvent.title);
       setEventDescription(updatedEvent.description);
       setEventAdditionalInfo(updatedEvent.additionalInfo);
@@ -261,7 +258,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       });
     },
     onError: (error) => {
-      setUserRSVPd(false);
       console.log(error);
       toast.error("Could not RSVP to event. Please try again.", {
         style: {
@@ -287,15 +283,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           border: "2px solid red",
         },
       });
-      if (setUserRSVPd) {
-        setUserRSVPd(false);
-      }
     },
     onError: (error) => {
       console.log(error);
-      if (setUserRSVPd) {
-        setUserRSVPd(true);
-      }
 
       toast.error("Could not remove RSVP. Please try again.", {
         style: {
@@ -499,14 +489,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent,
-    setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>
+    event: TEvent
   ): void => {
     e.preventDefault();
     setIsLoading(true);
-    if (setUserRSVPd) {
-      setUserRSVPd(true);
-    }
     if (currentUser) {
       const user = currentUser;
       addUserRSVPMutation.mutate({ user, event });
@@ -516,16 +502,11 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleDeleteUserRSVP = (
     event: TEvent,
     user: TUser,
-    setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     e?.preventDefault();
 
     setIsLoading(true);
-
-    if (setUserRSVPd) {
-      setUserRSVPd(false);
-    }
 
     removeUserRSVPMutation.mutate({ user, event });
   };
@@ -696,8 +677,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     createEventMutation,
     updateEventMutation,
     valuesToUpdate,
-    userRSVPd,
-    setUserRSVPd,
     eventTitle,
     setEventTitle,
     eventTitleError,
