@@ -28,7 +28,7 @@ const DropdownChecklist = ({
   const { handleAddRemoveUserAsOrganizer } = useEventContext();
 
   let displayedItemsArrayFiltered: TUser[] = [];
-  if (displayedItemsCount) {
+  if (displayedItemsCount && displayedItemsCount <= displayedItemsArray.length) {
     for (let i = 0; i < displayedItemsCount; i++) {
       displayedItemsArrayFiltered.push(displayedItemsArray[i]);
     }
