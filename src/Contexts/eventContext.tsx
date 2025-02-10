@@ -251,6 +251,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addUserRSVP(user, event),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: "allEvents" });
+      queryClient.refetchQueries({ queryKey: ["allEvents"] });
       toast.success("RSVP added!", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
