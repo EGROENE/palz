@@ -655,11 +655,9 @@ export type TEventContext = {
     setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>
   ) => void;
   handleDeleteUserRSVP: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     user: TUser,
     setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>,
-    displayedUsers?: TUser[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent> | undefined
   ) => void;
 };

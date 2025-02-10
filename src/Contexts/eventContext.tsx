@@ -254,6 +254,39 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
+  const removeUserRSVPMutation = useMutation({
+    mutationFn: ({ user, event }: { user: TUser; event: TEvent }) =>
+      Requests.deleteUserRSVP(user, event),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: "allEvents" });
+      toast("RSVP deleted", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+      if (setUserRSVPd) {
+        setUserRSVPd(false);
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+      if (setUserRSVPd) {
+        setUserRSVPd(true);
+      }
+
+      toast.error("Could not remove RSVP. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => setIsLoading(false),
+  });
+
   const updateEventMutation = useMutation({
     mutationFn: ({
       event,
@@ -428,14 +461,12 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleDeleteUserRSVP = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     user: TUser,
     setUserRSVPd?: React.Dispatch<React.SetStateAction<boolean | null>>,
-    displayedUsers?: TUser[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
-    e.preventDefault();
+    e?.preventDefault();
 
     setIsLoading(true);
 
@@ -443,42 +474,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       setUserRSVPd(false);
     }
 
-    if (displayedUsers && setDisplayedUsers) {
-      setDisplayedUsers(displayedUsers.filter((u) => u._id !== user._id));
-    }
-
-    Requests.deleteUserRSVP(user, event)
-      .then((response) => {
-        if (!response.ok) {
-          if (setUserRSVPd) {
-            setUserRSVPd(true);
-          }
-          if (displayedUsers && setDisplayedUsers) {
-            setDisplayedUsers(displayedUsers);
-          }
-          toast.error("Could not remove RSVP. Please try again.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        } else {
-          queryClient.invalidateQueries({ queryKey: "allEvents" });
-          toast("RSVP deleted", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          if (setUserRSVPd) {
-            setUserRSVPd(false);
-          }
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
+    removeUserRSVPMutation.mutate({ user, event });
   };
 
   const handleDeclineInvitation = (
