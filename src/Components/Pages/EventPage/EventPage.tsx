@@ -341,7 +341,7 @@ const EventPage = () => {
                     disabled={maxInviteesReached || isLoading}
                     onClick={(e) => {
                       if (userRSVPd && currentUser) {
-                        handleDeleteUserRSVP(e, currentEvent, currentUser, setUserRSVPd);
+                        handleDeleteUserRSVP(currentEvent, currentUser, setUserRSVPd, e);
                       } else if (!userRSVPd) {
                         handleAddUserRSVP(e, currentEvent, setUserRSVPd);
                       }

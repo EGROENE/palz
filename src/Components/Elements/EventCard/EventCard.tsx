@@ -207,7 +207,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                     className={`${styles.eventButtonsContainerButton}`}
                     onClick={(e) => {
                       if (userRSVPd && currentUser) {
-                        handleDeleteUserRSVP(e, event, currentUser, setUserRSVPd);
+                        handleDeleteUserRSVP(event, currentUser, setUserRSVPd, e);
                       } else if (!userRSVPd) {
                         handleAddUserRSVP(e, event, setUserRSVPd);
                       }

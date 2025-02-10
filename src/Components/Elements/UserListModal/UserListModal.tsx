@@ -58,7 +58,7 @@ const UserListModal = ({
     }
     // if deleteFrom === "rsvp-list"
     // params in handleDeleteUserRSVP()
-    return [currentEvent, user, undefined, userArray, setUserArray];
+    return [currentEvent, user];
   };
 
   return (
