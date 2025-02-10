@@ -474,15 +474,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.removeInvitee(event, user),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: "allEvents" });
-
-      if (currentEvent && fetchAllEventsQuery.data) {
-        allEvents = fetchAllEventsQuery.data;
-        const updatedEvent = allEvents.filter(
-          (event) => event._id === currentEvent._id
-        )[0];
-        console.log(updatedEvent.invitees);
-        setCurrentEvent(updatedEvent);
-      }
+      queryClient.refetchQueries({ queryKey: ["allEvents"] });
 
       toast("Invitee removed", {
         style: {
