@@ -447,6 +447,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addToDisinterestedUsers(user, event),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: "allEvents" });
+      queryClient.refetchQueries({ queryKey: ["allEvents"] });
       toast("Invitation declined.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
