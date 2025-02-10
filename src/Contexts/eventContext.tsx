@@ -417,6 +417,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     mutationFn: ({ event }: { event: TEvent }) => Requests.deleteEvent(event),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: "allEvents" });
+      queryClient.refetchQueries({ queryKey: ["allEvents"] });
       toast("Event deleted", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
