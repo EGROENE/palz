@@ -115,7 +115,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [userRSVPd, setUserRSVPd] = useState<boolean | null>(null);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (currentEvent && currentUser?._id) {
       setUserRSVPd(currentEvent.interestedUsers.includes(currentUser._id));
       setEventTitle(currentEvent.title);
@@ -137,16 +137,35 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       setInvitees(currentEvent.invitees);
       setRelatedInterests(currentEvent.relatedInterests);
     }
-  }, [currentEvent, allEvents]);
+  }, [currentEvent, allEvents]); */
 
   // Update currentEvent, eventImages w/ most recent info after fetchAllEventsQuery.data changes
   useEffect(() => {
-    if (fetchAllEventsQuery.data && currentEvent) {
+    if (fetchAllEventsQuery.data && currentEvent && currentUser && currentUser._id) {
       const updatedEvent = fetchAllEventsQuery.data.filter(
         (ev) => ev._id === currentEvent._id
       )[0];
       setCurrentEvent(updatedEvent);
       setEventImages(updatedEvent.images);
+      setUserRSVPd(currentEvent.interestedUsers.includes(currentUser._id));
+      setEventTitle(currentEvent.title);
+      setEventDescription(currentEvent.description);
+      setEventAdditionalInfo(currentEvent.additionalInfo);
+      setEventCity(currentEvent.city);
+      setEventState(currentEvent.stateProvince);
+      setEventCountry(currentEvent.country);
+      setEventStartDateMidnightUTCInMS(currentEvent.eventStartDateMidnightUTCInMS);
+      setEventStartTimeAfterMidnightUTCInMS(
+        currentEvent.eventStartTimeAfterMidnightUTCInMS
+      );
+      setEventEndDateMidnightUTCInMS(currentEvent.eventEndDateMidnightUTCInMS);
+      setEventEndTimeAfterMidnightUTCInMS(currentEvent.eventEndTimeAfterMidnightUTCInMS);
+      setEventAddress(currentEvent.address);
+      setMaxParticipants(currentEvent.maxParticipants);
+      setPublicity(currentEvent.publicity);
+      setOrganizers(currentEvent.organizers);
+      setInvitees(currentEvent.invitees);
+      setRelatedInterests(currentEvent.relatedInterests);
     }
   }, [fetchAllEventsQuery.data]);
 
