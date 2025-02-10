@@ -317,6 +317,14 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: "allEvents" });
 
+      if (currentEvent && fetchAllEventsQuery.data) {
+        allEvents = fetchAllEventsQuery.data;
+        const updatedEvent = allEvents.filter(
+          (event) => event._id === currentEvent._id
+        )[0];
+        setCurrentEvent(updatedEvent);
+      }
+
       toast.success("Event updated!", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
