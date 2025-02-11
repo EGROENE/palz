@@ -76,61 +76,92 @@ const UserHomepage = () => {
         {allCurrentUserEvents &&
           allCurrentUserEvents.length > 0 &&
           !fetchAllEventsQuery.isLoading && (
-            <div className="upcoming-events-hero">
-              <h1>Upcoming Events ({allCurrentUserEvents.length})</h1>
-              <div
-                style={
-                  Methods.sortEventsSoonestToLatest(allCurrentUserEvents).length < 3
-                    ? { justifyContent: "center", overflowX: "unset" }
-                    : undefined
-                }
-                className="rsvpd-events-container"
-              >
-                {Methods.sortEventsSoonestToLatest(allCurrentUserEvents).map(
-                  (event: TEvent) => (
-                    <EventCard key={event._id} event={event} />
-                  )
-                )}
+            <>
+              <div className="upcoming-events-hero">
+                <h1>Upcoming Events ({allCurrentUserEvents.length})</h1>
+                <div
+                  style={
+                    Methods.sortEventsSoonestToLatest(allCurrentUserEvents).length < 3
+                      ? { justifyContent: "center", overflowX: "unset" }
+                      : undefined
+                  }
+                  className="rsvpd-events-container"
+                >
+                  {Methods.sortEventsSoonestToLatest(allCurrentUserEvents).map(
+                    (event: TEvent) => (
+                      <EventCard key={event._id} event={event} />
+                    )
+                  )}
+                </div>
               </div>
-            </div>
+              <div className="site-links-container">
+                <Link to={"/add-event"}>
+                  <div className="theme-element-container">
+                    <button>Create Event</button>
+                  </div>
+                </Link>
+                <Link to={"/events"}>
+                  <div className="theme-element-container">
+                    <button>Explore Events</button>
+                  </div>
+                </Link>
+                <Link to={`/find-palz`}>
+                  <div className="theme-element-container">
+                    <button>Find Palz</button>
+                  </div>
+                </Link>
+                <Link to={`/${currentUser.username}/events`}>
+                  <div className="theme-element-container">
+                    <button>My Events</button>
+                  </div>
+                </Link>
+                <Link to={"/my-palz"}>
+                  <div className="theme-element-container">
+                    <button>My Palz</button>
+                  </div>
+                </Link>
+              </div>
+            </>
           )}
         {allCurrentUserEvents &&
           !allCurrentUserEvents.length &&
           !fetchAllEventsQuery.isLoading && (
-            <div className="upcoming-events-hero">
-              <h1>No upcoming events</h1>
-              <p>
-                Click <Link to={"/events"}>here</Link> to find something fun to do
-              </p>
-            </div>
+            <>
+              <div className="upcoming-events-hero">
+                <h1>No upcoming events</h1>
+                <p>
+                  Click <Link to={"/events"}>here</Link> to find something fun to do
+                </p>
+              </div>
+              <div className="site-links-container">
+                <Link to={"/add-event"}>
+                  <div className="theme-element-container">
+                    <button>Create Event</button>
+                  </div>
+                </Link>
+                <Link to={"/events"}>
+                  <div className="theme-element-container">
+                    <button>Explore Events</button>
+                  </div>
+                </Link>
+                <Link to={`/find-palz`}>
+                  <div className="theme-element-container">
+                    <button>Find Palz</button>
+                  </div>
+                </Link>
+                <Link to={`/${currentUser.username}/events`}>
+                  <div className="theme-element-container">
+                    <button>My Events</button>
+                  </div>
+                </Link>
+                <Link to={"/my-palz"}>
+                  <div className="theme-element-container">
+                    <button>My Palz</button>
+                  </div>
+                </Link>
+              </div>
+            </>
           )}
-        <div className="site-links-container">
-          <Link to={"/add-event"}>
-            <div className="theme-element-container">
-              <button>Create Event</button>
-            </div>
-          </Link>
-          <Link to={"/events"}>
-            <div className="theme-element-container">
-              <button>Explore Events</button>
-            </div>
-          </Link>
-          <Link to={`/find-palz`}>
-            <div className="theme-element-container">
-              <button>Find Palz</button>
-            </div>
-          </Link>
-          <Link to={`/${currentUser.username}/events`}>
-            <div className="theme-element-container">
-              <button>My Events</button>
-            </div>
-          </Link>
-          <Link to={"/my-palz"}>
-            <div className="theme-element-container">
-              <button>My Palz</button>
-            </div>
-          </Link>
-        </div>
       </div>
     )
   );
