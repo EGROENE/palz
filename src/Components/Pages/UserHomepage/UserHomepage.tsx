@@ -8,6 +8,7 @@ import Methods from "../../../methods";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import QueryError from "../../Elements/QueryError/QueryError";
+import SiteLinks from "../../Elements/SiteLinks/SiteLinks";
 
 const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
@@ -94,33 +95,7 @@ const UserHomepage = () => {
                   )}
                 </div>
               </div>
-              <div className="site-links-container">
-                <Link to={"/add-event"}>
-                  <div className="theme-element-container">
-                    <button>Create Event</button>
-                  </div>
-                </Link>
-                <Link to={"/events"}>
-                  <div className="theme-element-container">
-                    <button>Explore Events</button>
-                  </div>
-                </Link>
-                <Link to={`/find-palz`}>
-                  <div className="theme-element-container">
-                    <button>Find Palz</button>
-                  </div>
-                </Link>
-                <Link to={`/${currentUser.username}/events`}>
-                  <div className="theme-element-container">
-                    <button>My Events</button>
-                  </div>
-                </Link>
-                <Link to={"/my-palz"}>
-                  <div className="theme-element-container">
-                    <button>My Palz</button>
-                  </div>
-                </Link>
-              </div>
+              <SiteLinks />
             </>
           )}
         {allCurrentUserEvents &&
@@ -133,33 +108,7 @@ const UserHomepage = () => {
                   Click <Link to={"/events"}>here</Link> to find something fun to do
                 </p>
               </div>
-              <div className="site-links-container">
-                <Link to={"/add-event"}>
-                  <div className="theme-element-container">
-                    <button>Create Event</button>
-                  </div>
-                </Link>
-                <Link to={"/events"}>
-                  <div className="theme-element-container">
-                    <button>Explore Events</button>
-                  </div>
-                </Link>
-                <Link to={`/find-palz`}>
-                  <div className="theme-element-container">
-                    <button>Find Palz</button>
-                  </div>
-                </Link>
-                <Link to={`/${currentUser.username}/events`}>
-                  <div className="theme-element-container">
-                    <button>My Events</button>
-                  </div>
-                </Link>
-                <Link to={"/my-palz"}>
-                  <div className="theme-element-container">
-                    <button>My Palz</button>
-                  </div>
-                </Link>
-              </div>
+              <SiteLinks />
             </>
           )}
       </div>
