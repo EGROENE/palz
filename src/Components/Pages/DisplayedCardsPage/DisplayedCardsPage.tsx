@@ -780,22 +780,42 @@ const DisplayedCardsPage = ({
   };
   const filterOptions = !fetchAllUsersQuery.isLoading ? getFilterOptions() : [];
 
-  // Display "loading..." if query is still loading; if not loading & displayed items is empty, show related message. If not loading & displayed items isn't empty, render those items.
-  // Get values only if query isn't loading
+  // When used for events, both fetchAllUsersQuery & fetchAllEventsQuery will have to be successful for users to be displayed
+  // If used for displaying users not related to an event, only fetchAllUsersQuery will have to succeed for users to be shown
+  const isNoFetchError: boolean =
+    usedFor === "potential-friends" || usedFor === "my-friends"
+      ? !fetchAllUsersQuery.isError
+      : !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+
+  const fetchIsLoading: boolean =
+    usedFor === "potential-friends" || usedFor === "my-friends"
+      ? fetchAllUsersQuery.isLoading
+      : fetchAllEventsQuery.isLoading && fetchAllUsersQuery.isLoading;
+
+  const getQueryForQueryLoadingOrErrorComponent = () => {
+    if (usedFor !== "potential-friends" && usedFor !== "my-friends") {
+      if (fetchAllUsersQuery.isError) {
+        return fetchAllUsersQuery;
+      }
+      return fetchAllEventsQuery;
+    }
+    return fetchAllUsersQuery;
+  };
+  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>{pageHeading}</h1>
-      {!fetchAllUsersQuery.isLoading &&
-        !fetchAllUsersQuery.isError &&
+      {!fetchIsLoading &&
+        isNoFetchError &&
         displayedItems.length === 0 &&
         usedFor === "potential-friends" &&
         searchTerm === "" &&
         activeFilters.length === 0 && (
           <h2>No more potential friends. You must be popular!</h2>
         )}
-      {!fetchAllUsersQuery.isLoading &&
-        !fetchAllUsersQuery.isError &&
+      {!fetchIsLoading &&
+        isNoFetchError &&
         displayedItems.length === 0 &&
         usedFor === "my-friends" &&
         searchTerm === "" &&
@@ -815,8 +835,8 @@ const DisplayedCardsPage = ({
             to find some!
           </h2>
         )}
-      {!fetchAllUsersQuery.isLoading &&
-        !fetchAllUsersQuery.isError &&
+      {!fetchIsLoading &&
+        isNoFetchError &&
         displayedItems.length === 0 &&
         usedFor === "events" &&
         searchTerm === "" &&
@@ -836,8 +856,8 @@ const DisplayedCardsPage = ({
             or wait for others to do so.
           </h2>
         )}
-      {!fetchAllUsersQuery.isLoading &&
-        !fetchAllUsersQuery.isError &&
+      {!fetchIsLoading &&
+        isNoFetchError &&
         (displayedItems.length > 0 ||
           (displayedItems.length === 0 && searchTerm !== "") ||
           (displayedItems.length === 0 && activeFilters.length > 0)) && (
@@ -873,7 +893,7 @@ const DisplayedCardsPage = ({
             />
           </search>
         )}
-      {!fetchAllUsersQuery.isLoading && !fetchAllUsersQuery.isError && (
+      {!fetchIsLoading && isNoFetchError && (
         <div className="all-cards-container">
           {usedFor === "events" &&
             Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
@@ -887,7 +907,7 @@ const DisplayedCardsPage = ({
         </div>
       )}
       <QueryLoadingOrError
-        query={usedFor !== "events" ? fetchAllUsersQuery : fetchAllEventsQuery}
+        query={queryForQueryLoadingOrError}
         errorMessage={
           usedFor !== "events" ? "Error fetching users" : "Error fetching events"
         }
