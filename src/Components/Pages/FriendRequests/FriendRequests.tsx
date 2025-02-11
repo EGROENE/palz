@@ -133,6 +133,13 @@ const FriendRequests = () => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
+  const friendRequestsSentFiltered: string[] = friendRequestsSent
+    ? Methods.removeDuplicatesFromArray(friendRequestsSent)
+    : [];
+  const friendRequestsReceivedFiltered: string[] = friendRequestsReceived
+    ? Methods.removeDuplicatesFromArray(friendRequestsReceived)
+    : [];
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Friend Requests</h1>
@@ -151,27 +158,27 @@ const FriendRequests = () => {
         ) : (
           <>
             <div className={styles.friendRequestFilterHeaders}>
-              {friendRequestsSent && friendRequestsSent.length > 0 && (
+              {friendRequestsSent && friendRequestsSentFiltered.length > 0 && (
                 <div>
                   <header
                     style={
                       requestsVisible === "sent" &&
                       friendRequestsReceived &&
-                      friendRequestsReceived.length > 0
+                      friendRequestsReceivedFiltered.length > 0
                         ? { color: randomColor }
                         : { color: "var(--text-color)" }
                     }
                     onClick={
-                      friendRequestsReceived && friendRequestsReceived.length > 0
+                      friendRequestsReceived && friendRequestsReceivedFiltered.length > 0
                         ? () => setRequestsVisible("sent")
                         : undefined
                     }
                   >
-                    {`Sent (${friendRequestsSent.length})`}
+                    {`Sent (${friendRequestsSentFiltered.length})`}
                   </header>
                   {requestsVisible === "sent" &&
                     friendRequestsReceived &&
-                    friendRequestsReceived.length > 0 && (
+                    friendRequestsReceivedFiltered.length > 0 && (
                       <div
                         className={`${styles.requestTypeUnderline} animate__animated animate__slideInRight`}
                         style={{ backgroundColor: randomColor }}
@@ -179,7 +186,7 @@ const FriendRequests = () => {
                     )}
                 </div>
               )}
-              {friendRequestsReceived && friendRequestsReceived.length > 0 && (
+              {friendRequestsReceived && friendRequestsReceivedFiltered.length > 0 && (
                 <div>
                   <header
                     style={
@@ -190,16 +197,16 @@ const FriendRequests = () => {
                         : { color: "var(--text-color)" }
                     }
                     onClick={
-                      friendRequestsSent && friendRequestsSent.length > 0
+                      friendRequestsSent && friendRequestsSentFiltered.length > 0
                         ? () => setRequestsVisible("received")
                         : undefined
                     }
                   >
-                    {`Received (${friendRequestsReceived.length})`}
+                    {`Received (${friendRequestsReceivedFiltered.length})`}
                   </header>
                   {requestsVisible === "received" &&
                     friendRequestsSent &&
-                    friendRequestsSent.length > 0 && (
+                    friendRequestsSentFiltered.length > 0 && (
                       <div
                         className={`${styles.requestTypeUnderline} animate__animated animate__slideInLeft`}
                         style={{ backgroundColor: randomColor }}
