@@ -29,7 +29,7 @@ const UserListModal = ({
   const { isLoading } = useMainContext();
   const { allUsers, currentUser, blockedUsers, setBlockedUsers, fetchAllUsersQuery } =
     useUserContext();
-  const { currentEvent } = useEventContext();
+  const { currentEvent, fetchAllEventsQuery } = useEventContext();
 
   const getUserArray = (): TUser[] => {
     const userArray: TUser[] = [];
@@ -58,6 +58,31 @@ const UserListModal = ({
     return [currentEvent, user];
   };
 
+  const usedFor = deleteFrom === "blocked-users" ? "user" : "event";
+
+  // When used for events, both fetchAllUsersQuery & fetchAllEventsQuery will have to be successful for users to be displayed
+  // If used for displaying users not related to an event, only fetchAllUsersQuery will have to succeed for users to be shown
+  const isNoFetchError: boolean =
+    usedFor === "user"
+      ? !fetchAllUsersQuery.isError
+      : !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+
+  const fetchIsLoading: boolean =
+    usedFor === "user"
+      ? fetchAllUsersQuery.isLoading
+      : fetchAllEventsQuery.isLoading && fetchAllUsersQuery.isLoading;
+
+  const getQueryForQueryLoadingOrErrorComponent = () => {
+    if (usedFor !== "user") {
+      if (fetchAllUsersQuery.isError) {
+        return fetchAllUsersQuery;
+      }
+      return fetchAllEventsQuery;
+    }
+    return fetchAllUsersQuery;
+  };
+  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
+
   return (
     <div className={styles.modalBackground}>
       <i
@@ -70,8 +95,8 @@ const UserListModal = ({
         className={styles.userListContainer}
       >
         <h2>{header}</h2>
-        {!fetchAllUsersQuery.isLoading &&
-          !fetchAllUsersQuery.isError &&
+        {isNoFetchError &&
+          !fetchIsLoading &&
           (userArray.length > 0 ? (
             userArray.map((user) => (
               <ListedUser
@@ -95,8 +120,8 @@ const UserListModal = ({
             <p>No users to show</p>
           ))}
         <QueryLoadingOrError
-          query={fetchAllUsersQuery}
-          errorMessage="Error fetching data"
+          query={queryForQueryLoadingOrError}
+          errorMessage="Error fetching users"
         />
       </div>
     </div>
