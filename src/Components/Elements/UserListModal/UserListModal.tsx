@@ -32,7 +32,7 @@ const UserListModal = ({
 
   const getUserArray = (): TUser[] => {
     const userArray: TUser[] = [];
-    if (userIDArray) {
+    if (userIDArray && allUsers) {
       for (const userID of userIDArray) {
         const matchingUser = allUsers.filter((user) => user._id === userID)[0];
         userArray.push(matchingUser);
