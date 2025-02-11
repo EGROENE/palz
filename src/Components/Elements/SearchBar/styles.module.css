@@ -19,6 +19,8 @@
 
 .bar i {
   position: absolute;
+  right: 1rem;
+  color: white;
 }
 
 .bar button {
