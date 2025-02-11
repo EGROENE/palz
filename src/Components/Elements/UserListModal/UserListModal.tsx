@@ -68,24 +68,28 @@ const UserListModal = ({
         className={styles.userListContainer}
       >
         <h2>{header}</h2>
-        {userArray.map((user) => (
-          <ListedUser
-            key={user._id}
-            renderButtonOne={renderButtonOne}
-            randomColor={randomColor}
-            user={user}
-            buttonOneText="Message"
-            buttonOneLink={null}
-            buttonOneIsDisabled={isLoading}
-            buttonTwoText={buttonTwoText ? buttonTwoText : "Remove"}
-            buttonTwoIsDisabled={isLoading}
-            buttonTwoHandler={handleDeletion}
-            buttonTwoHandlerParams={getButtonTwoHandlerParams(user)}
-            handlerTwoNeedsEventParam={deleteFrom === "blocked-users" ? false : true}
-            buttonTwoLink={null}
-            objectLink={`/users/${user?.username}`}
-          />
-        ))}
+        {userArray.length > 0 ? (
+          userArray.map((user) => (
+            <ListedUser
+              key={user._id}
+              renderButtonOne={renderButtonOne}
+              randomColor={randomColor}
+              user={user}
+              buttonOneText="Message"
+              buttonOneLink={null}
+              buttonOneIsDisabled={isLoading}
+              buttonTwoText={buttonTwoText ? buttonTwoText : "Remove"}
+              buttonTwoIsDisabled={isLoading}
+              buttonTwoHandler={handleDeletion}
+              buttonTwoHandlerParams={getButtonTwoHandlerParams(user)}
+              handlerTwoNeedsEventParam={deleteFrom === "blocked-users" ? false : true}
+              buttonTwoLink={null}
+              objectLink={`/users/${user?.username}`}
+            />
+          ))
+        ) : (
+          <p>No users to show</p>
+        )}
       </div>
     </div>
   );
