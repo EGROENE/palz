@@ -254,14 +254,7 @@ const UserSettings = () => {
         isLoading={isLoading}
         setIsLoading={setIsLoading}
       />
-      <InterestsSection
-        isDisabled={isLoading}
-        randomColor={randomColor}
-        interestsRelation="user"
-        handleAddInterest={handleAddUserInterest}
-        handleRemoveInterest={handleDeleteUserInterest}
-      />
-      {currentUser && currentUser.blockedUsers.length > 0 && (
+      {currentUser && (
         <p style={{ width: "76%", textAlign: "left" }}>
           Blocked Users{" "}
           <span
@@ -273,6 +266,13 @@ const UserSettings = () => {
           </span>
         </p>
       )}
+      <InterestsSection
+        isDisabled={isLoading}
+        randomColor={randomColor}
+        interestsRelation="user"
+        handleAddInterest={handleAddUserInterest}
+        handleRemoveInterest={handleDeleteUserInterest}
+      />
       <div className="settings-theme-and-delete-account-container">
         <div>
           <h3>Delete Account</h3>
