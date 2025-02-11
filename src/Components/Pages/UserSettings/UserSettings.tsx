@@ -237,10 +237,6 @@ const UserSettings = () => {
     if (allUsers && currentUser) {
       if (blockedUsers && blockedUsers.length > 0) {
         return blockedUsers;
-      } else {
-        return allUsers
-          .filter((user) => currentUser._id && user._id && user._id !== currentUser._id)
-          .map((user) => (user._id ? user._id : ""));
       }
     }
     return [];
