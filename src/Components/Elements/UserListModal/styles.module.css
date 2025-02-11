@@ -12,6 +12,13 @@
   margin-left: -3rem;
 }
 
+.displayArea {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .userListContainer {
   background-color: var(--background-color);
   color: black;
@@ -21,4 +28,8 @@
   align-items: center;
   flex-direction: column;
   overflow-y: scroll;
+}
+
+.userListContainer h2 {
+  font-size: 3rem;
 }
