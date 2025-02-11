@@ -4,7 +4,7 @@ import SignupForm from "../../Forms/LoginForms/SignupForm/SignupForm";
 import LoginForm from "../../Forms/LoginForms/LoginForm/LoginForm";
 import { useEffect, useState } from "react";
 import { TThemeColor } from "../../../types";
-import QueryError from "../../Elements/QueryError/QueryError";
+import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 
 const LoginPage = () => {
   const { theme, toggleTheme } = useMainContext();
@@ -57,10 +57,7 @@ const LoginPage = () => {
           </button>
         </div>
       </div>
-      {fetchAllUsersQuery.isError && <QueryError />}
-      {fetchAllUsersQuery.isLoading && !fetchAllUsersQuery.isError && (
-        <header className="query-status-text">Loading...</header>
-      )}
+      <QueryLoadingOrError query={fetchAllUsersQuery} errorMessage="Error loading data" />
       {!fetchAllUsersQuery.isLoading && !fetchAllUsersQuery.isError && (
         <div className="login-form">
           <div className="login-options-container">

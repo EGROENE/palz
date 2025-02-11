@@ -7,8 +7,8 @@ import { TEvent } from "../../../types";
 import Methods from "../../../methods";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import QueryError from "../../Elements/QueryError/QueryError";
 import SiteLinks from "../../Elements/SiteLinks/SiteLinks";
+import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 
 const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
@@ -62,18 +62,13 @@ const UserHomepage = () => {
   return (
     currentUser && (
       <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
-        {fetchAllEventsQuery.isLoading && (
-          <>
-            <h1>Upcoming Events</h1>
-            <header className="query-status-text">Loading...</header>
-          </>
+        {(fetchAllEventsQuery.isLoading || fetchAllEventsQuery.isError) && (
+          <h1>Upcoming Events</h1>
         )}
-        {fetchAllEventsQuery.isError && !fetchAllEventsQuery.isLoading && (
-          <>
-            <h1>Upcoming Events</h1>
-            <QueryError />
-          </>
-        )}
+        <QueryLoadingOrError
+          query={fetchAllEventsQuery}
+          errorMessage="Error fetching events"
+        />
         {allCurrentUserEvents &&
           allCurrentUserEvents.length > 0 &&
           !fetchAllEventsQuery.isLoading &&

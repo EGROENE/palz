@@ -6,7 +6,7 @@ import ListedUser from "../../Elements/ListedUser/ListedUser";
 import styles from "./styles.module.css";
 import toast from "react-hot-toast";
 import Methods from "../../../methods";
-import QueryError from "../../Elements/QueryError/QueryError";
+import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 
 const FriendRequests = () => {
   const {
@@ -143,12 +143,10 @@ const FriendRequests = () => {
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Friend Requests</h1>
-      {fetchAllUsersQuery.isLoading && (
-        <header style={{ marginTop: "3rem" }} className="query-status-text">
-          Loading...
-        </header>
-      )}
-      {!fetchAllUsersQuery.isLoading && fetchAllUsersQuery.isError && <QueryError />}
+      <QueryLoadingOrError
+        query={fetchAllUsersQuery}
+        errorMessage="Error loading friend requests"
+      />
       {!fetchAllUsersQuery.isLoading &&
         !fetchAllUsersQuery.isError &&
         (userHasPendingRequests === null ||
