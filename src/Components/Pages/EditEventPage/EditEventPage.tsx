@@ -7,12 +7,13 @@ import EventForm from "../../Forms/EventForm/EventForm";
 import toast from "react-hot-toast";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 import { useEventContext } from "../../../Hooks/useEventContext";
+import QueryError from "../../Elements/QueryError/QueryError";
 
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
 const EditEventPage = ({ event }: { event?: TEvent }) => {
   const { showSidebar, setShowSidebar, isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
-  const { currentEvent } = useEventContext();
+  const { currentEvent, fetchAllEventsQuery } = useEventContext();
 
   const navigation = useNavigate();
 
@@ -74,7 +75,13 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       {isLoading && <LoadingModal message="Saving changes..." />}
       <h1>Edit Event</h1>
-      <EventForm randomColor={randomColor} usedFor="edit-event" event={event} />
+      {fetchAllEventsQuery.isLoading && !fetchAllEventsQuery.isError && (
+        <header className="query-status-text">Loading...</header>
+      )}
+      {!fetchAllEventsQuery.isLoading && fetchAllEventsQuery.isError && <QueryError />}
+      {!fetchAllEventsQuery.isLoading && !fetchAllEventsQuery.isError && (
+        <EventForm randomColor={randomColor} usedFor="edit-event" event={event} />
+      )}
     </div>
   );
 };
