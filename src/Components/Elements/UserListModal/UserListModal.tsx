@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { TUser } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
@@ -40,11 +39,7 @@ const UserListModal = ({
     }
     return userArray;
   };
-  const [userArray, setUserArray] = useState<TUser[]>(getUserArray());
-
-  useEffect(() => {
-    setUserArray(getUserArray());
-  }, [blockedUsers]);
+  const userArray = getUserArray();
 
   const getButtonTwoHandlerParams = (user: TUser) => {
     if (deleteFrom === "blocked-users") {
@@ -54,7 +49,7 @@ const UserListModal = ({
 
     if (deleteFrom === "invitee-list") {
       // params in handleRemoveInvitee()
-      return [currentEvent, user, userArray, setUserArray];
+      return [currentEvent, user];
     }
     // if deleteFrom === "rsvp-list"
     // params in handleDeleteUserRSVP()
