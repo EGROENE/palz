@@ -233,6 +233,20 @@ const UserSettings = () => {
       .finally(() => setAccountDeletionInProgress(false));
   };
 
+  const getBlockedUsersArray = (): string[] => {
+    if (allUsers && currentUser) {
+      if (blockedUsers && blockedUsers.length > 0) {
+        return blockedUsers;
+      } else {
+        return allUsers
+          .filter((user) => currentUser._id && user._id && user._id !== currentUser._id)
+          .map((user) => (user._id ? user._id : ""));
+      }
+    }
+    return [];
+  };
+  const blockedUsersArray: string[] = getBlockedUsersArray();
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       {isLoading && <LoadingModal message="Saving changes..." />}
@@ -242,10 +256,10 @@ const UserSettings = () => {
           closeModalMethod={setShowBlockedUsers}
           header="Blocked Users"
           handleDeletion={handleUnblockUser}
-          userIDArray={blockedUsers}
+          userIDArray={blockedUsersArray}
           deleteFrom="blocked-users"
           randomColor={randomColor}
-          buttonTwoText="Unblock"
+          buttonTwoText={"Unblock"}
         />
       )}
       <h1>Settings</h1>
