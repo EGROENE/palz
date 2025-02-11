@@ -4,6 +4,7 @@ import ListedUser from "../ListedUser/ListedUser";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import styles from "./styles.module.css";
 import { useMainContext } from "../../../Hooks/useMainContext";
+import QueryLoadingOrError from "../QueryLoadingOrError/QueryLoadingOrError";
 
 /* Component contains a modal w/ background, as well as a list of users. In every user box, there is user image, name, username, & button that will eventually make it possible to message user & a button that removes user from list. To be used on event pages to show list of RSVPs & list of invitees. */
 const UserListModal = ({
@@ -26,7 +27,8 @@ const UserListModal = ({
   buttonTwoText?: string;
 }) => {
   const { isLoading } = useMainContext();
-  const { allUsers, currentUser, blockedUsers, setBlockedUsers } = useUserContext();
+  const { allUsers, currentUser, blockedUsers, setBlockedUsers, fetchAllUsersQuery } =
+    useUserContext();
   const { currentEvent } = useEventContext();
 
   const getUserArray = (): TUser[] => {
@@ -68,28 +70,34 @@ const UserListModal = ({
         className={styles.userListContainer}
       >
         <h2>{header}</h2>
-        {userArray.length > 0 ? (
-          userArray.map((user) => (
-            <ListedUser
-              key={user._id}
-              renderButtonOne={renderButtonOne}
-              randomColor={randomColor}
-              user={user}
-              buttonOneText="Message"
-              buttonOneLink={null}
-              buttonOneIsDisabled={isLoading}
-              buttonTwoText={buttonTwoText ? buttonTwoText : "Remove"}
-              buttonTwoIsDisabled={isLoading}
-              buttonTwoHandler={handleDeletion}
-              buttonTwoHandlerParams={getButtonTwoHandlerParams(user)}
-              handlerTwoNeedsEventParam={deleteFrom === "blocked-users" ? false : true}
-              buttonTwoLink={null}
-              objectLink={`/users/${user?.username}`}
-            />
-          ))
-        ) : (
-          <p>No users to show</p>
-        )}
+        {!fetchAllUsersQuery.isLoading &&
+          !fetchAllUsersQuery.isError &&
+          (userArray.length > 0 ? (
+            userArray.map((user) => (
+              <ListedUser
+                key={user._id}
+                renderButtonOne={renderButtonOne}
+                randomColor={randomColor}
+                user={user}
+                buttonOneText="Message"
+                buttonOneLink={null}
+                buttonOneIsDisabled={isLoading}
+                buttonTwoText={buttonTwoText ? buttonTwoText : "Remove"}
+                buttonTwoIsDisabled={isLoading}
+                buttonTwoHandler={handleDeletion}
+                buttonTwoHandlerParams={getButtonTwoHandlerParams(user)}
+                handlerTwoNeedsEventParam={deleteFrom === "blocked-users" ? false : true}
+                buttonTwoLink={null}
+                objectLink={`/users/${user?.username}`}
+              />
+            ))
+          ) : (
+            <p>No users to show</p>
+          ))}
+        <QueryLoadingOrError
+          query={fetchAllUsersQuery}
+          errorMessage="Error fetching data"
+        />
       </div>
     </div>
   );
