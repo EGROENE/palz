@@ -21,6 +21,7 @@ const EventPage = () => {
     allEvents,
     setCurrentEvent,
     handleRemoveInvitee,
+    invitees,
   } = useEventContext();
 
   //const [event, setEvent] = useState<TEvent | undefined>();
@@ -189,7 +190,7 @@ const EventPage = () => {
               closeModalMethod={setShowInvitees}
               header="Invitees"
               handleDeletion={handleRemoveInvitee}
-              userIDArray={currentEvent.invitees}
+              userIDArray={invitees}
               deleteFrom="invitee-list"
               randomColor={randomColor}
             />
