@@ -76,7 +76,8 @@ const UserHomepage = () => {
         )}
         {allCurrentUserEvents &&
           allCurrentUserEvents.length > 0 &&
-          !fetchAllEventsQuery.isLoading && (
+          !fetchAllEventsQuery.isLoading &&
+          !fetchAllEventsQuery.isError && (
             <>
               <div className="upcoming-events-hero">
                 <h1>Upcoming Events ({allCurrentUserEvents.length})</h1>
@@ -100,7 +101,8 @@ const UserHomepage = () => {
           )}
         {allCurrentUserEvents &&
           !allCurrentUserEvents.length &&
-          !fetchAllEventsQuery.isLoading && (
+          !fetchAllEventsQuery.isLoading &&
+          !fetchAllEventsQuery.isError && (
             <>
               <div className="upcoming-events-hero">
                 <h1>No upcoming events</h1>
