@@ -416,29 +416,36 @@ const OtherUserProfile = () => {
             </div>
           </div>
           <section className={styles.furtherInfoSection}>
+            {currentOtherUser.about !== "" && (
+              <div className={styles.about}>
+                <header>About me :</header>
+                <p>{currentOtherUser.about}</p>
+              </div>
+            )}
             {currentOtherUser.interests.length > 0 ? (
               <div className={styles.infoPoint}>
-                <p>
-                I'm interested in:{" "}
+                <header>I'm interested in : </header>
                 <span>
                   {currentOtherUser.interests.map((int) => (
                     <Tab randomColor={randomColor} info={int} userMayNotDelete={true} />
                   ))}
                 </span>
-              </p>
               </div>
             ) : (
               <p>No interests to show</p>
             )}
             {palzInCommon.length > 0 ? (
-              <p>
-                You are both palz with:{" "}
+              <div className={styles.infoPoint}>
+                <header>You are both palz with : </header>
                 {palzInCommon.map((pal) => (
                   <Tab info={pal} userMayNotDelete={true} randomColor={randomColor} />
                 ))}
-              </p>
+              </div>
             ) : (
-              <p>No palz in common</p>
+              <div className={styles.infoPoint}>
+                <header>You are both palz with : </header>
+                <p>No one</p>
+              </div>
             )}
           </section>
         </>
