@@ -68,11 +68,14 @@ const createUser = (newUserData: TUser): Promise<Response> => {
   });
 };
 
-const addToBlockedUsers = (blocker: TUser, blockeeID: string): Promise<Response> => {
+const addToBlockedUsers = (
+  blocker: TUser,
+  blockeeID: string | undefined
+): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedBlockedUsersArray = blocker.blockedUsers.concat(blockeeID);
+  let updatedBlockedUsersArray = blockeeID ? blocker.blockedUsers.concat(blockeeID) : "";
 
   const getRaw = () => {
     return JSON.stringify({
