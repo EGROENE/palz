@@ -416,13 +416,15 @@ const OtherUserProfile = () => {
             </div>
           </div>
           <div>
-            {palzInCommon.length > 0 && (
+            {palzInCommon.length > 0 ? (
               <p>
                 You are both palz with:{" "}
                 {palzInCommon.map((pal) => (
                   <Tab info={pal} userMayNotDelete={true} randomColor={randomColor} />
                 ))}
               </p>
+            ) : (
+              <p>No palz in common</p>
             )}
           </div>
         </>
