@@ -347,7 +347,10 @@ const OtherUserProfile = () => {
                 (currentOtherUser.whoCanSeeLocation === "friends of friends" &&
                   usersAreFriendsOfFriends) ||
                 (currentOtherUser.whoCanSeeLocation === "friends" &&
-                  currentOtherUser.friends.includes(currentUser._id))) && (
+                  currentOtherUser.friends.includes(currentUser._id))) &&
+              currentOtherUser.city !== "" &&
+              currentOtherUser.stateProvince !== "" &&
+              currentOtherUser.country !== "" && (
                 <div className={styles.userLocationContainer}>
                   <p>{`${currentOtherUser.city}, ${currentOtherUser.stateProvince}`}</p>
                   <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
