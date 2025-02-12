@@ -715,6 +715,68 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  const blockUserMutation = useMutation({
+    mutationFn: ({
+      blocker,
+      blockee,
+      areFriends,
+      hasSentFriendRequest,
+      hasReceivedFriendRequest,
+    }: {
+      blocker: TUser;
+      blockee: TUser;
+      areFriends: boolean;
+      hasSentFriendRequest: boolean;
+      hasReceivedFriendRequest: boolean;
+    }) => {
+      if (
+        areFriends !== undefined &&
+        hasSentFriendRequest !== undefined &&
+        hasReceivedFriendRequest !== undefined
+      ) {
+        return Requests.addToBlockedUsers(blocker, blockee?._id);
+      }
+      return Requests.addToBlockedUsers(blocker, blockee?._id);
+    },
+    onSuccess: (data, variables) => {
+      if (data.ok) {
+        if (variables.areFriends) {
+          handleUnfriending(variables.blocker, variables.blockee);
+        }
+        if (variables.hasSentFriendRequest) {
+          handleRetractFriendRequest(variables.blocker, variables.blockee);
+        }
+        if (variables.hasReceivedFriendRequest) {
+          handleRetractFriendRequest(variables.blockee, variables.blocker);
+        }
+
+        queryClient.invalidateQueries({ queryKey: "allUsers" });
+        if (allUsers && currentUser) {
+          setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+        }
+
+        toast(`You have blocked ${variables.blockee.username}.`, {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
+    },
+    onError: (error, variables) => {
+      console.log(error);
+      toast.error(`Unable to block ${variables.blockee.username}. Please try again.`, {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => setIsLoading(false),
+  });
+
   useEffect(() => {
     if (fetchAllUsersQuery.data && currentUser) {
       const updatedUser = fetchAllUsersQuery.data.filter(
@@ -1500,184 +1562,26 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers?: string[] | null,
     setBlockedUsers?: React.Dispatch<SetStateAction<string[] | null>>
   ): void => {
-    let requestsAreOK: boolean = true;
-    /* Main requests: add to blocker's blockedUsers, remove from each other's friends arrays, remove from each other's friendRequestsSent/Received arrays. */
-    /* Promise.all() could be used, but could take longer. Chaining requests could save time, since the whole process will stop if the one before that in the chain fails, and the user will be prompted to try it again. */
-
     setIsLoading(true);
-
-    if (setBlockedUsers && blockedUsers && blockee._id) {
-      setBlockedUsers(blockedUsers.concat(blockee._id));
-    }
-
-    // Remove each from any friend request arrays:
-    if (blockee._id) {
-      // Add blockee to blocker's blockedUsers array:
-      Requests.addToBlockedUsers(blocker, blockee._id)
-        .then((response) => {
-          if (!response.ok) {
-            if (setBlockedUsers && blockedUsers && blockee._id) {
-              setBlockedUsers(blockedUsers);
-            }
-            toast.error(`Unable to block ${blockee.username}. Please try again.`, {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          } else {
-            // If friends, remove from each other's friends arrays:
-            if (blockee._id && blocker._id) {
-              if (
-                blocker.friends.includes(blockee._id) &&
-                blockee.friends.includes(blocker._id)
-              ) {
-                Requests.deleteFriendFromFriendsArray(blocker, blockee)
-                  .then((response) => {
-                    if (!response.ok) {
-                      if (setBlockedUsers && blockedUsers && blockee._id) {
-                        setBlockedUsers(blockedUsers);
-                      }
-                      requestsAreOK = false;
-                      toast.error(
-                        `Unable to block ${blockee.username}. Please try again.`,
-                        {
-                          style: {
-                            background:
-                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                            color: theme === "dark" ? "black" : "white",
-                            border: "2px solid red",
-                          },
-                        }
-                      );
-                    } else {
-                      if (blocker._id) {
-                        Requests.deleteFriendFromFriendsArray(blockee, blocker)
-                          .then((response) => {
-                            if (!response.ok) {
-                              requestsAreOK = false;
-                              if (setBlockedUsers && blockedUsers && blockee._id) {
-                                setBlockedUsers(blockedUsers);
-                              }
-                              toast.error(
-                                `Unable to block ${blockee.username}. Please try again.`,
-                                {
-                                  style: {
-                                    background:
-                                      theme === "light"
-                                        ? "#242424"
-                                        : "rgb(233, 231, 228)",
-                                    color: theme === "dark" ? "black" : "white",
-                                    border: "2px solid red",
-                                  },
-                                }
-                              );
-                            } else {
-                              queryClient
-                                .invalidateQueries({ queryKey: "allUsers" })
-                                .then(() => {
-                                  if (allUsers && currentUser) {
-                                    setCurrentUser(
-                                      allUsers.filter(
-                                        (user) => user._id === currentUser._id
-                                      )[0]
-                                    );
-                                  }
-                                });
-                            }
-                          })
-                          .catch((error) => console.log(error));
-                      }
-                    }
-                  })
-                  .catch((error) => console.log(error));
-              }
-            }
-
-            // Delete any friend requests between the blocker and blockee:
-            // If blocker has received FR from blockee:
-            if (blockee._id && requestsAreOK) {
-              if (blocker.friendRequestsReceived.includes(blockee._id)) {
-                Requests.removeFromFriendRequestsReceived(blockee, blocker)
-                  .then((response) => {
-                    if (!response.ok) {
-                      requestsAreOK = false;
-                    } else {
-                      if (blocker._id) {
-                        Requests.removeFromFriendRequestsSent(blockee, blocker)
-                          .then((response) => {
-                            if (!response.ok) {
-                              requestsAreOK = false;
-                            }
-                          })
-                          .catch((error) => console.log(error));
-                      }
-                    }
-                  })
-                  .catch((error) => console.log(error));
-              }
-
-              // If blockee has received FR from blocker:
-              if (blocker._id && requestsAreOK) {
-                if (blockee.friendRequestsReceived.includes(blocker._id)) {
-                  Requests.removeFromFriendRequestsReceived(blocker, blockee)
-                    .then((response) => {
-                      if (!response.ok) {
-                        requestsAreOK = false;
-                      } else {
-                        if (blockee._id) {
-                          Requests.removeFromFriendRequestsSent(blocker, blockee)
-                            .then((response) => {
-                              if (!response.ok) {
-                                toast.error(
-                                  `Unable to block ${blockee.username}. Please try again.`,
-                                  {
-                                    style: {
-                                      background:
-                                        theme === "light"
-                                          ? "#242424"
-                                          : "rgb(233, 231, 228)",
-                                      color: theme === "dark" ? "black" : "white",
-                                      border: "2px solid red",
-                                    },
-                                  }
-                                );
-                              }
-                            })
-                            .catch((error) => console.log(error));
-                        }
-                      }
-                    })
-                    .catch((error) => console.log(error));
-                }
-              }
-            }
-          }
-        })
-        .catch((error) => console.log(error))
-        .finally(() => {
-          setIsLoading(false);
-          if (requestsAreOK) {
-            queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-            if (fetchAllUsersQuery.data && currentUser) {
-              allUsers = fetchAllUsersQuery.data;
-              setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-            }
-            toast(`You have blocked ${blockee.username}.`, {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          } else {
-            if (setBlockedUsers && blockedUsers && blockee._id) {
-              setBlockedUsers(blockedUsers);
-            }
-          }
-        });
-    }
+    const areFriends: boolean =
+      blocker._id &&
+      blockee._id &&
+      (blocker.friends.includes(blockee._id) || blockee.friends.includes(blocker._id))
+        ? true
+        : false;
+    const hasSentFriendRequest: boolean = blockee._id
+      ? blocker.friendRequestsSent.includes(blockee._id)
+      : false;
+    const hasReceivedFriendRequest: boolean = blockee._id
+      ? blocker.friendRequestsReceived.includes(blockee._id)
+      : false;
+    blockUserMutation.mutate({
+      blocker,
+      blockee,
+      areFriends,
+      hasSentFriendRequest,
+      hasReceivedFriendRequest,
+    });
   };
 
   const handleUnblockUser = (
