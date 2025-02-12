@@ -1417,14 +1417,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleUnfriending = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     user: TUser,
     friend: TUser,
     friends?: string[],
     setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ): void => {
-    e.preventDefault();
-
     if (friends && setFriends) {
       setFriends(friends.filter((userID) => userID !== friend._id));
     }

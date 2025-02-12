@@ -251,7 +251,6 @@ export type TUserContext = {
   showFriendRequestResponseOptions: boolean;
   setShowFriendRequestResponseOptions: React.Dispatch<React.SetStateAction<boolean>>;
   handleUnfriending: (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     user: TUser,
     friend: TUser,
     friends?: string[],
