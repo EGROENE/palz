@@ -190,9 +190,9 @@ const UserCard = ({ user }: { user: TUser }) => {
                 ? { backgroundColor: `${randomColor}`, color: "black" }
                 : { backgroundColor: `${randomColor}`, color: "white" }
             }
-            onClick={(e) => {
+            onClick={() => {
               if (currentUserAndUserAreFriends) {
-                handleUnfriending(e, currentUser, user, friends, setFriends);
+                handleUnfriending(currentUser, user, friends, setFriends);
               }
               if (currentUserSentFriendRequest && currentUser && currentUserUpdated) {
                 handleRetractFriendRequest(

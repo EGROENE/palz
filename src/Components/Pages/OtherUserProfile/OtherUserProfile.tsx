@@ -196,7 +196,7 @@ const OtherUserProfile = () => {
     ),
     handler: handleUnfriending,
     handlerParams: [currentUser, currentOtherUser, friends, setFriends],
-    paramsIncludeEvent: true,
+    paramsIncludeEvent: false,
   };
 
   const getBlockButton = () => {
