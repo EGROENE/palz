@@ -765,6 +765,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     },
     onError: (error, variables) => {
+      if (blockedUsers && setBlockedUsers) {
+        setBlockedUsers(
+          blockedUsers.filter((userID) => userID !== variables.blockee._id)
+        );
+      }
       console.log(error);
       toast.error(`Unable to block ${variables.blockee.username}. Please try again.`, {
         style: {
@@ -1506,6 +1511,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers?: string[] | null,
     setBlockedUsers?: React.Dispatch<SetStateAction<string[] | null>>
   ): void => {
+    if (blockedUsers && setBlockedUsers && blockee._id) {
+      setBlockedUsers(blockedUsers.concat(blockee._id));
+    }
     setIsLoading(true);
     const areFriends: boolean =
       blocker._id &&
@@ -1528,6 +1536,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  // No mutation needed here, as operation is simpler than blocking
   const handleUnblockUser = (
     blocker: TUser,
     blockee: TUser,
