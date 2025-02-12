@@ -1322,39 +1322,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     const file = e.target.files && e.target.files[0];
     const base64 = file && (await Methods.convertToBase64(file));
     updateProfileImageMutation.mutate({ currentUser, base64 });
-    /* Requests.updateUserProfileImage(currentUser, base64)
-      .then((response) => {
-        if (!response.ok) {
-          if (response.status === 413) {
-            toast.error("Max file size is 50MB.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          } else {
-            toast.error("Could not update profile image. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          }
-        } else {
-          toast.success("Profile image updated", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid green",
-            },
-          });
-          setProfileImage(base64);
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setImageIsUploading(false)); */
   };
 
   const removeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1362,29 +1329,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setShowUpdateProfileImageInterface(false);
     const placeholder = "";
     removeProfileImageMutation.mutate({ currentUser, placeholder });
-    /* Requests.updateUserProfileImage(currentUser, "")
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not remove profile image. Please try again.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        } else {
-          toast("Profile image removed", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          setProfileImage("");
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setImageIsDeleting(false)); */
   };
 
   const handleSendFriendRequest = (
