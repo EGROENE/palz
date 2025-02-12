@@ -8,6 +8,8 @@ import styles from "./styles.module.css";
 import { TThemeColor, TUser } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { countries } from "../../../constants";
+import Methods from "../../../methods";
+import Tab from "../../Elements/Tab/Tab";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
@@ -293,6 +295,36 @@ const OtherUserProfile = () => {
     ? friendsOfCurrentUserFriends.includes(currentOtherUser)
     : false;
 
+  const getCurrentUserPalz = (): TUser[] => {
+    let currentUserPalz = [];
+    if (allUsers && currentUser) {
+      for (const palID of currentUser.friends) {
+        currentUserPalz.push(allUsers.filter((user) => user._id === palID)[0]);
+      }
+    }
+    return currentUserPalz;
+  };
+  const currentUserPalz: TUser[] = getCurrentUserPalz();
+
+  const getCurrentOtherUserPalz = (): TUser[] => {
+    let currentOtherUserPalz = [];
+    if (allUsers && currentOtherUser) {
+      for (const palID of currentOtherUser.friends) {
+        currentOtherUserPalz.push(allUsers.filter((user) => user._id === palID)[0]);
+      }
+    }
+    return currentOtherUserPalz;
+  };
+  const currentOtherUserPalz = getCurrentOtherUserPalz();
+
+  const combinedPalz = currentUserPalz.concat(currentOtherUserPalz);
+
+  const palzInCommon = Methods.removeDuplicatesFromArray(
+    combinedPalz.filter(
+      (pal) => combinedPalz.indexOf(pal) !== combinedPalz.lastIndexOf(pal)
+    )
+  );
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       {showFriendRequestResponseOptions && currentOtherUser && (
@@ -322,66 +354,78 @@ const OtherUserProfile = () => {
         />
       )}
       {currentOtherUser && (
-        <div
-          className={styles.kopfzeile}
-          style={{ borderBottom: `3px solid ${randomColor}` }}
-        >
-          <div style={{ boxShadow: "unset" }} className="theme-element-container">
-            <img
-              src={
-                currentOtherUser.profileImage !== "" &&
-                typeof currentOtherUser.profileImage === "string"
-                  ? currentOtherUser.profileImage
-                  : defaultProfileImage
-              }
-            />
-          </div>
-          <div className={styles.mainInfoContainer}>
-            <header style={{ color: `${randomColor}` }}>
-              {currentOtherUser.firstName} {currentOtherUser.lastName}
-            </header>
-            <p>{currentOtherUser.username}</p>
-            {currentUser?._id &&
-              currentOtherUser.whoCanSeeLocation !== "nobody" &&
-              (currentOtherUser.whoCanSeeLocation === "anyone" ||
-                (currentOtherUser.whoCanSeeLocation === "friends of friends" &&
-                  usersAreFriendsOfFriends) ||
-                (currentOtherUser.whoCanSeeLocation === "friends" &&
-                  currentOtherUser.friends.includes(currentUser._id))) &&
-              currentOtherUser.city !== "" &&
-              currentOtherUser.stateProvince !== "" &&
-              currentOtherUser.country !== "" && (
-                <div className={styles.userLocationContainer}>
-                  <p>{`${currentOtherUser.city}, ${currentOtherUser.stateProvince}`}</p>
-                  <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
-                </div>
-              )}
-            <div className={styles.actionButtonsContainer}>
-              {displayedButtons.map(
-                (button) =>
-                  button && (
-                    <div
-                      key={button.type}
-                      style={{ maxHeight: "3rem", display: "flex" }}
-                      className="theme-element-container"
-                    >
-                      <button
-                        disabled={isLoading}
-                        onClick={
-                          button.paramsIncludeEvent // @ts-expect-error: ...
-                            ? (e) => button.handler(e, ...button.handlerParams)
-                            : // @ts-expect-error: ...
-                              () => button.handler(...button.handlerParams)
-                        }
+        <>
+          <div
+            className={styles.kopfzeile}
+            style={{ borderBottom: `3px solid ${randomColor}` }}
+          >
+            <div style={{ boxShadow: "unset" }} className="theme-element-container">
+              <img
+                src={
+                  currentOtherUser.profileImage !== "" &&
+                  typeof currentOtherUser.profileImage === "string"
+                    ? currentOtherUser.profileImage
+                    : defaultProfileImage
+                }
+              />
+            </div>
+            <div className={styles.mainInfoContainer}>
+              <header style={{ color: `${randomColor}` }}>
+                {currentOtherUser.firstName} {currentOtherUser.lastName}
+              </header>
+              <p>{currentOtherUser.username}</p>
+              {currentUser?._id &&
+                currentOtherUser.whoCanSeeLocation !== "nobody" &&
+                (currentOtherUser.whoCanSeeLocation === "anyone" ||
+                  (currentOtherUser.whoCanSeeLocation === "friends of friends" &&
+                    usersAreFriendsOfFriends) ||
+                  (currentOtherUser.whoCanSeeLocation === "friends" &&
+                    currentOtherUser.friends.includes(currentUser._id))) &&
+                currentOtherUser.city !== "" &&
+                currentOtherUser.stateProvince !== "" &&
+                currentOtherUser.country !== "" && (
+                  <div className={styles.userLocationContainer}>
+                    <p>{`${currentOtherUser.city}, ${currentOtherUser.stateProvince}`}</p>
+                    <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
+                  </div>
+                )}
+              <div className={styles.actionButtonsContainer}>
+                {displayedButtons.map(
+                  (button) =>
+                    button && (
+                      <div
+                        key={button.type}
+                        style={{ maxHeight: "3rem", display: "flex" }}
+                        className="theme-element-container"
                       >
-                        {button.buttonText}
-                      </button>
-                    </div>
-                  )
-              )}
+                        <button
+                          disabled={isLoading}
+                          onClick={
+                            button.paramsIncludeEvent // @ts-expect-error: ...
+                              ? (e) => button.handler(e, ...button.handlerParams)
+                              : // @ts-expect-error: ...
+                                () => button.handler(...button.handlerParams)
+                          }
+                        >
+                          {button.buttonText}
+                        </button>
+                      </div>
+                    )
+                )}
+              </div>
             </div>
           </div>
-        </div>
+          <div>
+            {palzInCommon.length > 0 && (
+              <p>
+                You are both palz with:{" "}
+                {palzInCommon.map((pal) => (
+                  <Tab info={pal} userMayNotDelete={true} randomColor={randomColor} />
+                ))}
+              </p>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
