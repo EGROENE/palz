@@ -415,7 +415,21 @@ const OtherUserProfile = () => {
               </div>
             </div>
           </div>
-          <div>
+          <section className={styles.furtherInfoSection}>
+            {currentOtherUser.interests.length > 0 ? (
+              <div className={styles.infoPoint}>
+                <p>
+                I'm interested in:{" "}
+                <span>
+                  {currentOtherUser.interests.map((int) => (
+                    <Tab randomColor={randomColor} info={int} userMayNotDelete={true} />
+                  ))}
+                </span>
+              </p>
+              </div>
+            ) : (
+              <p>No interests to show</p>
+            )}
             {palzInCommon.length > 0 ? (
               <p>
                 You are both palz with:{" "}
@@ -426,7 +440,7 @@ const OtherUserProfile = () => {
             ) : (
               <p>No palz in common</p>
             )}
-          </div>
+          </section>
         </>
       )}
     </div>
