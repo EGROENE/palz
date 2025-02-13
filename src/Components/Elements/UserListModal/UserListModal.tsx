@@ -8,23 +8,39 @@ import QueryLoadingOrError from "../QueryLoadingOrError/QueryLoadingOrError";
 
 /* Component contains a modal w/ background, as well as a list of users. In every user box, there is user image, name, username, & button that will eventually make it possible to message user & a button that removes user from list. To be used on event pages to show list of RSVPs & list of invitees. */
 const UserListModal = ({
+  listType,
   renderButtonOne,
   closeModalMethod,
   header,
   userIDArray,
-  handleDeletion,
+  buttonOneText,
+  buttonOneHandler,
+  buttonOneHandlerNeedsEventParam,
+  buttonOneHandlerParams,
+  buttonTwoText,
+  buttonTwoHandler,
+  buttonTwoHandlerNeedsEventParam,
+  buttonTwoHandlerParams,
+  buttonTwoLink,
   deleteFrom,
   randomColor,
-  buttonTwoText,
 }: {
+  listType: "invitees" | "rsvpd-users" | "other-user-friends" | "blocked-users";
   renderButtonOne: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
   header: string;
   userIDArray: (string | undefined)[] | undefined | null;
-  handleDeletion?: Function;
+  buttonOneText?: string;
+  buttonOneHandler?: Function;
+  buttonOneHandlerNeedsEventParam?: boolean;
+  buttonOneHandlerParams?: any[];
+  buttonTwoText?: string;
+  buttonTwoHandler?: Function;
+  buttonTwoHandlerNeedsEventParam?: boolean;
+  buttonTwoHandlerParams?: any[];
+  buttonTwoLink?: string;
   deleteFrom?: "invitee-list" | "rsvp-list" | "blocked-users";
   randomColor?: string;
-  buttonTwoText?: string;
 }) => {
   const { isLoading } = useMainContext();
   const { allUsers, currentUser, blockedUsers, setBlockedUsers, fetchAllUsersQuery } =
@@ -61,18 +77,20 @@ const UserListModal = ({
     getNumberOfUsersWhoHaveBlockRelationshipWithCurrentUser();
 
   const getButtonTwoHandlerParams = (user: TUser) => {
-    if (deleteFrom === "blocked-users") {
-      // params in handleUnblockUser()
+    if (listType === "blocked-users") {
       return [currentUser, user, blockedUsers, setBlockedUsers];
     }
 
-    if (deleteFrom === "invitee-list") {
-      // params in handleRemoveInvitee()
+    if (listType === "invitees" || listType === "rsvpd-users") {
       return [currentEvent, user];
     }
-    // if deleteFrom === "rsvp-list"
-    // params in handleDeleteUserRSVP()
-    return [currentEvent, user];
+  };
+
+  const getButtonTwoLink = (user: TUser): string | null => {
+    if (listType === "other-user-friends") {
+      return `/users/${user.username}`;
+    }
+    return null;
   };
 
   const usedFor = deleteFrom === "blocked-users" ? "user" : "event";
@@ -125,19 +143,23 @@ const UserListModal = ({
                   <ListedUser
                     key={user._id}
                     renderButtonOne={renderButtonOne}
-                    randomColor={randomColor}
                     user={user}
-                    buttonOneText="Message"
+                    buttonOneText={buttonOneText}
+                    buttonOneHandler={buttonOneHandler}
+                    buttonOneHandlerNeedsEventParam={buttonOneHandlerNeedsEventParam}
+                    buttonOneHandlerParams={buttonOneHandlerParams}
                     buttonOneLink={null}
                     buttonOneIsDisabled={isLoading}
-                    buttonTwoText={buttonTwoText ? buttonTwoText : "Remove"}
+                    buttonTwoText={buttonTwoText}
                     buttonTwoIsDisabled={isLoading}
-                    buttonTwoHandler={handleDeletion}
-                    buttonTwoHandlerParams={getButtonTwoHandlerParams(user)}
-                    handlerTwoNeedsEventParam={
-                      deleteFrom === "blocked-users" ? false : true
+                    buttonTwoHandler={buttonTwoHandler}
+                    buttonTwoHandlerNeedsEventParam={buttonTwoHandlerNeedsEventParam}
+                    buttonTwoHandlerParams={
+                      buttonTwoHandlerParams
+                        ? buttonTwoHandlerParams
+                        : getButtonTwoHandlerParams(user)
                     }
-                    buttonTwoLink={null}
+                    buttonTwoLink={buttonTwoLink ? buttonTwoLink : getButtonTwoLink(user)}
                     objectLink={`/users/${user?.username}`}
                   />
                 )
