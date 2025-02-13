@@ -22,7 +22,6 @@ const UserListModal = ({
   buttonTwoHandlerNeedsEventParam,
   buttonTwoHandlerParams,
   buttonTwoLink,
-  deleteFrom,
   randomColor,
 }: {
   listType: "invitees" | "rsvpd-users" | "other-user-friends" | "blocked-users";
@@ -39,7 +38,6 @@ const UserListModal = ({
   buttonTwoHandlerNeedsEventParam?: boolean;
   buttonTwoHandlerParams?: any[];
   buttonTwoLink?: string;
-  deleteFrom?: "invitee-list" | "rsvp-list" | "blocked-users";
   randomColor?: string;
 }) => {
   const { isLoading } = useMainContext();
@@ -98,22 +96,20 @@ const UserListModal = ({
     return null;
   };
 
-  const usedFor = deleteFrom === "blocked-users" ? "user" : "event";
-
   // When used for events, both fetchAllUsersQuery & fetchAllEventsQuery will have to be successful for users to be displayed
   // If used for displaying users not related to an event, only fetchAllUsersQuery will have to succeed for users to be shown
   const isNoFetchError: boolean =
-    usedFor === "user"
+    listType === "blocked-users" || listType === "other-user-friends"
       ? !fetchAllUsersQuery.isError
       : !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
 
   const fetchIsLoading: boolean =
-    usedFor === "user"
+    listType === "blocked-users" || listType === "other-user-friends"
       ? fetchAllUsersQuery.isLoading
       : fetchAllEventsQuery.isLoading && fetchAllUsersQuery.isLoading;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (usedFor !== "user") {
+    if (listType !== "blocked-users" && listType !== "other-user-friends") {
       if (fetchAllUsersQuery.isError) {
         return fetchAllUsersQuery;
       }
