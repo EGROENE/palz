@@ -427,7 +427,12 @@ const OtherUserProfile = () => {
                 <header>I'm interested in : </header>
                 <span>
                   {currentOtherUser.interests.map((int) => (
-                    <Tab randomColor={randomColor} info={int} userMayNotDelete={true} />
+                    <Tab
+                      key={int}
+                      randomColor={randomColor}
+                      info={int}
+                      userMayNotDelete={true}
+                    />
                   ))}
                 </span>
               </div>
@@ -438,7 +443,12 @@ const OtherUserProfile = () => {
               <div className={styles.infoPoint}>
                 <header>You are both palz with : </header>
                 {palzInCommon.map((pal) => (
-                  <Tab info={pal} userMayNotDelete={true} randomColor={randomColor} />
+                  <Tab
+                    key={pal._id}
+                    info={pal}
+                    userMayNotDelete={true}
+                    randomColor={randomColor}
+                  />
                 ))}
               </div>
             ) : (
