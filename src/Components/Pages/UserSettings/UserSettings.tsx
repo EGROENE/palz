@@ -256,7 +256,6 @@ const UserSettings = () => {
           buttonTwoText="Unblock"
           buttonTwoHandler={handleUnblockUser}
           buttonTwoHandlerNeedsEventParam={false}
-          deleteFrom="blocked-users"
           randomColor={randomColor}
         />
       )}

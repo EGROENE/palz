@@ -198,7 +198,6 @@ const EventPage = () => {
               buttonTwoText="Remove"
               buttonTwoHandler={handleRemoveInvitee}
               buttonTwoHandlerNeedsEventParam={true}
-              deleteFrom="invitee-list"
               randomColor={randomColor}
             />
           )}
@@ -216,7 +215,6 @@ const EventPage = () => {
               buttonTwoText="Remove"
               buttonTwoHandler={handleDeleteUserRSVP}
               buttonTwoHandlerNeedsEventParam={false}
-              deleteFrom="rsvp-list"
               randomColor={randomColor}
             />
           )}
