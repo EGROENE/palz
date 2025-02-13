@@ -10,6 +10,7 @@ import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsIn
 import { countries } from "../../../constants";
 import Methods from "../../../methods";
 import Tab from "../../Elements/Tab/Tab";
+import UserListModal from "../../Elements/UserListModal/UserListModal";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
@@ -39,6 +40,8 @@ const OtherUserProfile = () => {
   const { username } = useParams();
   const currentOtherUser =
     allUsers && allUsers.filter((user) => user.username === username)[0];
+
+  const [showFriends, setShowFriends] = useState<boolean>(false);
 
   const currentOtherUserIsBlocked =
     blockedUsers && currentOtherUser?._id && blockedUsers.includes(currentOtherUser._id);
@@ -325,6 +328,26 @@ const OtherUserProfile = () => {
     )
   );
 
+  const getCurrentUserCanSeeFriendsList = (): boolean => {
+    if (currentUser && currentUser._id) {
+      const currentUserIsFriend: boolean =
+        currentOtherUser && currentOtherUser && currentOtherUser._id
+          ? currentOtherUser.friends.includes(currentUser._id) &&
+            currentUser.friends.includes(currentOtherUser._id)
+          : false;
+
+      if (
+        currentOtherUser?.whoCanSeeFriendsList === "anyone" ||
+        currentUserIsFriend ||
+        currentUserIsFriendOfFriend
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+  const currentUserCanSeeFriendsList: boolean = getCurrentUserCanSeeFriendsList();
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       {showFriendRequestResponseOptions && currentOtherUser && (
@@ -456,6 +479,24 @@ const OtherUserProfile = () => {
                 <header>You are both palz with : </header>
                 <p>No one</p>
               </div>
+            )}
+            {currentOtherUser.friends.length > 0 && currentUserCanSeeFriendsList && (
+              <div className={styles.infoPoint}>
+                <header
+                  className={styles.clickableHeader}
+                  onClick={() => setShowFriends(true)}
+                >{`See friends (${currentOtherUser.friends.length})`}</header>
+              </div>
+            )}
+            {showFriends && (
+              <UserListModal
+                listType="other-user-friends"
+                renderButtonOne={false}
+                closeModalMethod={setShowFriends}
+                header={`${currentOtherUser.username} 's palz`}
+                userIDArray={currentOtherUser.friends}
+                buttonTwoText="View Profile"
+              />
             )}
           </section>
         </>
