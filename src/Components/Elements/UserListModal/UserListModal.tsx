@@ -57,14 +57,15 @@ const UserListModal = ({
   };
   const userArray = getUserArray();
 
-  const getNumberOfUsersWhoHaveBlockRelationshipWithCurrentUser = (): number => {
+  const getNumberOfUsersInvisibleToCurrentUser = (): number => {
     let sum = 0;
     if (listType !== "blocked-users") {
       for (const user of userArray) {
         if (user && user._id && currentUser && currentUser._id) {
           if (
             user.blockedUsers.includes(currentUser._id) ||
-            currentUser?.blockedUsers.includes(user._id)
+            currentUser?.blockedUsers.includes(user._id) ||
+            user._id === currentUser._id
           ) {
             sum++;
           }
@@ -73,11 +74,9 @@ const UserListModal = ({
     }
     return sum;
   };
-  const numberOfUsersWhoHaveBlockRelationshipWithCurrentUser =
-    getNumberOfUsersWhoHaveBlockRelationshipWithCurrentUser();
+  const numberOfUsersInvisibleToCurrentUser = getNumberOfUsersInvisibleToCurrentUser();
 
-  const displayedUserCount =
-    userArray.length - numberOfUsersWhoHaveBlockRelationshipWithCurrentUser;
+  const displayedUserCount = userArray.length - numberOfUsersInvisibleToCurrentUser;
 
   const getButtonTwoHandlerParams = (user: TUser) => {
     if (listType === "blocked-users") {
@@ -129,6 +128,10 @@ const UserListModal = ({
           return false;
         }
       }
+    }
+
+    if (user._id === currentUser?._id) {
+      return false;
     }
     return true;
   };
