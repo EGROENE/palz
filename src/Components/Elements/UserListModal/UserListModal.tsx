@@ -11,8 +11,8 @@ const UserListModal = ({
   renderButtonOne,
   closeModalMethod,
   header,
-  handleDeletion,
   userIDArray,
+  handleDeletion,
   deleteFrom,
   randomColor,
   buttonTwoText,
@@ -20,9 +20,9 @@ const UserListModal = ({
   renderButtonOne: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
   header: string;
-  handleDeletion: Function;
   userIDArray: (string | undefined)[] | undefined | null;
-  deleteFrom: "invitee-list" | "rsvp-list" | "blocked-users";
+  handleDeletion?: Function;
+  deleteFrom?: "invitee-list" | "rsvp-list" | "blocked-users";
   randomColor?: string;
   buttonTwoText?: string;
 }) => {
@@ -42,6 +42,23 @@ const UserListModal = ({
     return userArray;
   };
   const userArray = getUserArray();
+
+  const getNumberOfUsersWhoHaveBlockRelationshipWithCurrentUser = (): number => {
+    let sum = 0;
+    for (const user of userArray) {
+      if (user && user._id && currentUser && currentUser._id) {
+        if (
+          user.blockedUsers.includes(currentUser._id) ||
+          currentUser?.blockedUsers.includes(user._id)
+        ) {
+          sum++;
+        }
+      }
+    }
+    return sum;
+  };
+  const numberOfUsersWhoHaveBlockRelationshipWithCurrentUser =
+    getNumberOfUsersWhoHaveBlockRelationshipWithCurrentUser();
 
   const getButtonTwoHandlerParams = (user: TUser) => {
     if (deleteFrom === "blocked-users") {
@@ -97,25 +114,34 @@ const UserListModal = ({
         <h2>{header}</h2>
         {isNoFetchError &&
           !fetchIsLoading &&
-          (userArray.length > 0 ? (
-            userArray.map((user) => (
-              <ListedUser
-                key={user._id}
-                renderButtonOne={renderButtonOne}
-                randomColor={randomColor}
-                user={user}
-                buttonOneText="Message"
-                buttonOneLink={null}
-                buttonOneIsDisabled={isLoading}
-                buttonTwoText={buttonTwoText ? buttonTwoText : "Remove"}
-                buttonTwoIsDisabled={isLoading}
-                buttonTwoHandler={handleDeletion}
-                buttonTwoHandlerParams={getButtonTwoHandlerParams(user)}
-                handlerTwoNeedsEventParam={deleteFrom === "blocked-users" ? false : true}
-                buttonTwoLink={null}
-                objectLink={`/users/${user?.username}`}
-              />
-            ))
+          (userArray.length - numberOfUsersWhoHaveBlockRelationshipWithCurrentUser > 0 ? (
+            userArray.map(
+              (user) =>
+                currentUser &&
+                currentUser._id &&
+                user._id &&
+                !user.blockedUsers.includes(currentUser._id) &&
+                !currentUser?.blockedUsers.includes(user._id) && (
+                  <ListedUser
+                    key={user._id}
+                    renderButtonOne={renderButtonOne}
+                    randomColor={randomColor}
+                    user={user}
+                    buttonOneText="Message"
+                    buttonOneLink={null}
+                    buttonOneIsDisabled={isLoading}
+                    buttonTwoText={buttonTwoText ? buttonTwoText : "Remove"}
+                    buttonTwoIsDisabled={isLoading}
+                    buttonTwoHandler={handleDeletion}
+                    buttonTwoHandlerParams={getButtonTwoHandlerParams(user)}
+                    handlerTwoNeedsEventParam={
+                      deleteFrom === "blocked-users" ? false : true
+                    }
+                    buttonTwoLink={null}
+                    objectLink={`/users/${user?.username}`}
+                  />
+                )
+            )
           ) : (
             <p>No users to show</p>
           ))}
