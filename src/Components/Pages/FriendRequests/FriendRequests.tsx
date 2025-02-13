@@ -227,7 +227,7 @@ const FriendRequests = () => {
                           buttonOneIsDisabled={isLoading}
                           buttonOneLink={`/users/${user?.username}`}
                           buttonOneHandler={() => setCurrentOtherUser(user)}
-                          handlerOneNeedsEventParam={false}
+                          buttonOneHandlerNeedsEventParam={false}
                           buttonTwoText="Retract"
                           buttonTwoHandler={handleRetractFriendRequest}
                           buttonTwoHandlerParams={[
@@ -237,7 +237,7 @@ const FriendRequests = () => {
                             setFriendRequestsSent,
                           ]}
                           buttonTwoIsDisabled={isLoading}
-                          handlerTwoNeedsEventParam={false}
+                          buttonTwoHandlerNeedsEventParam={false}
                           buttonTwoLink={null}
                           objectLink={`/users/${user?.username}`}
                         />
@@ -262,7 +262,7 @@ const FriendRequests = () => {
                             friends,
                             setFriends,
                           ]}
-                          handlerOneNeedsEventParam={true}
+                          buttonOneHandlerNeedsEventParam={true}
                           buttonOneIsDisabled={isLoading}
                           buttonTwoText="Reject"
                           buttonTwoHandler={handleRejectFriendRequest}
@@ -272,7 +272,7 @@ const FriendRequests = () => {
                             friendRequestsReceived,
                             setFriendRequestsReceived,
                           ]}
-                          handlerTwoNeedsEventParam={true}
+                          buttonTwoHandlerNeedsEventParam={true}
                           buttonTwoIsDisabled={isLoading}
                           buttonTwoLink={null}
                           objectLink={`/users/${user?.username}`}
