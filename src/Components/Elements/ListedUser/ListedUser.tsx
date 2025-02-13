@@ -6,35 +6,34 @@ import styles from "./styles.module.css";
 const ListedUser = ({
   renderButtonOne,
   user,
+  buttonOneText,
   buttonOneHandler,
-  buttonOneHandlerParams,
   buttonOneIsDisabled,
   buttonOneLink,
-  handlerOneNeedsEventParam,
-  buttonTwoHandler,
-  buttonTwoHandlerParams,
-  buttonOneText,
+  buttonOneHandlerNeedsEventParam,
+  buttonOneHandlerParams,
   buttonTwoText,
+  buttonTwoHandler,
   buttonTwoIsDisabled,
   buttonTwoLink,
-  handlerTwoNeedsEventParam,
+  buttonTwoHandlerNeedsEventParam,
+  buttonTwoHandlerParams,
   objectLink, // link that entire component leads to
 }: {
   renderButtonOne: boolean;
   user?: TUser;
-  randomColor?: string;
+  buttonOneText?: string;
   buttonOneHandler?: Function;
+  buttonOneIsDisabled?: boolean | null;
+  buttonOneLink?: string | null;
+  buttonOneHandlerNeedsEventParam?: boolean;
   buttonOneHandlerParams?: any[];
-  buttonOneIsDisabled: boolean | null;
-  handlerOneNeedsEventParam?: boolean;
+  buttonTwoText?: string;
   buttonTwoHandler?: Function;
-  buttonTwoHandlerParams?: any[];
-  buttonOneText: string;
-  buttonTwoText: string;
-  buttonTwoIsDisabled: boolean | null;
-  buttonOneLink: string | null;
+  buttonTwoIsDisabled?: boolean | null;
   buttonTwoLink: string | null;
-  handlerTwoNeedsEventParam?: boolean;
+  buttonTwoHandlerNeedsEventParam?: boolean;
+  buttonTwoHandlerParams?: any[];
   objectLink?: string | undefined;
 }) => {
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -76,64 +75,66 @@ const ListedUser = ({
           <p>{user?.username}</p>
         </div>
       )}
-      {buttonOneLink !== null ? (
-        renderButtonOne && <Link to={buttonOneLink}>
-          <button
-            disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
-            onClick={
-              buttonOneHandler
-                ? handlerOneNeedsEventParam
-                  ? (e) =>
-                      buttonOneHandlerParams
-                        ? buttonOneHandler(e, ...buttonOneHandlerParams)
-                        : buttonOneHandler(e)
-                  : () =>
-                      buttonOneHandlerParams
-                        ? buttonOneHandler(...buttonOneHandlerParams)
-                        : buttonOneHandler()
-                : undefined
-            }
-            style={
-              randomColor === "var(--primary-color)"
-                ? { backgroundColor: `${randomColor}`, color: "black" }
-                : { backgroundColor: `${randomColor}`, color: "white" }
-            }
-          >
-            {buttonOneText}
-          </button>
-        </Link>
-      ) : (
-        renderButtonOne && <button
-          disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
-          onClick={
-            buttonOneHandler
-              ? handlerOneNeedsEventParam
-                ? (e) =>
-                    buttonOneHandlerParams
-                      ? buttonOneHandler(e, ...buttonOneHandlerParams)
-                      : buttonOneHandler(e)
-                : () =>
-                    buttonOneHandlerParams
-                      ? buttonOneHandler(...buttonOneHandlerParams)
-                      : buttonOneHandler()
-              : undefined
-          }
-          style={
-            randomColor === "var(--primary-color)"
-              ? { backgroundColor: `${randomColor}`, color: "black" }
-              : { backgroundColor: `${randomColor}`, color: "white" }
-          }
-        >
-          {buttonOneText}
-        </button>
-      )}
+      {buttonOneLink
+        ? renderButtonOne && (
+            <Link to={buttonOneLink}>
+              <button
+                disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
+                onClick={
+                  buttonOneHandler
+                    ? buttonOneHandlerNeedsEventParam
+                      ? (e) =>
+                          buttonOneHandlerParams
+                            ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                            : buttonOneHandler(e)
+                      : () =>
+                          buttonOneHandlerParams
+                            ? buttonOneHandler(...buttonOneHandlerParams)
+                            : buttonOneHandler()
+                    : undefined
+                }
+                style={
+                  randomColor === "var(--primary-color)"
+                    ? { backgroundColor: `${randomColor}`, color: "black" }
+                    : { backgroundColor: `${randomColor}`, color: "white" }
+                }
+              >
+                {buttonOneText}
+              </button>
+            </Link>
+          )
+        : renderButtonOne && (
+            <button
+              disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
+              onClick={
+                buttonOneHandler
+                  ? buttonOneHandlerNeedsEventParam
+                    ? (e) =>
+                        buttonOneHandlerParams
+                          ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                          : buttonOneHandler(e)
+                    : () =>
+                        buttonOneHandlerParams
+                          ? buttonOneHandler(...buttonOneHandlerParams)
+                          : buttonOneHandler()
+                  : undefined
+              }
+              style={
+                randomColor === "var(--primary-color)"
+                  ? { backgroundColor: `${randomColor}`, color: "black" }
+                  : { backgroundColor: `${randomColor}`, color: "white" }
+              }
+            >
+              {buttonOneText}
+            </button>
+          )}
       {buttonTwoLink !== null ? (
         <Link to={buttonTwoLink}>
           <button
             disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
             onClick={
               buttonTwoHandler
-                ? handlerTwoNeedsEventParam
+                ? buttonTwoHandlerNeedsEventParam
                   ? (e) =>
                       buttonTwoHandlerParams
                         ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
@@ -154,7 +155,7 @@ const ListedUser = ({
           disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
           onClick={
             buttonTwoHandler
-              ? handlerTwoNeedsEventParam
+              ? buttonTwoHandlerNeedsEventParam
                 ? (e) =>
                     buttonTwoHandlerParams
                       ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
