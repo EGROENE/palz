@@ -78,6 +78,9 @@ const UserListModal = ({
   const numberOfUsersWhoHaveBlockRelationshipWithCurrentUser =
     getNumberOfUsersWhoHaveBlockRelationshipWithCurrentUser();
 
+  const displayedUserCount =
+    userArray.length - numberOfUsersWhoHaveBlockRelationshipWithCurrentUser;
+
   const getButtonTwoHandlerParams = (user: TUser) => {
     if (listType === "blocked-users") {
       return [currentUser, user, blockedUsers, setBlockedUsers];
@@ -145,10 +148,10 @@ const UserListModal = ({
         style={{ border: `2px solid ${randomColor}` }}
         className={styles.userListContainer}
       >
-        <h2>{header}</h2>
+        <h2>{`${header} (${displayedUserCount})`}</h2>
         {isNoFetchError &&
           !fetchIsLoading &&
-          (userArray.length - numberOfUsersWhoHaveBlockRelationshipWithCurrentUser > 0 ? (
+          (displayedUserCount > 0 ? (
             userArray.map(
               (user) =>
                 getListedUserIsVisible(user) && (
