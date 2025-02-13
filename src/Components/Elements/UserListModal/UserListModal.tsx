@@ -61,13 +61,15 @@ const UserListModal = ({
 
   const getNumberOfUsersWhoHaveBlockRelationshipWithCurrentUser = (): number => {
     let sum = 0;
-    for (const user of userArray) {
-      if (user && user._id && currentUser && currentUser._id) {
-        if (
-          user.blockedUsers.includes(currentUser._id) ||
-          currentUser?.blockedUsers.includes(user._id)
-        ) {
-          sum++;
+    if (listType !== "blocked-users") {
+      for (const user of userArray) {
+        if (user && user._id && currentUser && currentUser._id) {
+          if (
+            user.blockedUsers.includes(currentUser._id) ||
+            currentUser?.blockedUsers.includes(user._id)
+          ) {
+            sum++;
+          }
         }
       }
     }
