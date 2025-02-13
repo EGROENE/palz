@@ -485,7 +485,9 @@ const OtherUserProfile = () => {
                 <header
                   className={styles.clickableHeader}
                   onClick={() => setShowFriends(true)}
-                >{`See friends (${currentOtherUser.friends.length})`}</header>
+                >
+                  See friends
+                </header>
               </div>
             )}
             {showFriends && (
