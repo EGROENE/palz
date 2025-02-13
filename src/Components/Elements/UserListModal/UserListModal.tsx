@@ -118,6 +118,20 @@ const UserListModal = ({
   };
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
+  const getListedUserIsVisible = (user: TUser): boolean => {
+    if (listType !== "blocked-users") {
+      if (user && user._id && currentUser && currentUser._id) {
+        if (
+          user.blockedUsers.includes(currentUser._id) ||
+          currentUser?.blockedUsers.includes(user._id)
+        ) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
   return (
     <div className={styles.modalBackground}>
       <i
@@ -135,11 +149,7 @@ const UserListModal = ({
           (userArray.length - numberOfUsersWhoHaveBlockRelationshipWithCurrentUser > 0 ? (
             userArray.map(
               (user) =>
-                currentUser &&
-                currentUser._id &&
-                user._id &&
-                !user.blockedUsers.includes(currentUser._id) &&
-                !currentUser?.blockedUsers.includes(user._id) && (
+                getListedUserIsVisible(user) && (
                   <ListedUser
                     key={user._id}
                     renderButtonOne={renderButtonOne}
