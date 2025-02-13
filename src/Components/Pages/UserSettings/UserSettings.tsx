@@ -248,14 +248,16 @@ const UserSettings = () => {
       {isLoading && <LoadingModal message="Saving changes..." />}
       {showBlockedUsers && (
         <UserListModal
+          listType="blocked-users"
           renderButtonOne={false}
           closeModalMethod={setShowBlockedUsers}
           header="Blocked Users"
-          handleDeletion={handleUnblockUser}
           userIDArray={blockedUsersArray}
+          buttonTwoText="Unblock"
+          buttonTwoHandler={handleUnblockUser}
+          buttonTwoHandlerNeedsEventParam={false}
           deleteFrom="blocked-users"
           randomColor={randomColor}
-          buttonTwoText={"Unblock"}
         />
       )}
       <h1>Settings</h1>

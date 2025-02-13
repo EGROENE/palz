@@ -186,22 +186,36 @@ const EventPage = () => {
         <>
           {showInvitees && (
             <UserListModal
+              listType="invitees"
               renderButtonOne={true}
               closeModalMethod={setShowInvitees}
               header="Invitees"
-              handleDeletion={handleRemoveInvitee}
               userIDArray={invitees}
+              buttonOneText="Message"
+              buttonOneHandler={undefined}
+              buttonOneHandlerNeedsEventParam={false}
+              buttonOneHandlerParams={[]}
+              buttonTwoText="Remove"
+              buttonTwoHandler={handleRemoveInvitee}
+              buttonTwoHandlerNeedsEventParam={true}
               deleteFrom="invitee-list"
               randomColor={randomColor}
             />
           )}
           {showRSVPs && (
             <UserListModal
+              listType="rsvpd-users"
               renderButtonOne={true}
               closeModalMethod={setShowRSVPs}
               header="RSVPs"
-              handleDeletion={handleDeleteUserRSVP}
               userIDArray={refinedInterestedUsers.map((user) => user._id)}
+              buttonOneText="Message"
+              buttonOneHandler={undefined}
+              buttonOneHandlerNeedsEventParam={false}
+              buttonOneHandlerParams={[]}
+              buttonTwoText="Remove"
+              buttonTwoHandler={handleDeleteUserRSVP}
+              buttonTwoHandlerNeedsEventParam={false}
               deleteFrom="rsvp-list"
               randomColor={randomColor}
             />
