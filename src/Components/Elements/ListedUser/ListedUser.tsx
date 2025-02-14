@@ -5,6 +5,7 @@ import styles from "./styles.module.css";
 
 const ListedUser = ({
   renderButtonOne,
+  renderButtonTwo,
   user,
   buttonOneText,
   buttonOneHandler,
@@ -21,6 +22,7 @@ const ListedUser = ({
   objectLink, // link that entire component leads to
 }: {
   renderButtonOne: boolean;
+  renderButtonTwo: boolean;
   user?: TUser;
   buttonOneText?: string;
   buttonOneHandler?: Function;
@@ -75,60 +77,60 @@ const ListedUser = ({
           <p>{user?.username}</p>
         </div>
       )}
-      {buttonOneLink
-        ? renderButtonOne && (
-            <Link to={buttonOneLink}>
-              <button
-                disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
-                onClick={
-                  buttonOneHandler
-                    ? buttonOneHandlerNeedsEventParam
-                      ? (e) =>
-                          buttonOneHandlerParams
-                            ? buttonOneHandler(e, ...buttonOneHandlerParams)
-                            : buttonOneHandler(e)
-                      : () =>
-                          buttonOneHandlerParams
-                            ? buttonOneHandler(...buttonOneHandlerParams)
-                            : buttonOneHandler()
-                    : undefined
-                }
-                style={
-                  randomColor === "var(--primary-color)"
-                    ? { backgroundColor: `${randomColor}`, color: "black" }
-                    : { backgroundColor: `${randomColor}`, color: "white" }
-                }
-              >
-                {buttonOneText}
-              </button>
-            </Link>
-          )
-        : renderButtonOne && (
-            <button
-              disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
-              onClick={
-                buttonOneHandler
-                  ? buttonOneHandlerNeedsEventParam
-                    ? (e) =>
-                        buttonOneHandlerParams
-                          ? buttonOneHandler(e, ...buttonOneHandlerParams)
-                          : buttonOneHandler(e)
-                    : () =>
-                        buttonOneHandlerParams
-                          ? buttonOneHandler(...buttonOneHandlerParams)
-                          : buttonOneHandler()
-                  : undefined
-              }
-              style={
-                randomColor === "var(--primary-color)"
-                  ? { backgroundColor: `${randomColor}`, color: "black" }
-                  : { backgroundColor: `${randomColor}`, color: "white" }
-              }
-            >
-              {buttonOneText}
-            </button>
-          )}
-      {buttonTwoLink !== null ? (
+      {renderButtonOne && buttonOneLink ? (
+        <Link to={buttonOneLink}>
+          <button
+            disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
+            onClick={
+              buttonOneHandler
+                ? buttonOneHandlerNeedsEventParam
+                  ? (e) =>
+                      buttonOneHandlerParams
+                        ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                        : buttonOneHandler(e)
+                  : () =>
+                      buttonOneHandlerParams
+                        ? buttonOneHandler(...buttonOneHandlerParams)
+                        : buttonOneHandler()
+                : undefined
+            }
+            style={
+              randomColor === "var(--primary-color)"
+                ? { backgroundColor: `${randomColor}`, color: "black" }
+                : { backgroundColor: `${randomColor}`, color: "white" }
+            }
+          >
+            {buttonOneText}
+          </button>
+        </Link>
+      ) : (
+        renderButtonOne && (
+          <button
+            disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
+            onClick={
+              buttonOneHandler
+                ? buttonOneHandlerNeedsEventParam
+                  ? (e) =>
+                      buttonOneHandlerParams
+                        ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                        : buttonOneHandler(e)
+                  : () =>
+                      buttonOneHandlerParams
+                        ? buttonOneHandler(...buttonOneHandlerParams)
+                        : buttonOneHandler()
+                : undefined
+            }
+            style={
+              randomColor === "var(--primary-color)"
+                ? { backgroundColor: `${randomColor}`, color: "black" }
+                : { backgroundColor: `${randomColor}`, color: "white" }
+            }
+          >
+            {buttonOneText}
+          </button>
+        )
+      )}
+      {renderButtonTwo && buttonTwoLink ? (
         <Link to={buttonTwoLink}>
           <button
             disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
@@ -151,25 +153,27 @@ const ListedUser = ({
           </button>
         </Link>
       ) : (
-        <button
-          disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
-          onClick={
-            buttonTwoHandler
-              ? buttonTwoHandlerNeedsEventParam
-                ? (e) =>
-                    buttonTwoHandlerParams
-                      ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
-                      : buttonTwoHandler(e)
-                : () =>
-                    buttonTwoHandlerParams
-                      ? buttonTwoHandler(...buttonTwoHandlerParams)
-                      : buttonTwoHandler()
-              : undefined
-          }
-          style={{ backgroundColor: "tomato" }}
-        >
-          {buttonTwoText}
-        </button>
+        renderButtonTwo && (
+          <button
+            disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
+            onClick={
+              buttonTwoHandler
+                ? buttonTwoHandlerNeedsEventParam
+                  ? (e) =>
+                      buttonTwoHandlerParams
+                        ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                        : buttonTwoHandler(e)
+                  : () =>
+                      buttonTwoHandlerParams
+                        ? buttonTwoHandler(...buttonTwoHandlerParams)
+                        : buttonTwoHandler()
+                : undefined
+            }
+            style={{ backgroundColor: "tomato" }}
+          >
+            {buttonTwoText}
+          </button>
+        )
       )}
     </div>
   );

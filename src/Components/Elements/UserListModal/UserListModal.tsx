@@ -10,6 +10,7 @@ import QueryLoadingOrError from "../QueryLoadingOrError/QueryLoadingOrError";
 const UserListModal = ({
   listType,
   renderButtonOne,
+  renderButtonTwo,
   closeModalMethod,
   header,
   userIDArray,
@@ -17,6 +18,7 @@ const UserListModal = ({
   buttonOneHandler,
   buttonOneHandlerNeedsEventParam,
   buttonOneHandlerParams,
+  buttonOneLink,
   buttonTwoText,
   buttonTwoHandler,
   buttonTwoHandlerNeedsEventParam,
@@ -26,6 +28,7 @@ const UserListModal = ({
 }: {
   listType: "invitees" | "rsvpd-users" | "other-user-friends" | "blocked-users";
   renderButtonOne: boolean;
+  renderButtonTwo: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
   header: string;
   userIDArray: (string | undefined)[] | undefined | null;
@@ -33,6 +36,7 @@ const UserListModal = ({
   buttonOneHandler?: Function;
   buttonOneHandlerNeedsEventParam?: boolean;
   buttonOneHandlerParams?: any[];
+  buttonOneLink?: string;
   buttonTwoText?: string;
   buttonTwoHandler?: Function;
   buttonTwoHandlerNeedsEventParam?: boolean;
@@ -78,7 +82,7 @@ const UserListModal = ({
 
   const displayedUserCount = userArray.length - numberOfUsersInvisibleToCurrentUser;
 
-  const getButtonTwoHandlerParams = (user: TUser) => {
+  const getButtonOneHandlerParams = (user: TUser) => {
     if (listType === "blocked-users") {
       return [currentUser, user, blockedUsers, setBlockedUsers];
     }
@@ -88,7 +92,7 @@ const UserListModal = ({
     }
   };
 
-  const getButtonTwoLink = (user: TUser): string | null => {
+  const getButtonOneLink = (user: TUser): string | null => {
     if (listType === "other-user-friends") {
       return `/users/${user.username}`;
     }
@@ -157,23 +161,24 @@ const UserListModal = ({
                   <ListedUser
                     key={user._id}
                     renderButtonOne={renderButtonOne}
+                    renderButtonTwo={renderButtonTwo}
                     user={user}
                     buttonOneText={buttonOneText}
                     buttonOneHandler={buttonOneHandler}
                     buttonOneHandlerNeedsEventParam={buttonOneHandlerNeedsEventParam}
-                    buttonOneHandlerParams={buttonOneHandlerParams}
-                    buttonOneLink={null}
+                    buttonOneHandlerParams={
+                      buttonOneHandlerParams
+                        ? buttonOneHandlerParams
+                        : getButtonOneHandlerParams(user)
+                    }
+                    buttonOneLink={buttonOneLink ? buttonOneLink : getButtonOneLink(user)}
                     buttonOneIsDisabled={isLoading}
                     buttonTwoText={buttonTwoText}
                     buttonTwoIsDisabled={isLoading}
                     buttonTwoHandler={buttonTwoHandler}
                     buttonTwoHandlerNeedsEventParam={buttonTwoHandlerNeedsEventParam}
-                    buttonTwoHandlerParams={
-                      buttonTwoHandlerParams
-                        ? buttonTwoHandlerParams
-                        : getButtonTwoHandlerParams(user)
-                    }
-                    buttonTwoLink={buttonTwoLink ? buttonTwoLink : getButtonTwoLink(user)}
+                    buttonTwoHandlerParams={buttonTwoHandlerParams}
+                    buttonTwoLink={buttonTwoLink ? buttonTwoLink : null}
                     objectLink={`/users/${user?.username}`}
                   />
                 )
