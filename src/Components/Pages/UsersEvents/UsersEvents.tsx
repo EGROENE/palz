@@ -7,11 +7,13 @@ import { TEvent, TThemeColor } from "../../../types";
 import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSection";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
+import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 
 const UsersEvents = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, logout } = useUserContext();
-  const { allEvents } = useEventContext();
+  const { currentUser, userCreatedAccount, fetchAllUsersQuery, logout } =
+    useUserContext();
+  const { allEvents, fetchAllEventsQuery } = useEventContext();
 
   const navigation = useNavigate();
   useEffect(() => {
@@ -116,10 +118,30 @@ const UsersEvents = () => {
     .map((event) => event.array)
     .some((eventArray) => eventArray && eventArray.length > 0);
 
+  const isNoFetchError: boolean =
+    !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+
+  const fetchIsLoading: boolean =
+    fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
+
+  const getQueryForQueryLoadingOrErrorComponent = () => {
+    if (fetchAllUsersQuery.isError) {
+      return fetchAllUsersQuery;
+    }
+    return fetchAllEventsQuery;
+  };
+  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Your Events</h1>
-      {userEventsExist ? (
+      <QueryLoadingOrError
+        query={queryForQueryLoadingOrError}
+        errorMessage="Couldn't fetch data"
+      />
+      {isNoFetchError &&
+        !fetchIsLoading &&
+        userEventsExist &&
         usersEvents.map(
           (event) =>
             event &&
@@ -131,8 +153,8 @@ const UsersEvents = () => {
                 header={event.header}
               />
             )
-        )
-      ) : (
+        )}
+      {isNoFetchError && !fetchIsLoading && !userEventsExist && (
         <>
           <h2>
             Once you create/organize, are invited to, or RSVP to events, they will appear

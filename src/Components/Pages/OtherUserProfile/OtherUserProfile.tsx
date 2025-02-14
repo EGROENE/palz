@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useUserContext } from "../../../Hooks/useUserContext";
 import toast from "react-hot-toast";
 import { useMainContext } from "../../../Hooks/useMainContext";
+import { useUserContext } from "../../../Hooks/useUserContext";
+import { useEventContext } from "../../../Hooks/useEventContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import styles from "./styles.module.css";
 import { TThemeColor, TUser } from "../../../types";
@@ -11,6 +12,7 @@ import { countries } from "../../../constants";
 import Methods from "../../../methods";
 import Tab from "../../Elements/Tab/Tab";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
+import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
@@ -36,7 +38,9 @@ const OtherUserProfile = () => {
     handleUnfriending,
     friends,
     setFriends,
+    fetchAllUsersQuery,
   } = useUserContext();
+  const { fetchAllEventsQuery } = useEventContext();
   const { username } = useParams();
   const currentOtherUser =
     allUsers && allUsers.filter((user) => user.username === username)[0];
@@ -352,35 +356,56 @@ const OtherUserProfile = () => {
   };
   const currentUserCanSeeFriendsList: boolean = getCurrentUserCanSeeFriendsList();
 
+  const isNoFetchError: boolean =
+    !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+
+  const fetchIsLoading: boolean =
+    fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
+
+  const getQueryForQueryLoadingOrErrorComponent = () => {
+    if (fetchAllUsersQuery.isError) {
+      return fetchAllUsersQuery;
+    }
+    return fetchAllEventsQuery;
+  };
+  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
-      {showFriendRequestResponseOptions && currentOtherUser && (
-        <TwoOptionsInterface
-          header={`Respond to friend request from ${currentOtherUser.firstName} ${currentOtherUser.lastName} (${currentOtherUser.username})`}
-          buttonOneText="Decline"
-          buttonOneHandler={handleRejectFriendRequest}
-          buttonOneHandlerParams={[
-            currentOtherUser,
-            currentUser,
-            friendRequestsReceived,
-            setFriendRequestsReceived,
-          ]}
-          handlerOneNeedsEventParam={true}
-          buttonTwoText="Accept"
-          buttonTwoHandler={handleAcceptFriendRequest}
-          buttonTwoHandlerParams={[
-            currentOtherUser,
-            currentUser,
-            friendRequestsReceived,
-            setFriendRequestsReceived,
-            friends,
-            setFriends,
-          ]}
-          handlerTwoNeedsEventParam={true}
-          closeHandler={setShowFriendRequestResponseOptions}
-        />
-      )}
-      {currentOtherUser && (
+      <QueryLoadingOrError
+        query={queryForQueryLoadingOrError}
+        errorMessage="Error fetching data"
+      />
+      {!fetchIsLoading &&
+        isNoFetchError &&
+        showFriendRequestResponseOptions &&
+        currentOtherUser && (
+          <TwoOptionsInterface
+            header={`Respond to friend request from ${currentOtherUser.firstName} ${currentOtherUser.lastName} (${currentOtherUser.username})`}
+            buttonOneText="Decline"
+            buttonOneHandler={handleRejectFriendRequest}
+            buttonOneHandlerParams={[
+              currentOtherUser,
+              currentUser,
+              friendRequestsReceived,
+              setFriendRequestsReceived,
+            ]}
+            handlerOneNeedsEventParam={true}
+            buttonTwoText="Accept"
+            buttonTwoHandler={handleAcceptFriendRequest}
+            buttonTwoHandlerParams={[
+              currentOtherUser,
+              currentUser,
+              friendRequestsReceived,
+              setFriendRequestsReceived,
+              friends,
+              setFriends,
+            ]}
+            handlerTwoNeedsEventParam={true}
+            closeHandler={setShowFriendRequestResponseOptions}
+          />
+        )}
+      {!fetchIsLoading && isNoFetchError && currentOtherUser && (
         <>
           <div
             className={styles.kopfzeile}

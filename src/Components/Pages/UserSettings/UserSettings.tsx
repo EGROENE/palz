@@ -12,6 +12,7 @@ import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
 import styles from "./styles.module.css";
 import { useQueryClient } from "@tanstack/react-query";
+import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 
 const UserSettings = () => {
   const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
@@ -245,28 +246,38 @@ const UserSettings = () => {
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
-      {isLoading && <LoadingModal message="Saving changes..." />}
-      {showBlockedUsers && (
-        <UserListModal
-          listType="blocked-users"
-          renderButtonOne={true}
-          renderButtonTwo={false}
-          closeModalMethod={setShowBlockedUsers}
-          header="Blocked Users"
-          userIDArray={blockedUsersArray}
-          buttonOneText="Unblock"
-          buttonOneHandler={handleUnblockUser}
-          buttonOneHandlerNeedsEventParam={false}
+      <h1>Settings</h1>
+      <QueryLoadingOrError
+        query={fetchAllUsersQuery}
+        errorMessage="Error fetching data"
+      />
+      {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && isLoading && (
+        <LoadingModal message="Saving changes..." />
+      )}
+      {!fetchAllUsersQuery.isError &&
+        !fetchAllUsersQuery.isLoading &&
+        showBlockedUsers && (
+          <UserListModal
+            listType="blocked-users"
+            renderButtonOne={true}
+            renderButtonTwo={false}
+            closeModalMethod={setShowBlockedUsers}
+            header="Blocked Users"
+            userIDArray={blockedUsersArray}
+            buttonOneText="Unblock"
+            buttonOneHandler={handleUnblockUser}
+            buttonOneHandlerNeedsEventParam={false}
+            randomColor={randomColor}
+          />
+        )}
+      {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && (
+        <EditUserInfoForm
           randomColor={randomColor}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />
       )}
-      <h1>Settings</h1>
-      <EditUserInfoForm
-        randomColor={randomColor}
-        isLoading={isLoading}
-        setIsLoading={setIsLoading}
-      />
-      {currentUser && (
+      {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && currentUser && (
         <p style={{ width: "76%", textAlign: "left" }}>
           Blocked Users{" "}
           <span
@@ -278,52 +289,58 @@ const UserSettings = () => {
           </span>
         </p>
       )}
-      <InterestsSection
-        isDisabled={isLoading}
-        randomColor={randomColor}
-        interestsRelation="user"
-        handleAddInterest={handleAddUserInterest}
-        handleRemoveInterest={handleDeleteUserInterest}
-      />
-      <div className="settings-theme-and-delete-account-container">
-        <div>
-          <h3>Delete Account</h3>
-          <p>
-            Any events of which you are the sole organizer will be deleted & all your
-            account information will be lost.
-          </p>
-          <button
-            onClick={() => setShowAreYouSureInterface(true)}
-            className="delete-button"
-          >
-            Delete Account
-          </button>
-        </div>
-
-        <div>
-          <h3>Change Site Theme</h3>
-          <p>{theme === "dark" ? "Theme is set to dark" : "Theme is set to light"}</p>
-          <div className="theme-element-container">
-            <button onClick={() => toggleTheme()}>
-              {theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-            </button>
-          </div>
-        </div>
-      </div>
-      {showAreYouSureInterface && (
-        <TwoOptionsInterface
-          header="Are you sure you want to permanently delete your account?"
-          subheader="Please understand that this action is
-            irreversible."
-          buttonOneText="Cancel"
-          buttonOneHandler={() => setShowAreYouSureInterface(false)}
-          handlerOneNeedsEventParam={false}
-          buttonTwoText="Delete Account"
-          buttonTwoHandler={handleAccountDeletion}
-          handlerTwoNeedsEventParam={false}
-          closeHandler={setShowAreYouSureInterface}
+      {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && (
+        <InterestsSection
+          isDisabled={isLoading}
+          randomColor={randomColor}
+          interestsRelation="user"
+          handleAddInterest={handleAddUserInterest}
+          handleRemoveInterest={handleDeleteUserInterest}
         />
       )}
+      {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && (
+        <div className="settings-theme-and-delete-account-container">
+          <div>
+            <h3>Delete Account</h3>
+            <p>
+              Any events of which you are the sole organizer will be deleted & all your
+              account information will be lost.
+            </p>
+            <button
+              onClick={() => setShowAreYouSureInterface(true)}
+              className="delete-button"
+            >
+              Delete Account
+            </button>
+          </div>
+
+          <div>
+            <h3>Change Site Theme</h3>
+            <p>{theme === "dark" ? "Theme is set to dark" : "Theme is set to light"}</p>
+            <div className="theme-element-container">
+              <button onClick={() => toggleTheme()}>
+                {theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {!fetchAllUsersQuery.isError &&
+        !fetchAllUsersQuery.isLoading &&
+        showAreYouSureInterface && (
+          <TwoOptionsInterface
+            header="Are you sure you want to permanently delete your account?"
+            subheader="Please understand that this action is
+            irreversible."
+            buttonOneText="Cancel"
+            buttonOneHandler={() => setShowAreYouSureInterface(false)}
+            handlerOneNeedsEventParam={false}
+            buttonTwoText="Delete Account"
+            buttonTwoHandler={handleAccountDeletion}
+            handlerTwoNeedsEventParam={false}
+            closeHandler={setShowAreYouSureInterface}
+          />
+        )}
     </div>
   );
 };
