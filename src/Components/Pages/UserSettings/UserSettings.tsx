@@ -20,7 +20,7 @@ const UserSettings = () => {
   // Set random color:
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
-    if (!currentUser) {
+    if (!currentUser || userCreatedAccount === null) {
       toast.error("Please log in before accessing this page.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -62,6 +62,7 @@ const UserSettings = () => {
     blockedUsers,
     fetchAllUsersQuery,
     setCurrentUser,
+    userCreatedAccount,
   } = useUserContext();
   const { allEvents } = useEventContext();
 

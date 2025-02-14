@@ -83,6 +83,9 @@ const EventPage = () => {
         }
       }
     }
+    if (!currentUser || userCreatedAccount === null) {
+      return true;
+    }
     return false;
   };
   const userDoesNotHaveAccess = getUserDoesNotHaveAccess();
