@@ -493,11 +493,12 @@ const OtherUserProfile = () => {
             {showFriends && (
               <UserListModal
                 listType="other-user-friends"
-                renderButtonOne={false}
+                renderButtonOne={true}
+                renderButtonTwo={false}
                 closeModalMethod={setShowFriends}
                 header={`${currentOtherUser.username} 's palz`}
                 userIDArray={currentOtherUser.friends}
-                buttonTwoText="View Profile"
+                buttonOneText="View Profile"
               />
             )}
           </section>
