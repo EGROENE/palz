@@ -249,13 +249,14 @@ const UserSettings = () => {
       {showBlockedUsers && (
         <UserListModal
           listType="blocked-users"
-          renderButtonOne={false}
+          renderButtonOne={true}
+          renderButtonTwo={false}
           closeModalMethod={setShowBlockedUsers}
           header="Blocked Users"
           userIDArray={blockedUsersArray}
-          buttonTwoText="Unblock"
-          buttonTwoHandler={handleUnblockUser}
-          buttonTwoHandlerNeedsEventParam={false}
+          buttonOneText="Unblock"
+          buttonOneHandler={handleUnblockUser}
+          buttonOneHandlerNeedsEventParam={false}
           randomColor={randomColor}
         />
       )}
