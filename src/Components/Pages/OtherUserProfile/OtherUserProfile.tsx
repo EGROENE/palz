@@ -83,6 +83,10 @@ const OtherUserProfile = () => {
       navigation("/");
     }
 
+    if (showFriends) {
+      setShowFriends(false);
+    }
+
     // If logged-in user is blocked by currentOtherUser:
     if (currentUser?._id && currentOtherUser?.blockedUsers.includes(currentUser._id)) {
       toast("You do not have access to this page", {
