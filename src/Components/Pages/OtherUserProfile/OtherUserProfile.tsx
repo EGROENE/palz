@@ -505,8 +505,7 @@ const OtherUserProfile = () => {
               </div>
             ) : (
               <div className={styles.infoPoint}>
-                <header>You are both palz with : </header>
-                <p>No one</p>
+                <p>No mutual friends</p>
               </div>
             )}
             {currentOtherUser.friends.length > 0 && currentUserCanSeeFriendsList && (
