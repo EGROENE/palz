@@ -188,6 +188,7 @@ const EventPage = () => {
             <UserListModal
               listType="invitees"
               renderButtonOne={true}
+              renderButtonTwo={true}
               closeModalMethod={setShowInvitees}
               header="Invitees"
               userIDArray={invitees}
@@ -205,6 +206,7 @@ const EventPage = () => {
             <UserListModal
               listType="rsvpd-users"
               renderButtonOne={true}
+              renderButtonTwo={true}
               closeModalMethod={setShowRSVPs}
               header="RSVPs"
               userIDArray={refinedInterestedUsers.map((user) => user._id)}
