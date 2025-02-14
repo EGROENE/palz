@@ -86,10 +86,14 @@ const UserListModal = ({
     if (listType === "blocked-users") {
       return [currentUser, user, blockedUsers, setBlockedUsers];
     }
+    return undefined;
+  };
 
-    if (listType === "invitees" || listType === "rsvpd-users") {
+  const getButtonTwoHandlerParams = (user: TUser) => {
+    if (listType === "rsvpd-users" || listType === "invitees") {
       return [currentEvent, user];
     }
+    return undefined;
   };
 
   const getButtonOneLink = (user: TUser): string | null => {
@@ -177,7 +181,11 @@ const UserListModal = ({
                     buttonTwoIsDisabled={isLoading}
                     buttonTwoHandler={buttonTwoHandler}
                     buttonTwoHandlerNeedsEventParam={buttonTwoHandlerNeedsEventParam}
-                    buttonTwoHandlerParams={buttonTwoHandlerParams}
+                    buttonTwoHandlerParams={
+                      buttonTwoHandlerParams
+                        ? buttonTwoHandlerParams
+                        : getButtonTwoHandlerParams(user)
+                    }
                     buttonTwoLink={buttonTwoLink ? buttonTwoLink : null}
                     objectLink={`/users/${user?.username}`}
                   />
