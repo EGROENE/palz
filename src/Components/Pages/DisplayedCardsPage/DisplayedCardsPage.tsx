@@ -790,7 +790,7 @@ const DisplayedCardsPage = ({
   const fetchIsLoading: boolean =
     usedFor === "potential-friends" || usedFor === "my-friends"
       ? fetchAllUsersQuery.isLoading
-      : fetchAllEventsQuery.isLoading && fetchAllUsersQuery.isLoading;
+      : fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
     if (usedFor !== "potential-friends" && usedFor !== "my-friends") {

@@ -113,7 +113,7 @@ const UserListModal = ({
   const fetchIsLoading: boolean =
     listType === "blocked-users" || listType === "other-user-friends"
       ? fetchAllUsersQuery.isLoading
-      : fetchAllEventsQuery.isLoading && fetchAllUsersQuery.isLoading;
+      : fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
     if (listType !== "blocked-users" && listType !== "other-user-friends") {
