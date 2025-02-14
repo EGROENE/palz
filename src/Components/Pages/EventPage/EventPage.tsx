@@ -13,8 +13,14 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 
 const EventPage = () => {
   const { showSidebar, isLoading, setShowSidebar, theme } = useMainContext();
-  const { allUsers, currentUser, userCreatedAccount, setCurrentOtherUser, logout } =
-    useUserContext();
+  const {
+    allUsers,
+    currentUser,
+    userCreatedAccount,
+    setCurrentOtherUser,
+    logout,
+    fetchAllUsersQuery,
+  } = useUserContext();
   const {
     handleAddUserRSVP,
     handleDeleteUserRSVP,
@@ -22,6 +28,7 @@ const EventPage = () => {
     setCurrentEvent,
     handleRemoveInvitee,
     invitees,
+    fetchAllEventsQuery,
   } = useEventContext();
 
   //const [event, setEvent] = useState<TEvent | undefined>();
@@ -180,9 +187,15 @@ const EventPage = () => {
   };
   const status: string | undefined = getStatus();
 
+  const isNoFetchError: boolean =
+    !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+
+  const fetchIsLoading: boolean =
+    fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
+
   return (
     <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
-      {currentEvent ? (
+      {isNoFetchError && !fetchIsLoading && currentEvent ? (
         <>
           {showInvitees && (
             <UserListModal
@@ -384,6 +397,19 @@ const EventPage = () => {
             </div>
           </Link>
         </>
+      )}
+      {fetchIsLoading && (
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
+          Loading...
+        </header>
+      )}
+      {!isNoFetchError && (
+        <div className="query-error-container">
+          <header className="query-status-text">Couldn't fetch data.</header>
+          <div className="theme-element-container">
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        </div>
       )}
     </div>
   );
