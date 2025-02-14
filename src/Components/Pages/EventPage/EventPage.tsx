@@ -195,7 +195,7 @@ const EventPage = () => {
 
   return (
     <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
-      {isNoFetchError && !fetchIsLoading && currentEvent ? (
+      {isNoFetchError && !fetchIsLoading && currentEvent && (
         <>
           {showInvitees && (
             <UserListModal
@@ -388,9 +388,10 @@ const EventPage = () => {
               ))}
           </div>
         </>
-      ) : (
+      )}
+      {isNoFetchError && !fetchIsLoading && !currentEvent && (
         <>
-          <h1>Sorry, this event doesn't exist anymore.</h1>
+          <h1>Sorry, this event doesn't exist.</h1>
           <Link to={"/events"}>
             <div className="theme-element-container">
               <button>Back to All Events</button>
