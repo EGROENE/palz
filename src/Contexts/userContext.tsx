@@ -255,6 +255,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     whoCanSeeInstagram: "nobody",
     whoCanSeeEventsOrganized: "nobody",
     whoCanSeeEventsInterestedIn: "nobody",
+    whoCanSeeEventsInvitedTo: "nobody",
     friendRequestsReceived: [],
     friendRequestsSent: [],
     blockedUsers: [],
