@@ -72,6 +72,12 @@ export type TUser = {
     | "nobody"
     | "friends of friends"
     | undefined;
+  whoCanSeeEventsInvitedTo:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
 };
 
 export type TEvent = {
@@ -151,6 +157,12 @@ export type TUserValuesToUpdate = {
     | "friends of friends"
     | undefined;
   whoCanSeeEventsInterestedIn?:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  whoCanSeeEventsInvitedTo?:
     | "friends"
     | "anyone"
     | "nobody"
@@ -496,7 +508,6 @@ export type TUserContext = {
       "anyone" | "friends" | "nobody" | "friends of friends" | undefined
     >
   >;
-  //fetchAllUsers: () => Promise<void>;
   userCreatedAccount: null | boolean;
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
   allUsers: TUser[] | undefined;
