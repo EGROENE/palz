@@ -75,6 +75,7 @@ const createNewUser = async (req, res) => {
     whoCanSeeInstagram,
     whoCanSeeEventsOrganized,
     whoCanSeeEventsInterestedIn,
+    whoCanSeeEventsInvitedTo,
   } = req.body;
 
   // add document to DB:
@@ -117,6 +118,7 @@ const createNewUser = async (req, res) => {
       whoCanSeeInstagram,
       whoCanSeeEventsOrganized,
       whoCanSeeEventsInterestedIn,
+      whoCanSeeEventsInvitedTo,
     });
     res.status(200).json(user);
   } catch (error) {
