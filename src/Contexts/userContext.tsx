@@ -1692,6 +1692,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     ...(whoCanSeeEventsInterestedIn !== currentUser?.whoCanSeeEventsInterestedIn && {
       whoCanSeeEventsInterestedIn: whoCanSeeEventsInterestedIn,
     }),
+    ...(whoCanSeeEventsInvitedTo !== currentUser?.whoCanSeeEventsInvitedTo && {
+      whoCanSeeEventsInvitedTo: whoCanSeeEventsInvitedTo,
+    }),
   };
 
   const handleSignupOrLoginFormSubmission = (
