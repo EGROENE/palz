@@ -139,6 +139,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [whoCanSeeEventsInterestedIn, setWhoCanSeeEventsInterestedIn] = useSessionStorage<
     "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanSeeEventsInterestedIn", "nobody");
+  const [whoCanSeeEventsInvitedTo, setWhoCanSeeEventsInvitedTo] = useSessionStorage<
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+  >("whoCanSeeEventsInterestedIn", "nobody");
   const [blockedUsers, setBlockedUsers] = useSessionStorage<string[] | undefined>(
     "blockedUsers",
     currentUser?.blockedUsers
@@ -1771,6 +1774,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             setWhoCanSeeInstagram(userData.whoCanSeeInstagram);
             setWhoCanSeeEventsOrganized(userData.whoCanSeeEventsOrganized);
             setWhoCanSeeEventsInterestedIn(userData.whoCanSeeEventsInterestedIn);
+            setWhoCanSeeEventsInvitedTo(userData.whoCanSeeEventsInvitedTo);
           } else {
             setUserCreatedAccount(false);
             if (allUsers) {
@@ -1813,6 +1817,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             setWhoCanSeeInstagram(currentUser?.whoCanSeeInstagram);
             setWhoCanSeeEventsOrganized(currentUser?.whoCanSeeEventsOrganized);
             setWhoCanSeeEventsInterestedIn(currentUser?.whoCanSeeEventsInterestedIn);
+            setWhoCanSeeEventsInvitedTo(currentUser?.whoCanSeeEventsInvitedTo);
           }
           setFirstNameError("");
           setLastNameError("");
@@ -1881,6 +1886,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setWhoCanSeeEventsOrganized,
     whoCanSeeEventsInterestedIn,
     setWhoCanSeeEventsInterestedIn,
+    whoCanSeeEventsInvitedTo,
+    setWhoCanSeeEventsInvitedTo,
     friends,
     setFriends,
     friendRequestsSent,
@@ -2000,7 +2007,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setProfileVisibleTo,
     showUpdateProfileImageInterface,
     setShowUpdateProfileImageInterface,
-    //fetchAllUsers,
     allUsers,
     currentUser,
     setCurrentUser,
