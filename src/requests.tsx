@@ -58,6 +58,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "whoCanSeeInstagram": newUserData.whoCanSeeInstagram,
     "whoCanSeeEventsOrganized": newUserData.whoCanSeeEventsOrganized,
     "whoCanSeeEventsInterestedIn": newUserData.whoCanSeeEventsInterestedIn,
+    "whoCanSeeEventsInvitedTo": newUserData.whoCanSeeEventsInvitedTo,
   });
 
   return fetch("http://localhost:4000/palz/users/", {
