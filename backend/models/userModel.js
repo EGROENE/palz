@@ -121,6 +121,7 @@ const userSchema = new Schema({
   whoCanSeeInstagram: { type: String, required: true },
   whoCanSeeEventsOrganized: { type: String, required: true },
   whoCanSeeEventsInterestedIn: { type: String, required: true },
+  whoCanSeeEventsInvitedTo: { type: String, required: true },
 });
 
 module.exports = mongoose.model("User", userSchema);
