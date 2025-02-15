@@ -508,6 +508,17 @@ export type TUserContext = {
       "anyone" | "friends" | "nobody" | "friends of friends" | undefined
     >
   >;
+  whoCanSeeEventsInvitedTo:
+    | "friends"
+    | "anyone"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  setWhoCanSeeEventsInvitedTo: React.Dispatch<
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
+  >;
   userCreatedAccount: null | boolean;
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
   allUsers: TUser[] | undefined;
