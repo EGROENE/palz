@@ -10,6 +10,7 @@
   padding: 0.5rem;
   margin: 1.5rem;
   position: relative;
+  max-width: 44%;
 }
 
 .eventCardInvitation {
