@@ -111,6 +111,7 @@ const EditUserInfoForm = ({
     whoCanSeeInstagram,
     whoCanSeeEventsOrganized,
     whoCanSeeEventsInterestedIn,
+    whoCanSeeEventsInvitedTo,
     setWhoCanMessage,
     setDisplayFriendCount,
     setWhoCanSeeLocation,
@@ -122,6 +123,7 @@ const EditUserInfoForm = ({
     setWhoCanSeeInstagram,
     setWhoCanSeeEventsOrganized,
     setWhoCanSeeEventsInterestedIn,
+    setWhoCanSeeEventsInvitedTo,
   } = useUserContext();
 
   const [showPrivacySettings, setShowPrivacySettings] = useState<boolean>(false);
@@ -246,6 +248,7 @@ const EditUserInfoForm = ({
     setWhoCanSeeInstagram(currentUser?.whoCanSeeInstagram);
     setWhoCanSeeEventsOrganized(currentUser?.whoCanSeeEventsOrganized);
     setWhoCanSeeEventsInterestedIn(currentUser?.whoCanSeeEventsInterestedIn);
+    setWhoCanSeeEventsInvitedTo(currentUser?.whoCanSeeEventsInvitedTo);
   };
 
   // If currentUser has given a phone code, set limits for length of rest of number based on that
@@ -1154,8 +1157,8 @@ const EditUserInfoForm = ({
     whoCanSeeX !== currentUser?.whoCanSeeX ||
     whoCanSeeInstagram !== currentUser?.whoCanSeeInstagram ||
     whoCanSeeEventsOrganized !== currentUser?.whoCanSeeEventsOrganized ||
-    whoCanSeeEventsInterestedIn !== currentUser?.whoCanSeeEventsInterestedIn;
-
+    whoCanSeeEventsInterestedIn !== currentUser?.whoCanSeeEventsInterestedIn ||
+  whoCanSeeEventsInvitedTo !== currentUser?.whoCanSeeEventsInvitedTo;
   return (
     <>
       <h2>
@@ -2154,6 +2157,51 @@ const EditUserInfoForm = ({
                     checked={whoCanSeeEventsInterestedIn === "nobody"}
                     name="who-can-see-rsvpd-events"
                     id="nobody-can-see-rsvpd-events"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can see events you are invited to:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-see-events-invited-to"
+                    name="who-can-see-events-invited-to"
+                    onChange={() => setWhoCanSeeEventsInvitedTo("anyone")}
+                    checked={whoCanSeeEventsInvitedTo === "anyone"}
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEventsInvitedTo("friends")}
+                    checked={whoCanSeeEventsInvitedTo === "friends"}
+                    name="who-can-see-events-invited-to"
+                    id="friends-can-see-events-invited-to"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEventsInvitedTo("friends of friends")}
+                    checked={whoCanSeeEventsInvitedTo === "friends of friends"}
+                    name="who-can-see-events-invited-to"
+                    id="friends-of-friends-can-see-events-invited-to"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanSeeEventsInvitedTo("nobody")}
+                    checked={whoCanSeeEventsInvitedTo === "nobody"}
+                    name="who-can-see-events-invited-to"
+                    id="nobody-can-see-events-invited-to"
                     type="radio"
                   />
                   <span>Nobody</span>
