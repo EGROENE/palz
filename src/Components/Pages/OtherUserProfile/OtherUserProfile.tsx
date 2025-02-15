@@ -6,13 +6,14 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import styles from "./styles.module.css";
-import { TThemeColor, TUser } from "../../../types";
+import { TThemeColor, TUser, TEvent } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { countries } from "../../../constants";
 import Methods from "../../../methods";
 import Tab from "../../Elements/Tab/Tab";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
+import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSection";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
@@ -40,7 +41,7 @@ const OtherUserProfile = () => {
     setFriends,
     fetchAllUsersQuery,
   } = useUserContext();
-  const { fetchAllEventsQuery } = useEventContext();
+  const { fetchAllEventsQuery, allEvents } = useEventContext();
   const { username } = useParams();
   const currentOtherUser =
     allUsers && allUsers.filter((user) => user.username === username)[0];
@@ -370,6 +371,142 @@ const OtherUserProfile = () => {
   };
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
+  const now = Date.now();
+
+  const pastEventsUserOrganized: TEvent[] | undefined = allEvents?.filter(
+    (event) =>
+      currentOtherUser?._id &&
+      event.creator !== currentUser?._id &&
+      event.organizers.includes(currentOtherUser._id) &&
+      event.eventEndDateTimeInMS < now
+  );
+
+  const pastEventsUserRSVPd: TEvent[] | undefined = allEvents?.filter(
+    (event) =>
+      currentOtherUser?._id &&
+      event.interestedUsers.includes(currentOtherUser._id) &&
+      event.eventEndDateTimeInMS < now
+  );
+
+  const upcomingEventsUserOrganizes: TEvent[] | undefined = allEvents?.filter(
+    (event) =>
+      event.eventStartDateTimeInMS > now &&
+      event.eventEndDateTimeInMS > now &&
+      currentOtherUser?._id &&
+      event.organizers.includes(currentOtherUser._id)
+  );
+
+  const upcomingEventsUserInvitedTo: TEvent[] | undefined = allEvents?.filter(
+    (event) =>
+      event.eventStartDateTimeInMS > now &&
+      event.eventEndDateTimeInMS > now &&
+      currentOtherUser?._id &&
+      event.invitees.includes(currentOtherUser._id)
+  );
+
+  const upcomingEventsUserRSVPdTo: TEvent[] | undefined = allEvents?.filter(
+    (event) =>
+      event.eventStartDateTimeInMS > now &&
+      event.eventEndDateTimeInMS > now &&
+      currentOtherUser?._id &&
+      event.interestedUsers.includes(currentOtherUser._id)
+  );
+
+  const ongoingEvents: TEvent[] | undefined = allEvents?.filter((event) => {
+    event.eventStartDateTimeInMS < now &&
+      event.eventEndDateTimeInMS > now &&
+      currentOtherUser?._id &&
+      (event.organizers.includes(currentOtherUser._id) ||
+        event.interestedUsers.includes(currentOtherUser._id));
+  });
+
+  type TDisplayedEvent = {
+    header: string;
+    array: TEvent[] | undefined;
+    type: string;
+  };
+
+  const usersEvents: TDisplayedEvent[] = [
+    { header: "My Ongoing Events", array: ongoingEvents, type: "organized-event" },
+    {
+      header: "My Upcoming Events",
+      array: upcomingEventsUserOrganizes,
+      type: "organized-event",
+    },
+    {
+      header: "Upcoming Events I've RSVP'd To",
+      array: upcomingEventsUserRSVPdTo,
+      type: "interested-event",
+    },
+    {
+      header: "Upcoming Events I've Been Invited To",
+      array: upcomingEventsUserInvitedTo,
+      type: "invited-event",
+    },
+    {
+      header: "Past Events I RSVP'd To",
+      array: pastEventsUserRSVPd,
+      type: "interested-event",
+    },
+    {
+      header: "Past Events I Organized",
+      array: pastEventsUserOrganized,
+      type: "organized-event",
+    },
+  ];
+
+  const userEventsExist = usersEvents
+    .map((event) => event.array)
+    .some((eventArray) => eventArray && eventArray.length > 0);
+
+  const getCurrentUserMaySeeEvent = (event: TDisplayedEvent): boolean => {
+    const currentUserIsFriendOfFriend: boolean =
+      currentUser && currentOtherUser && currentOtherUserFriends
+        ? currentOtherUserFriends.some(
+            (user) => currentUser._id && user.friends.includes(currentUser._id)
+          )
+        : false;
+
+    if (currentUser && currentUser._id && currentOtherUser) {
+      if (event.type === "interested-event") {
+        if (
+          currentOtherUser.whoCanSeeEventsInterestedIn === "anyone" ||
+          (currentOtherUser.whoCanSeeEventsInterestedIn === "friends" &&
+            currentOtherUser.friends.includes(currentUser._id)) ||
+          (currentOtherUser.whoCanSeeEventsInterestedIn === "friends of friends" &&
+            currentUserIsFriendOfFriend)
+        ) {
+          return true;
+        }
+      }
+
+      if (event.type === "organized-event") {
+        if (
+          currentOtherUser.whoCanSeeEventsOrganized === "anyone" ||
+          (currentOtherUser.whoCanSeeEventsOrganized === "friends" &&
+            currentOtherUser.friends.includes(currentUser._id)) ||
+          (currentOtherUser.whoCanSeeEventsOrganized === "friends of friends" &&
+            currentUserIsFriendOfFriend)
+        ) {
+          return true;
+        }
+      }
+
+      if (event.type === "invited-event") {
+        if (
+          currentOtherUser.whoCanSeeEventsInvitedTo === "anyone" ||
+          (currentOtherUser.whoCanSeeEventsInvitedTo === "friends" &&
+            currentOtherUser.friends.includes(currentUser._id)) ||
+          (currentOtherUser.whoCanSeeEventsInvitedTo === "friends of friends" &&
+            currentUserIsFriendOfFriend)
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <QueryLoadingOrError
@@ -529,6 +666,22 @@ const OtherUserProfile = () => {
                 buttonOneText="View Profile"
               />
             )}
+            {!fetchIsLoading &&
+              isNoFetchError &&
+              userEventsExist &&
+              usersEvents.map(
+                (event) =>
+                  event &&
+                  getCurrentUserMaySeeEvent(event) &&
+                  event.array &&
+                  event.array.length > 0 && (
+                    <UserEventsSection
+                      key={event.header}
+                      eventsArray={event.array}
+                      header={event.header}
+                    />
+                  )
+              )}
           </section>
         </>
       )}
