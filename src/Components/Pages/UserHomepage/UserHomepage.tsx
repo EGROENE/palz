@@ -1,7 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import EventCard from "../../Elements/EventCard/EventCard";
 import { TEvent } from "../../../types";
 import Methods from "../../../methods";
@@ -39,37 +39,32 @@ const UserHomepage = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
-  let userRSVPDEvents: TEvent[] = [];
-  let userOrganizedEvents: TEvent[] = [];
-  let eventsUserIsInvitedTo: TEvent[] = [];
-  let allCurrentUserEvents: TEvent[] = [];
+  const [allCurrentUserEvents, setAllCurrentUserEvents] = useState<TEvent[]>([]);
 
   useEffect(() => {
     if (allEvents && currentUser) {
-      userRSVPDEvents = allEvents.filter(
+      const userRSVPDEvents: TEvent[] = allEvents.filter(
         (ev) => currentUser._id && ev.interestedUsers.includes(currentUser._id)
       );
 
-      userOrganizedEvents = allEvents.filter(
+      const userOrganizedEvents: TEvent[] = allEvents.filter(
         (ev) => currentUser._id && ev.organizers.includes(currentUser._id)
       );
 
-      eventsUserIsInvitedTo = allEvents.filter(
+      const eventsUserIsInvitedTo: TEvent[] = allEvents.filter(
         (ev) =>
           currentUser._id &&
           ev.invitees.includes(currentUser._id) &&
           !ev.disinterestedUsers.includes(currentUser._id)
       );
 
-      allCurrentUserEvents =
-        userRSVPDEvents &&
-        userOrganizedEvents &&
-        eventsUserIsInvitedTo &&
+      setAllCurrentUserEvents(
         Methods.removeDuplicatesFromArray(
           userRSVPDEvents.concat(userOrganizedEvents).concat(eventsUserIsInvitedTo)
-        );
+        )
+      );
     }
-  }, [fetchAllUsersQuery, fetchAllEventsQuery]);
+  }, [fetchAllUsersQuery.data, fetchAllEventsQuery.data, currentUser]);
 
   const isNoFetchError: boolean =
     !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
