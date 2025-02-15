@@ -141,7 +141,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   >("whoCanSeeEventsInterestedIn", "nobody");
   const [whoCanSeeEventsInvitedTo, setWhoCanSeeEventsInvitedTo] = useSessionStorage<
     "anyone" | "friends" | "nobody" | "friends of friends" | undefined
-  >("whoCanSeeEventsInterestedIn", "nobody");
+  >("whoCanSeeEventsInvitedTo", "nobody");
   const [blockedUsers, setBlockedUsers] = useSessionStorage<string[] | undefined>(
     "blockedUsers",
     currentUser?.blockedUsers
