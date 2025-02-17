@@ -1150,13 +1150,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       } else {
         setCurrentUser(null);
       }
-    }
 
-    inputConfirmationPWNoWhitespaces !== password &&
-    inputConfirmationPWNoWhitespaces !== "" &&
-    password !== ""
-      ? setConfirmationPasswordError("Passwords don't match")
-      : setConfirmationPasswordError("");
+      if (inputConfirmationPWNoWhitespaces !== password && password !== "") {
+        if (inputConfirmationPWNoWhitespaces !== "") {
+          setConfirmationPasswordError("Passwords don't match");
+        } else {
+          setConfirmationPasswordError("Please confirm password");
+        }
+      } else {
+        setConfirmationPasswordError("");
+      }
+    }
   };
 
   // This method is used on login form, where user can input either their username or email to log in
