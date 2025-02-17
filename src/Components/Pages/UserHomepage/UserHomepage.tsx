@@ -75,12 +75,11 @@ const UserHomepage = () => {
   return (
     <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
       {fetchIsLoading && <h1>Upcoming Events</h1>}
-      {fetchAllEventsQuery.isLoading ||
-        (fetchAllUsersQuery.isLoading && (
-          <header style={{ marginTop: "3rem" }} className="query-status-text">
-            Loading...
-          </header>
-        ))}
+      {fetchIsLoading && (
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
+          Loading...
+        </header>
+      )}
       {fetchAllEventsQuery.isError ||
         (fetchAllUsersQuery.isError && (
           <div className="query-error-container">
