@@ -669,34 +669,6 @@ const removeFromFriendRequestsSent = (
   });
 };
 
-/* const acceptFriendRequest = (
-  sender: string | number,
-  recipient: TUser
-): Promise<Response> => {
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-
-  const updatedFriendRequestsArray: Array<string | number | undefined> = [];
-  for (const existingSenderID of recipient.friendRequestsReceived) {
-    updatedFriendRequestsArray.push(existingSenderID);
-  }
-  updatedFriendRequestsArray.push(sender);
-
-  const getRaw = () => {
-    return JSON.stringify({
-      "friendRequestsReceived": updatedFriendRequestsArray,
-    });
-  };
-  const raw = getRaw();
-
-  return fetch(`http://localhost:3000/users/${recipient?._id}`, {
-    method: "PATCH",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow",
-  });
-}; */
-
 const addFriendToFriendsArray = (user: TUser, friend: TUser): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -761,7 +733,6 @@ const Requests = {
   deleteUserRSVP,
   getAllUsers,
   getAllEvents,
-  //getAttendedEventsByUser,
   createUser,
   patchUpdatedUserInfo,
   deletePhoneNumber,
