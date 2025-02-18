@@ -110,9 +110,9 @@ export type TMessage = {
   _id: string;
   sender: string;
   receiver: string;
-  content?: string;
+  content: string;
   timeSent: number;
-  image?: string;
+  image: string;
   timeOpened: number | null;
 };
 
