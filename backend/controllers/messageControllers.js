@@ -57,7 +57,6 @@ const updateMessage = async (req, res) => {
     return res.status(400).json({ error: "Bad request (invalid message id)" });
   }
 
-  console.log(req.body);
   const message = await Message.findOneAndUpdate(
     { _id: messageID },
     { ...req.body },
