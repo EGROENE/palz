@@ -711,7 +711,15 @@ const deleteFriendFromFriendsArray = (user: TUser, friend: TUser): Promise<Respo
   });
 };
 
+const getCurrentUserMessages = (userID: string): Promise<Response> => {
+  return fetch(`http://localhost:4000/palz/messages/${userID}`, {
+    method: "GET",
+    redirect: "follow",
+  });
+};
+
 const Requests = {
+  getCurrentUserMessages,
   removeFromBlockedUsers,
   addToBlockedUsers,
   removeEventImage,
