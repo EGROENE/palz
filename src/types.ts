@@ -106,6 +106,16 @@ export type TEvent = {
   relatedInterests: string[];
 };
 
+export type TMessage = {
+  _id: string;
+  sender: string;
+  receiver: string;
+  content?: string;
+  timeSent: number;
+  image?: string;
+  timeOpened: number | null;
+};
+
 export type TUserValuesToUpdate = {
   firstName?: string | undefined;
   lastName?: string | undefined;
