@@ -50,9 +50,30 @@ const deleteMessage = async (req, res) => {
 };
 
 // update message:
+const updateMessage = async (req, res) => {
+  const { messageID } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(messageID)) {
+    return res.status(400).json({ error: "Bad request (invalid message id)" });
+  }
+
+  console.log(req.body);
+  const message = await Message.findOneAndUpdate(
+    { _id: messageID },
+    { ...req.body },
+    { new: true }
+  );
+
+  if (!message) {
+    return res.status(404).json({ error: "Message doesn't exist" });
+  }
+
+  res.status(200).json(message);
+};
 
 module.exports = {
   getCurrentUserMessages,
   createMessage,
   deleteMessage,
+  updateMessage,
 };
