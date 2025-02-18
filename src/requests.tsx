@@ -763,7 +763,18 @@ const updateMessage = (
   });
 };
 
+const deleteMessage = (messageID: string) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  return fetch(`http://localhost:4000/palz/messages/${messageID}`, {
+    method: "DELETE",
+    redirect: "follow",
+  });
+};
+
 const Requests = {
+  deleteMessage,
   updateMessage,
   createNewMessage,
   getCurrentUserMessages,
