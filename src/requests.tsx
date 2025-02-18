@@ -1,4 +1,10 @@
-import { TUser, TEvent, TEventValuesToUpdate, TUserValuesToUpdate } from "./types";
+import {
+  TUser,
+  TEvent,
+  TMessage,
+  TEventValuesToUpdate,
+  TUserValuesToUpdate,
+} from "./types";
 
 const getAllUsers = (): Promise<TUser[]> => {
   return fetch("http://localhost:4000/palz/users", {
@@ -718,7 +724,29 @@ const getCurrentUserMessages = (userID: string): Promise<Response> => {
   });
 };
 
+const createNewMessage = (newMessage: TMessage): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "sender": newMessage.sender,
+    "receiver": newMessage.receiver,
+    "content": newMessage.content,
+    "image": newMessage.image,
+    "timeOpened": null,
+    "timeSent": newMessage.timeSent,
+  });
+
+  return fetch("http://localhost:4000/palz/messages/", {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
+  createNewMessage,
   getCurrentUserMessages,
   removeFromBlockedUsers,
   addToBlockedUsers,
