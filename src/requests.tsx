@@ -4,6 +4,7 @@ import {
   TMessage,
   TEventValuesToUpdate,
   TUserValuesToUpdate,
+  TMessageValuesToUpdate,
 } from "./types";
 
 const getAllUsers = (): Promise<TUser[]> => {
@@ -745,7 +746,25 @@ const createNewMessage = (newMessage: TMessage): Promise<Response> => {
   });
 };
 
+const updateMessage = (
+  message: TMessage,
+  valuesToUpdate: TMessageValuesToUpdate
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify(valuesToUpdate);
+
+  return fetch(`http://localhost:4000/palz/messages/${message._id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
+  updateMessage,
   createNewMessage,
   getCurrentUserMessages,
   removeFromBlockedUsers,
