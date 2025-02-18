@@ -507,6 +507,39 @@ const OtherUserProfile = () => {
     return false;
   };
 
+  const getSocialMediumIsVisible = (medium: "facebook" | "instagram" | "x"): boolean => {
+    if (currentUser && currentUser._id) {
+      if (
+        (medium === "facebook" && currentOtherUser?.whoCanSeeFacebook === "anyone") ||
+        (currentOtherUser?.whoCanSeeFacebook === "friends" &&
+          currentOtherUser.friends.includes(currentUser._id)) ||
+        (currentOtherUser?.whoCanSeeFacebook === "friends of friends" &&
+          currentUserIsFriendOfFriend)
+      ) {
+        return true;
+      }
+      if (
+        (medium === "instagram" && currentOtherUser?.whoCanSeeInstagram === "anyone") ||
+        (currentOtherUser?.whoCanSeeInstagram === "friends" &&
+          currentOtherUser.friends.includes(currentUser._id)) ||
+        (currentOtherUser?.whoCanSeeInstagram === "friends of friends" &&
+          currentUserIsFriendOfFriend)
+      ) {
+        return true;
+      }
+      if (
+        (medium === "x" && currentOtherUser?.whoCanSeeX === "anyone") ||
+        (currentOtherUser?.whoCanSeeX === "friends" &&
+          currentOtherUser.friends.includes(currentUser._id)) ||
+        (currentOtherUser?.whoCanSeeX === "friends of friends" &&
+          currentUserIsFriendOfFriend)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <QueryLoadingOrError
@@ -578,6 +611,39 @@ const OtherUserProfile = () => {
                     <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
                   </div>
                 )}
+              {(getSocialMediumIsVisible("facebook") ||
+                getSocialMediumIsVisible("instagram") ||
+                getSocialMediumIsVisible("x")) && (
+                <div className={styles.socialLinksContainer}>
+                  {getSocialMediumIsVisible("facebook") && (
+                    <a
+                      title={`${currentOtherUser.username}'s Facebook Profile`}
+                      href={`${currentOtherUser.facebook}`}
+                      target="_blank"
+                    >
+                      <span className="fab fa-facebook"></span>
+                    </a>
+                  )}
+                  {getSocialMediumIsVisible("instagram") && (
+                    <a
+                      title={`${currentOtherUser.username}'s Instagram Profile`}
+                      href={`${currentOtherUser.instagram}`}
+                      target="_blank"
+                    >
+                      <span className="fab fa-instagram"></span>
+                    </a>
+                  )}
+                  {getSocialMediumIsVisible("x") && (
+                    <a
+                      title={`${currentOtherUser.username}'s X Profile`}
+                      href={`${currentOtherUser.x}`}
+                      target="_blank"
+                    >
+                      <span className="fab fa-twitter-square"></span>
+                    </a>
+                  )}
+                </div>
+              )}
               <div className={styles.actionButtonsContainer}>
                 {displayedButtons.map(
                   (button) =>
