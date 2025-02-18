@@ -116,6 +116,14 @@ export type TMessage = {
   timeOpened: number | null;
 };
 
+export type TMessageValuesToUpdate = {
+  sender?: string;
+  receiver?: string;
+  content?: string;
+  image?: string;
+  timeSent?: number;
+};
+
 export type TUserValuesToUpdate = {
   firstName?: string | undefined;
   lastName?: string | undefined;
