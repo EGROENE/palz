@@ -1,9 +1,9 @@
 const express = require("express");
 
-const { getSentMessages } = require("../controllers/messageControllers");
+const { getCurrentUserMessages } = require("../controllers/messageControllers");
 
 const router = express.Router();
 
-router.get("/:sender", getSentMessages);
+router.get("/:currentUserID", getCurrentUserMessages);
 
 module.exports = router;
