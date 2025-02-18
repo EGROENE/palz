@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const Message = require("../models/messageModel");
 
 // get all messages in which currentUser is sender:
@@ -31,10 +33,26 @@ const createMessage = async (req, res) => {
 };
 
 // delete message:
+const deleteMessage = async (req, res) => {
+  const { messageID } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(messageID)) {
+    return res.status(400).json({ error: "Bad request (invalid message id)" });
+  }
+
+  const message = await Message.findOneAndDelete({ _id: messageID });
+
+  if (!message) {
+    return res.status(404).json({ error: "Message doesn't exist" });
+  }
+
+  res.status(200).json(message);
+};
 
 // update message:
 
 module.exports = {
   getCurrentUserMessages,
   createMessage,
+  deleteMessage,
 };
