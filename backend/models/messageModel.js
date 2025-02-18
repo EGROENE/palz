@@ -13,11 +13,11 @@ const messageSchema = new Schema({
   },
   content: {
     type: String,
-    required: true,
+    required: false,
   },
   image: {
     type: String,
-    required: true,
+    required: false,
   },
   timeOpened: {
     type: Number,
