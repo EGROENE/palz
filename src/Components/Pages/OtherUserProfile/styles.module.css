@@ -78,6 +78,7 @@
   font-weight: 700;
   font-size: 1.5rem;
   -webkit-text-fill-color: transparent;
+  margin: 0;
 }
 
 .userLocationContainer {
@@ -94,9 +95,107 @@
   border-radius: 3px;
 }
 
+.socialLinksContainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+.socialLinksContainer span {
+  border-radius: 3rem;
+  font-size: 2rem;
+  -webkit-text-fill-color: transparent;
+}
+
+.socialLinksContainer span:hover {
+  cursor: pointer;
+  box-shadow: var(--text-color) 0px 1px 22px;
+}
+
 .kopfzeile .actionButtonsContainer {
   padding: 0;
   width: 100%;
   display: flex;
   justify-content: space-evenly;
+}
+
+.furtherInfoSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 86%;
+}
+
+.furtherInfoSection header {
+  font-weight: 700;
+  font-family: var(--header-font);
+  font-size: 2rem;
+  line-height: 1.5;
+  background: linear-gradient(
+    80deg,
+    var(--primary-color),
+    var(--primary-color),
+    var(--secondary-color),
+    var(--secondary-color)
+  );
+  background: -webkit-linear-gradient(
+    34deg,
+    var(--primary-color),
+    var(--primary-color),
+    var(--secondary-color),
+    var(--secondary-color)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 300% !important;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animated_h1 10s ease-in-out infinite;
+  -moz-animation: animated_h1 10s ease-in-out infinite;
+  -webkit-animation: animated_h1 10s ease-in-out infinite;
+}
+@keyframes animated_h1 {
+  0% {
+    background-position: 0px 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0px 50%;
+  }
+}
+
+.furtherInfoSection section {
+  margin-left: -2rem;
+}
+
+.about {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.infoPoint {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 1rem 0;
+}
+
+.infoPoint p {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.infoPoint span {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.clickableHeader:hover {
+  cursor: pointer;
 }
