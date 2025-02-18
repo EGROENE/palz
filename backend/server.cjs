@@ -14,6 +14,7 @@ app.use(cors());
 
 const userRoutes = require("./routes/users.cjs");
 const eventRoutes = require("./routes/events.cjs");
+const messageRoutes = require("./routes/messages.cjs");
 
 // MIDDLEWARE
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -28,7 +29,7 @@ app.use((req, res, next) => {
 // ROUTES
 app.use("/palz/users", userRoutes);
 app.use("/palz/events", eventRoutes);
-// app.use("/messages", messageRoutes)
+app.use("/palz/messages", messageRoutes);
 
 // Connect to Mongoose:
 mongoose
