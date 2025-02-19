@@ -718,11 +718,11 @@ const deleteFriendFromFriendsArray = (user: TUser, friend: TUser): Promise<Respo
   });
 };
 
-const getCurrentUserMessages = (userID: string): Promise<Response> => {
+const getCurrentUserMessages = (userID: string): Promise<TMessage[]> => {
   return fetch(`http://localhost:4000/palz/messages/${userID}`, {
     method: "GET",
     redirect: "follow",
-  });
+  }).then((response) => response.json() as Promise<TMessage[]>);
 };
 
 const createNewMessage = (newMessage: TMessage): Promise<Response> => {
