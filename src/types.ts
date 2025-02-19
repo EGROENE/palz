@@ -243,6 +243,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  fetchMessagesQuery: UseQueryResult<TMessage[], Error>;
+  userMessages: TMessage[] | undefined;
   fetchAllUsersQuery: UseQueryResult<TUser[], Error>;
   friends: string[] | undefined;
   setFriends: React.Dispatch<React.SetStateAction<string[] | undefined>>;

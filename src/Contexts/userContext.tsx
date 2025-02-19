@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useState, useEffect, SetStateAction } from "react";
-import { TUserContext, TUser, TUserValuesToUpdate } from "../types";
+import { TUserContext, TUser, TUserValuesToUpdate, TMessage } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -20,8 +20,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const navigation = useNavigate();
 
   const { handleWelcomeMessage, theme, setIsLoading } = useMainContext();
-
-  //const [allUsers, setAllUsers] = useLocalStorage<TUser[]>("allUsers", []);
 
   const [currentUser, setCurrentUser] = useLocalStorage<TUser | null>(
     "currentUser",
@@ -214,6 +212,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     // refetchInterval: number
   });
   let allUsers: TUser[] | undefined = fetchAllUsersQuery.data;
+
+  const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
+
+  const fetchMessagesQuery: UseQueryResult<TMessage[], Error> = useQuery({
+    queryKey: ["messages"],
+    queryFn: () =>
+      currentUser && currentUser._id
+        ? Requests.getCurrentUserMessages(currentUser._id)
+        : undefined,
+    enabled: userHasLoggedIn,
+  });
+  let userMessages: TMessage[] | undefined = fetchMessagesQuery.data;
 
   // Rename to 'newUserData'
   const userData: TUser = {
@@ -1871,6 +1881,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    fetchMessagesQuery,
+    userMessages,
     removeProfileImageMutation,
     updateProfileImageMutation,
     fetchAllUsersQuery,
