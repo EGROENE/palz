@@ -106,6 +106,13 @@ export type TEvent = {
   relatedInterests: string[];
 };
 
+export type TChat = {
+  _id: string;
+  members: string[];
+  messages: TMessage[];
+  dateCreated: number;
+};
+
 export type TMessage = {
   _id: string;
   sender: string;
