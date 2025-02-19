@@ -188,7 +188,7 @@ function App() {
         <Route path="/add-event" element={<AddEventPage />} />
         <Route
           path="/edit-event/:eventID"
-          element={<EditEventPage currentEvent={currentEvent} />}
+          element={<EditEventPage event={currentEvent} />}
         />
         <Route path="/events" element={<DisplayedCardsPage usedFor="events" />} />
         <Route path="/events/:eventID" element={<EventPage />} />
