@@ -46,30 +46,30 @@ const deleteChat = async (req, res) => {
   res.status(200).json(chat);
 };
 
-// update message:
-const updateMessage = async (req, res) => {
-  const { messageID } = req.params;
+// update chat:
+const updateChat = async (req, res) => {
+  const { chatID } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(messageID)) {
-    return res.status(400).json({ error: "Bad request (invalid message id)" });
+  if (!mongoose.Types.ObjectId.isValid(chatID)) {
+    return res.status(400).json({ error: "Bad request (invalid chat id)" });
   }
 
-  const message = await Message.findOneAndUpdate(
-    { _id: messageID },
+  const chat = await Message.findOneAndUpdate(
+    { _id: chatID },
     { ...req.body },
     { new: true }
   );
 
-  if (!message) {
-    return res.status(404).json({ error: "Message doesn't exist" });
+  if (!chat) {
+    return res.status(404).json({ error: "Chat doesn't exist" });
   }
 
-  res.status(200).json(message);
+  res.status(200).json(chat);
 };
 
 module.exports = {
   getCurrentUserChats,
   createChat,
   deleteChat,
-  updateMessage,
+  updateChat,
 };
