@@ -5,7 +5,7 @@ const {
   createChat,
   deleteChat,
   updateChat,
-} = require("../controllers/messageControllers");
+} = require("../controllers/chatControllers");
 
 const router = express.Router();
 
