@@ -13,20 +13,17 @@ const getCurrentUserChats = async (req, res) => {
   res.status(200).json(chats);
 };
 
-// create new message:
-const createMessage = async (req, res) => {
-  const { sender, receiver, content, image, timeOpened, timeSent } = req.body;
+// create new chat:
+const createChat = async (req, res) => {
+  const { members, messages, dateCreated } = req.body;
 
   try {
-    const message = await Message.create({
-      sender,
-      receiver,
-      content,
-      image,
-      timeOpened,
-      timeSent,
+    const chat = await Chat.create({
+      members,
+      messages,
+      dateCreated,
     });
-    res.status(200).json(message);
+    res.status(200).json(chat);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -72,7 +69,7 @@ const updateMessage = async (req, res) => {
 
 module.exports = {
   getCurrentUserChats,
-  createMessage,
+  createChat,
   deleteMessage,
   updateMessage,
 };
