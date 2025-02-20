@@ -4,7 +4,7 @@ import {
   TChat,
   TEventValuesToUpdate,
   TUserValuesToUpdate,
-  TMessageValuesToUpdate,
+  TChatValuesToUpdate,
 } from "./types";
 
 const getAllUsers = (): Promise<TUser[]> => {
@@ -743,16 +743,16 @@ const createNewChat = (newChat: TChat): Promise<Response> => {
   });
 };
 
-const updateMessage = (
-  message: TMessage,
-  valuesToUpdate: TMessageValuesToUpdate
+const updateChat = (
+  chat: TChat,
+  valuesToUpdate: TChatValuesToUpdate
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
   var raw = JSON.stringify(valuesToUpdate);
 
-  return fetch(`http://localhost:4000/palz/messages/${message._id}`, {
+  return fetch(`http://localhost:4000/palz/chats/${chat._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -772,7 +772,7 @@ const deleteMessage = (messageID: string) => {
 
 const Requests = {
   deleteMessage,
-  updateMessage,
+  updateChat,
   createNewChat,
   getCurrentUserChats,
   removeFromBlockedUsers,
