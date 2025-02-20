@@ -1,17 +1,17 @@
 const express = require("express");
 
 const {
-  getCurrentUserMessages,
-  createMessage,
-  deleteMessage,
-  updateMessage,
+  getCurrentUserChats,
+  createChat,
+  deleteChat,
+  updateChat,
 } = require("../controllers/messageControllers");
 
 const router = express.Router();
 
-router.get("/:currentUserID", getCurrentUserMessages);
-router.post("/", createMessage);
-router.delete("/:messageID", deleteMessage);
-router.patch("/:messageID", updateMessage);
+router.get("/:currentUserID", getCurrentUserChats);
+router.post("/", createChat);
+router.delete("/:chatID", deleteChat);
+router.patch("/:chatID", updateChat);
 
 module.exports = router;
