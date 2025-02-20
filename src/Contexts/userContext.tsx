@@ -215,15 +215,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
 
-  const fetchMessagesQuery: UseQueryResult<TMessage[], Error> = useQuery({
+  const fetchChatsQuery: UseQueryResult<TMessage[], Error> = useQuery({
     queryKey: ["messages"],
     queryFn: () =>
       currentUser && currentUser._id
-        ? Requests.getCurrentUserMessages(currentUser._id)
+        ? Requests.getCurrentUserChats(currentUser._id)
         : undefined,
     enabled: userHasLoggedIn,
   });
-  let userMessages: TMessage[] | undefined = fetchMessagesQuery.data;
+  let userMessages: TMessage[] | undefined = fetchChatsQuery.data;
 
   // Rename to 'newUserData'
   const userData: TUser = {
@@ -1881,7 +1881,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
-    fetchMessagesQuery,
+    fetchChatsQuery,
     userMessages,
     removeProfileImageMutation,
     updateProfileImageMutation,
