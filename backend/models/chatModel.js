@@ -39,7 +39,7 @@ const chatSchema = new Schema({
     required: true,
   },
   dateCreated: {
-    type: number,
+    type: Number,
     required: true,
   },
 });
