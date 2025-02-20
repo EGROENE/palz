@@ -1,7 +1,7 @@
 import {
   TUser,
   TEvent,
-  TMessage,
+  TChat,
   TEventValuesToUpdate,
   TUserValuesToUpdate,
   TMessageValuesToUpdate,
@@ -718,11 +718,11 @@ const deleteFriendFromFriendsArray = (user: TUser, friend: TUser): Promise<Respo
   });
 };
 
-const getCurrentUserMessages = (userID: string): Promise<TMessage[]> => {
-  return fetch(`http://localhost:4000/palz/messages/${userID}`, {
+const getCurrentUserChats = (userID: string): Promise<TChat[]> => {
+  return fetch(`http://localhost:4000/palz/chats/${userID}`, {
     method: "GET",
     redirect: "follow",
-  }).then((response) => response.json() as Promise<TMessage[]>);
+  }).then((response) => response.json() as Promise<TChat[]>);
 };
 
 const createNewMessage = (newMessage: TMessage): Promise<Response> => {
@@ -777,7 +777,7 @@ const Requests = {
   deleteMessage,
   updateMessage,
   createNewMessage,
-  getCurrentUserMessages,
+  getCurrentUserChats,
   removeFromBlockedUsers,
   addToBlockedUsers,
   removeEventImage,
