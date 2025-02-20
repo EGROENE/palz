@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-const Message = require("../models/messageModel");
-
 const Chat = require("../models/chatModel");
 
 // get all chats in which user is member:
