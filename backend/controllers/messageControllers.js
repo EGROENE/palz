@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 
 const Message = require("../models/messageModel");
 
-// get all messages in which currentUser is sender:
-const getCurrentUserMessages = async (req, res) => {
-  const { currentUserID } = req.params;
-  console.log(currentUserID);
-  const sentMessages = await Message.find({
-    $or: [{ sender: currentUserID }, { receiver: currentUserID }],
-  });
+const Chat = require("../models/chatModel");
 
-  res.status(200).json(sentMessages);
+// get all chats in which user is member:
+const getCurrentUserChats = async (req, res) => {
+  const { currentUserID } = req.params;
+
+  const chats = await Chat.find({ members: currentUserID });
+
+  res.status(200).json(chats);
 };
 
 // create new message:
@@ -71,7 +71,7 @@ const updateMessage = async (req, res) => {
 };
 
 module.exports = {
-  getCurrentUserMessages,
+  getCurrentUserChats,
   createMessage,
   deleteMessage,
   updateMessage,
