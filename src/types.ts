@@ -116,7 +116,6 @@ export type TChat = {
 export type TMessage = {
   _id: string;
   sender: string;
-  receiver: string;
   content: string;
   timeSent: number;
   image: string;
