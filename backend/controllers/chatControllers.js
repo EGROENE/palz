@@ -52,7 +52,7 @@ const updateChat = async (req, res) => {
     return res.status(400).json({ error: "Bad request (invalid chat id)" });
   }
 
-  const chat = await Message.findOneAndUpdate(
+  const chat = await Chat.findOneAndUpdate(
     { _id: chatID },
     { ...req.body },
     { new: true }
