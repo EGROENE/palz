@@ -760,18 +760,18 @@ const updateChat = (
   });
 };
 
-const deleteMessage = (messageID: string) => {
+const deleteChat = (chatID: string) => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  return fetch(`http://localhost:4000/palz/messages/${messageID}`, {
+  return fetch(`http://localhost:4000/palz/chats/${chatID}`, {
     method: "DELETE",
     redirect: "follow",
   });
 };
 
 const Requests = {
-  deleteMessage,
+  deleteChat,
   updateChat,
   createNewChat,
   getCurrentUserChats,
