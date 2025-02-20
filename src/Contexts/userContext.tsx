@@ -223,7 +223,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         : undefined,
     enabled: userHasLoggedIn,
   });
-  let userMessages: TMessage[] | undefined = fetchChatsQuery.data;
+  let userChats: TMessage[] | undefined = fetchChatsQuery.data;
 
   // Rename to 'newUserData'
   const userData: TUser = {
@@ -1882,7 +1882,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const userContextValues: TUserContext = {
     fetchChatsQuery,
-    userMessages,
+    userChats,
     removeProfileImageMutation,
     updateProfileImageMutation,
     fetchAllUsersQuery,
