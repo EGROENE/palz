@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useState, useEffect, SetStateAction } from "react";
-import { TUserContext, TUser, TUserValuesToUpdate, TMessage } from "../types";
+import { TUserContext, TUser, TUserValuesToUpdate, TChat } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -215,7 +215,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
 
-  const fetchChatsQuery: UseQueryResult<TMessage[], Error> = useQuery({
+  const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
     queryKey: ["messages"],
     queryFn: () =>
       currentUser && currentUser._id
@@ -223,7 +223,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         : undefined,
     enabled: userHasLoggedIn,
   });
-  let userChats: TMessage[] | undefined = fetchChatsQuery.data;
+  let userChats: TChat[] | undefined = fetchChatsQuery.data;
 
   // Rename to 'newUserData'
   const userData: TUser = {
