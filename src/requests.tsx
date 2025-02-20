@@ -725,20 +725,17 @@ const getCurrentUserChats = (userID: string): Promise<TChat[]> => {
   }).then((response) => response.json() as Promise<TChat[]>);
 };
 
-const createNewMessage = (newMessage: TMessage): Promise<Response> => {
+const createNewChat = (newChat: TChat): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
   var raw = JSON.stringify({
-    "sender": newMessage.sender,
-    "receiver": newMessage.receiver,
-    "content": newMessage.content,
-    "image": newMessage.image,
-    "timeOpened": null,
-    "timeSent": newMessage.timeSent,
+    "members": newChat.members,
+    "messages": newChat.messages,
+    "dateCreated": newChat.dateCreated,
   });
 
-  return fetch("http://localhost:4000/palz/messages/", {
+  return fetch("http://localhost:4000/palz/chats/", {
     method: "POST",
     headers: myHeaders,
     body: raw,
@@ -776,7 +773,7 @@ const deleteMessage = (messageID: string) => {
 const Requests = {
   deleteMessage,
   updateMessage,
-  createNewMessage,
+  createNewChat,
   getCurrentUserChats,
   removeFromBlockedUsers,
   addToBlockedUsers,
