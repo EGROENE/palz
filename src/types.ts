@@ -123,12 +123,10 @@ export type TMessage = {
   timeOpened: number | null;
 };
 
-export type TMessageValuesToUpdate = {
-  sender?: string;
-  receiver?: string;
-  content?: string;
-  image?: string;
-  timeSent?: number;
+export type TChatValuesToUpdate = {
+  members?: string[];
+  messages?: TMessage[];
+  dateCreated?: number;
 };
 
 export type TUserValuesToUpdate = {
@@ -250,7 +248,7 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
-  fetchMessagesQuery: UseQueryResult<TMessage[], Error>;
+  fetchChatsQuery: UseQueryResult<TMessage[], Error>;
   userMessages: TMessage[] | undefined;
   fetchAllUsersQuery: UseQueryResult<TUser[], Error>;
   friends: string[] | undefined;
