@@ -141,9 +141,13 @@ const ChatsPage = () => {
               </div>
               <div className="chat-preview-text-container">
                 <header>
-                  {getChatMembers(chat)
-                    .map((member) => `${member.firstName} ${member.lastName}`)
-                    .join(", ")}
+                  {`${getChatMembers(chat)
+                    .map((member) =>
+                      getChatMembers(chat).indexOf(member) <= 2
+                        ? `${member.firstName} ${member.lastName}`
+                        : ""
+                    )
+                    .join(", ")} +${getChatMembers(chat).length - 3}`}
                 </header>
                 <p>{getPreviewOfLastMessage(chat)}</p>
               </div>
