@@ -21,6 +21,7 @@ import FriendRequests from "./Components/Pages/FriendRequests/FriendRequests";
 import OtherUserProfile from "./Components/Pages/OtherUserProfile/OtherUserProfile";
 import { useEventContext } from "./Hooks/useEventContext";
 import toast from "react-hot-toast";
+import ChatsPage from "./Components/Pages/ChatsPage/ChatsPage";
 
 function App() {
   const {
@@ -201,6 +202,7 @@ function App() {
           element={<DisplayedCardsPage usedFor="potential-friends" />}
         />
         <Route path="/my-palz" element={<DisplayedCardsPage usedFor="my-friends" />} />
+        <Route path="/chats" element={<ChatsPage />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
     </div>
