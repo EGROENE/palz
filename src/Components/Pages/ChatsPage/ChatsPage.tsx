@@ -117,21 +117,27 @@ const ChatsPage = () => {
               style={{ border: `2px solid ${randomColor}` }}
             >
               <div className="profile-images-chat-preview">
-                {getChatMembers(chat).map((member) => (
-                  <img
-                    key={member.profileImage}
-                    style={
-                      getChatMembers(chat).indexOf(member) > 0
-                        ? {
-                            border: `4px solid ${randomColor}`,
-                            marginLeft: "-3rem",
-                            zIndex: `${secondImageZIndex + 1}`,
-                          }
-                        : { border: `4px solid ${randomColor}` }
-                    }
-                    src={member.profileImage}
-                  />
-                ))}
+                {getChatMembers(chat).map((member) =>
+                  getChatMembers(chat).indexOf(member) < 3 ? (
+                    <img
+                      key={member.profileImage}
+                      style={
+                        getChatMembers(chat).indexOf(member) > 0
+                          ? {
+                              border: `4px solid ${randomColor}`,
+                              marginLeft: "-3rem",
+                              zIndex: `${secondImageZIndex + 1}`,
+                            }
+                          : { border: `4px solid ${randomColor}` }
+                      }
+                      src={member.profileImage}
+                    />
+                  ) : (
+                    <span className="more-images-text">{`+ ${
+                      getChatMembers(chat).length - 3
+                    }`}</span>
+                  )
+                )}
               </div>
               <div className="chat-preview-text-container">
                 <header>
