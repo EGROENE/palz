@@ -99,6 +99,8 @@ const ChatsPage = () => {
     return "IMAGE";
   };
 
+  const secondImageZIndex = 0;
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Chats</h1>
@@ -118,7 +120,15 @@ const ChatsPage = () => {
                 {getChatMembers(chat).map((member) => (
                   <img
                     key={member.profileImage}
-                    style={{ border: `4px solid ${randomColor}` }}
+                    style={
+                      getChatMembers(chat).indexOf(member) > 0
+                        ? {
+                            border: `4px solid ${randomColor}`,
+                            marginLeft: "-3rem",
+                            zIndex: `${secondImageZIndex + 1}`,
+                          }
+                        : { border: `4px solid ${randomColor}` }
+                    }
                     src={member.profileImage}
                   />
                 ))}
