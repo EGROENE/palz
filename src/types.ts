@@ -24,7 +24,7 @@ export type TUser = {
   instagram: string;
   facebook: string;
   x: string;
-  profileImage: string | unknown;
+  profileImage: string;
   about: string;
   friends: string[];
   subscriptionType: "free" | "bronze" | "silver" | "gold" | "platinum";
