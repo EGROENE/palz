@@ -71,7 +71,11 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
                 ? `${member.firstName} ${member.lastName}`
                 : ""
             )
-            .join(", ")} +${getChatMembers(chat).length - 3} more`}
+            .join(", ")} ${
+            getChatMembers(chat).length - 3 > 0
+              ? `+${getChatMembers(chat).length - 3} more`
+              : ""
+          }`}
         </header>
         <p>{getPreviewOfLastMessage(chat)}</p>
       </div>
