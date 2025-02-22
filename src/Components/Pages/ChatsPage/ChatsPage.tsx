@@ -142,7 +142,7 @@ const ChatsPage = () => {
                 )}
               </div>
               <div className="chat-preview-text-container">
-                <header>
+                <header style={{ color: randomColor }}>
                   {`${getChatMembers(chat)
                     .map((member) =>
                       getChatMembers(chat).indexOf(member) <= 2
