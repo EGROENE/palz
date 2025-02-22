@@ -135,7 +135,7 @@ const ChatsPage = () => {
                       src={member.profileImage}
                     />
                   ) : (
-                    <span className="more-images-text">{`+ ${
+                    <span key={member.username} className="more-images-text">{`+ ${
                       getChatMembers(chat).length - 3
                     }`}</span>
                   )
