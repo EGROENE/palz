@@ -247,6 +247,7 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  getChatMembers: (chat: TChat) => TUser[];
   fetchChatsQuery: UseQueryResult<TChat[], Error>;
   userChats: TChat[] | undefined;
   fetchAllUsersQuery: UseQueryResult<TUser[], Error>;

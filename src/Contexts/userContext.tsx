@@ -1880,7 +1880,23 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     window.location.reload(); // reload pg in order to reduce memory usage
   };
 
+  const allOtherUsers: TUser[] =
+      allUsers && currentUser
+        ? allUsers.filter((user) => user._id !== currentUser._id)
+        : [];
+  
+    const getChatMembers = (chat: TChat): TUser[] => {
+      let chatMembers: TUser[] = [];
+      for (const user of allOtherUsers) {
+        if (user._id && chat.members.includes(user._id)) {
+          chatMembers.push(user);
+        }
+      }
+      return chatMembers;
+    };
+
   const userContextValues: TUserContext = {
+    getChatMembers,
     fetchChatsQuery,
     userChats,
     removeProfileImageMutation,
