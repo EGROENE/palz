@@ -147,7 +147,7 @@ const ChatsPage = () => {
                         ? `${member.firstName} ${member.lastName}`
                         : ""
                     )
-                    .join(", ")} +${getChatMembers(chat).length - 3}`}
+                    .join(", ")} +${getChatMembers(chat).length - 3} more`}
                 </header>
                 <p>{getPreviewOfLastMessage(chat)}</p>
               </div>
