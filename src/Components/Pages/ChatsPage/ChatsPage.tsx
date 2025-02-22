@@ -126,7 +126,9 @@ const ChatsPage = () => {
                           ? {
                               border: `4px solid ${randomColor}`,
                               marginLeft: "-3rem",
-                              zIndex: `${secondImageZIndex + 1}`,
+                              zIndex: `${
+                                secondImageZIndex + getChatMembers(chat).indexOf(member)
+                              }`,
                             }
                           : { border: `4px solid ${randomColor}` }
                       }
