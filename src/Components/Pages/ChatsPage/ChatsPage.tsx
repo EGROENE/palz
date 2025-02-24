@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 import ChatPreview from "../../Elements/ChatPreview/ChatPreview";
+import Methods from "../../../methods";
+import { TChat } from "../../../types";
 
 const ChatsPage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
@@ -54,6 +56,11 @@ const ChatsPage = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
+  let userChatsSortedMostRecent: TChat[] = [];
+  if (userChats) {
+    userChatsSortedMostRecent = Methods.sortChatsByMostRecentMessage(userChats);
+  }
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Chats</h1>
@@ -63,7 +70,7 @@ const ChatsPage = () => {
       />
       {isNoFetchError && !fetchIsLoading && userChats && (
         <div className="chats-container">
-          {userChats.map((chat) => (
+          {userChatsSortedMostRecent.map((chat) => (
             <ChatPreview key={chat._id} chat={chat} />
           ))}
         </div>
