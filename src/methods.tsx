@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { TEvent, TUser } from "./types";
+import { TEvent, TUser, TChat } from "./types";
 
 const isTEvent = (value: any): value is TEvent => {
   if (value.eventStartDateTimeInMS) {
@@ -145,7 +145,26 @@ const convertToBase64 = (file: File): Promise<unknown> => {
   });
 };
 
+const sortChatsByMostRecentMessage = (chats: TChat[]): TChat[] => {
+  let sentTimes: number[] = [];
+  for (const chat of chats) {
+    sentTimes.push(chat.messages[chat.messages.length - 1].timeSent);
+  }
+  const sentTimesSortedMostRecent = sentTimes.sort((a, b) => b - a);
+
+  let sortedChats: TChat[] = [];
+  for (const sentTime of sentTimesSortedMostRecent) {
+    for (const chat of chats) {
+      if (chat.messages[chat.messages.length - 1].timeSent === sentTime) {
+        sortedChats.push(chat);
+      }
+    }
+  }
+  return sortedChats;
+};
+
 const Methods = {
+  sortChatsByMostRecentMessage,
   isTEvent,
   isTUser,
   convertToBase64,
