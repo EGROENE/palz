@@ -3,7 +3,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { TChat, TThemeColor } from "../../../types";
 
 const ChatPreview = ({ chat }: { chat: TChat }) => {
-  const { getChatMembers } = useUserContext();
+  const { getChatMembers, userChats } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -34,12 +34,29 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
     return "IMAGE";
   };
 
+  const getNumberOfUnreadMessagesInChat = (chat: TChat): string | number => {
+    let unreadMessages = [];
+    if (userChats) {
+      for (const message of chat.messages) {
+        if (message.timeOpened === null) {
+          unreadMessages.push(message);
+        }
+      }
+    }
+    return unreadMessages.length >= 10 ? "9+" : unreadMessages.length;
+  };
+
   return (
     <div
       key={chat._id}
       className="chat-preview"
       style={{ border: `2px solid ${randomColor}` }}
     >
+      {chat.messages[chat.messages.length - 1].timeOpened === null && (
+        <span style={{ backgroundColor: randomColor }} className="chat-new">
+          {`${getNumberOfUnreadMessagesInChat(chat)} New`}
+        </span>
+      )}
       <div className="profile-images-chat-preview">
         {getChatMembers(chat).map((member) =>
           getChatMembers(chat).indexOf(member) < 3 ? (
