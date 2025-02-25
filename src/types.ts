@@ -247,9 +247,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
-  getChatMembers: (chat: TChat) => TUser[];
-  fetchChatsQuery: UseQueryResult<TChat[], Error>;
-  userChats: TChat[] | undefined;
+  userHasLoggedIn: boolean;
+
   fetchAllUsersQuery: UseQueryResult<TUser[], Error>;
   friends: string[] | undefined;
   setFriends: React.Dispatch<React.SetStateAction<string[] | undefined>>;
@@ -702,4 +701,14 @@ export type TEventContext = {
     user: TUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent> | undefined
   ) => void;
+};
+
+export type TChatContext = {
+  currentChat: TChat | null;
+  setCurrentChat: React.Dispatch<React.SetStateAction<TChat | null>>;
+  showChatModal: boolean;
+  setShowChatModal: React.Dispatch<React.SetStateAction<boolean>>;
+  getChatMembers: (chat: TChat) => TUser[];
+  fetchChatsQuery: UseQueryResult<TChat[], Error>;
+  userChats: TChat[] | undefined;
 };
