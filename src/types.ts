@@ -119,7 +119,6 @@ export type TMessage = {
   content: string;
   timeSent: number;
   image: string;
-  timeOpened: number | null;
   seenBy: string[];
 };
 
