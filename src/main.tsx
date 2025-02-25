@@ -10,6 +10,7 @@ import { UserContextProvider } from "./Contexts/userContext.tsx";
 import { EventContextProvider } from "./Contexts/eventContext.tsx";
 import ErrorBoundary from "./Components/Pages/ErrorBoundary/ErrorBoundary.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ChatContextProvider } from "./Contexts/chatContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -25,9 +26,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           />
           <UserContextProvider>
             <EventContextProvider>
-              <ErrorBoundary>
-                <App />
-              </ErrorBoundary>
+              <ChatContextProvider>
+                <ErrorBoundary>
+                  <App />
+                </ErrorBoundary>
+              </ChatContextProvider>
             </EventContextProvider>
           </UserContextProvider>
         </MainContextProvider>
