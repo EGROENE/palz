@@ -44,9 +44,21 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
         ) {
           unreadMessages.push(message);
         }
+        if (
+          message.seenBy.includes(currentUser._id) ||
+          message.sender === currentUser._id
+        ) {
+          return "";
+        }
       }
     }
-    return unreadMessages.length >= 10 ? "9+" : unreadMessages.length;
+    if (unreadMessages.length >= 10) {
+      return "9+";
+    }
+    if (unreadMessages.length < 10) {
+      return unreadMessages.length;
+    }
+    return 0;
   };
 
   const getTimeOfLastMessageInChat = (chat: TChat): string => {
@@ -104,11 +116,12 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       className="chat-preview"
       style={{ border: `2px solid ${randomColor}` }}
     >
-      {chat.messages[chat.messages.length - 1].timeOpened === null && (
-        <span style={{ backgroundColor: randomColor }} className="chat-new">
-          {`${getNumberOfUnreadMessagesInChat(chat)} New`}
-        </span>
-      )}
+      {getNumberOfUnreadMessagesInChat(chat) !== 0 &&
+        typeof getNumberOfUnreadMessagesInChat(chat) !== "string" && (
+          <span style={{ backgroundColor: randomColor }} className="chat-new">
+            {`${getNumberOfUnreadMessagesInChat(chat)} New`}
+          </span>
+        )}
       <div className="profile-images-chat-preview">
         {getChatMembers(chat).map((member) =>
           getChatMembers(chat).indexOf(member) < 3 ? (
