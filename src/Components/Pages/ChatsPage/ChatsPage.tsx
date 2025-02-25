@@ -8,17 +8,13 @@ import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoading
 import ChatPreview from "../../Elements/ChatPreview/ChatPreview";
 import Methods from "../../../methods";
 import { TChat } from "../../../types";
+import { useChatContext } from "../../../Hooks/useChatContext";
 
 const ChatsPage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
-  const {
-    currentUser,
-    userCreatedAccount,
-    userChats,
-    fetchAllUsersQuery,
-    fetchChatsQuery,
-  } = useUserContext();
+  const { currentUser, userCreatedAccount, fetchAllUsersQuery } = useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
+  const { fetchChatsQuery, userChats } = useChatContext();
 
   const navigation = useNavigate();
 

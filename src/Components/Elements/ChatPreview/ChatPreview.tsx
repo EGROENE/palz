@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { TChat, TThemeColor, TMessage } from "../../../types";
+import { useChatContext } from "../../../Hooks/useChatContext";
 
 const ChatPreview = ({ chat }: { chat: TChat }) => {
-  const { getChatMembers, userChats, currentUser } = useUserContext();
+  const { currentUser } = useUserContext();
+  const { getChatMembers, userChats } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
