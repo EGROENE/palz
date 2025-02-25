@@ -27,7 +27,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
         : undefined;
     if (lastMessage) {
       if (lastMessage.length > 50) {
-        return `${lastMessage.slice(0, 47)}...`;
+        return `${lastMessage.slice(0, 37)}...`;
       }
       return lastMessage;
     }
