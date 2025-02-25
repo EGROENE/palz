@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TChat, TThemeColor } from "../../../types";
+import { TChat, TThemeColor, TMessage } from "../../../types";
 
 const ChatPreview = ({ chat }: { chat: TChat }) => {
-  const { getChatMembers, userChats } = useUserContext();
+  const { getChatMembers, userChats, currentUser } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -35,10 +35,13 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
   };
 
   const getNumberOfUnreadMessagesInChat = (chat: TChat): string | number => {
-    let unreadMessages = [];
-    if (userChats) {
+    let unreadMessages: TMessage[] = [];
+    if (userChats && currentUser && currentUser._id) {
       for (const message of chat.messages) {
-        if (message.timeOpened === null) {
+        if (
+          !message.seenBy.includes(currentUser._id) &&
+          message.sender !== currentUser._id
+        ) {
           unreadMessages.push(message);
         }
       }
