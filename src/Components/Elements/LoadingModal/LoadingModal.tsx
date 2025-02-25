@@ -3,7 +3,7 @@ import styles from "./styles.module.css";
 
 const LoadingModal = ({ message }: { message: string }) => {
   return (
-    <div className={styles.modalBackground}>
+    <div className="modal-background">
       <div className={styles.loadingModal}>
         <header className="animate__animated animate__pulse animate animate__infinite">
           {message}

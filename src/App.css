@@ -709,3 +709,17 @@ form textarea {
 .chat-preview-text-container span {
   font-family: var(--text-font);
 }
+
+.modal-background {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 201;
+  margin-left: -3rem;
+}

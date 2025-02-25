@@ -50,7 +50,7 @@ const TwoOptionsInterface = ({
   }, []);
 
   return (
-    <div className={styles.modalBackground}>
+    <div className="modal-background">
       <i
         title="Close"
         onClick={() => closeHandler(false)}

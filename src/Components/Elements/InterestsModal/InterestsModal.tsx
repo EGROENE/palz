@@ -34,7 +34,7 @@ const InterestsModal = ({
   interestsRelation: "event" | "user";
 }) => {
   return (
-    <div className={styles.modalBackground}>
+    <div className="modal-background">
       <i
         title="Close"
         onClick={() => {
