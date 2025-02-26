@@ -1,7 +1,15 @@
-import { TMessage, TUser } from "../../../types";
+import { TMessage, TThemeColor, TUser } from "../../../types";
 import { useUserContext } from "../../../Hooks/useUserContext";
+import { useMainContext } from "../../../Hooks/useMainContext";
 
-const Message = ({ message }: { message: TMessage }) => {
+const Message = ({
+  message,
+  randomColor,
+}: {
+  message: TMessage;
+  randomColor?: TThemeColor;
+}) => {
+  const { theme } = useMainContext();
   const { currentUser, allUsers } = useUserContext();
 
   const sender: TUser | undefined = allUsers
@@ -12,14 +20,36 @@ const Message = ({ message }: { message: TMessage }) => {
 
   return (
     <div
+      style={
+        sender && currentUser && sender._id === currentUser._id
+          ? { backgroundColor: "var(--background-color" }
+          : { backgroundColor: randomColor }
+      }
       className={
         message.sender === currentUser?._id ? "message sent" : "message received"
       }
     >
       <img src={sender ? sender.profileImage : ""} />
       <div className="message-content">
-        <p>{message.content}</p>
-        <p className="message-sent-info">{`Sent ${dateOfMessage.toLocaleDateString()} at ${dateOfMessage.toLocaleTimeString(
+        <p
+          style={
+            randomColor === "var(--primary-color)" ||
+            (sender && currentUser && sender._id === currentUser._id && theme === "light")
+              ? { color: "black" }
+              : { color: "white" }
+          }
+        >
+          {message.content}
+        </p>
+        <p
+          style={
+            randomColor === "var(--primary-color)" ||
+            (sender && currentUser && sender._id !== currentUser._id)
+              ? { color: "rgb(68, 67, 67)" }
+              : { color: "darkgray" }
+          }
+          className="message-sent-info"
+        >{`Sent ${dateOfMessage.toLocaleDateString()} at ${dateOfMessage.toLocaleTimeString(
           [],
           {
             hour: "2-digit",
