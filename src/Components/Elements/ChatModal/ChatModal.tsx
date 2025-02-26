@@ -70,6 +70,17 @@ const ChatModal = () => {
           currentChat.messages.map((message) => (
             <Message key={message._id} message={message} />
           ))}
+        <div className="message-input-container">
+          <input type="text" placeholder="Type message"></input>
+          <i
+            style={
+              randomColor === "var(--primary-color)"
+                ? { backgroundColor: `${randomColor}`, color: "black" }
+                : { backgroundColor: `${randomColor}`, color: "white" }
+            }
+            className="fas fa-paper-plane"
+          ></i>
+        </div>
       </div>
     </div>
   );
