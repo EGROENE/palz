@@ -728,3 +728,7 @@ form textarea {
   z-index: 201;
   margin-left: -3rem;
 }
+
+.modal-background i:hover {
+  cursor: pointer;
+}
