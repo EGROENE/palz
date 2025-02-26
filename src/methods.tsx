@@ -163,9 +163,9 @@ const sortChatsByMostRecentMessage = (chats: TChat[]): TChat[] => {
   return sortedChats;
 };
 
-const getDateMessageSent = (chat: TChat): string => {
+const getDateMessageSent = (message: TMessage): string => {
   const now = Date.now();
-  const timeOfMostRecentMessage = chat.messages[chat.messages.length - 1].timeSent;
+  const timeOfMostRecentMessage = message.timeSent;
   const timeElapsed = now - timeOfMostRecentMessage;
   const dateOfLastMessage = new Date(timeOfMostRecentMessage);
 
