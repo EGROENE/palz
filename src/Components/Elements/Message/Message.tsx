@@ -8,6 +8,8 @@ const Message = ({ message }: { message: TMessage }) => {
     ? allUsers.filter((user) => user._id === message.sender)[0]
     : undefined;
 
+  const dateOfMessage = new Date(message.timeSent);
+
   return (
     <div
       className={
@@ -15,7 +17,16 @@ const Message = ({ message }: { message: TMessage }) => {
       }
     >
       <img src={sender ? sender.profileImage : ""} />
-      <p>{message.content}</p>
+      <div className="message-content">
+        <p>{message.content}</p>
+        <p className="message-sent-info">{`Sent ${dateOfMessage.toLocaleDateString()} at ${dateOfMessage.toLocaleTimeString(
+          [],
+          {
+            hour: "2-digit",
+            minute: "2-digit",
+          }
+        )}`}</p>
+      </div>
     </div>
   );
 };
