@@ -68,7 +68,11 @@ const ChatModal = () => {
         </div>
         {currentChat &&
           currentChat.messages.map((message) => (
-            <Message key={message._id} message={message} />
+            <Message
+              key={message._id}
+              message={message}
+              randomColor={randomColor ? randomColor : undefined}
+            />
           ))}
         <div className="message-input-container">
           <input type="text" placeholder="Type message"></input>
