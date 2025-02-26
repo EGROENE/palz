@@ -125,7 +125,14 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
     >
       {getNumberOfUnreadMessagesInChat(chat) !== 0 &&
         typeof getNumberOfUnreadMessagesInChat(chat) !== "string" && (
-          <span style={{ backgroundColor: randomColor }} className="chat-new">
+          <span
+            style={
+              randomColor === "var(--primary-color)"
+                ? { backgroundColor: `${randomColor}`, color: "black" }
+                : { backgroundColor: `${randomColor}`, color: "white" }
+            }
+            className="chat-new"
+          >
             {`${getNumberOfUnreadMessagesInChat(chat)} New`}
           </span>
         )}
