@@ -89,16 +89,16 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
           </span>
         )}
       <div className="profile-images-chat-preview">
-        {getChatMembers(chat).map((member) =>
-          getChatMembers(chat).indexOf(member) < 3 ? (
+        {getChatMembers(chat.members).map((member) =>
+          getChatMembers(chat.members).indexOf(member) < 3 ? (
             <img
               key={member.profileImage}
               style={
-                getChatMembers(chat).indexOf(member) > 0
+                getChatMembers(chat.members).indexOf(member) > 0
                   ? {
                       border: `4px solid ${randomColor}`,
                       marginLeft: "-3rem",
-                      zIndex: `${getChatMembers(chat).indexOf(member)}`,
+                      zIndex: `${getChatMembers(chat.members).indexOf(member)}`,
                     }
                   : { border: `4px solid ${randomColor}` }
               }
@@ -106,22 +106,22 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
             />
           ) : (
             <span key={member.username} className="more-images-text">{`+ ${
-              getChatMembers(chat).length - 3
+              getChatMembers(chat.members).length - 3
             }`}</span>
           )
         )}
       </div>
       <div className="chat-preview-text-container">
         <header style={{ color: randomColor }}>
-          {`${getChatMembers(chat)
+          {`${getChatMembers(chat.members)
             .map((member) =>
-              getChatMembers(chat).indexOf(member) <= 2
+              getChatMembers(chat.members).indexOf(member) <= 2
                 ? `${member.firstName} ${member.lastName}`
                 : ""
             )
             .join(", ")} ${
-            getChatMembers(chat).length - 3 > 0
-              ? `+${getChatMembers(chat).length - 3} more`
+            getChatMembers(chat.members).length - 3 > 0
+              ? `+${getChatMembers(chat.members).length - 3} more`
               : ""
           }`}
         </header>
