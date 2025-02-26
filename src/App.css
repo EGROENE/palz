@@ -653,6 +653,11 @@ form textarea {
   margin: 0.75rem 0;
 }
 
+.chat-preview:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
 .chat-new {
   position: absolute;
   top: -1rem;
