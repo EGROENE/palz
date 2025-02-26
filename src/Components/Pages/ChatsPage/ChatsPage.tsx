@@ -9,12 +9,13 @@ import ChatPreview from "../../Elements/ChatPreview/ChatPreview";
 import Methods from "../../../methods";
 import { TChat } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
+import ChatModal from "../../Elements/ChatModal/ChatModal";
 
 const ChatsPage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, fetchAllUsersQuery } = useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
-  const { fetchChatsQuery, userChats } = useChatContext();
+  const { fetchChatsQuery, userChats, showChatModal } = useChatContext();
 
   const navigation = useNavigate();
 
@@ -60,6 +61,7 @@ const ChatsPage = () => {
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Chats</h1>
+      {showChatModal && <ChatModal />}
       <QueryLoadingOrError
         query={queryForQueryLoadingOrError}
         errorMessage="Error fetching your chats"
