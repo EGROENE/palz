@@ -35,7 +35,7 @@ const ChatModal = () => {
         }}
         className="fas fa-times close-module-icon"
       ></i>
-      <div style={{ border: `3px solid ${randomColor}` }} className="messages-container">
+      <div style={{ border: `3px solid ${randomColor}` }} className="chat-container">
         <div
           style={
             !showMembers
@@ -66,14 +66,17 @@ const ChatModal = () => {
             </>
           )}
         </div>
-        {currentChat &&
-          currentChat.messages.map((message) => (
-            <Message
-              key={message._id}
-              message={message}
-              randomColor={randomColor ? randomColor : undefined}
-            />
-          ))}
+        {currentChat && (
+          <div className="messages-container">
+            {currentChat.messages.map((message) => (
+              <Message
+                key={message._id}
+                message={message}
+                randomColor={randomColor ? randomColor : undefined}
+              />
+            ))}
+          </div>
+        )}
         <div className="message-input-container">
           <input type="text" placeholder="Type message"></input>
           <i
