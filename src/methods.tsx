@@ -163,7 +163,7 @@ const sortChatsByMostRecentMessage = (chats: TChat[]): TChat[] => {
   return sortedChats;
 };
 
-const getTimeOfLastMessageInChat = (chat: TChat): string => {
+const getDateMessageSent = (chat: TChat): string => {
   const now = Date.now();
   const timeOfMostRecentMessage = chat.messages[chat.messages.length - 1].timeSent;
   const timeElapsed = now - timeOfMostRecentMessage;
@@ -213,7 +213,7 @@ const getTimeOfLastMessageInChat = (chat: TChat): string => {
 };
 
 const Methods = {
-  getTimeOfLastMessageInChat,
+  getDateMessageSent,
   sortChatsByMostRecentMessage,
   isTEvent,
   isTUser,

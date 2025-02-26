@@ -127,7 +127,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
         </header>
         <div className="last-message-preview-and-date">
           <span>{getPreviewOfLastMessage(chat)}</span>
-          <span>{Methods.getTimeOfLastMessageInChat(chat)}</span>
+          <span>{Methods.getDateMessageSent(chat)}</span>
         </div>
       </div>
     </div>
