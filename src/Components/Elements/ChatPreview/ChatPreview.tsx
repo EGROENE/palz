@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { TChat, TThemeColor, TMessage } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
+import Methods from "../../../methods";
 
 const ChatPreview = ({ chat }: { chat: TChat }) => {
   const { currentUser } = useUserContext();
@@ -62,55 +63,6 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       return unreadMessages.length;
     }
     return 0;
-  };
-
-  const getTimeOfLastMessageInChat = (chat: TChat): string => {
-    const now = Date.now();
-    const timeOfMostRecentMessage = chat.messages[chat.messages.length - 1].timeSent;
-    const timeElapsed = now - timeOfMostRecentMessage;
-    const dateOfLastMessage = new Date(timeOfMostRecentMessage);
-
-    const oneDay = 1000 * 60 * 60 * 24;
-    const oneWeek = oneDay * 7;
-    const oneYear = oneDay * 365;
-
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "June",
-      "Jul",
-      "Aug",
-      "Sept",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-
-    if (timeElapsed < oneDay) {
-      return dateOfLastMessage.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    }
-
-    if (timeElapsed > oneDay && timeElapsed < oneWeek) {
-      const dayOfWeek = dateOfLastMessage.getDay();
-      return days[dayOfWeek];
-    }
-    if (timeElapsed > oneWeek && timeElapsed < oneYear) {
-      return months[dateOfLastMessage.getMonth()] + " " + dateOfLastMessage.getDate();
-    }
-    return (
-      months[dateOfLastMessage.getMonth()] +
-      " " +
-      dateOfLastMessage.getDate() +
-      " " +
-      dateOfLastMessage.getFullYear()
-    );
   };
 
   return (
@@ -175,7 +127,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
         </header>
         <div className="last-message-preview-and-date">
           <span>{getPreviewOfLastMessage(chat)}</span>
-          <span>{getTimeOfLastMessageInChat(chat)}</span>
+          <span>{Methods.getTimeOfLastMessageInChat(chat)}</span>
         </div>
       </div>
     </div>
