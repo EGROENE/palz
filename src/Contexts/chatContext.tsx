@@ -32,10 +32,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       ? allUsers.filter((user) => user._id !== currentUser._id)
       : [];
 
-  const getChatMembers = (chat: TChat): TUser[] => {
+  const getChatMembers = (members: string[]): TUser[] => {
     let chatMembers: TUser[] = [];
     for (const user of allOtherUsers) {
-      if (user._id && chat.members.includes(user._id)) {
+      if (user._id && members.includes(user._id)) {
         chatMembers.push(user);
       }
     }
