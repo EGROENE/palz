@@ -10,12 +10,19 @@ import Methods from "../../../methods";
 import { TChat, TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import ChatModal from "../../Elements/ChatModal/ChatModal";
+import CreateNewChatModal from "../../Elements/CreateNewChatModal/CreateNewChatModal";
 
 const ChatsPage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, fetchAllUsersQuery } = useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
-  const { fetchChatsQuery, userChats, showChatModal } = useChatContext();
+  const {
+    fetchChatsQuery,
+    userChats,
+    showChatModal,
+    showCreateNewChatModal,
+    setShowCreateNewChatModal,
+  } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -77,6 +84,7 @@ const ChatsPage = () => {
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Chats</h1>
       {showChatModal && <ChatModal />}
+      {showCreateNewChatModal && <CreateNewChatModal />}
       <QueryLoadingOrError
         query={queryForQueryLoadingOrError}
         errorMessage="Error fetching your chats"
@@ -97,6 +105,7 @@ const ChatsPage = () => {
             id="new-chat-btn"
             className="fas fa-feather"
             title="Start new chat"
+            onClick={() => setShowCreateNewChatModal(true)}
           ></i>
         </>
       )}
