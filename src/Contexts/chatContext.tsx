@@ -8,7 +8,7 @@ import { useLocalStorage } from "usehooks-ts";
 export const ChatContext = createContext<TChatContext | null>(null);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
-  const { currentUser, userHasLoggedIn, allUsers } = useUserContext();
+  const { currentUser, userHasLoggedIn, allOtherUsers } = useUserContext();
 
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
 
@@ -16,6 +16,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     "currentChat",
     null
   );
+
+  const [showCreateNewChatModal, setShowCreateNewChatModal] = useState<boolean>(false);
 
   const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
     queryKey: ["messages"],
@@ -26,11 +28,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     enabled: userHasLoggedIn,
   });
   let userChats: TChat[] | undefined = fetchChatsQuery.data;
-
-  const allOtherUsers: TUser[] =
-    allUsers && currentUser
-      ? allUsers.filter((user) => user._id !== currentUser._id)
-      : [];
 
   const getChatMembers = (members: string[]): TUser[] => {
     let chatMembers: TUser[] = [];
@@ -43,6 +40,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    showCreateNewChatModal,
+    setShowCreateNewChatModal,
     currentChat,
     setCurrentChat,
     fetchChatsQuery,
