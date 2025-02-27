@@ -12,6 +12,8 @@ const ChatModal = () => {
 
   const [showMembers, setShowMembers] = useState<boolean>(false);
 
+  const [inputMessage, setInputMessage] = useState<string>("");
+
   useEffect(() => {
     // Set color of event card's border randomly:
     const themeColors: TThemeColor[] = [
@@ -78,7 +80,12 @@ const ChatModal = () => {
           </div>
         )}
         <div className="message-input-container">
-          <input type="text" placeholder="Type message"></input>
+          <textarea
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            placeholder="Type message"
+            maxLength={10000}
+          ></textarea>
           <i
             style={
               randomColor === "var(--primary-color)"
