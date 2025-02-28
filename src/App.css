@@ -713,6 +713,7 @@ form textarea {
 
 .chat-preview-text-container span {
   font-family: var(--text-font);
+  color: var(--text-color);
 }
 
 .modal-background {
@@ -731,4 +732,17 @@ form textarea {
 
 .modal-background i:hover {
   cursor: pointer;
+}
+
+.dropdownList {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdownList i {
+  margin-left: 1rem;
+}
+
+.dropdownList button {
+  width: 12rem;
 }

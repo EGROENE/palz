@@ -1525,7 +1525,7 @@ const EventForm = ({
               className="clear-other-users-search-query fas fa-times"
             ></i>
           )}
-          <div className="coorganizersInviteesDropdown">
+          <div className="dropdownList">
             <button
               style={
                 randomColor === "var(--primary-color)"
@@ -1624,7 +1624,7 @@ const EventForm = ({
               className="clear-other-users-search-query fas fa-times"
             ></i>
           )}
-          <div className="coorganizersInviteesDropdown">
+          <div className="dropdownList">
             <button
               style={
                 randomColor === "var(--primary-color)"
