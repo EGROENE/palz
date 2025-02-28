@@ -1,0 +1,182 @@
+import { useState, useEffect } from "react";
+import { TThemeColor, TUser } from "../../../types";
+import { useChatContext } from "../../../Hooks/useChatContext";
+import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
+import { useUserContext } from "../../../Hooks/useUserContext";
+
+// add members
+// name chat (if over 1 other member)
+// upon click of 'create', make this modal disappear, then render ChatModal (set currentChat to newly created chat)
+// in chat preview, if no messages, show NO MESSAGES YET if no messages exist in chat
+
+const CreateNewChatModal = () => {
+  const { allOtherUsers, currentUser, allUsers } = useUserContext();
+  const {
+    setShowCreateNewChatModal,
+    numberOfPotentialChatMembersDisplayed,
+    setNumberOfPotentialChatMembersDisplayed,
+    handleAddRemoveUserFromChat,
+    usersToAddToChat,
+    setUsersToAddToChat,
+  } = useChatContext();
+
+  const [showPotentialChatMembers, setShowPotentialChatMembers] =
+    useState<boolean>(false);
+
+  const [potentialChatMembers, setPotentialChatMembers] = useState<TUser[]>([]);
+
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  const [chatMembersSearchQuery, setChatMembersSearchQuery] = useState<string>("");
+
+  useEffect(() => {
+    // Set color of event card's border randomly:
+    const themeColors: TThemeColor[] = [
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
+  }, []);
+
+  const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
+    if (allUsers) {
+      return allUsers.filter(
+        (user) => user && user._id && otherUser.friends.includes(user._id)
+      );
+    }
+    return [];
+  };
+
+  const initiatePotentialChatMembers = (): void => {
+    setPotentialChatMembers(
+      allOtherUsers.filter((otherUser) => {
+        const currentUserIsBlocked =
+          currentUser && currentUser._id
+            ? otherUser.blockedUsers.includes(currentUser._id)
+            : false;
+
+        const currentUserIsFriendOfFriend: boolean =
+          currentUser && currentUser._id
+            ? getCurrentOtherUserFriends(otherUser).some(
+                (otherUserFriend) =>
+                  currentUser._id && otherUserFriend.friends.includes(currentUser._id)
+              )
+            : false;
+
+        const currentUserIsFriend: boolean =
+          currentUser && currentUser._id
+            ? otherUser.friends.includes(currentUser._id)
+            : false;
+
+        if (
+          !currentUserIsBlocked &&
+          (otherUser.whoCanMessage === "anyone" ||
+            (otherUser.whoCanMessage === "friends" && currentUserIsFriend) ||
+            (otherUser.whoCanMessage === "friends of friends" &&
+              currentUserIsFriendOfFriend))
+        ) {
+          return otherUser;
+        }
+      })
+    );
+  };
+
+  useEffect(() => {
+    initiatePotentialChatMembers();
+  }, [usersToAddToChat]);
+
+  const handleSearchChatMembersInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    e.preventDefault();
+    const input = e.target.value.toLowerCase().replace(/s\+/g, " ");
+    console.log(input);
+    setChatMembersSearchQuery(input);
+
+    let matchingUsers: TUser[] = [];
+    if (input.replace(/\s+/g, "") !== "") {
+      for (const otherUser of allOtherUsers) {
+        if (otherUser.username && otherUser.firstName && otherUser.lastName) {
+          if (
+            otherUser.username.toLowerCase().includes(input) ||
+            otherUser.firstName.toLowerCase().includes(input) ||
+            otherUser.lastName.toLowerCase().includes(input)
+          ) {
+            matchingUsers.push(otherUser);
+          }
+        }
+      }
+      setPotentialChatMembers(matchingUsers);
+    } else {
+      initiatePotentialChatMembers();
+    }
+  };
+
+  return (
+    <div className="modal-background">
+      <i
+        title="Close"
+        onClick={() => {
+          setShowCreateNewChatModal(false);
+        }}
+        className="fas fa-times close-module-icon"
+      ></i>
+      <div className="create-new-chat">
+        <h1>New Chat</h1>
+        <div className="search-and-dropdown">
+          <input
+            name="chat-members-search"
+            id="chat-members-search"
+            className="dropdown-search"
+            value={chatMembersSearchQuery}
+            onChange={(e) => handleSearchChatMembersInput(e)}
+            type="text"
+            placeholder="Search users by username, first/last names"
+          />
+          {chatMembersSearchQuery.replace(/s\+/g, "") !== "" && (
+            <i
+              onClick={() => {
+                setChatMembersSearchQuery("");
+                initiatePotentialChatMembers();
+              }}
+              className="clear-other-users-search-query fas fa-times"
+            ></i>
+          )}
+          <div className="dropdownList">
+            <button
+              style={
+                randomColor === "var(--primary-color)"
+                  ? { backgroundColor: `${randomColor}`, color: "black" }
+                  : { backgroundColor: `${randomColor}`, color: "white" }
+              }
+              type="button"
+              onClick={() => setShowPotentialChatMembers(!showPotentialChatMembers)}
+            >
+              Select user:
+              <i
+                style={showPotentialChatMembers ? { "rotate": "180deg" } : undefined}
+                className="fas fa-chevron-down"
+              ></i>
+            </button>
+            {showPotentialChatMembers && (
+              <DropdownChecklist
+                usedFor="potential-chat-members"
+                action={handleAddRemoveUserFromChat}
+                actionEventParamNeeded={false}
+                displayedItemsArray={potentialChatMembers}
+                storageArray={usersToAddToChat}
+                setStorageArray={setUsersToAddToChat}
+                displayedItemsCount={numberOfPotentialChatMembersDisplayed}
+                setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
+                displayedItemsCountInterval={10}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+export default CreateNewChatModal;
