@@ -635,6 +635,251 @@ form textarea {
   cursor: pointer;
 }
 
+#new-chat-btn {
+  position: fixed;
+  bottom: 5rem;
+  right: 8rem;
+  font-size: 2rem;
+  border-radius: 50%;
+  padding: 2rem;
+}
+
+.chats-container {
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  flex-direction: column;
+}
+
+.chat-preview {
+  position: relative;
+  padding: 0.75rem 0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-around;
+  margin: 0.75rem 0;
+}
+
+.chat-preview:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.chat-new {
+  position: absolute;
+  top: -1rem;
+  right: -0.5rem;
+  background-color: green;
+  padding: 0.5rem;
+  border-radius: 50%;
+  font-family: var(--text-font);
+}
+
+.profile-images-chat-preview {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+.chat-preview img {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.more-images-text {
+  margin-left: -1.5rem;
+  background: black;
+  color: white;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  z-index: 3;
+  border-radius: 51%;
+  width: 2rem;
+  height: 2rem;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.chat-preview-text-container {
+  text-align: left;
+  width: 60%;
+}
+
+.last-message-preview-and-date {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chat-preview-text-container header {
+  color: var(--text-color);
+  font-size: 1.5rem;
+}
+
+.chat-preview-text-container span {
+  font-family: var(--text-font);
+  color: var(--text-color);
+}
+
+.modal-background {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 201;
+  margin-left: -3rem;
+}
+
+.modal-background i:hover {
+  cursor: pointer;
+}
+
+.chat-container {
+  background: black;
+  height: 75%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  scroll-behavior: smooth;
+  border-radius: 5px;
+}
+
+.members-panel {
+  position: sticky;
+  width: 100%;
+  z-index: 100;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--background-color);
+}
+
+.members-panel header {
+  font-size: 2rem;
+}
+
+.members-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+}
+
+.members-panel p {
+  font-family: var(--text-font);
+}
+
+.members-panel i {
+  color: var(--text-color);
+}
+
+.members-panel p:hover {
+  cursor: pointer;
+}
+
+.messages-container {
+  overflow-y: scroll;
+  height: calc(100% - 133px);
+}
+
+.message {
+  margin: 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 33%;
+  background-color: deeppink;
+  border-radius: 10px;
+  color: var(--text-color);
+  padding: 0.5rem;
+}
+
+.message img {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.message p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.message-sent-info {
+  font-size: 0.75rem;
+  color: lightgray;
+}
+
+.message.sent {
+  text-align: left;
+  flex-direction: row-reverse;
+  left: 62%;
+  position: relative;
+  background-color: var(--background-color);
+}
+
+.message.sent p:first-child {
+  color: var(--text-color);
+}
+
+.message.sent .message-content {
+  margin-right: 0.25rem;
+}
+
+.message.sent .message-sent-info {
+  color: darkgray;
+}
+
+.message.received {
+  text-align: right;
+}
+
+.message.received .message-content {
+  margin-left: 0.25rem;
+}
+
+.message-input-container {
+  padding: 1rem;
+  display: flex;
+  position: sticky;
+  bottom: 0rem;
+  align-items: center;
+  background-color: var(--background-color);
+  position: absolute;
+  width: 95%;
+  bottom: 0;
+}
+
+.message-input-container textarea {
+  width: 92%;
+  min-height: 1.5rem;
+  height: 1.5rem;
+  max-height: 13rem;
+  padding: 0.5rem;
+}
+
+.message-input-container i {
+  display: flex;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  margin-left: 1rem;
+  border-radius: 50%;
+  align-items: center;
+}
+
 .dropdown-search {
   width: 37% !important;
   /* height: calc(28px - 0.45rem); */
