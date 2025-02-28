@@ -22,7 +22,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [
     numberOfPotentialChatMembersDisplayed,
     setNumberOfPotentialChatMembersDisplayed,
-  ] = useState<number>(10);
+  ] = useState<number | null>(10);
 
   const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
     queryKey: ["messages"],
