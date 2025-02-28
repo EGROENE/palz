@@ -712,6 +712,8 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  numberOfPotentialChatMembersDisplayed: number;
+  setNumberOfPotentialChatMembersDisplayed: React.Dispatch<React.SetStateAction<number>>;
   currentChat: TChat | null;
   setCurrentChat: React.Dispatch<React.SetStateAction<TChat | null>>;
   showChatModal: boolean;

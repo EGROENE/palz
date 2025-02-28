@@ -19,6 +19,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showCreateNewChatModal, setShowCreateNewChatModal] = useState<boolean>(false);
 
+  const [
+    numberOfPotentialChatMembersDisplayed,
+    setNumberOfPotentialChatMembersDisplayed,
+  ] = useState<number>(10);
+
   const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
     queryKey: ["messages"],
     queryFn: () =>
@@ -40,6 +45,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    numberOfPotentialChatMembersDisplayed,
+    setNumberOfPotentialChatMembersDisplayed,
     showCreateNewChatModal,
     setShowCreateNewChatModal,
     currentChat,
