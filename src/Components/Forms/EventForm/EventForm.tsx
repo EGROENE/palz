@@ -1486,7 +1486,7 @@ const EventForm = ({
           <input
             name="event-co-organizers-search"
             id="event-co-organizers-search"
-            className={styles.eventCoOrganizersSearch}
+            className="dropdown-search"
             ref={coOrganizersRef}
             onFocus={() => setFocusedElement("coOrganizers")}
             onBlur={() => setFocusedElement(undefined)}
@@ -1585,7 +1585,7 @@ const EventForm = ({
           <input
             name="potential-invitees-search"
             id="potential-invitees-search"
-            className={styles.potentialInviteesSearch}
+            className="dropdown-search"
             ref={inviteesRef}
             onFocus={() => setFocusedElement("invitees")}
             onBlur={() => setFocusedElement(undefined)}
