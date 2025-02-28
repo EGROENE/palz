@@ -66,13 +66,6 @@
   display: flex;
 }
 
-.coorganizersInviteesInputs {
-  display: flex;
-  width: 100%;
-  position: relative;
-  align-items: baseline;
-}
-
 .potentialInviteesSearch,
 .eventCoOrganizersSearch {
   width: 37% !important;

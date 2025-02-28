@@ -635,87 +635,6 @@ form textarea {
   cursor: pointer;
 }
 
-.chats-container {
-  display: flex;
-  justify-content: center;
-  width: 50%;
-  flex-direction: column;
-}
-
-.chat-preview {
-  position: relative;
-  padding: 0.75rem 0;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: space-around;
-  margin: 0.75rem 0;
-}
-
-.chat-preview:hover {
-  cursor: pointer;
-  opacity: 0.8;
-}
-
-.chat-new {
-  position: absolute;
-  top: -1rem;
-  right: -0.5rem;
-  background-color: green;
-  padding: 0.5rem;
-  border-radius: 50%;
-  font-family: var(--text-font);
-}
-
-.profile-images-chat-preview {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-}
-
-.chat-preview img {
-  width: 5rem;
-  height: 5rem;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.more-images-text {
-  margin-left: -1.5rem;
-  background: black;
-  color: white;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  z-index: 3;
-  border-radius: 51%;
-  width: 2rem;
-  height: 2rem;
-  justify-content: center;
-  font-weight: 700;
-}
-
-.chat-preview-text-container {
-  text-align: left;
-  width: 60%;
-}
-
-.last-message-preview-and-date {
-  display: flex;
-  justify-content: space-between;
-}
-
-.chat-preview-text-container header {
-  color: var(--text-color);
-  font-size: 1.5rem;
-}
-
-.chat-preview-text-container span {
-  font-family: var(--text-font);
-  color: var(--text-color);
-}
-
 .modal-background {
   height: 100vh;
   width: 100vw;
@@ -732,6 +651,13 @@ form textarea {
 
 .modal-background i:hover {
   cursor: pointer;
+}
+
+.search-and-dropdown {
+  display: flex;
+  width: 100%;
+  position: relative;
+  align-items: baseline;
 }
 
 .dropdownList {

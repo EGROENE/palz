@@ -1482,7 +1482,7 @@ const EventForm = ({
                 />
               ))}
         </div>
-        <div className={styles.coorganizersInviteesInputs}>
+        <div className="search-and-dropdown">
           <input
             name="event-co-organizers-search"
             id="event-co-organizers-search"
@@ -1581,7 +1581,7 @@ const EventForm = ({
               />
             ))}
         </div>
-        <div className={styles.coorganizersInviteesInputs}>
+        <div className="search-and-dropdown">
           <input
             name="potential-invitees-search"
             id="potential-invitees-search"
