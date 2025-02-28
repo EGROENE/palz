@@ -89,6 +89,10 @@ const EventForm = ({
     updateEventMutation,
     createEventMutation,
     deleteEventMutation,
+    displayedPotentialInviteeCount,
+    setDisplayedPotentialInviteeCount,
+    displayedPotentialCoOrganizerCount,
+    setDisplayedPotentialCoOrganizerCount,
   } = useEventContext();
 
   const [focusedElement, setFocusedElement] = useState<
@@ -148,12 +152,6 @@ const EventForm = ({
     showAreYouSureRemoveCurrentUserAsOrganizer,
     setShowAreYouSureRemoveCurrentUserAsOrganizer,
   ] = useState<boolean>(false);
-
-  const [displayedPotentialInviteeCount, setDisplayedPotentialInviteeCount] = useState<
-    number | undefined
-  >(10);
-  const [displayedPotentialCoOrganizerCount, setDisplayedPotentialCoOrganizerCount] =
-    useState<number | undefined>(10);
 
   useEffect(() => {
     // Hide Sidebar if showing:
@@ -1527,7 +1525,7 @@ const EventForm = ({
               className="clear-other-users-search-query fas fa-times"
             ></i>
           )}
-          <div className={styles.coorganizersInviteesDropdown}>
+          <div className="coorganizersInviteesDropdown">
             <button
               style={
                 randomColor === "var(--primary-color)"
@@ -1554,6 +1552,8 @@ const EventForm = ({
                 setDisplayedItemsCount={setDisplayedPotentialCoOrganizerCount}
                 displayedItemsCountInterval={10}
                 event={currentEvent}
+                action={handleAddRemoveUserAsOrganizer}
+                actionEventParamNeeded={true}
               />
             )}
           </div>
@@ -1624,7 +1624,7 @@ const EventForm = ({
               className="clear-other-users-search-query fas fa-times"
             ></i>
           )}
-          <div className={styles.coorganizersInviteesDropdown}>
+          <div className="coorganizersInviteesDropdown">
             <button
               style={
                 randomColor === "var(--primary-color)"
@@ -1645,12 +1645,14 @@ const EventForm = ({
               <DropdownChecklist
                 usedFor="potential-invitees"
                 displayedItemsArray={potentialInvitees}
-                storageArray={invitees}
-                setStorageArray={setInvitees}
                 displayedItemsCount={displayedPotentialInviteeCount}
                 setDisplayedItemsCount={setDisplayedPotentialInviteeCount}
                 displayedItemsCountInterval={10}
+                storageArray={invitees}
+                setStorageArray={setInvitees}
                 event={currentEvent}
+                action={handleAddRemoveUserAsInvitee}
+                actionEventParamNeeded={true}
               />
             )}
           </div>
