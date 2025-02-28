@@ -224,8 +224,8 @@ export type TMainContext = {
   displayedItemsFiltered: (TUser | TEvent)[];
   setDisplayedItemsFiltered: React.Dispatch<React.SetStateAction<(TUser | TEvent)[]>>;
   handleLoadMoreOnScroll: (
-    displayedItemsCount: number | undefined,
-    setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>,
+    displayedItemsCount: number | null,
+    setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | null>>,
     displayedItemsArray: any[],
     displayedItemsArrayFiltered: any[],
     displayedItemsCountInterval: number | undefined,
