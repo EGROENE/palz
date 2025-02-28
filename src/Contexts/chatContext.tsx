@@ -19,6 +19,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showCreateNewChatModal, setShowCreateNewChatModal] = useState<boolean>(false);
 
+  const [usersToAddToChat, setUsersToAddToChat] = useState<TUser[]>([]);
+
   const [
     numberOfPotentialChatMembersDisplayed,
     setNumberOfPotentialChatMembersDisplayed,
@@ -44,7 +46,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     return chatMembers;
   };
 
+  const handleAddUserToChat = (user: TUser, chat: TChat | undefined) => {
+    if (!chat) {
+      setUsersToAddToChat(usersToAddToChat.concat(user));
+    }
+  };
+
   const chatContextValues: TChatContext = {
+    handleAddUserToChat,
+    usersToAddToChat,
+    setUsersToAddToChat,
     numberOfPotentialChatMembersDisplayed,
     setNumberOfPotentialChatMembersDisplayed,
     showCreateNewChatModal,
