@@ -569,6 +569,14 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  displayedPotentialInviteeCount: number | undefined;
+  setDisplayedPotentialInviteeCount: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
+  displayedPotentialCoOrganizerCount: number | undefined;
+  setDisplayedPotentialCoOrganizerCount: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
   updateEventMutation: UseMutationResult<
     Response,
     Error,
