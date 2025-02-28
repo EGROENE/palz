@@ -52,8 +52,17 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleRemoveUserFromChat = (user: TUser, chat: TChat | undefined) => {
+    if (!chat) {
+      setUsersToAddToChat(
+        usersToAddToChat.filter((userToAdd) => userToAdd._id !== user._id)
+      );
+    }
+  };
+
   const chatContextValues: TChatContext = {
     handleAddUserToChat,
+    handleRemoveUserFromChat,
     usersToAddToChat,
     setUsersToAddToChat,
     numberOfPotentialChatMembersDisplayed,

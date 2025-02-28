@@ -711,6 +711,7 @@ export type TEventContext = {
 
 export type TChatContext = {
   handleAddUserToChat: (user: TUser, chat: TChat | undefined) => void;
+  handleRemoveUserFromChat: (user: TUser, chat: TChat | undefined) => void;
   usersToAddToChat: TUser[];
   setUsersToAddToChat: React.Dispatch<React.SetStateAction<TUser[]>>;
   numberOfPotentialChatMembersDisplayed: number | null;
