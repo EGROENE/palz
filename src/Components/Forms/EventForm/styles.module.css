@@ -66,14 +66,6 @@
   display: flex;
 }
 
-.potentialInviteesSearch,
-.eventCoOrganizersSearch {
-  width: 37% !important;
-  /* height: calc(28px - 0.45rem); */
-  /* max-height: calc(28px - 0.45rem); */
-  margin-right: 1rem;
-}
-
 .eventImagesField {
   display: flex;
   flex-direction: column;

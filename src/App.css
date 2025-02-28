@@ -635,22 +635,11 @@ form textarea {
   cursor: pointer;
 }
 
-.modal-background {
-  height: 100vh;
-  width: 100vw;
-  position: fixed;
-  top: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 201;
-  margin-left: -3rem;
-}
-
-.modal-background i:hover {
-  cursor: pointer;
+.dropdown-search {
+  width: 37% !important;
+  /* height: calc(28px - 0.45rem); */
+  /* max-height: calc(28px - 0.45rem); */
+  margin-right: 1rem;
 }
 
 .search-and-dropdown {
