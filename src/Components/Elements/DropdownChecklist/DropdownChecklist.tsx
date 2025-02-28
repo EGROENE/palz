@@ -6,6 +6,9 @@ import styles from "./styles.module.css";
 
 const DropdownChecklist = ({
   usedFor,
+  action,
+  actionParams,
+  actionEventParamNeeded,
   displayedItemsArray,
   storageArray,
   setStorageArray,
@@ -15,17 +18,20 @@ const DropdownChecklist = ({
   event,
 }: {
   usedFor: string;
+  action: Function;
+  actionParams?: any[];
+  actionEventParamNeeded: boolean;
   displayedItemsArray: TUser[]; // type can be changed later if used for non-user lists
-  storageArray: string[];
-  setStorageArray: React.Dispatch<React.SetStateAction<string[]>>;
-  displayedItemsCount: number | undefined;
-  setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>;
+  storageArray: any[];
+  setStorageArray: React.Dispatch<React.SetStateAction<any[]>>;
+  displayedItemsCount: number | null;
+  setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | null>>;
   displayedItemsCountInterval?: number;
   event?: TEvent;
 }) => {
   const { isLoading, handleLoadMoreOnScroll } = useMainContext();
 
-  const { handleAddRemoveUserAsOrganizer } = useEventContext();
+  const { handleAddRemoveUserAsOrganizer, organizers, setOrganizers } = useEventContext();
 
   let displayedItemsArrayFiltered: TUser[] = [];
   if (displayedItemsCount && displayedItemsCount <= displayedItemsArray.length) {
@@ -35,6 +41,27 @@ const DropdownChecklist = ({
   } else {
     displayedItemsArrayFiltered = displayedItemsArray;
   }
+
+  const getActionParams = (user: TUser): any[] => {
+    if (!actionParams) {
+      // for handleAddRemoveUserAsOrganizer:
+      if (usedFor === "potential-co-organizers" && user && event) {
+        return [organizers, setOrganizers, user, event];
+      }
+
+      // for either handleAddRemoveUserAsInvitee, handleAddRemoveUserFromChat, or handleAddRemoveUserFromChat:
+      if (
+        usedFor === "potential-invitees" ||
+        usedFor === "potential-invitees" ||
+        usedFor === "potential-chat-members"
+      ) {
+        return [user];
+      }
+
+      return [];
+    }
+    return actionParams;
+  };
 
   return (
     <ul
@@ -53,8 +80,10 @@ const DropdownChecklist = ({
       {displayedItemsArrayFiltered.map((user) => (
         <li
           key={user._id}
-          onClick={(e) =>
-            handleAddRemoveUserAsOrganizer(e, storageArray, setStorageArray, user, event)
+          onClick={
+            actionEventParamNeeded
+              ? (e) => action(e, ...getActionParams(user))
+              : () => action(...getActionParams(user))
           }
           className={styles.otherUserOption}
         >
