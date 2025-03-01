@@ -3,6 +3,7 @@ import { TThemeColor, TUser } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
+import Tab from "../Tab/Tab";
 
 // add members
 // name chat (if over 1 other member)
@@ -18,6 +19,7 @@ const CreateNewChatModal = () => {
     handleAddRemoveUserFromChat,
     usersToAddToChat,
     setUsersToAddToChat,
+    handleRemoveUserFromChat,
   } = useChatContext();
 
   const [showPotentialChatMembers, setShowPotentialChatMembers] =
@@ -123,8 +125,25 @@ const CreateNewChatModal = () => {
         }}
         className="fas fa-times close-module-icon"
       ></i>
-      <div className="create-new-chat">
+      <div
+        style={showPotentialChatMembers ? { overflowY: "scroll" } : undefined}
+        className="create-new-chat"
+      >
         <h1>New Chat</h1>
+        <header>Add people to chat:</header>
+        {usersToAddToChat.length > 0 && (
+          <div className="added-user-tab-container">
+            {usersToAddToChat.map((user) => (
+              <Tab
+                key={user._id}
+                info={user}
+                removeHandler={() => handleRemoveUserFromChat(user)}
+                randomColor={randomColor}
+                userMayNotDelete={false}
+              />
+            ))}
+          </div>
+        )}
         <div className="search-and-dropdown">
           <input
             name="chat-members-search"
