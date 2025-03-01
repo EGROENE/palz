@@ -42,6 +42,10 @@ const chatSchema = new Schema({
     type: Number,
     required: true,
   },
+  chatName: {
+    type: String,
+    required: false,
+  },
 });
 
 module.exports = mongoose.model("Chat", chatSchema);
