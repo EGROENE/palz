@@ -650,11 +650,26 @@ form textarea {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: black;
+  padding: 4rem;
+  border-radius: 10px;
 }
 
 .create-new-chat header {
   font-family: var(--text-font);
-  margin-bottom: 1rem;
+  margin: 1rem 0;
+}
+
+.create-new-chat-modal-buttons {
+  display: flex;
+  margin-top: 5rem;
+  width: 72%;
+  justify-content: space-around;
+}
+
+.create-new-chat-modal-buttons #cancel {
+  background-color: var(--background-color-opposite);
+  color: var(--text-color-opposite);
 }
 
 .chats-container {
