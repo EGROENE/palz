@@ -4,6 +4,7 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import Tab from "../Tab/Tab";
+import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 
 // add members
 // name chat (if over 1 other member)
@@ -174,56 +175,34 @@ const CreateNewChatModal = () => {
             ))}
           </div>
         )}
-        <div className="search-and-dropdown">
-          <input
-            name="chat-members-search"
-            id="chat-members-search"
-            className="dropdown-search"
-            value={chatMembersSearchQuery}
-            onChange={(e) => handleSearchChatMembersInput(e)}
-            type="text"
-            placeholder="Search users by username, first/last names"
-          />
-          {chatMembersSearchQuery.replace(/s\+/g, "") !== "" && (
-            <i
-              onClick={() => {
-                setChatMembersSearchQuery("");
-                initiatePotentialChatMembers();
-              }}
-              className="clear-other-users-search-query fas fa-times"
-            ></i>
-          )}
-          <div className="dropdownList">
-            <button
-              style={
-                randomColor === "var(--primary-color)"
-                  ? { backgroundColor: `${randomColor}`, color: "black" }
-                  : { backgroundColor: `${randomColor}`, color: "white" }
-              }
-              type="button"
-              onClick={() => setShowPotentialChatMembers(!showPotentialChatMembers)}
-            >
-              Select user:
-              <i
-                style={showPotentialChatMembers ? { "rotate": "180deg" } : undefined}
-                className="fas fa-chevron-down"
-              ></i>
-            </button>
-            {showPotentialChatMembers && (
-              <DropdownChecklist
-                usedFor="potential-chat-members"
-                action={handleAddRemoveUserFromChat}
-                actionEventParamNeeded={false}
-                displayedItemsArray={potentialChatMembers}
-                storageArray={usersToAddToChat.map((user) => user._id)}
-                setStorageArray={setUsersToAddToChat}
-                displayedItemsCount={numberOfPotentialChatMembersDisplayed}
-                setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
-                displayedItemsCountInterval={10}
-              />
-            )}
-          </div>
-        </div>
+        <SearchAndDropdownList
+          name="chat-members-search"
+          id="chat-members-search"
+          randomColor={randomColor}
+          value={chatMembersSearchQuery}
+          inputOnChange={(e) => handleSearchChatMembersInput(e)}
+          placeholder="Search users by username, first/last names"
+          query={chatMembersSearchQuery}
+          clearQueryOnClick={() => {
+            setChatMembersSearchQuery("");
+            initiatePotentialChatMembers();
+          }}
+          showList={showPotentialChatMembers}
+          setShowList={setShowPotentialChatMembers}
+          dropdownChecklist={
+            <DropdownChecklist
+              usedFor="potential-chat-members"
+              action={handleAddRemoveUserFromChat}
+              actionEventParamNeeded={false}
+              displayedItemsArray={potentialChatMembers}
+              storageArray={usersToAddToChat.map((user) => user._id)}
+              setStorageArray={setUsersToAddToChat}
+              displayedItemsCount={numberOfPotentialChatMembersDisplayed}
+              setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
+              displayedItemsCountInterval={10}
+            />
+          }
+        />
         {usersToAddToChat.length > 1 && (
           <>
             <header>Choose group name (optional)</header>
