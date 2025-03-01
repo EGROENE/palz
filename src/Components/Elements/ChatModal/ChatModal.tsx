@@ -50,6 +50,9 @@ const ChatModal = () => {
           }
           className="members-panel"
         >
+          {currentChat && currentChat.chatName && currentChat.chatName !== "" && (
+            <p>{currentChat.chatName}</p>
+          )}
           {!showMembers && <p onClick={() => setShowMembers(true)}>Show members</p>}
           {currentChat && showMembers && (
             <>
