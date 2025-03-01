@@ -46,13 +46,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     return chatMembers;
   };
 
-  const handleAddUserToChat = (user: TUser, chat?: TChat) => {
+  const handleAddUserToChat = (user: TUser, chat?: TChat): void => {
     if (!chat) {
       setUsersToAddToChat(usersToAddToChat.concat(user));
     }
   };
 
-  const handleRemoveUserFromChat = (user: TUser, chat?: TChat) => {
+  const handleRemoveUserFromChat = (user: TUser, chat?: TChat): void => {
     if (!chat) {
       setUsersToAddToChat(
         usersToAddToChat.filter((userToAdd) => userToAdd._id !== user._id)
@@ -60,7 +60,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleAddRemoveUserFromChat = (user: TUser, chat: TChat | undefined) => {
+  const handleAddRemoveUserFromChat = (user: TUser, chat?: TChat): void => {
     if (!chat) {
       if (usersToAddToChat.includes(user)) {
         handleRemoveUserFromChat(user);
