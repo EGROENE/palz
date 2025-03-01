@@ -100,7 +100,7 @@ const DropdownChecklist = ({
                 event
               )
             }
-            checked={typeof user._id === "string" && storageArray.includes(user._id)}
+            checked={storageArray.includes(user._id)}
             type="checkbox"
           />
           <div title={`${user.firstName} ${user.lastName}`}>
