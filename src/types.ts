@@ -712,6 +712,10 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  chatName: string;
+  setChatName: React.Dispatch<React.SetStateAction<string>>;
+  chatNameError: string;
+  setChatNameError: React.Dispatch<React.SetStateAction<string>>;
   handleAddUserToChat: (user: TUser, chat?: TChat) => void;
   handleRemoveUserFromChat: (user: TUser, chat?: TChat) => void;
   handleAddRemoveUserFromChat: (user: TUser, chat?: TChat) => void;

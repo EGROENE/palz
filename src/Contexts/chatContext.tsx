@@ -21,6 +21,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [usersToAddToChat, setUsersToAddToChat] = useState<TUser[]>([]);
 
+  const [chatName, setChatName] = useState<string>("");
+  const [chatNameError, setChatNameError] = useState<string>("");
+
   const [
     numberOfPotentialChatMembersDisplayed,
     setNumberOfPotentialChatMembersDisplayed,
@@ -71,6 +74,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    chatName,
+    setChatName,
+    chatNameError,
+    setChatNameError,
     handleAddRemoveUserFromChat,
     handleAddUserToChat,
     handleRemoveUserFromChat,
