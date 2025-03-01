@@ -1452,7 +1452,7 @@ const EventForm = ({
               </>
             )}
         </header>
-        <div className={styles.coorganizersInviteesContainer}>
+        <div className="added-user-tab-container">
           {currentUser &&
             usersWhoAreOrganizers.filter(
               (user) => user.username !== currentUser?.username
@@ -1568,7 +1568,7 @@ const EventForm = ({
             </span>
           )}
         </header>
-        <div className={styles.coorganizersInviteesContainer}>
+        <div className="added-user-tab-container">
           {currentUser &&
             usersWhoAreInvitees.length > 0 &&
             usersWhoAreInvitees.map((user) => (
