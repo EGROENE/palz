@@ -733,6 +733,7 @@ const createNewChat = (newChat: TChat): Promise<Response> => {
     "members": newChat.members,
     "messages": newChat.messages,
     "dateCreated": newChat.dateCreated,
+    "chatName": newChat.chatName,
   });
 
   return fetch("http://localhost:4000/palz/chats/", {
