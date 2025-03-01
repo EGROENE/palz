@@ -1,31 +1,4 @@
 import React, { ReactNode } from "react";
-import { TUser, TEvent } from "../../../types";
-
-type TDropdownChecklist = ({
-  usedFor,
-  action,
-  actionParams,
-  actionEventParamNeeded,
-  displayedItemsArray,
-  storageArray,
-  setStorageArray,
-  displayedItemsCount,
-  setDisplayedItemsCount,
-  displayedItemsCountInterval,
-  event,
-}: {
-  usedFor: string;
-  action: Function;
-  actionParams?: any[];
-  actionEventParamNeeded: boolean;
-  displayedItemsArray: TUser[];
-  storageArray: any[];
-  setStorageArray: React.Dispatch<React.SetStateAction<any[]>>;
-  displayedItemsCount: number | null;
-  setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | null>>;
-  displayedItemsCountInterval?: number;
-  event?: TEvent;
-}) => JSX.Element;
 
 const SearchAndDropdownList = ({
   name,
@@ -35,7 +8,6 @@ const SearchAndDropdownList = ({
   onBlur,
   style,
   isDisabled,
-  value,
   inputOnChange,
   placeholder,
   query,
@@ -52,7 +24,6 @@ const SearchAndDropdownList = ({
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
   style?: React.CSSProperties | undefined;
   isDisabled?: boolean;
-  value: string;
   inputOnChange: React.ChangeEventHandler<HTMLInputElement>;
   placeholder?: string;
   query: string;
@@ -65,8 +36,8 @@ const SearchAndDropdownList = ({
   return (
     <div className="search-and-dropdown">
       <input
-        name="potential-invitees-search"
-        id="potential-invitees-search"
+        name={name}
+        id={id}
         className="dropdown-search"
         ref={ref}
         onFocus={onFocus}
@@ -76,7 +47,7 @@ const SearchAndDropdownList = ({
         value={query}
         onChange={inputOnChange}
         type="text"
-        placeholder="Search users by username, first/last names"
+        placeholder={placeholder}
       />
       {query.replace(/s\+/g, "") !== "" && (
         <i
