@@ -881,10 +881,14 @@ form textarea {
 }
 
 .dropdown-search {
-  width: 37% !important;
   /* height: calc(28px - 0.45rem); */
   /* max-height: calc(28px - 0.45rem); */
   margin-right: 1rem;
+}
+
+#potential-invitees-search,
+#event-co-organizers-search {
+  width: 37% !important;
 }
 
 .search-and-dropdown {
