@@ -144,6 +144,8 @@ const CreateNewChatModal = () => {
     setShowCreateNewChatModal(false);
   };
 
+  const chatCanBeCreated = chatNameError === "" && usersToAddToChat.length > 0;
+
   return (
     <div className="modal-background">
       <i
@@ -239,6 +241,7 @@ const CreateNewChatModal = () => {
             Cancel
           </button>
           <button
+            disabled={!chatCanBeCreated}
             style={
               randomColor === "var(--primary-color)"
                 ? { backgroundColor: `${randomColor}`, color: "black" }
