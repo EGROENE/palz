@@ -179,7 +179,6 @@ const CreateNewChatModal = () => {
           name="chat-members-search"
           id="chat-members-search"
           randomColor={randomColor}
-          value={chatMembersSearchQuery}
           inputOnChange={(e) => handleSearchChatMembersInput(e)}
           placeholder="Search users by username, first/last names"
           query={chatMembersSearchQuery}
