@@ -20,6 +20,10 @@ const CreateNewChatModal = () => {
     usersToAddToChat,
     setUsersToAddToChat,
     handleRemoveUserFromChat,
+    chatName,
+    setChatName,
+    chatNameError,
+    setChatNameError,
   } = useChatContext();
 
   const [showPotentialChatMembers, setShowPotentialChatMembers] =
@@ -94,7 +98,6 @@ const CreateNewChatModal = () => {
   const handleSearchChatMembersInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
     const input = e.target.value.toLowerCase().replace(/s\+/g, " ");
-    console.log(input);
     setChatMembersSearchQuery(input);
 
     let matchingUsers: TUser[] = [];
@@ -113,6 +116,17 @@ const CreateNewChatModal = () => {
       setPotentialChatMembers(matchingUsers);
     } else {
       initiatePotentialChatMembers();
+    }
+  };
+
+  const handleChatNameInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    e.preventDefault();
+    const inputCleaned = e.target.value.replace(/s\+/g, " ");
+    if (inputCleaned.trim().length <= 20) {
+      setChatName(inputCleaned);
+      setChatNameError("");
+    } else {
+      setChatNameError("Name must be 20 character or less");
     }
   };
 
@@ -185,7 +199,7 @@ const CreateNewChatModal = () => {
                 action={handleAddRemoveUserFromChat}
                 actionEventParamNeeded={false}
                 displayedItemsArray={potentialChatMembers}
-                storageArray={usersToAddToChat}
+                storageArray={usersToAddToChat.map((user) => user._id)}
                 setStorageArray={setUsersToAddToChat}
                 displayedItemsCount={numberOfPotentialChatMembersDisplayed}
                 setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
@@ -194,6 +208,18 @@ const CreateNewChatModal = () => {
             )}
           </div>
         </div>
+        {usersToAddToChat.length > 1 && (
+          <>
+            <header>Choose group name (optional)</header>
+            <input
+              value={chatName}
+              onChange={(e) => handleChatNameInput(e)}
+              type="text"
+              placeholder="Choose a name for the group chat"
+            ></input>
+            {chatNameError !== "" && <p>{chatNameError}</p>}
+          </>
+        )}
       </div>
     </div>
   );
