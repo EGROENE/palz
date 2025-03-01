@@ -130,12 +130,26 @@ const CreateNewChatModal = () => {
     }
   };
 
+  const handleCancelNewChatCreation = (
+    e:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.MouseEvent<HTMLElement, MouseEvent>
+  ): void => {
+    e.preventDefault();
+    setUsersToAddToChat([]);
+    setChatMembersSearchQuery("");
+    setPotentialChatMembers(potentialChatMembers);
+    setChatName("");
+    setChatNameError("");
+    setShowCreateNewChatModal(false);
+  };
+
   return (
     <div className="modal-background">
       <i
         title="Close"
-        onClick={() => {
-          setShowCreateNewChatModal(false);
+        onClick={(e) => {
+          handleCancelNewChatCreation(e);
         }}
         className="fas fa-times close-module-icon"
       ></i>
@@ -220,6 +234,20 @@ const CreateNewChatModal = () => {
             {chatNameError !== "" && <p>{chatNameError}</p>}
           </>
         )}
+        <div className="create-new-chat-modal-buttons">
+          <button onClick={(e) => handleCancelNewChatCreation(e)} id="cancel">
+            Cancel
+          </button>
+          <button
+            style={
+              randomColor === "var(--primary-color)"
+                ? { backgroundColor: `${randomColor}`, color: "black" }
+                : { backgroundColor: `${randomColor}`, color: "white" }
+            }
+          >
+            Create Chat
+          </button>
+        </div>
       </div>
     </div>
   );
