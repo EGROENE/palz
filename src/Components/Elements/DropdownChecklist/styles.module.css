@@ -14,6 +14,10 @@
   font-family: var(--text-font);
 }
 
+.otherUserOption div {
+  display: flex;
+}
+
 .otherUserOption:hover {
   cursor: pointer;
   background-color: rgb(75, 75, 75);
