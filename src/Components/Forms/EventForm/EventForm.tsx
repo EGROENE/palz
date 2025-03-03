@@ -1487,7 +1487,7 @@ const EventForm = ({
           randomColor={randomColor}
           name="event-co-organizers-search"
           id="event-co-organizers-search"
-          ref={coOrganizersRef}
+          inputRef={coOrganizersRef}
           onFocus={() => setFocusedElement("coOrganizers")}
           onBlur={() => setFocusedElement(undefined)}
           style={
@@ -1562,7 +1562,7 @@ const EventForm = ({
           randomColor={randomColor}
           name="potential-invitees-search"
           id="potential-invitees-search"
-          ref={inviteesRef}
+          inputRef={inviteesRef}
           onFocus={() => setFocusedElement("invitees")}
           onBlur={() => setFocusedElement(undefined)}
           style={

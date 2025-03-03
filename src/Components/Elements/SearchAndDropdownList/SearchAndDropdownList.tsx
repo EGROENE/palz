@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 const SearchAndDropdownList = ({
   name,
   id,
-  ref,
+  inputRef,
   onFocus,
   onBlur,
   style,
@@ -19,7 +19,7 @@ const SearchAndDropdownList = ({
 }: {
   name: string;
   id: string;
-  ref?: React.MutableRefObject<HTMLInputElement | null>;
+  inputRef?: React.MutableRefObject<HTMLInputElement | null>;
   onFocus?: React.FocusEventHandler<HTMLInputElement>;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
   style?: React.CSSProperties | undefined;
@@ -39,7 +39,7 @@ const SearchAndDropdownList = ({
         name={name}
         id={id}
         className="dropdown-search"
-        ref={ref}
+        ref={inputRef}
         onFocus={onFocus}
         onBlur={onBlur}
         style={style}
