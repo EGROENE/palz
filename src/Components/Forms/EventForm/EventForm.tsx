@@ -11,6 +11,7 @@ import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import DropdownChecklist from "../../Elements/DropdownChecklist/DropdownChecklist";
+import SearchAndDropdownList from "../../Elements/SearchAndDropdownList/SearchAndDropdownList";
 
 const EventForm = ({
   randomColor,
@@ -1482,82 +1483,58 @@ const EventForm = ({
                 />
               ))}
         </div>
-        <div className="search-and-dropdown">
-          <input
-            name="event-co-organizers-search"
-            id="event-co-organizers-search"
-            className="dropdown-search"
-            ref={coOrganizersRef}
-            onFocus={() => setFocusedElement("coOrganizers")}
-            onBlur={() => setFocusedElement(undefined)}
-            style={
-              focusedElement === "coOrganizers"
-                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                : undefined
+        <SearchAndDropdownList
+          randomColor={randomColor}
+          name="event-co-organizers-search"
+          id="event-co-organizers-search"
+          ref={coOrganizersRef}
+          onFocus={() => setFocusedElement("coOrganizers")}
+          onBlur={() => setFocusedElement(undefined)}
+          style={
+            focusedElement === "coOrganizers"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
+          isDisabled={isLoading}
+          query={coOrganizersSearchQuery}
+          inputOnChange={(e) =>
+            handlePotentialCoOrganizersAndInviteesSearchQuery(e, "co-organizers")
+          }
+          placeholder="Search users by username, first/last names"
+          clearQueryOnClick={() => {
+            setCoOrganizersSearchQuery("");
+            if (allOtherUsers) {
+              setPotentialCoOrganizers(
+                allOtherUsers.filter((user) => {
+                  if (user._id) {
+                    return (
+                      (user.whoCanAddUserAsOrganizer === "anyone" ||
+                        (user.whoCanAddUserAsOrganizer === "friends" &&
+                          currentUser?.friends.includes(user._id))) &&
+                      !invitees.includes(user._id)
+                    );
+                  }
+                })
+              );
             }
-            disabled={isLoading}
-            value={coOrganizersSearchQuery}
-            onChange={(e) =>
-              handlePotentialCoOrganizersAndInviteesSearchQuery(e, "co-organizers")
-            }
-            type="text"
-            placeholder="Search users by username, first/last names"
-          />
-          {coOrganizersSearchQuery.replace(/s\+/g, "") !== "" && (
-            <i
-              onClick={() => {
-                setCoOrganizersSearchQuery("");
-                if (allOtherUsers) {
-                  setPotentialCoOrganizers(
-                    allOtherUsers.filter((user) => {
-                      if (user._id) {
-                        return (
-                          (user.whoCanAddUserAsOrganizer === "anyone" ||
-                            (user.whoCanAddUserAsOrganizer === "friends" &&
-                              currentUser?.friends.includes(user._id))) &&
-                          !invitees.includes(user._id)
-                        );
-                      }
-                    })
-                  );
-                }
-              }}
-              className="clear-other-users-search-query fas fa-times"
-            ></i>
-          )}
-          <div className="dropdownList">
-            <button
-              style={
-                randomColor === "var(--primary-color)"
-                  ? { backgroundColor: `${randomColor}`, color: "black" }
-                  : { backgroundColor: `${randomColor}`, color: "white" }
-              }
-              disabled={isLoading}
-              type="button"
-              onClick={() => setShowPotentialCoOrganizers(!showPotentialCoOrganizers)}
-            >
-              Select user:
-              <i
-                style={showPotentialCoOrganizers ? { "rotate": "180deg" } : undefined}
-                className="fas fa-chevron-down"
-              ></i>
-            </button>
-            {showPotentialCoOrganizers && (
-              <DropdownChecklist
-                usedFor="potential-co-organizers"
-                displayedItemsArray={potentialCoOrganizers}
-                storageArray={organizers}
-                setStorageArray={setOrganizers}
-                displayedItemsCount={displayedPotentialCoOrganizerCount}
-                setDisplayedItemsCount={setDisplayedPotentialCoOrganizerCount}
-                displayedItemsCountInterval={10}
-                event={currentEvent}
-                action={handleAddRemoveUserAsOrganizer}
-                actionEventParamNeeded={true}
-              />
-            )}
-          </div>
-        </div>
+          }}
+          dropdownChecklist={
+            <DropdownChecklist
+              usedFor="potential-co-organizers"
+              displayedItemsArray={potentialCoOrganizers}
+              storageArray={organizers}
+              setStorageArray={setOrganizers}
+              displayedItemsCount={displayedPotentialCoOrganizerCount}
+              setDisplayedItemsCount={setDisplayedPotentialCoOrganizerCount}
+              displayedItemsCountInterval={10}
+              event={currentEvent}
+              action={handleAddRemoveUserAsOrganizer}
+              actionEventParamNeeded={true}
+            />
+          }
+          showList={showPotentialCoOrganizers}
+          setShowList={setShowPotentialCoOrganizers}
+        />
       </div>
       <div className={styles.addOtherUsersArea}>
         <header className="input-label">
@@ -1581,82 +1558,58 @@ const EventForm = ({
               />
             ))}
         </div>
-        <div className="search-and-dropdown">
-          <input
-            name="potential-invitees-search"
-            id="potential-invitees-search"
-            className="dropdown-search"
-            ref={inviteesRef}
-            onFocus={() => setFocusedElement("invitees")}
-            onBlur={() => setFocusedElement(undefined)}
-            style={
-              focusedElement === "invitees"
-                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                : undefined
+        <SearchAndDropdownList
+          randomColor={randomColor}
+          name="potential-invitees-search"
+          id="potential-invitees-search"
+          ref={inviteesRef}
+          onFocus={() => setFocusedElement("invitees")}
+          onBlur={() => setFocusedElement(undefined)}
+          style={
+            focusedElement === "invitees"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
+          isDisabled={isLoading}
+          query={inviteesSearchQuery}
+          inputOnChange={(e) =>
+            handlePotentialCoOrganizersAndInviteesSearchQuery(e, "invitees")
+          }
+          placeholder="Search users by username, first/last names"
+          clearQueryOnClick={() => {
+            setInviteesSearchQuery("");
+            if (allOtherUsers) {
+              setPotentialInvitees(
+                allOtherUsers.filter((user) => {
+                  if (user._id) {
+                    return (
+                      (user.whoCanInviteUser === "anyone" ||
+                        (user.whoCanInviteUser === "friends" &&
+                          currentUser?.friends.includes(user._id))) &&
+                      !organizers.includes(user._id)
+                    );
+                  }
+                })
+              );
             }
-            disabled={isLoading}
-            value={inviteesSearchQuery}
-            onChange={(e) =>
-              handlePotentialCoOrganizersAndInviteesSearchQuery(e, "invitees")
-            }
-            type="text"
-            placeholder="Search users by username, first/last names"
-          />
-          {inviteesSearchQuery.replace(/s\+/g, "") !== "" && (
-            <i
-              onClick={() => {
-                setInviteesSearchQuery("");
-                if (allOtherUsers) {
-                  setPotentialInvitees(
-                    allOtherUsers.filter((user) => {
-                      if (user._id) {
-                        return (
-                          (user.whoCanInviteUser === "anyone" ||
-                            (user.whoCanInviteUser === "friends" &&
-                              currentUser?.friends.includes(user._id))) &&
-                          !organizers.includes(user._id)
-                        );
-                      }
-                    })
-                  );
-                }
-              }}
-              className="clear-other-users-search-query fas fa-times"
-            ></i>
-          )}
-          <div className="dropdownList">
-            <button
-              style={
-                randomColor === "var(--primary-color)"
-                  ? { backgroundColor: `${randomColor}`, color: "black" }
-                  : { backgroundColor: `${randomColor}`, color: "white" }
-              }
-              disabled={isLoading}
-              type="button"
-              onClick={() => setShowPotentialInvitees(!showPotentialInvitees)}
-            >
-              Select user:
-              <i
-                style={showPotentialInvitees ? { "rotate": "180deg" } : undefined}
-                className="fas fa-chevron-down"
-              ></i>
-            </button>
-            {showPotentialInvitees && (
-              <DropdownChecklist
-                usedFor="potential-invitees"
-                displayedItemsArray={potentialInvitees}
-                displayedItemsCount={displayedPotentialInviteeCount}
-                setDisplayedItemsCount={setDisplayedPotentialInviteeCount}
-                displayedItemsCountInterval={10}
-                storageArray={invitees}
-                setStorageArray={setInvitees}
-                event={currentEvent}
-                action={handleAddRemoveUserAsInvitee}
-                actionEventParamNeeded={true}
-              />
-            )}
-          </div>
-        </div>
+          }}
+          showList={showPotentialInvitees}
+          setShowList={setShowPotentialInvitees}
+          dropdownChecklist={
+            <DropdownChecklist
+              usedFor="potential-invitees"
+              displayedItemsArray={potentialInvitees}
+              displayedItemsCount={displayedPotentialInviteeCount}
+              setDisplayedItemsCount={setDisplayedPotentialInviteeCount}
+              displayedItemsCountInterval={10}
+              storageArray={invitees}
+              setStorageArray={setInvitees}
+              event={currentEvent}
+              action={handleAddRemoveUserAsInvitee}
+              actionEventParamNeeded={true}
+            />
+          }
+        />
       </div>
       <InterestsSection
         randomColor={randomColor}
