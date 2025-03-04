@@ -95,11 +95,19 @@ const CreateNewChatModal = () => {
       | React.MouseEvent<HTMLElement, MouseEvent>
   ): void => {
     e.preventDefault();
-    setUsersToAddToChat([]);
-    setChatMembersSearchQuery("");
     initiatePotentialChatMembers();
-    setChatName("");
-    setChatNameError("");
+    if (usersToAddToChat.length > 0) {
+      setUsersToAddToChat([]);
+    }
+    if (chatMembersSearchQuery !== "") {
+      setChatMembersSearchQuery("");
+    }
+    if (chatName !== "") {
+      setChatName("");
+    }
+    if (chatNameError !== "") {
+      setChatNameError("");
+    }
     setShowCreateNewChatModal(false);
   };
 
