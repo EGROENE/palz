@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Message from "../Message/Message";
-import { TThemeColor } from "../../../types";
+import { TThemeColor, TUser } from "../../../types";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -123,6 +123,15 @@ const ChatModal = () => {
     setShowPotentialChatMembers(false);
   };
 
+  const otherChatMember: TUser | undefined =
+    currentUser && currentChat && currentChat.members.length < 3
+      ? allOtherUsers.filter(
+          (otherUser) =>
+            otherUser._id ===
+            currentChat?.members.filter((member) => member !== currentUser._id)[0]
+        )[0]
+      : undefined;
+
   return (
     <div className="modal-background">
       <i
@@ -225,7 +234,15 @@ const ChatModal = () => {
             {currentChat && currentChat.chatName && currentChat.chatName !== "" && (
               <p>{currentChat.chatName}</p>
             )}
-            {!showMembers && <p onClick={() => setShowMembers(true)}>Show members</p>}
+            {otherChatMember && (
+              <div className="chat-header-single-other-member">
+                <img src={otherChatMember.profileImage} />
+                <header>{`${otherChatMember.firstName} ${otherChatMember.lastName}`}</header>
+              </div>
+            )}
+            {!showMembers && currentChat && currentChat.members.length > 2 && (
+              <p onClick={() => setShowMembers(true)}>Show members</p>
+            )}
             {currentChat && showMembers && (
               <>
                 <div className="members-container">

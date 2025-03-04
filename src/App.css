@@ -816,6 +816,26 @@ form textarea {
   cursor: pointer;
 }
 
+.chat-header-single-other-member {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+.chat-header-single-other-member img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0.5rem;
+}
+
+.chat-header-single-other-member header {
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
 .add-members-modal {
   height: 100%;
   max-height: 100%;
