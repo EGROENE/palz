@@ -41,8 +41,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleLoadMoreOnScroll = (
-    displayedItemsCount: number | null,
-    setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | null>>,
+    displayedItemsCount: number | undefined,
+    setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>,
     displayedItemsArray: any[],
     displayedItemsArrayFiltered: any[],
     displayedItemsCountInterval: number | undefined,
