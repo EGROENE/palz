@@ -12,7 +12,7 @@ import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownLis
 // in chat preview, if no messages, show NO MESSAGES YET if no messages exist in chat
 
 const CreateNewChatModal = () => {
-  const { allOtherUsers, currentUser, allUsers } = useUserContext();
+  const { allOtherUsers, currentUser } = useUserContext();
   const {
     setShowCreateNewChatModal,
     numberOfPotentialChatMembersDisplayed,
@@ -31,6 +31,7 @@ const CreateNewChatModal = () => {
     setPotentialChatMembers,
     chatMembersSearchQuery,
     setChatMembersSearchQuery,
+    getCurrentOtherUserFriends,
   } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
