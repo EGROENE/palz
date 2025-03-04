@@ -53,7 +53,8 @@ const DropdownChecklist = ({
       if (
         usedFor === "potential-invitees" ||
         usedFor === "potential-invitees" ||
-        usedFor === "potential-chat-members"
+        usedFor === "potential-chat-members" ||
+        usedFor === "potential-additional-chat-members"
       ) {
         return [user];
       }
