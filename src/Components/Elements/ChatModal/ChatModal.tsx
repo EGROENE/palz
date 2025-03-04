@@ -195,7 +195,7 @@ const ChatModal = () => {
                 />
               }
             />
-            {usersToAddToChat.length > 1 && (
+            {usersToAddToChat.length > 0 && (
               <>
                 <header>Choose group name (optional)</header>
                 <input
