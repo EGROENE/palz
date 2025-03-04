@@ -712,6 +712,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  handleChatNameInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSearchChatMembersInput: (
     e: React.ChangeEvent<HTMLInputElement>,
     showList: boolean,

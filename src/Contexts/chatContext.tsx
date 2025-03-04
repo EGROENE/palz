@@ -122,7 +122,19 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleChatNameInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    e.preventDefault();
+    const inputCleaned = e.target.value.replace(/s\+/g, " ");
+    if (inputCleaned.trim().length <= 40) {
+      setChatName(inputCleaned);
+      setChatNameError("");
+    } else {
+      setChatNameError("Name must be 40 characters or less");
+    }
+  };
+
   const chatContextValues: TChatContext = {
+    handleChatNameInput,
     handleSearchChatMembersInput,
     getCurrentOtherUserFriends,
     showPotentialChatMembers,
