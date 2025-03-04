@@ -89,7 +89,36 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     return [];
   };
 
+  const handleSearchChatMembersInput = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    searchArray: TUser[],
+    resetFunction: Function
+  ): void => {
+    e.preventDefault();
+    const input = e.target.value.toLowerCase().replace(/s\+/g, " ");
+    setChatMembersSearchQuery(input);
+
+    let matchingUsers: TUser[] = [];
+    if (input.replace(/\s+/g, "") !== "") {
+      for (const user of searchArray) {
+        if (user.username && user.firstName && user.lastName) {
+          if (
+            user.username.toLowerCase().includes(input) ||
+            user.firstName.toLowerCase().includes(input) ||
+            user.lastName.toLowerCase().includes(input)
+          ) {
+            matchingUsers.push(user);
+          }
+        }
+      }
+      setPotentialChatMembers(matchingUsers);
+    } else {
+      resetFunction();
+    }
+  };
+
   const chatContextValues: TChatContext = {
+    handleSearchChatMembersInput,
     getCurrentOtherUserFriends,
     showPotentialChatMembers,
     setShowPotentialChatMembers,

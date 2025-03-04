@@ -712,7 +712,12 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
-  getCurrentOtherUserFriends: (otherUser: TUser) => TUser[]
+  handleSearchChatMembersInput: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    searchArray: TUser[],
+    resetFunction: Function
+  ) => void;
+  getCurrentOtherUserFriends: (otherUser: TUser) => TUser[];
   showPotentialChatMembers: boolean;
   setShowPotentialChatMembers: React.Dispatch<React.SetStateAction<boolean>>;
   potentialChatMembers: TUser[];
