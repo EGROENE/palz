@@ -6,8 +6,7 @@ import Methods from "../../../methods";
 
 const ChatPreview = ({ chat }: { chat: TChat }) => {
   const { currentUser } = useUserContext();
-  const { getChatMembers, userChats, setShowChatModal, setCurrentChat } =
-    useChatContext();
+  const { getChatMembers, userChats, handleOpenChat } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -71,10 +70,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       key={chat._id}
       className="chat-preview"
       style={{ border: `2px solid ${randomColor}` }}
-      onClick={() => {
-        setShowChatModal(true);
-        setCurrentChat(chat);
-      }}
+      onClick={() => handleOpenChat(chat)}
     >
       {getNumberOfUnreadMessagesInChat(chat) !== 0 &&
         typeof getNumberOfUnreadMessagesInChat(chat) !== "string" && (
