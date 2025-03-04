@@ -161,8 +161,8 @@ const ChatModal = () => {
               </div>
             )}
             <SearchAndDropdownList
-              name="add-member-from-chat"
-              id="add-member-from-chat"
+              name="add-member-to-chat"
+              id="add-member-to-chat"
               placeholder="Search users by username, first/last names"
               query={chatMembersSearchQuery}
               clearQueryOnClick={() => {
