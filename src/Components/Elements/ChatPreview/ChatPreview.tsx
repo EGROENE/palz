@@ -42,14 +42,15 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
     let unreadMessages: TMessage[] = [];
     if (userChats && currentUser && currentUser._id) {
       for (const message of chat.messages) {
+        const usersWhoSawMessage: string[] = message.seenBy.map((obj) => obj.user);
         if (
-          !message.seenBy.includes(currentUser._id) &&
+          !usersWhoSawMessage.includes(currentUser._id) &&
           message.sender !== currentUser._id
         ) {
           unreadMessages.push(message);
         }
         if (
-          message.seenBy.includes(currentUser._id) ||
+          usersWhoSawMessage.includes(currentUser._id) ||
           message.sender === currentUser._id
         ) {
           return "";
