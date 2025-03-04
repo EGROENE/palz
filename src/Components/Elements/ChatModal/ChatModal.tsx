@@ -124,11 +124,9 @@ const ChatModal = () => {
   };
 
   const otherChatMember: TUser | undefined =
-    currentUser && currentChat && currentChat.members.length < 3
-      ? allOtherUsers.filter(
-          (otherUser) =>
-            otherUser._id ===
-            currentChat?.members.filter((member) => member !== currentUser._id)[0]
+    currentChat && currentUser && currentChat.members.length === 2
+      ? getChatMembers(currentChat.members).filter(
+          (member) => member._id !== currentUser._id
         )[0]
       : undefined;
 
