@@ -120,7 +120,7 @@ export type TMessage = {
   content: string;
   timeSent: number;
   image: string;
-  seenBy: string[];
+  seenBy: { user: string; time: number }[];
 };
 
 export type TChatValuesToUpdate = {
