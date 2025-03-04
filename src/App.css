@@ -637,7 +637,7 @@ form textarea {
 
 #new-chat-btn {
   position: fixed;
-  bottom: 5rem;
+  bottom: 3rem;
   right: 8rem;
   font-size: 2rem;
   border-radius: 50%;
