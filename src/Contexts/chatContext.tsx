@@ -1,8 +1,8 @@
 import { ReactNode, useState, createContext } from "react";
-import { TChatContext, TChat, TUser } from "../types";
+import { TChatContext, TChat, TUser, TChatValuesToUpdate, TMessage } from "../types";
 import { useUserContext } from "../Hooks/useUserContext";
 import Requests from "../requests";
-import { UseQueryResult, useQuery } from "@tanstack/react-query";
+import { UseQueryResult, useMutation, useQuery } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
 
 export const ChatContext = createContext<TChatContext | null>(null);
@@ -133,7 +133,35 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleOpenChat = (chat: TChat): void => {
+    setCurrentChat(chat);
+    setShowChatModal(true);
+    // if unread messages, mark them as read
+    const now = Date.now();
+    const updatedChatMessages: TMessage[] = chat.messages.map((message) => {
+      const usersWhoSawMessage = message.seenBy.map((obj) => obj.user);
+      if (
+        currentUser &&
+        currentUser._id &&
+        message.sender !== currentUser._id &&
+        !usersWhoSawMessage.includes(currentUser._id)
+      ) {
+        message.seenBy.push({ user: currentUser._id, time: now });
+      }
+      return message;
+    });
+    const valuesToUpdate: TChatValuesToUpdate = {
+      members: chat.members,
+      messages: updatedChatMessages,
+      dateCreated: chat.dateCreated,
+      chatName: chat.chatName,
+    };
+    //markMessagesAsReadMutation.mutate({ chat, valuesToUpdate });
+    // scroll automatically to bottom of chat
+  };
+
   const chatContextValues: TChatContext = {
+    handleOpenChat,
     handleChatNameInput,
     handleSearchChatMembersInput,
     getCurrentOtherUserFriends,
