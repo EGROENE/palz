@@ -33,7 +33,9 @@ const Message = ({
       <div className="message-content">
         <p
           style={
-            randomColor === "var(--primary-color)" ||
+            (randomColor === "var(--primary-color)" &&
+              currentUser &&
+              message.sender !== currentUser._id) ||
             (sender && currentUser && sender._id === currentUser._id && theme === "light")
               ? { color: "black" }
               : { color: "white" }
@@ -43,7 +45,9 @@ const Message = ({
         </p>
         <p
           style={
-            randomColor === "var(--primary-color)" ||
+            (randomColor === "var(--primary-color)" &&
+              currentUser &&
+              message.sender !== currentUser._id) ||
             (sender && currentUser && sender._id !== currentUser._id)
               ? { color: "rgb(68, 67, 67)" }
               : { color: "darkgray" }
