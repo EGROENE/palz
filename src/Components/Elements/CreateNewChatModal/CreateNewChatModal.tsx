@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TThemeColor, TUser } from "../../../types";
+import { TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -32,6 +32,7 @@ const CreateNewChatModal = () => {
     chatMembersSearchQuery,
     setChatMembersSearchQuery,
     getCurrentOtherUserFriends,
+    handleSearchChatMembersInput,
   } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -86,30 +87,6 @@ const CreateNewChatModal = () => {
   useEffect(() => {
     initiatePotentialChatMembers();
   }, [usersToAddToChat]);
-
-  const handleSearchChatMembersInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    e.preventDefault();
-    const input = e.target.value.toLowerCase().replace(/s\+/g, " ");
-    setChatMembersSearchQuery(input);
-
-    let matchingUsers: TUser[] = [];
-    if (input.replace(/\s+/g, "") !== "") {
-      for (const otherUser of allOtherUsers) {
-        if (otherUser.username && otherUser.firstName && otherUser.lastName) {
-          if (
-            otherUser.username.toLowerCase().includes(input) ||
-            otherUser.firstName.toLowerCase().includes(input) ||
-            otherUser.lastName.toLowerCase().includes(input)
-          ) {
-            matchingUsers.push(otherUser);
-          }
-        }
-      }
-      setPotentialChatMembers(matchingUsers);
-    } else {
-      initiatePotentialChatMembers();
-    }
-  };
 
   const handleChatNameInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -170,7 +147,9 @@ const CreateNewChatModal = () => {
           name="chat-members-search"
           id="chat-members-search"
           randomColor={randomColor}
-          inputOnChange={(e) => handleSearchChatMembersInput(e)}
+          inputOnChange={(e) =>
+            handleSearchChatMembersInput(e, allOtherUsers, initiatePotentialChatMembers)
+          }
           placeholder="Search users by username, first/last names"
           query={chatMembersSearchQuery}
           clearQueryOnClick={() => {
