@@ -816,6 +816,27 @@ form textarea {
   cursor: pointer;
 }
 
+.add-members-modal {
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-members-modal header {
+  font-family: var(--text-font);
+}
+
+.add-members-modal .added-user-tab-container {
+  width: 75%;
+}
+
+.add-members-modal .search-and-dropdown {
+  width: 75%;
+}
+
 .messages-container {
   overflow-y: scroll;
   height: calc(100% - 133px);
