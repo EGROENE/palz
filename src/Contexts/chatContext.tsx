@@ -24,6 +24,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [chatName, setChatName] = useState<string>("");
   const [chatNameError, setChatNameError] = useState<string>("");
 
+  const [showPotentialChatMembers, setShowPotentialChatMembers] =
+    useState<boolean>(false);
+
+  const [potentialChatMembers, setPotentialChatMembers] = useState<TUser[]>([]);
+
+  const [chatMembersSearchQuery, setChatMembersSearchQuery] = useState<string>("");
+
   const [
     numberOfPotentialChatMembersDisplayed,
     setNumberOfPotentialChatMembersDisplayed,
@@ -74,6 +81,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    showPotentialChatMembers,
+    setShowPotentialChatMembers,
+    potentialChatMembers,
+    setPotentialChatMembers,
+    chatMembersSearchQuery,
+    setChatMembersSearchQuery,
     chatName,
     setChatName,
     chatNameError,

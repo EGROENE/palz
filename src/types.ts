@@ -712,6 +712,12 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  showPotentialChatMembers: boolean;
+  setShowPotentialChatMembers: React.Dispatch<React.SetStateAction<boolean>>;
+  potentialChatMembers: TUser[];
+  setPotentialChatMembers: React.Dispatch<React.SetStateAction<TUser[]>>;
+  chatMembersSearchQuery: string;
+  setChatMembersSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   chatName: string;
   setChatName: React.Dispatch<React.SetStateAction<string>>;
   chatNameError: string;

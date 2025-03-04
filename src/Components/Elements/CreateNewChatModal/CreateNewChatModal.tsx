@@ -25,16 +25,15 @@ const CreateNewChatModal = () => {
     setChatName,
     chatNameError,
     setChatNameError,
+    showPotentialChatMembers,
+    setShowPotentialChatMembers,
+    potentialChatMembers,
+    setPotentialChatMembers,
+    chatMembersSearchQuery,
+    setChatMembersSearchQuery,
   } = useChatContext();
 
-  const [showPotentialChatMembers, setShowPotentialChatMembers] =
-    useState<boolean>(false);
-
-  const [potentialChatMembers, setPotentialChatMembers] = useState<TUser[]>([]);
-
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-
-  const [chatMembersSearchQuery, setChatMembersSearchQuery] = useState<string>("");
 
   useEffect(() => {
     // Set color of event card's border randomly:
@@ -49,6 +48,7 @@ const CreateNewChatModal = () => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
+  // def in chatContext
   const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
     if (allUsers) {
       return allUsers.filter(
