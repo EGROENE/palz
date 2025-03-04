@@ -146,7 +146,7 @@ const ChatModal = () => {
               }}
               className="fas fa-times close-module-icon"
             ></i>
-            <header>Add member to chat:</header>
+            <header>Add people to chat:</header>
             {usersToAddToChat.length > 0 && (
               <div className="added-user-tab-container">
                 {usersToAddToChat.map((user) => (
