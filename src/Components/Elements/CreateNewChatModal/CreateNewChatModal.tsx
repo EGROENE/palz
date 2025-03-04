@@ -107,7 +107,7 @@ const CreateNewChatModal = () => {
     e.preventDefault();
     setUsersToAddToChat([]);
     setChatMembersSearchQuery("");
-    setPotentialChatMembers(potentialChatMembers);
+    initiatePotentialChatMembers();
     setChatName("");
     setChatNameError("");
     setShowCreateNewChatModal(false);
