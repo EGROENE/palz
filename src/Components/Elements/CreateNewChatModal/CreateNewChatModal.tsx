@@ -48,16 +48,6 @@ const CreateNewChatModal = () => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
-  // def in chatContext
-  const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
-    if (allUsers) {
-      return allUsers.filter(
-        (user) => user && user._id && otherUser.friends.includes(user._id)
-      );
-    }
-    return [];
-  };
-
   const initiatePotentialChatMembers = (): void => {
     setPotentialChatMembers(
       allOtherUsers.filter((otherUser) => {

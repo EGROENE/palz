@@ -8,7 +8,7 @@ import { useLocalStorage } from "usehooks-ts";
 export const ChatContext = createContext<TChatContext | null>(null);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
-  const { currentUser, userHasLoggedIn, allOtherUsers } = useUserContext();
+  const { currentUser, userHasLoggedIn, allOtherUsers, allUsers } = useUserContext();
 
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
 
@@ -80,7 +80,17 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
+    if (allUsers) {
+      return allUsers.filter(
+        (user) => user && user._id && otherUser.friends.includes(user._id)
+      );
+    }
+    return [];
+  };
+
   const chatContextValues: TChatContext = {
+    getCurrentOtherUserFriends,
     showPotentialChatMembers,
     setShowPotentialChatMembers,
     potentialChatMembers,
