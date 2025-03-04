@@ -28,6 +28,7 @@ const ChatModal = () => {
     numberOfPotentialChatMembersDisplayed,
     setNumberOfPotentialChatMembersDisplayed,
     handleSearchChatMembersInput,
+    handleChatNameInput,
     chatName,
     chatNameError,
     setChatName,
@@ -111,6 +112,9 @@ const ChatModal = () => {
     if (chatMembersSearchQuery !== "") {
       setChatMembersSearchQuery("");
     }
+    if (chatName !== "") {
+      setChatName("");
+    }
     if (chatNameError !== "") {
       setChatNameError("");
     }
@@ -191,6 +195,18 @@ const ChatModal = () => {
                 />
               }
             />
+            {usersToAddToChat.length > 1 && (
+              <>
+                <header>Choose group name (optional)</header>
+                <input
+                  value={chatName}
+                  onChange={(e) => handleChatNameInput(e)}
+                  type="text"
+                  placeholder="Choose a name for the group chat"
+                ></input>
+                {chatNameError !== "" && <p>{chatNameError}</p>}
+              </>
+            )}
           </div>
         )}
         {!showAddMemberModal && (
