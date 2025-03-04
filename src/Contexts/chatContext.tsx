@@ -91,10 +91,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleSearchChatMembersInput = (
     e: React.ChangeEvent<HTMLInputElement>,
+    showList: boolean,
+    setShowList: React.Dispatch<React.SetStateAction<boolean>>,
     searchArray: TUser[],
     resetFunction: Function
   ): void => {
     e.preventDefault();
+    if (!showList) {
+      setShowList(true);
+    }
     const input = e.target.value.toLowerCase().replace(/s\+/g, " ");
     setChatMembersSearchQuery(input);
 

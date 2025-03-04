@@ -714,6 +714,8 @@ export type TEventContext = {
 export type TChatContext = {
   handleSearchChatMembersInput: (
     e: React.ChangeEvent<HTMLInputElement>,
+    showList: boolean,
+    setShowList: React.Dispatch<React.SetStateAction<boolean>>,
     searchArray: TUser[],
     resetFunction: Function
   ) => void;
