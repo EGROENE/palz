@@ -56,7 +56,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     const bottomReached =
       e && scrollTop && clientHeight
         ? scrollTop + clientHeight === scrollHeight
-        : window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
+        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
 
     if (displayedItemsCount && displayedItemsCountInterval && setDisplayedItemsCount) {
       if (bottomReached) {
