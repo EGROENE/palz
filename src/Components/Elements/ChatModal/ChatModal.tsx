@@ -28,6 +28,10 @@ const ChatModal = () => {
     numberOfPotentialChatMembersDisplayed,
     setNumberOfPotentialChatMembersDisplayed,
     handleSearchChatMembersInput,
+    chatName,
+    chatNameError,
+    setChatName,
+    setChatNameError,
   } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -101,8 +105,15 @@ const ChatModal = () => {
       | React.MouseEvent<HTMLElement, MouseEvent>
   ): void => {
     e.preventDefault();
-    setUsersToAddToChat([]);
-    setChatMembersSearchQuery("");
+    if (usersToAddToChat.length > 0) {
+      setUsersToAddToChat([]);
+    }
+    if (chatMembersSearchQuery !== "") {
+      setChatMembersSearchQuery("");
+    }
+    if (chatNameError !== "") {
+      setChatNameError("");
+    }
     initiatePotentialChatMembers();
     setShowAddMemberModal(false);
     setShowPotentialChatMembers(false);
