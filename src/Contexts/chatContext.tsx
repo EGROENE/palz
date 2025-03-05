@@ -66,6 +66,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: "userChats" });
       queryClient.refetchQueries({ queryKey: ["userChats"] });
+      if (inputMessage !== "") {
+        setInputMessage("");
+      }
     },
     onError: (error) => console.log(error),
   });
