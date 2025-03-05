@@ -34,7 +34,15 @@ const ChatModal = () => {
     setChatName,
     handleSendMessage,
     setChatNameError,
+    userChats,
   } = useChatContext();
+
+  // Update currentChat whenever userChats updates:
+  useEffect(() => {
+    if (currentChat && userChats) {
+      setCurrentChat(userChats.filter((userChat) => userChat._id === currentChat._id)[0]);
+    }
+  }, [userChats]);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
