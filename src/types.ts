@@ -713,6 +713,8 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  inputMessage: string;
+  setInputMessage: React.Dispatch<React.SetStateAction<string>>;
   handleSendMessage: (chat: TChat, content: string) => void;
   handleOpenChat: (chat: TChat) => void;
   handleChatNameInput: (e: React.ChangeEvent<HTMLInputElement>) => void;

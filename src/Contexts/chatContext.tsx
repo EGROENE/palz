@@ -36,6 +36,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [chatMembersSearchQuery, setChatMembersSearchQuery] = useState<string>("");
 
+  const [inputMessage, setInputMessage] = useState<string>("");
+
   const [
     numberOfPotentialChatMembersDisplayed,
     setNumberOfPotentialChatMembersDisplayed,
@@ -205,6 +207,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    inputMessage,
+    setInputMessage,
     handleSendMessage,
     handleOpenChat,
     handleChatNameInput,

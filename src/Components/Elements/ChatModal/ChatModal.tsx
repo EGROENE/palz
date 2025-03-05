@@ -50,8 +50,6 @@ const ChatModal = () => {
 
   const [showAddMemberModal, setShowAddMemberModal] = useState<boolean>(false);
 
-  const [inputMessage, setInputMessage] = useState<string>("");
-
   useEffect(() => {
     // Set color of event card's border randomly:
     const themeColors: TThemeColor[] = [
