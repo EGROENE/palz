@@ -834,6 +834,7 @@ form textarea {
 .chat-header-single-other-member header {
   overflow-wrap: anywhere;
   text-align: left;
+  color: var(--text-color);
 }
 
 .add-members-modal {
