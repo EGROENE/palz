@@ -713,6 +713,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  handleDeleteMessage: (chat: TChat, messageID: string | mongoose.Types.ObjectId) => void;
   inputMessage: string;
   setInputMessage: React.Dispatch<React.SetStateAction<string>>;
   handleSendMessage: (chat: TChat, content: string) => void;

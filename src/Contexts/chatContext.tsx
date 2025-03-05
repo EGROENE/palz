@@ -130,6 +130,22 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     updateChatMutation.mutate({ chat, valuesToUpdate });
   };
 
+  const handleDeleteMessage = (
+    chat: TChat,
+    messageID: string | mongoose.Types.ObjectId
+  ) => {
+    const updatedMessages = chat.messages.filter((message) => message._id !== messageID);
+
+    const valuesToUpdate: TChatValuesToUpdate = {
+      members: chat.members,
+      messages: updatedMessages,
+      dateCreated: chat.dateCreated,
+      chatName: chat.chatName,
+    };
+
+    updateChatMutation.mutate({ chat, valuesToUpdate });
+  };
+
   const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
     if (allUsers) {
       return allUsers.filter(
@@ -210,6 +226,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    handleDeleteMessage,
     inputMessage,
     setInputMessage,
     handleSendMessage,
