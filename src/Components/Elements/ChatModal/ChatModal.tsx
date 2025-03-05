@@ -35,6 +35,8 @@ const ChatModal = () => {
     handleSendMessage,
     setChatNameError,
     userChats,
+    inputMessage,
+    setInputMessage,
   } = useChatContext();
 
   // Update currentChat whenever userChats updates:
