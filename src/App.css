@@ -861,6 +861,7 @@ form textarea {
 .messages-container {
   overflow-y: scroll;
   height: calc(100% - 133px);
+  position: relative;
 }
 
 .message {
@@ -918,6 +919,14 @@ form textarea {
 
 .message.received .message-content {
   margin-left: 0.25rem;
+}
+
+#to-latest-message-button {
+  position: fixed;
+  bottom: 13rem;
+  padding: 1rem;
+  border-radius: 50%;
+  font-size: 1rem;
 }
 
 .message-input-container {
