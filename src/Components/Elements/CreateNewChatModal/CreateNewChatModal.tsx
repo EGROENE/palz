@@ -123,7 +123,11 @@ const CreateNewChatModal = () => {
         className="fas fa-times close-module-icon"
       ></i>
       <div
-        style={showPotentialChatMembers ? { overflowY: "scroll" } : undefined}
+        style={
+          showPotentialChatMembers
+            ? { border: `2px solid ${randomColor}`, overflowY: "scroll" }
+            : { border: `2px solid ${randomColor}` }
+        }
         className="create-new-chat"
       >
         <h1>New Chat</h1>
