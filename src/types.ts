@@ -1,5 +1,6 @@
 import React from "react";
 import { UseQueryResult, UseMutationResult } from "@tanstack/react-query";
+import mongoose from "mongoose";
 
 export type TThemeColor =
   | "var(--primary-color)"
@@ -115,7 +116,7 @@ export type TChat = {
 };
 
 export type TMessage = {
-  _id: string;
+  _id: string | mongoose.Types.ObjectId;
   sender: string;
   content: string;
   timeSent: number;
@@ -712,6 +713,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  handleSendMessage: (chat: TChat, content: string) => void;
   handleOpenChat: (chat: TChat) => void;
   handleChatNameInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSearchChatMembersInput: (
