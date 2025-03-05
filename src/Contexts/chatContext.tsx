@@ -2,7 +2,12 @@ import { ReactNode, useState, createContext } from "react";
 import { TChatContext, TChat, TUser, TChatValuesToUpdate, TMessage } from "../types";
 import { useUserContext } from "../Hooks/useUserContext";
 import Requests from "../requests";
-import { UseQueryResult, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  UseQueryResult,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
 
 export const ChatContext = createContext<TChatContext | null>(null);
@@ -45,6 +50,23 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     enabled: userHasLoggedIn,
   });
   let userChats: TChat[] | undefined = fetchChatsQuery.data;
+
+  const queryClient = useQueryClient();
+
+  const markMessagesAsReadMutation = useMutation({
+    mutationFn: ({
+      chat,
+      valuesToUpdate,
+    }: {
+      chat: TChat;
+      valuesToUpdate: TChatValuesToUpdate;
+    }) => Requests.updateChat(chat, valuesToUpdate),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: "messages" });
+      queryClient.refetchQueries({ queryKey: ["messages"] });
+    },
+    onError: (error) => console.log(error),
+  });
 
   const getChatMembers = (members: string[]): TUser[] => {
     let chatMembers: TUser[] = [];
