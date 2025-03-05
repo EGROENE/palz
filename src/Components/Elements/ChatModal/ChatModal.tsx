@@ -32,6 +32,7 @@ const ChatModal = () => {
     chatName,
     chatNameError,
     setChatName,
+    handleSendMessage,
     setChatNameError,
   } = useChatContext();
 
@@ -344,6 +345,7 @@ const ChatModal = () => {
               maxLength={10000}
             ></textarea>
             <i
+              onClick={() => currentChat && handleSendMessage(currentChat, inputMessage)}
               style={
                 randomColor === "var(--primary-color)"
                   ? { backgroundColor: `${randomColor}`, color: "black" }
