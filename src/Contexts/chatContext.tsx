@@ -178,7 +178,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       dateCreated: chat.dateCreated,
       chatName: chat.chatName,
     };
-    //markMessagesAsReadMutation.mutate({ chat, valuesToUpdate });
+    markMessagesAsReadMutation.mutate({ chat, valuesToUpdate });
     // scroll automatically to bottom of chat
   };
 
