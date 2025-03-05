@@ -860,7 +860,6 @@ form textarea {
 }
 
 .messages-container {
-  overflow-y: scroll;
   height: calc(100% - 133px);
   position: relative;
 }

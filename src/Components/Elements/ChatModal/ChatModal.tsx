@@ -148,7 +148,7 @@ const ChatModal = () => {
 
   useEffect(() => {
     scrollToLatestMessage();
-  }, []);
+  }, [currentChat]);
 
   let messagesContainerScrollHeight: number = messagesContainerRef.current
     ? messagesContainerRef.current.scrollHeight
@@ -321,6 +321,11 @@ const ChatModal = () => {
             ref={messagesContainerRef}
             className="messages-container"
             onScroll={() => handleMessageContainerScroll()}
+            style={
+              messagesContainerScrollHeight > messagesContainerClientHeight
+                ? { overflowY: "scroll" }
+                : undefined
+            }
           >
             {messagesContainerScrollBottom > 0 && (
               <i
