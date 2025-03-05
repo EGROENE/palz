@@ -30,6 +30,7 @@
 }
 
 [data-theme="light"] {
+  --primary-color: #00cc81;
   --background-color: rgb(233, 231, 228);
   --background-color-opposite: #242424;
   --header-three-color: var(--secondary-color);
