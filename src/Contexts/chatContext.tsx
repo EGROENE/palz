@@ -42,7 +42,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   ] = useState<number | null>(10);
 
   const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
-    queryKey: ["messages"],
+    queryKey: ["userChats"],
     queryFn: () =>
       currentUser && currentUser._id
         ? Requests.getCurrentUserChats(currentUser._id)
@@ -62,8 +62,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       valuesToUpdate: TChatValuesToUpdate;
     }) => Requests.updateChat(chat, valuesToUpdate),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: "messages" });
-      queryClient.refetchQueries({ queryKey: ["messages"] });
+      queryClient.invalidateQueries({ queryKey: "userChats" });
+      queryClient.refetchQueries({ queryKey: ["userChats"] });
     },
     onError: (error) => console.log(error),
   });
@@ -179,7 +179,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       chatName: chat.chatName,
     };
     markMessagesAsReadMutation.mutate({ chat, valuesToUpdate });
-    // scroll automatically to bottom of chat
   };
 
   const chatContextValues: TChatContext = {
