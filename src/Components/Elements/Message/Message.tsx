@@ -22,7 +22,7 @@ const Message = ({
     <div
       style={
         sender && currentUser && sender._id === currentUser._id
-          ? { backgroundColor: "var(--background-color" }
+          ? { backgroundColor: "var(--background-color)" }
           : { backgroundColor: randomColor }
       }
       className={
