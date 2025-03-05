@@ -269,7 +269,6 @@ const ChatModal = () => {
                 ? { borderBottom: `2px solid ${randomColor}`, height: "unset" }
                 : {
                     borderBottom: `2px solid ${randomColor}`,
-                    height: "17%",
                     paddingBottom: "1rem",
                   }
             }
