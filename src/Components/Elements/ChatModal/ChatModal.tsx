@@ -328,7 +328,7 @@ const ChatModal = () => {
             )}
             {currentChat.messages.map((message) => (
               <Message
-                key={message._id}
+                key={message._id.toString()}
                 message={message}
                 randomColor={randomColor ? randomColor : undefined}
               />
