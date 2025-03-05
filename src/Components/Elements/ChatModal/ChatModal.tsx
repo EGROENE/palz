@@ -131,6 +131,7 @@ const ChatModal = () => {
       : undefined;
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToLatestMessage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -139,6 +140,41 @@ const ChatModal = () => {
   useEffect(() => {
     scrollToLatestMessage();
   }, []);
+
+  let messagesContainerScrollHeight: number = messagesContainerRef.current
+    ? messagesContainerRef.current.scrollHeight
+    : 0;
+
+  let messagesContainerClientHeight: number = messagesContainerRef.current
+    ? messagesContainerRef.current.clientHeight
+    : 0;
+
+  const [messagesContainerScrollBottom, setMessagesContainerScrollBottom] =
+    useState<number>(
+      messagesContainerRef.current && messagesContainerScrollHeight
+        ? messagesContainerScrollHeight -
+            messagesContainerRef.current.scrollTop -
+            messagesContainerClientHeight
+        : 0
+    );
+
+  const handleMessageContainerScroll = () => {
+    messagesContainerScrollHeight = messagesContainerRef.current
+      ? messagesContainerRef.current.scrollHeight
+      : 0;
+
+    messagesContainerClientHeight = messagesContainerRef.current
+      ? messagesContainerRef.current.clientHeight
+      : 0;
+
+    setMessagesContainerScrollBottom(
+      messagesContainerRef.current && messagesContainerScrollHeight
+        ? messagesContainerScrollHeight -
+            messagesContainerRef.current.scrollTop -
+            messagesContainerClientHeight
+        : 0
+    );
+  };
 
   return (
     <div className="modal-background">
@@ -273,7 +309,23 @@ const ChatModal = () => {
           </div>
         )}
         {currentChat && !showAddMemberModal && (
-          <div className="messages-container">
+          <div
+            ref={messagesContainerRef}
+            className="messages-container"
+            onScroll={() => handleMessageContainerScroll()}
+          >
+            {messagesContainerScrollBottom > 0 && (
+              <i
+                onClick={() => scrollToLatestMessage()}
+                id="to-latest-message-button"
+                className="fas fa-chevron-down"
+                style={
+                  randomColor === "var(--primary-color)"
+                    ? { backgroundColor: `${randomColor}`, color: "black" }
+                    : { backgroundColor: `${randomColor}`, color: "white" }
+                }
+              ></i>
+            )}
             {currentChat.messages.map((message) => (
               <Message
                 key={message._id}
