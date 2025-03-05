@@ -9,7 +9,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
-
+import mongoose from "mongoose";
 export const ChatContext = createContext<TChatContext | null>(null);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
@@ -102,6 +102,29 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleSendMessage = (chat: TChat, content: string): void => {
+    const now = Date.now();
+    const messageId = new mongoose.Types.ObjectId();
+
+    const newMessage: TMessage = {
+      _id: messageId,
+      sender: currentUser && currentUser._id ? currentUser._id : "",
+      content: content,
+      image: "",
+      timeSent: now,
+      seenBy: [],
+    };
+
+    const valuesToUpdate: TChatValuesToUpdate = {
+      members: chat.members,
+      messages: chat.messages.concat(newMessage),
+      dateCreated: chat.dateCreated,
+      chatName: chat.chatName,
+    };
+
+    updateChatMutation.mutate({ chat, valuesToUpdate });
+  };
+
   const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
     if (allUsers) {
       return allUsers.filter(
@@ -182,6 +205,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    handleSendMessage,
     handleOpenChat,
     handleChatNameInput,
     handleSearchChatMembersInput,
