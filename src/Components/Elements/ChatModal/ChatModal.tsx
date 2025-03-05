@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Message from "../Message/Message";
 import { TThemeColor, TUser } from "../../../types";
@@ -129,6 +129,16 @@ const ChatModal = () => {
           (member) => member._id !== currentUser._id
         )[0]
       : undefined;
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToLatestMessage = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToLatestMessage();
+  }, []);
 
   return (
     <div className="modal-background">
@@ -271,6 +281,7 @@ const ChatModal = () => {
                 randomColor={randomColor ? randomColor : undefined}
               />
             ))}
+            <div ref={messagesEndRef}></div>
           </div>
         )}
         {!showAddMemberModal && (
