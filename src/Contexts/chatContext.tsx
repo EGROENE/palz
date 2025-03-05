@@ -53,7 +53,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const queryClient = useQueryClient();
 
-  const markMessagesAsReadMutation = useMutation({
+  const updateChatMutation = useMutation({
     mutationFn: ({
       chat,
       valuesToUpdate,
@@ -178,7 +178,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       dateCreated: chat.dateCreated,
       chatName: chat.chatName,
     };
-    markMessagesAsReadMutation.mutate({ chat, valuesToUpdate });
+    updateChatMutation.mutate({ chat, valuesToUpdate });
   };
 
   const chatContextValues: TChatContext = {
