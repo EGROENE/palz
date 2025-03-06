@@ -239,12 +239,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         ) {
           unreadMessages.push(message);
         }
-        if (
-          usersWhoSawMessage.includes(currentUser._id) ||
-          message.sender === currentUser._id
-        ) {
-          return "";
-        }
       }
     }
     if (unreadMessages.length >= 10) {
