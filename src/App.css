@@ -860,9 +860,33 @@ form textarea {
 }
 
 .messages-container {
-  height: calc(100% - 133px);
+  height: calc(100% - 80px);
   position: relative;
   overflow-y: scroll;
+}
+
+.message-indicators-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  /* left: 0%; */
+  /*  top: 67%; */
+  max-width: 100%;
+  width: 100%;
+}
+
+.new-messages-indicator {
+  padding: 0.25rem 0.75rem;
+  border-radius: 11px;
+  margin-bottom: 0.5rem;
+}
+
+#to-latest-message-button {
+  padding: 1rem;
+  border-radius: 50%;
+  font-size: 1rem;
 }
 
 .message {
@@ -967,23 +991,13 @@ form textarea {
   color: red;
 }
 
-#to-latest-message-button {
-  position: fixed;
-  bottom: 12rem;
-  left: 48%;
-  padding: 1rem;
-  border-radius: 50%;
-  font-size: 1rem;
-}
-
 .message-input-container {
   padding: 1rem;
   display: flex;
-  position: sticky;
   bottom: 0rem;
   align-items: center;
   background-color: var(--background-color);
-  position: absolute;
+  position: relative;
   width: 95%;
   bottom: 0;
 }
