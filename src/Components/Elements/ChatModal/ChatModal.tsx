@@ -357,15 +357,17 @@ const ChatModal = () => {
               placeholder="Type message"
               maxLength={10000}
             ></textarea>
-            <i
+            <button
+              disabled={inputMessage.replace(/\s+/g, "") === ""}
               onClick={() => currentChat && handleSendMessage(currentChat, inputMessage)}
               style={
                 randomColor === "var(--primary-color)"
                   ? { backgroundColor: `${randomColor}`, color: "black" }
                   : { backgroundColor: `${randomColor}`, color: "white" }
               }
-              className="fas fa-paper-plane"
-            ></i>
+            >
+              <i className="fas fa-paper-plane"></i>
+            </button>
           </div>
         )}
       </div>

@@ -988,14 +988,14 @@ form textarea {
 }
 
 .message-input-container textarea {
-  width: 92%;
+  width: 87%;
   min-height: 1.5rem;
   height: 1.5rem;
   max-height: 13rem;
   padding: 0.5rem;
 }
 
-.message-input-container i {
+.message-input-container button {
   display: flex;
   justify-content: center;
   height: 3rem;
