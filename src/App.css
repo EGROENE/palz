@@ -893,6 +893,14 @@ form textarea {
   color: lightgray;
 }
 
+.message-sent-info span:hover {
+  cursor: pointer;
+}
+
+.message-sent-info span:nth-child(2) {
+  margin-left: 1rem;
+}
+
 .message.sent {
   text-align: left;
   flex-direction: row-reverse;
@@ -919,6 +927,10 @@ form textarea {
 
 .message.received .message-content {
   margin-left: 0.25rem;
+}
+
+#delete-msg-btn {
+  color: red;
 }
 
 #to-latest-message-button {
@@ -952,8 +964,8 @@ form textarea {
 .message-input-container i {
   display: flex;
   justify-content: center;
-  height: 2rem;
-  width: 2rem;
+  height: 3rem;
+  width: 3rem;
   margin-left: 1rem;
   border-radius: 50%;
   align-items: center;
