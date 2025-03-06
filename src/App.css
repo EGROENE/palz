@@ -862,13 +862,13 @@ form textarea {
 .messages-container {
   height: calc(100% - 133px);
   position: relative;
+  overflow-y: scroll;
 }
 
 .message {
   margin: 0.5rem;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
   width: 33%;
   background-color: deeppink;
   border-radius: 10px;
@@ -903,7 +903,6 @@ form textarea {
 
 .message.sent {
   text-align: left;
-  flex-direction: row-reverse;
   left: 62%;
   position: relative;
   background-color: var(--background-color);
@@ -913,8 +912,43 @@ form textarea {
   color: var(--text-color);
 }
 
-.message.sent .message-content {
-  margin-right: 0.25rem;
+.message.sent .message-content p:first-child {
+  margin-left: 0.25rem;
+}
+
+.delete-message-modal {
+  text-align: center;
+  width: 100%;
+}
+
+.delete-message-btns-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 1rem;
+}
+
+.delete-message-modal header {
+  font-family: var(--text-font);
+}
+
+.delete-message-btns-container button {
+  font-size: 0.75rem;
+}
+
+.delete-message-btns-container button:active {
+  background: var(--text-color-opposite);
+  opacity: 0.8;
+}
+
+.delete-message-btns-container button:first-child {
+  background-color: white;
+  color: black;
+}
+
+.delete-message-btns-container button:nth-child(2) {
+  background-color: black;
+  color: white;
 }
 
 .message.sent .message-sent-info {
