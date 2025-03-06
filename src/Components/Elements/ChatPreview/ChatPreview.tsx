@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useUserContext } from "../../../Hooks/useUserContext";
-import { TChat, TThemeColor, TMessage } from "../../../types";
+import { TChat, TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Methods from "../../../methods";
 
 const ChatPreview = ({ chat }: { chat: TChat }) => {
-  const { currentUser } = useUserContext();
-  const { getChatMembers, userChats, handleOpenChat } = useChatContext();
+  const { getChatMembers, handleOpenChat, getNumberOfUnreadMessagesInChat } =
+    useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -35,34 +34,6 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       return lastMessage;
     }
     return "IMAGE";
-  };
-
-  const getNumberOfUnreadMessagesInChat = (chat: TChat): string | number => {
-    let unreadMessages: TMessage[] = [];
-    if (userChats && currentUser && currentUser._id) {
-      for (const message of chat.messages) {
-        const usersWhoSawMessage: string[] = message.seenBy.map((obj) => obj.user);
-        if (
-          !usersWhoSawMessage.includes(currentUser._id) &&
-          message.sender !== currentUser._id
-        ) {
-          unreadMessages.push(message);
-        }
-        if (
-          usersWhoSawMessage.includes(currentUser._id) ||
-          message.sender === currentUser._id
-        ) {
-          return "";
-        }
-      }
-    }
-    if (unreadMessages.length >= 10) {
-      return "9+";
-    }
-    if (unreadMessages.length < 10) {
-      return unreadMessages.length;
-    }
-    return 0;
   };
 
   return (
