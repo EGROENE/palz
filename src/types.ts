@@ -713,6 +713,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  getNumberOfUnreadMessagesInChat: (chat: TChat) => string | number;
   handleDeleteMessage: (chat: TChat, messageID: string | mongoose.Types.ObjectId) => void;
   inputMessage: string;
   setInputMessage: React.Dispatch<React.SetStateAction<string>>;

@@ -225,7 +225,36 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     updateChatMutation.mutate({ chat, valuesToUpdate });
   };
 
+  const getNumberOfUnreadMessagesInChat = (chat: TChat): string | number => {
+    let unreadMessages: TMessage[] = [];
+    if (userChats && currentUser && currentUser._id) {
+      for (const message of chat.messages) {
+        const usersWhoSawMessage: string[] = message.seenBy.map((obj) => obj.user);
+        if (
+          !usersWhoSawMessage.includes(currentUser._id) &&
+          message.sender !== currentUser._id
+        ) {
+          unreadMessages.push(message);
+        }
+        if (
+          usersWhoSawMessage.includes(currentUser._id) ||
+          message.sender === currentUser._id
+        ) {
+          return "";
+        }
+      }
+    }
+    if (unreadMessages.length >= 10) {
+      return "9+";
+    }
+    if (unreadMessages.length < 10) {
+      return unreadMessages.length;
+    }
+    return 0;
+  };
+
   const chatContextValues: TChatContext = {
+    getNumberOfUnreadMessagesInChat,
     handleDeleteMessage,
     inputMessage,
     setInputMessage,
