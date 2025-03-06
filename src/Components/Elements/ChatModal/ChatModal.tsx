@@ -202,13 +202,18 @@ const ChatModal = () => {
       ? messagesContainerRef.current.clientHeight
       : 0;
 
-    setMessagesContainerScrollBottom(
+    const scrollBottom =
       messagesContainerRef.current && messagesContainerScrollHeight
         ? messagesContainerScrollHeight -
-            messagesContainerRef.current.scrollTop -
-            messagesContainerClientHeight
-        : 0
-    );
+          messagesContainerRef.current.scrollTop -
+          messagesContainerClientHeight
+        : 0;
+
+    if (scrollBottom === 0 && currentChat && areNewMessages) {
+      markMessagesAsRead(currentChat);
+    }
+
+    setMessagesContainerScrollBottom(scrollBottom);
   };
 
   return (
