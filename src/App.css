@@ -970,6 +970,7 @@ form textarea {
 #to-latest-message-button {
   position: fixed;
   bottom: 12rem;
+  left: 48%;
   padding: 1rem;
   border-radius: 50%;
   font-size: 1rem;
