@@ -10,6 +10,9 @@ import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 const ChatModal = () => {
   const { allOtherUsers, currentUser } = useUserContext();
   const {
+    areNewMessages,
+    setAreNewMessages,
+    getNumberOfUnreadMessagesInChat,
     setShowChatModal,
     setCurrentChat,
     currentChat,
@@ -37,6 +40,7 @@ const ChatModal = () => {
     userChats,
     inputMessage,
     setInputMessage,
+    markMessagesAsRead,
   } = useChatContext();
 
   // Update currentChat whenever userChats updates:
@@ -63,6 +67,8 @@ const ChatModal = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+
+    scrollToLatestMessage();
   }, []);
 
   const initiatePotentialChatMembers = (): void => {
@@ -143,11 +149,31 @@ const ChatModal = () => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToLatestMessage = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Mark latest message as read:
+    if (currentChat && areNewMessages) {
+      setAreNewMessages(false);
+      markMessagesAsRead(currentChat);
+    }
+
+    messagesEndRef.current?.scrollIntoView(false);
   };
 
   useEffect(() => {
-    scrollToLatestMessage();
+    if (currentChat) {
+      setAreNewMessages(
+        getNumberOfUnreadMessagesInChat(currentChat) !== 0 &&
+          getNumberOfUnreadMessagesInChat(currentChat) !== ""
+      );
+    }
+
+    if (
+      currentUser &&
+      currentUser._id &&
+      currentChat &&
+      currentChat.messages[currentChat.messages.length - 1].sender === currentUser._id
+    ) {
+      scrollToLatestMessage();
+    }
   }, [currentChat]);
 
   let messagesContainerScrollHeight: number = messagesContainerRef.current
@@ -192,6 +218,7 @@ const ChatModal = () => {
         onClick={(e) => {
           setShowChatModal(false);
           setCurrentChat(null);
+          setAreNewMessages(false);
           if (showAddMemberModal) {
             handleCancelAddingChatMembers(e);
           }
@@ -322,17 +349,34 @@ const ChatModal = () => {
             className="messages-container"
             onScroll={() => handleMessageContainerScroll()}
           >
-            {messagesContainerScrollBottom > 0 && (
-              <i
-                onClick={() => scrollToLatestMessage()}
-                id="to-latest-message-button"
-                className="fas fa-chevron-down"
-                style={
-                  randomColor === "var(--primary-color)"
-                    ? { backgroundColor: `${randomColor}`, color: "black" }
-                    : { backgroundColor: `${randomColor}`, color: "white" }
-                }
-              ></i>
+            {(messagesContainerScrollBottom > 0 || areNewMessages) && (
+              <div className="message-indicators-container">
+                {areNewMessages &&
+                  messagesContainerScrollHeight > messagesContainerClientHeight && (
+                    <span
+                      className="new-messages-indicator"
+                      style={
+                        randomColor === "var(--primary-color)"
+                          ? { backgroundColor: `${randomColor}`, color: "black" }
+                          : { backgroundColor: `${randomColor}`, color: "white" }
+                      }
+                    >
+                      New
+                    </span>
+                  )}
+                {messagesContainerScrollBottom > 0 && (
+                  <i
+                    onClick={() => scrollToLatestMessage()}
+                    id="to-latest-message-button"
+                    className="fas fa-chevron-down"
+                    style={
+                      randomColor === "var(--primary-color)"
+                        ? { backgroundColor: `${randomColor}`, color: "black" }
+                        : { backgroundColor: `${randomColor}`, color: "white" }
+                    }
+                  ></i>
+                )}
+              </div>
             )}
             {currentChat.messages.map((message) => (
               <Message
