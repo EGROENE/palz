@@ -17,7 +17,7 @@ const UsersEvents = () => {
 
   const navigation = useNavigate();
   useEffect(() => {
-    if (!currentUser) {
+    if (!currentUser || userCreatedAccount === null) {
       logout();
       toast.error("Please log in before accessing this page", {
         style: {

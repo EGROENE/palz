@@ -94,7 +94,7 @@ const FriendRequests = () => {
       : false;
 
   useEffect(() => {
-    if (userCreatedAccount === null) {
+    if (userCreatedAccount === null || !currentUser) {
       logout();
       toast.error("Please log in before accessing this page.", {
         style: {

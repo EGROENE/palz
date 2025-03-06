@@ -529,7 +529,7 @@ const DisplayedCardsPage = ({
 
   const navigation = useNavigate();
   useEffect(() => {
-    if (!currentUser && userCreatedAccount === null) {
+    if (!currentUser || userCreatedAccount === null) {
       logout();
       toast.error("Please log in before accessing this page", {
         style: {
