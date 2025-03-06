@@ -43,6 +43,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setNumberOfPotentialChatMembersDisplayed,
   ] = useState<number | null>(10);
 
+  const [areNewMessages, setAreNewMessages] = useState<boolean>(false);
+
   const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
     queryKey: ["userChats"],
     queryFn: () =>
@@ -202,6 +204,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleOpenChat = (chat: TChat): void => {
     setCurrentChat(chat);
     setShowChatModal(true);
+    setAreNewMessages(false);
     // if unread messages, mark them as read
     const now = Date.now();
     const updatedChatMessages: TMessage[] = chat.messages.map((message) => {
@@ -254,6 +257,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    areNewMessages,
+    setAreNewMessages,
     getNumberOfUnreadMessagesInChat,
     handleDeleteMessage,
     inputMessage,
