@@ -355,7 +355,10 @@ const ChatModal = () => {
             onScroll={() => handleMessageContainerScroll()}
           >
             {(messagesContainerScrollBottom > 0 || areNewMessages) && (
-              <div className="message-indicators-container">
+              <div
+                style={areNewMessages ? { top: "67%" } : { top: "80%" }}
+                className="message-indicators-container"
+              >
                 {areNewMessages &&
                   messagesContainerScrollHeight > messagesContainerClientHeight && (
                     <span
