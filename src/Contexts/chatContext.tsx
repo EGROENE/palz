@@ -201,11 +201,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleOpenChat = (chat: TChat): void => {
-    setCurrentChat(chat);
-    setShowChatModal(true);
-    setAreNewMessages(false);
-    // if unread messages, mark them as read
+  const markMessagesAsRead = (chat: TChat): void => {
     const now = Date.now();
     const updatedChatMessages: TMessage[] = chat.messages.map((message) => {
       const usersWhoSawMessage = message.seenBy.map((obj) => obj.user);
@@ -226,6 +222,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       chatName: chat.chatName,
     };
     updateChatMutation.mutate({ chat, valuesToUpdate });
+  };
+
+  const handleOpenChat = (chat: TChat): void => {
+    setCurrentChat(chat);
+    setShowChatModal(true);
+    setAreNewMessages(false);
+    // if unread messages, mark them as read
+    markMessagesAsRead(chat);
   };
 
   const getNumberOfUnreadMessagesInChat = (chat: TChat): string | number => {
@@ -251,6 +255,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    markMessagesAsRead,
     areNewMessages,
     setAreNewMessages,
     getNumberOfUnreadMessagesInChat,

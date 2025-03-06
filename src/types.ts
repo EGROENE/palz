@@ -713,6 +713,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  markMessagesAsRead: (chat: TChat) => void;
   areNewMessages: boolean;
   setAreNewMessages: React.Dispatch<React.SetStateAction<boolean>>;
   getNumberOfUnreadMessagesInChat: (chat: TChat) => string | number;
