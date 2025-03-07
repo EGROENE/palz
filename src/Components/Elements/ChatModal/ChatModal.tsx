@@ -319,7 +319,7 @@ const ChatModal = () => {
             className="members-panel"
           >
             {currentChat && currentChat.chatName && currentChat.chatName !== "" && (
-              <p>{currentChat.chatName}</p>
+              <header>{currentChat.chatName}</header>
             )}
             {otherChatMember && (
               <div className="chat-header-single-other-member">
