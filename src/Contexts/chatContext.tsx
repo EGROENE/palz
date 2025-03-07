@@ -87,8 +87,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: (data, variables) => {
       if (data.ok) {
         // set currentChat to chat, open ChatModal w/ it. if no message sent, put 'DRAFT' in chat preview
-        setCurrentChat(variables.chat);
-        setShowChatModal(true);
+        console.log(variables.chat);
+        handleOpenChat(variables.chat);
         setShowCreateNewChatModal(false);
         queryClient.invalidateQueries({ queryKey: "userChats" });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
@@ -129,6 +129,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     if (chatAlreadyExists) {
       setCurrentChat(chat);
       setShowChatModal(true);
+      handleOpenChat(chat);
       setChatCreationInProgress(false);
       toast.error("Chat already exists.", {
         style: {
