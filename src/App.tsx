@@ -175,14 +175,12 @@ function App() {
       {addEventIsInProgress && <LoadingModal message="Adding event..." />}
       {eventEditIsInProgress && <LoadingModal message="Updating event..." />}
       {eventDeletionIsInProgress && <LoadingModal message="Deleting event..." />}
-      {updateProfileImageMutation.isPending ||
-        (addEventImageMutation.isPending && (
-          <LoadingModal message="Uploading image..." />
-        ))}
-      {removeProfileImageMutation.isPending ||
-        (removeEventImageMutation.isPending && (
-          <LoadingModal message="Removing image..." />
-        ))}
+      {(updateProfileImageMutation.isPending || addEventImageMutation.isPending) && (
+        <LoadingModal message="Uploading image..." />
+      )}
+      {(removeProfileImageMutation.isPending || removeEventImageMutation.isPending) && (
+        <LoadingModal message="Removing image..." />
+      )}
       <Routes>
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />
