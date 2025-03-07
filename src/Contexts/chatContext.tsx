@@ -87,7 +87,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: (data, variables) => {
       if (data.ok) {
         // set currentChat to chat, open ChatModal w/ it. if no message sent, put 'DRAFT' in chat preview
-        console.log(variables.chat);
         handleOpenChat(variables.chat);
         setShowCreateNewChatModal(false);
         setUsersToAddToChat([]);
@@ -123,14 +122,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleCreateChat = (chat: TChat): void => {
     setChatCreationInProgress(true);
 
-    const chatAlreadyExists = userChats?.some((userChat) =>
-      Methods.arraysAreIdentical(userChat.members, chat.members)
-    );
+    const existingChat: TChat | undefined =
+      userChats &&
+      userChats.filter((userChat) =>
+        Methods.arraysAreIdentical(userChat.members, chat.members)
+      )[0];
 
-    if (chatAlreadyExists) {
+    if (existingChat) {
       setCurrentChat(chat);
       setShowChatModal(true);
-      handleOpenChat(chat);
+      handleOpenChat(existingChat);
       setChatCreationInProgress(false);
       setShowCreateNewChatModal(false);
       toast.error("Chat already exists.", {
