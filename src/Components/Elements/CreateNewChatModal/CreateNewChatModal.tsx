@@ -14,6 +14,7 @@ import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownLis
 const CreateNewChatModal = () => {
   const { allOtherUsers, currentUser } = useUserContext();
   const {
+    handleCreateChat,
     setShowCreateNewChatModal,
     numberOfPotentialChatMembersDisplayed,
     setNumberOfPotentialChatMembersDisplayed,
@@ -197,6 +198,21 @@ const CreateNewChatModal = () => {
             Cancel
           </button>
           <button
+            onClick={() => {
+              handleCreateChat({
+                members: usersToAddToChat
+                  .map((user) => {
+                    if (user._id) {
+                      return user._id;
+                    }
+                    return "";
+                  })
+                  .concat(currentUser && currentUser._id ? currentUser._id : ""),
+                messages: [],
+                chatName: chatName,
+                dateCreated: Date.now(),
+              });
+            }}
             disabled={!chatCanBeCreated}
             style={
               randomColor === "var(--primary-color)"
