@@ -90,6 +90,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         setCurrentChat(variables.chat);
         setShowChatModal(true);
         setShowCreateNewChatModal(false);
+        queryClient.invalidateQueries({ queryKey: "userChats" });
+        queryClient.refetchQueries({ queryKey: ["userChats"] });
       }
     },
     onError: () => {
