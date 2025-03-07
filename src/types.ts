@@ -713,6 +713,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  handleCreateChat: (chat: TChat) => void;
   chatCreationInProgress: boolean;
   setChatCreationInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   markMessagesAsRead: (chat: TChat) => void;

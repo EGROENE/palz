@@ -12,6 +12,7 @@ import { useLocalStorage } from "usehooks-ts";
 import mongoose from "mongoose";
 import toast from "react-hot-toast";
 import { useMainContext } from "../Hooks/useMainContext";
+import Methods from "../methods";
 
 export const ChatContext = createContext<TChatContext | null>(null);
 
@@ -116,7 +117,28 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   // If chat w/ members already exists, do not create new one; set currentChat to input chat, open ChatModal w/ it, and nofify user by toast that chat w/ these members already exists.
   // While chat is being created, display loadingmodal. hide onSettled of createChatMutation
-  //const handleCreateChat = (chat: TChat) => {}
+  const handleCreateChat = (chat: TChat): void => {
+    setChatCreationInProgress(true);
+
+    const chatAlreadyExists = userChats?.some((userChat) =>
+      Methods.arraysAreIdentical(userChat.members, chat.members)
+    );
+
+    if (chatAlreadyExists) {
+      setCurrentChat(chat);
+      setShowChatModal(true);
+      setChatCreationInProgress(false);
+      toast.error("Chat already exists.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    } else {
+      createChatMutation.mutate({ chat });
+    }
+  };
 
   const handleAddUserToChat = (user: TUser, chat?: TChat): void => {
     if (!chat) {
@@ -288,6 +310,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    handleCreateChat,
     chatCreationInProgress,
     setChatCreationInProgress,
     markMessagesAsRead,
