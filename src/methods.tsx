@@ -146,21 +146,29 @@ const convertToBase64 = (file: File): Promise<unknown> => {
 };
 
 const sortChatsByMostRecentMessage = (chats: TChat[]): TChat[] => {
+  let newChats: TChat[] = [];
   let sentTimes: number[] = [];
   for (const chat of chats) {
-    sentTimes.push(chat.messages[chat.messages.length - 1].timeSent);
+    if (chat.messages.length > 0) {
+      sentTimes.push(chat.messages[chat.messages.length - 1].timeSent);
+    } else {
+      newChats.push(chat);
+    }
   }
   const sentTimesSortedMostRecent = sentTimes.sort((a, b) => b - a);
 
   let sortedChats: TChat[] = [];
   for (const sentTime of sentTimesSortedMostRecent) {
     for (const chat of chats) {
-      if (chat.messages[chat.messages.length - 1].timeSent === sentTime) {
+      if (
+        chat.messages.length > 0 &&
+        chat.messages[chat.messages.length - 1].timeSent === sentTime
+      ) {
         sortedChats.push(chat);
       }
     }
   }
-  return sortedChats;
+  return newChats.concat(sortedChats);
 };
 
 const getDateMessageSent = (message: TMessage): string => {
