@@ -106,7 +106,13 @@ const Message = ({
       )}
       {showAreYouSureYouWantToDeleteMessage && (
         <div className="delete-message-modal">
-          <header>
+          <header
+            style={
+              randomColor === "var(--primary-color)"
+                ? { backgroundColor: `${randomColor}`, color: "black" }
+                : { backgroundColor: `${randomColor}`, color: "white" }
+            }
+          >
             Delete message?
             <div className="delete-message-btns-container">
               <button onClick={() => setShowAreYouSureYouWantToDeleteMessage(false)}>
