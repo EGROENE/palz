@@ -37,18 +37,17 @@ const ChatModal = () => {
     setChatName,
     handleSendMessage,
     setChatNameError,
-    userChats,
     inputMessage,
     setInputMessage,
     markMessagesAsRead,
   } = useChatContext();
 
   // Update currentChat whenever userChats updates:
-  useEffect(() => {
+  /* useEffect(() => {
     if (currentChat && userChats) {
       setCurrentChat(userChats.filter((userChat) => userChat._id === currentChat._id)[0]);
     }
-  }, [userChats]);
+  }, [userChats]); */
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -138,12 +137,7 @@ const ChatModal = () => {
     setShowPotentialChatMembers(false);
   };
 
-  const otherChatMember: TUser | undefined =
-    currentChat && currentUser && currentChat.members.length === 2
-      ? getChatMembers(currentChat.members).filter(
-          (member) => member._id !== currentUser._id
-        )[0]
-      : undefined;
+  const [otherChatMember, setOtherChatMember] = useState<TUser | undefined>(undefined);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -170,10 +164,19 @@ const ChatModal = () => {
       currentUser &&
       currentUser._id &&
       currentChat &&
+      currentChat.messages.length > 0 &&
       currentChat.messages[currentChat.messages.length - 1].sender === currentUser._id
     ) {
       scrollToLatestMessage();
     }
+
+    setOtherChatMember(
+      currentChat && currentUser && currentChat.members.length === 2
+        ? getChatMembers(currentChat.members).filter(
+            (member) => member._id !== currentUser._id
+          )[0]
+        : undefined
+    );
   }, [currentChat]);
 
   let messagesContainerScrollHeight: number = messagesContainerRef.current
