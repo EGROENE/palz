@@ -285,9 +285,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleOpenChat = (chat: TChat): void => {
     setCurrentChat(chat);
     setShowChatModal(true);
-    setAreNewMessages(false);
-    // if unread messages, mark them as read
-    markMessagesAsRead(chat);
+    if (chat.messages.length > 0) {
+      setAreNewMessages(false);
+      markMessagesAsRead(chat);
+    }
   };
 
   const getNumberOfUnreadMessagesInChat = (chat: TChat): string | number => {
