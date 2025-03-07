@@ -119,6 +119,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         setUsersToAddToChat([]);
         queryClient.invalidateQueries({ queryKey: "userChats" });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
+      } else {
+        throw Error;
       }
     },
     onError: () => {
