@@ -132,6 +132,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       setShowChatModal(true);
       handleOpenChat(chat);
       setChatCreationInProgress(false);
+      setShowCreateNewChatModal(false);
       toast.error("Chat already exists.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
