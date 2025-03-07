@@ -24,7 +24,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
 
   const getPreviewOfLastMessage = (chat: TChat): string => {
     const lastMessage: string | undefined =
-      chat.messages[chat.messages.length - 1].content !== ""
+      chat.messages.length > 0 && chat.messages[chat.messages.length - 1].content !== ""
         ? chat.messages[chat.messages.length - 1].content
         : undefined;
     if (lastMessage) {
@@ -95,9 +95,11 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
         </header>
         <div className="last-message-preview-and-date">
           <span>{getPreviewOfLastMessage(chat)}</span>
-          <span>
-            {Methods.getDateMessageSent(chat.messages[chat.messages.length - 1])}
-          </span>
+          {chat.messages.length > 0 && (
+            <span>
+              {Methods.getDateMessageSent(chat.messages[chat.messages.length - 1])}
+            </span>
+          )}
         </div>
       </div>
     </div>
