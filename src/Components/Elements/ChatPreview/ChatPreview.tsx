@@ -33,7 +33,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       }
       return lastMessage;
     }
-    return "IMAGE";
+    return "NO MESSAGES YET";
   };
 
   return (
