@@ -10,9 +10,13 @@ import {
 } from "@tanstack/react-query";
 import { useLocalStorage } from "usehooks-ts";
 import mongoose from "mongoose";
+import toast from "react-hot-toast";
+import { useMainContext } from "../Hooks/useMainContext";
+
 export const ChatContext = createContext<TChatContext | null>(null);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
+  const { theme } = useMainContext();
   const { currentUser, userHasLoggedIn, allOtherUsers, allUsers } = useUserContext();
 
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
@@ -75,6 +79,28 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     onError: (error) => console.log(error),
   });
 
+  const createChatMutation = useMutation({
+    mutationFn: ({ chat }: { chat: TChat }) => Requests.createNewChat(chat),
+    onSuccess: (data, variables) => {
+      if (data.ok) {
+        // set currentChat to chat, open ChatModal w/ it. if no message sent, put 'DRAFT' in chat preview
+        setCurrentChat(variables.chat);
+        setShowChatModal(true);
+        setShowCreateNewChatModal(false);
+      }
+    },
+    onError: () => {
+      // notify by toast of inability to create chat. allow retry
+      toast.error("Unable to create chat. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+  });
+
   const getChatMembers = (members: string[]): TUser[] => {
     let chatMembers: TUser[] = [];
     for (const user of allOtherUsers) {
@@ -84,6 +110,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
     return chatMembers;
   };
+
+  // If chat w/ members already exists, do not create new one; set currentChat to input chat, open ChatModal w/ it, and nofify user by toast that chat w/ these members already exists.
+  // While chat is being created, display loadingmodal. hide onSettled of createChatMutation
+  //const handleCreateChat = (chat: TChat) => {}
 
   const handleAddUserToChat = (user: TUser, chat?: TChat): void => {
     if (!chat) {
