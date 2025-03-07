@@ -90,6 +90,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         console.log(variables.chat);
         handleOpenChat(variables.chat);
         setShowCreateNewChatModal(false);
+        setUsersToAddToChat([]);
         queryClient.invalidateQueries({ queryKey: "userChats" });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
       }
