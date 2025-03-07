@@ -312,6 +312,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    createChatMutation,
     handleCreateChat,
     chatCreationInProgress,
     setChatCreationInProgress,

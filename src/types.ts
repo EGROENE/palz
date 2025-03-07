@@ -713,6 +713,14 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  createChatMutation: UseMutationResult<
+    Response,
+    Error,
+    {
+      chat: TChat;
+    },
+    unknown
+  >;
   handleCreateChat: (chat: TChat) => void;
   chatCreationInProgress: boolean;
   setChatCreationInProgress: React.Dispatch<React.SetStateAction<boolean>>;
