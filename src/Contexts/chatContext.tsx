@@ -68,9 +68,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     mutationFn: ({
       chat,
       valuesToUpdate,
+      // @ts-ignore: purpose param not needed in mutationFn, but needed in onError
+      purpose,
     }: {
       chat: TChat;
       valuesToUpdate: TChatValuesToUpdate;
+      purpose: "send-message" | "delete-message" | "mark-as-read";
     }) => Requests.updateChat(chat, valuesToUpdate),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: "userChats" });
@@ -190,7 +193,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       chatName: chat.chatName,
     };
 
-    updateChatMutation.mutate({ chat, valuesToUpdate });
+    const purpose = "send-message";
+    updateChatMutation.mutate({ chat, valuesToUpdate, purpose });
   };
 
   const handleDeleteMessage = (
@@ -206,7 +210,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       chatName: chat.chatName,
     };
 
-    updateChatMutation.mutate({ chat, valuesToUpdate });
+    const purpose = "delete-message";
+    updateChatMutation.mutate({ chat, valuesToUpdate, purpose });
   };
 
   const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
@@ -282,13 +287,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       dateCreated: chat.dateCreated,
       chatName: chat.chatName,
     };
-    updateChatMutation.mutate({ chat, valuesToUpdate });
+
+    const purpose = "mark-as-read";
+    updateChatMutation.mutate({ chat, valuesToUpdate, purpose });
   };
 
   const handleOpenChat = (chat: TChat): void => {
     setCurrentChat(chat);
     setShowChatModal(true);
-    if (chat.messages.length > 0) {
+    if (chat.messages.length > 0 && areNewMessages) {
       setAreNewMessages(false);
       markMessagesAsRead(chat);
     }
