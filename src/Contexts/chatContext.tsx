@@ -86,7 +86,27 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         throw Error;
       }
     },
-    onError: (error) => console.log(error),
+    onError: (error, variables) => {
+      console.log(error);
+      if (variables.purpose === "send-message") {
+        toast.error("Could not send message. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
+      if (variables.purpose === "delete-message") {
+        toast.error("Could not delete message. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
+    },
   });
 
   const createChatMutation = useMutation({
