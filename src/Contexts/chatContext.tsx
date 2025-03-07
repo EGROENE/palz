@@ -101,6 +101,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         },
       });
     },
+    onSettled: () => setChatCreationInProgress(false),
   });
 
   const getChatMembers = (members: string[]): TUser[] => {
