@@ -13,13 +13,14 @@ const getCurrentUserChats = async (req, res) => {
 
 // create new chat:
 const createChat = async (req, res) => {
-  const { members, messages, dateCreated } = req.body;
+  const { members, messages, dateCreated, chatName } = req.body;
 
   try {
     const chat = await Chat.create({
       members,
       messages,
       dateCreated,
+      chatName,
     });
     res.status(200).json(chat);
   } catch (error) {
