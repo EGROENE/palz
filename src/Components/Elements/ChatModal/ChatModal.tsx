@@ -170,9 +170,23 @@ const ChatModal = () => {
     messagesEndRef.current?.scrollIntoView(false);
   };
 
+  // useEffect for init render: call scrollToLatestMessage
+
   useEffect(() => {
     if (currentChat) {
-      setAreNewMessages(getNumberOfUnreadMessagesInChat(currentChat) !== 0);
+      const updatedAreNewMessages = getNumberOfUnreadMessagesInChat(currentChat) !== 0;
+      setAreNewMessages(updatedAreNewMessages);
+
+      const scrollBottom =
+        messagesContainerRef.current && messagesContainerScrollHeight
+          ? messagesContainerScrollHeight -
+            messagesContainerRef.current.scrollTop -
+            messagesContainerClientHeight
+          : 0;
+
+      if (scrollBottom === 0 && currentChat && updatedAreNewMessages) {
+        markMessagesAsRead(currentChat);
+      }
     }
 
     if (
@@ -192,7 +206,7 @@ const ChatModal = () => {
           )[0]
         : undefined
     );
-  }, [currentChat]);
+  }, [currentChat, fetchChatsQuery.data]);
 
   let messagesContainerScrollHeight: number = messagesContainerRef.current
     ? messagesContainerRef.current.scrollHeight
