@@ -30,6 +30,10 @@ const Schema = mongoose.Schema;
 }); */
 
 const chatSchema = new Schema({
+  _id: {
+    type: mongoose.Schema.ObjectId,
+    required: true,
+  },
   members: {
     type: [String],
     required: true,
