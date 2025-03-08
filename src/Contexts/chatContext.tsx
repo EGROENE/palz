@@ -124,7 +124,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         throw Error;
       }
     },
-    onError: () => {
+    onError: (error) => {
+      console.log(error);
       // notify by toast of inability to create chat. allow retry
       toast.error("Unable to create chat. Please try again.", {
         style: {
