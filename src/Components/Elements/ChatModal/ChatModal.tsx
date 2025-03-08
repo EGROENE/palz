@@ -175,6 +175,10 @@ const ChatModal = () => {
   // useEffect for init render: call scrollToLatestMessage
 
   useEffect(() => {
+    scrollToLatestMessage();
+  }, [currentChat?.messages]);
+
+  useEffect(() => {
     if (currentChat) {
       const updatedAreNewMessages = getNumberOfUnreadMessagesInChat(currentChat) !== 0;
       setAreNewMessages(updatedAreNewMessages);
