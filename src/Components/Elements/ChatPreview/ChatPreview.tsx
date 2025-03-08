@@ -38,7 +38,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
 
   return (
     <div
-      key={chat._id}
+      key={chat._id.toString()}
       className="chat-preview"
       style={{ border: `2px solid ${randomColor}` }}
       onClick={() => handleOpenChat(chat)}
