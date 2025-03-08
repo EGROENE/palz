@@ -6,6 +6,7 @@ import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
+import Methods from "../../../methods";
 
 const ChatModal = () => {
   const { allOtherUsers, currentUser } = useUserContext();
@@ -13,6 +14,7 @@ const ChatModal = () => {
     areNewMessages,
     setAreNewMessages,
     getNumberOfUnreadMessagesInChat,
+    showChatModal,
     setShowChatModal,
     setCurrentChat,
     currentChat,
@@ -40,14 +42,30 @@ const ChatModal = () => {
     inputMessage,
     setInputMessage,
     markMessagesAsRead,
+    fetchChatsQuery,
   } = useChatContext();
 
-  // Update currentChat whenever userChats updates:
-  /* useEffect(() => {
-    if (currentChat && userChats) {
-      setCurrentChat(userChats.filter((userChat) => userChat._id === currentChat._id)[0]);
+  /* 
+  Update currentChat whenever fetchChatsQuery.data changes & when chat in userChats w/ matching _id to currentChat is not identical to currentChat:
+  */
+  useEffect(() => {
+    const userChats = fetchChatsQuery.data;
+    if (currentChat && userChats && showChatModal) {
+      const updatedChat = userChats.filter(
+        (userChat) => userChat._id === currentChat._id
+      )[0];
+      // compare currentChat & updatedChat; if not the same, setCurrentChat(updatedChat)
+      const chatWasUpdated =
+        updatedChat &&
+        !Methods.arraysAreIdentical(
+          Object.values(currentChat),
+          Object.values(updatedChat)
+        );
+      if (chatWasUpdated) {
+        setCurrentChat(updatedChat);
+      }
     }
-  }, [userChats]); */
+  }, [fetchChatsQuery.data]);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
