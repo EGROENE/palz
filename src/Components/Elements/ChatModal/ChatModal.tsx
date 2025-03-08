@@ -172,10 +172,7 @@ const ChatModal = () => {
 
   useEffect(() => {
     if (currentChat) {
-      setAreNewMessages(
-        getNumberOfUnreadMessagesInChat(currentChat) !== 0 &&
-          getNumberOfUnreadMessagesInChat(currentChat) !== ""
-      );
+      setAreNewMessages(getNumberOfUnreadMessagesInChat(currentChat) !== 0);
     }
 
     if (
