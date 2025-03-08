@@ -5,6 +5,7 @@ import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
+import mongoose from "mongoose";
 
 // add members
 // name chat (if over 1 other member)
@@ -200,6 +201,7 @@ const CreateNewChatModal = () => {
           <button
             onClick={() => {
               handleCreateChat({
+                _id: new mongoose.Types.ObjectId().toString(),
                 members: usersToAddToChat
                   .map((user) => {
                     if (user._id) {
