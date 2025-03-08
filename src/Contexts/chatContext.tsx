@@ -323,7 +323,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleOpenChat = (chat: TChat): void => {
     setCurrentChat(chat);
     setShowChatModal(true);
-    if (chat.messages.length > 0 && areNewMessages) {
+    if (chat.messages.length > 0) {
       setAreNewMessages(false);
       markMessagesAsRead(chat);
     }
