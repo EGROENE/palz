@@ -157,7 +157,6 @@ const ChatModal = () => {
 
   const [otherChatMember, setOtherChatMember] = useState<TUser | undefined>(undefined);
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToLatestMessage = () => {
@@ -167,7 +166,10 @@ const ChatModal = () => {
       markMessagesAsRead(currentChat);
     }
 
-    messagesEndRef.current?.scrollIntoView(false);
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+    //messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   // useEffect for init render: call scrollToLatestMessage
@@ -425,7 +427,6 @@ const ChatModal = () => {
                 randomColor={randomColor ? randomColor : undefined}
               />
             ))}
-            <div ref={messagesEndRef}></div>
           </div>
         )}
         {!showAddMemberModal && (
