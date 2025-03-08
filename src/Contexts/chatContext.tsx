@@ -75,10 +75,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       valuesToUpdate: TChatValuesToUpdate;
       purpose: "send-message" | "delete-message" | "mark-as-read";
     }) => Requests.updateChat(chat, valuesToUpdate),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       if (data.ok) {
         queryClient.invalidateQueries({ queryKey: "userChats" });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
+        setCurrentChat(variables.chat);
         if (inputMessage !== "") {
           setInputMessage("");
         }
