@@ -730,6 +730,7 @@ const createNewChat = (newChat: TChat): Promise<Response> => {
   myHeaders.append("Content-Type", "application/json");
 
   var raw = JSON.stringify({
+    "_id": newChat._id,
     "members": newChat.members,
     "messages": newChat.messages,
     "dateCreated": newChat.dateCreated,
@@ -752,6 +753,8 @@ const updateChat = (
   myHeaders.append("Content-Type", "application/json");
 
   var raw = JSON.stringify(valuesToUpdate);
+
+  console.log(chat);
 
   return fetch(`http://localhost:4000/palz/chats/${chat._id}`, {
     method: "PATCH",
