@@ -85,7 +85,8 @@ const ChatModal = () => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
 
-    scrollToLatestMessage();
+    setTimeout(() => scrollToLatestMessage(), 500);
+    //scrollToLatestMessage();
   }, []);
 
   const initiatePotentialChatMembers = (): void => {
@@ -171,12 +172,6 @@ const ChatModal = () => {
     }
     //messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
-  // useEffect for init render: call scrollToLatestMessage
-
-  useEffect(() => {
-    scrollToLatestMessage();
-  }, [currentChat?.messages]);
 
   useEffect(() => {
     if (currentChat) {
