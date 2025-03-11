@@ -18,11 +18,12 @@ const ChatsPage = () => {
   const { fetchAllEventsQuery } = useEventContext();
   const {
     fetchChatsQuery,
-    userChats,
     showChatModal,
     showCreateNewChatModal,
     setShowCreateNewChatModal,
   } = useChatContext();
+
+  const userChats = fetchChatsQuery.data;
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
