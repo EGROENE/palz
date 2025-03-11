@@ -22,7 +22,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
-  const getPreviewOfLastMessage = (chat: TChat): string => {
+  const getPreviewOfLastMessage = (chat: TChat): string | JSX.Element => {
     const lastMessage: string | undefined =
       chat.messages.length > 0 && chat.messages[chat.messages.length - 1].content !== ""
         ? chat.messages[chat.messages.length - 1].content
@@ -33,7 +33,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       }
       return lastMessage;
     }
-    return "NO MESSAGES YET";
+    return <i>No messages yet</i>;
   };
 
   return (
