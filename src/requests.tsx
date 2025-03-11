@@ -747,12 +747,12 @@ const createNewChat = (newChat: TChat): Promise<Response> => {
 
 const updateChat = (
   chat: TChat,
-  valuesToUpdate: TChatValuesToUpdate
+  chatValuesToUpdate: TChatValuesToUpdate
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  var raw = JSON.stringify(valuesToUpdate);
+  var raw = JSON.stringify(chatValuesToUpdate);
 
   console.log(chat);
 

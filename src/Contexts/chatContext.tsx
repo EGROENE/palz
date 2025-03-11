@@ -64,19 +64,35 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   });
   const userChats: TChat[] | undefined = fetchChatsQuery.data;
 
+  /* const chatValuesToUpdate: TChatValuesToUpdate = {
+      ...(firstName?.trim() !== "" &&
+        firstName !== currentUser?.firstName && {
+          firstName: Methods.formatHyphensAndSpacesInString(
+            Methods.formatCapitalizedName(firstName?.trim())
+          ),
+        }),
+      ...(lastName?.trim() !== "" &&
+        lastName !== currentUser?.lastName && {
+          lastName: Methods.formatHyphensAndSpacesInString(
+            Methods.formatCapitalizedName(lastName?.trim())
+          ),
+        }),
+        ...
+    }; */
+
   const queryClient = useQueryClient();
 
   const updateChatMutation = useMutation({
     mutationFn: ({
       chat,
-      valuesToUpdate,
+      chatValuesToUpdate,
       // @ts-ignore: purpose param not needed in mutationFn, but needed in onError
       purpose,
     }: {
       chat: TChat;
-      valuesToUpdate: TChatValuesToUpdate;
+      chatValuesToUpdate: TChatValuesToUpdate;
       purpose: "send-message" | "delete-message" | "mark-as-read" | "add-members";
-    }) => Requests.updateChat(chat, valuesToUpdate),
+    }) => Requests.updateChat(chat, chatValuesToUpdate),
     onSuccess: (data, variables) => {
       if (data.ok) {
         queryClient.invalidateQueries({ queryKey: "userChats" });
@@ -247,7 +263,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAddMultipleUsersToChat = (users: string[], chat: TChat): void => {
     const updatedChatMembers = chat.members.concat(users);
 
-    const valuesToUpdate: TChatValuesToUpdate = {
+    const chatValuesToUpdate: TChatValuesToUpdate = {
       members: updatedChatMembers,
       messages: chat.messages,
       dateCreated: chat.dateCreated,
@@ -255,7 +271,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const purpose = "add-members";
-    updateChatMutation.mutate({ chat, valuesToUpdate, purpose });
+    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
   };
 
   const handleSendMessage = (chat: TChat, content: string): void => {
@@ -271,7 +287,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       seenBy: [],
     };
 
-    const valuesToUpdate: TChatValuesToUpdate = {
+    const chatValuesToUpdate: TChatValuesToUpdate = {
       members: chat.members,
       messages: chat.messages.concat(newMessage),
       dateCreated: chat.dateCreated,
@@ -279,7 +295,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const purpose = "send-message";
-    updateChatMutation.mutate({ chat, valuesToUpdate, purpose });
+    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
   };
 
   const handleDeleteMessage = (
@@ -288,7 +304,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     const updatedMessages = chat.messages.filter((message) => message._id !== messageID);
 
-    const valuesToUpdate: TChatValuesToUpdate = {
+    const chatValuesToUpdate: TChatValuesToUpdate = {
       members: chat.members,
       messages: updatedMessages,
       dateCreated: chat.dateCreated,
@@ -296,7 +312,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const purpose = "delete-message";
-    updateChatMutation.mutate({ chat, valuesToUpdate, purpose });
+    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
   };
 
   const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
@@ -366,7 +382,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       }
       return message;
     });
-    const valuesToUpdate: TChatValuesToUpdate = {
+    const chatValuesToUpdate: TChatValuesToUpdate = {
       members: chat.members,
       messages: updatedChatMessages,
       dateCreated: chat.dateCreated,
@@ -374,7 +390,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const purpose = "mark-as-read";
-    updateChatMutation.mutate({ chat, valuesToUpdate, purpose });
+    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
   };
 
   const handleOpenChat = (chat: TChat): void => {
