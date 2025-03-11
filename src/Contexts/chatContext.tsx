@@ -83,6 +83,28 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         if (inputMessage !== "") {
           setInputMessage("");
         }
+        if (variables.purpose === "add-members") {
+          if (usersToAddToChat.length > 1) {
+            toast.success("Users added to chat!", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid green",
+              },
+            });
+          } else {
+            toast.success("User added to chat!", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid green",
+              },
+            });
+          }
+          setShowAddMemberModal(false);
+          setChatMembersSearchQuery("");
+          setUsersToAddToChat([]);
+        }
       } else {
         throw Error;
       }
@@ -106,6 +128,25 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
             border: "2px solid red",
           },
         });
+      }
+      if (variables.purpose === "add-members") {
+        if (usersToAddToChat.length > 1) {
+          toast.error("Could not add users to chat. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        } else {
+          toast.error("Could not add user to chat. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
       }
     },
   });
