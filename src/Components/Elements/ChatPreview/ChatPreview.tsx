@@ -84,6 +84,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       <div className="chat-preview-text-container">
         <header style={{ color: randomColor }}>
           {`${getChatMembers(chat.members)
+            .slice(0, 3)
             .map((member) =>
               getChatMembers(chat.members).indexOf(member) <= 2
                 ? `${member.firstName} ${member.lastName}`
