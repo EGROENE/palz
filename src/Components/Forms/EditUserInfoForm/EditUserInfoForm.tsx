@@ -27,7 +27,7 @@ const EditUserInfoForm = ({
     currentUser,
     setCurrentUser,
     allUsers,
-    valuesToUpdate,
+    userValuesToUpdate,
     whoCanAddUserAsOrganizer,
     setWhoCanAddUserAsOrganizer,
     whoCanInviteUser,
@@ -315,7 +315,7 @@ const EditUserInfoForm = ({
 
         // Only if there are no errors & infos that must be unique aren't already in use, patch changes to user data object:
         if (areNoEditFormErrors && !phoneNumberExists) {
-          Requests.patchUpdatedUserInfo(currentUser, valuesToUpdate)
+          Requests.patchUpdatedUserInfo(currentUser, userValuesToUpdate)
             .then((response) => {
               if (!response.ok) {
                 toast.error("Could not update profile info. Please try again.", {
@@ -343,49 +343,49 @@ const EditUserInfoForm = ({
                 });
 
                 /* Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first, which won't happen) */
-                if (valuesToUpdate.firstName) {
-                  setFirstName(valuesToUpdate.firstName);
+                if (userValuesToUpdate.firstName) {
+                  setFirstName(userValuesToUpdate.firstName);
                 }
-                if (valuesToUpdate.lastName) {
-                  setLastName(valuesToUpdate.lastName);
+                if (userValuesToUpdate.lastName) {
+                  setLastName(userValuesToUpdate.lastName);
                 }
-                if (valuesToUpdate.emailAddress) {
-                  setEmailAddress(valuesToUpdate.emailAddress);
+                if (userValuesToUpdate.emailAddress) {
+                  setEmailAddress(userValuesToUpdate.emailAddress);
                 }
-                if (valuesToUpdate.password) {
-                  setPassword(valuesToUpdate.password);
+                if (userValuesToUpdate.password) {
+                  setPassword(userValuesToUpdate.password);
                 }
-                if (valuesToUpdate.phoneCountry) {
-                  setPhoneCountry(valuesToUpdate.phoneCountry);
+                if (userValuesToUpdate.phoneCountry) {
+                  setPhoneCountry(userValuesToUpdate.phoneCountry);
                 }
-                if (valuesToUpdate.phoneCountryCode) {
-                  setPhoneCountryCode(valuesToUpdate.phoneCountryCode);
+                if (userValuesToUpdate.phoneCountryCode) {
+                  setPhoneCountryCode(userValuesToUpdate.phoneCountryCode);
                 }
-                if (valuesToUpdate.phoneNumberWithoutCountryCode) {
+                if (userValuesToUpdate.phoneNumberWithoutCountryCode) {
                   setPhoneNumberWithoutCountryCode(
-                    valuesToUpdate.phoneNumberWithoutCountryCode
+                    userValuesToUpdate.phoneNumberWithoutCountryCode
                   );
                 }
-                if (valuesToUpdate.city) {
-                  setUserCity(valuesToUpdate.city);
+                if (userValuesToUpdate.city) {
+                  setUserCity(userValuesToUpdate.city);
                 }
-                if (valuesToUpdate.stateProvince) {
-                  setUserState(valuesToUpdate.stateProvince);
+                if (userValuesToUpdate.stateProvince) {
+                  setUserState(userValuesToUpdate.stateProvince);
                 }
-                if (valuesToUpdate.country) {
-                  setUserCountry(valuesToUpdate.country);
+                if (userValuesToUpdate.country) {
+                  setUserCountry(userValuesToUpdate.country);
                 }
-                if (valuesToUpdate.facebook) {
-                  setFacebook(valuesToUpdate.facebook);
+                if (userValuesToUpdate.facebook) {
+                  setFacebook(userValuesToUpdate.facebook);
                 }
-                if (valuesToUpdate.instagram) {
-                  setInstagram(valuesToUpdate.instagram);
+                if (userValuesToUpdate.instagram) {
+                  setInstagram(userValuesToUpdate.instagram);
                 }
-                if (valuesToUpdate.x) {
-                  setX(valuesToUpdate.x);
+                if (userValuesToUpdate.x) {
+                  setX(userValuesToUpdate.x);
                 }
-                if (valuesToUpdate.about) {
-                  setUserAbout(valuesToUpdate.about);
+                if (userValuesToUpdate.about) {
+                  setUserAbout(userValuesToUpdate.about);
                 }
 
                 // Hide PW again if unhidden on submit of edit-user-info form
@@ -1158,7 +1158,7 @@ const EditUserInfoForm = ({
     whoCanSeeInstagram !== currentUser?.whoCanSeeInstagram ||
     whoCanSeeEventsOrganized !== currentUser?.whoCanSeeEventsOrganized ||
     whoCanSeeEventsInterestedIn !== currentUser?.whoCanSeeEventsInterestedIn ||
-  whoCanSeeEventsInvitedTo !== currentUser?.whoCanSeeEventsInvitedTo;
+    whoCanSeeEventsInvitedTo !== currentUser?.whoCanSeeEventsInvitedTo;
   return (
     <>
       <h2>

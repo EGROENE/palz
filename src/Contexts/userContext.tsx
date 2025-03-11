@@ -1607,7 +1607,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     (username !== "" || emailAddress !== "") && password !== "";
 
   // If a data point is updated, it is used in PATCH request to update its part of the user's data object in DB
-  const valuesToUpdate: TUserValuesToUpdate = {
+  const userValuesToUpdate: TUserValuesToUpdate = {
     ...(firstName?.trim() !== "" &&
       firstName !== currentUser?.firstName && {
         firstName: Methods.formatHyphensAndSpacesInString(
@@ -1927,7 +1927,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     accountDeletionInProgress,
     setAccountDeletionInProgress,
     removeProfileImage,
-    valuesToUpdate,
+    userValuesToUpdate,
     handleProfileImageUpload,
     profileImage,
     setProfileImage,

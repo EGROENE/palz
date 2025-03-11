@@ -125,12 +125,12 @@ const removeFromBlockedUsers = (blocker: TUser, blockeeID: string): Promise<Resp
 
 const patchUpdatedUserInfo = (
   user: TUser | null,
-  valuesToUpdate: TUserValuesToUpdate
+  userValuesToUpdate: TUserValuesToUpdate
 ): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const raw = JSON.stringify(valuesToUpdate);
+  const raw = JSON.stringify(userValuesToUpdate);
 
   return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
     method: "PATCH",

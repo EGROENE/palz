@@ -318,7 +318,7 @@ export type TUserContext = {
   showUpdateProfileImageInterface: boolean;
   setShowUpdateProfileImageInterface: React.Dispatch<React.SetStateAction<boolean>>;
   removeProfileImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  valuesToUpdate: TUserValuesToUpdate;
+  userValuesToUpdate: TUserValuesToUpdate;
   handleProfileImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   profileImage: string | unknown;
   setProfileImage: React.Dispatch<React.SetStateAction<string | unknown>>;
