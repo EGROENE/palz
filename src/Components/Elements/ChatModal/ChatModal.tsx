@@ -266,7 +266,7 @@ const ChatModal = () => {
       ></i>
       {!showAddMemberModal && (
         <div style={{ border: `3px solid ${randomColor}` }} className="chat-container">
-          {!showAddMemberModal && (
+          {
             <div
               style={
                 !showMembers
@@ -310,8 +310,8 @@ const ChatModal = () => {
                 </>
               )}
             </div>
-          )}
-          {currentChat && !showAddMemberModal && (
+          }
+          {currentChat && (
             <div
               ref={messagesContainerRef}
               className="messages-container"
@@ -358,7 +358,7 @@ const ChatModal = () => {
               ))}
             </div>
           )}
-          {!showAddMemberModal && (
+          {
             <div className="message-input-container">
               <textarea
                 value={inputMessage}
@@ -380,7 +380,7 @@ const ChatModal = () => {
                 <i className="fas fa-paper-plane"></i>
               </button>
             </div>
-          )}
+          }
         </div>
       )}
       {showAddMemberModal && (
