@@ -715,6 +715,8 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  admins: string[];
+  setAdmins: React.Dispatch<React.SetStateAction<string[]>>;
   showAddMemberModal: boolean;
   setShowAddMemberModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleAddMultipleUsersToChat: (users: string[], chat: TChat) => void;

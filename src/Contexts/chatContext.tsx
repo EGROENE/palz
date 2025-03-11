@@ -34,6 +34,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [chatName, setChatName] = useState<string>("");
   const [chatNameError, setChatNameError] = useState<string>("");
 
+  const [admins, setAdmins] = useState<string[]>([]);
+
   const [showPotentialChatMembers, setShowPotentialChatMembers] =
     useState<boolean>(false);
 
@@ -413,6 +415,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    admins,
+    setAdmins,
     showAddMemberModal,
     setShowAddMemberModal,
     handleAddMultipleUsersToChat,
