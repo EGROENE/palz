@@ -7,6 +7,7 @@ const ListedUser = ({
   renderButtonOne,
   renderButtonTwo,
   user,
+  title,
   buttonOneText,
   buttonOneHandler,
   buttonOneIsDisabled,
@@ -24,6 +25,7 @@ const ListedUser = ({
   renderButtonOne: boolean;
   renderButtonTwo: boolean;
   user?: TUser;
+  title?: string;
   buttonOneText?: string;
   buttonOneHandler?: Function;
   buttonOneIsDisabled?: boolean | null;
@@ -73,6 +75,11 @@ const ListedUser = ({
         </Link>
       ) : (
         <div className={styles.listedUserTextsContainer}>
+          {title && (
+            <p className={styles.userTitle} style={{ color: randomColor }}>
+              {title}
+            </p>
+          )}
           <p>{`${user?.firstName} ${user?.lastName}`}</p>
           <p>{user?.username}</p>
         </div>
