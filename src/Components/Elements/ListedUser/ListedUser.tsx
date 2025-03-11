@@ -33,7 +33,7 @@ const ListedUser = ({
   buttonTwoText?: string;
   buttonTwoHandler?: Function;
   buttonTwoIsDisabled?: boolean | null;
-  buttonTwoLink: string | null;
+  buttonTwoLink?: string | null;
   buttonTwoHandlerNeedsEventParam?: boolean;
   buttonTwoHandlerParams?: any[];
   objectLink?: string | undefined;
