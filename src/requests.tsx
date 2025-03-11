@@ -459,12 +459,12 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
 
 const updateEvent = (
   event: TEvent,
-  valuesToUpdate: TEventValuesToUpdate | undefined
+  eventValuesToUpdate: TEventValuesToUpdate | undefined
 ): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const raw = JSON.stringify(valuesToUpdate);
+  const raw = JSON.stringify(eventValuesToUpdate);
 
   return fetch(`http://localhost:4000/palz/events/${event._id}`, {
     method: "PATCH",

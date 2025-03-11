@@ -86,7 +86,7 @@ const EventForm = ({
     setInvitees,
     relatedInterests,
     setRelatedInterests,
-    valuesToUpdate,
+    eventValuesToUpdate,
     updateEventMutation,
     createEventMutation,
     deleteEventMutation,
@@ -795,9 +795,9 @@ const EventForm = ({
       if (currentEvent && usedFor === "edit-event") {
         // When updating an existing event:
         setEventEditIsInProgress(true);
-        if (valuesToUpdate) {
+        if (eventValuesToUpdate) {
           const event = currentEvent;
-          updateEventMutation.mutate({ event, valuesToUpdate });
+          updateEventMutation.mutate({ event, eventValuesToUpdate });
         }
       } else {
         // When adding a newly created event:

@@ -583,7 +583,7 @@ export type TEventContext = {
     Error,
     {
       event: TEvent;
-      valuesToUpdate: TEventValuesToUpdate;
+      eventValuesToUpdate: TEventValuesToUpdate;
     },
     unknown
   >;
@@ -603,7 +603,7 @@ export type TEventContext = {
     },
     unknown
   >;
-  valuesToUpdate: TEventValuesToUpdate | undefined;
+  eventValuesToUpdate: TEventValuesToUpdate | undefined;
   eventTitle: string;
   setEventTitle: React.Dispatch<React.SetStateAction<string>>;
   eventTitleError: string;

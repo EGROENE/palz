@@ -307,11 +307,11 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const updateEventMutation = useMutation({
     mutationFn: ({
       event,
-      valuesToUpdate,
+      eventValuesToUpdate,
     }: {
       event: TEvent;
-      valuesToUpdate: TEventValuesToUpdate;
-    }) => Requests.updateEvent(event, valuesToUpdate),
+      eventValuesToUpdate: TEventValuesToUpdate;
+    }) => Requests.updateEvent(event, eventValuesToUpdate),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: "allEvents" });
       queryClient.refetchQueries({ queryKey: ["allEvents"] });
@@ -325,41 +325,41 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       });
 
       /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
-      if (valuesToUpdate?.title) {
-        setEventTitle(valuesToUpdate.title);
+      if (eventValuesToUpdate?.title) {
+        setEventTitle(eventValuesToUpdate.title);
       }
-      if (valuesToUpdate?.organizers) {
-        setOrganizers(valuesToUpdate.organizers);
+      if (eventValuesToUpdate?.organizers) {
+        setOrganizers(eventValuesToUpdate.organizers);
       }
-      if (valuesToUpdate?.invitees) {
-        setInvitees(valuesToUpdate.invitees);
+      if (eventValuesToUpdate?.invitees) {
+        setInvitees(eventValuesToUpdate.invitees);
       }
-      if (valuesToUpdate?.description) {
-        setEventDescription(valuesToUpdate.description);
+      if (eventValuesToUpdate?.description) {
+        setEventDescription(eventValuesToUpdate.description);
       }
-      if (valuesToUpdate?.additionalInfo) {
-        setEventAdditionalInfo(valuesToUpdate.additionalInfo);
+      if (eventValuesToUpdate?.additionalInfo) {
+        setEventAdditionalInfo(eventValuesToUpdate.additionalInfo);
       }
-      if (valuesToUpdate?.city) {
-        setEventCity(valuesToUpdate.city);
+      if (eventValuesToUpdate?.city) {
+        setEventCity(eventValuesToUpdate.city);
       }
-      if (valuesToUpdate?.stateProvince) {
-        setEventState(valuesToUpdate.stateProvince);
+      if (eventValuesToUpdate?.stateProvince) {
+        setEventState(eventValuesToUpdate.stateProvince);
       }
-      if (valuesToUpdate?.country) {
-        setEventCountry(valuesToUpdate.country);
+      if (eventValuesToUpdate?.country) {
+        setEventCountry(eventValuesToUpdate.country);
       }
-      if (valuesToUpdate?.publicity) {
-        setPublicity(valuesToUpdate.publicity);
+      if (eventValuesToUpdate?.publicity) {
+        setPublicity(eventValuesToUpdate.publicity);
       }
-      if (valuesToUpdate?.maxParticipants) {
-        setMaxParticipants(valuesToUpdate.maxParticipants);
+      if (eventValuesToUpdate?.maxParticipants) {
+        setMaxParticipants(eventValuesToUpdate.maxParticipants);
       }
-      if (valuesToUpdate?.address) {
-        setEventAddress(valuesToUpdate.address);
+      if (eventValuesToUpdate?.address) {
+        setEventAddress(eventValuesToUpdate.address);
       }
-      if (valuesToUpdate?.relatedInterests) {
-        setRelatedInterests(valuesToUpdate.relatedInterests);
+      if (eventValuesToUpdate?.relatedInterests) {
+        setRelatedInterests(eventValuesToUpdate.relatedInterests);
       }
     },
     onError: (error) => {
@@ -598,7 +598,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /* valuesToUpdate is to be used on EventForm. It's an object that represents updated values on event, which are sent to the event in the DB in a PATCH request
+  /* eventValuesToUpdate is to be used on EventForm. It's an object that represents updated values on event, which are sent to the event in the DB in a PATCH request
    */
   const getValuesToUpdate = (): TEventValuesToUpdate | undefined => {
     // interestedUsers omitted from type b/c that is not controllable with this form, rather changes depending on other users RSVPing or de-RSVPing.
@@ -676,7 +676,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       };
     }
   };
-  const valuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
+  const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
     displayedPotentialInviteeCount,
@@ -686,7 +686,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     deleteEventMutation,
     createEventMutation,
     updateEventMutation,
-    valuesToUpdate,
+    eventValuesToUpdate,
     eventTitle,
     setEventTitle,
     eventTitleError,
