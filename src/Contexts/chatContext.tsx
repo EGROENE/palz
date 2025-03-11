@@ -73,7 +73,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }: {
       chat: TChat;
       valuesToUpdate: TChatValuesToUpdate;
-      purpose: "send-message" | "delete-message" | "mark-as-read";
+      purpose: "send-message" | "delete-message" | "mark-as-read" | "add-members";
     }) => Requests.updateChat(chat, valuesToUpdate),
     onSuccess: (data, variables) => {
       if (data.ok) {
@@ -199,6 +199,20 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         handleAddUserToChat(user);
       }
     }
+  };
+
+  const handleAddMultipleUsersToChat = (users: string[], chat: TChat): void => {
+    const updatedChatMembers = chat.members.concat(users);
+
+    const valuesToUpdate: TChatValuesToUpdate = {
+      members: updatedChatMembers,
+      messages: chat.messages,
+      dateCreated: chat.dateCreated,
+      chatName: chat.chatName,
+    };
+
+    const purpose = "add-members";
+    updateChatMutation.mutate({ chat, valuesToUpdate, purpose });
   };
 
   const handleSendMessage = (chat: TChat, content: string): void => {
@@ -352,6 +366,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    handleAddMultipleUsersToChat,
     createChatMutation,
     handleCreateChat,
     chatCreationInProgress,

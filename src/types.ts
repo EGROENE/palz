@@ -713,6 +713,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  handleAddMultipleUsersToChat: (users: string[], chat: TChat) => void;
   createChatMutation: UseMutationResult<
     Response,
     Error,
