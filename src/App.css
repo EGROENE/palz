@@ -655,6 +655,10 @@ form textarea {
   border-radius: 10px;
 }
 
+.create-new-chat .search-and-dropdown {
+  margin-bottom: 5rem;
+}
+
 .create-new-chat header {
   font-family: var(--text-font);
   margin: 1rem 0;
@@ -662,9 +666,10 @@ form textarea {
 
 .create-new-chat-modal-buttons {
   display: flex;
-  margin-top: 5rem;
+  /* margin-top: 5rem; */
   width: 72%;
   justify-content: space-around;
+  margin: 2rem 0;
 }
 
 .create-new-chat-modal-buttons #cancel {
@@ -837,13 +842,26 @@ form textarea {
   color: var(--text-color);
 }
 
-.add-members-modal {
+.add-members-modal-container {
   height: 100%;
-  max-height: 100%;
+  /* max-height: 100%; */
+  background: black;
+  height: 75%;
+  width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.add-members-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  /* height: 100%; */
+  width: 100%;
+  overflow-y: auto;
 }
 
 .add-members-modal header {
