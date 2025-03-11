@@ -11,6 +11,7 @@ import Methods from "../../../methods";
 const ChatModal = () => {
   const { allOtherUsers, currentUser } = useUserContext();
   const {
+    handleAddMultipleUsersToChat,
     areNewMessages,
     setAreNewMessages,
     getNumberOfUnreadMessagesInChat,
@@ -263,16 +264,131 @@ const ChatModal = () => {
         }}
         className="fas fa-times close-module-icon"
       ></i>
-      <div style={{ border: `3px solid ${randomColor}` }} className="chat-container">
-        {showAddMemberModal && (
+      {!showAddMemberModal && (
+        <div style={{ border: `3px solid ${randomColor}` }} className="chat-container">
+          {!showAddMemberModal && (
+            <div
+              style={
+                !showMembers
+                  ? { borderBottom: `2px solid ${randomColor}`, height: "unset" }
+                  : {
+                      borderBottom: `2px solid ${randomColor}`,
+                      paddingBottom: "1rem",
+                    }
+              }
+              className="members-panel"
+            >
+              {currentChat && currentChat.chatName && currentChat.chatName !== "" && (
+                <header>{currentChat.chatName}</header>
+              )}
+              {otherChatMember && (
+                <div className="chat-header-single-other-member">
+                  <img src={otherChatMember.profileImage} />
+                  <header>{`${otherChatMember.firstName} ${otherChatMember.lastName}`}</header>
+                </div>
+              )}
+              {!showMembers && currentChat && currentChat.members.length > 2 && (
+                <p onClick={() => setShowMembers(true)}>Show members</p>
+              )}
+              {currentChat && showMembers && (
+                <>
+                  <div className="members-container">
+                    {getChatMembers(currentChat.members).map((member) => (
+                      <Tab
+                        userMayNotDelete={true}
+                        key={member._id}
+                        randomColor={randomColor}
+                        info={member}
+                      />
+                    ))}
+                    <i
+                      onClick={() => setShowAddMemberModal(true)}
+                      className="fas fa-plus"
+                    ></i>
+                  </div>
+                  <p onClick={() => setShowMembers(false)}>Hide members</p>
+                </>
+              )}
+            </div>
+          )}
+          {currentChat && !showAddMemberModal && (
+            <div
+              ref={messagesContainerRef}
+              className="messages-container"
+              onScroll={() => handleMessageContainerScroll()}
+            >
+              {(messagesContainerScrollBottom > 0 || areNewMessages) && (
+                <div
+                  style={areNewMessages ? { top: "67%" } : { top: "80%" }}
+                  className="message-indicators-container"
+                >
+                  {areNewMessages &&
+                    messagesContainerScrollHeight > messagesContainerClientHeight && (
+                      <span
+                        className="new-messages-indicator"
+                        style={
+                          randomColor === "var(--primary-color)"
+                            ? { backgroundColor: `${randomColor}`, color: "black" }
+                            : { backgroundColor: `${randomColor}`, color: "white" }
+                        }
+                      >
+                        New
+                      </span>
+                    )}
+                  {messagesContainerScrollBottom > 0 && (
+                    <i
+                      onClick={() => scrollToLatestMessage()}
+                      id="to-latest-message-button"
+                      className="fas fa-chevron-down"
+                      style={
+                        randomColor === "var(--primary-color)"
+                          ? { backgroundColor: `${randomColor}`, color: "black" }
+                          : { backgroundColor: `${randomColor}`, color: "white" }
+                      }
+                    ></i>
+                  )}
+                </div>
+              )}
+              {currentChat.messages.map((message) => (
+                <Message
+                  key={message._id.toString()}
+                  message={message}
+                  randomColor={randomColor ? randomColor : undefined}
+                />
+              ))}
+            </div>
+          )}
+          {!showAddMemberModal && (
+            <div className="message-input-container">
+              <textarea
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Type message"
+                maxLength={10000}
+              ></textarea>
+              <button
+                disabled={inputMessage.replace(/\s+/g, "") === ""}
+                onClick={() =>
+                  currentChat && handleSendMessage(currentChat, inputMessage)
+                }
+                style={
+                  randomColor === "var(--primary-color)"
+                    ? { backgroundColor: `${randomColor}`, color: "black" }
+                    : { backgroundColor: `${randomColor}`, color: "white" }
+                }
+              >
+                <i className="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {showAddMemberModal && (
+        <div
+          style={{ border: `3px solid ${randomColor}` }}
+          className="add-members-modal-container"
+        >
           <div className="add-members-modal">
-            <i
-              title="Close"
-              onClick={(e) => {
-                handleCancelAddingChatMembers(e);
-              }}
-              className="fas fa-times close-module-icon"
-            ></i>
             <header>Add people to chat:</header>
             {usersToAddToChat.length > 0 && (
               <div className="added-user-tab-container">
@@ -334,122 +450,39 @@ const ChatModal = () => {
                 {chatNameError !== "" && <p>{chatNameError}</p>}
               </>
             )}
-          </div>
-        )}
-        {!showAddMemberModal && (
-          <div
-            style={
-              !showMembers
-                ? { borderBottom: `2px solid ${randomColor}`, height: "unset" }
-                : {
-                    borderBottom: `2px solid ${randomColor}`,
-                    paddingBottom: "1rem",
-                  }
-            }
-            className="members-panel"
-          >
-            {currentChat && currentChat.chatName && currentChat.chatName !== "" && (
-              <header>{currentChat.chatName}</header>
-            )}
-            {otherChatMember && (
-              <div className="chat-header-single-other-member">
-                <img src={otherChatMember.profileImage} />
-                <header>{`${otherChatMember.firstName} ${otherChatMember.lastName}`}</header>
-              </div>
-            )}
-            {!showMembers && currentChat && currentChat.members.length > 2 && (
-              <p onClick={() => setShowMembers(true)}>Show members</p>
-            )}
-            {currentChat && showMembers && (
-              <>
-                <div className="members-container">
-                  {getChatMembers(currentChat.members).map((member) => (
-                    <Tab
-                      userMayNotDelete={true}
-                      key={member._id}
-                      randomColor={randomColor}
-                      info={member}
-                    />
-                  ))}
-                  <i
-                    onClick={() => setShowAddMemberModal(true)}
-                    className="fas fa-plus"
-                  ></i>
-                </div>
-                <p onClick={() => setShowMembers(false)}>Hide members</p>
-              </>
-            )}
-          </div>
-        )}
-        {currentChat && !showAddMemberModal && (
-          <div
-            ref={messagesContainerRef}
-            className="messages-container"
-            onScroll={() => handleMessageContainerScroll()}
-          >
-            {(messagesContainerScrollBottom > 0 || areNewMessages) && (
-              <div
-                style={areNewMessages ? { top: "67%" } : { top: "80%" }}
-                className="message-indicators-container"
+            <div className="create-new-chat-modal-buttons">
+              <button
+                onClick={(e) => {
+                  handleCancelAddingChatMembers(e);
+                }}
+                id="cancel"
               >
-                {areNewMessages &&
-                  messagesContainerScrollHeight > messagesContainerClientHeight && (
-                    <span
-                      className="new-messages-indicator"
-                      style={
-                        randomColor === "var(--primary-color)"
-                          ? { backgroundColor: `${randomColor}`, color: "black" }
-                          : { backgroundColor: `${randomColor}`, color: "white" }
-                      }
-                    >
-                      New
-                    </span>
-                  )}
-                {messagesContainerScrollBottom > 0 && (
-                  <i
-                    onClick={() => scrollToLatestMessage()}
-                    id="to-latest-message-button"
-                    className="fas fa-chevron-down"
-                    style={
-                      randomColor === "var(--primary-color)"
-                        ? { backgroundColor: `${randomColor}`, color: "black" }
-                        : { backgroundColor: `${randomColor}`, color: "white" }
-                    }
-                  ></i>
-                )}
-              </div>
-            )}
-            {currentChat.messages.map((message) => (
-              <Message
-                key={message._id.toString()}
-                message={message}
-                randomColor={randomColor ? randomColor : undefined}
-              />
-            ))}
+                Cancel
+              </button>
+              <button
+                disabled={usersToAddToChat.length === 0}
+                style={
+                  randomColor === "var(--primary-color)"
+                    ? { backgroundColor: `${randomColor}`, color: "black" }
+                    : { backgroundColor: `${randomColor}`, color: "white" }
+                }
+                onClick={() => {
+                  setShowAddMemberModal(false);
+                  setChatMembersSearchQuery("");
+                  if (currentChat) {
+                    handleAddMultipleUsersToChat(
+                      usersToAddToChat.map((user) => (user && user._id ? user._id : "")),
+                      currentChat
+                    );
+                  }
+                }}
+              >
+                Add
+              </button>
+            </div>
           </div>
-        )}
-        {!showAddMemberModal && (
-          <div className="message-input-container">
-            <textarea
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Type message"
-              maxLength={10000}
-            ></textarea>
-            <button
-              disabled={inputMessage.replace(/\s+/g, "") === ""}
-              onClick={() => currentChat && handleSendMessage(currentChat, inputMessage)}
-              style={
-                randomColor === "var(--primary-color)"
-                  ? { backgroundColor: `${randomColor}`, color: "black" }
-                  : { backgroundColor: `${randomColor}`, color: "white" }
-              }
-            >
-              <i className="fas fa-paper-plane"></i>
-            </button>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
