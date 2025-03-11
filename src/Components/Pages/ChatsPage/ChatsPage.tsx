@@ -91,11 +91,19 @@ const ChatsPage = () => {
       />
       {isNoFetchError && !fetchIsLoading && userChats && (
         <>
-          <div className="chats-container">
-            {userChatsSortedMostRecent.map((chat) => (
-              <ChatPreview key={chat._id.toString()} chat={chat} />
-            ))}
-          </div>
+          {userChats.length > 0 ? (
+            <div className="chats-container">
+              {userChatsSortedMostRecent.map((chat) => (
+                <ChatPreview key={chat._id.toString()} chat={chat} />
+              ))}
+            </div>
+          ) : (
+            <header
+              style={{ color: "var(--text-color)", fontFamily: "var(--text-font)" }}
+            >
+              No chats yet, but you can create one by clicking the quill icon below!
+            </header>
+          )}
           <i
             style={
               randomColor === "var(--primary-color)"
