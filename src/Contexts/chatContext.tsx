@@ -52,6 +52,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [chatCreationInProgress, setChatCreationInProgress] = useState<boolean>(false);
 
+  const [showAddMemberModal, setShowAddMemberModal] = useState<boolean>(false);
+
   const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
     queryKey: ["userChats"],
     queryFn: () =>
@@ -407,6 +409,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    showAddMemberModal,
+    setShowAddMemberModal,
     handleAddMultipleUsersToChat,
     createChatMutation,
     handleCreateChat,

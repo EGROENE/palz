@@ -713,6 +713,8 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  showAddMemberModal: boolean;
+  setShowAddMemberModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleAddMultipleUsersToChat: (users: string[], chat: TChat) => void;
   createChatMutation: UseMutationResult<
     Response,
