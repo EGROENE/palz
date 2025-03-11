@@ -50,6 +50,10 @@ const chatSchema = new Schema({
     type: String,
     required: false,
   },
+  admins: {
+    type: [String],
+    required: false,
+  },
 });
 
 module.exports = mongoose.model("Chat", chatSchema);
