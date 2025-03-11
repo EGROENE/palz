@@ -265,9 +265,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
     const chatValuesToUpdate: TChatValuesToUpdate = {
       members: updatedChatMembers,
-      messages: chat.messages,
-      dateCreated: chat.dateCreated,
-      chatName: chat.chatName,
     };
 
     const purpose = "add-members";
@@ -288,10 +285,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const chatValuesToUpdate: TChatValuesToUpdate = {
-      members: chat.members,
       messages: chat.messages.concat(newMessage),
-      dateCreated: chat.dateCreated,
-      chatName: chat.chatName,
     };
 
     const purpose = "send-message";
@@ -305,10 +299,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     const updatedMessages = chat.messages.filter((message) => message._id !== messageID);
 
     const chatValuesToUpdate: TChatValuesToUpdate = {
-      members: chat.members,
       messages: updatedMessages,
-      dateCreated: chat.dateCreated,
-      chatName: chat.chatName,
     };
 
     const purpose = "delete-message";
@@ -383,10 +374,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       return message;
     });
     const chatValuesToUpdate: TChatValuesToUpdate = {
-      members: chat.members,
       messages: updatedChatMessages,
-      dateCreated: chat.dateCreated,
-      chatName: chat.chatName,
     };
 
     const purpose = "mark-as-read";
