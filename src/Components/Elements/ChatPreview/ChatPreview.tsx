@@ -57,26 +57,28 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
           </span>
         )}
       <div className="profile-images-chat-preview">
-        {getChatMembers(chat.members).map((member) =>
-          getChatMembers(chat.members).indexOf(member) < 3 ? (
-            <img
-              key={member.profileImage}
-              style={
-                getChatMembers(chat.members).indexOf(member) > 0
-                  ? {
-                      border: `4px solid ${randomColor}`,
-                      marginLeft: "-3rem",
-                      zIndex: `${getChatMembers(chat.members).indexOf(member)}`,
-                    }
-                  : { border: `4px solid ${randomColor}` }
-              }
-              src={member.profileImage}
-            />
-          ) : (
-            <span key={member.username} className="more-images-text">{`+ ${
-              getChatMembers(chat.members).length - 3
-            }`}</span>
-          )
+        {getChatMembers(chat.members).map(
+          (member) =>
+            getChatMembers(chat.members).indexOf(member) < 3 && (
+              <img
+                key={member.profileImage}
+                style={
+                  getChatMembers(chat.members).indexOf(member) > 0
+                    ? {
+                        border: `4px solid ${randomColor}`,
+                        marginLeft: "-3rem",
+                        zIndex: `${getChatMembers(chat.members).indexOf(member)}`,
+                      }
+                    : { border: `4px solid ${randomColor}` }
+                }
+                src={member.profileImage}
+              />
+            )
+        )}
+        {chat.members.length - 1 > 3 && (
+          <span className="more-images-text">{`+ ${
+            getChatMembers(chat.members).length - 3
+          }`}</span>
         )}
       </div>
       <div className="chat-preview-text-container">
