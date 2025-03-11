@@ -297,6 +297,15 @@ const ChatModal = () => {
                     key={member._id}
                     renderButtonOne={true}
                     user={member}
+                    title={
+                      currentChat &&
+                      currentChat.admins &&
+                      member &&
+                      member._id &&
+                      currentChat.admins.includes(member._id)
+                        ? "Admin"
+                        : undefined
+                    }
                     buttonOneText="Message"
                     renderButtonTwo={
                       currentUser && currentUser._id && currentChat && currentChat.admins
