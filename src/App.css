@@ -880,7 +880,7 @@ form textarea {
 .messages-container {
   height: calc(100% - 80px);
   position: relative;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .message-indicators-container {

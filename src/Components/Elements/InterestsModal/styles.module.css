@@ -44,7 +44,7 @@
   align-items: center;
   flex-wrap: wrap;
   height: 7rem;
-  overflow-y: scroll;
+  overflow-y: auto;
   margin-top: 1rem;
 }
 

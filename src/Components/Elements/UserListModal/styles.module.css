@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .userListContainer h2 {

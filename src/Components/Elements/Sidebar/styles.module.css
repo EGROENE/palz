@@ -6,7 +6,7 @@
   min-width: 24rem;
   max-width: 24rem;
   height: 83vh;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .sidebarIcon,
