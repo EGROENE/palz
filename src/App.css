@@ -653,6 +653,7 @@ form textarea {
   background-color: black;
   padding: 4rem;
   border-radius: 10px;
+  overflow-y: auto;
 }
 
 .create-new-chat .search-and-dropdown {
