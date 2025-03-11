@@ -7,6 +7,7 @@ import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownLis
 import { useUserContext } from "../../../Hooks/useUserContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import Methods from "../../../methods";
+import ListedUser from "../ListedUser/ListedUser";
 
 const ChatModal = () => {
   const { allOtherUsers, currentUser } = useUserContext();
@@ -264,53 +265,69 @@ const ChatModal = () => {
         }}
         className="fas fa-times close-module-icon"
       ></i>
-      {!showAddMemberModal && (
-        <div style={{ border: `3px solid ${randomColor}` }} className="chat-container">
-          {
-            <div
-              style={
-                !showMembers
-                  ? { borderBottom: `2px solid ${randomColor}`, height: "unset" }
-                  : {
-                      borderBottom: `2px solid ${randomColor}`,
-                      paddingBottom: "1rem",
-                    }
-              }
-              className="members-panel"
-            >
-              {currentChat && currentChat.chatName && currentChat.chatName !== "" && (
-                <header>{currentChat.chatName}</header>
-              )}
-              {otherChatMember && (
-                <div className="chat-header-single-other-member">
-                  <img src={otherChatMember.profileImage} />
-                  <header>{`${otherChatMember.firstName} ${otherChatMember.lastName}`}</header>
-                </div>
-              )}
-              {!showMembers && currentChat && currentChat.members.length > 2 && (
-                <p onClick={() => setShowMembers(true)}>Show members</p>
-              )}
-              {currentChat && showMembers && (
-                <>
-                  <div className="members-container">
-                    {getChatMembers(currentChat.members).map((member) => (
-                      <Tab
-                        userMayNotDelete={true}
-                        key={member._id}
-                        randomColor={randomColor}
-                        info={member}
-                      />
-                    ))}
-                    <i
-                      onClick={() => setShowAddMemberModal(true)}
-                      className="fas fa-plus"
-                    ></i>
-                  </div>
-                  <p onClick={() => setShowMembers(false)}>Hide members</p>
-                </>
-              )}
-            </div>
+      {!showAddMemberModal && showMembers && (
+        <div
+          style={
+            !showMembers
+              ? {
+                  borderBottom: `2px solid ${randomColor}`,
+                  height: "unset",
+                  border: `3px solid ${randomColor}`,
+                }
+              : {
+                  borderBottom: `2px solid ${randomColor}`,
+                  paddingBottom: "1rem",
+                  border: `3px solid ${randomColor}`,
+                }
           }
+          className="members-panel-container"
+        >
+          <div className="members-panel">
+            {currentChat && currentChat.chatName && currentChat.chatName !== "" && (
+              <header>{currentChat.chatName}</header>
+            )}
+            {currentChat && showMembers && (
+              <div className="members-container">
+                <div>
+                  <button onClick={() => setShowMembers(false)}>Hide members</button>
+                  <button onClick={() => setShowAddMemberModal(true)}>Add</button>
+                </div>
+                {getChatMembers(currentChat.members).map((member) => (
+                  <ListedUser
+                    key={member._id}
+                    renderButtonOne={true}
+                    user={member}
+                    buttonOneText="Message"
+                    renderButtonTwo={
+                      currentUser && currentUser._id && currentChat && currentChat.admins
+                        ? currentChat.admins.includes(currentUser._id)
+                        : false
+                    }
+                    buttonTwoText="Remove"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {!showAddMemberModal && !showMembers && (
+        <div style={{ border: `3px solid ${randomColor}` }} className="chat-container">
+          {!showMembers && currentChat && currentChat.members.length > 2 && (
+            <header
+              className="show-members"
+              style={{ borderBottom: `3px solid ${randomColor}` }}
+              onClick={() => setShowMembers(true)}
+            >
+              Show members
+            </header>
+          )}
+          {otherChatMember && (
+            <div className="chat-header-single-other-member">
+              <img src={otherChatMember.profileImage} />
+              <header>{`${otherChatMember.firstName} ${otherChatMember.lastName}`}</header>
+            </div>
+          )}
           {currentChat && (
             <div
               ref={messagesContainerRef}
