@@ -10,6 +10,10 @@
   margin: 1rem 0;
 }
 
+.userTitle {
+  font-size: 1rem;
+}
+
 .listedUser button {
   height: 43%;
 }
@@ -34,6 +38,6 @@
   margin: 0;
 }
 
-.listedUserTextsContainer p:first-child {
+.listedUserTextsContainer p:nth-child(2) {
   font-size: 1.5rem;
 }
