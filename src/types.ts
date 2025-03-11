@@ -113,6 +113,7 @@ export type TChat = {
   messages: TMessage[];
   dateCreated: number;
   chatName: string;
+  admins: string[];
 };
 
 export type TMessage = {
@@ -129,6 +130,7 @@ export type TChatValuesToUpdate = {
   messages?: TMessage[];
   dateCreated?: number;
   chatName?: string;
+  admins: string[];
 };
 
 export type TUserValuesToUpdate = {
