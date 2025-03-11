@@ -770,7 +770,6 @@ export type TChatContext = {
   setShowChatModal: React.Dispatch<React.SetStateAction<boolean>>;
   getChatMembers: (members: string[]) => TUser[];
   fetchChatsQuery: UseQueryResult<TChat[], Error>;
-  userChats: TChat[] | undefined;
   showCreateNewChatModal: boolean;
   setShowCreateNewChatModal: React.Dispatch<React.SetStateAction<boolean>>;
 };

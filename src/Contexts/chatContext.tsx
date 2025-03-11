@@ -62,7 +62,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         : undefined,
     enabled: userHasLoggedIn,
   });
-  let userChats: TChat[] | undefined = fetchChatsQuery.data;
+  const userChats: TChat[] | undefined = fetchChatsQuery.data;
 
   const queryClient = useQueryClient();
 
@@ -450,7 +450,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     currentChat,
     setCurrentChat,
     fetchChatsQuery,
-    userChats,
     showChatModal,
     setShowChatModal,
     getChatMembers,
