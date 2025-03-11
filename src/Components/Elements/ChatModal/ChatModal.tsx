@@ -72,8 +72,6 @@ const ChatModal = () => {
 
   const [showMembers, setShowMembers] = useState<boolean>(false);
 
-  const [showAddMemberModal, setShowAddMemberModal] = useState<boolean>(false);
-
   useEffect(() => {
     // Set color of event card's border randomly:
     const themeColors: TThemeColor[] = [
@@ -467,8 +465,6 @@ const ChatModal = () => {
                     : { backgroundColor: `${randomColor}`, color: "white" }
                 }
                 onClick={() => {
-                  setShowAddMemberModal(false);
-                  setChatMembersSearchQuery("");
                   if (currentChat) {
                     handleAddMultipleUsersToChat(
                       usersToAddToChat.map((user) => (user && user._id ? user._id : "")),
