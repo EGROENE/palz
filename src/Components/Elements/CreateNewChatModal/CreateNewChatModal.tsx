@@ -15,6 +15,7 @@ import mongoose from "mongoose";
 const CreateNewChatModal = () => {
   const { allOtherUsers, currentUser } = useUserContext();
   const {
+    admins,
     handleCreateChat,
     setShowCreateNewChatModal,
     numberOfPotentialChatMembersDisplayed,
@@ -200,19 +201,23 @@ const CreateNewChatModal = () => {
           </button>
           <button
             onClick={() => {
+              const userIDsToAddToChat = usersToAddToChat
+                .map((user) => {
+                  if (user._id) {
+                    return user._id;
+                  }
+                  return "";
+                })
+                .concat(currentUser && currentUser._id ? currentUser._id : "");
               handleCreateChat({
                 _id: new mongoose.Types.ObjectId().toString(),
-                members: usersToAddToChat
-                  .map((user) => {
-                    if (user._id) {
-                      return user._id;
-                    }
-                    return "";
-                  })
-                  .concat(currentUser && currentUser._id ? currentUser._id : ""),
+                members: userIDsToAddToChat,
                 messages: [],
                 chatName: chatName,
                 dateCreated: Date.now(),
+                ...(usersToAddToChat.length >= 2 &&
+                  currentUser &&
+                  currentUser._id && { admins: [currentUser._id].concat(admins) }),
               });
             }}
             disabled={!chatCanBeCreated}
