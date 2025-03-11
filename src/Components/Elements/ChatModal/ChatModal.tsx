@@ -44,6 +44,8 @@ const ChatModal = () => {
     setInputMessage,
     markMessagesAsRead,
     fetchChatsQuery,
+    showAddMemberModal,
+    setShowAddMemberModal,
   } = useChatContext();
 
   /* 
