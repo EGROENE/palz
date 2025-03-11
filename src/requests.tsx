@@ -754,8 +754,6 @@ const updateChat = (
 
   var raw = JSON.stringify(chatValuesToUpdate);
 
-  console.log(chat);
-
   return fetch(`http://localhost:4000/palz/chats/${chat._id}`, {
     method: "PATCH",
     headers: myHeaders,
