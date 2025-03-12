@@ -717,6 +717,8 @@ export type TEventContext = {
 export type TChatContext = {
   showMembers: boolean;
   setShowMembers: React.Dispatch<React.SetStateAction<boolean>>;
+  showAreYouSureYouWantToLeaveChat: boolean;
+  setShowShowAreYouSureYouWantToLeaveChat: React.Dispatch<React.SetStateAction<boolean>>;
   admins: string[];
   setAdmins: React.Dispatch<React.SetStateAction<string[]>>;
   showAddMemberModal: boolean;
