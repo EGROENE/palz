@@ -111,7 +111,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         | "mark-as-read"
         | "add-members"
         | "remove-member"
-        | "remove-self-from-chat";
+        | "remove-self-from-chat"
+        | "add-admin";
     }) => Requests.updateChat(chat, chatValuesToUpdate),
     onSuccess: (data, variables) => {
       if (data.ok) {
@@ -161,6 +162,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
               color: theme === "dark" ? "black" : "white",
               border: "2px solid red",
+            },
+          });
+          setCurrentOtherUser(null);
+        }
+        if (variables.purpose === "add-admin") {
+          toast.success(`Added ${currentOtherUser?.username} as admin!`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid green",
             },
           });
           setCurrentOtherUser(null);
@@ -220,6 +231,18 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       if (variables.purpose === "remove-member") {
         toast.error(
           `Could not remove ${currentOtherUser?.username} from chat. Please try again.`,
+          {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          }
+        );
+      }
+      if (variables.purpose === "add-admin") {
+        toast.error(
+          `Could not add ${currentOtherUser?.username} as admin. Please try again.`,
           {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
