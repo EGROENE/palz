@@ -359,9 +359,45 @@ const ChatModal = () => {
                         currentUser &&
                         currentUser._id &&
                         currentChat &&
-                        currentChat.admins
-                          ? currentChat.admins.includes(currentUser._id)
+                        currentChat.admins &&
+                        member._id &&
+                        !currentChat.admins.includes(member._id) &&
+                        currentChat.admins.includes(currentUser._id)
+                          ? true
                           : false
+                      }
+                      buttonTwoHandler={
+                        currentUser &&
+                        currentUser._id &&
+                        currentChat &&
+                        currentChat.admins &&
+                        member._id &&
+                        !currentChat.admins.includes(member._id) &&
+                        currentChat.admins.includes(currentUser._id)
+                          ? handleRemoveUserFromChat
+                          : undefined
+                      }
+                      buttonTwoHandlerParams={
+                        currentUser &&
+                        currentUser._id &&
+                        currentChat &&
+                        currentChat.admins &&
+                        member._id &&
+                        !currentChat.admins.includes(member._id) &&
+                        currentChat.admins.includes(currentUser._id)
+                          ? [member, currentChat]
+                          : undefined
+                      }
+                      buttonTwoHandlerNeedsEventParam={
+                        currentUser &&
+                        currentUser._id &&
+                        currentChat &&
+                        currentChat.admins &&
+                        member._id &&
+                        !currentChat.admins.includes(member._id) &&
+                        currentChat.admins.includes(currentUser._id)
+                          ? false
+                          : undefined
                       }
                       buttonTwoText="Remove"
                     />
