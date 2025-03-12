@@ -18,7 +18,14 @@ export const ChatContext = createContext<TChatContext | null>(null);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const { theme } = useMainContext();
-  const { currentUser, userHasLoggedIn, allOtherUsers, allUsers } = useUserContext();
+  const {
+    currentUser,
+    userHasLoggedIn,
+    allOtherUsers,
+    allUsers,
+    setCurrentOtherUser,
+    currentOtherUser,
+  } = useUserContext();
 
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
 
@@ -103,7 +110,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         | "delete-message"
         | "mark-as-read"
         | "add-members"
-        | "remove-member";
+        | "remove-member"
+        | "remove-self-from-chat";
     }) => Requests.updateChat(chat, chatValuesToUpdate),
     onSuccess: (data, variables) => {
       if (data.ok) {
@@ -135,7 +143,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           setChatMembersSearchQuery("");
           setUsersToAddToChat([]);
         }
-        if (variables.purpose === "remove-member") {
+        if (variables.purpose === "remove-self-from-chat") {
           setShowMembers(false);
           setShowChatModal(false);
           toast("You have left the chat.", {
@@ -145,6 +153,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
               border: "2px solid red",
             },
           });
+        }
+        if (variables.purpose === "remove-member") {
+          toast(`${currentOtherUser?.username} removed from chat.`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+          setCurrentOtherUser(null);
         }
       } else {
         throw Error;
@@ -189,14 +207,26 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           });
         }
       }
-      if (variables.purpose === "remove-member") {
-        toast.error("Could not remove you from chat. Please try again.", {
+      if (variables.purpose === "remove-self-from-chat") {
+        toast.error(`Could not remove you from chat. Please try again.`, {
           style: {
             background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
             color: theme === "dark" ? "black" : "white",
             border: "2px solid red",
           },
         });
+      }
+      if (variables.purpose === "remove-member") {
+        toast.error(
+          `Could not remove ${currentOtherUser?.username} from chat. Please try again.`,
+          {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          }
+        );
       }
     },
   });
@@ -297,6 +327,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           },
         });
       } else {
+        setCurrentOtherUser(user);
         const chatValuesToUpdate: TChatValuesToUpdate = {
           members: chat.members.filter((member) => member !== user._id),
         };
