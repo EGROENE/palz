@@ -146,6 +146,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         if (variables.purpose === "remove-self-from-chat") {
           setShowMembers(false);
           setShowChatModal(false);
+          setCurrentChat(null);
           toast("You have left the chat.", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
