@@ -295,6 +295,12 @@ const ChatModal = () => {
                     <div className="members-container-options">
                       <button
                         style={{ color: randomColor }}
+                        onClick={() => setShowAddMemberModal(true)}
+                      >
+                        Add Members
+                      </button>
+                      <button
+                        style={{ color: randomColor }}
                         onClick={() => setShowShowAreYouSureYouWantToLeaveChat(true)}
                       >
                         Leave chat
@@ -304,12 +310,6 @@ const ChatModal = () => {
                         onClick={() => setShowMembers(false)}
                       >
                         Hide members
-                      </button>
-                      <button
-                        style={{ color: randomColor }}
-                        onClick={() => setShowAddMemberModal(true)}
-                      >
-                        Add Members
                       </button>
                     </div>
                   )}
