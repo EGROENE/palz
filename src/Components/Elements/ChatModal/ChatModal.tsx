@@ -309,7 +309,7 @@ const ChatModal = () => {
                         style={{ color: randomColor }}
                         onClick={() => setShowAddMemberModal(true)}
                       >
-                        Add
+                        Add Members
                       </button>
                     </div>
                   )}
