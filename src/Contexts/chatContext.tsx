@@ -327,11 +327,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           },
         });
       } else {
-        setCurrentOtherUser(user);
+        if (user !== currentUser) {
+          setCurrentOtherUser(user);
+        }
         const chatValuesToUpdate: TChatValuesToUpdate = {
           members: chat.members.filter((member) => member !== user._id),
         };
-        const purpose = "remove-member";
+        const purpose = user === currentUser ? "remove-self-from-chat" : "remove-member";
         updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
       }
     }
