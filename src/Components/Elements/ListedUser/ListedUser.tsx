@@ -67,7 +67,7 @@ const ListedUser = ({
         alt="profile pic"
       />
       {objectLink ? (
-        <Link to={objectLink}>
+        <Link to={objectLink} target="_blank">
           <div className={styles.listedUserTextsContainer}>
             <p
               className={styles.listedUserName}
