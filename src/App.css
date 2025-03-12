@@ -798,6 +798,7 @@ form textarea {
 }
 
 .members-panel-container {
+  background-color: var(--background-color);
   position: sticky;
   /* width: 100%; */
   /* z-index: 100; */
@@ -806,7 +807,6 @@ form textarea {
   /* flex-direction: column; */
   /* align-items: center; */
   /* background-color: var(--background-color); */
-  background: black;
   height: 75%;
   width: 50%;
   display: flex;
