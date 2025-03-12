@@ -44,5 +44,5 @@
 
 .listedUserTextsContainer p {
   margin: 0;
-  color: white;
+  color: var(--text-color);
 }
