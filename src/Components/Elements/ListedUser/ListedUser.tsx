@@ -158,7 +158,7 @@ const ListedUser = ({
                         : buttonTwoHandler()
                 : undefined
             }
-            style={{ backgroundColor: "tomato" }}
+            style={{ backgroundColor: "tomato", color: "white" }}
           >
             {buttonTwoText}
           </button>
@@ -180,7 +180,7 @@ const ListedUser = ({
                         : buttonTwoHandler()
                 : undefined
             }
-            style={{ backgroundColor: "tomato" }}
+            style={{ backgroundColor: "tomato", color: "white" }}
           >
             {buttonTwoText}
           </button>
