@@ -298,11 +298,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         });
       } else {
         const chatValuesToUpdate: TChatValuesToUpdate = {
-          members: chat.members.filter((member) => {
-            if (currentUser) {
-              return member !== currentUser._id;
-            }
-          }),
+          members: chat.members.filter((member) => member !== user._id),
         };
         const purpose = "remove-member";
         updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
