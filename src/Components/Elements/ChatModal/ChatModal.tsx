@@ -342,6 +342,7 @@ const ChatModal = () => {
                   {getChatMembers(currentChat.members).map((member) => (
                     <ListedUser
                       key={member._id}
+                      objectLink={`/users/${member?.username}`}
                       renderButtonOne={true}
                       user={member}
                       title={
