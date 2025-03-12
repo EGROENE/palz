@@ -15,4 +15,5 @@
   flex-wrap: wrap;
   margin: 0 2rem;
   justify-content: flex-start;
+  width: 100%;
 }
