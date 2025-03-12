@@ -22,6 +22,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
 
+  const [showMembers, setShowMembers] = useState<boolean>(false);
+
+  const [showAreYouSureYouWantToLeaveChat, setShowShowAreYouSureYouWantToLeaveChat] =
+    useState<boolean>(false);
+
   const [currentChat, setCurrentChat] = useLocalStorage<TChat | null>(
     "currentChat",
     null
@@ -93,7 +98,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }: {
       chat: TChat;
       chatValuesToUpdate: TChatValuesToUpdate;
-      purpose: "send-message" | "delete-message" | "mark-as-read" | "add-members";
+      purpose:
+        | "send-message"
+        | "delete-message"
+        | "mark-as-read"
+        | "add-members"
+        | "remove-member";
     }) => Requests.updateChat(chat, chatValuesToUpdate),
     onSuccess: (data, variables) => {
       if (data.ok) {
@@ -124,6 +134,17 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           setShowAddMemberModal(false);
           setChatMembersSearchQuery("");
           setUsersToAddToChat([]);
+        }
+        if (variables.purpose === "remove-member") {
+          setShowMembers(false);
+          setShowChatModal(false);
+          toast("You have left the chat.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         }
       } else {
         throw Error;
@@ -167,6 +188,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
             },
           });
         }
+      }
+      if (variables.purpose === "remove-member") {
+        toast.error("Could not remove you from chat. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
     },
   });
@@ -249,6 +279,34 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       setUsersToAddToChat(
         usersToAddToChat.filter((userToAdd) => userToAdd._id !== user._id)
       );
+    } else {
+      // if user is only admin left, inform by toast that they can't leave until another admin is assigned:
+      if (
+        chat &&
+        chat.admins &&
+        user._id &&
+        user &&
+        chat.admins.includes(user._id) &&
+        chat.admins.length - 1 === 0
+      ) {
+        toast.error("Please assign another admin before leaving the chat.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      } else {
+        const chatValuesToUpdate: TChatValuesToUpdate = {
+          members: chat.members.filter((member) => {
+            if (currentUser) {
+              return member !== currentUser._id;
+            }
+          }),
+        };
+        const purpose = "remove-member";
+        updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+      }
     }
   };
 
@@ -415,6 +473,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    showMembers,
+    setShowMembers,
+    showAreYouSureYouWantToLeaveChat,
+    setShowShowAreYouSureYouWantToLeaveChat,
     admins,
     setAdmins,
     showAddMemberModal,
