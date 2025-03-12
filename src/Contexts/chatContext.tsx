@@ -384,6 +384,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
   };
 
+  const handleAddAdminToChat = (user: TUser, chat: TChat): void => {
+    setCurrentOtherUser(user);
+    const updatedAdmins = chat.admins && user._id ? chat.admins.concat(user._id) : [];
+    const chatValuesToUpdate = { admins: updatedAdmins };
+    const purpose = "add-admin";
+    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+  };
+
   const handleSendMessage = (chat: TChat, content: string): void => {
     const now = Date.now();
     const messageId = new mongoose.Types.ObjectId();
@@ -526,6 +534,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    handleAddAdminToChat,
     showMembers,
     setShowMembers,
     showAreYouSureYouWantToLeaveChat,
