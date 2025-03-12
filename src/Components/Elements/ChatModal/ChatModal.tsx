@@ -12,6 +12,10 @@ import ListedUser from "../ListedUser/ListedUser";
 const ChatModal = () => {
   const { allOtherUsers, currentUser } = useUserContext();
   const {
+    showAreYouSureYouWantToLeaveChat,
+    setShowShowAreYouSureYouWantToLeaveChat,
+    showMembers,
+    setShowMembers,
     handleAddMultipleUsersToChat,
     areNewMessages,
     setAreNewMessages,
@@ -72,8 +76,6 @@ const ChatModal = () => {
   }, [fetchChatsQuery.data]);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-
-  const [showMembers, setShowMembers] = useState<boolean>(false);
 
   useEffect(() => {
     // Set color of event card's border randomly:
@@ -282,42 +284,91 @@ const ChatModal = () => {
           }
           className="members-panel-container"
         >
-          <div className="members-panel">
-            {currentChat && currentChat.chatName && currentChat.chatName !== "" && (
-              <header>{currentChat.chatName}</header>
-            )}
-            {currentChat && showMembers && (
-              <div className="members-container">
-                <div>
-                  <button onClick={() => setShowMembers(false)}>Hide members</button>
-                  <button onClick={() => setShowAddMemberModal(true)}>Add</button>
+          {
+            <div className="members-panel">
+              {currentChat && currentChat.chatName && currentChat.chatName !== "" && (
+                <header>{currentChat.chatName}</header>
+              )}
+              {currentChat && showMembers && (
+                <div className="members-container">
+                  {!showAreYouSureYouWantToLeaveChat && (
+                    <div className="members-container-options">
+                      <button
+                        style={{ color: randomColor }}
+                        onClick={() => setShowShowAreYouSureYouWantToLeaveChat(true)}
+                      >
+                        Leave chat
+                      </button>
+                      <button
+                        style={{ color: randomColor }}
+                        onClick={() => setShowMembers(false)}
+                      >
+                        Hide members
+                      </button>
+                      <button
+                        style={{ color: randomColor }}
+                        onClick={() => setShowAddMemberModal(true)}
+                      >
+                        Add
+                      </button>
+                    </div>
+                  )}
+                  {showAreYouSureYouWantToLeaveChat && (
+                    <div>
+                      <header>Are you sure you want to leave this chat?</header>
+                      <div className="leave-chat-button-container">
+                        <button
+                          onClick={() => setShowShowAreYouSureYouWantToLeaveChat(false)}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          style={
+                            randomColor === "var(--primary-color)"
+                              ? { backgroundColor: `${randomColor}`, color: "black" }
+                              : { backgroundColor: `${randomColor}`, color: "white" }
+                          }
+                          onClick={() => {
+                            if (currentChat && currentUser) {
+                              handleRemoveUserFromChat(currentUser, currentChat);
+                            }
+                          }}
+                        >
+                          Leave
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {getChatMembers(currentChat.members).map((member) => (
+                    <ListedUser
+                      key={member._id}
+                      renderButtonOne={true}
+                      user={member}
+                      title={
+                        currentChat &&
+                        currentChat.admins &&
+                        member &&
+                        member._id &&
+                        currentChat.admins.includes(member._id)
+                          ? "Admin"
+                          : undefined
+                      }
+                      buttonOneText="Message"
+                      renderButtonTwo={
+                        currentUser &&
+                        currentUser._id &&
+                        currentChat &&
+                        currentChat.admins
+                          ? currentChat.admins.includes(currentUser._id)
+                          : false
+                      }
+                      buttonTwoText="Remove"
+                    />
+                  ))}
                 </div>
-                {getChatMembers(currentChat.members).map((member) => (
-                  <ListedUser
-                    key={member._id}
-                    renderButtonOne={true}
-                    user={member}
-                    title={
-                      currentChat &&
-                      currentChat.admins &&
-                      member &&
-                      member._id &&
-                      currentChat.admins.includes(member._id)
-                        ? "Admin"
-                        : undefined
-                    }
-                    buttonOneText="Message"
-                    renderButtonTwo={
-                      currentUser && currentUser._id && currentChat && currentChat.admins
-                        ? currentChat.admins.includes(currentUser._id)
-                        : false
-                    }
-                    buttonTwoText="Remove"
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          }
         </div>
       )}
       {!showAddMemberModal && !showMembers && (
