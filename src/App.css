@@ -829,6 +829,32 @@ form textarea {
   width: 100%;
 }
 
+.leave-chat-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 0.5rem;
+}
+
+.leave-chat-button-container button {
+  background-color: white;
+  color: black;
+}
+
+.leave-chat-button-container button:active {
+  background-color: white;
+  color: black;
+  opacity: 0.9;
+}
+
+.members-container-options {
+  margin-top: 0.5rem;
+}
+
+.members-container-options button {
+  background-color: transparent;
+}
+
 .members-panel p {
   font-family: var(--text-font);
 }
