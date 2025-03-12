@@ -69,8 +69,10 @@ const ListedUser = ({
       {objectLink ? (
         <Link to={objectLink}>
           <div className={styles.listedUserTextsContainer}>
-            <p>{`${user?.firstName} ${user?.lastName}`}</p>
-            <p>{user?.username}</p>
+            <p
+              className={styles.listedUserName}
+            >{`${user?.firstName} ${user?.lastName}`}</p>
+            <p className={styles.listUserUsername}>{user?.username}</p>
           </div>
         </Link>
       ) : (
@@ -80,8 +82,10 @@ const ListedUser = ({
               {title}
             </p>
           )}
-          <p>{`${user?.firstName} ${user?.lastName}`}</p>
-          <p>{user?.username}</p>
+          <p
+            className={styles.listedUserName}
+          >{`${user?.firstName} ${user?.lastName}`}</p>
+          <p className={styles.listUserUsername}>{user?.username}</p>
         </div>
       )}
       {renderButtonOne && buttonOneLink ? (
