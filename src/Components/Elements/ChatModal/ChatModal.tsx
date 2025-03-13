@@ -1,17 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Message from "../Message/Message";
-import { TThemeColor, TUser } from "../../../types";
+import { TThemeColor, TUser, TChat } from "../../../types";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import Methods from "../../../methods";
 import ListedUser from "../ListedUser/ListedUser";
+import mongoose from "mongoose";
 
 const ChatModal = () => {
   const { allOtherUsers, currentUser } = useUserContext();
   const {
+    handleOpenChat,
     showAreYouSureYouWantToLeaveChat,
     setShowShowAreYouSureYouWantToLeaveChat,
     showMembers,
@@ -51,6 +53,8 @@ const ChatModal = () => {
     fetchChatsQuery,
     showAddMemberModal,
     setShowAddMemberModal,
+    handleAddAdminToChat,
+    handleCreateChat,
   } = useChatContext();
 
   /* 
@@ -253,6 +257,105 @@ const ChatModal = () => {
     setMessagesContainerScrollBottom(scrollBottom);
   };
 
+  const getButtonOneHandler = (listedChatMember: TUser) => {
+    const listedChatMemberIsAdmin: boolean =
+      currentChat &&
+      currentChat.admins &&
+      listedChatMember._id &&
+      currentChat.admins.includes(listedChatMember._id)
+        ? true
+        : false;
+
+    const currentUserIsAdmin: boolean =
+      currentChat &&
+      currentChat.admins &&
+      currentUser &&
+      currentUser._id &&
+      currentChat.admins.includes(currentUser._id)
+        ? true
+        : false;
+
+    /* 
+    if LCM is fellow admin, or if LCM is admin, but currentUser isn't, or If neither LCM nor currentUser is admin, 'message' btn:
+    */
+    if (
+      (listedChatMemberIsAdmin && currentUserIsAdmin) ||
+      (listedChatMemberIsAdmin && !currentUserIsAdmin) ||
+      (!listedChatMemberIsAdmin && !currentUserIsAdmin)
+    ) {
+      return () => {
+        const userChats = fetchChatsQuery.data;
+
+        const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
+          (chat) =>
+            chat.members.length === 2 &&
+            currentUser &&
+            currentUser._id &&
+            chat.members.includes(currentUser._id) &&
+            listedChatMember._id &&
+            chat.members.includes(listedChatMember?._id)
+        )[0];
+
+        if (existingChatWithListedChatMember) {
+          return handleOpenChat(existingChatWithListedChatMember);
+        } else {
+          const newChatMembers: string[] =
+            listedChatMember._id && currentUser && currentUser._id
+              ? [listedChatMember._id, currentUser._id]
+              : [];
+          return handleCreateChat({
+            _id: new mongoose.Types.ObjectId().toString(),
+            members: newChatMembers,
+            messages: [],
+            chatName: chatName,
+            dateCreated: Date.now(),
+            ...(usersToAddToChat.length >= 2 &&
+              currentUser &&
+              currentUser._id && { admins: [currentUser._id] }),
+          });
+        }
+      };
+    }
+
+    // if currentUser is admin, but LCM isn't, 'add as admin' btn:
+    if (currentUserIsAdmin && !listedChatMemberIsAdmin && currentChat) {
+      return () => handleAddAdminToChat(listedChatMember, currentChat);
+    }
+  };
+
+  const getButtonOneText = (listedChatMember: TUser): string => {
+    const listedChatMemberIsAdmin: boolean =
+      currentChat &&
+      currentChat.admins &&
+      listedChatMember._id &&
+      currentChat.admins.includes(listedChatMember._id)
+        ? true
+        : false;
+
+    const currentUserIsAdmin: boolean =
+      currentChat &&
+      currentChat.admins &&
+      currentUser &&
+      currentUser._id &&
+      currentChat.admins.includes(currentUser._id)
+        ? true
+        : false;
+
+    /* 
+    if LCM is fellow admin, or if LCM is admin, but currentUser isn't, or If neither LCM nor currentUser is admin, 'message' btn:
+    */
+    if (
+      (listedChatMemberIsAdmin && currentUserIsAdmin) ||
+      (listedChatMemberIsAdmin && !currentUserIsAdmin) ||
+      (!listedChatMemberIsAdmin && !currentUserIsAdmin)
+    ) {
+      return "Message";
+    }
+
+    // if currentUser is admin, but LCM isn't, 'add as admin' btn:
+    return "Add as Admin";
+  };
+
   return (
     <div className="modal-background">
       <i
@@ -343,7 +446,6 @@ const ChatModal = () => {
                     <ListedUser
                       key={member._id}
                       objectLink={`/users/${member?.username}`}
-                      renderButtonOne={true}
                       user={member}
                       title={
                         currentChat &&
@@ -354,7 +456,10 @@ const ChatModal = () => {
                           ? "Admin"
                           : undefined
                       }
-                      buttonOneText="Message"
+                      renderButtonOne={true}
+                      buttonOneText={getButtonOneText(member)}
+                      buttonOneHandler={getButtonOneHandler(member)}
+                      buttonOneHandlerNeedsEventParam={false}
                       renderButtonTwo={
                         currentUser &&
                         currentUser._id &&
