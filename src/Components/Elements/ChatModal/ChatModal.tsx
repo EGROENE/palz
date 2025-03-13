@@ -413,14 +413,19 @@ const ChatModal = () => {
                         >
                           Leave chat
                         </button>
-                        <button
-                          style={{ color: randomColor }}
-                          onClick={() =>
-                            setShowAreYouSureYouWantToRemoveYourselfAsAdmin(true)
-                          }
-                        >
-                          Remove yourself as admin
-                        </button>
+                        {currentChat.admins &&
+                          currentUser &&
+                          currentUser._id &&
+                          currentChat.admins.includes(currentUser._id) && (
+                            <button
+                              style={{ color: randomColor }}
+                              onClick={() =>
+                                setShowAreYouSureYouWantToRemoveYourselfAsAdmin(true)
+                              }
+                            >
+                              Remove yourself as admin
+                            </button>
+                          )}
                         <button
                           style={{ color: randomColor }}
                           onClick={() => setShowMembers(false)}
