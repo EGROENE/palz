@@ -13,6 +13,7 @@ import UserListModal from "../../Elements/UserListModal/UserListModal";
 import styles from "./styles.module.css";
 import { useQueryClient } from "@tanstack/react-query";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
+import { useChatContext } from "../../../Hooks/useChatContext";
 
 const UserSettings = () => {
   const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
@@ -65,6 +66,7 @@ const UserSettings = () => {
     userCreatedAccount,
   } = useUserContext();
   const { allEvents } = useEventContext();
+  const { fetchChatsQuery } = useChatContext();
 
   const queryClient = useQueryClient();
 
@@ -177,6 +179,32 @@ const UserSettings = () => {
           Requests.removeFromFriendRequestsReceived(currentUser, user),
           Requests.deleteFriendFromFriendsArray(user, currentUser)
         );
+      }
+    }
+
+    // In chats user is in, replace their _id w/ 'Deleted User':
+    const userChats = fetchChatsQuery.data;
+    if (userChats && currentUser && currentUser._id) {
+      for (const userChat of userChats) {
+        const updatedChatMembers = userChat.members.map((member) =>
+          member === currentUser._id ? "Deleted User" : member
+        );
+        let updatedChatAdmins;
+        if (userChat.admins?.includes(currentUser._id)) {
+          // If user is sole admin of chat, delete chat; else, replace their _id w/ 'Deleted User':
+          if (userChat.admins.length - 1 === 0) {
+            promisesToAwait.push(Requests.deleteChat(userChat._id.toString()));
+          } else {
+            updatedChatAdmins = userChat.admins.map((admin) =>
+              admin === currentUser._id ? "Deleted User" : admin
+            );
+          }
+        }
+        const chatValuesToUpdate = {
+          members: updatedChatMembers,
+          admins: updatedChatAdmins,
+        };
+        promisesToAwait.push(Requests.updateChat(userChat, chatValuesToUpdate));
       }
     }
 
