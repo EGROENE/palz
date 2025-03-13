@@ -470,7 +470,6 @@ const ChatModal = () => {
                       title={
                         currentChat &&
                         currentChat.admins &&
-                        member &&
                         member._id &&
                         currentChat.admins.includes(member._id)
                           ? "Admin"
