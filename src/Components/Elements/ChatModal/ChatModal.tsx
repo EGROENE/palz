@@ -59,6 +59,9 @@ const ChatModal = () => {
     setShowAreYouSureYouWantToRemoveYourselfAsAdmin,
     showAreYouSureYouWantToRemoveYourselfAsAdmin,
     handleRemoveAdminFromChat,
+    showAreYouSureYouWantToDeleteChat,
+    setShowShowAreYouSureYouWantToDeleteChat,
+    handleDeleteChat,
   } = useChatContext();
 
   /* 
@@ -399,7 +402,8 @@ const ChatModal = () => {
               {currentChat && showMembers && (
                 <div className="members-container">
                   {!showAreYouSureYouWantToLeaveChat &&
-                    !showAreYouSureYouWantToRemoveYourselfAsAdmin && (
+                    !showAreYouSureYouWantToRemoveYourselfAsAdmin &&
+                    !showAreYouSureYouWantToDeleteChat && (
                       <div className="members-container-options">
                         <button
                           style={{ color: randomColor }}
@@ -413,6 +417,20 @@ const ChatModal = () => {
                         >
                           Leave chat
                         </button>
+                        {currentUser &&
+                          currentUser._id &&
+                          currentChat.admins &&
+                          currentChat.admins.length === 1 &&
+                          currentChat.admins.includes(currentUser._id) && (
+                            <button
+                              style={{ color: randomColor }}
+                              onClick={() =>
+                                setShowShowAreYouSureYouWantToDeleteChat(true)
+                              }
+                            >
+                              Delete chat
+                            </button>
+                          )}
                         {currentChat.admins &&
                           currentUser &&
                           currentUser._id &&
@@ -448,6 +466,23 @@ const ChatModal = () => {
                         }
                       }}
                       header="Are you sure you want to leave this chat?"
+                    />
+                  )}
+                  {showAreYouSureYouWantToDeleteChat && (
+                    <ChatModalTwoOptions
+                      randomColor={randomColor}
+                      header="Are you sure you want to delete this chat?"
+                      subheader="This cannot be undone."
+                      buttonOneText="Cancel"
+                      buttonOneHandler={() =>
+                        setShowShowAreYouSureYouWantToDeleteChat(false)
+                      }
+                      buttonTwoText="Delete"
+                      buttonTwoHandler={() => {
+                        if (currentChat._id) {
+                          handleDeleteChat(currentChat._id.toString());
+                        }
+                      }}
                     />
                   )}
                   {showAreYouSureYouWantToRemoveYourselfAsAdmin && (
