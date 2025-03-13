@@ -404,6 +404,15 @@ const ChatModal = () => {
                   {!showAreYouSureYouWantToLeaveChat &&
                     !showAreYouSureYouWantToRemoveYourselfAsAdmin &&
                     !showAreYouSureYouWantToDeleteChat && (
+                      <i
+                        title="Close"
+                        onClick={() => setShowMembers(false)}
+                        className="fas fa-times"
+                      ></i>
+                    )}
+                  {!showAreYouSureYouWantToLeaveChat &&
+                    !showAreYouSureYouWantToRemoveYourselfAsAdmin &&
+                    !showAreYouSureYouWantToDeleteChat && (
                       <div className="members-container-options">
                         <button
                           style={{ color: randomColor }}
@@ -444,12 +453,6 @@ const ChatModal = () => {
                               Remove yourself as admin
                             </button>
                           )}
-                        <button
-                          style={{ color: randomColor }}
-                          onClick={() => setShowMembers(false)}
-                        >
-                          Hide members
-                        </button>
                       </div>
                     )}
                   {showAreYouSureYouWantToLeaveChat && (
