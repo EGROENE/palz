@@ -457,6 +457,7 @@ const ChatModal = () => {
                       buttonTwoText="Confirm"
                       buttonTwoHandler={() => {
                         if (currentUser && currentChat) {
+                          setShowAreYouSureYouWantToRemoveYourselfAsAdmin(false);
                           handleRemoveAdminFromChat(currentUser, currentChat);
                         }
                       }}
