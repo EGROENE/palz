@@ -829,19 +829,19 @@ form textarea {
   width: 100%;
 }
 
-.leave-chat-button-container {
+.chat-modal-two-options-buttons-container {
   width: 100%;
   display: flex;
   justify-content: space-evenly;
   margin-top: 0.5rem;
 }
 
-.leave-chat-button-container button {
+.chat-modal-two-options-buttons-container button {
   background-color: white;
   color: black;
 }
 
-.leave-chat-button-container button:active {
+.chat-modal-two-options-buttons-container button:active {
   background-color: white;
   color: black;
   opacity: 0.9;
