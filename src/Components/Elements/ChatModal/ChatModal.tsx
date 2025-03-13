@@ -459,7 +459,6 @@ const ChatModal = () => {
                       renderButtonOne={true}
                       buttonOneText={getButtonOneText(member)}
                       buttonOneHandler={getButtonOneHandler(member)}
-                      buttonOneHandlerNeedsEventParam={false}
                       renderButtonTwo={
                         currentUser &&
                         currentUser._id &&
@@ -491,17 +490,6 @@ const ChatModal = () => {
                         !currentChat.admins.includes(member._id) &&
                         currentChat.admins.includes(currentUser._id)
                           ? [member, currentChat]
-                          : undefined
-                      }
-                      buttonTwoHandlerNeedsEventParam={
-                        currentUser &&
-                        currentUser._id &&
-                        currentChat &&
-                        currentChat.admins &&
-                        member._id &&
-                        !currentChat.admins.includes(member._id) &&
-                        currentChat.admins.includes(currentUser._id)
-                          ? false
                           : undefined
                       }
                       buttonTwoText="Remove"
