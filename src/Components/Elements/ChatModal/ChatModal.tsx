@@ -419,6 +419,7 @@ const ChatModal = () => {
                   )}
                   {showAreYouSureYouWantToLeaveChat && (
                     <ChatModalTwoOptions
+                      randomColor={randomColor}
                       buttonOneText="Cancel"
                       buttonOneHandler={() =>
                         setShowShowAreYouSureYouWantToLeaveChat(false)
