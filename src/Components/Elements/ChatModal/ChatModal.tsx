@@ -56,6 +56,9 @@ const ChatModal = () => {
     setShowAddMemberModal,
     handleAddAdminToChat,
     handleCreateChat,
+    setShowAreYouSureYouWantToRemoveYourselfAsAdmin,
+    showAreYouSureYouWantToRemoveYourselfAsAdmin,
+    handleRemoveAdminFromChat,
   } = useChatContext();
 
   /* 
@@ -395,28 +398,37 @@ const ChatModal = () => {
               )}
               {currentChat && showMembers && (
                 <div className="members-container">
-                  {!showAreYouSureYouWantToLeaveChat && (
-                    <div className="members-container-options">
-                      <button
-                        style={{ color: randomColor }}
-                        onClick={() => setShowAddMemberModal(true)}
-                      >
-                        Add Members
-                      </button>
-                      <button
-                        style={{ color: randomColor }}
-                        onClick={() => setShowShowAreYouSureYouWantToLeaveChat(true)}
-                      >
-                        Leave chat
-                      </button>
-                      <button
-                        style={{ color: randomColor }}
-                        onClick={() => setShowMembers(false)}
-                      >
-                        Hide members
-                      </button>
-                    </div>
-                  )}
+                  {!showAreYouSureYouWantToLeaveChat &&
+                    !showAreYouSureYouWantToRemoveYourselfAsAdmin && (
+                      <div className="members-container-options">
+                        <button
+                          style={{ color: randomColor }}
+                          onClick={() => setShowAddMemberModal(true)}
+                        >
+                          Add Members
+                        </button>
+                        <button
+                          style={{ color: randomColor }}
+                          onClick={() => setShowShowAreYouSureYouWantToLeaveChat(true)}
+                        >
+                          Leave chat
+                        </button>
+                        <button
+                          style={{ color: randomColor }}
+                          onClick={() =>
+                            setShowAreYouSureYouWantToRemoveYourselfAsAdmin(true)
+                          }
+                        >
+                          Remove yourself as admin
+                        </button>
+                        <button
+                          style={{ color: randomColor }}
+                          onClick={() => setShowMembers(false)}
+                        >
+                          Hide members
+                        </button>
+                      </div>
+                    )}
                   {showAreYouSureYouWantToLeaveChat && (
                     <ChatModalTwoOptions
                       randomColor={randomColor}
@@ -431,6 +443,23 @@ const ChatModal = () => {
                         }
                       }}
                       header="Are you sure you want to leave this chat?"
+                    />
+                  )}
+                  {showAreYouSureYouWantToRemoveYourselfAsAdmin && (
+                    <ChatModalTwoOptions
+                      randomColor={randomColor}
+                      header="Are you sure you want to remove yourself as admin?"
+                      subheader="You will need to ask another admin to be re-added as admin."
+                      buttonOneText="Cancel"
+                      buttonOneHandler={() =>
+                        setShowAreYouSureYouWantToRemoveYourselfAsAdmin(false)
+                      }
+                      buttonTwoText="Confirm"
+                      buttonTwoHandler={() => {
+                        if (currentUser && currentChat) {
+                          handleRemoveAdminFromChat(currentUser, currentChat);
+                        }
+                      }}
                     />
                   )}
                   {getChatMembers(currentChat.members).map((member) => (
