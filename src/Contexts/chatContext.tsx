@@ -112,7 +112,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         | "add-members"
         | "remove-member"
         | "remove-self-from-chat"
-        | "add-admin";
+        | "add-admin"
+        | "remove-admin";
     }) => Requests.updateChat(chat, chatValuesToUpdate),
     onSuccess: (data, variables) => {
       if (data.ok) {
@@ -175,6 +176,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
             },
           });
           setCurrentOtherUser(null);
+        }
+        if (variables.purpose === "remove-admin") {
+          toast(`You have removed yourself as admin.`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
         }
       } else {
         throw Error;
@@ -251,6 +261,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
             },
           }
         );
+      }
+      if (variables.purpose === "remove-admin") {
+        toast(`Could not remove you as admin; please try again.`, {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
     },
   });
