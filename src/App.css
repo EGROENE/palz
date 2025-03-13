@@ -827,6 +827,7 @@ form textarea {
   align-items: center;
   justify-content: center;
   width: 100%;
+  position: relative;
 }
 
 .chat-modal-two-options-hero .subheader {
@@ -853,10 +854,19 @@ form textarea {
 }
 
 .members-container-options {
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
   width: 100%;
   display: flex;
   justify-content: space-evenly;
+  align-items: center;
+}
+
+.members-container i {
+  font-size: 2rem;
+  position: relative;
+  color: var(--text-color);
+  right: -46%;
+  top: 0.5rem;
 }
 
 .members-container-options button {
