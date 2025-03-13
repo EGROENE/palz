@@ -715,6 +715,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  handleDeleteChat: (chatID: string) => void;
   showAreYouSureYouWantToRemoveYourselfAsAdmin: boolean;
   setShowAreYouSureYouWantToRemoveYourselfAsAdmin: React.Dispatch<
     React.SetStateAction<boolean>

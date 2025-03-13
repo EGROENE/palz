@@ -373,6 +373,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleDeleteChat = (chatID: string): void => {
+    deleteChatMutation.mutate({ chatID });
+  };
+
   const handleAddUserToChat = (user: TUser, chat?: TChat): void => {
     if (!chat) {
       setUsersToAddToChat(usersToAddToChat.concat(user));
@@ -606,6 +610,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    handleDeleteChat,
     showAreYouSureYouWantToRemoveYourselfAsAdmin,
     setShowAreYouSureYouWantToRemoveYourselfAsAdmin,
     handleRemoveAdminFromChat,
