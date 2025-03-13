@@ -34,6 +34,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [showAreYouSureYouWantToLeaveChat, setShowShowAreYouSureYouWantToLeaveChat] =
     useState<boolean>(false);
 
+  const [
+    showAreYouSureYouWantToRemoveYourselfAsAdmin,
+    setShowAreYouSureYouWantToRemoveYourselfAsAdmin,
+  ] = useState<boolean>(false);
+
   const [currentChat, setCurrentChat] = useLocalStorage<TChat | null>(
     "currentChat",
     null
@@ -556,6 +561,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    showAreYouSureYouWantToRemoveYourselfAsAdmin,
+    setShowAreYouSureYouWantToRemoveYourselfAsAdmin,
     handleAddAdminToChat,
     showMembers,
     setShowMembers,
