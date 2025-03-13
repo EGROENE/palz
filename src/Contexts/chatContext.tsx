@@ -307,6 +307,33 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setChatCreationInProgress(false),
   });
 
+  const deleteChatMutation = useMutation({
+    mutationFn: ({ chatID }: { chatID: string }) => Requests.deleteChat(chatID),
+    onSuccess: (data) => {
+      if (data.ok) {
+        toast("Chat deleted.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      } else {
+        throw Error;
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Could not delete chat. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+  });
+
   const getChatMembers = (members: string[]): TUser[] => {
     let chatMembers: TUser[] = [];
     for (const user of allOtherUsers) {
