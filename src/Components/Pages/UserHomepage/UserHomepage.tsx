@@ -25,7 +25,7 @@ const UserHomepage = () => {
 
   const navigation = useNavigate();
   useEffect(() => {
-    if (!currentUser && userCreatedAccount === null) {
+    if (!currentUser || userCreatedAccount === null) {
       toast.error("You must be logged in to access this page.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
