@@ -829,6 +829,11 @@ form textarea {
   width: 100%;
 }
 
+.chat-modal-two-options-hero .subheader {
+  font-family: var(--text-font);
+  font-size: 1rem;
+}
+
 .chat-modal-two-options-buttons-container {
   width: 100%;
   display: flex;

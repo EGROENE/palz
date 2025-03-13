@@ -18,9 +18,9 @@ const ChatModalTwoOptions = ({
   randomColor?: TThemeColor;
 }) => {
   return (
-    <div>
+    <div className="chat-modal-two-options-hero">
       <header>{header}</header>
-      {subheader && <header>{subheader}</header>}
+      {subheader && <header className="subheader">{subheader}</header>}
       <div className="chat-modal-two-options-buttons-container">
         <button onClick={buttonOneHandler}>{buttonOneText}</button>
         <button
