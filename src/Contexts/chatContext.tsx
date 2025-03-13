@@ -416,6 +416,24 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
   };
 
+  const handleRemoveAdminFromChat = (user: TUser, chat: TChat): void => {
+    if (chat.admins && chat.admins.length - 1 === 0) {
+      toast.error("Please assign another admin before removing yourself as admin.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    } else {
+      const purpose = "remove-admin";
+      const updatedAdmins =
+        chat.admins && chat.admins.filter((admin) => admin !== user._id);
+      const chatValuesToUpdate = { admins: updatedAdmins };
+      updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+    }
+  };
+
   const handleSendMessage = (chat: TChat, content: string): void => {
     const now = Date.now();
     const messageId = new mongoose.Types.ObjectId();
@@ -563,6 +581,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const chatContextValues: TChatContext = {
     showAreYouSureYouWantToRemoveYourselfAsAdmin,
     setShowAreYouSureYouWantToRemoveYourselfAsAdmin,
+    handleRemoveAdminFromChat,
     handleAddAdminToChat,
     showMembers,
     setShowMembers,
