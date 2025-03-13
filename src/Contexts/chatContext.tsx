@@ -34,6 +34,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [showAreYouSureYouWantToLeaveChat, setShowShowAreYouSureYouWantToLeaveChat] =
     useState<boolean>(false);
 
+  const [showAreYouSureYouWantToDeleteChat, setShowShowAreYouSureYouWantToDeleteChat] =
+    useState<boolean>(false);
+
   const [
     showAreYouSureYouWantToRemoveYourselfAsAdmin,
     setShowAreYouSureYouWantToRemoveYourselfAsAdmin,
@@ -610,6 +613,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    showAreYouSureYouWantToDeleteChat,
+    setShowShowAreYouSureYouWantToDeleteChat,
     handleDeleteChat,
     showAreYouSureYouWantToRemoveYourselfAsAdmin,
     setShowAreYouSureYouWantToRemoveYourselfAsAdmin,
