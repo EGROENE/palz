@@ -9,6 +9,7 @@ import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import Methods from "../../../methods";
 import ListedUser from "../ListedUser/ListedUser";
 import mongoose from "mongoose";
+import ChatModalTwoOptions from "../ChatModalTwoOptions/ChatModalTwoOptions";
 
 const ChatModal = () => {
   const { allOtherUsers, currentUser } = useUserContext();
@@ -417,30 +418,19 @@ const ChatModal = () => {
                     </div>
                   )}
                   {showAreYouSureYouWantToLeaveChat && (
-                    <div>
-                      <header>Are you sure you want to leave this chat?</header>
-                      <div className="leave-chat-button-container">
-                        <button
-                          onClick={() => setShowShowAreYouSureYouWantToLeaveChat(false)}
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          style={
-                            randomColor === "var(--primary-color)"
-                              ? { backgroundColor: `${randomColor}`, color: "black" }
-                              : { backgroundColor: `${randomColor}`, color: "white" }
-                          }
-                          onClick={() => {
-                            if (currentChat && currentUser) {
-                              handleRemoveUserFromChat(currentUser, currentChat);
-                            }
-                          }}
-                        >
-                          Leave
-                        </button>
-                      </div>
-                    </div>
+                    <ChatModalTwoOptions
+                      buttonOneText="Cancel"
+                      buttonOneHandler={() =>
+                        setShowShowAreYouSureYouWantToLeaveChat(false)
+                      }
+                      buttonTwoText="Leave"
+                      buttonTwoHandler={() => {
+                        if (currentChat && currentUser) {
+                          handleRemoveUserFromChat(currentUser, currentChat);
+                        }
+                      }}
+                      header="Are you sure you want to leave this chat?"
+                    />
                   )}
                   {getChatMembers(currentChat.members).map((member) => (
                     <ListedUser
