@@ -314,6 +314,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     mutationFn: ({ chatID }: { chatID: string }) => Requests.deleteChat(chatID),
     onSuccess: (data) => {
       if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: "userChats" });
+        queryClient.refetchQueries({ queryKey: ["userChats"] });
+        setShowShowAreYouSureYouWantToDeleteChat(false);
+        setShowChatModal(false);
+        setCurrentChat(null);
         toast("Chat deleted.", {
           style: {
             background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
