@@ -14,7 +14,7 @@ const Message = ({
 }) => {
   const { theme } = useMainContext();
   const { currentUser, allUsers } = useUserContext();
-  const { handleDeleteMessage, currentChat } = useChatContext();
+  const { handleDeleteMessage, currentChat, startEditingMessage } = useChatContext();
 
   const [showAreYouSureYouWantToDeleteMessage, setShowAreYouSureYouWantToDeleteMessage] =
     useState<boolean>(false);
@@ -117,7 +117,11 @@ const Message = ({
             </p>
             {currentUser && message.sender === currentUser._id && (
               <p className="message-sent-info">
-                <span style={{ color: randomColor }} id="edit-msg-btn">
+                <span
+                  onClick={() => startEditingMessage(message)}
+                  style={{ color: randomColor }}
+                  id="edit-msg-btn"
+                >
                   Edit
                 </span>
                 <span
