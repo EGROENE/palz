@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { TUser, TThemeColor } from "../../../types";
 import styles from "./styles.module.css";
+import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const ListedUser = ({
   renderButtonOne,
@@ -63,7 +64,9 @@ const ListedUser = ({
     >
       <img
         style={{ border: `2px solid ${randomColor}` }}
-        src={`${user?.profileImage}`}
+        src={
+          user && user.profileImage !== "" ? `${user.profileImage}` : defaultProfileImage
+        }
         alt="profile pic"
       />
       {objectLink ? (

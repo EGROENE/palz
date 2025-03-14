@@ -3,6 +3,7 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import { TUser, TEvent } from "../../../types";
 import styles from "./styles.module.css";
+import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const DropdownChecklist = ({
   usedFor,
@@ -105,7 +106,11 @@ const DropdownChecklist = ({
             type="checkbox"
           />
           <div title={`${user.firstName} ${user.lastName}`}>
-            <img src={`${user.profileImage}`} />
+            <img
+              src={
+                user.profileImage !== "" ? `${user.profileImage}` : defaultProfileImage
+              }
+            />
             <span style={{ fontSize: "1rem" }}>{`${user.username}`}</span>
           </div>
         </li>
