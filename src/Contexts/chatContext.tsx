@@ -496,6 +496,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
   };
 
+  const startEditingMessage = (message: TMessage): void => {
+    setMessageIsBeingEdited(true);
+    setInputMessage(message.content);
+  };
+
   const handleDeleteMessage = (
     chat: TChat,
     messageID: string | mongoose.Types.ObjectId
@@ -620,6 +625,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    startEditingMessage,
     messageIsBeingEdited,
     setMessageIsBeingEdited,
     showAreYouSureYouWantToDeleteChat,
