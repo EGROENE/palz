@@ -76,6 +76,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showAddMemberModal, setShowAddMemberModal] = useState<boolean>(false);
 
+  const [messageIsBeingEdited, setMessageIsBeingEdited] = useState<boolean>(false);
+
   const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
     queryKey: ["userChats"],
     queryFn: () =>
@@ -618,6 +620,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    messageIsBeingEdited,
+    setMessageIsBeingEdited,
     showAreYouSureYouWantToDeleteChat,
     setShowShowAreYouSureYouWantToDeleteChat,
     handleDeleteChat,
