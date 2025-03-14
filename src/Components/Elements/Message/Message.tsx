@@ -95,6 +95,24 @@ const Message = ({
                 minute: "2-digit",
               }
             )}`}</p>
+            <p
+              className="message-sent-info"
+              style={
+                (randomColor === "var(--primary-color)" &&
+                  currentUser &&
+                  message.sender !== currentUser._id) ||
+                (sender && currentUser && sender._id !== currentUser._id)
+                  ? { color: "rgb(68, 67, 67)" }
+                  : { color: "darkgray" }
+              }
+            >
+              {sender &&
+              sender._id &&
+              currentChat &&
+              currentChat.members.includes(sender._id)
+                ? `${sender.firstName} ${sender.lastName}`
+                : "Deleted User"}
+            </p>
             {currentUser && message.sender === currentUser._id && (
               <p className="message-sent-info">
                 <span style={{ color: randomColor }} id="edit-msg-btn">
