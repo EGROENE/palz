@@ -220,6 +220,7 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  currentRoute: string;
   displayedItemsCount: number | undefined;
   setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>;
   displayedItemsCountInterval: number | undefined;

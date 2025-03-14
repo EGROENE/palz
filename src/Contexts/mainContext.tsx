@@ -1,6 +1,7 @@
 import { useState, createContext, ReactNode, useEffect } from "react";
 import { TMainContext, TUser, TEvent } from "../types";
 import useLocalStorage from "use-local-storage";
+import { useLocation } from "react-router-dom";
 
 export const MainContext = createContext<TMainContext | null>(null);
 
@@ -16,6 +17,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
   };
+
+  const currentRoute: string = useLocation().pathname;
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
@@ -79,6 +82,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mainContextValues: TMainContext = {
+    currentRoute,
     displayedItemsCountInterval,
     setDisplayedItemsCountInterval,
     displayedItemsFiltered,
