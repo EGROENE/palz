@@ -5,7 +5,7 @@ import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const NavBar = () => {
-  const { showSidebar, setShowSidebar } = useMainContext();
+  const { showSidebar, setShowSidebar, currentRoute } = useMainContext();
   const { logout, profileImage, currentUser, userCreatedAccount } = useUserContext();
 
   return (
@@ -17,12 +17,16 @@ const NavBar = () => {
             <header>PALZ</header>
           </Link>
         </li>
-        <li>
-          <Link to={"/chats"}>Chats</Link>
-        </li>
-        <li>
-          <Link to={"/settings"}>Settings</Link>
-        </li>
+        {currentRoute !== "/chats" && (
+          <li>
+            <Link to={"/chats"}>Chats</Link>
+          </li>
+        )}
+        {currentRoute !== "/settings" && (
+          <li>
+            <Link to={"/settings"}>Settings</Link>
+          </li>
+        )}
         <li>
           <Link to={""}>Terms & Conditions</Link>
         </li>
