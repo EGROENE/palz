@@ -83,7 +83,8 @@ const Message = ({
                 (randomColor === "var(--primary-color)" &&
                   currentUser &&
                   message.sender !== currentUser._id) ||
-                (sender && currentUser && sender._id !== currentUser._id)
+                (sender && currentUser && sender._id !== currentUser._id) ||
+                !sender
                   ? { color: "rgb(68, 67, 67)" }
                   : { color: "darkgray" }
               }
@@ -101,7 +102,8 @@ const Message = ({
                 (randomColor === "var(--primary-color)" &&
                   currentUser &&
                   message.sender !== currentUser._id) ||
-                (sender && currentUser && sender._id !== currentUser._id)
+                (sender && currentUser && sender._id !== currentUser._id) ||
+                !sender
                   ? { color: "rgb(68, 67, 67)" }
                   : { color: "darkgray" }
               }
