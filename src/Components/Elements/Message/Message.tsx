@@ -3,6 +3,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import { useState } from "react";
+import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const Message = ({
   message,
@@ -54,7 +55,13 @@ const Message = ({
     >
       {!showAreYouSureYouWantToDeleteMessage && (
         <>
-          <img src={sender ? sender.profileImage : ""} />
+          <img
+            src={
+              sender && sender.profileImage !== ""
+                ? sender.profileImage
+                : defaultProfileImage
+            }
+          />
           <div className="message-content">
             <p
               style={
