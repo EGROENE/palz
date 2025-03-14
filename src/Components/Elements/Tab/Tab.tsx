@@ -1,5 +1,6 @@
 import { TUser } from "../../../types";
 import styles from "./styles.module.css";
+import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 /* Returns a tab w/ user image, username, & 'X' button, which, onClick, remove user from something. At time of creation, this is used on AddEventForm to show which other users have been added as co-organizers and/or invitees. */
 const Tab = ({
@@ -42,7 +43,9 @@ const Tab = ({
       className={isDisabled ? `${styles.tab} disabled` : `${styles.tab}`}
     >
       {typeof info !== "string" && (
-        <img src={`${info.profileImage}`} alt={`${info.username} profile pic`} />
+        <img
+          src={info.profileImage !== "" ? `${info.profileImage}` : defaultProfileImage}
+        />
       )}
       <span>
         {typeof info !== "string" ? info.username : info}
