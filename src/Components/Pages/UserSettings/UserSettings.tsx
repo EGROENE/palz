@@ -243,6 +243,10 @@ const UserSettings = () => {
                 });
               } else {
                 queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+                queryClient.invalidateQueries({ queryKey: "allEvents" });
+                queryClient.refetchQueries({ queryKey: ["allEvents"] });
+                queryClient.invalidateQueries({ queryKey: "userChats" });
+                queryClient.refetchQueries({ queryKey: ["userChats"] });
                 if (fetchAllUsersQuery.data) {
                   allUsers = fetchAllUsersQuery.data;
                 }
