@@ -76,7 +76,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showAddMemberModal, setShowAddMemberModal] = useState<boolean>(false);
 
-  const [messageBeingEdited, setMessageIsBeingEdited] = useState<TMessage | undefined>(
+  const [messageBeingEdited, setMessageBeingEdited] = useState<TMessage | undefined>(
     undefined
   );
 
@@ -200,7 +200,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           });
         }
         if (variables.purpose === "edit-message") {
-          setMessageIsBeingEdited(undefined);
+          setMessageBeingEdited(undefined);
           setInputMessage("");
           toast.success(`Message has been updated.`, {
             style: {
@@ -520,12 +520,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const startEditingMessage = (message: TMessage): void => {
-    setMessageIsBeingEdited(message);
+    setMessageBeingEdited(message);
     setInputMessage(message.content);
   };
 
   const cancelEditingMessage = (): void => {
-    setMessageIsBeingEdited(undefined);
+    setMessageBeingEdited(undefined);
     setInputMessage("");
   };
 
@@ -656,7 +656,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     cancelEditingMessage,
     startEditingMessage,
     messageBeingEdited,
-    setMessageIsBeingEdited,
+    setMessageBeingEdited,
     showAreYouSureYouWantToDeleteChat,
     setShowShowAreYouSureYouWantToDeleteChat,
     handleDeleteChat,
