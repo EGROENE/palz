@@ -186,8 +186,8 @@ const UserSettings = () => {
     const userChats = fetchChatsQuery.data;
     if (userChats && currentUser && currentUser._id) {
       for (const userChat of userChats) {
-        const updatedChatMembers = userChat.members.map((member) =>
-          member === currentUser._id ? "Deleted User" : member
+        const updatedChatMembers = userChat.members.filter(
+          (member) => member !== currentUser._id
         );
         let updatedChatAdmins;
         if (userChat.admins?.includes(currentUser._id)) {
@@ -195,8 +195,8 @@ const UserSettings = () => {
           if (userChat.admins.length - 1 === 0) {
             promisesToAwait.push(Requests.deleteChat(userChat._id.toString()));
           } else {
-            updatedChatAdmins = userChat.admins.map((admin) =>
-              admin === currentUser._id ? "Deleted User" : admin
+            updatedChatAdmins = userChat.admins.filter(
+              (admin) => admin !== currentUser._id
             );
           }
         }
