@@ -123,7 +123,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         | "remove-member"
         | "remove-self-from-chat"
         | "add-admin"
-        | "remove-admin";
+        | "remove-admin"
+        | "edit-message";
     }) => Requests.updateChat(chat, chatValuesToUpdate),
     onSuccess: (data, variables) => {
       if (data.ok) {
@@ -193,6 +194,17 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
               color: theme === "dark" ? "black" : "white",
               border: "2px solid red",
+            },
+          });
+        }
+        if (variables.purpose === "edit-message") {
+          setMessageIsBeingEdited(false);
+          setInputMessage("");
+          toast.success(`Message has been updated.`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid green",
             },
           });
         }
@@ -274,6 +286,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       }
       if (variables.purpose === "remove-admin") {
         toast(`Could not remove you as admin; please try again.`, {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
+      if (variables.purpose === "edit-message") {
+        toast.error("Could not save edits; please try again.", {
           style: {
             background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
             color: theme === "dark" ? "black" : "white",
