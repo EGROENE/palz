@@ -777,9 +777,9 @@ export type TChatContext = {
   handleAddRemoveUserFromChat: (user: TUser, chat?: TChat) => void;
   usersToAddToChat: TUser[];
   setUsersToAddToChat: React.Dispatch<React.SetStateAction<TUser[]>>;
-  numberOfPotentialChatMembersDisplayed: number | null;
+  numberOfPotentialChatMembersDisplayed: number | undefined;
   setNumberOfPotentialChatMembersDisplayed: React.Dispatch<
-    React.SetStateAction<number | null>
+    React.SetStateAction<number | undefined>
   >;
   currentChat: TChat | null;
   setCurrentChat: React.Dispatch<React.SetStateAction<TChat | null>>;

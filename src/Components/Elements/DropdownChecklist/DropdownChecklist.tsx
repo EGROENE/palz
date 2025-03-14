@@ -25,8 +25,8 @@ const DropdownChecklist = ({
   displayedItemsArray: TUser[]; // type can be changed later if used for non-user lists
   storageArray: any[];
   setStorageArray: React.Dispatch<React.SetStateAction<any[]>>;
-  displayedItemsCount: number | null;
-  setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | null>>;
+  displayedItemsCount: number | undefined;
+  setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>;
   displayedItemsCountInterval?: number;
   event?: TEvent;
 }) => {

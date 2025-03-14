@@ -68,7 +68,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [
     numberOfPotentialChatMembersDisplayed,
     setNumberOfPotentialChatMembersDisplayed,
-  ] = useState<number | null>(10);
+  ] = useState<number | undefined>(10);
 
   const [areNewMessages, setAreNewMessages] = useState<boolean>(false);
 
