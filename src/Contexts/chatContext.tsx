@@ -76,7 +76,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showAddMemberModal, setShowAddMemberModal] = useState<boolean>(false);
 
-  const [messageIsBeingEdited, setMessageIsBeingEdited] = useState<boolean>(false);
+  const [messageBeingEdited, setMessageIsBeingEdited] = useState<TMessage | undefined>(
+    undefined
+  );
 
   const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
     queryKey: ["userChats"],
@@ -198,7 +200,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           });
         }
         if (variables.purpose === "edit-message") {
-          setMessageIsBeingEdited(false);
+          setMessageIsBeingEdited(undefined);
           setInputMessage("");
           toast.success(`Message has been updated.`, {
             style: {
@@ -518,12 +520,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const startEditingMessage = (message: TMessage): void => {
-    setMessageIsBeingEdited(true);
+    setMessageIsBeingEdited(message);
     setInputMessage(message.content);
   };
 
   const cancelEditingMessage = (): void => {
-    setMessageIsBeingEdited(false);
+    setMessageIsBeingEdited(undefined);
     setInputMessage("");
   };
 
@@ -653,7 +655,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const chatContextValues: TChatContext = {
     cancelEditingMessage,
     startEditingMessage,
-    messageIsBeingEdited,
+    messageBeingEdited,
     setMessageIsBeingEdited,
     showAreYouSureYouWantToDeleteChat,
     setShowShowAreYouSureYouWantToDeleteChat,
