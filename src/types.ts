@@ -716,6 +716,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  cancelEditingMessage: () => void;
   startEditingMessage: (message: TMessage) => void;
   messageIsBeingEdited: boolean;
   setMessageIsBeingEdited: React.Dispatch<React.SetStateAction<boolean>>;
