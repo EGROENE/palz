@@ -62,6 +62,9 @@ const ChatModal = () => {
     showAreYouSureYouWantToDeleteChat,
     setShowShowAreYouSureYouWantToDeleteChat,
     handleDeleteChat,
+    messageBeingEdited,
+    cancelEditingMessage,
+    handleSaveEditedMessage,
   } = useChatContext();
 
   /* 
@@ -76,10 +79,15 @@ const ChatModal = () => {
       // compare currentChat & updatedChat; if not the same, setCurrentChat(updatedChat)
       const chatWasUpdated =
         updatedChat &&
-        !Methods.arraysAreIdentical(
+        (!Methods.arraysAreIdentical(
           Object.values(currentChat),
           Object.values(updatedChat)
-        );
+        ) ||
+          !Methods.arraysAreIdentical(
+            Object.values(updatedChat.messages.map((message) => message.content)),
+            Object.values(currentChat.messages.map((message) => message.content))
+          ));
+      console.log(chatWasUpdated);
       if (chatWasUpdated) {
         setCurrentChat(updatedChat);
       }
@@ -636,19 +644,41 @@ const ChatModal = () => {
                 placeholder="Type message"
                 maxLength={10000}
               ></textarea>
-              <button
-                disabled={inputMessage.replace(/\s+/g, "") === ""}
-                onClick={() =>
-                  currentChat && handleSendMessage(currentChat, inputMessage)
-                }
-                style={
-                  randomColor === "var(--primary-color)"
-                    ? { backgroundColor: `${randomColor}`, color: "black" }
-                    : { backgroundColor: `${randomColor}`, color: "white" }
-                }
-              >
-                <i className="fas fa-paper-plane"></i>
-              </button>
+              {!messageBeingEdited ? (
+                <button
+                  id="send-message-button"
+                  disabled={inputMessage.replace(/\s+/g, "") === ""}
+                  onClick={() =>
+                    currentChat && handleSendMessage(currentChat, inputMessage)
+                  }
+                  style={
+                    randomColor === "var(--primary-color)"
+                      ? { backgroundColor: `${randomColor}`, color: "black" }
+                      : { backgroundColor: `${randomColor}`, color: "white" }
+                  }
+                >
+                  <i className="fas fa-paper-plane"></i>
+                </button>
+              ) : (
+                <div className="edit-message-buttons-container">
+                  <button
+                    onClick={
+                      currentChat
+                        ? () => handleSaveEditedMessage(currentChat, messageBeingEdited)
+                        : undefined
+                    }
+                    disabled={inputMessage === messageBeingEdited.content}
+                    style={
+                      randomColor === "var(--primary-color)"
+                        ? { backgroundColor: `${randomColor}`, color: "black" }
+                        : { backgroundColor: `${randomColor}`, color: "white" }
+                    }
+                  >
+                    Update
+                  </button>
+                  <button onClick={() => cancelEditingMessage()}>Cancel</button>
+                </div>
+              )}
             </div>
           }
         </div>
