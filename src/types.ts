@@ -716,6 +716,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  handleSaveEditedMessage: (chat: TChat, editedMessage: TMessage) => void;
   cancelEditingMessage: () => void;
   startEditingMessage: (message: TMessage) => void;
   messageBeingEdited: TMessage | undefined;

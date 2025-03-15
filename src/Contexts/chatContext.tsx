@@ -529,6 +529,31 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setInputMessage("");
   };
 
+  const handleSaveEditedMessage = (chat: TChat, editedMessage: TMessage): void => {
+    const updatedMessageContent: string = inputMessage;
+    const messageToUpdate: TMessage = chat.messages.filter(
+      (message) => message._id === editedMessage._id
+    )[0];
+    const updatedMessage = {
+      _id: messageToUpdate._id,
+      sender: messageToUpdate.sender,
+      content: updatedMessageContent,
+      timeSent: messageToUpdate.timeSent,
+      image: messageToUpdate.image,
+      seenBy: messageToUpdate.seenBy,
+    };
+    const updatedMessages = chat.messages.map((message) => {
+      if (message._id === editedMessage._id) {
+        return updatedMessage;
+      } else {
+        return message;
+      }
+    });
+    const chatValuesToUpdate = { messages: updatedMessages };
+    const purpose = "edit-message";
+    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+  };
+
   const handleDeleteMessage = (
     chat: TChat,
     messageID: string | mongoose.Types.ObjectId
@@ -653,6 +678,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    handleSaveEditedMessage,
     cancelEditingMessage,
     startEditingMessage,
     messageBeingEdited,
