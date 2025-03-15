@@ -842,12 +842,14 @@ form textarea {
   margin-top: 0.5rem;
 }
 
-.chat-modal-two-options-buttons-container button {
+.chat-modal-two-options-buttons-container button,
+.edit-message-buttons-container button {
   background-color: white;
   color: black;
 }
 
-.chat-modal-two-options-buttons-container button:active {
+.chat-modal-two-options-buttons-container button:active,
+.edit-message-buttons-container button:active {
   background-color: white;
   color: black;
   opacity: 0.9;
@@ -1094,7 +1096,7 @@ form textarea {
   padding: 0.5rem;
 }
 
-.message-input-container button {
+#send-message-button {
   display: flex;
   justify-content: center;
   height: 3rem;
@@ -1102,6 +1104,17 @@ form textarea {
   margin-left: 1rem;
   border-radius: 50%;
   align-items: center;
+}
+
+.edit-message-buttons-container {
+  display: flex;
+  margin-left: 1rem;
+}
+
+.edit-message-buttons-container button {
+  padding: 0.3em 0.6em;
+  font-size: 0.75rem;
+  margin: 0 0.75rem;
 }
 
 .added-user-tab-container {
