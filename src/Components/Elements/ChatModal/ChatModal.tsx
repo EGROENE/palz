@@ -14,6 +14,7 @@ import ChatModalTwoOptions from "../ChatModalTwoOptions/ChatModalTwoOptions";
 const ChatModal = () => {
   const { allOtherUsers, currentUser } = useUserContext();
   const {
+    setMessageBeingEdited,
     handleOpenChat,
     showAreYouSureYouWantToLeaveChat,
     setShowShowAreYouSureYouWantToLeaveChat,
@@ -379,6 +380,10 @@ const ChatModal = () => {
           setShowChatModal(false);
           setCurrentChat(null);
           setAreNewMessages(false);
+          if (messageBeingEdited) {
+            setMessageBeingEdited(undefined);
+            setInputMessage("");
+          }
           if (showAddMemberModal) {
             handleCancelAddingChatMembers(e);
           }
