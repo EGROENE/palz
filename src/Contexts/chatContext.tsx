@@ -505,7 +505,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     const newMessage: TMessage = {
       _id: messageId,
       sender: currentUser && currentUser._id ? currentUser._id : "",
-      content: content,
+      content: content.trim(),
       image: "",
       timeSent: now,
       seenBy: [],
@@ -530,7 +530,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleSaveEditedMessage = (chat: TChat, editedMessage: TMessage): void => {
-    const updatedMessageContent: string = inputMessage;
+    const updatedMessageContent: string = inputMessage.trim();
     const messageToUpdate: TMessage = chat.messages.filter(
       (message) => message._id === editedMessage._id
     )[0];
