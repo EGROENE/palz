@@ -530,6 +530,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleSaveEditedMessage = (chat: TChat, editedMessage: TMessage): void => {
+    const now = Date.now();
     const updatedMessageContent: string = inputMessage.trim();
     const messageToUpdate: TMessage = chat.messages.filter(
       (message) => message._id === editedMessage._id
@@ -541,6 +542,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       timeSent: messageToUpdate.timeSent,
       image: messageToUpdate.image,
       seenBy: messageToUpdate.seenBy,
+      timeEdited: now,
     };
     const updatedMessages = chat.messages.map((message) => {
       if (message._id === editedMessage._id) {
