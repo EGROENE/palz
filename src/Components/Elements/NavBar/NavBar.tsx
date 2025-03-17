@@ -3,10 +3,19 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
+import { useChatContext } from "../../../Hooks/useChatContext";
+import { TChat } from "../../../types";
 
 const NavBar = () => {
   const { showSidebar, setShowSidebar, currentRoute } = useMainContext();
   const { logout, profileImage, currentUser, userCreatedAccount } = useUserContext();
+  const { getTotalNumberOfUnreadMessages, fetchChatsQuery } = useChatContext();
+
+  const userChats: TChat[] | undefined = fetchChatsQuery.data;
+
+  const totalUnreadUserMessages: string | number | undefined = userChats
+    ? getTotalNumberOfUnreadMessages(userChats)
+    : undefined;
 
   return (
     <nav>
@@ -18,8 +27,11 @@ const NavBar = () => {
           </Link>
         </li>
         {currentRoute !== "/chats" && (
-          <li>
+          <li style={{ display: "flex", alignItems: "center" }}>
             <Link to={"/chats"}>Chats</Link>
+            {totalUnreadUserMessages && (
+              <span className={styles.unreadMessages}>{totalUnreadUserMessages}</span>
+            )}
           </li>
         )}
         {currentRoute !== "/settings" && (
