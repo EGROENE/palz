@@ -23,7 +23,7 @@ const Message = ({
     ? allUsers.filter((user) => user._id === message.sender)[0]
     : undefined;
 
-  const dateOfMessage = new Date(message.timeSent);
+  const dateOfSend = new Date(message.timeSent);
 
   const getComponentInlineStyling = () => {
     if (!showAreYouSureYouWantToDeleteMessage) {
@@ -89,7 +89,7 @@ const Message = ({
                   : { color: "darkgray" }
               }
               className="message-sent-info"
-            >{`Sent ${dateOfMessage.toLocaleDateString()} at ${dateOfMessage.toLocaleTimeString(
+            >{`Sent ${dateOfSend.toLocaleDateString()} at ${dateOfSend.toLocaleTimeString(
               [],
               {
                 hour: "2-digit",
