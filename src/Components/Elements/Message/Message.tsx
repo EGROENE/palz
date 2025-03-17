@@ -25,6 +25,10 @@ const Message = ({
 
   const dateOfSend = new Date(message.timeSent);
 
+  const dateOfEdit: Date | null = message.timeEdited
+    ? new Date(message.timeEdited)
+    : null;
+
   const getComponentInlineStyling = () => {
     if (!showAreYouSureYouWantToDeleteMessage) {
       if (sender && currentUser && sender._id === currentUser._id) {
@@ -96,6 +100,26 @@ const Message = ({
                 minute: "2-digit",
               }
             )}`}</p>
+            {dateOfEdit && (
+              <p
+                style={
+                  (randomColor === "var(--primary-color)" &&
+                    currentUser &&
+                    message.sender !== currentUser._id) ||
+                  (sender && currentUser && sender._id !== currentUser._id) ||
+                  !sender
+                    ? { color: "rgb(68, 67, 67)" }
+                    : { color: "darkgray" }
+                }
+                className="message-sent-info"
+              >{`Edited ${dateOfEdit.toLocaleDateString()} at ${dateOfEdit.toLocaleTimeString(
+                [],
+                {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }
+              )}`}</p>
+            )}
             <p
               className="message-sent-info"
               style={
