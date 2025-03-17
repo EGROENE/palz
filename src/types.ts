@@ -123,6 +123,7 @@ export type TMessage = {
   timeSent: number;
   image: string;
   seenBy: { user: string; time: number }[];
+  timeEdited?: number | undefined;
 };
 
 export type TChatValuesToUpdate = {
