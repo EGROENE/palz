@@ -111,6 +111,9 @@ const CreateNewChatModal = () => {
     if (chatNameError !== "") {
       setChatNameError("");
     }
+    if (showPotentialChatMembers) {
+      setShowPotentialChatMembers(false);
+    }
     setShowCreateNewChatModal(false);
   };
 
