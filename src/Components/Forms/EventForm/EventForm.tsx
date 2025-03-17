@@ -962,7 +962,7 @@ const EventForm = ({
   };
 
   return (
-    <form className={styles.eventForm}>
+    <form className="event-form">
       <label>
         <header className="input-label">Title:</header>
         <input
