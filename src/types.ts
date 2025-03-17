@@ -719,6 +719,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  getTotalNumberOfUnreadMessages: (chatArray: TChat[]) => string | number;
   handleSaveEditedMessage: (chat: TChat, editedMessage: TMessage) => void;
   cancelEditingMessage: () => void;
   startEditingMessage: (message: TMessage) => void;

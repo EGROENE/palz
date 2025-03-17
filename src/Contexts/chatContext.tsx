@@ -679,7 +679,21 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     return 0;
   };
 
+  const getTotalNumberOfUnreadMessages = (chatArray: TChat[]): string | number => {
+    let unreadMessages: number = 0;
+    for (const chat of chatArray) {
+      const newMessagesInChat = getNumberOfUnreadMessagesInChat(chat);
+      if (typeof newMessagesInChat === "number") {
+        unreadMessages += newMessagesInChat;
+      } else {
+        return "9+";
+      }
+    }
+    return unreadMessages > 9 ? "9+" : unreadMessages;
+  };
+
   const chatContextValues: TChatContext = {
+    getTotalNumberOfUnreadMessages,
     handleSaveEditedMessage,
     cancelEditingMessage,
     startEditingMessage,
