@@ -18,6 +18,25 @@
   background-clip: text;
 }
 
+.unreadMessages {
+  /* position: absolute; */
+  display: block;
+  margin-left: 0.5rem;
+  /* top: 4rem; */
+  background-color: var(--background-color-opposite);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--text-color-opposite);
+  border-radius: 50%;
+  left: 23rem;
+  z-index: 100;
+  font-size: 1rem;
+  font-family: var(--text-font);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .profileImageContainer {
   display: flex;
   align-items: center;
@@ -48,7 +67,7 @@
 .navbar li {
   color: transparent;
   margin-left: 0;
-      font-size: 1.5rem;
+  font-size: 1.5rem;
 }
 
 .navbar a:hover,
