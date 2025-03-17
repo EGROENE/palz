@@ -39,10 +39,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     useState<boolean>(false);
 
   const [displayedPotentialInviteeCount, setDisplayedPotentialInviteeCount] = useState<
-    number | null
+    number | undefined
   >(10);
   const [displayedPotentialCoOrganizerCount, setDisplayedPotentialCoOrganizerCount] =
-    useState<number | null>(10);
+    useState<number | undefined>(10);
 
   // State values  pertaining to properties on TEvent, along w/ error values to be used on EventForm:
   // Initialize these to characteristics of currentEvent if defined; update in useEffect dependent on currentEvent, allEvents, maybe more
