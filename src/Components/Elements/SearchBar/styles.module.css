@@ -20,6 +20,7 @@
 .bar i {
   position: absolute;
   right: 1rem;
+  top: 0.45rem;
   color: white;
 }
 
