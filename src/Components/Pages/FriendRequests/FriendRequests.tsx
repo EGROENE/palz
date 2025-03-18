@@ -63,16 +63,36 @@ const FriendRequests = () => {
     if (
       requestsVisible === "received" &&
       friendRequestsReceived &&
-      friendRequestsReceivedUSERS
+      friendRequestsReceivedUSERS &&
+      friendRequestsSent &&
+      friendRequestsSentUSERS
     ) {
-      setDisplayedItems(friendRequestsReceivedUSERS);
-      setDisplayedItemsFiltered(
-        friendRequestsReceivedUSERS.slice(0, displayedItemsCount)
-      );
+      if (friendRequestsReceived.length === 0) {
+        setDisplayedItems(friendRequestsSentUSERS);
+        setDisplayedItemsFiltered(friendRequestsSentUSERS.slice(0, displayedItemsCount));
+      } else {
+        setDisplayedItems(friendRequestsReceivedUSERS);
+        setDisplayedItemsFiltered(
+          friendRequestsReceivedUSERS.slice(0, displayedItemsCount)
+        );
+      }
     }
-    if (requestsVisible === "sent" && friendRequestsSent && friendRequestsSentUSERS) {
-      setDisplayedItems(friendRequestsSentUSERS);
-      setDisplayedItemsFiltered(friendRequestsSentUSERS.slice(0, displayedItemsCount));
+    if (
+      requestsVisible === "sent" &&
+      friendRequestsReceived &&
+      friendRequestsReceivedUSERS &&
+      friendRequestsSent &&
+      friendRequestsSentUSERS
+    ) {
+      if (friendRequestsSent.length === 0) {
+        setDisplayedItems(friendRequestsReceivedUSERS);
+        setDisplayedItemsFiltered(
+          friendRequestsReceivedUSERS.slice(0, displayedItemsCount)
+        );
+      } else {
+        setDisplayedItems(friendRequestsSentUSERS);
+        setDisplayedItemsFiltered(friendRequestsSentUSERS.slice(0, displayedItemsCount));
+      }
     }
   }, [
     requestsVisible,
