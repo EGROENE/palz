@@ -14,6 +14,7 @@ import Tab from "../../Elements/Tab/Tab";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSection";
+import { useChatContext } from "../../../Hooks/useChatContext";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
@@ -42,6 +43,7 @@ const OtherUserProfile = () => {
     fetchAllUsersQuery,
   } = useUserContext();
   const { fetchAllEventsQuery, allEvents } = useEventContext();
+  const { getStartOrOpenChatWithUserHandler } = useChatContext();
   const { username } = useParams();
   const currentOtherUser =
     allUsers && allUsers.filter((user) => user.username === username)[0];
@@ -195,8 +197,15 @@ const OtherUserProfile = () => {
   // have array with msg btn, array with FR button, array w/ block button
   const messageButton = {
     type: "message",
-    buttonText: "Message",
-    handler: undefined,
+    buttonText: (
+      <>
+        <i className="fas fa-comments"></i>
+        {` Message`}
+      </>
+    ),
+    handler: currentOtherUser
+      ? () => getStartOrOpenChatWithUserHandler(currentOtherUser)
+      : undefined,
     handlerParams: [],
     paramsIncludeEvent: false,
   };
