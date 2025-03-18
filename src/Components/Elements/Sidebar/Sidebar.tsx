@@ -8,8 +8,12 @@ import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const Sidebar = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
-  const { profileImage, currentUser, setShowUpdateProfileImageInterface } =
-    useUserContext();
+  const {
+    profileImage,
+    currentUser,
+    setShowUpdateProfileImageInterface,
+    friendRequestsReceived,
+  } = useUserContext();
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   useEffect(() => {
@@ -102,7 +106,16 @@ const Sidebar = () => {
           className={styles.sidebarOption}
           to={`/${currentUser?.username}/friend-requests`}
         >
-          Friend Requests
+          {
+            <>
+              Friend Requests{" "}
+              {friendRequestsReceived && friendRequestsReceived.length > 0 && (
+                <span className="notifications-count">
+                  {friendRequestsReceived.length}
+                </span>
+              )}
+            </>
+          }
         </Link>
         <Link className={styles.sidebarOption} to="/find-palz">
           Find Palz
