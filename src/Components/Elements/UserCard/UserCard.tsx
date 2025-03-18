@@ -30,7 +30,12 @@ const UserCard = ({ user }: { user: TUser }) => {
     friendRequestsReceived,
     setFriendRequestsReceived,
   } = useUserContext();
-  const { fetchChatsQuery, handleCreateChat, handleOpenChat } = useChatContext();
+  const {
+    fetchChatsQuery,
+    handleCreateChat,
+    handleOpenChat,
+    getCurrentOtherUserFriends,
+  } = useChatContext();
 
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
   const currentUserUpdated: TUser | undefined =
@@ -152,6 +157,28 @@ const UserCard = ({ user }: { user: TUser }) => {
   };
   const startOrOpenChatWithUserHandler = getStartOrOpenChatWithUserHandler();
 
+  const getUserIsMessageable = (): boolean => {
+    const currentUserIsFriendOfFriend: boolean =
+      currentUser && currentUser._id
+        ? getCurrentOtherUserFriends(user).some(
+            (otherUserFriend) =>
+              currentUser._id && otherUserFriend.friends.includes(currentUser._id)
+          )
+        : false;
+
+    if (currentUser && currentUser._id) {
+      if (
+        user.whoCanMessage === "anyone" ||
+        (user.whoCanMessage === "friends" && user.friends.includes(currentUser._id)) ||
+        (user.whoCanMessage === "friends of friends" && currentUserIsFriendOfFriend)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+  const userIsMessageable: boolean = getUserIsMessageable();
+
   return (
     <>
       {showFriendRequestResponseOptions &&
@@ -188,16 +215,18 @@ const UserCard = ({ user }: { user: TUser }) => {
           boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
         }}
       >
-        <i
-          onClick={() => startOrOpenChatWithUserHandler()}
-          style={{
-            position: "absolute",
-            right: "1rem",
-            top: "1rem",
-            fontSize: "1.25rem",
-          }}
-          className="fas fa-comments"
-        ></i>
+        {userIsMessageable && (
+          <i
+            onClick={() => startOrOpenChatWithUserHandler()}
+            style={{
+              position: "absolute",
+              right: "1rem",
+              top: "1rem",
+              fontSize: "1.25rem",
+            }}
+            className="fas fa-comments"
+          ></i>
+        )}
         <img
           style={{ border: `2px solid ${randomColor}` }}
           src={
