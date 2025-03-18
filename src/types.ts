@@ -719,7 +719,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
-  getStartOrOpenChatWithUserHandler: (otherUser: TUser) => () => void;
+  getStartOrOpenChatWithUserHandler: (otherUser: TUser) => void;
   getTotalNumberOfUnreadMessages: (chatArray: TChat[]) => string | number;
   handleSaveEditedMessage: (chat: TChat, editedMessage: TMessage) => void;
   cancelEditingMessage: () => void;

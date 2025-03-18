@@ -657,7 +657,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const getStartOrOpenChatWithUserHandler = (otherUser: TUser): (() => void) => {
+  const getStartOrOpenChatWithUserHandler = (otherUser: TUser): void => {
     const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
       (chat) =>
         chat.members.length === 2 &&
@@ -669,7 +669,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     )[0];
 
     if (existingChatWithListedChatMember) {
-      return () => handleOpenChat(existingChatWithListedChatMember);
+      return handleOpenChat(existingChatWithListedChatMember);
     }
 
     const newChatMembers: string[] =
@@ -677,14 +677,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         ? [otherUser._id, currentUser._id]
         : [];
 
-    return () =>
-      handleCreateChat({
-        _id: new mongoose.Types.ObjectId().toString(),
-        members: newChatMembers,
-        messages: [],
-        chatName: "",
-        dateCreated: Date.now(),
-      });
+    return handleCreateChat({
+      _id: new mongoose.Types.ObjectId().toString(),
+      members: newChatMembers,
+      messages: [],
+      chatName: "",
+      dateCreated: Date.now(),
+    });
   };
 
   const getNumberOfUnreadMessagesInChat = (chat: TChat): string | number => {
