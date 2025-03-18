@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { TUser, TThemeColor } from "../../../types";
+import { TUser, TThemeColor, TChat } from "../../../types";
 import { countries } from "../../../constants";
 import { useState, useEffect } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
@@ -7,6 +7,8 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import TwoOptionsInterface from "../TwoOptionsInterface/TwoOptionsInterface";
 import { Link } from "react-router-dom";
+import { useChatContext } from "../../../Hooks/useChatContext";
+import mongoose from "mongoose";
 
 const UserCard = ({ user }: { user: TUser }) => {
   const { isLoading } = useMainContext();
@@ -28,6 +30,8 @@ const UserCard = ({ user }: { user: TUser }) => {
     friendRequestsReceived,
     setFriendRequestsReceived,
   } = useUserContext();
+  const { fetchChatsQuery, handleCreateChat, handleOpenChat } = useChatContext();
+
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
   const currentUserUpdated: TUser | undefined =
     allUsers && allUsers.filter((user) => user._id === currentUser?._id)[0];
@@ -119,6 +123,35 @@ const UserCard = ({ user }: { user: TUser }) => {
     !currentUserSentFriendRequest &&
     !currentUserReceivedFriendRequest;
 
+  const userChats = fetchChatsQuery.data;
+
+  const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
+    (chat) =>
+      chat.members.length === 2 &&
+      currentUser &&
+      currentUser._id &&
+      chat.members.includes(currentUser._id) &&
+      user._id &&
+      chat.members.includes(user._id)
+  )[0];
+
+  const getStartOrOpenChatWithUserHandler = (): (() => void) => {
+    if (existingChatWithListedChatMember) {
+      return () => handleOpenChat(existingChatWithListedChatMember);
+    }
+    const newChatMembers: string[] =
+      user._id && currentUser && currentUser._id ? [user._id, currentUser._id] : [];
+    return () =>
+      handleCreateChat({
+        _id: new mongoose.Types.ObjectId().toString(),
+        members: newChatMembers,
+        messages: [],
+        chatName: "",
+        dateCreated: Date.now(),
+      });
+  };
+  const startOrOpenChatWithUserHandler = getStartOrOpenChatWithUserHandler();
+
   return (
     <>
       {showFriendRequestResponseOptions &&
@@ -156,6 +189,7 @@ const UserCard = ({ user }: { user: TUser }) => {
         }}
       >
         <i
+          onClick={() => startOrOpenChatWithUserHandler()}
           style={{
             position: "absolute",
             right: "1rem",
