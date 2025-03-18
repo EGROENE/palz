@@ -23,6 +23,8 @@ const EditUserInfoForm = ({
 }) => {
   const { theme } = useMainContext();
   let {
+    whoCanMessage,
+    setWhoCanMessage,
     fetchAllUsersQuery,
     currentUser,
     setCurrentUser,
@@ -112,7 +114,6 @@ const EditUserInfoForm = ({
     whoCanSeeEventsOrganized,
     whoCanSeeEventsInterestedIn,
     whoCanSeeEventsInvitedTo,
-    setWhoCanMessage,
     setDisplayFriendCount,
     setWhoCanSeeLocation,
     setWhoCanSeeFriendsList,
@@ -1158,7 +1159,8 @@ const EditUserInfoForm = ({
     whoCanSeeInstagram !== currentUser?.whoCanSeeInstagram ||
     whoCanSeeEventsOrganized !== currentUser?.whoCanSeeEventsOrganized ||
     whoCanSeeEventsInterestedIn !== currentUser?.whoCanSeeEventsInterestedIn ||
-    whoCanSeeEventsInvitedTo !== currentUser?.whoCanSeeEventsInvitedTo;
+    whoCanSeeEventsInvitedTo !== currentUser?.whoCanSeeEventsInvitedTo ||
+    whoCanMessage !== currentUser?.whoCanMessage;
   return (
     <>
       <h2>
@@ -1842,6 +1844,51 @@ const EditUserInfoForm = ({
                     checked={whoCanSeeLocation === "nobody"}
                     name="who-can-see-location"
                     id="nobody-can-see-location"
+                    type="radio"
+                  />
+                  <span>Nobody</span>
+                </div>
+              </div>
+            </label>
+            <label>
+              <p>Who can message you:</p>
+              <div className="radio-inputs-container">
+                <div className="radio-input-and-label">
+                  <input
+                    id="anyone-can-message-you"
+                    onChange={() => setWhoCanMessage("anyone")}
+                    checked={whoCanMessage === "anyone"}
+                    name="who-can-message-you"
+                    type="radio"
+                  />
+                  <span>Anyone</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanMessage("friends")}
+                    checked={whoCanMessage === "friends"}
+                    name="who-can-message-you"
+                    id="friends-can-message-you"
+                    type="radio"
+                  />
+                  <span>Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanMessage("friends of friends")}
+                    checked={whoCanMessage === "friends of friends"}
+                    name="who-can-message-you"
+                    id="friends-of-friends-can-message-you"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div className="radio-input-and-label">
+                  <input
+                    onChange={() => setWhoCanMessage("nobody")}
+                    checked={whoCanMessage === "nobody"}
+                    name="who-can-message-you"
+                    id="nobody-can-message-you"
                     type="radio"
                   />
                   <span>Nobody</span>
