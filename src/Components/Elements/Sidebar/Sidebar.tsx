@@ -90,9 +90,6 @@ const Sidebar = () => {
         </p>
       </div>
       <div className={styles.sidebarOptionContainer}>
-        <Link to={"/chats"} className={styles.sidebarOption}>
-          Chats
-        </Link>
         <Link to={"/add-event"} className={styles.sidebarOption}>
           Create Event
         </Link>
@@ -122,9 +119,6 @@ const Sidebar = () => {
         </Link>
         <Link className={styles.sidebarOption} to={"/my-palz"}>
           My Palz
-        </Link>
-        <Link className={styles.sidebarOption} to="/settings">
-          Settings
         </Link>
       </div>
     </div>
