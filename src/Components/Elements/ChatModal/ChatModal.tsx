@@ -88,7 +88,6 @@ const ChatModal = () => {
             Object.values(updatedChat.messages.map((message) => message.content)),
             Object.values(currentChat.messages.map((message) => message.content))
           ));
-      console.log(chatWasUpdated);
       if (chatWasUpdated) {
         setCurrentChat(updatedChat);
       }
