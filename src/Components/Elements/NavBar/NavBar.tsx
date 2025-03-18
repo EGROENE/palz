@@ -30,7 +30,7 @@ const NavBar = () => {
           <li style={{ display: "flex", alignItems: "center" }}>
             <Link to={"/chats"}>Chats</Link>
             {totalUnreadUserMessages !== 0 && (
-              <span className={styles.unreadMessages}>{totalUnreadUserMessages}</span>
+              <span className="notifications-count">{totalUnreadUserMessages}</span>
             )}
           </li>
         )}
