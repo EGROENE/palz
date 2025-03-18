@@ -9,19 +9,14 @@ import ChatPreview from "../../Elements/ChatPreview/ChatPreview";
 import Methods from "../../../methods";
 import { TChat, TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
-import ChatModal from "../../Elements/ChatModal/ChatModal";
 import CreateNewChatModal from "../../Elements/CreateNewChatModal/CreateNewChatModal";
 
 const ChatsPage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, fetchAllUsersQuery } = useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
-  const {
-    fetchChatsQuery,
-    showChatModal,
-    showCreateNewChatModal,
-    setShowCreateNewChatModal,
-  } = useChatContext();
+  const { fetchChatsQuery, showCreateNewChatModal, setShowCreateNewChatModal } =
+    useChatContext();
 
   const userChats = fetchChatsQuery.data;
 
@@ -84,7 +79,6 @@ const ChatsPage = () => {
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Chats</h1>
-      {showChatModal && <ChatModal />}
       {showCreateNewChatModal && <CreateNewChatModal />}
       <QueryLoadingOrError
         query={queryForQueryLoadingOrError}

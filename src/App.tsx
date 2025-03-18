@@ -23,6 +23,7 @@ import { useEventContext } from "./Hooks/useEventContext";
 import toast from "react-hot-toast";
 import ChatsPage from "./Components/Pages/ChatsPage/ChatsPage";
 import { useChatContext } from "./Hooks/useChatContext";
+import ChatModal from "./Components/Elements/ChatModal/ChatModal";
 
 function App() {
   const {
@@ -54,7 +55,7 @@ function App() {
     addEventImageMutation,
     removeEventImageMutation,
   } = useEventContext();
-  const { chatCreationInProgress } = useChatContext();
+  const { chatCreationInProgress, showChatModal } = useChatContext();
 
   const navigation = useNavigate();
   const currentURL = useLocation().pathname;
@@ -184,6 +185,7 @@ function App() {
         <LoadingModal message="Removing image..." />
       )}
       {chatCreationInProgress && <LoadingModal message="Creating chat..." />}
+      {showChatModal && <ChatModal />}
       <Routes>
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />
