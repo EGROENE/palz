@@ -369,7 +369,7 @@ const ChatModal = () => {
     }
 
     // if currentUser is admin, but LCM isn't, 'add as admin' btn:
-    return "Add as Admin";
+    return "Add Admin";
   };
 
   return (
