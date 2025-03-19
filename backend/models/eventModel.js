@@ -15,6 +15,10 @@ const eventSchema = new Schema({
     type: Array,
     required: true,
   },
+  blockedUsersEvent: {
+    type: [String],
+    required: true,
+  },
   description: {
     type: String,
     required: true,
