@@ -312,6 +312,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       if (eventValuesToUpdate?.invitees) {
         setInvitees(eventValuesToUpdate.invitees);
       }
+      if (eventValuesToUpdate?.blockedUsers) {
+        setBlockedUsers(eventValuesToUpdate.blockedUsers);
+      }
       if (eventValuesToUpdate?.description) {
         setEventDescription(eventValuesToUpdate.description);
       }
