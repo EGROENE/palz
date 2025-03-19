@@ -26,7 +26,12 @@ const UserListModal = ({
   buttonTwoLink,
   randomColor,
 }: {
-  listType: "invitees" | "rsvpd-users" | "other-user-friends" | "blocked-users";
+  listType:
+    | "invitees"
+    | "rsvpd-users"
+    | "other-user-friends"
+    | "blocked-users"
+    | "mutual-friends";
   renderButtonOne: boolean;
   renderButtonTwo: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
@@ -97,7 +102,7 @@ const UserListModal = ({
   };
 
   const getButtonOneLink = (user: TUser): string | null => {
-    if (listType === "other-user-friends") {
+    if (listType === "other-user-friends" || listType === "mutual-friends") {
       return `/users/${user.username}`;
     }
     return null;
