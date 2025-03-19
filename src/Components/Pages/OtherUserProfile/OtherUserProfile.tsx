@@ -49,6 +49,7 @@ const OtherUserProfile = () => {
     allUsers && allUsers.filter((user) => user.username === username)[0];
 
   const [showFriends, setShowFriends] = useState<boolean>(false);
+  const [showMutualFriends, setShowMutualFriends] = useState<boolean>(false);
 
   const currentOtherUserIsBlocked =
     blockedUsers && currentOtherUser?._id && blockedUsers.includes(currentOtherUser._id);
@@ -92,6 +93,10 @@ const OtherUserProfile = () => {
 
     if (showFriends) {
       setShowFriends(false);
+    }
+
+    if (showMutualFriends) {
+      setShowMutualFriends(false);
     }
 
     // If logged-in user is blocked by currentOtherUser:
@@ -336,9 +341,9 @@ const OtherUserProfile = () => {
     }
     return currentOtherUserPalz;
   };
-  const currentOtherUserPalz = getCurrentOtherUserPalz();
+  const currentOtherUserPalz: TUser[] = getCurrentOtherUserPalz();
 
-  const combinedPalz = currentUserPalz.concat(currentOtherUserPalz);
+  const combinedPalz: TUser[] = currentUserPalz.concat(currentOtherUserPalz);
 
   const palzInCommon = Methods.removeDuplicatesFromArray(
     combinedPalz.filter(
@@ -564,6 +569,17 @@ const OtherUserProfile = () => {
   };
   const numberOfGroupChatsInCommon = getNumberOfGroupChatsInCommon();
 
+  const getPalzInCommonHeader = (): string => {
+    if (palzInCommon.length > 2) {
+      return `${palzInCommon
+        .slice(0, 3)
+        .map((pal) => `${pal.firstName} ${pal.lastName}`)
+        .join(", ")} + ${palzInCommon.length - 2} more`;
+    }
+    return palzInCommon.map((pal) => `${pal.firstName} ${pal.lastName}`).join(" & ");
+  };
+  const palzInCommonHeader = getPalzInCommonHeader();
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <QueryLoadingOrError
@@ -635,6 +651,17 @@ const OtherUserProfile = () => {
                     <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
                   </div>
                 )}
+              {palzInCommon.length > 0 ? (
+                <p
+                  onClick={
+                    palzInCommon.length > 2 ? () => setShowMutualFriends(true) : undefined
+                  }
+                >
+                  You are both friends with {palzInCommonHeader}{" "}
+                </p>
+              ) : (
+                <p>No mutual friends</p>
+              )}
               {numberOfGroupChatsInCommon > 0 && (
                 <p>{`You are in ${numberOfGroupChatsInCommon} group chats together`}</p>
               )}
@@ -721,23 +748,6 @@ const OtherUserProfile = () => {
             ) : (
               <p>No interests to show</p>
             )}
-            {palzInCommon.length > 0 ? (
-              <div className={styles.infoPoint}>
-                <header>Palz in common : </header>
-                {palzInCommon.map((pal) => (
-                  <Tab
-                    key={pal._id}
-                    info={pal}
-                    userMayNotDelete={true}
-                    randomColor={randomColor}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className={styles.infoPoint}>
-                <p>No mutual friends</p>
-              </div>
-            )}
             {currentOtherUser.friends.length > 0 && currentUserCanSeeFriendsList && (
               <div className={styles.infoPoint}>
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -758,6 +768,17 @@ const OtherUserProfile = () => {
                   ></i>
                 </div>
               </div>
+            )}
+            {showMutualFriends && (
+              <UserListModal
+                listType="mutual-friends"
+                renderButtonOne={true}
+                buttonOneText="View Profile"
+                renderButtonTwo={false}
+                closeModalMethod={setShowMutualFriends}
+                header="Mutual Friends"
+                userIDArray={palzInCommon.map((pal) => pal._id)}
+              />
             )}
             {showFriends && (
               <UserListModal
