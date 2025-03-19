@@ -27,8 +27,7 @@ const EventForm = ({
   const { handleCityStateCountryInput, allUsers, currentUser, blockedUsers } =
     useUserContext();
   const {
-    /*  eventBeingEdited,
-    setEventBeingEdited, */
+    blockedUsersEvent,
     allEvents,
     currentEvent,
     setCurrentEvent,
@@ -936,6 +935,7 @@ const EventForm = ({
     creator: currentUser?._id,
     organizers: organizers,
     invitees: invitees,
+    blockedUsersEvent: blockedUsersEvent,
     description: eventDescription.trim(),
     additionalInfo: eventAdditionalInfo.trim(),
     city: Methods.formatHyphensAndSpacesInString(
