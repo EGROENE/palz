@@ -582,6 +582,10 @@ export type TEventContext = {
   setDisplayedPotentialInviteeCount: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
+  displayedPotentialBlockeeCount: number | undefined;
+  setDisplayedPotentialBlockeeCount: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
   displayedPotentialCoOrganizerCount: number | undefined;
   setDisplayedPotentialCoOrganizerCount: React.Dispatch<
     React.SetStateAction<number | undefined>
