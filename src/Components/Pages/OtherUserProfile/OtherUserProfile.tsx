@@ -350,6 +350,7 @@ const OtherUserProfile = () => {
       (pal) => combinedPalz.indexOf(pal) !== combinedPalz.lastIndexOf(pal)
     )
   );
+  console.log(palzInCommon.length);
 
   const getCurrentUserCanSeeFriendsList = (): boolean => {
     if (currentUser && currentUser._id) {
@@ -571,12 +572,16 @@ const OtherUserProfile = () => {
 
   const getPalzInCommonHeader = (): string => {
     if (palzInCommon.length > 2) {
-      return `${palzInCommon
+      return `You are both friends with ${palzInCommon
         .slice(0, 3)
         .map((pal) => `${pal.firstName} ${pal.lastName}`)
-        .join(", ")} + ${palzInCommon.length - 2} more`;
+        .join(", ")} +${palzInCommon.length - 2} more`;
+    } else if (palzInCommon.length > 0) {
+      return `You are both friends with ${palzInCommon
+        .map((pal) => `${pal.firstName} ${pal.lastName}`)
+        .join(" & ")}`;
     }
-    return palzInCommon.map((pal) => `${pal.firstName} ${pal.lastName}`).join(" & ");
+    return "No mutual friends";
   };
   const palzInCommonHeader = getPalzInCommonHeader();
 
@@ -635,7 +640,7 @@ const OtherUserProfile = () => {
               <header style={{ color: `${randomColor}` }}>
                 {currentOtherUser.firstName} {currentOtherUser.lastName}
               </header>
-              <p>{currentOtherUser.username}</p>
+              <p style={{ color: randomColor }}>{currentOtherUser.username}</p>
               {currentUser?._id &&
                 currentOtherUser.whoCanSeeLocation !== "nobody" &&
                 (currentOtherUser.whoCanSeeLocation === "anyone" ||
@@ -647,23 +652,38 @@ const OtherUserProfile = () => {
                 currentOtherUser.stateProvince !== "" &&
                 currentOtherUser.country !== "" && (
                   <div className={styles.userLocationContainer}>
-                    <p>{`${currentOtherUser.city}, ${currentOtherUser.stateProvince}`}</p>
+                    <p
+                      style={{ color: randomColor }}
+                    >{`${currentOtherUser.city}, ${currentOtherUser.stateProvince}`}</p>
                     <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
                   </div>
                 )}
-              {palzInCommon.length > 0 ? (
-                <p
-                  onClick={
-                    palzInCommon.length > 2 ? () => setShowMutualFriends(true) : undefined
-                  }
-                >
-                  You are both friends with {palzInCommonHeader}{" "}
-                </p>
-              ) : (
-                <p>No mutual friends</p>
-              )}
+              <p
+                style={{ color: randomColor }}
+                className={
+                  palzInCommon.length > 2 ? `${styles.mutualFriendsLink}` : undefined
+                }
+                onClick={
+                  palzInCommon.length > 2 ? () => setShowMutualFriends(true) : undefined
+                }
+              >
+                {palzInCommonHeader}
+                {palzInCommon.length > 2 && (
+                  <i
+                    style={{
+                      transform: "rotate(22.5deg)",
+                      fontSize: "1.25rem",
+                      marginLeft: "0.25rem",
+                    }}
+                    className="fas fa-arrow-up"
+                  ></i>
+                )}
+              </p>
+
               {numberOfGroupChatsInCommon > 0 && (
-                <p>{`You are in ${numberOfGroupChatsInCommon} group chats together`}</p>
+                <p
+                  style={{ color: randomColor }}
+                >{`You are in ${numberOfGroupChatsInCommon} group chats together`}</p>
               )}
               {(getSocialMediumIsVisible("facebook") ||
                 getSocialMediumIsVisible("instagram") ||

@@ -3,33 +3,10 @@
   display: flex;
   padding: 2rem 0;
   justify-content: space-between;
-  height: 17rem;
+  /* height: 17rem; */
   font-size: 3.2em;
   line-height: 1.5;
   margin: 0.5rem auto;
-
-  background: linear-gradient(
-    80deg,
-    var(--primary-color),
-    var(--primary-color),
-    var(--secondary-color),
-    var(--secondary-color)
-  );
-  background: -webkit-linear-gradient(
-    34deg,
-    var(--primary-color),
-    var(--primary-color),
-    var(--secondary-color),
-    var(--secondary-color)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  background-size: 300% !important;
-  -webkit-background-clip: text;
-  animation: animated_header 10s ease-in-out infinite;
-  -moz-animation: animated_header 10s ease-in-out infinite;
-  -webkit-animation: animated_header 10s ease-in-out infinite;
 }
 
 .mainInfoContainer {
@@ -70,14 +47,42 @@
   font-size: 2.5rem;
   font-weight: 700;
   -webkit-text-fill-color: transparent;
+
+  background: linear-gradient(
+    80deg,
+    var(--primary-color),
+    var(--primary-color),
+    var(--secondary-color),
+    var(--secondary-color)
+  );
+  background: -webkit-linear-gradient(
+    34deg,
+    var(--primary-color),
+    var(--primary-color),
+    var(--secondary-color),
+    var(--secondary-color)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 300% !important;
+  -webkit-background-clip: text;
+  animation: animated_header 10s ease-in-out infinite;
+  -moz-animation: animated_header 10s ease-in-out infinite;
+  -webkit-animation: animated_header 10s ease-in-out infinite;
+}
+
+.mutualFriendsLink:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .kopfzeile p {
   font-family: var(--header-font);
-  color: var(--text-color-opposite);
+  /* color: var(--text-color-opposite); */
   font-weight: 700;
   font-size: 1.5rem;
-  -webkit-text-fill-color: transparent;
+  /* -webkit-text-fill-color: transparent; */
   margin: 0;
 }
 
