@@ -705,7 +705,7 @@ const OtherUserProfile = () => {
             )}
             {palzInCommon.length > 0 ? (
               <div className={styles.infoPoint}>
-                <header>You are both palz with : </header>
+                <header>Palz in common : </header>
                 {palzInCommon.map((pal) => (
                   <Tab
                     key={pal._id}
