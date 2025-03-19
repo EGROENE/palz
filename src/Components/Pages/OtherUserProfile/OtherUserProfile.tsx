@@ -722,12 +722,23 @@ const OtherUserProfile = () => {
             )}
             {currentOtherUser.friends.length > 0 && currentUserCanSeeFriendsList && (
               <div className={styles.infoPoint}>
-                <header
-                  className={styles.clickableHeader}
-                  onClick={() => setShowFriends(true)}
-                >
-                  See friends
-                </header>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <header
+                    className={styles.clickableHeader}
+                    onClick={() => setShowFriends(true)}
+                  >
+                    See friends
+                  </header>
+                  <i
+                    style={{
+                      transform: "rotate(22.5deg)",
+                      fontSize: "1.25rem",
+                      marginLeft: "0.25rem",
+                      color: randomColor,
+                    }}
+                    className="fas fa-arrow-up"
+                  ></i>
+                </div>
               </div>
             )}
             {showFriends && (
