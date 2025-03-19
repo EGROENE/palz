@@ -117,7 +117,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     currentEvent ? currentEvent.relatedInterests : []
   );
   const [eventImages, setEventImages] = useState<string[]>([]);
-  const [blockedUsersEvent, setBlockedUsersEvent] = useState<string[]>([]);
+  const [blockedUsersEvent, setBlockedUsersEvent] = useState<string[]>(
+    currentEvent ? currentEvent.blockedUsersEvent : []
+  );
   ///////////////////////
 
   // Update currentEvent, eventImages w/ most recent info after fetchAllEventsQuery.data changes
