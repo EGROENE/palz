@@ -146,6 +146,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       setOrganizers(updatedEvent.organizers);
       setInvitees(updatedEvent.invitees);
       setRelatedInterests(updatedEvent.relatedInterests);
+      setBlockedUsers(updatedEvent.blockedUsers);
     }
   }, [fetchAllEventsQuery.data]);
 
