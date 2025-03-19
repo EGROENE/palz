@@ -570,7 +570,7 @@ const OtherUserProfile = () => {
   };
   const numberOfGroupChatsInCommon = getNumberOfGroupChatsInCommon();
 
-  const getPalzInCommonHeader = (): string => {
+  const getPalzInCommonText = (): string => {
     if (palzInCommon.length > 2) {
       return `You are both friends with ${palzInCommon
         .slice(0, 3)
@@ -583,7 +583,7 @@ const OtherUserProfile = () => {
     }
     return "No mutual friends";
   };
-  const palzInCommonHeader = getPalzInCommonHeader();
+  const palzInCommonText = getPalzInCommonText();
 
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
@@ -667,7 +667,7 @@ const OtherUserProfile = () => {
                   palzInCommon.length > 2 ? () => setShowMutualFriends(true) : undefined
                 }
               >
-                {palzInCommonHeader}
+                {palzInCommonText}
                 {palzInCommon.length > 2 && (
                   <i
                     style={{
