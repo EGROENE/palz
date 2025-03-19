@@ -885,6 +885,7 @@ const EventForm = ({
         publicity !== currentEvent?.publicity ||
         !Methods.arraysAreIdentical(organizers, currentEvent?.organizers) ||
         !Methods.arraysAreIdentical(currentEvent?.invitees, invitees) ||
+        !Methods.arraysAreIdentical(currentEvent?.blockedUsersEvent, blockedUsersEvent) ||
         !Methods.arraysAreIdentical(currentEvent?.relatedInterests, relatedInterests)
       );
     }
@@ -904,6 +905,7 @@ const EventForm = ({
       publicity !== "public" ||
       organizers.length > 1 ||
       invitees.length > 0 ||
+      blockedUsersEvent.length > 0 ||
       relatedInterests.length > 0
     );
   };
