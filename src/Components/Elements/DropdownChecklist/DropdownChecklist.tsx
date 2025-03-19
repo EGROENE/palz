@@ -53,7 +53,6 @@ const DropdownChecklist = ({
       // for either handleAddRemoveUserAsInvitee, handleAddRemoveUserFromChat, or handleAddRemoveUserFromChat:
       if (
         usedFor === "potential-invitees" ||
-        usedFor === "potential-invitees" ||
         usedFor === "potential-chat-members" ||
         usedFor === "potential-additional-chat-members"
       ) {
