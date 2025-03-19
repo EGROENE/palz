@@ -116,7 +116,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [relatedInterests, setRelatedInterests] = useState<string[]>(
     currentEvent ? currentEvent.relatedInterests : []
   );
-  const [eventImages, setEventImages] = useState<string[]>([]);
+  const [eventImages, setEventImages] = useState<string[]>(
+    currentEvent ? currentEvent.images : []
+  );
   const [blockedUsersEvent, setBlockedUsersEvent] = useState<string[]>(
     currentEvent ? currentEvent.blockedUsersEvent : []
   );
