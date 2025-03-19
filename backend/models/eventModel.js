@@ -8,11 +8,11 @@ const eventSchema = new Schema({
     required: true,
   },
   organizers: {
-    type: Array,
+    type: [String],
     required: true,
   },
   invitees: {
-    type: Array,
+    type: [String],
     required: true,
   },
   blockedUsersEvent: {
@@ -72,19 +72,19 @@ const eventSchema = new Schema({
     required: true,
   },
   interestedUsers: {
-    type: Array,
+    type: [String],
     required: true,
   },
   disinterestedUsers: {
-    type: Array,
+    type: [String],
     required: true,
   },
   images: {
-    type: Array,
+    type: [String],
     required: false,
   },
   relatedInterests: {
-    type: Array,
+    type: [String],
     required: false,
   },
   address: {
