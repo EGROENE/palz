@@ -83,6 +83,7 @@ export type TUser = {
 
 export type TEvent = {
   _id?: string;
+  blockedUsers: string[];
   creator: string | undefined;
   title: string;
   organizers: string[];
@@ -200,6 +201,7 @@ export type TUserValuesToUpdate = {
 
 export type TEventValuesToUpdate = {
   relatedInterests?: string[] | undefined;
+  blockedUsers?: string[] | undefined;
   images?: string[] | undefined;
   address?: string | undefined;
   maxParticipants?: number | null;
