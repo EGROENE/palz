@@ -430,6 +430,7 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
     "creator": eventData.creator,
     "organizers": eventData.organizers,
     "invitees": eventData.invitees,
+    "blockedUsersEvent": eventData.blockedUsersEvent,
     "description": eventData.description,
     "additionalInfo": eventData.additionalInfo,
     "city": eventData.city,
