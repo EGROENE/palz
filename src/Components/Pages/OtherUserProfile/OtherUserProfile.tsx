@@ -43,7 +43,7 @@ const OtherUserProfile = () => {
     fetchAllUsersQuery,
   } = useUserContext();
   const { fetchAllEventsQuery, allEvents } = useEventContext();
-  const { getStartOrOpenChatWithUserHandler } = useChatContext();
+  const { getStartOrOpenChatWithUserHandler, fetchChatsQuery } = useChatContext();
   const { username } = useParams();
   const currentOtherUser =
     allUsers && allUsers.filter((user) => user.username === username)[0];
@@ -549,6 +549,21 @@ const OtherUserProfile = () => {
     return false;
   };
 
+  const getNumberOfGroupChatsInCommon = (): number => {
+    const currentUserChats = fetchChatsQuery.data;
+
+    let chatsInCommon = [];
+    if (currentUserChats && currentOtherUser && currentOtherUser._id) {
+      for (const chat of currentUserChats) {
+        if (chat.members.length > 2 && chat.members.includes(currentOtherUser._id)) {
+          chatsInCommon.push(chat);
+        }
+      }
+    }
+    return chatsInCommon.length;
+  };
+  const numberOfGroupChatsInCommon = getNumberOfGroupChatsInCommon();
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <QueryLoadingOrError
@@ -620,6 +635,9 @@ const OtherUserProfile = () => {
                     <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
                   </div>
                 )}
+              {numberOfGroupChatsInCommon > 0 && (
+                <p>{`You are in ${numberOfGroupChatsInCommon} group chats together`}</p>
+              )}
               {(getSocialMediumIsVisible("facebook") ||
                 getSocialMediumIsVisible("instagram") ||
                 getSocialMediumIsVisible("x")) && (
