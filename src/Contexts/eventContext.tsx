@@ -119,30 +119,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventImages, setEventImages] = useState<string[]>([]);
   ///////////////////////
 
-  /* useEffect(() => {
-    if (currentEvent && currentUser?._id) {
-      setUserRSVPd(currentEvent.interestedUsers.includes(currentUser._id));
-      setEventTitle(currentEvent.title);
-      setEventDescription(currentEvent.description);
-      setEventAdditionalInfo(currentEvent.additionalInfo);
-      setEventCity(currentEvent.city);
-      setEventState(currentEvent.stateProvince);
-      setEventCountry(currentEvent.country);
-      setEventStartDateMidnightUTCInMS(currentEvent.eventStartDateMidnightUTCInMS);
-      setEventStartTimeAfterMidnightUTCInMS(
-        currentEvent.eventStartTimeAfterMidnightUTCInMS
-      );
-      setEventEndDateMidnightUTCInMS(currentEvent.eventEndDateMidnightUTCInMS);
-      setEventEndTimeAfterMidnightUTCInMS(currentEvent.eventEndTimeAfterMidnightUTCInMS);
-      setEventAddress(currentEvent.address);
-      setMaxParticipants(currentEvent.maxParticipants);
-      setPublicity(currentEvent.publicity);
-      setOrganizers(currentEvent.organizers);
-      setInvitees(currentEvent.invitees);
-      setRelatedInterests(currentEvent.relatedInterests);
-    }
-  }, [currentEvent, allEvents]); */
-
   // Update currentEvent, eventImages w/ most recent info after fetchAllEventsQuery.data changes
   useEffect(() => {
     if (fetchAllEventsQuery.data && currentEvent && currentUser && currentUser._id) {
