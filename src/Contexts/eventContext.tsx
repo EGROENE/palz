@@ -622,6 +622,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           organizers: organizers,
         }),
         ...(invitees !== currentEvent.invitees && { invitees: invitees }),
+        ...(blockedUsersEvent !== currentEvent.blockedUsersEvent && {
+          blockedUsersEvent: blockedUsersEvent,
+        }),
         ...(eventDescription !== "" &&
           eventDescription !== currentEvent.description && {
             description: eventDescription.trim(),
