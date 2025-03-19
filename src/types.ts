@@ -83,7 +83,7 @@ export type TUser = {
 
 export type TEvent = {
   _id?: string;
-  blockedUsers: string[];
+  blockedUsersEvent: string[];
   creator: string | undefined;
   title: string;
   organizers: string[];
@@ -201,7 +201,7 @@ export type TUserValuesToUpdate = {
 
 export type TEventValuesToUpdate = {
   relatedInterests?: string[] | undefined;
-  blockedUsers?: string[] | undefined;
+  blockedUsersEvent?: string[] | undefined;
   images?: string[] | undefined;
   address?: string | undefined;
   maxParticipants?: number | null;
@@ -678,8 +678,8 @@ export type TEventContext = {
   >;
   eventImages: string[];
   setEventImages: React.Dispatch<React.SetStateAction<string[]>>;
-  blockedUsers: string[];
-  setBlockedUsers: React.Dispatch<React.SetStateAction<string[]>>;
+  blockedUsersEvent: string[];
+  setBlockedUsersEvent: React.Dispatch<React.SetStateAction<string[]>>;
   allEvents: TEvent[] | undefined;
   fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
