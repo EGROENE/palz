@@ -1160,7 +1160,8 @@ form textarea {
 }
 
 #potential-invitees-search,
-#event-co-organizers-search {
+#event-co-organizers-search,
+#potential-blockees-search {
   width: 37% !important;
 }
 
