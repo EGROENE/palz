@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TThemeColor } from "../../../types";
+import { TThemeColor, TUser } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -119,6 +119,15 @@ const CreateNewChatModal = () => {
 
   const chatCanBeCreated = chatNameError === "" && usersToAddToChat.length > 0;
 
+  let usersToAdd: TUser[] = [];
+  for (const userID of usersToAddToChat) {
+    for (const otherUser of allOtherUsers) {
+      if (otherUser._id === userID) {
+        usersToAdd.push(otherUser);
+      }
+    }
+  }
+
   return (
     <div className="modal-background">
       <i
@@ -140,7 +149,7 @@ const CreateNewChatModal = () => {
         <header>Add people to chat:</header>
         {usersToAddToChat.length > 0 && (
           <div className="added-user-tab-container">
-            {usersToAddToChat.map((user) => (
+            {usersToAdd.map((user) => (
               <Tab
                 key={user._id}
                 info={user}
@@ -180,7 +189,7 @@ const CreateNewChatModal = () => {
               action={handleAddRemoveUserFromChat}
               actionEventParamNeeded={false}
               displayedItemsArray={potentialChatMembers}
-              storageArray={usersToAddToChat.map((user) => user._id)}
+              storageArray={usersToAdd.map((user) => user._id)}
               setStorageArray={setUsersToAddToChat}
               displayedItemsCount={numberOfPotentialChatMembersDisplayed}
               setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
@@ -206,14 +215,9 @@ const CreateNewChatModal = () => {
           </button>
           <button
             onClick={() => {
-              const userIDsToAddToChat = usersToAddToChat
-                .map((user) => {
-                  if (user._id) {
-                    return user._id;
-                  }
-                  return "";
-                })
-                .concat(currentUser && currentUser._id ? currentUser._id : "");
+              const userIDsToAddToChat = usersToAddToChat.concat(
+                currentUser && currentUser._id ? currentUser._id : ""
+              );
               handleCreateChat({
                 _id: new mongoose.Types.ObjectId().toString(),
                 members: userIDsToAddToChat,
