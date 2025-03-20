@@ -614,7 +614,7 @@ const EventForm = ({
   const handlePublicPrivateBoxChecking = (option: "public" | "private"): void =>
     setPublicity(option);
 
-  const handlePotentialCoOrganizersAndInviteesSearchQuery = (
+  const handleDropdownListSearchQuery = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: "co-organizers" | "invitees" | "blockees"
   ): void => {
@@ -1536,9 +1536,7 @@ const EventForm = ({
           }
           isDisabled={isLoading}
           query={coOrganizersSearchQuery}
-          inputOnChange={(e) =>
-            handlePotentialCoOrganizersAndInviteesSearchQuery(e, "co-organizers")
-          }
+          inputOnChange={(e) => handleDropdownListSearchQuery(e, "co-organizers")}
           placeholder="Search users by username, first/last names"
           clearQueryOnClick={() => {
             setCoOrganizersSearchQuery("");
@@ -1613,9 +1611,7 @@ const EventForm = ({
           }
           isDisabled={isLoading}
           query={inviteesSearchQuery}
-          inputOnChange={(e) =>
-            handlePotentialCoOrganizersAndInviteesSearchQuery(e, "invitees")
-          }
+          inputOnChange={(e) => handleDropdownListSearchQuery(e, "invitees")}
           placeholder="Search users by username, first/last names"
           clearQueryOnClick={() => {
             setInviteesSearchQuery("");
@@ -1690,9 +1686,7 @@ const EventForm = ({
           }
           isDisabled={isLoading}
           query={blockeesSearchQuery}
-          inputOnChange={(e) =>
-            handlePotentialCoOrganizersAndInviteesSearchQuery(e, "blockees")
-          }
+          inputOnChange={(e) => handleDropdownListSearchQuery(e, "blockees")}
           placeholder="Search users by username, first/last names"
           clearQueryOnClick={() => {
             setBlockeesSearchQuery("");
