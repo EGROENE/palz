@@ -24,7 +24,7 @@ const SearchBar = ({
   isSideButton: boolean;
   sideButtonText?: string;
   sideButtonIsDisabled?: boolean;
-  addMethod?: (input: string, e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
+  addMethod?: Function;
   randomColor?: TThemeColor;
   title?: string;
   searchBoxRef?: React.MutableRefObject<HTMLInputElement | null>;
