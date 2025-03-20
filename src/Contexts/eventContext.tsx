@@ -164,7 +164,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addEventImage(event, base64),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-      queryClient.refetchQueries({queryKey: ["allEvents"]})
+      queryClient.refetchQueries({ queryKey: ["allEvents"] });
       if (currentEvent && fetchAllEventsQuery.data) {
         allEvents = fetchAllEventsQuery.data;
         const updatedEvent = allEvents.filter(
@@ -206,7 +206,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }) => Requests.removeEventImage(event, imageToBeRemoved),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-      queryClient.refetchQueries({queryKey: ["allEvents"]})
+      queryClient.refetchQueries({ queryKey: ["allEvents"] });
       allEvents = fetchAllEventsQuery.data;
       if (currentEvent && fetchAllEventsQuery.data) {
         allEvents = fetchAllEventsQuery.data;
@@ -473,6 +473,39 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     onError: (error) => {
       console.log(error);
       toast.error("Could not remove invitee. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => setIsLoading(false),
+  });
+
+  const removeSelfAsEventOrganizerMutation = useMutation({
+    mutationFn: ({ event, user }: { event: TEvent; user: TUser }) =>
+      Requests.removeOrganizer(event, user),
+    onSuccess: (data) => {
+      if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
+        queryClient.refetchQueries({ queryKey: ["allEvents"] });
+        toast("You have removed yourself as an organizer of this event.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+        // Redirect to currentUser's homepage, as they've lost rights to edit event:
+        navigation(`/${currentUser?.username}`);
+      } else {
+        throw Error;
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Unable to remove you as organizer; please try again.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
           color: theme === "dark" ? "black" : "white",
