@@ -763,23 +763,23 @@ const EventForm = ({
       setRelatedInterests(currentEvent.relatedInterests);
     } else {
       setEventTitle("");
-      setEventTitleError("");
+      setEventTitleError("Please enter a title");
       setEventDescription("");
-      setEventDescriptionError("");
+      setEventDescriptionError("Please enter a description");
       setEventAdditionalInfo("");
       setEventAdditionalInfoError("");
       setEventCity("");
       setEventState("");
       setEventCountry("");
-      setEventLocationError("");
+      setEventLocationError("Please enter a location");
       setEventStartDateMidnightUTCInMS(0);
       setEventStartTimeAfterMidnightUTCInMS(-1);
-      setEventStartDateTimeError("");
+      setEventStartDateTimeError("Please enter a start date & time");
       setEventEndDateMidnightUTCInMS(0);
       setEventEndTimeAfterMidnightUTCInMS(-1);
-      setEventEndDateTimeError("");
+      setEventEndDateTimeError("Please enter an end date & time");
       setEventAddress("");
-      setEventAddressError("");
+      setEventAddressError("Please enter an address");
       setMaxParticipants(null);
       setPublicity("public");
       setOrganizers([`${currentUser?._id}`]);
@@ -823,8 +823,10 @@ const EventForm = ({
         }
       } else {
         // When adding a newly created event:
-        setAddEventIsInProgress(true);
-        createEventMutation.mutate({ eventInfos });
+        if (allRequiredFieldsFilled) {
+          setAddEventIsInProgress(true);
+          createEventMutation.mutate({ eventInfos });
+        }
       }
     } else {
       window.alert(
@@ -955,14 +957,25 @@ const EventForm = ({
     eventEndDateTimeError === "" &&
     eventAddressError === "";
 
+  const allRequiredFieldsFilled: boolean =
+    eventTitle !== "" &&
+    eventDescription !== "" &&
+    eventCity !== "" &&
+    eventState !== "" &&
+    eventCountry !== "" &&
+    eventStartDateMidnightUTCInMS !== 0 &&
+    eventStartTimeAfterMidnightUTCInMS !== -1 &&
+    eventEndDateMidnightUTCInMS !== 0 &&
+    eventEndTimeAfterMidnightUTCInMS !== -1 &&
+    eventAddress !== "";
+
   const getSubmitButtonIsDisabled = (): boolean => {
     if (isLoading) {
       return true;
     } else if (usedFor === "edit-event") {
-      // return !(changesMade && allRequiredFieldsFilled && areNoErrors);
-      return !changesMade;
+      return !(changesMade && allRequiredFieldsFilled && areNoErrors);
+      //return !changesMade || !allRequiredFieldsFilled || !areNoErrors;
     }
-    //return !(areNoErrors && allRequiredFieldsFilled);
     return false;
   };
   const submitButtonIsDisabled: boolean = getSubmitButtonIsDisabled();
