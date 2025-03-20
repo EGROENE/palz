@@ -27,6 +27,11 @@ const EventForm = ({
   const { handleCityStateCountryInput, allUsers, currentUser, blockedUsers } =
     useUserContext();
   const {
+    handleAddRemoveBlockedUserOnEvent,
+    handleAddRemoveUserAsInvitee,
+    displayedPotentialBlockeeCount,
+    setDisplayedPotentialBlockeeCount,
+    setBlockedUsersEvent,
     blockedUsersEvent,
     allEvents,
     currentEvent,
@@ -112,6 +117,7 @@ const EventForm = ({
     | `image${string}`
     | "coOrganizers"
     | "invitees"
+    | "blockees"
     | undefined
   >();
   // REFS:
@@ -130,15 +136,19 @@ const EventForm = ({
   const privateRef = useRef<HTMLInputElement | null>(null);
   const coOrganizersRef = useRef<HTMLInputElement | null>(null);
   const inviteesRef = useRef<HTMLInputElement | null>(null);
+  const blockeesRef = useRef<HTMLInputElement | null>(null);
   ///////
 
   const [potentialCoOrganizers, setPotentialCoOrganizers] = useState<TUser[]>([]);
   const [potentialInvitees, setPotentialInvitees] = useState<TUser[]>([]);
+  const [potentialBlockees, setPotentialBlockees] = useState<TUser[]>([]);
   const [coOrganizersSearchQuery, setCoOrganizersSearchQuery] = useState<string>("");
   const [inviteesSearchQuery, setInviteesSearchQuery] = useState<string>("");
+  const [blockeesSearchQuery, setBlockeesSearchQuery] = useState<string>("");
   const [showPotentialCoOrganizers, setShowPotentialCoOrganizers] =
     useState<boolean>(false);
   const [showPotentialInvitees, setShowPotentialInvitees] = useState<boolean>(false);
+  const [showPotentialBlockees, setShowPotentialBlockees] = useState<boolean>(false);
 
   const [showEventCountries, setShowEventCountries] = useState<boolean>(false);
 
@@ -211,8 +221,10 @@ const EventForm = ({
           }
         })
       );
+
+      setPotentialBlockees(allOtherUsers);
     }
-  }, [invitees, organizers]);
+  }, [invitees, organizers, blockedUsersEvent]);
 
   // Make allOtherUsers consist first of currentUser's friends, then all others
   const currentUserFriends = allUsers
@@ -604,7 +616,7 @@ const EventForm = ({
 
   const handlePotentialCoOrganizersAndInviteesSearchQuery = (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: "co-organizers" | "invitees"
+    field: "co-organizers" | "invitees" | "blockees"
   ): void => {
     e.preventDefault();
     const inputCleaned = e.target.value.replace(/\s+/g, " ");
@@ -645,7 +657,8 @@ const EventForm = ({
             })
           );
         }
-      } else {
+      }
+      if (field === "invitees") {
         setInviteesSearchQuery(inputCleaned);
         setShowPotentialInvitees(true);
         if (inputCleaned.replace(/\s+/g, "") !== "") {
@@ -680,21 +693,29 @@ const EventForm = ({
           );
         }
       }
-    }
-  };
-
-  /* prop could be user: TUser only, but TS must be satisfied (this function, along w/ handleAddRemoveUserAsOrganizer, which has the props now included here, are both passed to Tab as removeHandler) */
-  const handleAddRemoveUserAsInvitee = (
-    e?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    user?: TUser
-  ): void => {
-    e?.preventDefault();
-    if (user?._id) {
-      if (invitees.includes(user._id)) {
-        // Remove user as invitee
-        setInvitees(invitees.filter((inviteeID) => inviteeID !== user?._id));
-      } else {
-        setInvitees(invitees.concat(user._id));
+      if (field === "blockees") {
+        setBlockeesSearchQuery(inputCleaned);
+        setShowPotentialBlockees(true);
+        if (inputCleaned.replace(/\s+/g, "") !== "") {
+          const matchingUsers: TUser[] = [];
+          for (const user of allOtherUsers) {
+            if (
+              user.firstName &&
+              user.lastName &&
+              user.username &&
+              (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+                user?.lastName
+                  .toLowerCase()
+                  .includes(inputCleaned.toLowerCase().trim()) ||
+                user?.username.includes(inputCleaned.toLowerCase()))
+            ) {
+              matchingUsers.push(user);
+            }
+          }
+          setPotentialBlockees(matchingUsers);
+        } else {
+          setPotentialBlockees(allOtherUsers);
+        }
       }
     }
   };
@@ -738,6 +759,7 @@ const EventForm = ({
       setPublicity("public");
       setOrganizers(currentEvent.organizers);
       setInvitees(currentEvent.invitees);
+      setBlockedUsersEvent(currentEvent.blockedUsersEvent);
       setRelatedInterests(currentEvent.relatedInterests);
     } else {
       setEventTitle("");
@@ -762,6 +784,7 @@ const EventForm = ({
       setPublicity("public");
       setOrganizers([`${currentUser?._id}`]);
       setInvitees([]);
+      setBlockedUsersEvent([]);
       setRelatedInterests([]);
     }
   };
@@ -864,6 +887,18 @@ const EventForm = ({
     return usersWhoAreInvitees;
   };
   const usersWhoAreInvitees = getUsersWhoAreInvitees();
+
+  const getUsersWhoAreBlocked = (): TUser[] => {
+    const blockedUsers: TUser[] = [];
+    if (allUsers) {
+      for (const blockee of blockedUsersEvent) {
+        const user = allUsers.filter((user) => user._id === blockee)[0];
+        blockedUsers.push(user);
+      }
+    }
+    return blockedUsers;
+  };
+  const usersWhoAreBlocked = getUsersWhoAreBlocked();
 
   const getChangesMade = (): boolean => {
     if (currentEvent && usedFor === "edit-event") {
@@ -1467,6 +1502,8 @@ const EventForm = ({
                   key={user._id}
                   info={user}
                   removeHandler={handleAddRemoveUserAsOrganizer}
+                  removeHandlerNeedsEventParam={true}
+                  removeHandlerParams={[organizers, setOrganizers, user]}
                   randomColor={randomColor}
                   isDisabled={isLoading}
                   userMayNotDelete={currentEvent?.creator === user._id}
@@ -1555,6 +1592,8 @@ const EventForm = ({
                 key={user._id}
                 info={user}
                 removeHandler={handleAddRemoveUserAsInvitee}
+                removeHandlerNeedsEventParam={false}
+                removeHandlerParams={[user]}
                 randomColor={randomColor}
                 isDisabled={isLoading}
               />
@@ -1609,6 +1648,72 @@ const EventForm = ({
               event={currentEvent}
               action={handleAddRemoveUserAsInvitee}
               actionEventParamNeeded={true}
+            />
+          }
+        />
+      </div>
+      <div className={styles.addOtherUsersArea}>
+        <header className="input-label">
+          Block users: (users whom you don't want to see this event){" "}
+          {currentUser && blockedUsersEvent.length > 0 && (
+            <span style={{ color: randomColor }} onClick={() => setBlockedUsersEvent([])}>
+              Remove All
+            </span>
+          )}
+        </header>
+        <div className="added-user-tab-container">
+          {currentUser &&
+            usersWhoAreBlocked.length > 0 &&
+            usersWhoAreBlocked.map((user) => (
+              <Tab
+                key={user._id}
+                info={user}
+                removeHandler={handleAddRemoveBlockedUserOnEvent}
+                removeHandlerNeedsEventParam={false}
+                removeHandlerParams={[user._id]}
+                randomColor={randomColor}
+                isDisabled={isLoading}
+              />
+            ))}
+        </div>
+        <SearchAndDropdownList
+          randomColor={randomColor}
+          name="potential-blockees-search"
+          id="potential-blockees-search"
+          inputRef={blockeesRef}
+          onFocus={() => setFocusedElement("blockees")}
+          onBlur={() => setFocusedElement(undefined)}
+          style={
+            focusedElement === "blockees"
+              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+              : undefined
+          }
+          isDisabled={isLoading}
+          query={blockeesSearchQuery}
+          inputOnChange={(e) =>
+            handlePotentialCoOrganizersAndInviteesSearchQuery(e, "blockees")
+          }
+          placeholder="Search users by username, first/last names"
+          clearQueryOnClick={() => {
+            setBlockeesSearchQuery("");
+            if (allOtherUsers) {
+              setPotentialBlockees(allOtherUsers);
+            }
+          }}
+          showList={showPotentialBlockees}
+          setShowList={setShowPotentialBlockees}
+          dropdownChecklist={
+            <DropdownChecklist
+              usedFor="potential-blockees"
+              displayedItemsArray={potentialBlockees}
+              displayedItemsCount={displayedPotentialBlockeeCount}
+              setDisplayedItemsCount={setDisplayedPotentialBlockeeCount}
+              displayedItemsCountInterval={10}
+              storageArray={blockedUsersEvent}
+              setStorageArray={setBlockedUsersEvent}
+              event={currentEvent}
+              action={handleAddRemoveBlockedUserOnEvent}
+              actionEventParamNeeded={false}
             />
           }
         />
