@@ -534,17 +534,24 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const navigation = useNavigate();
 
+  const handleAddRemoveBlockedUserOnEvent = (user?: TUser): void => {
+    //e?.preventDefault();
+    if (user && user._id) {
+      if (blockedUsersEvent.includes(user._id)) {
+        setBlockedUsersEvent(
+          blockedUsersEvent.filter((blockeeID) => blockeeID !== user._id)
+        );
+      } else {
+        setBlockedUsersEvent(blockedUsersEvent.concat(user._id));
+      }
+    }
+  };
+
   const handleAddRemoveUserAsOrganizer = (
-    e:
-      | React.MouseEvent<HTMLDivElement, MouseEvent>
-      | React.ChangeEvent<HTMLInputElement>
-      | React.MouseEvent<HTMLLIElement, MouseEvent>,
     organizers: string[],
     setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
-    user: TUser,
-    event?: TEvent
+    user: TUser
   ): void => {
-    e?.preventDefault();
     if (user && user._id) {
       if (organizers.includes(user._id)) {
         // Only state values are updated for now; DB updated when form is saved
@@ -554,35 +561,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
         // Add non-current user as organizer
         setOrganizers(organizers.concat(user._id));
       }
-    } else {
-      // Remove currentUser as organizer
-      Requests.removeOrganizer(event, currentUser)
-        .then((response) => {
-          if (!response.ok) {
-            toast.error("Could not remove you as user. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          } else {
-            queryClient.invalidateQueries({ queryKey: "allEvents" });
-            queryClient.refetchQueries({ queryKey: ["allEvents"] });
-            toast(
-              "You have removed yourself as an organizer & are no longer able to make changes to that event.",
-              {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid red",
-                },
-              }
-            );
-            navigation(`/${currentUser?.username}`);
-          }
-        })
-        .catch((error) => console.log(error));
     }
   };
 
@@ -670,6 +648,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    handleAddRemoveBlockedUserOnEvent,
     displayedPotentialBlockeeCount,
     setDisplayedPotentialBlockeeCount,
     blockedUsersEvent,
