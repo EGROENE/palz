@@ -1758,15 +1758,18 @@ const EventForm = ({
           </div>
         }
       </div>
-      {currentEvent && currentEvent.creator === currentUser?._id && (
-        <button
-          type="button"
-          onClick={() => setShowAreYouSureDeleteEvent(true)}
-          className="delete-button"
-        >
-          Delete Event
-        </button>
-      )}
+      {currentEvent &&
+        currentUser &&
+        currentUser._id &&
+        currentEvent.organizers.includes(currentUser._id) && (
+          <button
+            type="button"
+            onClick={() => setShowAreYouSureDeleteEvent(true)}
+            className="delete-button"
+          >
+            Delete Event
+          </button>
+        )}
       {showAreYouSureDeleteEvent && (
         <TwoOptionsInterface
           header="Are you sure you want to delete this event?"
