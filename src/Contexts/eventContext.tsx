@@ -564,6 +564,21 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleAddRemoveUserAsInvitee = (
+    invitees: string[],
+    setInvitees: React.Dispatch<React.SetStateAction<string[]>>,
+    user?: TUser
+  ): void => {
+    if (user?._id) {
+      if (invitees.includes(user._id)) {
+        // Remove user as invitee
+        setInvitees(invitees.filter((inviteeID) => inviteeID !== user?._id));
+      } else {
+        setInvitees(invitees.concat(user._id));
+      }
+    }
+  };
+
   /* eventValuesToUpdate is to be used on EventForm. It's an object that represents updated values on event, which are sent to the event in the DB in a PATCH request
    */
   const getValuesToUpdate = (): TEventValuesToUpdate | undefined => {
@@ -649,6 +664,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const eventContextValues: TEventContext = {
     handleAddRemoveBlockedUserOnEvent,
+    handleAddRemoveUserAsInvitee,
     displayedPotentialBlockeeCount,
     setDisplayedPotentialBlockeeCount,
     blockedUsersEvent,
