@@ -164,6 +164,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addEventImage(event, base64),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allEvents"] });
+      queryClient.refetchQueries({queryKey: ["allEvents"]})
       if (currentEvent && fetchAllEventsQuery.data) {
         allEvents = fetchAllEventsQuery.data;
         const updatedEvent = allEvents.filter(
@@ -205,6 +206,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }) => Requests.removeEventImage(event, imageToBeRemoved),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allEvents"] });
+      queryClient.refetchQueries({queryKey: ["allEvents"]})
       allEvents = fetchAllEventsQuery.data;
       if (currentEvent && fetchAllEventsQuery.data) {
         allEvents = fetchAllEventsQuery.data;
