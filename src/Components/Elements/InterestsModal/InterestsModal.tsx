@@ -68,6 +68,8 @@ const InterestsModal = ({
                   info={interest}
                   key={interest}
                   addHandler={handleAddInterest}
+                  addHandlerNeedsEventParam={true}
+                  addHandlerParams={[interest]}
                   randomColor={randomColor}
                 />
               )

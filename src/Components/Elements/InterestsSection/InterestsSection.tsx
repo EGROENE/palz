@@ -15,7 +15,7 @@ type InterestsSectionProps = {
   handleAddInterest: (
     interest: string,
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ) => void | ((interest: string) => void);
+  ) => void;
   handleRemoveInterest: (
     interest: string,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
@@ -205,6 +205,8 @@ const InterestsSection = ({
               key={interest}
               info={interest}
               removeHandler={handleRemoveInterest}
+              removeHandlerNeedsEventParam={true}
+              removeHandlerParams={[interest]}
               isDisabled={isDisabled}
               randomColor={randomColor}
             />

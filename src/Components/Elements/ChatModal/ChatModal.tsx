@@ -700,7 +700,9 @@ const ChatModal = () => {
                   <Tab
                     key={user._id}
                     info={user}
-                    removeHandler={() => handleRemoveUserFromChat(user)}
+                    removeHandler={handleRemoveUserFromChat}
+                    removeHandlerNeedsEventParam={false}
+                    removeHandlerParams={[user]}
                     randomColor={randomColor}
                     userMayNotDelete={false}
                   />
