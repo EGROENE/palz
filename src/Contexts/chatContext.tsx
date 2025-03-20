@@ -49,7 +49,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showCreateNewChatModal, setShowCreateNewChatModal] = useState<boolean>(false);
 
-  const [usersToAddToChat, setUsersToAddToChat] = useState<TUser[]>([]);
+  const [usersToAddToChat, setUsersToAddToChat] = useState<string[]>([]);
 
   const [chatName, setChatName] = useState<string>("");
   const [chatNameError, setChatNameError] = useState<string>("");
@@ -410,53 +410,38 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     deleteChatMutation.mutate({ chatID });
   };
 
-  const handleAddUserToChat = (user: TUser, chat?: TChat): void => {
-    if (!chat) {
-      setUsersToAddToChat(usersToAddToChat.concat(user));
+  const handleRemoveUserFromChat = (user: TUser, chat: TChat): void => {
+    // if user is only admin left, inform by toast that they can't leave until another admin is assigned:
+    if (
+      chat &&
+      chat.admins &&
+      user._id &&
+      user &&
+      chat.admins.includes(user._id) &&
+      chat.admins.length - 1 === 0
+    ) {
+      toast.error("Please assign another admin before leaving the chat.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
   };
 
-  const handleRemoveUserFromChat = (user: TUser, chat?: TChat): void => {
-    if (!chat) {
-      setUsersToAddToChat(
-        usersToAddToChat.filter((userToAdd) => userToAdd._id !== user._id)
-      );
-    } else {
-      // if user is only admin left, inform by toast that they can't leave until another admin is assigned:
-      if (
-        chat &&
-        chat.admins &&
-        user._id &&
-        user &&
-        chat.admins.includes(user._id) &&
-        chat.admins.length - 1 === 0
-      ) {
-        toast.error("Please assign another admin before leaving the chat.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
+  const handleAddRemoveUserFromChat = (
+    user: TUser,
+    usersToAddToChat: string[],
+    setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>
+  ): void => {
+    if (user._id) {
+      if (usersToAddToChat.includes(user._id)) {
+        setUsersToAddToChat(
+          usersToAddToChat.filter((userToAdd) => userToAdd !== user._id)
+        );
       } else {
-        if (user !== currentUser) {
-          setCurrentOtherUser(user);
-        }
-        const chatValuesToUpdate: TChatValuesToUpdate = {
-          members: chat.members.filter((member) => member !== user._id),
-        };
-        const purpose = user === currentUser ? "remove-self-from-chat" : "remove-member";
-        updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
-      }
-    }
-  };
-
-  const handleAddRemoveUserFromChat = (user: TUser, chat?: TChat): void => {
-    if (!chat) {
-      if (usersToAddToChat.includes(user)) {
-        handleRemoveUserFromChat(user);
-      } else {
-        handleAddUserToChat(user);
+        setUsersToAddToChat(usersToAddToChat.concat(user._id));
       }
     }
   };
@@ -772,7 +757,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     chatNameError,
     setChatNameError,
     handleAddRemoveUserFromChat,
-    handleAddUserToChat,
     handleRemoveUserFromChat,
     usersToAddToChat,
     setUsersToAddToChat,
