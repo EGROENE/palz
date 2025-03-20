@@ -402,6 +402,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const deleteEventMutation = useMutation({
     mutationFn: ({ event }: { event: TEvent }) => Requests.deleteEvent(event),
     onSuccess: () => {
+      setCurrentEvent(undefined);
       queryClient.invalidateQueries({ queryKey: "allEvents" });
       queryClient.refetchQueries({ queryKey: ["allEvents"] });
       toast("Event deleted", {
