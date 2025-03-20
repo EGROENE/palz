@@ -1379,7 +1379,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleAcceptFriendRequest = (
-    e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
     friendRequestsReceived?: string[],
@@ -1387,9 +1386,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       React.SetStateAction<string[] | undefined>
     >,
     friends?: string[],
-    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>,
+    e?: React.ChangeEvent<HTMLInputElement>
   ): void => {
-    e.preventDefault();
+    e?.preventDefault();
     setIsLoading(true);
 
     if (showFriendRequestResponseOptions) {
@@ -1410,13 +1410,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleRejectFriendRequest = (
-    e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
     friendRequestsReceived?: string[],
-    setFriendRequestsReceived?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    setFriendRequestsReceived?: React.Dispatch<
+      React.SetStateAction<string[] | undefined>
+    >,
+    e?: React.ChangeEvent<HTMLInputElement>
   ) => {
-    e.preventDefault();
+    e?.preventDefault();
 
     setIsLoading(true);
 

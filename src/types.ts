@@ -302,7 +302,6 @@ export type TUserContext = {
     setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   handleAcceptFriendRequest: (
-    e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
     friendRequestsReceived?: string[],
@@ -310,14 +309,17 @@ export type TUserContext = {
       React.SetStateAction<string[] | undefined>
     >,
     friends?: string[],
-    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>,
+    e?: React.ChangeEvent<HTMLInputElement>
   ) => void;
   handleRejectFriendRequest: (
-    e: React.ChangeEvent<HTMLInputElement>,
     sender: TUser,
     receiver: TUser,
     friendRequestsReceived?: string[],
-    setFriendRequestsReceived?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    setFriendRequestsReceived?: React.Dispatch<
+      React.SetStateAction<string[] | undefined>
+    >,
+    e?: React.ChangeEvent<HTMLInputElement>
   ) => void;
   accountDeletionInProgress: boolean;
   setAccountDeletionInProgress: React.Dispatch<React.SetStateAction<boolean>>;
