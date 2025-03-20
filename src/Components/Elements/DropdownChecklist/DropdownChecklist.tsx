@@ -4,6 +4,7 @@ import { useEventContext } from "../../../Hooks/useEventContext";
 import { TUser, TEvent } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
+import { useChatContext } from "../../../Hooks/useChatContext";
 
 const DropdownChecklist = ({
   usedFor,
@@ -32,7 +33,22 @@ const DropdownChecklist = ({
 }) => {
   const { isLoading, handleLoadMoreOnScroll } = useMainContext();
 
-  const { handleAddRemoveUserAsOrganizer, organizers, setOrganizers } = useEventContext();
+  const {
+    handleAddRemoveUserAsOrganizer,
+    handleAddRemoveUserAsInvitee,
+    organizers,
+    setOrganizers,
+    invitees,
+    setInvitees,
+    handleAddRemoveBlockedUserOnEvent,
+  } = useEventContext();
+
+  const {
+    usersToAddToChat,
+    setUsersToAddToChat,
+    currentChat,
+    handleAddRemoveUserFromChat,
+  } = useChatContext();
 
   let displayedItemsArrayFiltered: TUser[] = [];
   if (displayedItemsCount && displayedItemsCount <= displayedItemsArray.length) {
@@ -47,21 +63,54 @@ const DropdownChecklist = ({
     if (!actionParams) {
       // for handleAddRemoveUserAsOrganizer:
       if (usedFor === "potential-co-organizers" && user && event) {
-        return [organizers, setOrganizers, user, event];
+        return [organizers, setOrganizers, user];
       }
 
-      // for either handleAddRemoveUserAsInvitee, handleAddRemoveUserFromChat, or handleAddRemoveUserFromChat:
-      if (
-        usedFor === "potential-invitees" ||
-        usedFor === "potential-chat-members" ||
-        usedFor === "potential-additional-chat-members"
-      ) {
+      // for handleAddRemoveUserAsInvitee:
+      if (usedFor === "potential-invitees") {
+        return [invitees, setInvitees, user];
+      }
+
+      // for handleAddRemoveUserFromChat:
+      if (usedFor === "potential-additional-chat-members") {
+        return [user, usersToAddToChat, setUsersToAddToChat, currentChat];
+      }
+
+      // for handleAddRemoveUserFromChat:
+      if (usedFor === "potential-chat-members") {
+        return [user, usersToAddToChat, setUsersToAddToChat];
+      }
+
+      // for handleAddRemoveBlockedUserOnEvent:
+      if (usedFor === "potential-blockees") {
         return [user];
       }
-
       return [];
     }
     return actionParams;
+  };
+
+  const getOnChangeHandler = (user: TUser) => {
+    if (usedFor === "potential-co-organizers") {
+      return () => handleAddRemoveUserAsOrganizer(storageArray, setStorageArray, user);
+    }
+
+    if (usedFor === "potential-invitees") {
+      return () => handleAddRemoveUserAsInvitee(storageArray, setStorageArray, user);
+    }
+
+    if (usedFor === "potential-additional-chat-members" && currentChat) {
+      return () =>
+        handleAddRemoveUserFromChat(user, storageArray, setStorageArray, currentChat);
+    }
+
+    if (usedFor === "potential-chat-members") {
+      return () => handleAddRemoveUserFromChat(user, storageArray, setStorageArray);
+    }
+
+    if (usedFor === "potential-blockees") {
+      return () => handleAddRemoveBlockedUserOnEvent(user);
+    }
   };
 
   return (
@@ -92,15 +141,7 @@ const DropdownChecklist = ({
             name={`${usedFor}-${user._id}`}
             id={`${usedFor}-${user._id}`}
             disabled={isLoading}
-            onChange={(e) =>
-              handleAddRemoveUserAsOrganizer(
-                e,
-                storageArray,
-                setStorageArray,
-                user,
-                event
-              )
-            }
+            onChange={getOnChangeHandler(user)}
             checked={storageArray.includes(user._id)}
             type="checkbox"
           />
