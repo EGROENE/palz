@@ -687,14 +687,14 @@ export type TEventContext = {
   allEvents: TEvent[] | undefined;
   fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
-    e:
-      | React.MouseEvent<HTMLDivElement, MouseEvent>
-      | React.ChangeEvent<HTMLInputElement>
-      | React.MouseEvent<HTMLLIElement, MouseEvent>,
     organizers: string[],
     setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
-    user: TUser,
-    event?: TEvent
+    user: TUser
+  ) => void;
+  handleAddRemoveUserAsInvitee: (
+    invitees: string[],
+    setInvitees: React.Dispatch<React.SetStateAction<string[]>>,
+    user?: TUser
   ) => void;
   handleRemoveInvitee: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
@@ -715,6 +715,7 @@ export type TEventContext = {
   setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
   eventEditIsInProgress: boolean;
   setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
+  handleAddRemoveBlockedUserOnEvent: (user?: TUser) => void;
   handleAddUserRSVP: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent
@@ -791,11 +792,15 @@ export type TChatContext = {
   setChatName: React.Dispatch<React.SetStateAction<string>>;
   chatNameError: string;
   setChatNameError: React.Dispatch<React.SetStateAction<string>>;
-  handleAddUserToChat: (user: TUser, chat?: TChat) => void;
-  handleRemoveUserFromChat: (user: TUser, chat?: TChat) => void;
-  handleAddRemoveUserFromChat: (user: TUser, chat?: TChat) => void;
-  usersToAddToChat: TUser[];
-  setUsersToAddToChat: React.Dispatch<React.SetStateAction<TUser[]>>;
+  handleRemoveUserFromChat: (user: TUser, chat: TChat) => void;
+  handleAddRemoveUserFromChat: (
+    user: TUser,
+    usersToAddToChat: string[],
+    setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>,
+    chat?: TChat
+  ) => void;
+  usersToAddToChat: string[];
+  setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>;
   numberOfPotentialChatMembersDisplayed: number | undefined;
   setNumberOfPotentialChatMembersDisplayed: React.Dispatch<
     React.SetStateAction<number | undefined>
