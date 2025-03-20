@@ -1789,7 +1789,7 @@ const EventForm = ({
           buttonTwoText="Remove Myself as Organizer"
           closeHandler={setShowAreYouSureRemoveCurrentUserAsOrganizer}
           buttonTwoHandler={handleAddRemoveUserAsOrganizer}
-          buttonTwoHandlerParams={[currentUser]}
+          buttonTwoHandlerParams={[organizers, setOrganizers, currentUser]}
           handlerTwoNeedsEventParam={true}
         />
       )}
