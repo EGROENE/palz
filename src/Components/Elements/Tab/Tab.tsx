@@ -6,28 +6,46 @@ import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 const Tab = ({
   info,
   addHandler,
+  addHandlerParams,
+  addHandlerNeedsEventParam,
   removeHandler,
+  removeHandlerParams,
+  removeHandlerNeedsEventParam,
   randomColor,
   isDisabled,
   userMayNotDelete,
   specialIcon,
 }: {
   info: TUser | string;
-  addHandler?: any;
-  removeHandler?: any;
+  addHandler?: Function;
+  addHandlerParams?: any[];
+  addHandlerNeedsEventParam?: boolean;
+  removeHandler?: Function;
+  removeHandlerParams?: any[];
+  removeHandlerNeedsEventParam?: boolean;
   randomColor?: string;
   isDisabled?: boolean;
   userMayNotDelete?: boolean;
   specialIcon?: JSX.Element;
 }) => {
-  const onClickFunction = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    if (addHandler) {
-      return addHandler(info, e); // if calling handleAddInterest(interest: string, e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
-    } else {
-      if (typeof info !== "string") {
-        return removeHandler(undefined, info); // if calling handleRemoveUserAsOrganizer/Invitee: (e?: React.MouseEvent<HTMLButtonElement, MouseEvent>, user?: TUser) => void
+  const getOnClickFunction = () => {
+    if (addHandler && addHandlerParams) {
+      if (addHandlerNeedsEventParam) {
+        return (e: React.MouseEvent<HTMLElement, MouseEvent>) =>
+          addHandler(...addHandlerParams, e);
+      } else {
+        return () => addHandler(...addHandlerParams);
       }
-      return removeHandler(info, e); // if calling handleRemoveInterest: (interest: string, e?: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
+    }
+    if (removeHandler && removeHandlerParams) {
+      if (removeHandlerParams) {
+        if (removeHandlerNeedsEventParam && removeHandlerParams) {
+          return (e: React.MouseEvent<HTMLElement, MouseEvent>) =>
+            removeHandler(...removeHandlerParams, e);
+        } else {
+          return () => removeHandler(...removeHandlerParams);
+        }
+      }
     }
   };
 
@@ -54,7 +72,7 @@ const Tab = ({
       {!userMayNotDelete && (
         <i
           style={addHandler && { "rotate": "45deg" }} // turns X into plus sign
-          onClick={(e) => onClickFunction(e)}
+          onClick={getOnClickFunction()}
           className="fas fa-times"
           title={addHandler ? "Add" : "Remove"}
         ></i>
