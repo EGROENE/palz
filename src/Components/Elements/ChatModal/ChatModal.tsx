@@ -371,6 +371,15 @@ const ChatModal = () => {
     return "Add Admin";
   };
 
+  let usersToAdd: TUser[] = [];
+  for (const userID of usersToAddToChat) {
+    for (const otherUser of allOtherUsers) {
+      if (otherUser._id === userID) {
+        usersToAdd.push(otherUser);
+      }
+    }
+  }
+
   return (
     <div className="modal-background">
       <i
@@ -696,13 +705,18 @@ const ChatModal = () => {
             <header style={{ marginBottom: "1rem" }}>Add people to chat:</header>
             {usersToAddToChat.length > 0 && (
               <div className="added-user-tab-container">
-                {usersToAddToChat.map((user) => (
+                {usersToAdd.map((user) => (
                   <Tab
-                    key={user._id}
+                    key={`${user._id}-dropdown-item`}
                     info={user}
-                    removeHandler={handleRemoveUserFromChat}
+                    removeHandler={handleAddRemoveUserFromChat}
                     removeHandlerNeedsEventParam={false}
-                    removeHandlerParams={[user]}
+                    removeHandlerParams={[
+                      user,
+                      usersToAddToChat,
+                      setUsersToAddToChat,
+                      currentChat,
+                    ]}
                     randomColor={randomColor}
                     userMayNotDelete={false}
                   />
@@ -736,7 +750,7 @@ const ChatModal = () => {
                   action={handleAddRemoveUserFromChat}
                   actionEventParamNeeded={false}
                   displayedItemsArray={potentialChatMembers}
-                  storageArray={usersToAddToChat.map((user) => user._id)}
+                  storageArray={usersToAddToChat}
                   setStorageArray={setUsersToAddToChat}
                   displayedItemsCount={numberOfPotentialChatMembersDisplayed}
                   setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
@@ -775,7 +789,7 @@ const ChatModal = () => {
                 onClick={() => {
                   if (currentChat) {
                     handleAddMultipleUsersToChat(
-                      usersToAddToChat.map((user) => (user && user._id ? user._id : "")),
+                      usersToAdd.map((user) => (user && user._id ? user._id : "")),
                       currentChat
                     );
                   }
