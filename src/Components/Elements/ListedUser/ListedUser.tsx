@@ -80,7 +80,7 @@ const ListedUser = ({
             <p
               className={styles.listedUserName}
             >{`${user?.firstName} ${user?.lastName}`}</p>
-            <p className={styles.listUserUsername}>{user?.username}</p>
+            <p className={styles.listedUserUsername}>{user?.username}</p>
           </div>
         </Link>
       ) : (
@@ -93,7 +93,7 @@ const ListedUser = ({
           <p
             className={styles.listedUserName}
           >{`${user?.firstName} ${user?.lastName}`}</p>
-          <p className={styles.listUserUsername}>{user?.username}</p>
+          <p className={styles.listedUserUsername}>{user?.username}</p>
         </div>
       )}
       {renderButtonOne && buttonOneLink ? (
