@@ -543,16 +543,13 @@ const removeInvitee = (event: TEvent, user: TUser | null): Promise<Response> => 
   });
 };
 
-const removeOrganizer = (
-  event: TEvent | undefined,
-  user: TUser | null
-): Promise<Response> => {
+const removeOrganizer = (event: TEvent, user: TUser | null): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
   const getRaw = () => {
     return JSON.stringify({
-      "organizers": event?.organizers.filter((id) => id !== user?._id),
+      "organizers": event.organizers.filter((id) => id !== user?._id),
     });
   };
   const raw = getRaw();
