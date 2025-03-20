@@ -69,7 +69,7 @@ const TwoOptionsInterface = ({
                       handlerOneNeedsEventParam
                       ? (e) =>
                           buttonOneHandlerParams
-                            ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                            ? buttonOneHandler(...buttonOneHandlerParams, e)
                             : buttonOneHandler(e)
                       : () =>
                           buttonOneHandlerParams
@@ -91,7 +91,7 @@ const TwoOptionsInterface = ({
                     ? handlerTwoNeedsEventParam
                       ? (e) =>
                           buttonTwoHandlerParams
-                            ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                            ? buttonTwoHandler(...buttonTwoHandlerParams, e)
                             : buttonTwoHandler(e)
                       : () =>
                           buttonTwoHandlerParams
