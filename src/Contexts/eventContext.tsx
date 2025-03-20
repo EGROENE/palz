@@ -585,13 +585,26 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAddRemoveUserAsOrganizer = (
     organizers: string[],
     setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
-    user: TUser
+    user: TUser,
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
-    if (user && user._id) {
+    e?.preventDefault();
+    if (user && user._id && currentUser && currentUser._id) {
       if (organizers.includes(user._id)) {
-        // Only state values are updated for now; DB updated when form is saved
-        // Remove user who isn't currentUser
-        setOrganizers(organizers.filter((organizerID) => organizerID !== user._id));
+        if (user._id === currentUser._id) {
+          // Remove self as organizer:
+          // DB is updated immediately, redirect to homepage
+          setIsLoading(true);
+          if (currentEvent && currentUser) {
+            const event = currentEvent;
+            const user = currentUser;
+            removeSelfAsEventOrganizerMutation.mutate({ event, user });
+          }
+        } else {
+          // Remove other user as organizer:
+          // Only state values are updated for now; DB updated when form is saved
+          setOrganizers(organizers.filter((organizerID) => organizerID !== user._id));
+        }
       } else {
         // Add non-current user as organizer
         setOrganizers(organizers.concat(user._id));

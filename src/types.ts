@@ -689,7 +689,8 @@ export type TEventContext = {
   handleAddRemoveUserAsOrganizer: (
     organizers: string[],
     setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
-    user: TUser
+    user: TUser,
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
   handleAddRemoveUserAsInvitee: (
     invitees: string[],
