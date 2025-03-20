@@ -31,6 +31,7 @@ const UserListModal = ({
     | "rsvpd-users"
     | "other-user-friends"
     | "blocked-users"
+    | "blocked-users-event"
     | "mutual-friends";
   renderButtonOne: boolean;
   renderButtonTwo: boolean;
