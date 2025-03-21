@@ -93,21 +93,25 @@ const UserListModal = ({
   const getButtonOneHandlerParams = (user: TUser) => {
     // Only set these if buttonOneHandlerParams not defined
     // Also check handler passed in
-    if (listType === "blocked-users") {
-      return [currentUser, user, blockedUsers, setBlockedUsers];
-    }
-    if (
-      (listType === "invitees" || listType === "rsvpd-users") &&
-      buttonOneHandler === startConversation
-    ) {
-      return [user];
+    if (!buttonOneHandlerParams) {
+      if (listType === "blocked-users") {
+        return [currentUser, user, blockedUsers, setBlockedUsers];
+      }
+      if (
+        (listType === "invitees" || listType === "rsvpd-users") &&
+        buttonOneHandler === startConversation
+      ) {
+        return [user];
+      }
     }
     return undefined;
   };
 
   const getButtonTwoHandlerParams = (user: TUser) => {
-    if (listType === "rsvpd-users" || listType === "invitees") {
-      return [currentEvent, user];
+    if (!buttonTwoHandlerParams) {
+      if (listType === "rsvpd-users" || listType === "invitees") {
+        return [currentEvent, user];
+      }
     }
     return undefined;
   };
