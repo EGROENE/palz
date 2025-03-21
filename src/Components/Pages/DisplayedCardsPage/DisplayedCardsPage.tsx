@@ -896,10 +896,16 @@ const DisplayedCardsPage = ({
       {!fetchIsLoading && isNoFetchError && (
         <div className="all-cards-container">
           {usedFor === "events" &&
-            Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
-              (item) =>
-                Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
-            )}
+            Methods.removeDuplicatesFromArray(displayedItemsFiltered)
+              .filter((event) =>
+                currentUser && currentUser._id
+                  ? !event.blockedUsersEvent.includes(currentUser._id)
+                  : event
+              )
+              .map(
+                (item) =>
+                  Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
+              )}
           {(usedFor === "potential-friends" || usedFor === "my-friends") &&
             Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
               (item) => Methods.isTUser(item) && <UserCard key={item._id} user={item} />
