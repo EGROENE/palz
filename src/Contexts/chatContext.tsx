@@ -13,6 +13,7 @@ import mongoose from "mongoose";
 import toast from "react-hot-toast";
 import { useMainContext } from "../Hooks/useMainContext";
 import Methods from "../methods";
+import { useEventContext } from "../Hooks/useEventContext";
 
 export const ChatContext = createContext<TChatContext | null>(null);
 
@@ -26,6 +27,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setCurrentOtherUser,
     currentOtherUser,
   } = useUserContext();
+  const { showInvitees, setShowInvitees, showRSVPs, setShowRSVPs } = useEventContext();
 
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
 
@@ -706,7 +708,53 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     return unreadMessages > 9 ? "9+" : unreadMessages;
   };
 
+  const startConversation = (otherUser: TUser): void => {
+    const userChats = fetchChatsQuery.data;
+
+    if (showInvitees) {
+      setShowInvitees(false);
+    }
+
+    if (showRSVPs) {
+      setShowRSVPs(false);
+    }
+
+    if (showChatModal) {
+      setShowChatModal(false);
+    }
+
+    const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
+      (chat) =>
+        chat.members.length === 2 &&
+        currentUser &&
+        currentUser._id &&
+        chat.members.includes(currentUser._id) &&
+        otherUser._id &&
+        chat.members.includes(otherUser._id)
+    )[0];
+
+    if (existingChatWithListedChatMember) {
+      return handleOpenChat(existingChatWithListedChatMember);
+    } else {
+      const newChatMembers: string[] =
+        otherUser._id && currentUser && currentUser._id
+          ? [otherUser._id, currentUser._id]
+          : [];
+      return handleCreateChat({
+        _id: new mongoose.Types.ObjectId().toString(),
+        members: newChatMembers,
+        messages: [],
+        chatName: chatName,
+        dateCreated: Date.now(),
+        ...(usersToAddToChat.length >= 2 &&
+          currentUser &&
+          currentUser._id && { admins: [currentUser._id] }),
+      });
+    }
+  };
+
   const chatContextValues: TChatContext = {
+    startConversation,
     getStartOrOpenChatWithUserHandler,
     getTotalNumberOfUnreadMessages,
     handleSaveEditedMessage,
