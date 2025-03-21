@@ -36,7 +36,9 @@ const DisplayedCardsPage = ({
     friends,
     fetchAllUsersQuery,
   } = useUserContext();
-  const { allEvents, fetchAllEventsQuery } = useEventContext();
+  const { fetchAllEventsQuery } = useEventContext();
+
+  const allEvents = fetchAllEventsQuery.data;
 
   const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
   const toggleShowFilterOptions = (): void => setShowFilterOptions(!showFilterOptions);

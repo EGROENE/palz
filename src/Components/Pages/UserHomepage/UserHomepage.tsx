@@ -13,7 +13,8 @@ const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, username, fetchAllUsersQuery } =
     useUserContext();
-  const { allEvents, fetchAllEventsQuery } = useEventContext();
+  const { fetchAllEventsQuery } = useEventContext();
+  const allEvents = fetchAllEventsQuery.data;
 
   // On init rendering, hide sidebar, if displayed (better ux when returning to user homepage from Settings, etc.)
   useEffect(() => {

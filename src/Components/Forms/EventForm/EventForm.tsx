@@ -33,7 +33,6 @@ const EventForm = ({
     setDisplayedPotentialBlockeeCount,
     setBlockedUsersEvent,
     blockedUsersEvent,
-    allEvents,
     currentEvent,
     setCurrentEvent,
     setAddEventIsInProgress,
@@ -98,7 +97,10 @@ const EventForm = ({
     setDisplayedPotentialInviteeCount,
     displayedPotentialCoOrganizerCount,
     setDisplayedPotentialCoOrganizerCount,
+    fetchAllEventsQuery,
   } = useEventContext();
+
+  const allEvents = fetchAllEventsQuery.data;
 
   const [focusedElement, setFocusedElement] = useState<
     | "title"
