@@ -52,9 +52,16 @@ const UserListModal = ({
   randomColor?: string;
 }) => {
   const { isLoading } = useMainContext();
-  const { allUsers, currentUser, blockedUsers, setBlockedUsers, fetchAllUsersQuery } =
-    useUserContext();
-  const { currentEvent, fetchAllEventsQuery } = useEventContext();
+  const {
+    allUsers,
+    currentUser,
+    blockedUsers,
+    setBlockedUsers,
+    fetchAllUsersQuery,
+    handleUnblockUser,
+  } = useUserContext();
+  const { currentEvent, fetchAllEventsQuery, handleDeleteUserRSVP, handleRemoveInvitee } =
+    useEventContext();
   const { startConversation } = useChatContext();
 
   const getUserArray = (): TUser[] => {
@@ -91,10 +98,8 @@ const UserListModal = ({
   const displayedUserCount = userArray.length - numberOfUsersInvisibleToCurrentUser;
 
   const getButtonOneHandlerParams = (user: TUser) => {
-    // Only set these if buttonOneHandlerParams not defined
-    // Also check handler passed in
     if (!buttonOneHandlerParams) {
-      if (listType === "blocked-users") {
+      if (listType === "blocked-users" && buttonOneHandler === handleUnblockUser) {
         return [currentUser, user, blockedUsers, setBlockedUsers];
       }
       if (
@@ -109,7 +114,12 @@ const UserListModal = ({
 
   const getButtonTwoHandlerParams = (user: TUser) => {
     if (!buttonTwoHandlerParams) {
-      if (listType === "rsvpd-users" || listType === "invitees") {
+      if (
+        listType === "rsvpd-users" ||
+        (listType === "invitees" &&
+          (buttonTwoHandler === handleRemoveInvitee ||
+            buttonTwoHandler === handleDeleteUserRSVP))
+      ) {
         return [currentEvent, user];
       }
     }
