@@ -224,7 +224,19 @@ const EventForm = ({
         })
       );
 
-      setPotentialBlockees(allOtherUsers);
+      setPotentialBlockees(
+        allOtherUsers.filter((user) => {
+          if (user._id) {
+            return (
+              !organizers.includes(user._id) &&
+              !invitees.includes(user._id) &&
+              !blockedUsers?.includes(user._id) &&
+              currentUser?._id &&
+              !user.blockedUsers.includes(currentUser._id)
+            );
+          }
+        })
+      );
     }
   }, [invitees, organizers, blockedUsersEvent]);
 
