@@ -5,6 +5,7 @@ import { useEventContext } from "../../../Hooks/useEventContext";
 import styles from "./styles.module.css";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import QueryLoadingOrError from "../QueryLoadingOrError/QueryLoadingOrError";
+import { useChatContext } from "../../../Hooks/useChatContext";
 
 /* Component contains a modal w/ background, as well as a list of users. In every user box, there is user image, name, username, & button that will eventually make it possible to message user & a button that removes user from list. To be used on event pages to show list of RSVPs & list of invitees. */
 const UserListModal = ({
@@ -54,6 +55,7 @@ const UserListModal = ({
   const { allUsers, currentUser, blockedUsers, setBlockedUsers, fetchAllUsersQuery } =
     useUserContext();
   const { currentEvent, fetchAllEventsQuery } = useEventContext();
+  const { startConversation } = useChatContext();
 
   const getUserArray = (): TUser[] => {
     const userArray: TUser[] = [];
@@ -89,8 +91,16 @@ const UserListModal = ({
   const displayedUserCount = userArray.length - numberOfUsersInvisibleToCurrentUser;
 
   const getButtonOneHandlerParams = (user: TUser) => {
+    // Only set these if buttonOneHandlerParams not defined
+    // Also check handler passed in
     if (listType === "blocked-users") {
       return [currentUser, user, blockedUsers, setBlockedUsers];
+    }
+    if (
+      (listType === "invitees" || listType === "rsvpd-users") &&
+      buttonOneHandler === startConversation
+    ) {
+      return [user];
     }
     return undefined;
   };
