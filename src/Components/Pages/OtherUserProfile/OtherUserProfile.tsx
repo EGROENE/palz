@@ -42,7 +42,8 @@ const OtherUserProfile = () => {
     setFriends,
     fetchAllUsersQuery,
   } = useUserContext();
-  const { fetchAllEventsQuery, allEvents } = useEventContext();
+  const { fetchAllEventsQuery } = useEventContext();
+  const allEvents = fetchAllEventsQuery.data;
   const { getStartOrOpenChatWithUserHandler, fetchChatsQuery } = useChatContext();
   const { username } = useParams();
   const currentOtherUser =
