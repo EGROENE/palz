@@ -65,7 +65,9 @@ const UserSettings = () => {
     setCurrentUser,
     userCreatedAccount,
   } = useUserContext();
-  const { allEvents } = useEventContext();
+  const { fetchAllEventsQuery } = useEventContext();
+  const allEvents = fetchAllEventsQuery.data;
+
   const { fetchChatsQuery } = useChatContext();
 
   const queryClient = useQueryClient();
