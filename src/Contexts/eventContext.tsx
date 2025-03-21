@@ -776,7 +776,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     removeEventImageMutation,
     eventImages,
     setEventImages,
-    allEvents,
     fetchAllEventsQuery,
     handleAddRemoveUserAsOrganizer,
     handleRemoveInvitee,

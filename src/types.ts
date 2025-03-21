@@ -686,7 +686,6 @@ export type TEventContext = {
   setEventImages: React.Dispatch<React.SetStateAction<string[]>>;
   blockedUsersEvent: string[];
   setBlockedUsersEvent: React.Dispatch<React.SetStateAction<string[]>>;
-  allEvents: TEvent[] | undefined;
   fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
     organizers: string[],
