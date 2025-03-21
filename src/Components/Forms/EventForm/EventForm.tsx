@@ -199,6 +199,7 @@ const EventForm = ({
                   currentUser?.friends.includes(user._id))) &&
               !invitees.includes(user._id) &&
               !blockedUsers?.includes(user._id) &&
+              !blockedUsersEvent.includes(user._id) &&
               currentUser?._id &&
               !user.blockedUsers.includes(currentUser._id)
             );
@@ -215,6 +216,7 @@ const EventForm = ({
                   currentUser?.friends.includes(user._id))) &&
               !organizers.includes(user._id) &&
               !blockedUsers?.includes(user._id) &&
+              !blockedUsersEvent.includes(user._id) &&
               currentUser?._id &&
               !user.blockedUsers.includes(currentUser._id)
             );
