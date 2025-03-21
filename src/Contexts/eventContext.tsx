@@ -589,10 +589,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     user: TUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
-    e?.preventDefault();
     if (user && user._id && currentUser && currentUser._id) {
       if (organizers.includes(user._id)) {
         if (user._id === currentUser._id) {
+          e?.preventDefault();
           // Remove self as organizer:
           // DB is updated immediately, redirect to homepage
           setIsLoading(true);
