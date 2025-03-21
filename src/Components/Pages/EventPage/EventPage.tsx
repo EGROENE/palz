@@ -24,10 +24,8 @@ const EventPage = () => {
   const {
     handleAddUserRSVP,
     handleDeleteUserRSVP,
-    allEvents,
     setCurrentEvent,
     handleRemoveInvitee,
-    invitees,
     fetchAllEventsQuery,
   } = useEventContext();
 
@@ -38,6 +36,7 @@ const EventPage = () => {
 
   // Get most current version of event to which this page pertains:
   const { eventID } = useParams();
+  const allEvents = fetchAllEventsQuery.data;
   const currentEvent: TEvent | undefined = allEvents
     ? allEvents.filter((ev) => ev._id === eventID)[0]
     : undefined;
@@ -207,7 +206,7 @@ const EventPage = () => {
               renderButtonTwo={true}
               closeModalMethod={setShowInvitees}
               header="Invitees"
-              userIDArray={invitees}
+              userIDArray={currentEvent.invitees}
               buttonOneText="Message"
               buttonOneHandler={undefined}
               buttonOneHandlerNeedsEventParam={false}
