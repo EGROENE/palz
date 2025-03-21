@@ -580,6 +580,10 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  showRSVPs: boolean;
+  setShowRSVPs: React.Dispatch<React.SetStateAction<boolean>>;
+  showInvitees: boolean;
+  setShowInvitees: React.Dispatch<React.SetStateAction<boolean>>;
   displayedPotentialInviteeCount: number | undefined;
   setDisplayedPotentialInviteeCount: React.Dispatch<
     React.SetStateAction<number | undefined>

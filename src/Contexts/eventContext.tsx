@@ -33,6 +33,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     "currentEvent",
     undefined
   ); // event user is editing or viewing
+
+  const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
+  const [showInvitees, setShowInvitees] = useState<boolean>(false);
+
   const [addEventIsInProgress, setAddEventIsInProgress] = useState<boolean>(false);
   const [eventEditIsInProgress, setEventEditIsInProgress] = useState<boolean>(false);
   const [eventDeletionIsInProgress, setEventDeletionIsInProgress] =
@@ -712,6 +716,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    showRSVPs,
+    setShowRSVPs,
+    showInvitees,
+    setShowInvitees,
     handleAddRemoveBlockedUserOnEvent,
     handleAddRemoveUserAsInvitee,
     displayedPotentialBlockeeCount,
