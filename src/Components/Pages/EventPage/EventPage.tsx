@@ -10,6 +10,7 @@ import UserListModal from "../../Elements/UserListModal/UserListModal";
 import Tab from "../../Elements/Tab/Tab";
 import styles from "./styles.module.css";
 import { useMainContext } from "../../../Hooks/useMainContext";
+import { useChatContext } from "../../../Hooks/useChatContext";
 
 const EventPage = () => {
   const { showSidebar, isLoading, setShowSidebar, theme } = useMainContext();
@@ -27,12 +28,15 @@ const EventPage = () => {
     setCurrentEvent,
     handleRemoveInvitee,
     fetchAllEventsQuery,
+    showRSVPs,
+    setShowRSVPs,
+    showInvitees,
+    setShowInvitees,
   } = useEventContext();
+  const { startConversation } = useChatContext();
 
   //const [event, setEvent] = useState<TEvent | undefined>();
   const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
-  const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
-  const [showInvitees, setShowInvitees] = useState<boolean>(false);
 
   // Get most current version of event to which this page pertains:
   const { eventID } = useParams();
@@ -208,9 +212,8 @@ const EventPage = () => {
               header="Invitees"
               userIDArray={currentEvent.invitees}
               buttonOneText="Message"
-              buttonOneHandler={undefined}
+              buttonOneHandler={startConversation}
               buttonOneHandlerNeedsEventParam={false}
-              buttonOneHandlerParams={[]}
               buttonTwoText="Remove"
               buttonTwoHandler={handleRemoveInvitee}
               buttonTwoHandlerNeedsEventParam={true}
@@ -226,9 +229,8 @@ const EventPage = () => {
               header="RSVPs"
               userIDArray={refinedInterestedUsers.map((user) => user._id)}
               buttonOneText="Message"
-              buttonOneHandler={undefined}
+              buttonOneHandler={startConversation}
               buttonOneHandlerNeedsEventParam={false}
-              buttonOneHandlerParams={[]}
               buttonTwoText="Remove"
               buttonTwoHandler={handleDeleteUserRSVP}
               buttonTwoHandlerNeedsEventParam={false}
