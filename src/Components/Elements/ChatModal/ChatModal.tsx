@@ -1,21 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Message from "../Message/Message";
-import { TThemeColor, TUser, TChat } from "../../../types";
+import { TThemeColor, TUser } from "../../../types";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import Methods from "../../../methods";
 import ListedUser from "../ListedUser/ListedUser";
-import mongoose from "mongoose";
 import ChatModalTwoOptions from "../ChatModalTwoOptions/ChatModalTwoOptions";
 
 const ChatModal = () => {
   const { allOtherUsers, currentUser } = useUserContext();
   const {
+    startConversation,
     setMessageBeingEdited,
-    handleOpenChat,
     showAreYouSureYouWantToLeaveChat,
     setShowShowAreYouSureYouWantToLeaveChat,
     showMembers,
@@ -56,7 +55,6 @@ const ChatModal = () => {
     showAddMemberModal,
     setShowAddMemberModal,
     handleAddAdminToChat,
-    handleCreateChat,
     setShowAreYouSureYouWantToRemoveYourselfAsAdmin,
     showAreYouSureYouWantToRemoveYourselfAsAdmin,
     handleRemoveAdminFromChat,
@@ -298,38 +296,7 @@ const ChatModal = () => {
       (listedChatMemberIsAdmin && !currentUserIsAdmin) ||
       (!listedChatMemberIsAdmin && !currentUserIsAdmin)
     ) {
-      return () => {
-        const userChats = fetchChatsQuery.data;
-
-        const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
-          (chat) =>
-            chat.members.length === 2 &&
-            currentUser &&
-            currentUser._id &&
-            chat.members.includes(currentUser._id) &&
-            listedChatMember._id &&
-            chat.members.includes(listedChatMember?._id)
-        )[0];
-
-        if (existingChatWithListedChatMember) {
-          return handleOpenChat(existingChatWithListedChatMember);
-        } else {
-          const newChatMembers: string[] =
-            listedChatMember._id && currentUser && currentUser._id
-              ? [listedChatMember._id, currentUser._id]
-              : [];
-          return handleCreateChat({
-            _id: new mongoose.Types.ObjectId().toString(),
-            members: newChatMembers,
-            messages: [],
-            chatName: chatName,
-            dateCreated: Date.now(),
-            ...(usersToAddToChat.length >= 2 &&
-              currentUser &&
-              currentUser._id && { admins: [currentUser._id] }),
-          });
-        }
-      };
+      return () => startConversation(listedChatMember)
     }
 
     // if currentUser is admin, but LCM isn't, 'add as admin' btn:
