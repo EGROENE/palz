@@ -132,7 +132,7 @@ const DropdownChecklist = ({
           key={user._id}
           onClick={
             actionEventParamNeeded
-              ? (e) => action(e, ...getActionParams(user))
+              ? (e) => action(...getActionParams(user), e)
               : () => action(...getActionParams(user))
           }
           className={styles.otherUserOption}
