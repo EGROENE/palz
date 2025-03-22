@@ -164,6 +164,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           setShowMembers(false);
           setShowChatModal(false);
           setCurrentChat(null);
+          setShowAreYouSureYouWantToLeaveChat(false);
           toast("You have left the chat.", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
