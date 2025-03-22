@@ -15,8 +15,7 @@ const ChatModal = () => {
   const {
     startConversation,
     setMessageBeingEdited,
-    showAreYouSureYouWantToLeaveChat,
-    setShowShowAreYouSureYouWantToLeaveChat,
+    setShowAreYouSureYouWantToLeaveChat,
     showMembers,
     setShowMembers,
     handleAddMultipleUsersToChat,
@@ -58,9 +57,7 @@ const ChatModal = () => {
     setShowAreYouSureYouWantToRemoveYourselfAsAdmin,
     showAreYouSureYouWantToRemoveYourselfAsAdmin,
     handleRemoveAdminFromChat,
-    showAreYouSureYouWantToDeleteChat,
-    setShowShowAreYouSureYouWantToDeleteChat,
-    handleDeleteChat,
+    setShowAreYouSureYouWantToDeleteChat,
     messageBeingEdited,
     cancelEditingMessage,
     handleSaveEditedMessage,
@@ -399,73 +396,36 @@ const ChatModal = () => {
               )}
               {currentChat && showMembers && (
                 <div className="members-container">
-                  {!showAreYouSureYouWantToLeaveChat &&
-                    !showAreYouSureYouWantToRemoveYourselfAsAdmin &&
-                    !showAreYouSureYouWantToDeleteChat && (
-                      <i
-                        title="Close"
-                        onClick={() => setShowMembers(false)}
-                        className="fas fa-times"
-                      ></i>
-                    )}
-                  {!showAreYouSureYouWantToLeaveChat &&
-                    !showAreYouSureYouWantToRemoveYourselfAsAdmin &&
-                    !showAreYouSureYouWantToDeleteChat && (
-                      <div className="members-container-options">
-                        <button
-                          style={{ color: randomColor }}
-                          onClick={() => setShowAddMemberModal(true)}
-                        >
-                          Add Members
-                        </button>
-
-                        {currentChat.admins &&
-                          currentUser &&
-                          currentUser._id &&
-                          currentChat.admins.includes(currentUser._id) && (
-                            <button
-                              style={{ color: randomColor }}
-                              onClick={() =>
-                                setShowAreYouSureYouWantToRemoveYourselfAsAdmin(true)
-                              }
-                            >
-                              Remove yourself as admin
-                            </button>
-                          )}
-                      </div>
-                    )}
-                  {showAreYouSureYouWantToLeaveChat && (
-                    <ChatModalTwoOptions
-                      randomColor={randomColor}
-                      buttonOneText="Cancel"
-                      buttonOneHandler={() =>
-                        setShowShowAreYouSureYouWantToLeaveChat(false)
-                      }
-                      buttonTwoText="Leave"
-                      buttonTwoHandler={() => {
-                        if (currentChat && currentUser) {
-                          handleRemoveUserFromChat(currentUser, currentChat);
-                        }
-                      }}
-                      header="Are you sure you want to leave this chat?"
-                    />
+                  {!showAreYouSureYouWantToRemoveYourselfAsAdmin && (
+                    <i
+                      title="Close"
+                      onClick={() => setShowMembers(false)}
+                      className="fas fa-times"
+                    ></i>
                   )}
-                  {showAreYouSureYouWantToDeleteChat && (
-                    <ChatModalTwoOptions
-                      randomColor={randomColor}
-                      header="Are you sure you want to delete this chat?"
-                      subheader="This cannot be undone."
-                      buttonOneText="Cancel"
-                      buttonOneHandler={() =>
-                        setShowShowAreYouSureYouWantToDeleteChat(false)
-                      }
-                      buttonTwoText="Delete"
-                      buttonTwoHandler={() => {
-                        if (currentChat._id) {
-                          handleDeleteChat(currentChat._id.toString());
-                        }
-                      }}
-                    />
+                  {!showAreYouSureYouWantToRemoveYourselfAsAdmin && (
+                    <div className="members-container-options">
+                      <button
+                        style={{ color: randomColor }}
+                        onClick={() => setShowAddMemberModal(true)}
+                      >
+                        Add Members
+                      </button>
+
+                      {currentChat.admins &&
+                        currentUser &&
+                        currentUser._id &&
+                        currentChat.admins.includes(currentUser._id) && (
+                          <button
+                            style={{ color: randomColor }}
+                            onClick={() =>
+                              setShowAreYouSureYouWantToRemoveYourselfAsAdmin(true)
+                            }
+                          >
+                            Remove yourself as admin
+                          </button>
+                        )}
+                    </div>
                   )}
                   {showAreYouSureYouWantToRemoveYourselfAsAdmin && (
                     <ChatModalTwoOptions
@@ -551,11 +511,11 @@ const ChatModal = () => {
               style={{ borderBottom: `3px solid ${randomColor}` }}
             >
               <header onClick={() => setShowMembers(true)}>Show members</header>
-              <header onClick={() => setShowShowAreYouSureYouWantToLeaveChat(true)}>
+              <header onClick={() => setShowAreYouSureYouWantToLeaveChat(true)}>
                 Leave chat
               </header>
               {userMayDeleteChat && (
-                <header onClick={() => setShowShowAreYouSureYouWantToDeleteChat(true)}>
+                <header onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}>
                   Delete chat
                 </header>
               )}
