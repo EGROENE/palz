@@ -832,12 +832,19 @@ form textarea {
 }
 
 .show-members {
-  padding: 1rem;
-  font-family: var(--text-font);
+  padding: 1rem 0;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-evenly;
 }
 
 .show-members:hover {
   cursor: pointer;
+}
+
+.show-members header {
+  font-family: var(--text-font);
 }
 
 .members-panel-container {

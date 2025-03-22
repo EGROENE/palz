@@ -418,20 +418,7 @@ const ChatModal = () => {
                         >
                           Add Members
                         </button>
-                        <button
-                          style={{ color: randomColor }}
-                          onClick={() => setShowShowAreYouSureYouWantToLeaveChat(true)}
-                        >
-                          Leave chat
-                        </button>
-                        {userMayDeleteChat && (
-                          <button
-                            style={{ color: randomColor }}
-                            onClick={() => setShowShowAreYouSureYouWantToDeleteChat(true)}
-                          >
-                            Delete chat
-                          </button>
-                        )}
+
                         {currentChat.admins &&
                           currentUser &&
                           currentUser._id &&
@@ -559,13 +546,20 @@ const ChatModal = () => {
       {!showAddMemberModal && !showMembers && (
         <div style={{ border: `3px solid ${randomColor}` }} className="chat-container">
           {!showMembers && currentChat && currentChat.members.length > 2 && (
-            <header
+            <div
               className="show-members"
               style={{ borderBottom: `3px solid ${randomColor}` }}
-              onClick={() => setShowMembers(true)}
             >
-              Show members
-            </header>
+              <header onClick={() => setShowMembers(true)}>Show members</header>
+              <header onClick={() => setShowShowAreYouSureYouWantToLeaveChat(true)}>
+                Leave chat
+              </header>
+              {userMayDeleteChat && (
+                <header onClick={() => setShowShowAreYouSureYouWantToDeleteChat(true)}>
+                  Delete chat
+                </header>
+              )}
+            </div>
           )}
           {otherChatMember && (
             <div className="chat-header-single-other-member">
