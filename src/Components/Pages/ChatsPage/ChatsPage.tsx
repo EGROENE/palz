@@ -10,13 +10,21 @@ import Methods from "../../../methods";
 import { TChat, TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import CreateNewChatModal from "../../Elements/CreateNewChatModal/CreateNewChatModal";
+import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 
 const ChatsPage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, fetchAllUsersQuery } = useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
-  const { fetchChatsQuery, showCreateNewChatModal, setShowCreateNewChatModal } =
-    useChatContext();
+  const {
+    fetchChatsQuery,
+    showCreateNewChatModal,
+    setShowCreateNewChatModal,
+    showAreYouSureYouWantToDeleteChat,
+    setShowShowAreYouSureYouWantToDeleteChat,
+    handleDeleteChat,
+    currentChat,
+  } = useChatContext();
 
   const userChats = fetchChatsQuery.data;
 
@@ -88,6 +96,19 @@ const ChatsPage = () => {
         <>
           {userChats.length > 0 ? (
             <div className="chats-container">
+              {showAreYouSureYouWantToDeleteChat && (
+                <TwoOptionsInterface
+                  header="Are you sure you want to delete this chat?"
+                  buttonOneText="Cancel"
+                  buttonOneHandler={() => setShowShowAreYouSureYouWantToDeleteChat(false)}
+                  handlerOneNeedsEventParam={false}
+                  buttonTwoText="Delete"
+                  buttonTwoHandler={handleDeleteChat}
+                  buttonTwoHandlerParams={[currentChat?._id]}
+                  handlerTwoNeedsEventParam={false}
+                  closeHandler={setShowShowAreYouSureYouWantToDeleteChat}
+                />
+              )}
               {userChatsSortedMostRecent.map((chat) => (
                 <ChatPreview key={chat._id.toString()} chat={chat} />
               ))}

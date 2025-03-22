@@ -2,10 +2,17 @@ import { useEffect, useState } from "react";
 import { TChat, TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Methods from "../../../methods";
+import { useUserContext } from "../../../Hooks/useUserContext";
 
 const ChatPreview = ({ chat }: { chat: TChat }) => {
-  const { getChatMembers, handleOpenChat, getNumberOfUnreadMessagesInChat } =
-    useChatContext();
+  const { currentUser } = useUserContext();
+  const {
+    getChatMembers,
+    handleOpenChat,
+    getNumberOfUnreadMessagesInChat,
+    setShowShowAreYouSureYouWantToDeleteChat,
+    setCurrentChat,
+  } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -36,6 +43,15 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
     return <i>No messages yet</i>;
   };
 
+  const userMayDeleteChat: boolean =
+    chat.admins &&
+    currentUser &&
+    currentUser._id &&
+    (chat.admins.includes(currentUser._id) ||
+      (chat.members.includes(currentUser._id) && chat.members.length === 2))
+      ? true
+      : false;
+
   return (
     <div
       key={chat._id.toString()}
@@ -55,6 +71,17 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
             {`${getNumberOfUnreadMessagesInChat(chat)} New`}
           </span>
         )}
+      {userMayDeleteChat && (
+        <i
+          onClick={() => {
+            setCurrentChat(chat);
+            setShowShowAreYouSureYouWantToDeleteChat(true);
+          }}
+          title="Delete Chat"
+          style={{ color: randomColor, margin: "0 2rem", fontSize: "1.25rem" }}
+          className="fas fa-trash-alt"
+        ></i>
+      )}
       <div onClick={() => handleOpenChat(chat)} className="chat-preview">
         <div className="profile-images-chat-preview-container">
           {getChatMembers(chat.members).map(
