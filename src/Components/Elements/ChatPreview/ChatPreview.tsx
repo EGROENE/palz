@@ -10,7 +10,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
     getChatMembers,
     handleOpenChat,
     getNumberOfUnreadMessagesInChat,
-    setShowShowAreYouSureYouWantToDeleteChat,
+    setShowAreYouSureYouWantToDeleteChat,
     setCurrentChat,
   } = useChatContext();
 
@@ -75,7 +75,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
         <i
           onClick={() => {
             setCurrentChat(chat);
-            setShowShowAreYouSureYouWantToDeleteChat(true);
+            setShowAreYouSureYouWantToDeleteChat(true);
           }}
           title="Delete Chat"
           style={{ color: randomColor, margin: "0 2rem", fontSize: "1.25rem" }}

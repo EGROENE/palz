@@ -743,7 +743,7 @@ export type TChatContext = {
   messageBeingEdited: TMessage | undefined;
   setMessageBeingEdited: React.Dispatch<React.SetStateAction<TMessage | undefined>>;
   showAreYouSureYouWantToDeleteChat: boolean;
-  setShowShowAreYouSureYouWantToDeleteChat: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAreYouSureYouWantToDeleteChat: React.Dispatch<React.SetStateAction<boolean>>;
   handleDeleteChat: (chatID: string) => void;
   showAreYouSureYouWantToRemoveYourselfAsAdmin: boolean;
   setShowAreYouSureYouWantToRemoveYourselfAsAdmin: React.Dispatch<
@@ -754,7 +754,7 @@ export type TChatContext = {
   showMembers: boolean;
   setShowMembers: React.Dispatch<React.SetStateAction<boolean>>;
   showAreYouSureYouWantToLeaveChat: boolean;
-  setShowShowAreYouSureYouWantToLeaveChat: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAreYouSureYouWantToLeaveChat: React.Dispatch<React.SetStateAction<boolean>>;
   admins: string[];
   setAdmins: React.Dispatch<React.SetStateAction<string[]>>;
   showAddMemberModal: boolean;

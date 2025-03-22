@@ -33,10 +33,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showMembers, setShowMembers] = useState<boolean>(false);
 
-  const [showAreYouSureYouWantToLeaveChat, setShowShowAreYouSureYouWantToLeaveChat] =
+  const [showAreYouSureYouWantToLeaveChat, setShowAreYouSureYouWantToLeaveChat] =
     useState<boolean>(false);
 
-  const [showAreYouSureYouWantToDeleteChat, setShowShowAreYouSureYouWantToDeleteChat] =
+  const [showAreYouSureYouWantToDeleteChat, setShowAreYouSureYouWantToDeleteChat] =
     useState<boolean>(false);
 
   const [
@@ -343,7 +343,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       if (data.ok) {
         queryClient.invalidateQueries({ queryKey: "userChats" });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
-        setShowShowAreYouSureYouWantToDeleteChat(false);
+        setShowAreYouSureYouWantToDeleteChat(false);
         setShowChatModal(false);
         setCurrentChat(null);
         toast("Chat deleted.", {
@@ -788,7 +788,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     messageBeingEdited,
     setMessageBeingEdited,
     showAreYouSureYouWantToDeleteChat,
-    setShowShowAreYouSureYouWantToDeleteChat,
+    setShowAreYouSureYouWantToDeleteChat,
     handleDeleteChat,
     showAreYouSureYouWantToRemoveYourselfAsAdmin,
     setShowAreYouSureYouWantToRemoveYourselfAsAdmin,
@@ -797,7 +797,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     showMembers,
     setShowMembers,
     showAreYouSureYouWantToLeaveChat,
-    setShowShowAreYouSureYouWantToLeaveChat,
+    setShowAreYouSureYouWantToLeaveChat,
     admins,
     setAdmins,
     showAddMemberModal,
