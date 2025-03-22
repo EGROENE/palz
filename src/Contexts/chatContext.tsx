@@ -412,23 +412,48 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     deleteChatMutation.mutate({ chatID });
   };
 
-  const handleRemoveUserFromChat = (user: TUser, chat: TChat): void => {
-    // if user is only admin left, inform by toast that they can't leave until another admin is assigned:
-    if (
-      chat &&
-      chat.admins &&
-      user._id &&
-      user &&
-      chat.admins.includes(user._id) &&
-      chat.admins.length - 1 === 0
-    ) {
-      toast.error("Please assign another admin before leaving the chat.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
+  const handleRemoveUserFromChat = (user: TUser, chat?: TChat): void => {
+    if (chat && chat.admins && user._id && user) {
+      let updatedAdmins: string[] = [];
+      const updatedMembers: string[] = chat.members.filter(
+        (member) => member !== user._id
+      );
+      if (chat.admins.includes(user._id)) {
+        // if user is only admin left, inform by toast that they can't leave until another admin is assigned:
+        if (chat.admins.length - 1 === 0) {
+          toast.error("Please assign another admin before leaving the chat.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        } else {
+          // If user isn't only admin left, remove them from chat:
+          updatedAdmins = chat.admins.filter((admin) => admin !== user._id);
+          const chatValuesToUpdate: TChatValuesToUpdate = {
+            admins: updatedAdmins,
+            members: updatedMembers,
+          };
+          const purpose =
+            currentUser && user._id === currentUser._id
+              ? "remove-self-from-chat"
+              : "remove-member";
+          updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+        }
+      } else {
+        // Remove non-admin members:
+        const chatValuesToUpdate: TChatValuesToUpdate = { members: updatedMembers };
+        const purpose =
+          currentUser && user._id === currentUser._id
+            ? "remove-self-from-chat"
+            : "remove-member";
+        updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+      }
+    }
+
+    if (!chat) {
+      setUsersToAddToChat(usersToAddToChat.filter((userToAdd) => userToAdd !== user._id));
     }
   };
 
