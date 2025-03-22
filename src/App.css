@@ -712,7 +712,7 @@ form textarea {
   flex-direction: column;
 }
 
-.chat-preview {
+.chat-preview-container {
   position: relative;
   padding: 0.75rem 0;
   border-radius: 10px;
@@ -723,9 +723,13 @@ form textarea {
   margin: 0.75rem 0;
 }
 
-.chat-preview:hover {
+.chat-preview-container i:hover {
   cursor: pointer;
   opacity: 0.8;
+}
+
+.chat-preview-container:hover {
+  cursor: pointer;
 }
 
 .chat-new {
@@ -738,13 +742,13 @@ form textarea {
   font-family: var(--text-font);
 }
 
-.profile-images-chat-preview {
+.profile-images-chat-preview-container {
   position: relative;
   display: flex;
   align-items: flex-end;
 }
 
-.chat-preview img {
+.chat-preview-container img {
   width: 5rem;
   height: 5rem;
   border-radius: 50%;
@@ -766,7 +770,7 @@ form textarea {
   font-weight: 700;
 }
 
-.chat-preview-text-container {
+.chat-preview-container-text-container {
   text-align: left;
   width: 60%;
 }
@@ -776,14 +780,26 @@ form textarea {
   justify-content: space-between;
 }
 
-.chat-preview-text-container header {
+.chat-preview-container-text-container header {
   color: var(--text-color);
   font-size: 1.5rem;
 }
 
-.chat-preview-text-container span {
+.chat-preview-container-text-container span {
   font-family: var(--text-font);
   color: var(--text-color);
+}
+
+.chat-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 93%;
+}
+
+.chat-preview:hover {
+  cursor: pointer;
+  opacity: 0.8;
 }
 
 .modal-background {

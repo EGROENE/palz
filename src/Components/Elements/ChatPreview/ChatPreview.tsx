@@ -39,9 +39,8 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
   return (
     <div
       key={chat._id.toString()}
-      className="chat-preview"
+      className="chat-preview-container"
       style={{ border: `2px solid ${randomColor}` }}
-      onClick={() => handleOpenChat(chat)}
     >
       {getNumberOfUnreadMessagesInChat(chat) !== 0 &&
         typeof getNumberOfUnreadMessagesInChat(chat) !== "string" && (
@@ -56,53 +55,55 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
             {`${getNumberOfUnreadMessagesInChat(chat)} New`}
           </span>
         )}
-      <div className="profile-images-chat-preview">
-        {getChatMembers(chat.members).map(
-          (member) =>
-            getChatMembers(chat.members).indexOf(member) < 3 && (
-              <img
-                key={member.profileImage}
-                style={
-                  getChatMembers(chat.members).indexOf(member) > 0
-                    ? {
-                        border: `4px solid ${randomColor}`,
-                        marginLeft: "-3rem",
-                        zIndex: `${getChatMembers(chat.members).indexOf(member)}`,
-                      }
-                    : { border: `4px solid ${randomColor}` }
-                }
-                src={member.profileImage}
-              />
-            )
-        )}
-        {chat.members.length - 1 > 3 && (
-          <span className="more-images-text">{`+ ${
-            getChatMembers(chat.members).length - 3
-          }`}</span>
-        )}
-      </div>
-      <div className="chat-preview-text-container">
-        <header style={{ color: randomColor }}>
-          {`${getChatMembers(chat.members)
-            .slice(0, 3)
-            .map((member) =>
-              getChatMembers(chat.members).indexOf(member) <= 2
-                ? `${member.firstName} ${member.lastName}`
-                : ""
-            )
-            .join(", ")} ${
-            getChatMembers(chat.members).length - 3 > 0
-              ? `+${getChatMembers(chat.members).length - 3} more`
-              : ""
-          }`}
-        </header>
-        <div className="last-message-preview-and-date">
-          <span>{getPreviewOfLastMessage(chat)}</span>
-          {chat.messages.length > 0 && (
-            <span>
-              {Methods.getDateMessageSent(chat.messages[chat.messages.length - 1])}
-            </span>
+      <div onClick={() => handleOpenChat(chat)} className="chat-preview">
+        <div className="profile-images-chat-preview-container">
+          {getChatMembers(chat.members).map(
+            (member) =>
+              getChatMembers(chat.members).indexOf(member) < 3 && (
+                <img
+                  key={member.profileImage}
+                  style={
+                    getChatMembers(chat.members).indexOf(member) > 0
+                      ? {
+                          border: `4px solid ${randomColor}`,
+                          marginLeft: "-3rem",
+                          zIndex: `${getChatMembers(chat.members).indexOf(member)}`,
+                        }
+                      : { border: `4px solid ${randomColor}` }
+                  }
+                  src={member.profileImage}
+                />
+              )
           )}
+          {chat.members.length - 1 > 3 && (
+            <span className="more-images-text">{`+ ${
+              getChatMembers(chat.members).length - 3
+            }`}</span>
+          )}
+        </div>
+        <div className="chat-preview-container-text-container">
+          <header style={{ color: randomColor }}>
+            {`${getChatMembers(chat.members)
+              .slice(0, 3)
+              .map((member) =>
+                getChatMembers(chat.members).indexOf(member) <= 2
+                  ? `${member.firstName} ${member.lastName}`
+                  : ""
+              )
+              .join(", ")} ${
+              getChatMembers(chat.members).length - 3 > 0
+                ? `+${getChatMembers(chat.members).length - 3} more`
+                : ""
+            }`}
+          </header>
+          <div className="last-message-preview-and-date">
+            <span>{getPreviewOfLastMessage(chat)}</span>
+            {chat.messages.length > 0 && (
+              <span>
+                {Methods.getDateMessageSent(chat.messages[chat.messages.length - 1])}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>
