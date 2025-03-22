@@ -32,6 +32,7 @@
 
 .listedUserTextsContainer {
   text-align: left;
+  margin-left: 0.5rem;
 }
 
 .listedUserName {
