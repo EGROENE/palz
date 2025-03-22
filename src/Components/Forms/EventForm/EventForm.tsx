@@ -1620,7 +1620,7 @@ const EventForm = ({
                 info={user}
                 removeHandler={handleAddRemoveUserAsInvitee}
                 removeHandlerNeedsEventParam={false}
-                removeHandlerParams={[user]}
+                removeHandlerParams={[invitees, setInvitees, user]}
                 randomColor={randomColor}
                 isDisabled={isLoading}
               />
@@ -1695,7 +1695,7 @@ const EventForm = ({
                 info={user}
                 removeHandler={handleAddRemoveBlockedUserOnEvent}
                 removeHandlerNeedsEventParam={false}
-                removeHandlerParams={[user._id]}
+                removeHandlerParams={[user]}
                 randomColor={randomColor}
                 isDisabled={isLoading}
               />
