@@ -21,9 +21,12 @@ const ChatsPage = () => {
     showCreateNewChatModal,
     setShowCreateNewChatModal,
     showAreYouSureYouWantToDeleteChat,
-    setShowShowAreYouSureYouWantToDeleteChat,
+    setShowAreYouSureYouWantToDeleteChat,
     handleDeleteChat,
     currentChat,
+    showAreYouSureYouWantToLeaveChat,
+    setShowAreYouSureYouWantToLeaveChat,
+    handleRemoveUserFromChat,
   } = useChatContext();
 
   const userChats = fetchChatsQuery.data;
@@ -100,13 +103,26 @@ const ChatsPage = () => {
                 <TwoOptionsInterface
                   header="Are you sure you want to delete this chat?"
                   buttonOneText="Cancel"
-                  buttonOneHandler={() => setShowShowAreYouSureYouWantToDeleteChat(false)}
+                  buttonOneHandler={() => setShowAreYouSureYouWantToDeleteChat(false)}
                   handlerOneNeedsEventParam={false}
                   buttonTwoText="Delete"
                   buttonTwoHandler={handleDeleteChat}
                   buttonTwoHandlerParams={[currentChat?._id]}
                   handlerTwoNeedsEventParam={false}
-                  closeHandler={setShowShowAreYouSureYouWantToDeleteChat}
+                  closeHandler={setShowAreYouSureYouWantToDeleteChat}
+                />
+              )}
+              {showAreYouSureYouWantToLeaveChat && (
+                <TwoOptionsInterface
+                  header="Are you sure you want to leave this chat?"
+                  buttonOneText="Cancel"
+                  buttonOneHandler={() => setShowAreYouSureYouWantToLeaveChat(false)}
+                  handlerOneNeedsEventParam={false}
+                  buttonTwoText="Leave"
+                  buttonTwoHandler={handleRemoveUserFromChat}
+                  buttonTwoHandlerParams={[currentUser, currentChat]}
+                  handlerTwoNeedsEventParam={false}
+                  closeHandler={setShowAreYouSureYouWantToLeaveChat}
                 />
               )}
               {userChatsSortedMostRecent.map((chat) => (
