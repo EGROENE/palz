@@ -296,7 +296,7 @@ const ChatModal = () => {
       (listedChatMemberIsAdmin && !currentUserIsAdmin) ||
       (!listedChatMemberIsAdmin && !currentUserIsAdmin)
     ) {
-      return () => startConversation(listedChatMember)
+      return () => startConversation(listedChatMember);
     }
 
     // if currentUser is admin, but LCM isn't, 'add as admin' btn:
@@ -346,6 +346,16 @@ const ChatModal = () => {
       }
     }
   }
+
+  const userMayDeleteChat: boolean =
+    currentChat &&
+    currentChat.admins &&
+    currentUser &&
+    currentUser._id &&
+    (currentChat.admins.includes(currentUser._id) ||
+      (currentChat.members.includes(currentUser._id) && currentChat.members.length === 2))
+      ? true
+      : false;
 
   return (
     <div className="modal-background">
@@ -414,20 +424,14 @@ const ChatModal = () => {
                         >
                           Leave chat
                         </button>
-                        {currentUser &&
-                          currentUser._id &&
-                          currentChat.admins &&
-                          currentChat.admins.length === 1 &&
-                          currentChat.admins.includes(currentUser._id) && (
-                            <button
-                              style={{ color: randomColor }}
-                              onClick={() =>
-                                setShowShowAreYouSureYouWantToDeleteChat(true)
-                              }
-                            >
-                              Delete chat
-                            </button>
-                          )}
+                        {userMayDeleteChat && (
+                          <button
+                            style={{ color: randomColor }}
+                            onClick={() => setShowShowAreYouSureYouWantToDeleteChat(true)}
+                          >
+                            Delete chat
+                          </button>
+                        )}
                         {currentChat.admins &&
                           currentUser &&
                           currentUser._id &&
