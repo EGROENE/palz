@@ -29,6 +29,7 @@ const AddEventPage = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+    window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {

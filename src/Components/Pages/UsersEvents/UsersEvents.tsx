@@ -47,6 +47,7 @@ const UsersEvents = () => {
     if (showSidebar) {
       setShowSidebar(false);
     }
+    window.scrollTo(0, 0);
   }, []);
 
   const now = Date.now();

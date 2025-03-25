@@ -68,6 +68,10 @@ const UserSettings = () => {
   const { fetchAllEventsQuery } = useEventContext();
   const allEvents = fetchAllEventsQuery.data;
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const { fetchChatsQuery } = useChatContext();
 
   const queryClient = useQueryClient();

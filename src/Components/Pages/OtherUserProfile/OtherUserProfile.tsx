@@ -77,6 +77,7 @@ const OtherUserProfile = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+    window.scrollTo(0, 0);
   }, []);
 
   // if currentUser is falsy, redirect to login page

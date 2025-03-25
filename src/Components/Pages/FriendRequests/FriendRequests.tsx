@@ -55,6 +55,7 @@ const FriendRequests = () => {
   useEffect(() => {
     setDisplayedItemsCount(4);
     setDisplayedItemsCountInterval(4);
+    window.scrollTo(0, 0);
   }, []);
 
   // Upon change of requestsVisible, set displayedItems & displayedItemsFiltered arrays:
