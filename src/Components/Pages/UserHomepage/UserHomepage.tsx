@@ -7,7 +7,7 @@ import { TEvent } from "../../../types";
 import Methods from "../../../methods";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import SiteLinks from "../../Elements/SiteLinks/SiteLinks";
+import Footer from "../../Elements/Footer/Footer";
 
 const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
@@ -112,7 +112,7 @@ const UserHomepage = () => {
                 )}
               </div>
             </div>
-            <SiteLinks />
+            <Footer />
           </>
         )}
       {allCurrentUserEvents &&
@@ -126,7 +126,7 @@ const UserHomepage = () => {
                 Click <Link to={"/events"}>here</Link> to find something fun to do
               </p>
             </div>
-            <SiteLinks />
+            <Footer />
           </>
         )}
     </div>
