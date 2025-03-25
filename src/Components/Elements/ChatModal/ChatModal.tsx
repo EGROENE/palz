@@ -523,8 +523,16 @@ const ChatModal = () => {
           )}
           {otherChatMember && (
             <div className="chat-header-single-other-member">
-              <img src={otherChatMember.profileImage} />
-              <header>{`${otherChatMember.firstName} ${otherChatMember.lastName}`}</header>
+              <div>
+                <img src={otherChatMember.profileImage} />
+                <header>{`${otherChatMember.firstName} ${otherChatMember.lastName}`}</header>
+              </div>
+              <i
+                onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}
+                title="Delete Chat"
+                style={{ color: randomColor, margin: "0 2rem", fontSize: "1.25rem" }}
+                className="fas fa-trash-alt"
+              ></i>
             </div>
           )}
           {currentChat && (
