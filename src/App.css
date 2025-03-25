@@ -710,6 +710,7 @@ form textarea {
   justify-content: center;
   width: 50%;
   flex-direction: column;
+  margin-bottom: 4rem;
 }
 
 .chat-preview-container {
