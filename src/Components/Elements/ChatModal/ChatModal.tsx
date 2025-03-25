@@ -515,7 +515,10 @@ const ChatModal = () => {
                 Leave chat
               </header>
               {userMayDeleteChat && (
-                <header onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}>
+                <header
+                  style={{ color: "tomato" }}
+                  onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}
+                >
                   Delete chat
                 </header>
               )}
