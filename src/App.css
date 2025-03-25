@@ -657,11 +657,12 @@ form textarea {
 
 #new-chat-btn {
   position: fixed;
-  bottom: 3rem;
+  bottom: 11rem;
   right: 8rem;
   font-size: 2rem;
   border-radius: 50%;
-  padding: 2rem;
+  padding: 1.5rem;
+  z-index: 100;
 }
 
 .create-new-chat {
