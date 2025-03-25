@@ -38,7 +38,7 @@ const DisplayedCardsPage = ({
   } = useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
 
-  const allEvents = fetchAllEventsQuery.data;
+  const allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
 
   const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
   const toggleShowFilterOptions = (): void => setShowFilterOptions(!showFilterOptions);
