@@ -1,4 +1,10 @@
 .footer {
   margin-top: 2rem;
   margin-bottom: 2rem;
+  padding-top: 2rem;
+}
+
+.footer hr {
+  width: 61%;
+  margin-bottom: 3rem;
 }
