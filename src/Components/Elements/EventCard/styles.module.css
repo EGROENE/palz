@@ -28,6 +28,7 @@
   align-items: center;
   background-color: black;
   border-radius: 8px;
+  font-size: 0.85rem;
 }
 
 .eventCard img {
@@ -67,6 +68,10 @@
   border-radius: 50%;
   border: 2px solid var(--text-color);
   padding: 0.5rem;
+}
+
+.eventInfoContainer p {
+  font-size: 0.75rem;
 }
 
 .eventCardImageContainer {

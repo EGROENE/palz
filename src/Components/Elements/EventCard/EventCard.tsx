@@ -167,7 +167,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
           title="Copy link to event page to clipboard"
         ></i>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <div className="event-info-container">
+          <div className={styles.eventInfoContainer}>
             <header>{event.title}</header>
             <p>
               {nextEventDateTime.toDateString()} at{" "}
