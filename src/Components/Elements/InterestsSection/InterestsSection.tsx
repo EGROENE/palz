@@ -57,7 +57,9 @@ const InterestsSection = ({
     inputInterest === "";
 
   const { currentUser, allUsers, fetchAllUsersQuery } = useUserContext();
-  const { allEvents } = useEventContext();
+  const { fetchAllEventsQuery } = useEventContext();
+
+  const allEvents = fetchAllEventsQuery.data;
 
   // Get array of interests that are not present on user/event object
   // This will be passed to InterestsModal; for each item in array, an addable interest displays

@@ -13,7 +13,9 @@ const UsersEvents = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, fetchAllUsersQuery, logout } =
     useUserContext();
-  const { allEvents, fetchAllEventsQuery } = useEventContext();
+  const { fetchAllEventsQuery } = useEventContext();
+
+  const allEvents = fetchAllEventsQuery.data;
 
   const navigation = useNavigate();
   useEffect(() => {
