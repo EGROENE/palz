@@ -306,7 +306,7 @@
 }
 
 .rsvpd-events-container {
-  margin-top: 2rem;
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
   display: flex;
   overflow-x: scroll;
