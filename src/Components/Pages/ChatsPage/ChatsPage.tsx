@@ -139,7 +139,7 @@ const ChatsPage = () => {
               <header
                 style={{ color: "var(--text-color)", fontFamily: "var(--text-font)" }}
               >
-                No chats yet, but you can create one by clicking the quill icon below!
+                No chats yet, but you can create one by clicking the quill icon!
               </header>
               <Footer />
             </>
