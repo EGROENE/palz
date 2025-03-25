@@ -163,7 +163,8 @@ h3 {
   margin: 0;
 }
 
-p {
+p,
+footer {
   color: var(--text-color);
   font-family: var(--text-font);
 }
