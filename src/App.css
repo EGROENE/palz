@@ -940,9 +940,16 @@ form textarea {
 .chat-header-single-other-member {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   max-width: 100%;
   background-color: var(--background-color);
+}
+
+.chat-header-single-other-member div {
+  display: flex;
+  width: 22rem;
+  align-items: center;
 }
 
 .chat-header-single-other-member img {
