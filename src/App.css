@@ -330,7 +330,7 @@
   width: 81vw;
   display: flex;
   justify-content: space-evenly;
-  margin: 3rem auto;
+  margin-bottom: 2rem;
 }
 
 /* .site-links-container button {
