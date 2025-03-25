@@ -8,6 +8,7 @@ import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSectio
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
+import Footer from "../../Elements/Footer/Footer";
 
 const UsersEvents = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
@@ -185,6 +186,7 @@ const UsersEvents = () => {
           </div>
         </>
       )}
+      <Footer randomColor={randomColor} />
     </div>
   );
 };

@@ -133,7 +133,7 @@ const ChatsPage = () => {
                   <ChatPreview key={chat._id.toString()} chat={chat} />
                 ))}
               </div>
-              <Footer />
+              <Footer randomColor={randomColor} />
             </>
           ) : (
             <>
@@ -142,7 +142,7 @@ const ChatsPage = () => {
               >
                 No chats yet, but you can create one by clicking the quill icon!
               </header>
-              <Footer />
+              <Footer randomColor={randomColor} />
             </>
           )}
           <i

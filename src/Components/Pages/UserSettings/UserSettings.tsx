@@ -14,6 +14,7 @@ import styles from "./styles.module.css";
 import { useQueryClient } from "@tanstack/react-query";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 import { useChatContext } from "../../../Hooks/useChatContext";
+import Footer from "../../Elements/Footer/Footer";
 
 const UserSettings = () => {
   const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
@@ -364,6 +365,7 @@ const UserSettings = () => {
           </div>
         </div>
       )}
+      <Footer randomColor={randomColor} />
       {!fetchAllUsersQuery.isError &&
         !fetchAllUsersQuery.isLoading &&
         showAreYouSureInterface && (
