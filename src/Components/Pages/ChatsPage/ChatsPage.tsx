@@ -102,6 +102,7 @@ const ChatsPage = () => {
               {showAreYouSureYouWantToDeleteChat && (
                 <TwoOptionsInterface
                   header="Are you sure you want to delete this chat?"
+                  subheader="Please understand that all messages will be deleted. This is irreversible."
                   buttonOneText="Cancel"
                   buttonOneHandler={() => setShowAreYouSureYouWantToDeleteChat(false)}
                   handlerOneNeedsEventParam={false}
