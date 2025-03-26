@@ -10,7 +10,6 @@ import Methods from "../../../methods";
 import { TChat, TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import CreateNewChatModal from "../../Elements/CreateNewChatModal/CreateNewChatModal";
-import Footer from "../../Elements/Footer/Footer";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 
 const ChatsPage = () => {
@@ -117,7 +116,6 @@ const ChatsPage = () => {
                   <ChatPreview key={chat._id.toString()} chat={chat} />
                 ))}
               </div>
-              <Footer randomColor={randomColor} />
             </>
           ) : (
             <>
@@ -126,7 +124,6 @@ const ChatsPage = () => {
               >
                 No chats yet, but you can create one by clicking the quill icon!
               </header>
-              <Footer randomColor={randomColor} />
             </>
           )}
           <i

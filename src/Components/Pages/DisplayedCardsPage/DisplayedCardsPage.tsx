@@ -11,7 +11,6 @@ import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
-import Footer from "../../Elements/Footer/Footer";
 
 const DisplayedCardsPage = ({
   usedFor,
@@ -846,7 +845,6 @@ const DisplayedCardsPage = ({
           usedFor !== "events" ? "Error fetching users" : "Error fetching events"
         }
       />
-      <Footer randomColor={randomColor} />
     </div>
   );
 };

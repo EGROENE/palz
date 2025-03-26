@@ -24,6 +24,7 @@ import toast from "react-hot-toast";
 import ChatsPage from "./Components/Pages/ChatsPage/ChatsPage";
 import { useChatContext } from "./Hooks/useChatContext";
 import ChatModal from "./Components/Elements/ChatModal/ChatModal";
+import Footer from "./Components/Elements/Footer/Footer";
 
 function App() {
   const {
@@ -186,6 +187,7 @@ function App() {
       )}
       {chatCreationInProgress && <LoadingModal message="Creating chat..." />}
       {showChatModal && <ChatModal />}
+
       <Routes>
         <Route path="/" element={baseURLElement} />
         <Route path="/settings" element={<UserSettings />} />
@@ -208,6 +210,8 @@ function App() {
         <Route path="/chats" element={<ChatsPage />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
+      {baseURLElement.type.name !== "Welcome" &&
+        baseURLElement.type.name !== "LoginPage" && <Footer />}
     </div>
   );
 }

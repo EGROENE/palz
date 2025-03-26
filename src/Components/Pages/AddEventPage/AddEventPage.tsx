@@ -8,7 +8,6 @@ import { TThemeColor } from "../../../types";
 import toast from "react-hot-toast";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
-import Footer from "../../Elements/Footer/Footer";
 
 const AddEventPage = () => {
   const navigation = useNavigate();
@@ -71,7 +70,6 @@ const AddEventPage = () => {
       {!fetchIsLoading && isNoFetchError && (
         <EventForm randomColor={randomColor} usedFor="add-event" />
       )}
-      <Footer randomColor={randomColor} />
     </div>
   );
 };
