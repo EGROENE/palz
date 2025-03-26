@@ -10,25 +10,14 @@ import Methods from "../../../methods";
 import { TChat, TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import CreateNewChatModal from "../../Elements/CreateNewChatModal/CreateNewChatModal";
-import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import Footer from "../../Elements/Footer/Footer";
 
 const ChatsPage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, fetchAllUsersQuery } = useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
-  const {
-    fetchChatsQuery,
-    showCreateNewChatModal,
-    setShowCreateNewChatModal,
-    showAreYouSureYouWantToDeleteChat,
-    setShowAreYouSureYouWantToDeleteChat,
-    handleDeleteChat,
-    currentChat,
-    showAreYouSureYouWantToLeaveChat,
-    setShowAreYouSureYouWantToLeaveChat,
-    handleRemoveUserFromChat,
-  } = useChatContext();
+  const { fetchChatsQuery, showCreateNewChatModal, setShowCreateNewChatModal } =
+    useChatContext();
 
   const userChats = fetchChatsQuery.data;
 
@@ -102,33 +91,6 @@ const ChatsPage = () => {
           {userChats.length > 0 ? (
             <>
               <div className="chats-container">
-                {showAreYouSureYouWantToDeleteChat && (
-                  <TwoOptionsInterface
-                    header="Are you sure you want to delete this chat?"
-                    subheader="Please understand that all messages will be deleted. This is irreversible."
-                    buttonOneText="Cancel"
-                    buttonOneHandler={() => setShowAreYouSureYouWantToDeleteChat(false)}
-                    handlerOneNeedsEventParam={false}
-                    buttonTwoText="Delete"
-                    buttonTwoHandler={handleDeleteChat}
-                    buttonTwoHandlerParams={[currentChat?._id]}
-                    handlerTwoNeedsEventParam={false}
-                    closeHandler={setShowAreYouSureYouWantToDeleteChat}
-                  />
-                )}
-                {showAreYouSureYouWantToLeaveChat && (
-                  <TwoOptionsInterface
-                    header="Are you sure you want to leave this chat?"
-                    buttonOneText="Cancel"
-                    buttonOneHandler={() => setShowAreYouSureYouWantToLeaveChat(false)}
-                    handlerOneNeedsEventParam={false}
-                    buttonTwoText="Leave"
-                    buttonTwoHandler={handleRemoveUserFromChat}
-                    buttonTwoHandlerParams={[currentUser, currentChat]}
-                    handlerTwoNeedsEventParam={false}
-                    closeHandler={setShowAreYouSureYouWantToLeaveChat}
-                  />
-                )}
                 {userChatsSortedMostRecent.map((chat) => (
                   <ChatPreview key={chat._id.toString()} chat={chat} />
                 ))}

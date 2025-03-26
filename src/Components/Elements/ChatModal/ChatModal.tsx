@@ -61,6 +61,8 @@ const ChatModal = () => {
     messageBeingEdited,
     cancelEditingMessage,
     handleSaveEditedMessage,
+    handleDeleteChat,
+    showAreYouSureYouWantToDeleteChat,
   } = useChatContext();
 
   /* 
@@ -359,6 +361,9 @@ const ChatModal = () => {
       <i
         title="Close"
         onClick={(e) => {
+          if (showAreYouSureYouWantToDeleteChat) {
+            setShowAreYouSureYouWantToDeleteChat(false);
+          }
           setShowChatModal(false);
           setCurrentChat(null);
           setAreNewMessages(false);
@@ -540,6 +545,11 @@ const ChatModal = () => {
           )}
           {currentChat && (
             <div
+              style={
+                showAreYouSureYouWantToDeleteChat
+                  ? { display: "flex", alignItems: "center", justifyContent: "center" }
+                  : undefined
+              }
               ref={messagesContainerRef}
               className="messages-container"
               onScroll={() => handleMessageContainerScroll()}
@@ -576,13 +586,27 @@ const ChatModal = () => {
                   )}
                 </div>
               )}
-              {currentChat.messages.map((message) => (
-                <Message
-                  key={message._id.toString()}
-                  message={message}
-                  randomColor={randomColor ? randomColor : undefined}
+              {!showAreYouSureYouWantToDeleteChat ? (
+                currentChat.messages.map((message) => (
+                  <Message
+                    key={message._id.toString()}
+                    message={message}
+                    randomColor={randomColor ? randomColor : undefined}
+                  />
+                ))
+              ) : (
+                <ChatModalTwoOptions
+                  randomColor={randomColor}
+                  header="Are you sure you want to delete this chat?"
+                  subheader="Please understand that all messages will be deleted. This is irreversible."
+                  buttonOneText="Cancel"
+                  buttonOneHandler={() => setShowAreYouSureYouWantToDeleteChat(false)}
+                  buttonTwoText="Delete"
+                  buttonTwoHandler={() =>
+                    handleDeleteChat(currentChat ? currentChat._id.toString() : "")
+                  }
                 />
-              ))}
+              )}
             </div>
           )}
           {
