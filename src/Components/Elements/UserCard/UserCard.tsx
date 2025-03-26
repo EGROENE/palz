@@ -145,6 +145,13 @@ const UserCard = ({ user }: { user: TUser }) => {
   };
   const userIsMessageable: boolean = getUserIsMessageable();
 
+  const friendsInCommon: TUser[] = allUsers
+    ? allUsers?.filter(
+        (u) =>
+          u._id && user.friends.includes(u._id) && currentUser?.friends.includes(u._id)
+      )
+    : [];
+
   return (
     <>
       {showFriendRequestResponseOptions &&
@@ -212,6 +219,13 @@ const UserCard = ({ user }: { user: TUser }) => {
             <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
           </div>
         )}
+        {user.whoCanSeeFriendsList &&
+          friendsInCommon.length > 0 &&
+          (friendsInCommon.length === 1 ? (
+            <p>{`${friendsInCommon.length} friend in common`}</p>
+          ) : (
+            <p>{`${friendsInCommon.length} friends in common`}</p>
+          ))}
         <div className={styles.userCardBtnContainer}>
           <button
             style={
