@@ -1010,6 +1010,11 @@ form textarea {
   overflow-y: auto;
 }
 
+.messages-container header {
+  font-size: 2rem;
+  color: var(--text-color);
+}
+
 .message-indicators-container {
   display: flex;
   flex-direction: column;
