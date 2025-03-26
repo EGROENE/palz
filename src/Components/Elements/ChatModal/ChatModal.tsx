@@ -357,6 +357,16 @@ const ChatModal = () => {
       ? true
       : false;
 
+  const usersAreFriends: boolean =
+    otherChatMember &&
+    otherChatMember._id &&
+    currentUser &&
+    currentUser._id &&
+    otherChatMember.friends.includes(currentUser._id) &&
+    currentUser.friends.includes(otherChatMember._id)
+      ? true
+      : false;
+
   return (
     <div className="modal-background">
       <i
@@ -532,9 +542,14 @@ const ChatModal = () => {
           )}
           {otherChatMember && (
             <div className="chat-header-single-other-member">
-              <div>
-                <img src={otherChatMember.profileImage} />
-                <header>{`${otherChatMember.firstName} ${otherChatMember.lastName}`}</header>
+              <div className="other-member-info-container">
+                <div>
+                  <img src={otherChatMember.profileImage} />
+                  <header>{`${otherChatMember.firstName} ${otherChatMember.lastName}`}</header>
+                </div>
+                {!usersAreFriends && (
+                  <p>{`You and ${otherChatMember.firstName} are not friends`}</p>
+                )}
               </div>
               <i
                 onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}
