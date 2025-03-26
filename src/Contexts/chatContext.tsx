@@ -92,22 +92,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   });
   const userChats: TChat[] | undefined = fetchChatsQuery.data;
 
-  /* const chatValuesToUpdate: TChatValuesToUpdate = {
-      ...(firstName?.trim() !== "" &&
-        firstName !== currentUser?.firstName && {
-          firstName: Methods.formatHyphensAndSpacesInString(
-            Methods.formatCapitalizedName(firstName?.trim())
-          ),
-        }),
-      ...(lastName?.trim() !== "" &&
-        lastName !== currentUser?.lastName && {
-          lastName: Methods.formatHyphensAndSpacesInString(
-            Methods.formatCapitalizedName(lastName?.trim())
-          ),
-        }),
-        ...
-    }; */
-
   const queryClient = useQueryClient();
 
   const updateChatMutation = useMutation({
