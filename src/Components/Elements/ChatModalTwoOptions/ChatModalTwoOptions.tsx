@@ -9,9 +9,9 @@ const ChatModalTwoOptions = ({
   subheader,
   randomColor,
 }: {
-  buttonOneHandler: React.MouseEventHandler<HTMLButtonElement>;
+  buttonOneHandler?: React.MouseEventHandler<HTMLButtonElement>;
   buttonOneText: string;
-  buttonTwoHandler: React.MouseEventHandler<HTMLButtonElement>;
+  buttonTwoHandler?: React.MouseEventHandler<HTMLButtonElement>;
   buttonTwoText: string;
   header: string;
   subheader?: string;
