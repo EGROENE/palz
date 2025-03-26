@@ -953,11 +953,11 @@ form textarea {
   flex-direction: column;
   align-items: flex-start;
   padding-left: 0.5rem;
+  max-width: 60%;
 }
 
 .other-member-info-container div {
   display: flex;
-  width: 22rem;
   align-items: center;
 }
 
