@@ -948,10 +948,21 @@ form textarea {
   background-color: var(--background-color);
 }
 
-.chat-header-single-other-member div {
+.other-member-info-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 0.5rem;
+}
+
+.other-member-info-container div {
   display: flex;
   width: 22rem;
   align-items: center;
+}
+
+.other-member-info-container p {
+  margin: 0.5rem 0 0.5rem 0;
 }
 
 .chat-header-single-other-member img {
