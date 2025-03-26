@@ -352,7 +352,6 @@ const OtherUserProfile = () => {
       (pal) => combinedPalz.indexOf(pal) !== combinedPalz.lastIndexOf(pal)
     )
   );
-  console.log(palzInCommon.length);
 
   const getCurrentUserCanSeeFriendsList = (): boolean => {
     if (currentUser && currentUser._id) {
