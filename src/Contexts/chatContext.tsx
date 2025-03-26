@@ -23,10 +23,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     currentUser,
     userHasLoggedIn,
     allOtherUsers,
-    allUsers,
+    fetchAllUsersQuery,
     setCurrentOtherUser,
     currentOtherUser,
   } = useUserContext();
+  const allUsers = fetchAllUsersQuery.data;
   const { showInvitees, setShowInvitees, showRSVPs, setShowRSVPs } = useEventContext();
 
   const [showChatModal, setShowChatModal] = useState<boolean>(false);

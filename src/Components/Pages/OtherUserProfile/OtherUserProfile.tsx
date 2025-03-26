@@ -20,7 +20,6 @@ const OtherUserProfile = () => {
   const navigation = useNavigate();
   const { showSidebar, setShowSidebar, theme, isLoading } = useMainContext();
   const {
-    allUsers,
     currentUser,
     userCreatedAccount,
     handleSendFriendRequest,
@@ -42,6 +41,7 @@ const OtherUserProfile = () => {
     setFriends,
     fetchAllUsersQuery,
   } = useUserContext();
+  const allUsers = fetchAllUsersQuery.data;
   const { fetchAllEventsQuery } = useEventContext();
   const allEvents = fetchAllEventsQuery.data;
   const { getStartOrOpenChatWithUserHandler, fetchChatsQuery } = useChatContext();
