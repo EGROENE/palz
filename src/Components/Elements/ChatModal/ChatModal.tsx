@@ -604,8 +604,10 @@ const ChatModal = () => {
                   buttonOneText="Cancel"
                   buttonOneHandler={() => setShowAreYouSureYouWantToDeleteChat(false)}
                   buttonTwoText="Delete"
-                  buttonTwoHandler={() =>
-                    handleDeleteChat(currentChat ? currentChat._id.toString() : "")
+                  buttonTwoHandler={
+                    currentChat
+                      ? () => handleDeleteChat(currentChat._id.toString())
+                      : undefined
                   }
                 />
               )}
