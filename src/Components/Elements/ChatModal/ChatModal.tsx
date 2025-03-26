@@ -63,6 +63,7 @@ const ChatModal = () => {
     handleSaveEditedMessage,
     handleDeleteChat,
     showAreYouSureYouWantToDeleteChat,
+    showAreYouSureYouWantToLeaveChat,
   } = useChatContext();
 
   /* 
@@ -546,7 +547,7 @@ const ChatModal = () => {
           {currentChat && (
             <div
               style={
-                showAreYouSureYouWantToDeleteChat
+                showAreYouSureYouWantToDeleteChat || showAreYouSureYouWantToLeaveChat
                   ? { display: "flex", alignItems: "center", justifyContent: "center" }
                   : undefined
               }
@@ -586,15 +587,16 @@ const ChatModal = () => {
                   )}
                 </div>
               )}
-              {!showAreYouSureYouWantToDeleteChat ? (
+              {!showAreYouSureYouWantToDeleteChat &&
+                !showAreYouSureYouWantToLeaveChat &&
                 currentChat.messages.map((message) => (
                   <Message
                     key={message._id.toString()}
                     message={message}
                     randomColor={randomColor ? randomColor : undefined}
                   />
-                ))
-              ) : (
+                ))}
+              {showAreYouSureYouWantToDeleteChat && !showAreYouSureYouWantToLeaveChat && (
                 <ChatModalTwoOptions
                   randomColor={randomColor}
                   header="Are you sure you want to delete this chat?"
@@ -604,6 +606,20 @@ const ChatModal = () => {
                   buttonTwoText="Delete"
                   buttonTwoHandler={() =>
                     handleDeleteChat(currentChat ? currentChat._id.toString() : "")
+                  }
+                />
+              )}
+              {showAreYouSureYouWantToLeaveChat && !showAreYouSureYouWantToDeleteChat && (
+                <ChatModalTwoOptions
+                  randomColor={randomColor}
+                  header="Are you sure you want to leave this chat?"
+                  buttonOneText="Cancel"
+                  buttonOneHandler={() => setShowAreYouSureYouWantToLeaveChat(false)}
+                  buttonTwoText="Leave"
+                  buttonTwoHandler={
+                    currentUser && currentChat
+                      ? () => handleRemoveUserFromChat(currentUser, currentChat)
+                      : undefined
                   }
                 />
               )}
