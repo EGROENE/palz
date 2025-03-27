@@ -42,8 +42,12 @@ const OtherUserProfile = () => {
     fetchAllUsersQuery,
   } = useUserContext();
   const allUsers = fetchAllUsersQuery.data;
-  const { fetchAllEventsQuery, handleRemoveInvitee, handleRemoveOrganizer } =
-    useEventContext();
+  const {
+    fetchAllEventsQuery,
+    handleRemoveInvitee,
+    handleRemoveOrganizer,
+    handleDeleteUserRSVP,
+  } = useEventContext();
   const allEvents = fetchAllEventsQuery.data;
   const { getStartOrOpenChatWithUserHandler, fetchChatsQuery, handleDeleteChat } =
     useChatContext();
@@ -278,6 +282,9 @@ const OtherUserProfile = () => {
           }
 
           // Remove blockee's RSVP:
+          if (event.interestedUsers.includes(currentOtherUser._id)) {
+            handleDeleteUserRSVP(event, currentOtherUser, e);
+          }
 
           // Remove blockee as organizer:
           if (event.organizers.includes(currentOtherUser._id)) {
