@@ -1515,7 +1515,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   // Defined here, since used in DropdownChecklist & EventForm
 
   // maybe pass in a TUser[] & its setter in order to optimistically render UserCards on FindPalz/MyPalz, FriendRequests
-  const handleBlockUser = (
+  const addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists = (
     blocker: TUser,
     blockee: TUser,
     blockedUsers?: string[] | undefined,
@@ -1914,7 +1914,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers,
     setBlockedUsers,
     handleUnblockUser,
-    handleBlockUser,
+    addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists,
     whoCanMessage,
     setWhoCanMessage,
     currentOtherUser,

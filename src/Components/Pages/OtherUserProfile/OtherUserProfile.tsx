@@ -30,7 +30,7 @@ const OtherUserProfile = () => {
     handleAcceptFriendRequest,
     friendRequestsSent,
     setFriendRequestsSent,
-    handleBlockUser,
+    addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists,
     handleUnblockUser,
     blockedUsers,
     setBlockedUsers,
@@ -264,7 +264,7 @@ const OtherUserProfile = () => {
                 setBlockedUsers
               )
           : () =>
-              handleBlockUser(
+              addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists(
                 currentUser,
                 currentOtherUser,
                 blockedUsers,
@@ -289,7 +289,7 @@ const OtherUserProfile = () => {
           ? !currentOtherUserIsBlocked
             ? () => {
                 // Delete chat w/ currentOtherUser, if it exists:
-                // Must be done here, since handleBlockUser, defined in userContext, doesn't have access to chat info
+                // Must be done here, since addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have access to chat info
                 let chatToDelete: TChat | undefined = userChats
                   ? userChats.filter(
                       (chat) =>
@@ -308,10 +308,10 @@ const OtherUserProfile = () => {
                 }
 
                 // Remove from invitee lists, currentOtherUser from co-organizer lists (if currentUser is event creator), currentUser from co-organizer lists (if currentOtherUser is event creator)
-                // Must be done here, as handleBlockUser, defined in userContext, doesn't have acces to events info
+                // Must be done here, as addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have acces to events info
 
                 // Remove from friend requests, friends lists:
-                handleBlockUser(
+                addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists(
                   currentUser,
                   currentOtherUser,
                   blockedUsers,

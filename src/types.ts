@@ -267,7 +267,7 @@ export type TUserContext = {
   setFriendRequestsReceived: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   blockedUsers: string[] | undefined;
   setBlockedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  handleBlockUser: (
+  addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists: (
     blocker: TUser,
     blockee: TUser,
     blockedUsers?: string[] | undefined,
