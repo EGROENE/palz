@@ -6,7 +6,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import styles from "./styles.module.css";
-import { TThemeColor, TUser, TEvent } from "../../../types";
+import { TThemeColor, TUser, TEvent, TChat } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { countries } from "../../../constants";
 import Methods from "../../../methods";
@@ -44,7 +44,9 @@ const OtherUserProfile = () => {
   const allUsers = fetchAllUsersQuery.data;
   const { fetchAllEventsQuery } = useEventContext();
   const allEvents = fetchAllEventsQuery.data;
-  const { getStartOrOpenChatWithUserHandler, fetchChatsQuery } = useChatContext();
+  const { getStartOrOpenChatWithUserHandler, fetchChatsQuery, handleDeleteChat } =
+    useChatContext();
+  const userChats = fetchChatsQuery.data;
   const { username } = useParams();
   const currentOtherUser =
     allUsers && allUsers.filter((user) => user.username === username)[0];
@@ -285,13 +287,37 @@ const OtherUserProfile = () => {
       handler:
         currentUser && currentOtherUser
           ? !currentOtherUserIsBlocked
-            ? () =>
+            ? () => {
+                // Delete chat w/ currentOtherUser, if it exists:
+                // Must be done here, since handleBlockUser, defined in userContext, doesn't have access to chat info
+                let chatToDelete: TChat | undefined = userChats
+                  ? userChats.filter(
+                      (chat) =>
+                        currentUser &&
+                        currentUser._id &&
+                        currentOtherUser &&
+                        currentOtherUser._id &&
+                        chat.members.length === 2 &&
+                        chat.members.includes(currentUser._id) &&
+                        chat.members.includes(currentOtherUser._id)
+                    )[0]
+                  : undefined;
+
+                if (chatToDelete) {
+                  handleDeleteChat(chatToDelete._id.toString());
+                }
+
+                // Remove from invitee lists, currentOtherUser from co-organizer lists (if currentUser is event creator), currentUser from co-organizer lists (if currentOtherUser is event creator)
+                // Must be done here, as handleBlockUser, defined in userContext, doesn't have acces to events info
+
+                // Remove from friend requests, friends lists:
                 handleBlockUser(
                   currentUser,
                   currentOtherUser,
                   blockedUsers,
                   setBlockedUsers
-                )
+                );
+              }
             : () =>
                 handleUnblockUser(
                   currentUser,
