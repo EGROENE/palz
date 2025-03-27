@@ -163,13 +163,16 @@ const OtherUserProfile = () => {
             <i className="fas fa-user-minus"></i> Retract Request
           </>
         ),
-        handler: handleRetractFriendRequest,
-        handlerParams: [
-          currentUser,
-          currentOtherUser,
-          friendRequestsSent,
-          setFriendRequestsSent,
-        ],
+        handler:
+          currentUser && currentOtherUser
+            ? () =>
+                handleRetractFriendRequest(
+                  currentUser,
+                  currentOtherUser,
+                  friendRequestsSent,
+                  setFriendRequestsSent
+                )
+            : undefined,
         paramsIncludeEvent: false,
       };
     }
@@ -177,8 +180,8 @@ const OtherUserProfile = () => {
       return {
         type: "respond to friend request",
         buttonText: "Accept/Decline Request",
-        handler: setShowFriendRequestResponseOptions,
-        handlerParams: [!showFriendRequestResponseOptions],
+        handler: () =>
+          setShowFriendRequestResponseOptions(!showFriendRequestResponseOptions),
         paramsIncludeEvent: false,
       };
     }
@@ -189,13 +192,16 @@ const OtherUserProfile = () => {
           <i className="fas fa-user-plus"></i> Add Friend
         </>
       ),
-      handler: handleSendFriendRequest,
-      handlerParams: [
-        currentUser,
-        currentOtherUser,
-        friendRequestsSent,
-        setFriendRequestsSent,
-      ],
+      handler:
+        currentUser && currentOtherUser
+          ? () =>
+              handleSendFriendRequest(
+                currentUser,
+                currentOtherUser,
+                friendRequestsSent,
+                setFriendRequestsSent
+              )
+          : undefined,
       paramsIncludeEvent: false,
     };
   };
@@ -213,7 +219,6 @@ const OtherUserProfile = () => {
     handler: currentOtherUser
       ? () => getStartOrOpenChatWithUserHandler(currentOtherUser)
       : undefined,
-    handlerParams: [],
     paramsIncludeEvent: false,
   };
 
@@ -224,8 +229,10 @@ const OtherUserProfile = () => {
         <i className="fas fa-user-minus"></i> Unfriend
       </>
     ),
-    handler: handleUnfriending,
-    handlerParams: [currentUser, currentOtherUser, friends, setFriends],
+    handler:
+      currentUser && currentOtherUser
+        ? () => handleUnfriending(currentUser, currentOtherUser, friends, setFriends)
+        : undefined,
     paramsIncludeEvent: false,
   };
 
@@ -246,8 +253,21 @@ const OtherUserProfile = () => {
             <i className="fas fa-lock"></i> Block
           </>
         ),
-        handler: currentOtherUserIsBlocked ? handleUnblockUser : handleBlockUser,
-        handlerParams: [currentUser, currentOtherUser, blockedUsers, setBlockedUsers],
+        handler: currentOtherUserIsBlocked
+          ? () =>
+              handleUnblockUser(
+                currentUser,
+                currentOtherUser,
+                blockedUsers,
+                setBlockedUsers
+              )
+          : () =>
+              handleBlockUser(
+                currentUser,
+                currentOtherUser,
+                blockedUsers,
+                setBlockedUsers
+              ),
         paramsIncludeEvent: false,
       };
     }
@@ -262,8 +282,24 @@ const OtherUserProfile = () => {
           <i className="fas fa-lock-open"></i> Unblock
         </>
       ),
-      handler: !currentOtherUserIsBlocked ? handleBlockUser : handleUnblockUser,
-      handlerParams: [currentUser, currentOtherUser, blockedUsers, setBlockedUsers],
+      handler:
+        currentUser && currentOtherUser
+          ? !currentOtherUserIsBlocked
+            ? () =>
+                handleBlockUser(
+                  currentUser,
+                  currentOtherUser,
+                  blockedUsers,
+                  setBlockedUsers
+                )
+            : () =>
+                handleUnblockUser(
+                  currentUser,
+                  currentOtherUser,
+                  blockedUsers,
+                  setBlockedUsers
+                )
+          : undefined,
       paramsIncludeEvent: false,
     };
   };
@@ -728,15 +764,7 @@ const OtherUserProfile = () => {
                         style={{ maxHeight: "3rem", display: "flex" }}
                         className="theme-element-container"
                       >
-                        <button
-                          disabled={isLoading}
-                          onClick={
-                            button.paramsIncludeEvent // @ts-expect-error: ...
-                              ? (e) => button.handler(e, ...button.handlerParams)
-                              : // @ts-expect-error: ...
-                                () => button.handler(...button.handlerParams)
-                          }
-                        >
+                        <button disabled={isLoading} onClick={button.handler}>
                           {button.buttonText}
                         </button>
                       </div>
