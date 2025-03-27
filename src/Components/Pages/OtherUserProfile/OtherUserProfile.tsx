@@ -42,7 +42,7 @@ const OtherUserProfile = () => {
     fetchAllUsersQuery,
   } = useUserContext();
   const allUsers = fetchAllUsersQuery.data;
-  const { fetchAllEventsQuery } = useEventContext();
+  const { fetchAllEventsQuery, handleRemoveInvitee } = useEventContext();
   const allEvents = fetchAllEventsQuery.data;
   const { getStartOrOpenChatWithUserHandler, fetchChatsQuery, handleDeleteChat } =
     useChatContext();
@@ -238,7 +238,7 @@ const OtherUserProfile = () => {
     paramsIncludeEvent: false,
   };
 
-  const handleBlockUser = (): void => {
+  const handleBlockUser = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>): void => {
     // Delete chat w/ currentOtherUser, if it exists:
     // Must be done here, since addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have access to chat info
     let chatToDelete: TChat | undefined = userChats
@@ -259,7 +259,27 @@ const OtherUserProfile = () => {
     }
 
     // Remove from invitee lists, currentOtherUser from co-organizer lists (if currentUser is event creator), currentUser from co-organizer lists (if currentOtherUser is event creator)
-    // Must be done here, as addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have acces to events info
+    // Must be done here, as addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have access to events info
+    const allEvents = fetchAllEventsQuery.data;
+    if (
+      allEvents &&
+      currentUser &&
+      currentUser._id &&
+      currentOtherUser &&
+      currentOtherUser._id
+    ) {
+      for (const event of allEvents) {
+        // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
+        if (event.creator === currentUser._id) {
+          if (event.invitees.includes(currentOtherUser._id)) {
+            const user = currentOtherUser;
+            handleRemoveInvitee(e, event, user);
+          }
+        }
+
+        // If event creator is currentOtherUser & currentUser is invitee or co-organizer, remove currentUser from those lists:
+      }
+    }
 
     // Add to blockedUsers (representative value in state), remove from friend requests, friends lists:
     if (currentUser && currentOtherUser) {
@@ -321,7 +341,7 @@ const OtherUserProfile = () => {
       handler:
         currentUser && currentOtherUser
           ? !currentOtherUserIsBlocked
-            ? () => handleBlockUser()
+            ? (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => handleBlockUser(e)
             : () =>
                 handleUnblockUser(
                   currentUser,
