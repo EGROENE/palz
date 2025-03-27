@@ -309,63 +309,27 @@ const OtherUserProfile = () => {
   };
 
   const getBlockButton = () => {
-    if (
-      currentOtherUser &&
-      currentOtherUser._id &&
-      currentUser?.blockedUsers.includes(currentOtherUser._id)
-    ) {
+    if (currentOtherUserIsBlocked && currentUser && currentOtherUser) {
       return {
         type: "unblock",
-        buttonText: currentOtherUserIsBlocked ? (
+        buttonText: (
           <>
             <i className="fas fa-lock-open"></i> Unblock
           </>
-        ) : (
-          <>
-            <i className="fas fa-lock"></i> Block
-          </>
         ),
-        handler: currentOtherUserIsBlocked
-          ? () =>
-              handleUnblockUser(
-                currentUser,
-                currentOtherUser,
-                blockedUsers,
-                setBlockedUsers
-              )
-          : () =>
-              addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists(
-                currentUser,
-                currentOtherUser,
-                blockedUsers,
-                setBlockedUsers
-              ),
+        handler: () =>
+          handleUnblockUser(currentUser, currentOtherUser, blockedUsers, setBlockedUsers),
         paramsIncludeEvent: false,
       };
     }
     return {
       type: "block",
-      buttonText: !currentOtherUserIsBlocked ? (
+      buttonText: (
         <>
           <i className="fas fa-lock"></i> Block
         </>
-      ) : (
-        <>
-          <i className="fas fa-lock-open"></i> Unblock
-        </>
       ),
-      handler:
-        currentUser && currentOtherUser
-          ? !currentOtherUserIsBlocked
-            ? (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => handleBlockUser(e)
-            : () =>
-                handleUnblockUser(
-                  currentUser,
-                  currentOtherUser,
-                  blockedUsers,
-                  setBlockedUsers
-                )
-          : undefined,
+      handler: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => handleBlockUser(e),
       paramsIncludeEvent: false,
     };
   };
