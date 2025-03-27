@@ -488,6 +488,38 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
+  const removeOrganizerMutation = useMutation({
+    mutationFn: ({ event, user }: { event: TEvent; user: TUser }) =>
+      Requests.removeOrganizer(event, user),
+    onSuccess: (data) => {
+      if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.refetchQueries({ queryKey: ["allEvents"] });
+
+        toast("Event organizer removed", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      } else {
+        throw Error;
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Could not remove invitee. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    },
+    onSettled: () => setIsLoading(false),
+  });
+
   const removeSelfAsEventOrganizerMutation = useMutation({
     mutationFn: ({ event, user }: { event: TEvent; user: TUser }) =>
       Requests.removeOrganizer(event, user),
@@ -587,6 +619,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Used in dropdown list of potential organizers; changes are only made to organizers variable in state
   const handleAddRemoveUserAsOrganizer = (
     organizers: string[],
     setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
