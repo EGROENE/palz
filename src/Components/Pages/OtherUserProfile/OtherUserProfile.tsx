@@ -754,37 +754,40 @@ const OtherUserProfile = () => {
               )}
               {(getSocialMediumIsVisible("facebook") ||
                 getSocialMediumIsVisible("instagram") ||
-                getSocialMediumIsVisible("x")) && (
-                <div className={styles.socialLinksContainer}>
-                  {getSocialMediumIsVisible("facebook") && (
-                    <a
-                      title={`${currentOtherUser.username}'s Facebook Profile`}
-                      href={`${currentOtherUser.facebook}`}
-                      target="_blank"
-                    >
-                      <span className="fab fa-facebook"></span>
-                    </a>
-                  )}
-                  {getSocialMediumIsVisible("instagram") && (
-                    <a
-                      title={`${currentOtherUser.username}'s Instagram Profile`}
-                      href={`${currentOtherUser.instagram}`}
-                      target="_blank"
-                    >
-                      <span className="fab fa-instagram"></span>
-                    </a>
-                  )}
-                  {getSocialMediumIsVisible("x") && (
-                    <a
-                      title={`${currentOtherUser.username}'s X Profile`}
-                      href={`${currentOtherUser.x}`}
-                      target="_blank"
-                    >
-                      <span className="fab fa-twitter-square"></span>
-                    </a>
-                  )}
-                </div>
-              )}
+                getSocialMediumIsVisible("x")) &&
+                (currentOtherUser.facebook !== "" ||
+                  currentOtherUser.instagram !== "" ||
+                  currentOtherUser.x !== "") && (
+                  <div className={styles.socialLinksContainer}>
+                    {getSocialMediumIsVisible("facebook") && (
+                      <a
+                        title={`${currentOtherUser.username}'s Facebook Profile`}
+                        href={`${currentOtherUser.facebook}`}
+                        target="_blank"
+                      >
+                        <span className="fab fa-facebook"></span>
+                      </a>
+                    )}
+                    {getSocialMediumIsVisible("instagram") && (
+                      <a
+                        title={`${currentOtherUser.username}'s Instagram Profile`}
+                        href={`${currentOtherUser.instagram}`}
+                        target="_blank"
+                      >
+                        <span className="fab fa-instagram"></span>
+                      </a>
+                    )}
+                    {getSocialMediumIsVisible("x") && (
+                      <a
+                        title={`${currentOtherUser.username}'s X Profile`}
+                        href={`${currentOtherUser.x}`}
+                        target="_blank"
+                      >
+                        <span className="fab fa-twitter-square"></span>
+                      </a>
+                    )}
+                  </div>
+                )}
               <div className={styles.actionButtonsContainer}>
                 {displayedButtons.map(
                   (button) =>
