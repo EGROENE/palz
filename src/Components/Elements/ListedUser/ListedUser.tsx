@@ -105,7 +105,7 @@ const ListedUser = ({
                 ? buttonOneHandlerNeedsEventParam
                   ? (e) =>
                       buttonOneHandlerParams
-                        ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                        ? buttonOneHandler(...buttonOneHandlerParams, e)
                         : buttonOneHandler(e)
                   : () =>
                       buttonOneHandlerParams
@@ -131,7 +131,7 @@ const ListedUser = ({
                 ? buttonOneHandlerNeedsEventParam
                   ? (e) =>
                       buttonOneHandlerParams
-                        ? buttonOneHandler(e, ...buttonOneHandlerParams)
+                        ? buttonOneHandler(...buttonOneHandlerParams, e)
                         : buttonOneHandler(e)
                   : () =>
                       buttonOneHandlerParams
