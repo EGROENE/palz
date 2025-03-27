@@ -59,8 +59,10 @@ const OtherUserProfile = () => {
   const [showFriends, setShowFriends] = useState<boolean>(false);
   const [showMutualFriends, setShowMutualFriends] = useState<boolean>(false);
 
-  const currentOtherUserIsBlocked =
-    blockedUsers && currentOtherUser?._id && blockedUsers.includes(currentOtherUser._id);
+  const currentOtherUserIsBlocked: boolean =
+    blockedUsers && currentOtherUser && currentOtherUser._id
+      ? blockedUsers.includes(currentOtherUser._id)
+      : false;
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
   useEffect(() => {
