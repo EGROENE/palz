@@ -1518,8 +1518,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleBlockUser = (
     blocker: TUser,
     blockee: TUser,
-    blockedUsers?: string[] | null,
-    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | null>>
+    blockedUsers?: string[] | undefined,
+    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
   ): void => {
     if (blockedUsers && setBlockedUsers && blockee._id) {
       setBlockedUsers(blockedUsers.concat(blockee._id));
@@ -1550,8 +1550,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleUnblockUser = (
     blocker: TUser,
     blockee: TUser,
-    blockedUsers?: string[] | null,
-    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | null>>
+    blockedUsers?: string[] | undefined,
+    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
   ): void => {
     setIsLoading(true);
 

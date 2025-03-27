@@ -270,14 +270,14 @@ export type TUserContext = {
   handleBlockUser: (
     blocker: TUser,
     blockee: TUser,
-    blockedUsers?: string[] | null,
-    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | null>>
+    blockedUsers?: string[] | undefined,
+    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   handleUnblockUser: (
     blocker: TUser,
     blockee: TUser,
-    blockedUsers?: string[] | null,
-    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | null>>
+    blockedUsers?: string[] | undefined,
+    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   currentOtherUser: TUser | null;
   setCurrentOtherUser: React.Dispatch<React.SetStateAction<TUser | null>>;
