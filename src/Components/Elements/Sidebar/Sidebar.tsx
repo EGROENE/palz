@@ -7,7 +7,7 @@ import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
 const Sidebar = () => {
-  const { showSidebar, setShowSidebar, theme } = useMainContext();
+  const { showSidebar, setShowSidebar, theme, currentRoute } = useMainContext();
   const {
     profileImage,
     currentUser,
@@ -90,36 +90,48 @@ const Sidebar = () => {
         </p>
       </div>
       <div className={styles.sidebarOptionContainer}>
-        <Link to={"/add-event"} className={styles.sidebarOption}>
-          Create Event
-        </Link>
-        <Link to={`/${currentUser?.username}/events`} className={styles.sidebarOption}>
-          My Events
-        </Link>
-        <Link className={styles.sidebarOption} to={"/events"}>
-          Explore Events
-        </Link>
-        <Link
-          className={styles.sidebarOption}
-          to={`/${currentUser?.username}/friend-requests`}
-        >
-          {
-            <>
-              Friend Requests{" "}
-              {friendRequestsReceived && friendRequestsReceived.length > 0 && (
-                <span className="notifications-count">
-                  {friendRequestsReceived.length}
-                </span>
-              )}
-            </>
-          }
-        </Link>
-        <Link className={styles.sidebarOption} to="/find-palz">
-          Find Palz
-        </Link>
-        <Link className={styles.sidebarOption} to={"/my-palz"}>
-          My Palz
-        </Link>
+        {currentRoute !== "/add-event" && (
+          <Link to={"/add-event"} className={styles.sidebarOption}>
+            Create Event
+          </Link>
+        )}
+        {currentRoute !== `/${currentUser?.username}/events` && (
+          <Link to={`/${currentUser?.username}/events`} className={styles.sidebarOption}>
+            My Events
+          </Link>
+        )}
+        {currentRoute !== "/events" && (
+          <Link className={styles.sidebarOption} to={"/events"}>
+            Explore Events
+          </Link>
+        )}
+        {currentRoute !== `/${currentUser?.username}/friend-requests` && (
+          <Link
+            className={styles.sidebarOption}
+            to={`/${currentUser?.username}/friend-requests`}
+          >
+            {
+              <>
+                Friend Requests{" "}
+                {friendRequestsReceived && friendRequestsReceived.length > 0 && (
+                  <span className="notifications-count">
+                    {friendRequestsReceived.length}
+                  </span>
+                )}
+              </>
+            }
+          </Link>
+        )}
+        {currentRoute !== "/find-palz" && (
+          <Link className={styles.sidebarOption} to="/find-palz">
+            Find Palz
+          </Link>
+        )}
+        {currentRoute !== "/my-palz" && (
+          <Link className={styles.sidebarOption} to={"/my-palz"}>
+            My Palz
+          </Link>
+        )}
       </div>
     </div>
   );
