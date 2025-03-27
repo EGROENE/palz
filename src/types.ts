@@ -580,6 +580,11 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  handleRemoveOrganizer: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent,
+    user: TUser | null
+  ) => void;
   showRSVPs: boolean;
   setShowRSVPs: React.Dispatch<React.SetStateAction<boolean>>;
   showInvitees: boolean;

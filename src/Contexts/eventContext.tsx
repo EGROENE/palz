@@ -589,7 +589,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Handler for user to decline invitation. Should remove them from invitees array.
+  // Handler for user to decline invitation. Should remove them from invitees array in DB:
   const handleRemoveInvitee = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
@@ -601,6 +601,19 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (user) {
       removeInviteeMutation.mutate({ event, user });
+    }
+  };
+
+  // Removes organizer from event.organizers. Request sent to DB.
+  const handleRemoveOrganizer = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    event: TEvent,
+    user: TUser | null
+  ) => {
+    e.preventDefault();
+    setIsLoading(true);
+    if (user) {
+      removeOrganizerMutation.mutate({ event, user });
     }
   };
 
@@ -749,6 +762,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    handleRemoveOrganizer,
     showRSVPs,
     setShowRSVPs,
     showInvitees,
