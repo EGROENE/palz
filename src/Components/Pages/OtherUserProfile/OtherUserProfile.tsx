@@ -238,6 +238,40 @@ const OtherUserProfile = () => {
     paramsIncludeEvent: false,
   };
 
+  const handleBlockUser = (): void => {
+    // Delete chat w/ currentOtherUser, if it exists:
+    // Must be done here, since addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have access to chat info
+    let chatToDelete: TChat | undefined = userChats
+      ? userChats.filter(
+          (chat) =>
+            currentUser &&
+            currentUser._id &&
+            currentOtherUser &&
+            currentOtherUser._id &&
+            chat.members.length === 2 &&
+            chat.members.includes(currentUser._id) &&
+            chat.members.includes(currentOtherUser._id)
+        )[0]
+      : undefined;
+
+    if (chatToDelete) {
+      handleDeleteChat(chatToDelete._id.toString());
+    }
+
+    // Remove from invitee lists, currentOtherUser from co-organizer lists (if currentUser is event creator), currentUser from co-organizer lists (if currentOtherUser is event creator)
+    // Must be done here, as addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have acces to events info
+
+    // Add to blockedUsers (representative value in state), remove from friend requests, friends lists:
+    if (currentUser && currentOtherUser) {
+      addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists(
+        currentUser,
+        currentOtherUser,
+        blockedUsers,
+        setBlockedUsers
+      );
+    }
+  };
+
   const getBlockButton = () => {
     if (
       currentOtherUser &&
@@ -287,37 +321,7 @@ const OtherUserProfile = () => {
       handler:
         currentUser && currentOtherUser
           ? !currentOtherUserIsBlocked
-            ? () => {
-                // Delete chat w/ currentOtherUser, if it exists:
-                // Must be done here, since addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have access to chat info
-                let chatToDelete: TChat | undefined = userChats
-                  ? userChats.filter(
-                      (chat) =>
-                        currentUser &&
-                        currentUser._id &&
-                        currentOtherUser &&
-                        currentOtherUser._id &&
-                        chat.members.length === 2 &&
-                        chat.members.includes(currentUser._id) &&
-                        chat.members.includes(currentOtherUser._id)
-                    )[0]
-                  : undefined;
-
-                if (chatToDelete) {
-                  handleDeleteChat(chatToDelete._id.toString());
-                }
-
-                // Remove from invitee lists, currentOtherUser from co-organizer lists (if currentUser is event creator), currentUser from co-organizer lists (if currentOtherUser is event creator)
-                // Must be done here, as addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have acces to events info
-
-                // Remove from friend requests, friends lists:
-                addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists(
-                  currentUser,
-                  currentOtherUser,
-                  blockedUsers,
-                  setBlockedUsers
-                );
-              }
+            ? () => handleBlockUser()
             : () =>
                 handleUnblockUser(
                   currentUser,
