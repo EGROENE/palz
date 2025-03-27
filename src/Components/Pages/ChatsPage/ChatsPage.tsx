@@ -42,6 +42,9 @@ const ChatsPage = () => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
     window.scrollTo(0, 0);
+    if (showSidebar) {
+      setShowSidebar(false);
+    }
   }, []);
 
   const navigation = useNavigate();
