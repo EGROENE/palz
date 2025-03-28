@@ -708,11 +708,9 @@ export type TEventContext = {
     user?: TUser
   ) => void;
   handleRemoveInvitee: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     user: TUser | null,
-    displayedUsers?: TUser[],
-    setDisplayedUsers?: React.Dispatch<React.SetStateAction<TUser[]>>
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
   handleDeclineInvitation: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,

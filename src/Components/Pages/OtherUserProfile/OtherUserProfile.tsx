@@ -279,7 +279,7 @@ const OtherUserProfile = () => {
         // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
         if (event.creator === currentUser._id) {
           if (event.invitees.includes(currentOtherUser._id)) {
-            handleRemoveInvitee(e, event, currentOtherUser);
+            handleRemoveInvitee(event, currentOtherUser, e);
           }
 
           // Remove blockee's RSVP:
