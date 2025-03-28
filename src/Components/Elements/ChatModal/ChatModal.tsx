@@ -11,7 +11,7 @@ import ListedUser from "../ListedUser/ListedUser";
 import ChatModalTwoOptions from "../ChatModalTwoOptions/ChatModalTwoOptions";
 
 const ChatModal = () => {
-  const { allOtherUsers, currentUser } = useUserContext();
+  const { allOtherUsers, currentUser, setCurrentOtherUser } = useUserContext();
   const {
     startConversation,
     setMessageBeingEdited,
@@ -496,18 +496,10 @@ const ChatModal = () => {
                         member._id &&
                         !currentChat.admins.includes(member._id) &&
                         currentChat.admins.includes(currentUser._id)
-                          ? handleRemoveUserFromChat
-                          : undefined
-                      }
-                      buttonTwoHandlerParams={
-                        currentUser &&
-                        currentUser._id &&
-                        currentChat &&
-                        currentChat.admins &&
-                        member._id &&
-                        !currentChat.admins.includes(member._id) &&
-                        currentChat.admins.includes(currentUser._id)
-                          ? [member, currentChat]
+                          ? () => {
+                              setCurrentOtherUser(member);
+                              handleRemoveUserFromChat(member, currentChat);
+                            }
                           : undefined
                       }
                       buttonTwoText="Remove"
