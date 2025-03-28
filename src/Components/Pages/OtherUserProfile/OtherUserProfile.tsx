@@ -55,6 +55,7 @@ const OtherUserProfile = () => {
   const { username } = useParams();
   const currentOtherUser =
     allUsers && allUsers.filter((user) => user.username === username)[0];
+  console.log(currentOtherUser);
 
   const [showFriends, setShowFriends] = useState<boolean>(false);
   const [showMutualFriends, setShowMutualFriends] = useState<boolean>(false);
@@ -652,6 +653,19 @@ const OtherUserProfile = () => {
   };
   const palzInCommonText = getPalzInCommonText();
 
+  const showFacebook: boolean =
+    currentOtherUser && getSocialMediumIsVisible("facebook")
+      ? currentOtherUser.facebook !== ""
+      : false;
+
+  const showInstagram: boolean =
+    currentOtherUser && getSocialMediumIsVisible("instagram")
+      ? currentOtherUser.instagram !== ""
+      : false;
+
+  const showX: boolean =
+    currentOtherUser && getSocialMediumIsVisible("x") ? currentOtherUser.x !== "" : false;
+
   return (
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <QueryLoadingOrError
@@ -752,14 +766,10 @@ const OtherUserProfile = () => {
                   style={{ color: randomColor }}
                 >{`You are in ${numberOfGroupChatsInCommon} group chats together`}</p>
               )}
-              {(getSocialMediumIsVisible("facebook") ||
-                getSocialMediumIsVisible("instagram") ||
-                getSocialMediumIsVisible("x")) &&
-                (currentOtherUser.facebook !== "" ||
-                  currentOtherUser.instagram !== "" ||
-                  currentOtherUser.x !== "") && (
-                  <div className={styles.socialLinksContainer}>
-                    {getSocialMediumIsVisible("facebook") && (
+              {(showFacebook || showInstagram || showX) && (
+                <div className={styles.socialLinksContainer}>
+                  {getSocialMediumIsVisible("facebook") &&
+                    currentOtherUser.facebook !== "" && (
                       <a
                         title={`${currentOtherUser.username}'s Facebook Profile`}
                         href={`${currentOtherUser.facebook}`}
@@ -768,7 +778,8 @@ const OtherUserProfile = () => {
                         <span className="fab fa-facebook"></span>
                       </a>
                     )}
-                    {getSocialMediumIsVisible("instagram") && (
+                  {getSocialMediumIsVisible("instagram") &&
+                    currentOtherUser.instagram !== "" && (
                       <a
                         title={`${currentOtherUser.username}'s Instagram Profile`}
                         href={`${currentOtherUser.instagram}`}
@@ -777,17 +788,17 @@ const OtherUserProfile = () => {
                         <span className="fab fa-instagram"></span>
                       </a>
                     )}
-                    {getSocialMediumIsVisible("x") && (
-                      <a
-                        title={`${currentOtherUser.username}'s X Profile`}
-                        href={`${currentOtherUser.x}`}
-                        target="_blank"
-                      >
-                        <span className="fab fa-twitter-square"></span>
-                      </a>
-                    )}
-                  </div>
-                )}
+                  {getSocialMediumIsVisible("x") && currentOtherUser.x !== "" && (
+                    <a
+                      title={`${currentOtherUser.username}'s X Profile`}
+                      href={`${currentOtherUser.x}`}
+                      target="_blank"
+                    >
+                      <span className="fab fa-twitter-square"></span>
+                    </a>
+                  )}
+                </div>
+              )}
               <div className={styles.actionButtonsContainer}>
                 {displayedButtons.map(
                   (button) =>
