@@ -109,7 +109,6 @@
 .socialLinksContainer span {
   border-radius: 3rem;
   font-size: 2rem;
-  -webkit-text-fill-color: transparent;
 }
 
 .socialLinksContainer span:hover {
