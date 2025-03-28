@@ -158,7 +158,7 @@ const ListedUser = ({
                 ? buttonTwoHandlerNeedsEventParam
                   ? (e) =>
                       buttonTwoHandlerParams
-                        ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                        ? buttonTwoHandler(...buttonTwoHandlerParams, e)
                         : buttonTwoHandler(e)
                   : () =>
                       buttonTwoHandlerParams
@@ -180,7 +180,7 @@ const ListedUser = ({
                 ? buttonTwoHandlerNeedsEventParam
                   ? (e) =>
                       buttonTwoHandlerParams
-                        ? buttonTwoHandler(e, ...buttonTwoHandlerParams)
+                        ? buttonTwoHandler(...buttonTwoHandlerParams, e)
                         : buttonTwoHandler(e)
                   : () =>
                       buttonTwoHandlerParams
