@@ -11,6 +11,7 @@ import { TChat, TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import CreateNewChatModal from "../../Elements/CreateNewChatModal/CreateNewChatModal";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
+import EditChatNameModal from "../../EditChatNameModal/EditChatNameModal";
 
 const ChatsPage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
@@ -24,6 +25,7 @@ const ChatsPage = () => {
     setShowAreYouSureYouWantToDeleteChat,
     handleDeleteChat,
     currentChat,
+    showEditChatNameModal,
   } = useChatContext();
 
   const userChats = fetchChatsQuery.data;
@@ -92,6 +94,7 @@ const ChatsPage = () => {
     <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
       <h1>Chats</h1>
       {showCreateNewChatModal && <CreateNewChatModal />}
+      {showEditChatNameModal && <EditChatNameModal />}
       <QueryLoadingOrError
         query={queryForQueryLoadingOrError}
         errorMessage="Error fetching your chats"
