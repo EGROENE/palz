@@ -115,7 +115,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         | "remove-self-from-chat"
         | "add-admin"
         | "remove-admin"
-        | "edit-message";
+        | "edit-message"
+        | "update-chat-name";
     }) => Requests.updateChat(chat, chatValuesToUpdate),
     onSuccess: (data, variables) => {
       if (data.ok) {
@@ -193,6 +194,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           setMessageBeingEdited(undefined);
           setInputMessage("");
           toast.success(`Message has been updated.`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid green",
+            },
+          });
+        }
+        if (variables.purpose === "update-chat-name") {
+          setChatName(undefined);
+          toast.success(`Chat name has been updated.`, {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
               color: theme === "dark" ? "black" : "white",
@@ -287,6 +298,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       }
       if (variables.purpose === "edit-message") {
         toast.error("Could not save edits; please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
+      if (variables.purpose === "update-chat-name") {
+        toast.error("Could not update chat name; please try again.", {
           style: {
             background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
             color: theme === "dark" ? "black" : "white",
