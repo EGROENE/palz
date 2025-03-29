@@ -515,7 +515,7 @@ const ChatModal = () => {
         <div style={{ border: `3px solid ${randomColor}` }} className="chat-container">
           {!showMembers && currentChat && currentChat.members.length > 2 && (
             <div
-              className="show-members"
+              className="group-chat-header"
               style={{ borderBottom: `3px solid ${randomColor}` }}
             >
               <header onClick={() => setShowMembers(true)}>Show members</header>

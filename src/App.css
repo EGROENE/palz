@@ -833,7 +833,7 @@ form textarea {
   border-radius: 5px;
 }
 
-.show-members {
+.group-chat-header {
   padding: 1rem 0;
   display: flex;
   width: 100%;
@@ -841,11 +841,11 @@ form textarea {
   justify-content: space-evenly;
 }
 
-.show-members:hover {
+.group-chat-header:hover {
   cursor: pointer;
 }
 
-.show-members header {
+.group-chat-header header {
   font-family: var(--text-font);
 }
 
