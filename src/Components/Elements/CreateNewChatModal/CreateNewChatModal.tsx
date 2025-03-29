@@ -223,6 +223,7 @@ const CreateNewChatModal = () => {
                 members: userIDsToAddToChat,
                 messages: [],
                 chatName: chatName,
+                chatType: userIDsToAddToChat.length > 2 ? "group" : "two-member",
                 dateCreated: Date.now(),
                 ...(usersToAddToChat.length >= 2 &&
                   currentUser &&

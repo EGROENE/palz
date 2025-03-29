@@ -680,6 +680,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       members: newChatMembers,
       messages: [],
       chatName: "",
+      chatType: "two-member",
       dateCreated: Date.now(),
     });
   };
@@ -756,6 +757,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         members: newChatMembers,
         messages: [],
         chatName: chatName,
+        chatType: "two-member",
         dateCreated: Date.now(),
         ...(usersToAddToChat.length >= 2 &&
           currentUser &&
