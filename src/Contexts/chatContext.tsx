@@ -52,6 +52,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showCreateNewChatModal, setShowCreateNewChatModal] = useState<boolean>(false);
 
+  const [showEditChatNameModal, setShowEditChatNameModal] = useState<boolean>(false);
+
   const [usersToAddToChat, setUsersToAddToChat] = useState<string[]>([]);
 
   const [chatName, setChatName] = useState<string | undefined>(undefined);
@@ -770,6 +772,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    showEditChatNameModal,
+    setShowEditChatNameModal,
     startConversation,
     getStartOrOpenChatWithUserHandler,
     getTotalNumberOfUnreadMessages,

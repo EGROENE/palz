@@ -738,6 +738,8 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  showEditChatNameModal: boolean;
+  setShowEditChatNameModal: React.Dispatch<React.SetStateAction<boolean>>;
   startConversation: (otherUser: TUser) => void;
   getStartOrOpenChatWithUserHandler: (otherUser: TUser) => void;
   getTotalNumberOfUnreadMessages: (chatArray: TChat[]) => string | number;
