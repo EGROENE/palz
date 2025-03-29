@@ -50,6 +50,10 @@ const chatSchema = new Schema({
     type: String,
     required: false,
   },
+  chatType: {
+    type: String,
+    required: true,
+  },
   admins: {
     type: [String],
     required: false,
