@@ -849,6 +849,11 @@ form textarea {
   font-family: var(--text-font);
 }
 
+.chat-name {
+  font-family: var(--header-font);
+  font-size: 2rem;
+}
+
 .members-panel-container {
   background-color: var(--background-color);
   position: sticky;

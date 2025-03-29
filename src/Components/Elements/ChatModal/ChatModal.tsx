@@ -407,9 +407,6 @@ const ChatModal = () => {
         >
           {
             <div className="members-panel">
-              {currentChat && currentChat.chatName && currentChat.chatName !== "" && (
-                <header>{currentChat.chatName}</header>
-              )}
               {currentChat && showMembers && (
                 <div className="members-container">
                   {!showAreYouSureYouWantToRemoveYourselfAsAdmin && (
@@ -514,23 +511,30 @@ const ChatModal = () => {
       {!showAddMemberModal && !showMembers && (
         <div style={{ border: `3px solid ${randomColor}` }} className="chat-container">
           {!showMembers && currentChat && currentChat.members.length > 2 && (
-            <div
-              className="group-chat-header"
-              style={{ borderBottom: `3px solid ${randomColor}` }}
-            >
-              <header onClick={() => setShowMembers(true)}>Show members</header>
-              <header onClick={() => setShowAreYouSureYouWantToLeaveChat(true)}>
-                Leave chat
-              </header>
-              {userMayDeleteChat && (
-                <header
-                  style={{ color: "tomato" }}
-                  onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}
-                >
-                  Delete chat
+            <>
+              {currentChat.chatName && (
+                <header style={{ color: randomColor }} className="chat-name">
+                  {currentChat.chatName}
                 </header>
               )}
-            </div>
+              <div
+                className="group-chat-header"
+                style={{ borderBottom: `3px solid ${randomColor}` }}
+              >
+                <header onClick={() => setShowMembers(true)}>Show members</header>
+                <header onClick={() => setShowAreYouSureYouWantToLeaveChat(true)}>
+                  Leave chat
+                </header>
+                {userMayDeleteChat && (
+                  <header
+                    style={{ color: "tomato" }}
+                    onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}
+                  >
+                    Delete chat
+                  </header>
+                )}
+              </div>
+            </>
           )}
           {otherChatMember && (
             <div className="chat-header-single-other-member">
