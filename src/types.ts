@@ -113,7 +113,7 @@ export type TChat = {
   members: string[];
   messages: TMessage[];
   dateCreated: number;
-  chatName: string;
+  chatName: string | undefined;
   chatType: "two-member" | "group";
   admins?: string[];
 };
@@ -799,8 +799,8 @@ export type TChatContext = {
   setPotentialChatMembers: React.Dispatch<React.SetStateAction<TUser[]>>;
   chatMembersSearchQuery: string;
   setChatMembersSearchQuery: React.Dispatch<React.SetStateAction<string>>;
-  chatName: string;
-  setChatName: React.Dispatch<React.SetStateAction<string>>;
+  chatName: string | undefined;
+  setChatName: React.Dispatch<React.SetStateAction<string | undefined>>;
   chatNameError: string;
   setChatNameError: React.Dispatch<React.SetStateAction<string>>;
   handleRemoveUserFromChat: (user: TUser, chat: TChat) => void;

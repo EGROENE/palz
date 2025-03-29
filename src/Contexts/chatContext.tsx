@@ -54,7 +54,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [usersToAddToChat, setUsersToAddToChat] = useState<string[]>([]);
 
-  const [chatName, setChatName] = useState<string>("");
+  const [chatName, setChatName] = useState<string | undefined>(undefined);
   const [chatNameError, setChatNameError] = useState<string>("");
 
   const [admins, setAdmins] = useState<string[]>([]);
