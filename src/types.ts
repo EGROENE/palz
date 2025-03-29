@@ -738,6 +738,7 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  handleUpdateChatName: (chat: TChat) => void;
   showEditChatNameModal: boolean;
   setShowEditChatNameModal: React.Dispatch<React.SetStateAction<boolean>>;
   startConversation: (otherUser: TUser) => void;

@@ -668,6 +668,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
   };
 
+  const handleUpdateChatName = (chat: TChat): void => {
+    const purpose = "update-chat-name";
+    const chatValuesToUpdate: TChatValuesToUpdate = {
+      chatName: chatName,
+    };
+    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+  };
+
   const handleOpenChat = (chat: TChat): void => {
     setCurrentChat(chat);
     setShowChatModal(true);
@@ -792,6 +800,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    handleUpdateChatName,
     showEditChatNameModal,
     setShowEditChatNameModal,
     startConversation,
