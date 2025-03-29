@@ -733,7 +733,8 @@ const createNewChat = (newChat: TChat): Promise<Response> => {
     "messages": newChat.messages,
     "chatType": newChat.chatType,
     "dateCreated": newChat.dateCreated,
-    "chatName": newChat.chatName,
+    ...(newChat.chatName &&
+      newChat.chatName.replace(/\s/g, "") !== "" && { newChat: newChat.chatName }),
     ...(newChat.admins && newChat.admins.length > 0 && { admins: newChat.admins }),
   });
 
