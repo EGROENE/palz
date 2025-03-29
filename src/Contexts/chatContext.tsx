@@ -390,6 +390,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         },
       });
     } else {
+      if (chatName !== undefined) {
+        setChatName(undefined);
+      }
       createChatMutation.mutate({ chat });
     }
   };
