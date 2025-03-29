@@ -201,7 +201,7 @@ const CreateNewChatModal = () => {
           <>
             <header>Choose group name (optional)</header>
             <input
-              value={chatName}
+              value={chatName ? chatName : ""}
               onChange={(e) => handleChatNameInput(e)}
               type="text"
               placeholder="Choose a name for the group chat"
