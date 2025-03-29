@@ -510,7 +510,7 @@ const ChatModal = () => {
       )}
       {!showAddMemberModal && !showMembers && (
         <div style={{ border: `3px solid ${randomColor}` }} className="chat-container">
-          {!showMembers && currentChat && currentChat.members.length > 2 && (
+          {currentChat && currentChat.chatType === "group" && (
             <>
               {currentChat.chatName && (
                 <header style={{ color: randomColor }} className="chat-name">
