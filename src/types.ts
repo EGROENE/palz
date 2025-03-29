@@ -114,6 +114,7 @@ export type TChat = {
   messages: TMessage[];
   dateCreated: number;
   chatName: string;
+  chatType: "two-member" | "group";
   admins?: string[];
 };
 
