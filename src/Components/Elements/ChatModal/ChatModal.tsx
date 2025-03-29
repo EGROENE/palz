@@ -64,6 +64,7 @@ const ChatModal = () => {
     handleDeleteChat,
     showAreYouSureYouWantToDeleteChat,
     showAreYouSureYouWantToLeaveChat,
+    setShowEditChatNameModal,
   } = useChatContext();
 
   /* 
@@ -525,6 +526,18 @@ const ChatModal = () => {
                 <header onClick={() => setShowAreYouSureYouWantToLeaveChat(true)}>
                   Leave chat
                 </header>
+                {currentUser &&
+                  currentUser._id &&
+                  currentChat.admins?.includes(currentUser._id) &&
+                  (currentChat.chatName ? (
+                    <header onClick={() => setShowEditChatNameModal(true)}>
+                      Edit Chat Name
+                    </header>
+                  ) : (
+                    <header onClick={() => setShowEditChatNameModal(true)}>
+                      Add Chat Name
+                    </header>
+                  ))}
                 {userMayDeleteChat && (
                   <header
                     style={{ color: "tomato" }}
