@@ -318,7 +318,10 @@ const UserSettings = () => {
         />
       )}
       {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && currentUser && (
-        <p style={{ width: "76%", textAlign: "left" }}>
+        <header
+          className="independent-header"
+          style={{ width: "76%", textAlign: "left" }}
+        >
           Blocked Users{" "}
           <span
             style={{ "color": randomColor }}
@@ -327,7 +330,7 @@ const UserSettings = () => {
           >
             See List
           </span>
-        </p>
+        </header>
       )}
       {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && (
         <InterestsSection

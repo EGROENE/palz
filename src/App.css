@@ -258,6 +258,12 @@
   color: var(--text-color);
 }
 
+.independent-header {
+  font-size: 1.25rem;
+  font-family: var(--text-font);
+  color: var(--text-color);
+}
+
 .erroneous-field {
   outline: 2px solid red;
   border: none;
