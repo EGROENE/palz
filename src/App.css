@@ -985,7 +985,8 @@ form textarea {
   font-size: 2rem;
 }
 
-.add-members-modal-container {
+.add-members-modal-container,
+.edit-chat-name-modal-container {
   height: 100%;
   /* max-height: 100%; */
   background: black;
@@ -1007,8 +1008,18 @@ form textarea {
   overflow-y: auto;
 }
 
-.add-members-modal header {
+.add-members-modal header,
+.edit-chat-name-modal-container header {
   font-family: var(--text-font);
+  margin-bottom: 1rem;
+}
+
+.edit-chat-name-modal-container input {
+  width: 44%;
+  /* height: calc(28px - 0.45rem); */
+  /* max-height: calc(28px - 0.45rem); */
+  margin-right: 1rem;
+  padding: 0.35rem;
 }
 
 .add-members-modal .added-user-tab-container {

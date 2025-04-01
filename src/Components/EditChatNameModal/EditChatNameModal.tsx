@@ -47,34 +47,35 @@ const EditChatNameModal = () => {
         }}
         className="fas fa-times close-module-icon"
       ></i>
-
-      <header>
-        {currentChat && currentChat.chatName
-          ? "Change name of group chat"
-          : "Add name to group chat"}
-      </header>
-      <input
-        value={chatName ? chatName : ""}
-        onChange={(e) => handleChatNameInput(e)}
-        type="text"
-        placeholder="Choose a name for the group chat"
-      ></input>
-      {chatNameError !== "" && <p>{chatNameError}</p>}
-      <div className="create-new-chat-modal-buttons">
-        <button onClick={(e) => handleCancelEditChatName(e)} id="cancel">
-          Cancel
-        </button>
-        <button
-          onClick={currentChat ? () => handleUpdateChatName(currentChat) : undefined}
-          disabled={chatName === undefined || chatName.replace(/\s/g, "") === ""}
-          style={
-            randomColor === "var(--primary-color)"
-              ? { backgroundColor: `${randomColor}`, color: "black" }
-              : { backgroundColor: `${randomColor}`, color: "white" }
-          }
-        >
-          {currentChat && currentChat.chatName ? "Update Chat Name" : "Add Chat Name"}
-        </button>
+      <div className="edit-chat-name-modal-container">
+        <header>
+          {currentChat && currentChat.chatName
+            ? "Change name of group chat"
+            : "Add name to group chat"}
+        </header>
+        <input
+          value={chatName ? chatName : ""}
+          onChange={(e) => handleChatNameInput(e)}
+          type="text"
+          placeholder="Choose a name for the group chat"
+        ></input>
+        {chatNameError !== "" && <p>{chatNameError}</p>}
+        <div className="create-new-chat-modal-buttons">
+          <button onClick={(e) => handleCancelEditChatName(e)} id="cancel">
+            Cancel
+          </button>
+          <button
+            onClick={currentChat ? () => handleUpdateChatName(currentChat) : undefined}
+            disabled={chatName === undefined || chatName.replace(/\s/g, "") === ""}
+            style={
+              randomColor === "var(--primary-color)"
+                ? { backgroundColor: `${randomColor}`, color: "black" }
+                : { backgroundColor: `${randomColor}`, color: "white" }
+            }
+          >
+            {currentChat && currentChat.chatName ? "Update Chat Name" : "Add Chat Name"}
+          </button>
+        </div>
       </div>
     </div>
   );
