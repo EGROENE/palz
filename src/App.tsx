@@ -38,6 +38,7 @@ function App() {
     displayedItems,
     displayedItemsFiltered,
     displayedItemsCountInterval,
+    setShowSidebar,
   } = useMainContext();
   const {
     userCreatedAccount,
@@ -160,11 +161,12 @@ function App() {
   };
   const baseURLElement = getBaseURLElement();
 
-  // method to get onClick for page-hero that hides: showSidebar,
-
   return (
     <div className="app" data-theme={theme}>
-      <div className="page-hero">
+      <div
+        className="page-hero"
+        onClick={() => (showSidebar ? setShowSidebar(false) : undefined)}
+      >
         {baseURLElement.type.name !== "Welcome" &&
           baseURLElement.type.name !== "LoginPage" && <NavBar />}
         {showSidebar && <Sidebar />}
