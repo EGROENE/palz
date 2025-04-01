@@ -66,8 +66,11 @@
   position: absolute;
   right: 0.5rem;
   border-radius: 50%;
-  border: 2px solid var(--text-color);
   padding: 0.5rem;
+}
+
+.eventCardMainInfo i:focus {
+  border: 2px solid var(--text-color);
 }
 
 .eventInfoContainer p {

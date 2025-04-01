@@ -147,6 +147,20 @@ const EventCard = ({ event }: { event: TEvent }) => {
       )}
       <div className={styles.eventCardMainInfo}>
         <i
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              setCurrentEvent(event);
+              navigator.clipboard.writeText(`localhost:5173/events/${event._id}`);
+              toast.success("Link copied!", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid green",
+                },
+              });
+            }
+          }}
           style={
             randomColor === "var(--primary-color)"
               ? { backgroundColor: randomColor, color: "black" }
