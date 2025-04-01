@@ -57,6 +57,12 @@ const Sidebar = () => {
       ></i>
       <div className={`${styles.sidebarIconContainer} ${styles.sidebarEditProfileImage}`}>
         <i
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              setShowUpdateProfileImageInterface(true);
+            }
+          }}
           style={
             randomColor === "var(--primary-color)"
               ? { backgroundColor: randomColor, color: "black" }
