@@ -50,13 +50,14 @@ const TwoOptionsInterface = ({
   }, []);
 
   return (
-    <div className="modal-background">
+    <div tabIndex={0} className="modal-background">
       <i
+        tabIndex={0}
         title="Close"
         onClick={() => closeHandler(false)}
         className="fas fa-times close-module-icon"
       ></i>
-      <div className={styles.areYouSureModal}>
+      <div tabIndex={0} className={styles.areYouSureModal}>
         {!isFileUpload ? (
           <>
             <header style={{ color: randomColor }}>{header}</header>
