@@ -1157,6 +1157,7 @@ form textarea {
 
 .delete-message-modal header {
   font-family: var(--text-font);
+  font-size: 1rem;
 }
 
 .delete-message-btns-container button {
