@@ -541,24 +541,30 @@ const ChatModal = () => {
                 className="group-chat-header"
                 style={{ borderBottom: `3px solid ${randomColor}` }}
               >
-                <header onClick={() => setShowMembers(true)}>Show members</header>
-                <header onClick={() => setShowAreYouSureYouWantToLeaveChat(true)}>
+                <header tabIndex={0} onClick={() => setShowMembers(true)}>
+                  Show members
+                </header>
+                <header
+                  tabIndex={0}
+                  onClick={() => setShowAreYouSureYouWantToLeaveChat(true)}
+                >
                   Leave chat
                 </header>
                 {currentUser &&
                   currentUser._id &&
                   currentChat.admins?.includes(currentUser._id) &&
                   (currentChat.chatName ? (
-                    <header onClick={() => setShowEditChatNameModal(true)}>
+                    <header tabIndex={0} onClick={() => setShowEditChatNameModal(true)}>
                       Edit Chat Name
                     </header>
                   ) : (
-                    <header onClick={() => setShowEditChatNameModal(true)}>
+                    <header tabIndex={0} onClick={() => setShowEditChatNameModal(true)}>
                       Add Chat Name
                     </header>
                   ))}
                 {userMayDeleteChat && (
                   <header
+                    tabIndex={0}
                     style={{ color: "tomato" }}
                     onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}
                   >
