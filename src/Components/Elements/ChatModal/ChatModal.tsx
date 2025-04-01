@@ -369,6 +369,14 @@ const ChatModal = () => {
       ? true
       : false;
 
+  const showMembersHeaderRef = useRef<HTMLElement | null>(null);
+
+  const leaveChatHeaderRef = useRef<HTMLElement | null>(null);
+
+  const addOrEditChatNameHeaderRef = useRef<HTMLElement | null>(null);
+
+  const deleteChatHeaderRef = useRef<HTMLElement | null>(null);
+
   return (
     <div tabIndex={0} className="modal-background">
       <i
@@ -541,10 +549,25 @@ const ChatModal = () => {
                 className="group-chat-header"
                 style={{ borderBottom: `3px solid ${randomColor}` }}
               >
-                <header tabIndex={0} onClick={() => setShowMembers(true)}>
+                <header
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setShowMembers(true);
+                    }
+                  }}
+                  ref={showMembersHeaderRef}
+                  tabIndex={0}
+                  onClick={() => setShowMembers(true)}
+                >
                   Show members
                 </header>
                 <header
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setShowAreYouSureYouWantToLeaveChat(true);
+                    }
+                  }}
+                  ref={leaveChatHeaderRef}
                   tabIndex={0}
                   onClick={() => setShowAreYouSureYouWantToLeaveChat(true)}
                 >
@@ -554,16 +577,40 @@ const ChatModal = () => {
                   currentUser._id &&
                   currentChat.admins?.includes(currentUser._id) &&
                   (currentChat.chatName ? (
-                    <header tabIndex={0} onClick={() => setShowEditChatNameModal(true)}>
+                    <header
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          setShowEditChatNameModal(true);
+                        }
+                      }}
+                      ref={addOrEditChatNameHeaderRef}
+                      tabIndex={0}
+                      onClick={() => setShowEditChatNameModal(true)}
+                    >
                       Edit Chat Name
                     </header>
                   ) : (
-                    <header tabIndex={0} onClick={() => setShowEditChatNameModal(true)}>
+                    <header
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          setShowEditChatNameModal(true);
+                        }
+                      }}
+                      ref={addOrEditChatNameHeaderRef}
+                      tabIndex={0}
+                      onClick={() => setShowEditChatNameModal(true)}
+                    >
                       Add Chat Name
                     </header>
                   ))}
                 {userMayDeleteChat && (
                   <header
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setShowAreYouSureYouWantToDeleteChat(true);
+                      }
+                    }}
+                    ref={deleteChatHeaderRef}
                     tabIndex={0}
                     style={{ color: "tomato" }}
                     onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}
