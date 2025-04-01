@@ -1,6 +1,6 @@
 const Error404 = () => {
   return (
-    <div className="page-hero standalone-element">
+    <div className="standalone-element">
       <h1>Hmmm, looks like that page doesn't exist...</h1>
       <p>
         Double-check the URL to make sure it's correct. Otherwise, we're not sure what to

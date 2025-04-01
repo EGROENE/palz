@@ -160,60 +160,64 @@ function App() {
   };
   const baseURLElement = getBaseURLElement();
 
+  // method to get onClick for page-hero that hides: showSidebar,
+
   return (
     <div className="app" data-theme={theme}>
-      {baseURLElement.type.name !== "Welcome" &&
-        baseURLElement.type.name !== "LoginPage" && <NavBar />}
-      {showSidebar && <Sidebar />}
-      {showUpdateProfileImageInterface && (
-        <TwoOptionsInterface
-          header="Edit Profile Image"
-          buttonOneText="Upload New"
-          buttonTwoText="Remove Profile Image"
-          buttonTwoHandler={removeProfileImage}
-          handlerTwoNeedsEventParam={true}
-          closeHandler={setShowUpdateProfileImageInterface}
-          isFileUpload={true}
-        />
-      )}
-      {accountDeletionInProgress && <LoadingModal message="Deleting account..." />}
-      {addEventIsInProgress && <LoadingModal message="Adding event..." />}
-      {eventEditIsInProgress && <LoadingModal message="Updating event..." />}
-      {eventDeletionIsInProgress && <LoadingModal message="Deleting event..." />}
-      {(updateProfileImageMutation.isPending || addEventImageMutation.isPending) && (
-        <LoadingModal message="Uploading image..." />
-      )}
-      {(removeProfileImageMutation.isPending || removeEventImageMutation.isPending) && (
-        <LoadingModal message="Removing image..." />
-      )}
-      {chatCreationInProgress && <LoadingModal message="Creating chat..." />}
-      {showChatModal && <ChatModal />}
+      <div className="page-hero">
+        {baseURLElement.type.name !== "Welcome" &&
+          baseURLElement.type.name !== "LoginPage" && <NavBar />}
+        {showSidebar && <Sidebar />}
+        {showUpdateProfileImageInterface && (
+          <TwoOptionsInterface
+            header="Edit Profile Image"
+            buttonOneText="Upload New"
+            buttonTwoText="Remove Profile Image"
+            buttonTwoHandler={removeProfileImage}
+            handlerTwoNeedsEventParam={true}
+            closeHandler={setShowUpdateProfileImageInterface}
+            isFileUpload={true}
+          />
+        )}
+        {accountDeletionInProgress && <LoadingModal message="Deleting account..." />}
+        {addEventIsInProgress && <LoadingModal message="Adding event..." />}
+        {eventEditIsInProgress && <LoadingModal message="Updating event..." />}
+        {eventDeletionIsInProgress && <LoadingModal message="Deleting event..." />}
+        {(updateProfileImageMutation.isPending || addEventImageMutation.isPending) && (
+          <LoadingModal message="Uploading image..." />
+        )}
+        {(removeProfileImageMutation.isPending || removeEventImageMutation.isPending) && (
+          <LoadingModal message="Removing image..." />
+        )}
+        {chatCreationInProgress && <LoadingModal message="Creating chat..." />}
+        {showChatModal && <ChatModal />}
 
-      <Routes>
-        <Route path="/" element={baseURLElement} />
-        <Route path="/settings" element={<UserSettings />} />
-        <Route path="/add-event" element={<AddEventPage />} />
-        <Route
-          path="/edit-event/:eventID"
-          element={<EditEventPage event={currentEvent} />}
-        />
-        <Route path="/events" element={<DisplayedCardsPage usedFor="events" />} />
-        <Route path="/events/:eventID" element={<EventPage />} />
-        <Route path="/:username/events" element={<UsersEvents />} />
-        <Route path="/:username/friend-requests" element={<FriendRequests />} />
-        <Route path="/:username" element={<UserHomepage />} />
-        <Route path="/users/:username" element={<OtherUserProfile />} />
-        <Route
-          path="/find-palz"
-          element={<DisplayedCardsPage usedFor="potential-friends" />}
-        />
-        <Route path="/my-palz" element={<DisplayedCardsPage usedFor="my-friends" />} />
-        <Route path="/chats" element={<ChatsPage />} />
-        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-        <Route path="*" element={<Error404 />} />
-      </Routes>
-      {baseURLElement.type.name !== "Welcome" &&
-        baseURLElement.type.name !== "LoginPage" && <Footer />}
+        <Routes>
+          <Route path="/" element={baseURLElement} />
+          <Route path="/settings" element={<UserSettings />} />
+          <Route path="/add-event" element={<AddEventPage />} />
+          <Route
+            path="/edit-event/:eventID"
+            element={<EditEventPage event={currentEvent} />}
+          />
+          <Route path="/events" element={<DisplayedCardsPage usedFor="events" />} />
+          <Route path="/events/:eventID" element={<EventPage />} />
+          <Route path="/:username/events" element={<UsersEvents />} />
+          <Route path="/:username/friend-requests" element={<FriendRequests />} />
+          <Route path="/:username" element={<UserHomepage />} />
+          <Route path="/users/:username" element={<OtherUserProfile />} />
+          <Route
+            path="/find-palz"
+            element={<DisplayedCardsPage usedFor="potential-friends" />}
+          />
+          <Route path="/my-palz" element={<DisplayedCardsPage usedFor="my-friends" />} />
+          <Route path="/chats" element={<ChatsPage />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="*" element={<Error404 />} />
+        </Routes>
+        {baseURLElement.type.name !== "Welcome" &&
+          baseURLElement.type.name !== "LoginPage" && <Footer />}
+      </div>
     </div>
   );
 }

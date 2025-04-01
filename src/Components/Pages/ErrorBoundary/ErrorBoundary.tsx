@@ -15,8 +15,8 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }> {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ "width": " 100vw", "margin": "0" }} className="page-hero">
-          <div className="standalone-element">
+        <div style={{ "width": " 100vw", "margin": "0" }}>
+          <div className="page-hero standalone-element">
             <div
               className="error-boundary-container"
               style={{ background: "rgba(0, 0, 0, 0.6)", padding: "1.5rem" }}

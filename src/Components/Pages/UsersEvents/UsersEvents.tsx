@@ -136,7 +136,7 @@ const UsersEvents = () => {
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
   return (
-    <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
+    <>
       <h1>Your Events</h1>
       <QueryLoadingOrError
         query={queryForQueryLoadingOrError}
@@ -185,7 +185,7 @@ const UsersEvents = () => {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 };
 export default UsersEvents;

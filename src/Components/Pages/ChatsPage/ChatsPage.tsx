@@ -91,7 +91,7 @@ const ChatsPage = () => {
   }
 
   return (
-    <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
+    <>
       <h1>Chats</h1>
       {showCreateNewChatModal && <CreateNewChatModal />}
       {showEditChatNameModal && <EditChatNameModal />}
@@ -145,7 +145,7 @@ const ChatsPage = () => {
           ></i>
         </>
       )}
-    </div>
+    </>
   );
 };
 export default ChatsPage;

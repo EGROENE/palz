@@ -162,7 +162,7 @@ const FriendRequests = () => {
     : [];
 
   return (
-    <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
+    <>
       <h1>Friend Requests</h1>
       <QueryLoadingOrError
         query={fetchAllUsersQuery}
@@ -305,7 +305,7 @@ const FriendRequests = () => {
             </div>
           </>
         ))}
-    </div>
+    </>
   );
 };
 export default FriendRequests;

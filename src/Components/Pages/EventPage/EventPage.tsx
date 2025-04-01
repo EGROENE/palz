@@ -13,7 +13,7 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import { useChatContext } from "../../../Hooks/useChatContext";
 
 const EventPage = () => {
-  const { showSidebar, isLoading, setShowSidebar, theme } = useMainContext();
+  const { isLoading, theme } = useMainContext();
   const {
     allUsers,
     currentUser,
@@ -200,7 +200,7 @@ const EventPage = () => {
     fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
 
   return (
-    <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
+    <>
       {isNoFetchError && !fetchIsLoading && currentEvent && (
         <>
           {showInvitees && (
@@ -416,7 +416,7 @@ const EventPage = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

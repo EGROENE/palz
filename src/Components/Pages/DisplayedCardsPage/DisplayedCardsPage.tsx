@@ -731,7 +731,8 @@ const DisplayedCardsPage = ({
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
   return (
-    <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
+    <>
+      {" "}
       <h1>{pageHeading}</h1>
       {!fetchIsLoading &&
         isNoFetchError &&
@@ -845,7 +846,7 @@ const DisplayedCardsPage = ({
           usedFor !== "events" ? "Error fetching users" : "Error fetching events"
         }
       />
-    </div>
+    </>
   );
 };
 

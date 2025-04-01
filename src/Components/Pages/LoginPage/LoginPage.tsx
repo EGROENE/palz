@@ -38,7 +38,7 @@ const LoginPage = () => {
   }, []);
 
   return (
-    <div className="page-hero login-page-container">
+    <div className="login-page-container">
       <div className="login-greeting-container">
         <img src="../src/assets/palz.png" />
         <h1>Welcome to Palz!</h1>

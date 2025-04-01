@@ -11,7 +11,7 @@ import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoading
 
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
 const EditEventPage = ({ event }: { event?: TEvent }) => {
-  const { showSidebar, setShowSidebar, isLoading, theme } = useMainContext();
+  const { isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
   const { currentEvent, fetchAllEventsQuery } = useEventContext();
 
@@ -72,7 +72,7 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
   }, [event, navigation]);
 
   return (
-    <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
+    <>
       {isLoading && <LoadingModal message="Saving changes..." />}
       <h1>Edit Event</h1>
       <QueryLoadingOrError
@@ -82,7 +82,7 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
       {!fetchAllEventsQuery.isLoading && !fetchAllEventsQuery.isError && (
         <EventForm randomColor={randomColor} usedFor="edit-event" event={event} />
       )}
-    </div>
+    </>
   );
 };
 export default EditEventPage;

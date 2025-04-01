@@ -1,6 +1,7 @@
 const TermsAndConditions = () => {
   return (
-    <div className="page-hero">
+    <>
+      {" "}
       <h1>Terms & Conditions</h1>
       <div className="terms-and-conditions-paragraphs-container">
         <p>
@@ -44,7 +45,7 @@ const TermsAndConditions = () => {
           Hölle! Gewöhnlich glaubt der Mensch, wenn er sie beim Kragen hätte.
         </p>
       </div>
-    </div>
+    </>
   );
 };
 

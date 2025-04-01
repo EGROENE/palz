@@ -11,7 +11,7 @@ import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoading
 
 const AddEventPage = () => {
   const navigation = useNavigate();
-  const { showSidebar, setShowSidebar, isLoading, theme } = useMainContext();
+  const { isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout, fetchAllUsersQuery } =
     useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
@@ -60,7 +60,7 @@ const AddEventPage = () => {
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
   return (
-    <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
+    <>
       {isLoading && <LoadingModal message="Adding event..." />}
       <h1>Add New Event</h1>
       <QueryLoadingOrError
@@ -70,7 +70,7 @@ const AddEventPage = () => {
       {!fetchIsLoading && isNoFetchError && (
         <EventForm randomColor={randomColor} usedFor="add-event" />
       )}
-    </div>
+    </>
   );
 };
 

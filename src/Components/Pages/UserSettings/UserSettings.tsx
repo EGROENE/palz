@@ -284,7 +284,8 @@ const UserSettings = () => {
   const blockedUsersArray: string[] = getBlockedUsersArray();
 
   return (
-    <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
+    <>
+      {" "}
       <h1>Settings</h1>
       <QueryLoadingOrError
         query={fetchAllUsersQuery}
@@ -370,7 +371,7 @@ const UserSettings = () => {
           <TwoOptionsInterface
             header="Are you sure you want to permanently delete your account?"
             subheader="Please understand that this action is
-            irreversible."
+          irreversible."
             buttonOneText="Cancel"
             buttonOneHandler={() => setShowAreYouSureInterface(false)}
             handlerOneNeedsEventParam={false}
@@ -380,7 +381,7 @@ const UserSettings = () => {
             closeHandler={setShowAreYouSureInterface}
           />
         )}
-    </div>
+    </>
   );
 };
 

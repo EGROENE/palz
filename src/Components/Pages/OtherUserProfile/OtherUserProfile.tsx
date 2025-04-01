@@ -18,7 +18,7 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
-  const { showSidebar, setShowSidebar, theme, isLoading } = useMainContext();
+  const { theme, isLoading } = useMainContext();
   const {
     currentUser,
     userCreatedAccount,
@@ -667,7 +667,8 @@ const OtherUserProfile = () => {
     currentOtherUser && getSocialMediumIsVisible("x") ? currentOtherUser.x !== "" : false;
 
   return (
-    <div className="page-hero" onClick={() => showSidebar && setShowSidebar(false)}>
+    <>
+      {" "}
       <QueryLoadingOrError
         query={queryForQueryLoadingOrError}
         errorMessage="Error fetching data"
@@ -903,7 +904,7 @@ const OtherUserProfile = () => {
           </section>
         </>
       )}
-    </div>
+    </>
   );
 };
 export default OtherUserProfile;

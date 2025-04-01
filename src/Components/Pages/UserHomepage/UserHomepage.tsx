@@ -73,7 +73,7 @@ const UserHomepage = () => {
     fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
 
   return (
-    <div onClick={() => showSidebar && setShowSidebar(false)} className="page-hero">
+    <>
       {fetchIsLoading && <h1>Upcoming Events</h1>}
       {fetchIsLoading && (
         <header style={{ marginTop: "3rem" }} className="query-status-text">
@@ -126,7 +126,7 @@ const UserHomepage = () => {
             </div>
           </>
         )}
-    </div>
+    </>
   );
 };
 export default UserHomepage;
