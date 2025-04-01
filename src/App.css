@@ -1201,6 +1201,10 @@ form textarea {
   align-items: center;
 }
 
+#send-message-button:focus {
+  border: 2px solid white;
+}
+
 .edit-message-buttons-container {
   display: flex;
   margin-left: 1rem;
