@@ -182,6 +182,10 @@ footer {
   align-items: center;
 }
 
+.theme-element-container button:focus {
+  border: unset;
+}
+
 button {
   text-align: center;
   font-size: 1rem;
@@ -258,9 +262,10 @@ input:checked {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+button:focus {
   outline: none;
-  border: none;
+  border: 2px solid var(--text-color);
 }
 
 input:disabled,
