@@ -872,6 +872,7 @@ const OtherUserProfile = () => {
                 closeModalMethod={setShowMutualFriends}
                 header="Mutual Friends"
                 userIDArray={palzInCommon.map((pal) => pal._id)}
+                randomColor={randomColor}
               />
             )}
             {showFriends && (
@@ -883,6 +884,7 @@ const OtherUserProfile = () => {
                 header={`${currentOtherUser.username} 's palz`}
                 userIDArray={currentOtherUser.friends}
                 buttonOneText="View Profile"
+                randomColor={randomColor}
               />
             )}
             {!fetchIsLoading &&
