@@ -44,6 +44,10 @@
   margin: 0;
 }
 
+.buttonsContainer label:focus {
+  opacity: 0.8;
+}
+
 .areYouSureModal .buttonsContainer button:first-child {
   background-color: white;
   color: black;
