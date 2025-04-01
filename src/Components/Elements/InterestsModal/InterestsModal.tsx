@@ -34,9 +34,16 @@ const InterestsModal = ({
   interestsRelation: "event" | "user";
 }) => {
   return (
-    <div className="modal-background">
+    <div tabIndex={0} className="modal-background">
       <i
+        tabIndex={0}
         title="Close"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            setShowInterestsModal(false);
+            handleInterestsInput("");
+          }
+        }}
         onClick={() => {
           setShowInterestsModal(false);
           handleInterestsInput("");

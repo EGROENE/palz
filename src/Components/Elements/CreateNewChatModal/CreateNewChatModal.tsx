@@ -96,6 +96,7 @@ const CreateNewChatModal = () => {
     e:
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
       | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.KeyboardEvent<HTMLElement>
   ): void => {
     e.preventDefault();
     initiatePotentialChatMembers();
@@ -129,12 +130,16 @@ const CreateNewChatModal = () => {
   }
 
   return (
-    <div className="modal-background">
+    <div tabIndex={0} className="modal-background">
       <i
+        tabIndex={0}
         title="Close"
-        onClick={(e) => {
-          handleCancelNewChatCreation(e);
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleCancelNewChatCreation(e);
+          }
         }}
+        onClick={(e) => handleCancelNewChatCreation(e)}
         className="fas fa-times close-module-icon"
       ></i>
       <div

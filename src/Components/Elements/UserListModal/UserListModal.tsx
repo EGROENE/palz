@@ -175,9 +175,15 @@ const UserListModal = ({
   };
 
   return (
-    <div className="modal-background">
+    <div tabIndex={0} className="modal-background">
       <i
+        tabIndex={0}
         title="Close"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            closeModalMethod(false);
+          }
+        }}
         onClick={() => closeModalMethod(false)}
         className="fas fa-times close-module-icon"
       ></i>

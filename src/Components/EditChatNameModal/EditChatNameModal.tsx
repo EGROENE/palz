@@ -32,6 +32,7 @@ const EditChatNameModal = () => {
     e:
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
       | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.KeyboardEvent<HTMLElement>
   ): void => {
     e.preventDefault();
     setChatName(undefined);
@@ -39,12 +40,16 @@ const EditChatNameModal = () => {
   };
 
   return (
-    <div className="modal-background">
+    <div tabIndex={0} className="modal-background">
       <i
+        tabIndex={0}
         title="Close"
-        onClick={(e) => {
-          handleCancelEditChatName(e);
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleCancelEditChatName(e);
+          }
         }}
+        onClick={(e) => handleCancelEditChatName(e)}
         className="fas fa-times close-module-icon"
       ></i>
       <div className="edit-chat-name-modal-container">

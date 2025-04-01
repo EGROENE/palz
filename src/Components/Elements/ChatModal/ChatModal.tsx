@@ -159,6 +159,7 @@ const ChatModal = () => {
     e:
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
       | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.KeyboardEvent<HTMLElement>
   ): void => {
     e.preventDefault();
     if (usersToAddToChat.length > 0) {
@@ -369,9 +370,27 @@ const ChatModal = () => {
       : false;
 
   return (
-    <div className="modal-background">
+    <div tabIndex={0} className="modal-background">
       <i
+        tabIndex={0}
         title="Close"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            if (showAreYouSureYouWantToDeleteChat) {
+              setShowAreYouSureYouWantToDeleteChat(false);
+            }
+            setShowChatModal(false);
+            setCurrentChat(null);
+            setAreNewMessages(false);
+            if (messageBeingEdited) {
+              setMessageBeingEdited(undefined);
+              setInputMessage("");
+            }
+            if (showAddMemberModal) {
+              handleCancelAddingChatMembers(e);
+            }
+          }
+        }}
         onClick={(e) => {
           if (showAreYouSureYouWantToDeleteChat) {
             setShowAreYouSureYouWantToDeleteChat(false);
