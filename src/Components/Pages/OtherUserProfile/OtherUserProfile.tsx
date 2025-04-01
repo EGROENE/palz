@@ -55,7 +55,6 @@ const OtherUserProfile = () => {
   const { username } = useParams();
   const currentOtherUser =
     allUsers && allUsers.filter((user) => user.username === username)[0];
-  console.log(currentOtherUser);
 
   const [showFriends, setShowFriends] = useState<boolean>(false);
   const [showMutualFriends, setShowMutualFriends] = useState<boolean>(false);
