@@ -39,9 +39,11 @@ const NavBar = () => {
             <Link to={"/settings"}>Settings</Link>
           </li>
         )}
-        <li>
-          <Link to={""}>Terms & Conditions</Link>
-        </li>
+        {currentRoute !== "/terms-and-conditions" && (
+          <li>
+            <Link to={"/terms-and-conditions"}>Terms & Conditions</Link>
+          </li>
+        )}
         {userCreatedAccount !== null ? (
           <li onClick={() => logout()}>
             Log Out<i className="fas fa-sign-out-alt"></i>
