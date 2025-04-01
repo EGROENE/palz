@@ -142,7 +142,7 @@ const ChatsPage = () => {
             title="Start new chat"
             onClick={() => setShowCreateNewChatModal(true)}
           >
-            <i tabIndex={0} className="fas fa-feather"></i>
+            <i className="fas fa-feather"></i>
           </button>
         </>
       )}
