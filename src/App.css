@@ -156,6 +156,10 @@
   width: 80%;
 }
 
+.terms-and-conditions-paragraphs-container {
+  width: 75%;
+}
+
 .login-greeting-container {
   display: flex;
   flex-direction: column;
