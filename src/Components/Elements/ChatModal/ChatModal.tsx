@@ -633,6 +633,12 @@ const ChatModal = () => {
                 )}
               </div>
               <i
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setShowAreYouSureYouWantToDeleteChat(true);
+                  }
+                }}
                 onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}
                 title="Delete Chat"
                 style={{ color: randomColor, margin: "0 2rem", fontSize: "1.25rem" }}
