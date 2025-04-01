@@ -148,7 +148,7 @@
   padding: 0;
 }
 
-.page-hero.login-page-container {
+.page-hero .login-page-container {
   display: flex;
   align-items: center;
   justify-content: space-around;
