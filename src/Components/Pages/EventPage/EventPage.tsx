@@ -122,6 +122,8 @@ const EventPage = () => {
     setRandomColor(themeColors[randomNumber]);
 
     setCurrentEvent(currentEvent);
+
+    window.scrollTo(0, 0);
   }, []);
 
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
