@@ -16,7 +16,7 @@
 }
 
 .areYouSureModal p {
-  color: var(--text-color);
+  color: white;
 }
 
 .buttonsContainer {
@@ -29,6 +29,11 @@
 .buttonsContainer label:hover,
 .buttonsContainer button:hover {
   opacity: 0.7;
+}
+
+.buttonsContainer button:focus {
+  opacity: 0.8;
+  border: unset;
 }
 
 .buttonsContainer button:first-child {
