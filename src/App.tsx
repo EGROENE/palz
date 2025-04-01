@@ -25,6 +25,7 @@ import ChatsPage from "./Components/Pages/ChatsPage/ChatsPage";
 import { useChatContext } from "./Hooks/useChatContext";
 import ChatModal from "./Components/Elements/ChatModal/ChatModal";
 import Footer from "./Components/Elements/Footer/Footer";
+import TermsAndConditions from "./Components/Pages/TermsAndConditions/TermsAndConditions";
 
 function App() {
   const {
@@ -208,6 +209,7 @@ function App() {
         />
         <Route path="/my-palz" element={<DisplayedCardsPage usedFor="my-friends" />} />
         <Route path="/chats" element={<ChatsPage />} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
       {baseURLElement.type.name !== "Welcome" &&
