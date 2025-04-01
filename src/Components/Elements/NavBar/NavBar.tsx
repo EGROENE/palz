@@ -53,7 +53,14 @@ const NavBar = () => {
             Log In/Sign Up<i className="fas fa-sign-out-alt"></i>
           </Link>
         )}
-        <li tabIndex={0}>
+        <li
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              setShowSidebar(!showSidebar);
+            }
+          }}
+        >
           <div className={styles.profileImageContainer}>
             <img
               onClick={() => setShowSidebar(!showSidebar)}
