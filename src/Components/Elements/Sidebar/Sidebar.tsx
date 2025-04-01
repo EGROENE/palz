@@ -41,6 +41,12 @@ const Sidebar = () => {
       }
     >
       <i
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            setShowSidebar(!showSidebar);
+          }
+        }}
         onClick={() => setShowSidebar(!showSidebar)}
         style={
           randomColor === "var(--primary-color)"
