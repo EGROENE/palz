@@ -77,12 +77,28 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
             setCurrentChat(chat);
             setShowAreYouSureYouWantToDeleteChat(true);
           }}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              setCurrentChat(chat);
+              setShowAreYouSureYouWantToDeleteChat(true);
+            }
+          }}
           title="Delete Chat"
           style={{ color: randomColor, margin: "0 2rem", fontSize: "1.25rem" }}
           className="fas fa-trash-alt"
         ></i>
       )}
-      <div onClick={() => handleOpenChat(chat)} className="chat-preview">
+      <div
+        tabIndex={0}
+        onClick={() => handleOpenChat(chat)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            return handleOpenChat(chat);
+          }
+        }}
+        className="chat-preview"
+      >
         <div className="profile-images-chat-preview-container">
           {getChatMembers(chat.members).map(
             (member) =>
