@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import styles from "./styles.module.css";
 
 const FileUploadWithButton = ({
@@ -9,8 +10,17 @@ const FileUploadWithButton = ({
   addFileButtonText: string;
   randomColor?: string;
 }) => {
+  const fileUploadInput = useRef<HTMLInputElement | null>(null);
+
   return (
-    <label>
+    <label
+      onKeyDown={() => {
+        if (fileUploadInput.current) {
+          fileUploadInput.current.click();
+        }
+      }}
+      tabIndex={0}
+    >
       <label
         className={styles.uploadFileButton}
         htmlFor="image-upload"
@@ -23,9 +33,12 @@ const FileUploadWithButton = ({
         {addFileButtonText}
       </label>
       <input
+        ref={fileUploadInput}
         id="image-upload"
         name="profileImage"
-        onChange={(e) => addFile(e)}
+        onChange={(e) => {
+          addFile(e);
+        }}
         style={{ display: "none" }}
         type="file"
         accept=".jpeg, .png, .jpg"
