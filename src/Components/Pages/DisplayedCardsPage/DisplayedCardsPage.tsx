@@ -824,6 +824,7 @@ const DisplayedCardsPage = ({
       {!fetchIsLoading && isNoFetchError && (
         <div className="all-cards-container">
           {usedFor === "events" &&
+            displayedItemsFiltered.every((event) => Methods.isTEvent(event)) &&
             Methods.removeDuplicatesFromArray(displayedItemsFiltered)
               .filter((event) =>
                 currentUser && currentUser._id
