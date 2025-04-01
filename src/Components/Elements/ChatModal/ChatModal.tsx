@@ -704,7 +704,7 @@ const ChatModal = () => {
           className="add-members-modal-container"
         >
           <div className="add-members-modal">
-            <header style={{ marginBottom: "1rem" }}>Add people to chat:</header>
+            <header>Add people to chat:</header>
             {usersToAddToChat.length > 0 && (
               <div className="added-user-tab-container">
                 {usersToAdd.map((user) => (
