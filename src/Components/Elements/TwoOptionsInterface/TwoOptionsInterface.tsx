@@ -54,6 +54,11 @@ const TwoOptionsInterface = ({
       <i
         tabIndex={0}
         title="Close"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            closeHandler(false);
+          }
+        }}
         onClick={() => closeHandler(false)}
         className="fas fa-times close-module-icon"
       ></i>
