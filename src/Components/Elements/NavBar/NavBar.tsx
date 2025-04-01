@@ -45,7 +45,7 @@ const NavBar = () => {
           </li>
         )}
         {userCreatedAccount !== null ? (
-          <li onClick={() => logout()}>
+          <li tabIndex={0} onClick={() => logout()}>
             Log Out<i className="fas fa-sign-out-alt"></i>
           </li>
         ) : (
@@ -53,7 +53,7 @@ const NavBar = () => {
             Log In/Sign Up<i className="fas fa-sign-out-alt"></i>
           </Link>
         )}
-        <li>
+        <li tabIndex={0}>
           <div className={styles.profileImageContainer}>
             <img
               onClick={() => setShowSidebar(!showSidebar)}
