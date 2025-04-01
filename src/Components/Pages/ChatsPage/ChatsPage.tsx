@@ -132,17 +132,18 @@ const ChatsPage = () => {
               </header>
             </>
           )}
-          <i
+          <button
             style={
               randomColor === "var(--primary-color)"
                 ? { backgroundColor: `${randomColor}`, color: "black" }
-                : { backgroundColor: `${randomColor}`, color: "white" }
+                : { backgroundColor: `${randomColor}`, color: "var(--text-color)" }
             }
             id="new-chat-btn"
-            className="fas fa-feather"
             title="Start new chat"
             onClick={() => setShowCreateNewChatModal(true)}
-          ></i>
+          >
+            <i tabIndex={0} className="fas fa-feather"></i>
+          </button>
         </>
       )}
     </>
