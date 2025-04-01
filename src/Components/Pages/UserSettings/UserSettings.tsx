@@ -324,6 +324,12 @@ const UserSettings = () => {
         >
           Blocked Users{" "}
           <span
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setShowBlockedUsers(!showBlockedUsers);
+              }
+            }}
             style={{ "color": randomColor }}
             className={styles.showModule}
             onClick={() => setShowBlockedUsers(!showBlockedUsers)}
