@@ -142,6 +142,12 @@ const Message = ({
             {currentUser && message.sender === currentUser._id && (
               <p className="message-sent-info">
                 <span
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      startEditingMessage(message);
+                    }
+                  }}
                   onClick={() => startEditingMessage(message)}
                   style={{ color: randomColor }}
                   id="edit-msg-btn"
@@ -149,6 +155,12 @@ const Message = ({
                   Edit
                 </span>
                 <span
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setShowAreYouSureYouWantToDeleteMessage(true);
+                    }
+                  }}
                   onClick={() => setShowAreYouSureYouWantToDeleteMessage(true)}
                   id="delete-msg-btn"
                 >
