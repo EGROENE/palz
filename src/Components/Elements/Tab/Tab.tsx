@@ -51,6 +51,8 @@ const Tab = ({
 
   return (
     <div
+      tabIndex={0}
+      aria-hidden="false"
       title={typeof info !== "string" ? `${info.firstName} ${info.lastName}` : undefined}
       key={typeof info === "string" ? info : info._id}
       style={
