@@ -761,10 +761,15 @@ const OtherUserProfile = () => {
                 )}
               </p>
 
-              {numberOfGroupChatsInCommon > 0 && (
+              {numberOfGroupChatsInCommon > 1 && (
                 <p
                   style={{ color: randomColor }}
                 >{`You are in ${numberOfGroupChatsInCommon} group chats together`}</p>
+              )}
+              {numberOfGroupChatsInCommon === 1 && (
+                <p
+                  style={{ color: randomColor }}
+                >{`You are in ${numberOfGroupChatsInCommon} group chat together`}</p>
               )}
               {(showFacebook || showInstagram || showX) && (
                 <div className={styles.socialLinksContainer}>
