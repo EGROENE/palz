@@ -677,6 +677,12 @@ const ChatModal = () => {
                     )}
                   {messagesContainerScrollBottom > 0 && (
                     <i
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          scrollToLatestMessage();
+                        }
+                      }}
                       onClick={() => scrollToLatestMessage()}
                       id="to-latest-message-button"
                       className="fas fa-chevron-down"
