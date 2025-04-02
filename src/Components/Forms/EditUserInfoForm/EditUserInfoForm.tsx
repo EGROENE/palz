@@ -1175,6 +1175,7 @@ const EditUserInfoForm = ({
     whoCanSeeEventsInterestedIn !== currentUser?.whoCanSeeEventsInterestedIn ||
     whoCanSeeEventsInvitedTo !== currentUser?.whoCanSeeEventsInvitedTo ||
     whoCanMessage !== currentUser?.whoCanMessage;
+
   return (
     <>
       <h2>
@@ -1851,7 +1852,16 @@ const EditUserInfoForm = ({
             )}
           </label>
         )}
-        <header className="input-label">
+        <header
+          tabIndex={0}
+          aria-hidden="false"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              setShowPrivacySettings(!showPrivacySettings);
+            }
+          }}
+          className="input-label"
+        >
           Privacy Settings{" "}
           <i
             onClick={() => setShowPrivacySettings(!showPrivacySettings)}
@@ -1864,7 +1874,16 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can see your profile:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setProfileVisibleTo("anyone");
+                    }
+                  }}
+                >
                   <input
                     id="anyone-can-see-profile"
                     onChange={() => setProfileVisibleTo("anyone")}
@@ -1874,8 +1893,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setProfileVisibleTo("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setProfileVisibleTo("friends")}
                     checked={profileVisibleTo === "friends"}
                     name="who-can-see-profile"
@@ -1884,8 +1913,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setProfileVisibleTo("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setProfileVisibleTo("friends of friends")}
                     checked={profileVisibleTo === "friends of friends"}
                     name="who-can-see-profile"
@@ -1899,8 +1938,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can see your location:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeLocation("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-see-location"
                     onChange={() => setWhoCanSeeLocation("anyone")}
                     checked={whoCanSeeLocation === "anyone"}
@@ -1909,8 +1958,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeLocation("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeLocation("friends")}
                     checked={whoCanSeeLocation === "friends"}
                     name="who-can-see-location"
@@ -1919,8 +1978,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeLocation("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeLocation("friends of friends")}
                     checked={whoCanSeeLocation === "friends of friends"}
                     name="who-can-see-location"
@@ -1929,8 +1998,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends of Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeLocation("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeLocation("nobody")}
                     checked={whoCanSeeLocation === "nobody"}
                     name="who-can-see-location"
@@ -1944,7 +2023,16 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can message you:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanMessage("anyone");
+                    }
+                  }}
+                >
                   <input
                     id="anyone-can-message-you"
                     onChange={() => setWhoCanMessage("anyone")}
@@ -1954,8 +2042,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanMessage("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanMessage("friends")}
                     checked={whoCanMessage === "friends"}
                     name="who-can-message-you"
@@ -1964,8 +2062,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanMessage("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanMessage("friends of friends")}
                     checked={whoCanMessage === "friends of friends"}
                     name="who-can-message-you"
@@ -1974,8 +2082,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends of Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanMessage("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanMessage("nobody")}
                     checked={whoCanMessage === "nobody"}
                     name="who-can-message-you"
@@ -1989,8 +2107,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can see your friends list:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeFriendsList("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-see-friends-list"
                     onChange={() => setWhoCanSeeFriendsList("anyone")}
                     checked={whoCanSeeFriendsList === "anyone"}
@@ -1999,8 +2127,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeFriendsList("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeFriendsList("friends")}
                     checked={whoCanSeeFriendsList === "friends"}
                     name="who-can-see-friends-list"
@@ -2009,8 +2147,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeFriendsList("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeFriendsList("friends of friends")}
                     checked={whoCanSeeFriendsList === "friends of friends"}
                     name="who-can-see-friends-list"
@@ -2019,8 +2167,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends of Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeFriendsList("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeFriendsList("nobody")}
                     checked={whoCanSeeFriendsList === "nobody"}
                     name="who-can-see-friends-list"
@@ -2034,8 +2192,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can see your phone number:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeePhoneNumber("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-see-phone-number"
                     onChange={() => setWhoCanSeePhoneNumber("anyone")}
                     checked={whoCanSeePhoneNumber === "anyone"}
@@ -2044,8 +2212,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeePhoneNumber("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeePhoneNumber("friends")}
                     checked={whoCanSeePhoneNumber === "friends"}
                     name="who-can-see-phone-number"
@@ -2054,8 +2232,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeePhoneNumber("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeePhoneNumber("friends of friends")}
                     checked={whoCanSeePhoneNumber === "friends of friends"}
                     name="who-can-see-phone-number"
@@ -2064,8 +2252,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends of Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeePhoneNumber("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeePhoneNumber("nobody")}
                     checked={whoCanSeePhoneNumber === "nobody"}
                     name="who-can-see-phone-number"
@@ -2079,8 +2277,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can see your email address:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEmailAddress("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-see-email-address"
                     onChange={() => setWhoCanSeeEmailAddress("anyone")}
                     checked={whoCanSeeEmailAddress === "anyone"}
@@ -2089,8 +2297,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEmailAddress("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEmailAddress("friends")}
                     checked={whoCanSeeEmailAddress === "friends"}
                     name="who-can-see-email-address"
@@ -2099,8 +2317,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEmailAddress("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEmailAddress("friends of friends")}
                     checked={whoCanSeeEmailAddress === "friends of friends"}
                     name="who-can-see-email-address"
@@ -2109,8 +2337,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends of Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEmailAddress("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEmailAddress("nobody")}
                     checked={whoCanSeeEmailAddress === "nobody"}
                     name="who-can-see-email-address"
@@ -2124,8 +2362,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can see your Facebook:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeFacebook("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-see-facebook"
                     name="who-can-see-facebook"
                     onChange={() => setWhoCanSeeFacebook("anyone")}
@@ -2134,8 +2382,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeFacebook("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeFacebook("friends")}
                     checked={whoCanSeeFacebook === "friends"}
                     name="who-can-see-facebook"
@@ -2144,8 +2402,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeFacebook("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeFacebook("friends of friends")}
                     checked={whoCanSeeFacebook === "friends of friends"}
                     name="who-can-see-facebook"
@@ -2154,8 +2422,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends of Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeFacebook("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeFacebook("nobody")}
                     checked={whoCanSeeFacebook === "nobody"}
                     name="who-can-see-facebook"
@@ -2169,8 +2447,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can see your X:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeX("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-see-x"
                     name="who-can-see-x"
                     onChange={() => setWhoCanSeeX("anyone")}
@@ -2179,8 +2467,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeX("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeX("friends")}
                     checked={whoCanSeeX === "friends"}
                     name="who-can-see-x"
@@ -2189,8 +2487,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeX("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeX("friends of friends")}
                     checked={whoCanSeeX === "friends of friends"}
                     name="who-can-see-x"
@@ -2199,8 +2507,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends of Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeX("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeX("nobody")}
                     checked={whoCanSeeX === "nobody"}
                     name="who-can-see-x"
@@ -2214,8 +2532,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can see your Instagram:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeInstagram("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-see-instagram"
                     name="who-can-see-instagram"
                     onChange={() => setWhoCanSeeInstagram("anyone")}
@@ -2224,8 +2552,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeInstagram("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeInstagram("friends")}
                     checked={whoCanSeeInstagram === "friends"}
                     name="who-can-see-instagram"
@@ -2234,8 +2572,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeInstagram("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeInstagram("friends of friends")}
                     checked={whoCanSeeInstagram === "friends of friends"}
                     name="who-can-see-instagram"
@@ -2244,8 +2592,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends of Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeInstagram("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeInstagram("nobody")}
                     checked={whoCanSeeInstagram === "nobody"}
                     name="who-can-see-instagram"
@@ -2259,8 +2617,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can see events you RSVP to:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsInterestedIn("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-see-rsvpd-events"
                     name="who-can-see-rsvpd-events"
                     onChange={() => setWhoCanSeeEventsInterestedIn("anyone")}
@@ -2269,8 +2637,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsInterestedIn("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEventsInterestedIn("friends")}
                     checked={whoCanSeeEventsInterestedIn === "friends"}
                     name="who-can-see-rsvpd-events"
@@ -2279,8 +2657,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsInterestedIn("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEventsInterestedIn("friends of friends")}
                     checked={whoCanSeeEventsInterestedIn === "friends of friends"}
                     name="who-can-see-rsvpd-events"
@@ -2289,8 +2677,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends of Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsInterestedIn("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEventsInterestedIn("nobody")}
                     checked={whoCanSeeEventsInterestedIn === "nobody"}
                     name="who-can-see-rsvpd-events"
@@ -2304,8 +2702,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can see events you are invited to:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsInvitedTo("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-see-events-invited-to"
                     name="who-can-see-events-invited-to"
                     onChange={() => setWhoCanSeeEventsInvitedTo("anyone")}
@@ -2314,8 +2722,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsInvitedTo("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEventsInvitedTo("friends")}
                     checked={whoCanSeeEventsInvitedTo === "friends"}
                     name="who-can-see-events-invited-to"
@@ -2324,8 +2742,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsInvitedTo("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEventsInvitedTo("friends of friends")}
                     checked={whoCanSeeEventsInvitedTo === "friends of friends"}
                     name="who-can-see-events-invited-to"
@@ -2334,8 +2762,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends of Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsInvitedTo("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEventsInvitedTo("nobody")}
                     checked={whoCanSeeEventsInvitedTo === "nobody"}
                     name="who-can-see-events-invited-to"
@@ -2349,8 +2787,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can see events you organize:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsOrganized("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-see-events"
                     name="who-can-see-events"
                     onChange={() => setWhoCanSeeEventsOrganized("anyone")}
@@ -2359,8 +2807,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsOrganized("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEventsOrganized("friends")}
                     checked={whoCanSeeEventsOrganized === "friends"}
                     name="who-can-see-events"
@@ -2369,8 +2827,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsOrganized("friends of friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEventsOrganized("friends of friends")}
                     checked={whoCanSeeEventsOrganized === "friends of friends"}
                     name="who-can-see-events"
@@ -2379,8 +2847,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends of Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanSeeEventsOrganized("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     onChange={() => setWhoCanSeeEventsOrganized("nobody")}
                     checked={whoCanSeeEventsOrganized === "nobody"}
                     name="who-can-see-events"
@@ -2394,8 +2872,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can add you as co-organizer of events:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanAddUserAsOrganizer("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-add-as-co-organizer"
                     onChange={() => setWhoCanAddUserAsOrganizer("anyone")}
                     checked={whoCanAddUserAsOrganizer === "anyone"}
@@ -2404,8 +2892,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanAddUserAsOrganizer("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="friends-can-add-as-organizer"
                     onChange={() => setWhoCanAddUserAsOrganizer("friends")}
                     checked={whoCanAddUserAsOrganizer === "friends"}
@@ -2414,8 +2912,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanAddUserAsOrganizer("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="nobody-can-add-as-co-organizer"
                     onChange={() => setWhoCanAddUserAsOrganizer("nobody")}
                     checked={whoCanAddUserAsOrganizer === "nobody"}
@@ -2429,8 +2937,18 @@ const EditUserInfoForm = ({
             <label>
               <p>Who can invite you to events:</p>
               <div className="radio-inputs-container">
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanInviteUser("anyone");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="anyone-can-invite"
                     onChange={() => setWhoCanInviteUser("anyone")}
                     checked={whoCanInviteUser === "anyone"}
@@ -2439,8 +2957,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Anyone</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanInviteUser("friends");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="friends-can-invite"
                     onChange={() => setWhoCanInviteUser("friends")}
                     checked={whoCanInviteUser === "friends"}
@@ -2449,8 +2977,18 @@ const EditUserInfoForm = ({
                   />
                   <span>Friends</span>
                 </div>
-                <div className="radio-input-and-label">
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanInviteUser("nobody");
+                    }
+                  }}
+                >
                   <input
+                    tabIndex={0}
                     id="nobody-can-invite"
                     onChange={() => setWhoCanInviteUser("nobody")}
                     checked={whoCanInviteUser === "nobody"}
