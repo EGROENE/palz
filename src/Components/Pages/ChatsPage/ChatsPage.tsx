@@ -11,7 +11,7 @@ import { TChat, TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import CreateNewChatModal from "../../Elements/CreateNewChatModal/CreateNewChatModal";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
-import EditChatNameModal from "../../EditChatNameModal/EditChatNameModal";
+import EditChatNameModal from "../../Elements/EditChatNameModal/EditChatNameModal";
 
 const ChatsPage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();

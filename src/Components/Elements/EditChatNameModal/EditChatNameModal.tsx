@@ -1,6 +1,6 @@
-import { useChatContext } from "../../Hooks/useChatContext";
+import { useChatContext } from "../../../Hooks/useChatContext";
 import { useState, useEffect } from "react";
-import { TThemeColor } from "../../types";
+import { TThemeColor } from "../../../types";
 
 const EditChatNameModal = () => {
   const {
