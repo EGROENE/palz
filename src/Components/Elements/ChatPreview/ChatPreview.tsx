@@ -78,6 +78,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
             setShowAreYouSureYouWantToDeleteChat(true);
           }}
           tabIndex={0}
+          aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               setCurrentChat(chat);
@@ -91,6 +92,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       )}
       <div
         tabIndex={0}
+        aria-hidden="false"
         onClick={() => handleOpenChat(chat)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {

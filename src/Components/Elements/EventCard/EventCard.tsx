@@ -148,6 +148,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
       <div className={styles.eventCardMainInfo}>
         <i
           tabIndex={0}
+          aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               setCurrentEvent(event);

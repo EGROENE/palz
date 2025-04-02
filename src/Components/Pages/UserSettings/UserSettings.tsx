@@ -325,6 +325,7 @@ const UserSettings = () => {
           Blocked Users{" "}
           <span
             tabIndex={0}
+            aria-hidden="false"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 setShowBlockedUsers(!showBlockedUsers);

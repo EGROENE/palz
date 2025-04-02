@@ -20,6 +20,7 @@ const FileUploadWithButton = ({
         }
       }}
       tabIndex={0}
+      aria-hidden="false"
     >
       <label
         className={styles.uploadFileButton}

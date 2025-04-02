@@ -381,6 +381,7 @@ const ChatModal = () => {
     <div tabIndex={0} className="modal-background">
       <i
         tabIndex={0}
+        aria-hidden="false"
         title="Close"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -557,6 +558,7 @@ const ChatModal = () => {
                   }}
                   ref={showMembersHeaderRef}
                   tabIndex={0}
+                  aria-hidden="false"
                   onClick={() => setShowMembers(true)}
                 >
                   Show members
@@ -569,6 +571,7 @@ const ChatModal = () => {
                   }}
                   ref={leaveChatHeaderRef}
                   tabIndex={0}
+                  aria-hidden="false"
                   onClick={() => setShowAreYouSureYouWantToLeaveChat(true)}
                 >
                   Leave chat
@@ -585,6 +588,7 @@ const ChatModal = () => {
                       }}
                       ref={addOrEditChatNameHeaderRef}
                       tabIndex={0}
+                      aria-hidden="false"
                       onClick={() => setShowEditChatNameModal(true)}
                     >
                       Edit Chat Name
@@ -598,6 +602,7 @@ const ChatModal = () => {
                       }}
                       ref={addOrEditChatNameHeaderRef}
                       tabIndex={0}
+                      aria-hidden="false"
                       onClick={() => setShowEditChatNameModal(true)}
                     >
                       Add Chat Name
@@ -612,6 +617,7 @@ const ChatModal = () => {
                     }}
                     ref={deleteChatHeaderRef}
                     tabIndex={0}
+                    aria-hidden="false"
                     style={{ color: "tomato" }}
                     onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}
                   >
@@ -634,6 +640,7 @@ const ChatModal = () => {
               </div>
               <i
                 tabIndex={0}
+                aria-hidden="false"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     setShowAreYouSureYouWantToDeleteChat(true);
@@ -677,6 +684,7 @@ const ChatModal = () => {
                     )}
                   {messagesContainerScrollBottom > 0 && (
                     <i
+                      aria-hidden="false"
                       tabIndex={0}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
