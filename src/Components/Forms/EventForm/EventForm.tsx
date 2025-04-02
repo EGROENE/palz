@@ -1214,6 +1214,25 @@ const EventForm = ({
             <ul className="dropdown-list">
               {resortedCountries.map((country) => (
                 <li
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleCityStateCountryInput(
+                        { city: eventCity, state: eventState, country: eventCountry },
+                        {
+                          citySetter: undefined,
+                          stateSetter: undefined,
+                          countrySetter: setEventCountry,
+                          errorSetter: setEventLocationError,
+                          showCountriesSetter: setShowEventCountries,
+                        },
+                        "country",
+                        country.country,
+                        undefined
+                      );
+                    }
+                  }}
                   style={
                     country.country === "United States"
                       ? {
