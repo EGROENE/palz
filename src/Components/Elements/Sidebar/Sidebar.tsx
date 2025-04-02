@@ -30,6 +30,7 @@ const Sidebar = () => {
 
   return (
     <div
+      aria-hidden="false"
       className={styles.sidebar}
       style={
         theme === "dark"

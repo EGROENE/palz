@@ -145,7 +145,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
           </button>
         </div>
       )}
-      <div className={styles.eventCardMainInfo}>
+      <div aria-hidden="false" className={styles.eventCardMainInfo}>
         <i
           tabIndex={0}
           aria-hidden="false"
@@ -196,7 +196,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                   : `${organizerUsernames[0]}  +${organizerUsernames.length - 1}`}
               </span>
             </p>
-            <div className={styles.eventButtonsContainer}>
+            <div aria-hidden="false" className={styles.eventButtonsContainer}>
               <Link
                 style={
                   randomColor === "var(--primary-color)"

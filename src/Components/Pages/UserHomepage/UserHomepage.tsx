@@ -94,7 +94,7 @@ const UserHomepage = () => {
         !fetchIsLoading &&
         isNoFetchError && (
           <>
-            <div className="upcoming-events-hero">
+            <div aria-hidden="false" className="upcoming-events-hero">
               <h1>Upcoming Events ({allCurrentUserEvents.length})</h1>
               <div
                 style={
