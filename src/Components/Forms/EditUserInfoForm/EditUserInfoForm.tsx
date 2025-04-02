@@ -1357,6 +1357,17 @@ const EditUserInfoForm = ({
             <ul className="dropdown-list">
               {resortedCountries.map((country) => (
                 <li
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handlePhoneNumberInput(
+                        "country-code",
+                        undefined,
+                        `${country.country} +${country.phoneCode}`
+                      );
+                    }
+                  }}
                   style={
                     country.country === "United States"
                       ? {
