@@ -45,7 +45,16 @@ const FilterDropdown = ({
       {showFilterOptions && (
         <div className={styles.filterOptionsContainer}>
           {filterOptions.map((option) => (
-            <label key={option}>
+            <label
+              tabIndex={0}
+              aria-hidden="false"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleAddDeleteFilter(option);
+                }
+              }}
+              key={option}
+            >
               <span>{option}</span>
               <input
                 name={option}
