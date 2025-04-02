@@ -71,6 +71,13 @@ const Tab = ({
       </span>
       {!userMayNotDelete && (
         <i
+          tabIndex={0}
+          aria-hidden="false"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              getOnClickFunction();
+            }
+          }}
           style={addHandler && { "rotate": "45deg" }} // turns X into plus sign
           onClick={getOnClickFunction()}
           className="fas fa-times"
