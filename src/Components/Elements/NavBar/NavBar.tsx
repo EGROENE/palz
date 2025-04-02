@@ -45,7 +45,15 @@ const NavBar = () => {
           </li>
         )}
         {userCreatedAccount !== null ? (
-          <li tabIndex={0} onClick={() => logout()}>
+          <li
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                logout();
+              }
+            }}
+            onClick={() => logout()}
+          >
             Log Out<i className="fas fa-sign-out-alt"></i>
           </li>
         ) : (
