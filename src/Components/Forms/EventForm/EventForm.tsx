@@ -1335,7 +1335,17 @@ const EventForm = ({
             </label>
             {(eventStartDateMidnightUTCInMS > 0 ||
               eventStartTimeAfterMidnightUTCInMS > -1) && (
-              <span onClick={() => handleClearDateTime(true)} className="remove-data">
+              <span
+                tabIndex={0}
+                aria-hidden="false"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleClearDateTime(true);
+                  }
+                }}
+                onClick={() => handleClearDateTime(true)}
+                className="remove-data"
+              >
                 Clear Start Date/Time
               </span>
             )}
@@ -1405,7 +1415,17 @@ const EventForm = ({
             </label>
             {(eventEndDateMidnightUTCInMS > 0 ||
               eventEndTimeAfterMidnightUTCInMS > -1) && (
-              <span onClick={() => handleClearDateTime(false)} className="remove-data">
+              <span
+                tabIndex={0}
+                aria-hidden="false"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleClearDateTime(false);
+                  }
+                }}
+                onClick={() => handleClearDateTime(false)}
+                className="remove-data"
+              >
                 Clear End Date/Time
               </span>
             )}
