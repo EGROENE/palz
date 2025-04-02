@@ -1500,6 +1500,25 @@ const EditUserInfoForm = ({
               <ul className="dropdown-list">
                 {resortedCountries.map((country) => (
                   <li
+                    tabIndex={0}
+                    aria-hidden="false"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleCityStateCountryInput(
+                          { city: userCity, state: userState, country: userCountry },
+                          {
+                            citySetter: undefined,
+                            stateSetter: undefined,
+                            countrySetter: setUserCountry,
+                            errorSetter: setLocationError,
+                            showCountriesSetter: setShowUserLocationCountries,
+                          },
+                          "country",
+                          country.country,
+                          undefined
+                        );
+                      }
+                    }}
                     style={
                       country.country === "United States"
                         ? {
