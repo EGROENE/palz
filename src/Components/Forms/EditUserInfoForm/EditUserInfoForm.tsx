@@ -943,7 +943,11 @@ const EditUserInfoForm = ({
   };
 
   // METHODS TO DELETE THINGS:
-  const handleDeletePhoneNumber = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+  const handleDeletePhoneNumber = (
+    e:
+      | React.MouseEvent<HTMLSpanElement, MouseEvent>
+      | React.KeyboardEvent<HTMLSpanElement>
+  ) => {
     e.preventDefault();
     setIsLoading(true);
     Requests.deletePhoneNumber(currentUser)
@@ -980,7 +984,11 @@ const EditUserInfoForm = ({
       .finally(() => setIsLoading(false));
   };
 
-  const handleDeleteLocation = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+  const handleDeleteLocation = (
+    e:
+      | React.MouseEvent<HTMLSpanElement, MouseEvent>
+      | React.KeyboardEvent<HTMLSpanElement>
+  ) => {
     e.preventDefault();
     setIsLoading(true);
     Requests.deleteLocation(currentUser)
@@ -1017,7 +1025,9 @@ const EditUserInfoForm = ({
   };
 
   const handleDeleteSocialMedium = (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    e:
+      | React.MouseEvent<HTMLSpanElement, MouseEvent>
+      | React.KeyboardEvent<HTMLSpanElement>,
     medium: "facebook" | "instagram" | "x"
   ) => {
     e.preventDefault();
@@ -1061,7 +1071,11 @@ const EditUserInfoForm = ({
       .finally(() => setIsLoading(false));
   };
 
-  const handleDeleteUserAbout = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+  const handleDeleteUserAbout = (
+    e:
+      | React.MouseEvent<HTMLSpanElement, MouseEvent>
+      | React.KeyboardEvent<HTMLSpanElement>
+  ) => {
     e.preventDefault();
     setIsLoading(true);
     Requests.deleteUserAbout(currentUser)
@@ -1292,7 +1306,17 @@ const EditUserInfoForm = ({
               currentUser?.phoneCountryCode !== "" ||
               currentUser?.phoneNumberWithoutCountryCode !== "") &&
               !isLoading && (
-                <span onClick={(e) => handleDeletePhoneNumber(e)} className="remove-data">
+                <span
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleDeletePhoneNumber(e);
+                    }
+                  }}
+                  onClick={(e) => handleDeletePhoneNumber(e)}
+                  className="remove-data"
+                >
                   Remove
                 </span>
               )}
@@ -1555,6 +1579,12 @@ const EditUserInfoForm = ({
             currentUser?.country !== "" &&
             !isLoading && (
               <span
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleDeleteLocation(e);
+                  }
+                }}
                 style={
                   !showUserLocationCountries
                     ? {
@@ -1582,6 +1612,13 @@ const EditUserInfoForm = ({
               Facebook:{" "}
               {currentUser?.facebook !== "" && !isLoading && (
                 <span
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleDeleteSocialMedium(e, "facebook");
+                    }
+                  }}
                   onClick={(e) => handleDeleteSocialMedium(e, "facebook")}
                   className="remove-data"
                 >
@@ -1614,6 +1651,13 @@ const EditUserInfoForm = ({
               Instagram:{" "}
               {currentUser?.instagram !== "" && !isLoading && (
                 <span
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleDeleteSocialMedium(e, "instagram");
+                    }
+                  }}
                   onClick={(e) => handleDeleteSocialMedium(e, "instagram")}
                   className="remove-data"
                 >
@@ -1646,6 +1690,13 @@ const EditUserInfoForm = ({
               X:{" "}
               {currentUser?.x !== "" && !isLoading && (
                 <span
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleDeleteSocialMedium(e, "x");
+                    }
+                  }}
                   onClick={(e) => handleDeleteSocialMedium(e, "x")}
                   className="remove-data"
                 >
@@ -1678,7 +1729,17 @@ const EditUserInfoForm = ({
           <header className="input-label">
             About:{" "}
             {currentUser?.about !== "" && !isLoading && (
-              <span onClick={(e) => handleDeleteUserAbout(e)} className="remove-data">
+              <span
+                tabIndex={0}
+                aria-hidden="false"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleDeleteUserAbout(e);
+                  }
+                }}
+                onClick={(e) => handleDeleteUserAbout(e)}
+                className="remove-data"
+              >
                 Remove
               </span>
             )}
