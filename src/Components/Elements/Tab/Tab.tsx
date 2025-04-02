@@ -28,22 +28,22 @@ const Tab = ({
   userMayNotDelete?: boolean;
   specialIcon?: JSX.Element;
 }) => {
-  const getOnClickFunction = () => {
+  const getOnClickFunction = (
+    e: React.MouseEvent<HTMLElement, MouseEvent> | React.KeyboardEvent<HTMLElement>
+  ) => {
     if (addHandler && addHandlerParams) {
       if (addHandlerNeedsEventParam) {
-        return (e: React.MouseEvent<HTMLElement, MouseEvent>) =>
-          addHandler(...addHandlerParams, e);
+        return addHandler(...addHandlerParams, e);
       } else {
-        return () => addHandler(...addHandlerParams);
+        return addHandler(...addHandlerParams);
       }
     }
     if (removeHandler && removeHandlerParams) {
       if (removeHandlerParams) {
         if (removeHandlerNeedsEventParam && removeHandlerParams) {
-          return (e: React.MouseEvent<HTMLElement, MouseEvent>) =>
-            removeHandler(...removeHandlerParams, e);
+          return removeHandler(...removeHandlerParams, e);
         } else {
-          return () => removeHandler(...removeHandlerParams);
+          return removeHandler(...removeHandlerParams);
         }
       }
     }
@@ -77,11 +77,11 @@ const Tab = ({
           aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              getOnClickFunction();
+              getOnClickFunction(e);
             }
           }}
           style={addHandler && { "rotate": "45deg" }} // turns X into plus sign
-          onClick={getOnClickFunction()}
+          onClick={(e) => getOnClickFunction(e)}
           className="fas fa-times"
           title={addHandler ? "Add" : "Remove"}
         ></i>
