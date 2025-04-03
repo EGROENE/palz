@@ -51,3 +51,27 @@
 .nonUserInterestsContainer .tab {
   font-size: 1.25rem;
 }
+
+/* RESPONSIVE STYLING */
+@media screen and (max-width: 1024px) {
+  .browseInterestsModal .barAndDescription p {
+    margin: 0;
+  }
+}
+
+@media screen and (max-width: 834px) {
+  .browseInterestsModal {
+    width: 85%;
+    padding: 2rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .browseInterestsModal .barAndDescription {
+    width: 93%;
+  }
+
+  .browseInterestsModal {
+    padding: 1rem;
+  }
+}
