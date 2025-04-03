@@ -24,6 +24,14 @@
   align-items: center;
 }
 
+.hamburger-container {
+  display: flex;
+  width: 83%;
+  justify-content: space-between;
+  margin-top: 2rem;
+  align-items: baseline;
+}
+
 .query-error-container {
   display: flex;
   flex-direction: column;
@@ -38,7 +46,8 @@
   font-weight: 700;
 }
 
-.palz-logo header {
+.palz-logo header,
+#hamburger {
   font-size: 2rem;
   line-height: 1.5;
   margin: -1.5rem 0 0 0;
