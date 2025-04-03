@@ -13,13 +13,49 @@
     font-size: x-large;
   }
 
-  .login-page-container {
+  .page-hero .login-page-container {
     flex-direction: column;
+    height: 84vh;
+  }
+
+  .login-greeting-container {
+    margin-bottom: 2rem;
+  }
+
+  .login-form {
+    width: 86%;
   }
 
   .form {
     width: 89%;
     margin-top: 4rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .login-page-container h1 {
+    font-size: 2rem;
+  }
+
+  .login-page-container h2 {
+    font-size: 1.5rem;
+  }
+
+  .login-options-container header {
+    font-size: 1.5rem;
+  }
+
+  .login-signup-edit-form header,
+  .login-signup-edit-form p:first-child {
+    font-size: 1rem;
+  }
+
+  .login-signup-edit-form .theme-element-container {
+    margin-top: 1rem;
+  }
+
+  .login-button {
+    font-size: 1rem;
   }
 }
 
@@ -38,12 +74,21 @@
     width: 85vw;
   }
 
+  .login-form {
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+
   .login-signup-edit-form p:first-child {
     font-size: 1rem;
   }
 
   .form {
     width: 95%;
+  }
+
+  .page-hero .login-page-container {
+    height: 100vh;
   }
 }
 
@@ -60,6 +105,31 @@
 @media screen and (max-width: 480px) {
   .form {
     margin-top: 4rem;
+  }
+}
+
+@media screen and (max-width: 414px) {
+  .login-greeting-container {
+    margin-bottom: 0.5rem;
+    margin-top: -2.5rem;
+  }
+}
+
+@media screen and (max-width: 412px) {
+  .page-hero .login-page-container {
+    height: 80vh;
+  }
+}
+
+@media screen and (max-width: 412px) and (min-width: 732px) {
+  .page-hero .login-page-container {
+    height: 93vh;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .page-hero .login-page-container {
+    height: 95vh;
   }
 }
 
