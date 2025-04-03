@@ -17,7 +17,9 @@ const NavBar = () => {
     ? getTotalNumberOfUnreadMessages(userChats)
     : undefined;
 
-  return (
+  const screenWidth: number = Number(window.screen.width);
+
+  return screenWidth > 1024 ? (
     <nav>
       <ul className={styles.navbar}>
         <li>
@@ -85,6 +87,14 @@ const NavBar = () => {
         </li>
       </ul>
     </nav>
+  ) : (
+    <div className="hamburger-container">
+      <Link className="palz-logo" to={`/${currentUser?.username}`}>
+        <img src="../src/assets/palz.png" />
+        <header>PALZ</header>
+      </Link>
+      <i id="hamburger" style={{ fontSize: "3rem" }} className="fas fa-hamburger"></i>
+    </div>
   );
 };
 
