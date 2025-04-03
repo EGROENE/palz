@@ -1469,9 +1469,8 @@ const EventForm = ({
               ? {
                   boxShadow: `0px 0px 10px 2px ${randomColor}`,
                   outline: "none",
-                  width: "25%",
                 }
-              : { width: "25%" }
+              : undefined
           }
           disabled={isLoading}
           className={

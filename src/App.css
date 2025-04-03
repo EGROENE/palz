@@ -278,6 +278,10 @@
   border: none;
 }
 
+#event-max-participants {
+  width: 25%;
+}
+
 .input-error-message {
   font-size: 1rem;
   font-family: var(--text-font);
