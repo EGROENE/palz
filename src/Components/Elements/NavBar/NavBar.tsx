@@ -93,7 +93,7 @@ const NavBar = () => {
         <img src="../src/assets/palz.png" />
         <header>PALZ</header>
       </Link>
-      <i id="hamburger" style={{ fontSize: "3rem" }} className="fas fa-hamburger"></i>
+      <i id="hamburger" className="fas fa-hamburger"></i>
     </div>
   );
 };
