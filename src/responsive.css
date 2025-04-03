@@ -30,6 +30,19 @@
     width: 89%;
     margin-top: 4rem;
   }
+
+  .rsvpd-events-container {
+    flex-direction: column;
+    width: 100vw;
+  }
+
+  .site-links-container {
+    width: 96vw;
+  }
+
+  .site-links-container button {
+    font-size: 0.75rem;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -56,6 +69,33 @@
 
   .login-button {
     font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 615px) {
+  .hamburger-container {
+    margin-top: 1rem;
+  }
+
+  .palz-logo img {
+    width: 5rem;
+  }
+
+  .palz-logo header {
+    font-size: 1.5rem;
+    margin-top: -1rem;
+  }
+
+  #hamburger {
+    font-size: 2rem;
+  }
+
+  .upcoming-events-hero h1 {
+    font-size: 2rem;
+  }
+
+  .site-links-container button {
+    font-size: 0.5rem;
   }
 }
 
@@ -90,6 +130,14 @@
   .page-hero .login-page-container {
     height: 100vh;
   }
+
+  .site-links-container {
+    width: 70vw;
+    display: flex;
+    flex-wrap: wrap;
+    height: 5rem;
+    margin-bottom: 0.5rem;
+  }
 }
 
 @media screen and (max-width: 500px) {
@@ -106,6 +154,18 @@
   .form {
     margin-top: 4rem;
   }
+
+  .site-links-container {
+    width: 70vw;
+    display: flex;
+    flex-wrap: wrap;
+    height: 7rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .site-links-container button {
+    font-size: 0.75rem;
+  }
 }
 
 @media screen and (max-width: 414px) {
@@ -113,11 +173,28 @@
     margin-bottom: 0.5rem;
     margin-top: -2.5rem;
   }
+
+  .site-links-container {
+    height: 12rem;
+    width: 95vw;
+  }
+
+  .site-links-container button {
+    font-size: 1rem;
+  }
 }
 
 @media screen and (max-width: 412px) {
   .page-hero .login-page-container {
     height: 80vh;
+  }
+
+  .site-links-container {
+    height: 9rem;
+  }
+
+  .site-links-container button {
+    font-size: 0.75rem;
   }
 }
 

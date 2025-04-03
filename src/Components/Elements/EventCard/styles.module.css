@@ -201,3 +201,42 @@
 .eventsInfoContainer .eventButtonsContainer {
   width: 75%;
 }
+
+/* RESPONSIVE DESIGN */
+@media screen and (max-width: 1024px) {
+  .eventCard {
+    max-width: 100%;
+  }
+
+  .eventCardMainInfo {
+    width: 87%;
+  }
+}
+
+@media screen and (max-width: 615px) {
+  .eventCardMainInfo i {
+    font-size: smaller;
+    right: -1rem;
+  }
+
+  .eventInfoContainer header {
+    font-size: smaller;
+  }
+
+  .eventInfoContainer p {
+    font-size: small;
+  }
+
+  .eventButtonsContainerButton {
+    font-size: 0.5rem;
+  }
+
+  .eventCardLocationContainer p {
+    font-size: smaller;
+  }
+
+  .eventCard img {
+    width: 7rem;
+    height: 4rem;
+  }
+}
