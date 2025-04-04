@@ -1178,7 +1178,7 @@ const EditUserInfoForm = ({
 
   return (
     <>
-      <h2>
+      <h2 id="user-settings-header">
         Feel free to change any of your profile info in the form below. Make sure to save
         changes, else they won't apply
       </h2>
