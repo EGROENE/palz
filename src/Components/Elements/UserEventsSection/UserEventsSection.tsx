@@ -23,7 +23,7 @@ const UserEventsSection = ({
   return (
     <section className={styles.userEventsSection}>
       <h2>{header}</h2>
-      <div className={`${styles.userEventsSectionEventsContainer}`}>
+      <div className="userEventsSectionEventsContainer">
         {Methods.sortEventsSoonestToLatest(eventsFromWhichCurrentUserNotBlocked).map(
           (event) => (
             <EventCard key={event._id} event={event} />

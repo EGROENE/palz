@@ -361,6 +361,18 @@
   margin: 1rem 3rem 2rem 0;
 }
 
+.userEventsSectionEventsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 2rem;
+  justify-content: flex-start;
+  width: 96%;
+}
+
+.userEventsSectionEventsContainer .eventCard {
+  width: 75%;
+}
+
 .all-cards-container .eventCard {
   /* width: calc(50% - 4rem); */
   margin: 2rem 5rem;

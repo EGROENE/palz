@@ -10,11 +10,3 @@
   margin: 1rem 0 0 2rem;
   font-size: 2rem;
 }
-
-.userEventsSectionEventsContainer {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 2rem;
-  justify-content: flex-start;
-  width: 96%;
-}
