@@ -43,6 +43,10 @@
   .site-links-container button {
     font-size: 0.75rem;
   }
+
+  form textarea {
+    width: 76%;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -70,9 +74,17 @@
   .login-button {
     font-size: 1rem;
   }
+
+  .page-hero form input {
+    width: 86%;
+  }
 }
 
 @media screen and (max-width: 615px) {
+  .page-hero h1 {
+    font-size: 2rem;
+  }
+
   .hamburger-container {
     margin-top: 1rem;
   }
@@ -97,11 +109,39 @@
   .site-links-container button {
     font-size: 0.5rem;
   }
+
+  .event-form header {
+    font-size: 1rem;
+  }
+
+  .location-inputs {
+    flex-direction: column;
+  }
+
+  .location-input:first-child ~ * {
+    margin: 0.25rem 0;
+  }
+
+  #event-max-participants {
+    width: 75%;
+  }
+
+  .buttons-container {
+    margin-top: 6rem;
+  }
 }
 
 @media screen and (max-width: 600px) {
   .form {
     margin-top: 1rem;
+  }
+
+  .buttons-container {
+    margin-top: 6rem;
+  }
+
+  .buttons-container button {
+    font-size: smaller;
   }
 }
 
@@ -181,6 +221,10 @@
 
   .site-links-container button {
     font-size: 1rem;
+  }
+
+  .hamburger-container {
+    margin-top: 0;
   }
 }
 

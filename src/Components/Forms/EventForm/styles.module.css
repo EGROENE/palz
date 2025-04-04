@@ -110,3 +110,24 @@
 .eventImageContainer i:hover {
   opacity: 0.9;
 }
+
+/* RESPONSIVE */
+@media screen and (max-width: 1024px) {
+  .dateTimeInputsLine {
+    flex-direction: column;
+  }
+
+  .dateTimeGroupContainer {
+    margin: 0.5rem 0 0.5rem 0;
+  }
+
+  .dateTimeGroupContainer:first-child {
+    margin-right: 1rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .eventFormCheckboxContainer span {
+    font-size: smaller;
+  }
+}
