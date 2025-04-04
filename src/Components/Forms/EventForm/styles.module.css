@@ -65,7 +65,7 @@
   margin: 0 0.75rem;
 }
 
-.eventImagesContainer label {
+.add-photo-box {
   margin: 0;
 }
 
@@ -124,10 +124,39 @@
   .dateTimeGroupContainer:first-child {
     margin-right: 1rem;
   }
+
+  .eventImagesContainer {
+    flex-direction: column;
+  }
+
+  .eventImageContainer {
+    margin: 1rem 0;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .dateTimeInputsLine {
+    width: 90%;
+  }
+
+  .dateTimeInputsLine label {
+    margin: 0 1rem 0 0;
+  }
 }
 
 @media screen and (max-width: 600px) {
   .eventFormCheckboxContainer span {
     font-size: smaller;
+  }
+
+  .eventImagesContainer img {
+    height: 9rem;
+    width: 16rem;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .dateTimeInputsLine label {
+    margin: 0 0.5rem 0 0;
   }
 }

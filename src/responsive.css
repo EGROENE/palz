@@ -47,6 +47,16 @@
   form textarea {
     width: 76%;
   }
+
+  #add-photo-box {
+    width: 20rem;
+  }
+}
+
+@media screen and (max-width: 857px) {
+  .buttons-container {
+    margin-top: 5rem;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -128,6 +138,11 @@
 
   .buttons-container {
     margin-top: 6rem;
+  }
+
+  #add-photo-box {
+    height: 9rem;
+    width: 16rem;
   }
 }
 
