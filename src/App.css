@@ -338,6 +338,34 @@
   width: 87vw;
 }
 
+.eventCard {
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  min-width: 33%;
+  font-family: var(--text-font);
+  color: var(--text-color);
+  padding: 0.5rem;
+  margin: 1.5rem;
+  position: relative;
+  max-width: 44%;
+}
+
+.eventCard header {
+  font-weight: 700;
+}
+
+.user-events-section .all-cards-container .eventCard {
+  margin: 1rem 3rem 2rem 0;
+}
+
+.all-cards-container .eventCard {
+  /* width: calc(50% - 4rem); */
+  margin: 2rem 5rem;
+}
+
 .box-link-container {
   display: flex;
 }

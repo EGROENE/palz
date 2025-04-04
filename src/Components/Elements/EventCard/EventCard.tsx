@@ -112,7 +112,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   return (
     <div
-      className={styles.eventCard}
+      className="eventCard"
       style={{
         boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
       }}
