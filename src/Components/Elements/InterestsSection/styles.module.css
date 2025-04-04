@@ -23,3 +23,10 @@
   flex-wrap: wrap;
   margin-top: 2rem;
 }
+
+/* RESPONSIVE STYLING */
+@media screen and (max-width: 1024px) {
+  .interestsSection {
+    width: 100%;
+  }
+}
