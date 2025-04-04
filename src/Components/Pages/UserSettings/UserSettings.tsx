@@ -318,10 +318,7 @@ const UserSettings = () => {
         />
       )}
       {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && currentUser && (
-        <header
-          className="independent-header"
-          style={{ width: "76%", textAlign: "left" }}
-        >
+        <header className="independent-header">
           Blocked Users{" "}
           <span
             tabIndex={0}

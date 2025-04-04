@@ -271,6 +271,7 @@
   font-size: 1.25rem;
   font-family: var(--text-font);
   color: var(--text-color);
+  text-align: left;
 }
 
 .erroneous-field {
