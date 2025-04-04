@@ -1810,7 +1810,7 @@ const EventForm = ({
             {eventImages && eventImages.length < 3 && (
               <label>
                 <label title="Add Photo" htmlFor="event-image-upload">
-                  <i className="fas fa-plus"></i>
+                  <i id="add-photo-box" className="fas fa-plus"></i>
                 </label>
                 <input
                   id="event-image-upload"
