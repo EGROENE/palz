@@ -64,6 +64,13 @@
   padding: 2rem 0.5rem;
 }
 
+.eventCardImageContainer img {
+  float: left;
+  width: 10rem;
+  height: 7rem;
+  object-fit: cover;
+}
+
 .eventCardLocationContainer {
   display: flex;
   align-items: center;
