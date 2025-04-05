@@ -10,3 +10,26 @@
   margin: 1rem 0 0 2rem;
   font-size: 2rem;
 }
+
+/* RESPONSIVE STYLING */
+@media screen and (max-width: 914px) {
+  .userEventsSection {
+    align-items: center;
+  }
+
+  .userEventsSection h2 {
+    margin: 0;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .userEventsSection h2 {
+    max-width: 90%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .userEventsSection h2 {
+    font-size: 1.5rem;
+  }
+}

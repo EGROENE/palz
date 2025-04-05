@@ -71,6 +71,16 @@
   .settings-theme-and-delete-account-container {
     width: 95%;
   }
+
+  .userEventsSectionEventsContainer {
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+  }
+
+  .userEventsSectionEventsContainer .eventCard {
+    width: 75%;
+  }
 }
 
 @media screen and (max-width: 914px) {
@@ -216,6 +226,11 @@
     height: 9rem;
     width: 16rem;
   }
+
+  .eventCardImageContainer img {
+    width: 8rem;
+    height: 5rem;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -273,6 +288,11 @@
     flex-wrap: wrap;
     height: 5rem;
     margin-bottom: 0.5rem;
+  }
+
+  .userEventsSectionEventsContainer .eventCard {
+    margin: 1.5rem 0;
+    width: 93%;
   }
 }
 

@@ -202,3 +202,19 @@
     font-size: smaller;
   }
 }
+
+@media screen and (max-width: 360px) {
+  .eventCardMainInfo i {
+    right: 0;
+  }
+
+  .eventCardImageContainer {
+    margin-top: 1rem;
+    margin-left: 0.25rem;
+  }
+
+  .eventCardImageContainer img {
+    height: 5rem;
+    width: 8rem;
+  }
+}
