@@ -50,27 +50,6 @@
   font-size: 0.75rem;
 }
 
-.eventCardImageContainer {
-  margin-top: 1rem;
-  margin-left: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.eventCardImageContainer p {
-  font-size: 0.85rem;
-  width: 75%;
-  padding: 2rem 0.5rem;
-}
-
-.eventCardImageContainer img {
-  float: left;
-  width: 10rem;
-  height: 7rem;
-  object-fit: cover;
-}
-
 .organizersEventCard {
   font-size: 0.75rem;
   position: relative;
@@ -187,15 +166,5 @@
 @media screen and (max-width: 360px) {
   .eventCardMainInfo i {
     right: 0;
-  }
-
-  .eventCardImageContainer {
-    margin-top: 1rem;
-    margin-left: 0.25rem;
-  }
-
-  .eventCardImageContainer img {
-    height: 5rem;
-    width: 8rem;
   }
 }
