@@ -9,8 +9,20 @@
   cursor: pointer;
 }
 
+@media screen and (max-width: 768px) {
+  .eye {
+    left: 82%;
+  }
+}
+
 @media screen and (max-width: 540px) {
   .eye {
     top: 0.7rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .eye {
+    top: 30%;
   }
 }
