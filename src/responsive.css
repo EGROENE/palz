@@ -81,6 +81,11 @@
   .userEventsSectionEventsContainer .eventCard {
     width: 75%;
   }
+
+  .all-cards-container .eventCard {
+    width: 80%;
+    margin: 1.25rem 3rem;
+  }
 }
 
 @media screen and (max-width: 914px) {
@@ -99,6 +104,35 @@
 @media screen and (max-width: 857px) {
   .buttons-container {
     margin-top: 5rem;
+  }
+}
+
+@media screen and (max-width: 834px) {
+  .all-cards-container .eventCard .eventCardImageContainer {
+    width: 7rem;
+    height: 5rem;
+  }
+
+  .all-cards-container .eventCard header {
+    font-size: smaller;
+  }
+
+  .all-cards-container .eventCard p {
+    font-size: 0.6rem;
+  }
+
+  .all-cards-container .eventCard a,
+  .all-cards-container .eventCard button {
+    width: 90%;
+  }
+
+  .eventCardImageContainer img {
+    width: 7rem;
+    height: 5rem;
+  }
+
+  .eventCardLocationContainer p {
+    margin: 0.25rem 0;
   }
 }
 
@@ -231,6 +265,18 @@
     width: 8rem;
     height: 5rem;
   }
+
+  .all-cards-container .eventCard {
+    margin: 1.25rem 1rem;
+  }
+
+  .eventCardLocationContainer p {
+    font-size: smaller;
+  }
+
+  .search-tools-container {
+    flex-direction: column;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -253,6 +299,11 @@
 
   .radio-input-and-label {
     margin: 0.25rem 0;
+  }
+
+  .all-cards-container {
+    width: 100vw;
+    margin: 0 1rem;
   }
 }
 
@@ -294,6 +345,11 @@
     margin: 1.5rem 0;
     width: 93%;
   }
+
+  .eventCardImageContainer img {
+    width: 6rem;
+    height: 4rem;
+  }
 }
 
 @media screen and (max-width: 500px) {
@@ -321,6 +377,15 @@
 
   .site-links-container button {
     font-size: 0.75rem;
+  }
+
+  .all-cards-container {
+    width: 100vw;
+    margin: 2rem 1rem 0 1rem;
+  }
+
+  .all-cards-container .eventCard {
+    margin: 1.75rem 1rem;
   }
 }
 
@@ -388,8 +453,25 @@
   }
 }
 
+@media screen and (max-width: 360px) {
+  .eventCardImageContainer {
+    margin-top: 1rem;
+    margin-left: 0.25rem;
+  }
+
+  .eventCardImageContainer img {
+    height: 5rem;
+    width: 8rem;
+  }
+}
+
 @media screen and (max-width: 320px) {
   :root {
     font-size: small;
+  }
+
+  .eventCardImageContainer img {
+    height: 4rem;
+    width: 6rem;
   }
 }
