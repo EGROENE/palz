@@ -250,7 +250,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
             )}
           </div>
         </div>
-        <div className={styles.eventCardLocationContainer}>
+        <div className="eventCardLocationContainer">
           <p>{`${event.city}, ${event.stateProvince}`}</p>
           <img src={`/flags/4x3/${eventCountryAbbreviation}.svg`} />
         </div>
