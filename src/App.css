@@ -247,16 +247,22 @@
   width: 50%;
 }
 
-.page-hero .login-signup-edit-form {
+.page-hero .login-signup-form {
+  width: 100%;
+}
+
+.page-hero .edit-form {
   width: 70%;
 }
 
-.login-signup-edit-form .theme-element-container {
+.login-signup-form .theme-element-container,
+.edit-form .theme-element-container {
   width: 103%;
   margin-top: 1.5rem;
 }
 
-.login-signup-edit-form p:first-child {
+.login-signup-form p:first-child,
+.edit-form p:first-child {
   font-size: 1.25rem;
   font-family: var(--text-font);
 }
@@ -602,7 +608,8 @@
   width: 12rem;
 }
 
-.login-signup-edit-form button:active {
+.login-signup-form button:active,
+.edit-form button:active {
   background: rgb(75, 75, 75);
   color: white;
 }

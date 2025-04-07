@@ -1182,7 +1182,7 @@ const EditUserInfoForm = ({
         Feel free to change any of your profile info in the form below. Make sure to save
         changes, else they won't apply
       </h2>
-      <form className="login-signup-edit-form">
+      <form className="edit-form">
         <div>
           <label>
             <header className="input-label">First Name:</header>
