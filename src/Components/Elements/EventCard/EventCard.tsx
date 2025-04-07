@@ -241,7 +241,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                 ))}
             </div>
           </div>
-          <div className={styles.eventCardImageContainer}>
+          <div className="eventCardImageContainer">
             {status && <p style={{ backgroundColor: randomColor }}>{status}</p>}
             {event && event.images && event.images.length > 0 ? (
               <img style={{ border: `2px solid ${randomColor}` }} src={event.images[0]} />
