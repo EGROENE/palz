@@ -167,7 +167,19 @@
   }
 
   .settings-theme-and-delete-account-container div .theme-element-container {
-    width: 56%;
+    width: 43%;
+  }
+}
+
+@media screen and (max-width: 810px) {
+  .settings-theme-and-delete-account-container div .theme-element-container {
+    width: 43%;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .settings-theme-and-delete-account-container div .theme-element-container {
+    width: 43%;
   }
 }
 
@@ -204,8 +216,8 @@
     width: 86%;
   }
 
-  .eye {
-    left: 82%;
+  .settings-theme-and-delete-account-container div .theme-element-container {
+    width: 45%;
   }
 }
 
@@ -359,10 +371,6 @@
 @media screen and (max-width: 500px) {
   :root {
     font-size: medium;
-  }
-
-  .eye {
-    top: 2.4rem;
   }
 }
 
