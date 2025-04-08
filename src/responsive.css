@@ -91,6 +91,10 @@
     width: 80%;
     margin: 1.25rem 3rem;
   }
+
+  .friendRequestUsersContainer {
+    width: 75%;
+  }
 }
 
 @media screen and (max-width: 914px) {
@@ -185,6 +189,10 @@
 @media screen and (max-width: 810px) {
   .settings-theme-and-delete-account-container div .theme-element-container {
     width: 43%;
+  }
+
+  .listedUser {
+    width: 97%;
   }
 }
 
@@ -380,6 +388,10 @@
   .eventCardImageContainer img {
     width: 6rem;
     height: 4rem;
+  }
+
+  .friendRequestUsersContainer {
+    width: 99%;
   }
 }
 

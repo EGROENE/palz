@@ -375,7 +375,7 @@
 }
 
 .userEventsSectionEventsContainer .eventCard {
-  max-width: 42%;
+  max-width: 36%;
 }
 
 .all-cards-container .eventCard {
@@ -1374,4 +1374,39 @@ form textarea {
 
 .dropdownList button {
   width: 12rem;
+}
+
+.listedUser {
+  color: var(--text-color);
+  padding: 1rem;
+  border-radius: 10px;
+  width: 50%;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 1rem 0;
+}
+
+.listedUser a:hover,
+.listedUserBtnsContainer button:hover {
+  opacity: 0.7;
+}
+
+.listedUser img {
+  float: left;
+  width: 5rem;
+  height: 5rem;
+  object-fit: cover;
+}
+
+.friendRequestUsersContainer {
+  width: 47%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.friendRequestUsersContainer .listedUser {
+  width: 72%;
 }

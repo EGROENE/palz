@@ -234,7 +234,7 @@ const FriendRequests = () => {
                 </div>
               )}
             </div>
-            <div className={styles.friendRequestUsersContainer}>
+            <div className="friendRequestUsersContainer">
               {requestsVisible === "sent"
                 ? displayedItemsFiltered &&
                   Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
