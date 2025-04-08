@@ -116,7 +116,7 @@
   box-shadow: var(--text-color) 0px 1px 22px;
 }
 
-.kopfzeile .actionButtonsContainer {
+.actionButtonsContainer {
   padding: 0;
   width: 100%;
   display: flex;
@@ -215,6 +215,13 @@
     width: 81%;
   }
 
+  .eventInfoContainer {
+    width: 89%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
   .infoPoint {
     align-items: center;
   }
@@ -243,6 +250,16 @@
   }
 }
 
+@media screen and (max-width: 768px) {
+  .actionButtonsContainer button {
+    font-size: 0.75rem;
+  }
+
+  .actionButtonsContainer {
+    width: 119%;
+  }
+}
+
 @media screen and (max-width: 615px) {
   .kopfzeile p {
     font-size: 1rem;
@@ -258,5 +275,11 @@
 
   .furtherInfoSection header {
     font-size: 1.25rem;
+  }
+}
+
+@media screen and (max-width: 384px) {
+  .actionButtonsContainer {
+    width: 134%;
   }
 }

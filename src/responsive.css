@@ -80,6 +80,7 @@
 
   .userEventsSectionEventsContainer .eventCard {
     width: 75%;
+    max-width: 100%;
   }
 
   .all-cards-container {
@@ -172,6 +173,12 @@
 
   .settings-theme-and-delete-account-container div .theme-element-container {
     width: 43%;
+  }
+
+  .userEventsSectionEventsContainer .eventCard .event-all-but-location-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
   }
 }
 

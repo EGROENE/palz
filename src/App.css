@@ -374,6 +374,10 @@
   width: 96%;
 }
 
+.userEventsSectionEventsContainer .eventCard {
+  max-width: 42%;
+}
+
 .all-cards-container .eventCard {
   /* width: calc(50% - 4rem); */
   margin: 2rem 5rem;
