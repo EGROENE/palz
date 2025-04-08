@@ -181,7 +181,10 @@ const EventCard = ({ event }: { event: TEvent }) => {
           className="fas fa-link"
           title="Copy link to event page to clipboard"
         ></i>
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div
+          className="event-all-but-location-container"
+          style={{ display: "flex", alignItems: "center" }}
+        >
           <div className={styles.eventInfoContainer}>
             <header>{event.title}</header>
             <p>

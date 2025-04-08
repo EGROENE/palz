@@ -144,6 +144,23 @@
   }
 }
 
+@media screen and (max-width: 820px) {
+  .eventCardMainInfo i {
+    top: 16%;
+  }
+
+  .eventButtonsContainerButton {
+    width: 15rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .eventCardMainInfo i {
+    right: -1%;
+    top: 1%;
+  }
+}
+
 @media screen and (max-width: 615px) {
   .eventCardMainInfo i {
     font-size: smaller;
@@ -156,14 +173,34 @@
 
   .eventInfoContainer p {
     font-size: small;
+    margin: 0.25rem;
   }
 
   .eventButtonsContainerButton {
-    font-size: 0.5rem;
+    font-size: 0.75rem;
   }
 
   .organizersEventCard i {
     margin-right: 1.25rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .eventCardMainInfo i {
+    top: 2%;
+  }
+
+  .eventButtonsContainerButton {
+    width: 10rem;
+  }
+}
+
+@media screen and (max-width: 448px) {
+  .eventInfoContainer {
+    width: 89%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }
 
