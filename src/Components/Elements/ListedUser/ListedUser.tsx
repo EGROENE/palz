@@ -97,104 +97,106 @@ const ListedUser = ({
             <p className={styles.listedUserUsername}>{user?.username}</p>
           </div>
         )}
-        <div className={styles.listedUserBtnsContainer}>{renderButtonOne && buttonOneLink ? (
-          <Link to={buttonOneLink}>
-            <button
-              disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
-              onClick={
-                buttonOneHandler
-                  ? buttonOneHandlerNeedsEventParam
-                    ? (e) =>
-                        buttonOneHandlerParams
-                          ? buttonOneHandler(...buttonOneHandlerParams, e)
-                          : buttonOneHandler(e)
-                    : () =>
-                        buttonOneHandlerParams
-                          ? buttonOneHandler(...buttonOneHandlerParams)
-                          : buttonOneHandler()
-                  : undefined
-              }
-              style={
-                randomColor === "var(--primary-color)"
-                  ? { backgroundColor: `${randomColor}`, color: "black" }
-                  : { backgroundColor: `${randomColor}`, color: "white" }
-              }
-            >
-              {buttonOneText}
-            </button>
-          </Link>
-        ) : (
-          renderButtonOne && (
-            <button
-              disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
-              onClick={
-                buttonOneHandler
-                  ? buttonOneHandlerNeedsEventParam
-                    ? (e) =>
-                        buttonOneHandlerParams
-                          ? buttonOneHandler(...buttonOneHandlerParams, e)
-                          : buttonOneHandler(e)
-                    : () =>
-                        buttonOneHandlerParams
-                          ? buttonOneHandler(...buttonOneHandlerParams)
-                          : buttonOneHandler()
-                  : undefined
-              }
-              style={
-                randomColor === "var(--primary-color)"
-                  ? { backgroundColor: `${randomColor}`, color: "black" }
-                  : { backgroundColor: `${randomColor}`, color: "white" }
-              }
-            >
-              {buttonOneText}
-            </button>
-          )
-        )}
-        {renderButtonTwo && buttonTwoLink ? (
-          <Link to={buttonTwoLink}>
-            <button
-              disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
-              onClick={
-                buttonTwoHandler
-                  ? buttonTwoHandlerNeedsEventParam
-                    ? (e) =>
-                        buttonTwoHandlerParams
-                          ? buttonTwoHandler(...buttonTwoHandlerParams, e)
-                          : buttonTwoHandler(e)
-                    : () =>
-                        buttonTwoHandlerParams
-                          ? buttonTwoHandler(...buttonTwoHandlerParams)
-                          : buttonTwoHandler()
-                  : undefined
-              }
-              style={{ backgroundColor: "tomato", color: "white" }}
-            >
-              {buttonTwoText}
-            </button>
-          </Link>
-        ) : (
-          renderButtonTwo && (
-            <button
-              disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
-              onClick={
-                buttonTwoHandler
-                  ? buttonTwoHandlerNeedsEventParam
-                    ? (e) =>
-                        buttonTwoHandlerParams
-                          ? buttonTwoHandler(...buttonTwoHandlerParams, e)
-                          : buttonTwoHandler(e)
-                    : () =>
-                        buttonTwoHandlerParams
-                          ? buttonTwoHandler(...buttonTwoHandlerParams)
-                          : buttonTwoHandler()
-                  : undefined
-              }
-              style={{ backgroundColor: "tomato", color: "white" }}
-            >
-              {buttonTwoText}
-            </button>
-          )
-        )}</div>
+        <div className={styles.listedUserBtnsContainer}>
+          {renderButtonOne && buttonOneLink ? (
+            <Link to={buttonOneLink}>
+              <button
+                disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
+                onClick={
+                  buttonOneHandler
+                    ? buttonOneHandlerNeedsEventParam
+                      ? (e) =>
+                          buttonOneHandlerParams
+                            ? buttonOneHandler(...buttonOneHandlerParams, e)
+                            : buttonOneHandler(e)
+                      : () =>
+                          buttonOneHandlerParams
+                            ? buttonOneHandler(...buttonOneHandlerParams)
+                            : buttonOneHandler()
+                    : undefined
+                }
+                style={
+                  randomColor === "var(--primary-color)"
+                    ? { backgroundColor: `${randomColor}`, color: "black" }
+                    : { backgroundColor: `${randomColor}`, color: "white" }
+                }
+              >
+                {buttonOneText}
+              </button>
+            </Link>
+          ) : (
+            renderButtonOne && (
+              <button
+                disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
+                onClick={
+                  buttonOneHandler
+                    ? buttonOneHandlerNeedsEventParam
+                      ? (e) =>
+                          buttonOneHandlerParams
+                            ? buttonOneHandler(...buttonOneHandlerParams, e)
+                            : buttonOneHandler(e)
+                      : () =>
+                          buttonOneHandlerParams
+                            ? buttonOneHandler(...buttonOneHandlerParams)
+                            : buttonOneHandler()
+                    : undefined
+                }
+                style={
+                  randomColor === "var(--primary-color)"
+                    ? { backgroundColor: `${randomColor}`, color: "black" }
+                    : { backgroundColor: `${randomColor}`, color: "white" }
+                }
+              >
+                {buttonOneText}
+              </button>
+            )
+          )}
+          {renderButtonTwo && buttonTwoLink ? (
+            <Link to={buttonTwoLink}>
+              <button
+                disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
+                onClick={
+                  buttonTwoHandler
+                    ? buttonTwoHandlerNeedsEventParam
+                      ? (e) =>
+                          buttonTwoHandlerParams
+                            ? buttonTwoHandler(...buttonTwoHandlerParams, e)
+                            : buttonTwoHandler(e)
+                      : () =>
+                          buttonTwoHandlerParams
+                            ? buttonTwoHandler(...buttonTwoHandlerParams)
+                            : buttonTwoHandler()
+                    : undefined
+                }
+                style={{ backgroundColor: "tomato", color: "white" }}
+              >
+                {buttonTwoText}
+              </button>
+            </Link>
+          ) : (
+            renderButtonTwo && (
+              <button
+                disabled={buttonTwoIsDisabled !== null && buttonTwoIsDisabled}
+                onClick={
+                  buttonTwoHandler
+                    ? buttonTwoHandlerNeedsEventParam
+                      ? (e) =>
+                          buttonTwoHandlerParams
+                            ? buttonTwoHandler(...buttonTwoHandlerParams, e)
+                            : buttonTwoHandler(e)
+                      : () =>
+                          buttonTwoHandlerParams
+                            ? buttonTwoHandler(...buttonTwoHandlerParams)
+                            : buttonTwoHandler()
+                    : undefined
+                }
+                style={{ backgroundColor: "tomato", color: "white" }}
+              >
+                {buttonTwoText}
+              </button>
+            )
+          )}
+        </div>
       </div>
     </div>
   );
