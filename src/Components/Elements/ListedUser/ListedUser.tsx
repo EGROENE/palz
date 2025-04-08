@@ -97,7 +97,7 @@ const ListedUser = ({
             <p className={styles.listedUserUsername}>{user?.username}</p>
           </div>
         )}
-        {renderButtonOne && buttonOneLink ? (
+        <div className={styles.listedUserBtnsContainer}>{renderButtonOne && buttonOneLink ? (
           <Link to={buttonOneLink}>
             <button
               disabled={buttonOneIsDisabled !== null && buttonOneIsDisabled}
@@ -194,7 +194,7 @@ const ListedUser = ({
               {buttonTwoText}
             </button>
           )
-        )}
+        )}</div>
       </div>
     </div>
   );

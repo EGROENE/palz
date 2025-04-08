@@ -14,12 +14,12 @@
   font-size: 1rem;
 }
 
-.listedUser button {
+.listedUserBtnsContainer button {
   height: 43%;
 }
 
 .listedUser a:hover,
-.listedUser button:hover {
+.listedUserBtnsContainer button:hover {
   opacity: 0.7;
 }
 
@@ -32,7 +32,6 @@
 
 .listedUserTextsContainer {
   text-align: left;
-  margin-left: 0.5rem;
 }
 
 .listedUserName {
@@ -48,9 +47,23 @@
   color: var(--text-color);
 }
 
-.infoContainer button {
+.listedUserBtnsContainer button {
   margin: 0.5rem;
 }
+
+.listedUserBtnsContainer button:first-child {
+  margin: 0.5rem 0.5rem 0.5rem 0;
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* .infoContainer button {
+  margin: 0.5rem;
+} */
 
 @media screen and (max-width: 810px) {
   .listedUser {
