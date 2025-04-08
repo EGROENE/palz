@@ -793,7 +793,11 @@ const DisplayedCardsPage = ({
             <SearchBar
               input={searchTerm}
               placeholder={
-                usedFor === "events" ? "Search events" : "Search potential palz"
+                usedFor === "events"
+                  ? "Search events"
+                  : usedFor === "potential-friends"
+                  ? "Search potential palz"
+                  : "Search palz"
               }
               inputHandler={handleSearchTermInput}
               clearInputHandler={handleClearSearchTerm}
