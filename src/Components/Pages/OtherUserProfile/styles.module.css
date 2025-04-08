@@ -28,7 +28,7 @@
   }
 }
 
-.kopfzeile img {
+.profileImage {
   border-radius: 10px;
   width: 18rem;
   height: 100%;
@@ -202,4 +202,61 @@
 
 .clickableHeader:hover {
   cursor: pointer;
+}
+
+@media screen and (max-width: 1024px) {
+  .kopfzeile {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .mainInfoContainer {
+    width: 81%;
+  }
+
+  .infoPoint {
+    align-items: center;
+  }
+
+  .furtherInfoSection section {
+    margin-left: 0;
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 914px) {
+  .infoPoint span {
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 839px) {
+  .furtherInfoSection {
+    width: 95vw;
+  }
+}
+
+@media screen and (max-width: 834px) {
+  .profileImage {
+    width: 19rem;
+  }
+}
+
+@media screen and (max-width: 615px) {
+  .kopfzeile p {
+    font-size: 1rem;
+  }
+
+  .socialLinksContainer span {
+    font-size: 1.5rem;
+  }
+
+  .actionButtonsContainer button {
+    font-size: 0.75rem;
+  }
+
+  .furtherInfoSection header {
+    font-size: 1.25rem;
+  }
 }

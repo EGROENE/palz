@@ -709,6 +709,7 @@ const OtherUserProfile = () => {
           >
             <div style={{ boxShadow: "unset" }} className="theme-element-container">
               <img
+                className={styles.profileImage}
                 src={
                   currentOtherUser.profileImage !== "" &&
                   typeof currentOtherUser.profileImage === "string"
