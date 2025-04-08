@@ -189,16 +189,12 @@ const UserCard = ({ user }: { user: TUser }) => {
         }}
       >
         {userIsMessageable && (
-          <i
-            onClick={() => getStartOrOpenChatWithUserHandler(user)}
-            style={{
-              position: "absolute",
-              right: "1rem",
-              top: "1rem",
-              fontSize: "1.25rem",
-            }}
-            className="fas fa-comments"
-          ></i>
+          <div className={styles.userCardMessageBtnContainer}>
+            <i
+              onClick={() => getStartOrOpenChatWithUserHandler(user)}
+              className="fas fa-comments"
+            ></i>
+          </div>
         )}
         <img
           style={{ border: `2px solid ${randomColor}` }}
