@@ -12,10 +12,14 @@
   position: relative;
 }
 
-.userCard .fas.fa-comments {
+.userCardMessageBtnContainer {
   position: absolute;
   right: 2rem;
   top: 1rem;
+  font-size: 1.25rem;
+}
+
+.userCardMessageBtnContainer i {
   font-size: 1.25rem;
 }
 
@@ -68,4 +72,153 @@
 
 .userCardBtnContainer i {
   margin-right: 0.5rem;
+}
+
+@media screen and (max-width: 1024px) {
+  .userCard {
+    min-width: unset;
+    width: 15rem;
+    margin: 1rem 1.5rem;
+  }
+
+  .userCardMessageBtnContainer {
+    right: 1rem;
+  }
+
+  .userCard img {
+    width: 8rem;
+    height: 5rem;
+  }
+}
+
+@media screen and (max-width: 914px) {
+  .userCard {
+    width: 13rem;
+  }
+
+  .userCard img {
+    width: 7rem;
+    height: 5rem;
+  }
+
+  .userCard header {
+    font-size: smaller;
+  }
+
+  .userCard p {
+    font-size: 0.75rem;
+  }
+
+  .userCardBtnContainer button {
+    font-size: 0.6rem;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .userCard {
+    margin: 1rem 0.8rem;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .userCard {
+    width: 12rem;
+  }
+}
+
+@media screen and (max-width: 884px) {
+  .userCardMessageBtnContainer {
+    top: 0.5rem;
+  }
+
+  .userCardMessageBtnContainer i {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .userCard {
+    width: 11rem;
+  }
+
+  .userCard img {
+    width: 5rem;
+    height: 3rem;
+  }
+
+  .userCard p {
+    font-size: 0.5rem;
+  }
+
+  .userCard .userCardBtnContainer button {
+    font-size: 0.5rem;
+  }
+
+  .userCardMessageBtnContainer i {
+    font-size: 0.75rem !important;
+  }
+
+  .userCard .userCardBtnContainer button {
+    font-size: 0.4rem;
+  }
+}
+
+@media screen and (max-width: 615px) {
+  .userCard {
+    width: 9rem;
+  }
+
+  .userCardLocationContainer {
+    margin-top: 0.5rem;
+  }
+
+  .userCard .userCardLocationContainer img {
+    width: 1rem;
+    height: 0.75rem;
+  }
+}
+
+@media screen and (max-width: 540px) {
+  .userCard {
+    width: 8rem;
+  }
+
+  .userCard img {
+    width: 4rem;
+    height: 2.5rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .userCard {
+    width: 10rem;
+  }
+}
+
+@media screen and (max-width: 414px) {
+  .userCard {
+    margin: 1.5rem 0.8rem;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .userCard {
+    width: 9rem;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .userCard {
+    width: 50%;
+    margin: 1rem 0.8rem;
+  }
+
+  .userCard img {
+    width: 6rem;
+    height: 4rem;
+  }
+
+  .userCard .userCardBtnContainer button {
+    font-size: 0.5rem;
+  }
 }

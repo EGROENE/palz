@@ -82,6 +82,10 @@
     width: 75%;
   }
 
+  .all-cards-container {
+    margin: 2rem 2rem 0 2rem;
+  }
+
   .all-cards-container .eventCard {
     width: 80%;
     margin: 1.25rem 3rem;
@@ -292,6 +296,10 @@
   .search-tools-container {
     flex-direction: column;
   }
+
+  .all-cards-container {
+    margin: 2rem 1rem 0 1rem;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -371,6 +379,10 @@
 @media screen and (max-width: 500px) {
   :root {
     font-size: medium;
+  }
+
+  .all-cards-container {
+    justify-content: space-evenly;
   }
 }
 
