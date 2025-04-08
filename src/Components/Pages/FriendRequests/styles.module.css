@@ -19,8 +19,24 @@
 }
 
 .friendRequestUsersContainer {
-  width: 75%;
+  width: 47%;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+@media screen and (max-width: 1024px) {
+  .friendRequestFilterHeaders {
+    width: 54%;
+  }
+
+  .friendRequestUsersContainer {
+    width: 75%;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .friendRequestFilterHeaders {
+    width: 84%;
+  }
 }

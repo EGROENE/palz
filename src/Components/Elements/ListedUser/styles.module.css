@@ -47,3 +47,33 @@
   margin: 0;
   color: var(--text-color);
 }
+
+.infoContainer button {
+  margin: 0.5rem;
+}
+
+@media screen and (max-width: 810px) {
+  .listedUser {
+    width: 97%;
+  }
+}
+
+@media screen and (max-width: 615px) {
+  .listedUserName {
+    font-size: 1rem;
+  }
+
+  .infoContainer button {
+    font-size: 0.75rem;
+  }
+}
+
+@media screen and (max-width: 540px) {
+  .friendRequestFilterHeaders header {
+    font-size: 1.25rem;
+  }
+
+  .friendRequestsUsersContainer {
+    width: 99%;
+  }
+}
