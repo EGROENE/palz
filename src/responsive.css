@@ -384,6 +384,18 @@
   .all-cards-container {
     justify-content: space-evenly;
   }
+
+  .site-links-container {
+    width: 87vw;
+  }
+
+  .site-links-container {
+    width: 87vw;
+  }
+
+  .site-links-container button {
+    font-size: 0.75rem;
+  }
 }
 
 @media screen and (max-width: 480px) {
