@@ -166,6 +166,10 @@
   .eventCardLocationContainer p {
     margin: 0.25rem 0;
   }
+
+  .modal-background .listedUser {
+    width: 66%;
+  }
 }
 
 @media screen and (max-width: 820px) {
@@ -214,7 +218,7 @@
     width: 43%;
   }
 
-  .listedUser {
+  .friendRequestUsersContainer .listedUser {
     width: 97%;
   }
 }
@@ -262,7 +266,7 @@
     width: 45%;
   }
 
-  .furtherInfoSection .listedUser img {
+  .modal-background .listedUser img {
     width: 4rem;
     height: 4rem;
   }
@@ -492,7 +496,7 @@
     margin: 1.75rem 1rem;
   }
 
-  .kopfzeile .userListContainer {
+  .modal-background .userListContainer {
     height: 53%;
   }
 }
