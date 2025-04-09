@@ -2,7 +2,6 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { TUser } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import styles from "./styles.module.css";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import QueryLoadingOrError from "../QueryLoadingOrError/QueryLoadingOrError";
 import { useChatContext } from "../../../Hooks/useChatContext";
@@ -188,10 +187,7 @@ const UserListModal = ({
         onClick={() => closeModalMethod(false)}
         className="fas fa-times close-module-icon"
       ></i>
-      <div
-        style={{ border: `2px solid ${randomColor}` }}
-        className={styles.userListContainer}
-      >
+      <div style={{ border: `2px solid ${randomColor}` }} className="userListContainer">
         <h2>{`${header} (${displayedUserCount})`}</h2>
         {isNoFetchError &&
           !fetchIsLoading &&

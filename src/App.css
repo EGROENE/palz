@@ -1463,3 +1463,22 @@ form textarea {
 .furtherInfoSection section {
   margin-left: -2rem;
 }
+
+.userListContainer {
+  background-color: var(--background-color);
+  color: black;
+  height: 75%;
+  width: 60%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.userListContainer h2 {
+  font-size: 3rem;
+}
+
+.userListContainer p {
+  color: var(--text-color);
+}
