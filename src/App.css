@@ -1487,3 +1487,12 @@ form textarea {
 .userListContainer p {
   color: var(--text-color);
 }
+
+.chat-preview-container i {
+  font-size: 1.25rem;
+  margin: 0 2rem;
+}
+
+.profile-images-chat-preview-container img {
+  margin-left: -3rem;
+}
