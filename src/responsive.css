@@ -112,6 +112,17 @@
   .userListContainer {
     width: 91%;
   }
+
+  .chats-container {
+    width: 93%;
+  }
+
+  #new-chat-btn {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    right: 0;
+  }
 }
 
 @media screen and (max-width: 914px) {
@@ -125,6 +136,28 @@
     width: 84%;
     margin: 1rem 0;
   }
+
+  .last-message-preview-and-date span:nth-child(2) {
+    width: 20%;
+  }
+}
+
+@media screen and (max-width: 884px) {
+  #new-chat-btn {
+    font-size: 1.5rem;
+    height: 4rem;
+    width: 4rem;
+  }
+
+  .chat-preview-container img {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .last-message-preview-and-date span:nth-child(2) {
+    width: 32%;
+    margin-left: 0.25rem;
+  }
 }
 
 @media screen and (max-width: 857px) {
@@ -136,6 +169,11 @@
 @media screen and (max-width: 839px) {
   .furtherInfoSection {
     width: 95vw;
+  }
+
+  .chats-container {
+    margin-bottom: 0;
+    margin-top: 2rem;
   }
 }
 
@@ -220,6 +258,10 @@
 
   .friendRequestUsersContainer .listedUser {
     width: 97%;
+  }
+
+  .last-message-preview-and-date span:nth-child(2) {
+    width: 36%;
   }
 }
 
@@ -396,6 +438,15 @@
     width: 100vw;
     margin: 0 1rem;
   }
+
+  .chat-preview-container {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .last-message-preview-and-date span:nth-child(2) {
+    width: 46%;
+  }
 }
 
 @media screen and (max-width: 540px) {
@@ -449,6 +500,47 @@
 
   .modal-background .listedUser {
     width: 78%;
+  }
+
+  .chats-container {
+    width: 95%;
+  }
+
+  .chat-preview-container-text-container header {
+    font-size: 1rem;
+  }
+
+  .chat-preview-container-text-container span {
+    font-size: 0.75rem;
+  }
+
+  .chat-preview-container i {
+    font-size: 1rem;
+    margin: 0 1rem;
+  }
+
+  .profile-images-chat-preview-container {
+    margin-left: 0.75rem;
+  }
+
+  .profile-images-chat-preview-container img {
+    margin-left: -2rem;
+  }
+
+  .chat-preview-container img {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .last-message-preview-and-date span:nth-child(2) {
+    width: 39%;
+  }
+
+  .more-images-text {
+    margin-left: -0.8rem;
+    font-size: 0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
   }
 }
 
