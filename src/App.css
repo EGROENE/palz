@@ -278,6 +278,7 @@
   font-family: var(--text-font);
   color: var(--text-color);
   text-align: left;
+  width: 76%;
 }
 
 .erroneous-field {
