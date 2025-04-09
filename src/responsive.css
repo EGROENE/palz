@@ -168,7 +168,7 @@
   }
 
   .modal-background .listedUser {
-    width: 66%;
+    width: 70%;
   }
 }
 
@@ -445,6 +445,10 @@
 
   .friendRequestUsersContainer {
     width: 99%;
+  }
+
+  .modal-background .listedUser {
+    width: 78%;
   }
 }
 
