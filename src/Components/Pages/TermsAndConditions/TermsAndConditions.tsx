@@ -5,6 +5,12 @@ const TermsAndConditions = () => {
       <h1>Terms & Conditions</h1>
       <div className="terms-and-conditions-paragraphs-container">
         <p>
+          PALZ ist kein berechtigtes Unternehmen, denn es ist kein Unternehmen, also diese
+          Internetseite dient keinem Unternehmen. Ich erstellte sie mit der einzigen
+          Absicht, meine Fähigkeiten bezüglich Webentwicklung zu verbessern und sie soll
+          halt Teil meines Portfolios als Webentwickler werden, nichts mehr.
+        </p>
+        <p>
           So schreitet in dem engen Bretterhaus (Theater, Bühne) Den ganzen Kreis der
           Schöpfung aus, Und wandelt mit bedächtger Schnelle Vom Himmel durch die Welt zur
           Hölle!
