@@ -823,7 +823,7 @@ const OtherUserProfile = () => {
               </div>
             </div>
           </div>
-          <section className={styles.furtherInfoSection}>
+          <section className="furtherInfoSection">
             {currentOtherUser.about !== "" && (
               <div className={styles.about}>
                 <header>About me :</header>

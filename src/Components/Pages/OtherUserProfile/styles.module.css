@@ -123,58 +123,6 @@
   justify-content: space-evenly;
 }
 
-.furtherInfoSection {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 86%;
-}
-
-.furtherInfoSection header {
-  font-weight: 700;
-  font-family: var(--header-font);
-  font-size: 2rem;
-  line-height: 1.5;
-  background: linear-gradient(
-    80deg,
-    var(--primary-color),
-    var(--primary-color),
-    var(--secondary-color),
-    var(--secondary-color)
-  );
-  background: -webkit-linear-gradient(
-    34deg,
-    var(--primary-color),
-    var(--primary-color),
-    var(--secondary-color),
-    var(--secondary-color)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  background-size: 300% !important;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: animated_h1 10s ease-in-out infinite;
-  -moz-animation: animated_h1 10s ease-in-out infinite;
-  -webkit-animation: animated_h1 10s ease-in-out infinite;
-}
-@keyframes animated_h1 {
-  0% {
-    background-position: 0px 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0px 50%;
-  }
-}
-
-.furtherInfoSection section {
-  margin-left: -2rem;
-}
-
 .about {
   display: flex;
   flex-direction: column;
@@ -225,22 +173,11 @@
   .infoPoint {
     align-items: center;
   }
-
-  .furtherInfoSection section {
-    margin-left: 0;
-    align-items: center;
-  }
 }
 
 @media screen and (max-width: 914px) {
   .infoPoint span {
     justify-content: center;
-  }
-}
-
-@media screen and (max-width: 839px) {
-  .furtherInfoSection {
-    width: 95vw;
   }
 }
 
@@ -271,10 +208,6 @@
 
   .actionButtonsContainer button {
     font-size: 0.75rem;
-  }
-
-  .furtherInfoSection header {
-    font-size: 1.25rem;
   }
 }
 
