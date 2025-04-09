@@ -86,7 +86,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
             }
           }}
           title="Delete Chat"
-          style={{ color: randomColor, margin: "0 2rem", fontSize: "1.25rem" }}
+          style={{ color: randomColor }}
           className="fas fa-trash-alt"
         ></i>
       )}
@@ -111,7 +111,6 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
                     getChatMembers(chat.members).indexOf(member) > 0
                       ? {
                           border: `4px solid ${randomColor}`,
-                          marginLeft: "-3rem",
                           zIndex: `${getChatMembers(chat.members).indexOf(member)}`,
                         }
                       : { border: `4px solid ${randomColor}` }
