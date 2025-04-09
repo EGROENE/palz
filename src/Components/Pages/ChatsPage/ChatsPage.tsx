@@ -93,6 +93,18 @@ const ChatsPage = () => {
   return (
     <>
       <h1>Chats</h1>
+      <button
+        style={
+          randomColor === "var(--primary-color)"
+            ? { backgroundColor: `${randomColor}`, color: "black" }
+            : { backgroundColor: `${randomColor}`, color: "var(--text-color)" }
+        }
+        id="new-chat-btn"
+        title="Start new chat"
+        onClick={() => setShowCreateNewChatModal(true)}
+      >
+        <i className="fas fa-feather"></i>
+      </button>
       {showCreateNewChatModal && <CreateNewChatModal />}
       {showEditChatNameModal && <EditChatNameModal />}
       <QueryLoadingOrError
@@ -132,18 +144,6 @@ const ChatsPage = () => {
               </header>
             </>
           )}
-          <button
-            style={
-              randomColor === "var(--primary-color)"
-                ? { backgroundColor: `${randomColor}`, color: "black" }
-                : { backgroundColor: `${randomColor}`, color: "var(--text-color)" }
-            }
-            id="new-chat-btn"
-            title="Start new chat"
-            onClick={() => setShowCreateNewChatModal(true)}
-          >
-            <i className="fas fa-feather"></i>
-          </button>
         </>
       )}
     </>
