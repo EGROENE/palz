@@ -96,6 +96,10 @@
     width: 75%;
   }
 
+  .furtherInfoSection {
+    align-items: center;
+  }
+
   .furtherInfoSection section {
     margin-left: 0;
     align-items: center;
