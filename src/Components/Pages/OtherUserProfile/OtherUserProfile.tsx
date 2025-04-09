@@ -851,7 +851,14 @@ const OtherUserProfile = () => {
               <div className={styles.infoPoint}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <header
+                    tabIndex={0}
+                    aria-hidden="false"
                     className={styles.clickableHeader}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setShowFriends(true);
+                      }
+                    }}
                     onClick={() => setShowFriends(true)}
                   >
                     See friends
