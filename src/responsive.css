@@ -127,6 +127,14 @@
   .chat-container {
     width: 87%;
   }
+
+  .members-panel-container {
+    width: 88%;
+  }
+
+  .members-container .listedUser {
+    width: 66%;
+  }
 }
 
 @media screen and (max-width: 914px) {
@@ -176,6 +184,15 @@
     width: 32%;
     margin-left: 0.25rem;
   }
+
+  .members-panel-container {
+    width: 66%;
+  }
+
+  .members-container i {
+    font-size: 1.5rem;
+    right: -43%;
+  }
 }
 
 @media screen and (max-width: 857px) {
@@ -193,6 +210,18 @@
 
   .message.sent {
     left: 48%;
+  }
+
+  .members-panel-container {
+    width: 90%;
+  }
+
+  .members-container i {
+    top: 1rem;
+  }
+
+  .members-container .listedUser {
+    width: 77%;
   }
 }
 
@@ -241,6 +270,11 @@
 
   .modal-background .listedUser {
     width: 70%;
+  }
+
+  .listedUser img {
+    width: 4rem;
+    height: 4rem;
   }
 }
 
@@ -482,6 +516,10 @@
   .message.sent {
     left: 45%;
   }
+
+  .modal-background .listedUser {
+    width: 79%;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -522,6 +560,10 @@
 
   .message-indicators-container {
     top: 87%;
+  }
+
+  .members-container-options button {
+    font-size: 0.75rem;
   }
 }
 
@@ -622,6 +664,14 @@
   .message.sent {
     left: 43%;
   }
+
+  .group-chat-header header {
+    font-size: 0.6rem;
+  }
+
+  .modal-background .listedUser {
+    width: 84%;
+  }
 }
 
 @media screen and (max-width: 500px) {
@@ -647,6 +697,10 @@
 
   .message.sent {
     left: 47%;
+  }
+
+  .modal-background .listedUser {
+    width: 67%;
   }
 }
 
@@ -709,6 +763,10 @@
 
   .message.sent {
     left: 45%;
+  }
+
+  .modal-background .listedUser {
+    width: 79%;
   }
 }
 
@@ -775,6 +833,11 @@
 
   .message.sent {
     left: 43%;
+  }
+
+  .modal-background .listedUser img {
+    width: 3rem;
+    height: 3rem;
   }
 }
 
