@@ -63,7 +63,7 @@ const EditChatNameModal = () => {
           value={chatName ? chatName : ""}
           onChange={(e) => handleChatNameInput(e)}
           type="text"
-          placeholder="Choose a name for the group chat"
+          placeholder="Enter group chat name"
         ></input>
         {chatNameError !== "" && <p>{chatNameError}</p>}
         <div className="create-new-chat-modal-buttons">
