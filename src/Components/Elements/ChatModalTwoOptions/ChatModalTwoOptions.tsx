@@ -19,7 +19,7 @@ const ChatModalTwoOptions = ({
 }) => {
   return (
     <div className="chat-modal-two-options-hero">
-      <header>{header}</header>
+      <header style={{ color: randomColor }}>{header}</header>
       {subheader && <header className="subheader">{subheader}</header>}
       <div className="chat-modal-two-options-buttons-container">
         <button onClick={buttonOneHandler}>{buttonOneText}</button>
