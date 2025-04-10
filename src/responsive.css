@@ -135,6 +135,10 @@
   .members-container .listedUser {
     width: 66%;
   }
+
+  .edit-chat-name-modal-container {
+    width: 87%;
+  }
 }
 
 @media screen and (max-width: 914px) {
@@ -520,6 +524,10 @@
   .modal-background .listedUser {
     width: 79%;
   }
+
+  .edit-chat-name-modal-container input {
+    width: 65%;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -676,6 +684,10 @@
 
   .modal-background .listedUser {
     width: 84%;
+  }
+
+  .create-new-chat-modal-buttons button {
+    font-size: 0.75rem;
   }
 }
 
