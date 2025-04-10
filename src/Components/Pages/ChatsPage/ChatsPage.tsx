@@ -26,6 +26,7 @@ const ChatsPage = () => {
     handleDeleteChat,
     currentChat,
     showEditChatNameModal,
+    showChatModal,
   } = useChatContext();
 
   const userChats = fetchChatsQuery.data;
@@ -115,7 +116,7 @@ const ChatsPage = () => {
         <>
           {userChats.length > 0 ? (
             <>
-              {showAreYouSureYouWantToDeleteChat && (
+              {showAreYouSureYouWantToDeleteChat && !showChatModal && (
                 <TwoOptionsInterface
                   header="Are you sure you want to delete this chat?"
                   subheader="Please understand that all messages will be deleted. This is irreversible."
