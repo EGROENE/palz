@@ -144,6 +144,10 @@
   .last-message-preview-and-date span:nth-child(2) {
     width: 20%;
   }
+
+  .message.sent {
+    left: 49%;
+  }
 }
 
 @media screen and (max-width: 900px) {
@@ -152,7 +156,7 @@
   }
 
   .message.sent {
-    left: 47%;
+    left: 46%;
   }
 }
 
@@ -200,6 +204,10 @@
   .chats-container {
     margin-bottom: 0;
     margin-top: 2rem;
+  }
+
+  .message.sent {
+    left: 47%;
   }
 }
 
@@ -465,6 +473,14 @@
 
   .other-member-info-container {
     max-width: 75%;
+  }
+
+  .group-chat-header header {
+    font-size: 0.75rem;
+  }
+
+  .message.sent {
+    left: 45%;
   }
 }
 
@@ -735,6 +751,10 @@
 @media screen and (max-width: 375px) {
   .form {
     margin-top: 2rem;
+  }
+
+  .group-chat-header header {
+    font-size: 0.6rem;
   }
 
   .message.sent {
