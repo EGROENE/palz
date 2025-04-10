@@ -962,6 +962,8 @@ form textarea {
   width: 100%;
   align-items: center;
   justify-content: space-evenly;
+  z-index: 100;
+  margin-bottom: 0.25rem;
 }
 
 .group-chat-header:hover {
@@ -1174,8 +1176,8 @@ form textarea {
   align-items: center;
   justify-content: center;
   position: sticky;
-  /* left: 0%; */
-  /*  top: 67%; */
+  left: 0%;
+  top: 80%;
   max-width: 100%;
   width: 100%;
   z-index: 1;
@@ -1201,7 +1203,7 @@ form textarea {
   margin: 0.5rem;
   display: flex;
   align-items: flex-start;
-  width: 33%;
+  width: 44%;
   background-color: deeppink;
   border-radius: 10px;
   color: var(--text-color);
