@@ -1239,7 +1239,7 @@ form textarea {
 .message.sent {
   text-align: left;
   position: relative;
-  left: 61%;
+  left: 50%;
   background-color: var(--background-color);
 }
 
