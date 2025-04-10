@@ -804,6 +804,10 @@
   .message.sent {
     left: 43%;
   }
+
+  .messages-container header {
+    font-size: 1.5rem;
+  }
 }
 
 @media screen and (max-width: 375px) {
