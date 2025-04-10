@@ -123,6 +123,10 @@
     bottom: 0;
     right: 0;
   }
+
+  .chat-container {
+    width: 87%;
+  }
 }
 
 @media screen and (max-width: 914px) {
@@ -139,6 +143,16 @@
 
   .last-message-preview-and-date span:nth-child(2) {
     width: 20%;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .message {
+    width: 46%;
+  }
+
+  .message.sent {
+    left: 47%;
   }
 }
 
@@ -163,6 +177,18 @@
 @media screen and (max-width: 857px) {
   .buttons-container {
     margin-top: 5rem;
+  }
+
+  .message {
+    width: 45%;
+  }
+
+  .message.sent {
+    left: 52%;
+  }
+
+  .message.sent {
+    left: 48%;
   }
 }
 
@@ -329,6 +355,22 @@
     font-size: 2rem;
     margin: 1rem 0;
   }
+
+  .chat-header-single-other-member header {
+    font-size: 1.5rem;
+  }
+
+  .message p:first-child {
+    font-size: 0.75rem;
+  }
+
+  .message.sent {
+    left: 46%;
+  }
+
+  .message-sent-info {
+    font-size: 0.6rem;
+  }
 }
 
 @media screen and (max-width: 615px) {
@@ -410,6 +452,20 @@
   .furtherInfoSection header {
     font-size: 1.25rem;
   }
+
+  #to-latest-message-button {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .chat-header-single-other-member img {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .other-member-info-container {
+    max-width: 75%;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -446,6 +502,10 @@
 
   .last-message-preview-and-date span:nth-child(2) {
     width: 46%;
+  }
+
+  .message-indicators-container {
+    top: 87%;
   }
 }
 
@@ -542,6 +602,10 @@
     width: 1.5rem;
     height: 1.5rem;
   }
+
+  .message.sent {
+    left: 43%;
+  }
 }
 
 @media screen and (max-width: 500px) {
@@ -563,6 +627,10 @@
 
   .site-links-container button {
     font-size: 0.75rem;
+  }
+
+  .message.sent {
+    left: 47%;
   }
 }
 
@@ -622,6 +690,10 @@
   .hamburger-container {
     margin-top: 0;
   }
+
+  .message.sent {
+    left: 45%;
+  }
 }
 
 @media screen and (max-width: 412px) {
@@ -654,11 +726,19 @@
   .settings-theme-and-delete-account-container div {
     width: 100%;
   }
+
+  .message.sent {
+    left: 43%;
+  }
 }
 
 @media screen and (max-width: 375px) {
   .form {
     margin-top: 2rem;
+  }
+
+  .message.sent {
+    left: 45%;
   }
 }
 
@@ -671,6 +751,10 @@
   .eventCardImageContainer img {
     height: 5rem;
     width: 8rem;
+  }
+
+  .message.sent {
+    left: 43%;
   }
 }
 
