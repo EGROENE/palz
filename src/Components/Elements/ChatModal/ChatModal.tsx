@@ -666,7 +666,7 @@ const ChatModal = () => {
             >
               {(messagesContainerScrollBottom > 0 || areNewMessages) && (
                 <div
-                  style={areNewMessages ? { top: "67%" } : { top: "80%" }}
+                  style={areNewMessages ? { top: "67%" } : undefined}
                   className="message-indicators-container"
                 >
                   {areNewMessages &&
@@ -694,11 +694,6 @@ const ChatModal = () => {
                       onClick={() => scrollToLatestMessage()}
                       id="to-latest-message-button"
                       className="fas fa-chevron-down"
-                      style={
-                        randomColor === "var(--primary-color)"
-                          ? { backgroundColor: `${randomColor}`, color: "black" }
-                          : { backgroundColor: `${randomColor}`, color: "white" }
-                      }
                     ></i>
                   )}
                 </div>
