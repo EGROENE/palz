@@ -565,6 +565,11 @@
   .members-container-options button {
     font-size: 0.75rem;
   }
+
+  .chat-modal-two-options-buttons-container button,
+  .edit-message-buttons-container button {
+    font-size: 0.75rem;
+  }
 }
 
 @media screen and (max-width: 540px) {
@@ -702,6 +707,13 @@
   .modal-background .listedUser {
     width: 67%;
   }
+
+  .chat-modal-two-options-hero {
+    display: flex;
+    flex-direction: column;
+    height: 50%;
+    justify-content: space-around;
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -732,6 +744,10 @@
 
   .modal-background .userListContainer {
     height: 53%;
+  }
+
+  .chat-modal-two-options-hero {
+    height: 37%;
   }
 }
 
@@ -768,6 +784,10 @@
   .modal-background .listedUser {
     width: 79%;
   }
+
+  .chat-modal-two-options-hero {
+    height: 55%;
+  }
 }
 
 @media screen and (max-width: 412px) {
@@ -781,6 +801,10 @@
 
   .site-links-container button {
     font-size: 0.75rem;
+  }
+
+  .chat-modal-two-options-hero {
+    height: 49%;
   }
 }
 
@@ -807,6 +831,10 @@
 
   .messages-container header {
     font-size: 1.5rem;
+  }
+
+  .chat-modal-two-options-hero .subheader {
+    font-size: 0.75rem;
   }
 }
 
