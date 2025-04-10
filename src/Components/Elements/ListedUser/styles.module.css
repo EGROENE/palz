@@ -41,6 +41,16 @@
   margin: 0.5rem;
 } */
 
+@media screen and (max-width: 834px) {
+  .listedUserTextsContainer p {
+    font-size: smaller;
+  }
+
+  .listedUserBtnsContainer button {
+    font-size: 0.75rem;
+  }
+}
+
 @media screen and (max-width: 615px) {
   .listedUserName {
     font-size: 1rem;
