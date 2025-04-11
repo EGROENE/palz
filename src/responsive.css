@@ -734,10 +734,7 @@
   }
 
   .chat-modal-two-options-hero {
-    display: flex;
-    flex-direction: column;
     height: 50%;
-    justify-content: space-around;
   }
 }
 
