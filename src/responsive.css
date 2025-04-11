@@ -541,6 +541,18 @@
   .edit-chat-name-modal-container input {
     width: 65%;
   }
+
+  .members-panel header {
+    font-size: 1.5rem;
+  }
+
+  .chat-modal-two-options-hero .subheader {
+    font-size: 0.75rem;
+  }
+
+  .chat-modal-two-options-buttons-container button {
+    font-size: 0.6rem;
+  }
 }
 
 @media screen and (max-width: 600px) {
