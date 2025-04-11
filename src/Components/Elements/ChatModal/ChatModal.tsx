@@ -657,8 +657,13 @@ const ChatModal = () => {
             <div
               style={
                 showAreYouSureYouWantToDeleteChat || showAreYouSureYouWantToLeaveChat
-                  ? { display: "flex", alignItems: "center", justifyContent: "center" }
-                  : undefined
+                  ? {
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "gray",
+                    }
+                  : { backgroundColor: "gray" }
               }
               ref={messagesContainerRef}
               className="messages-container"

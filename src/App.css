@@ -964,6 +964,11 @@ form textarea {
   justify-content: space-evenly;
   z-index: 100;
   margin-bottom: 0.25rem;
+  background-color: var(--background-color);
+}
+
+.group-chat-header header {
+  color: var(--text-color);
 }
 
 .group-chat-header:hover {
@@ -1156,6 +1161,20 @@ form textarea {
   margin-bottom: 2rem;
 }
 
+.chat-modal-two-options-hero {
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  min-height: 32%;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.chat-modal-two-options-hero .subheader {
+  color: var(--text-color-opposite);
+}
+
 .messages-container {
   height: calc(100% - 80px);
   position: relative;
@@ -1240,7 +1259,7 @@ form textarea {
   text-align: left;
   position: relative;
   left: 50%;
-  background-color: var(--background-color);
+  background-color: gray;
 }
 
 .message.sent p:first-child {
