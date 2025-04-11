@@ -139,6 +139,15 @@
   .edit-chat-name-modal-container {
     width: 87%;
   }
+
+  .add-members-modal .search-and-dropdown {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .add-members-modal .dropdown-search {
+    margin-bottom: 2rem;
+  }
 }
 
 @media screen and (max-width: 914px) {
@@ -159,6 +168,10 @@
 
   .message.sent {
     left: 49%;
+  }
+
+  .add-members-modal-container {
+    width: 84%;
   }
 }
 
@@ -798,6 +811,10 @@
   }
 
   .chat-modal-two-options-hero {
+    height: 55%;
+  }
+
+  .add-members-modal-container {
     height: 55%;
   }
 }
