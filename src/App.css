@@ -1172,7 +1172,7 @@ form textarea {
 }
 
 .chat-modal-two-options-hero .subheader {
-  color: var(--text-color-opposite);
+  color: var(--text-color);
 }
 
 .messages-container {
