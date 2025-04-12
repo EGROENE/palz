@@ -249,7 +249,7 @@ const EventPage = () => {
               <p style={{ backgroundColor: randomColor, padding: "0.5rem" }}>{status}</p>
             )}
             <h1 style={{ "color": randomColor }}>{currentEvent.title}</h1>
-            <div className="organizersContainer">
+            <div className="event-organizers-container">
               {currentEvent.organizers.length > 1 ? (
                 <p>Organizers: </p>
               ) : (

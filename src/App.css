@@ -370,7 +370,7 @@
   object-fit: cover;
 }
 
-.organizersContainer {
+.event-organizers-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
