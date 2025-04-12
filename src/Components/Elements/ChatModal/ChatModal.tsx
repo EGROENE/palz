@@ -860,6 +860,7 @@ const ChatModal = () => {
                   onChange={(e) => handleChatNameInput(e)}
                   type="text"
                   placeholder="Enter group chat name"
+                  inputMode="text"
                 ></input>
                 {chatNameError !== "" && <p>{chatNameError}</p>}
               </>

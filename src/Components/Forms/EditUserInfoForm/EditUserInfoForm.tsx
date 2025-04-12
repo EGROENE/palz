@@ -1679,6 +1679,7 @@ const EditUserInfoForm = ({
               ref={instagramRef}
               disabled={isLoading}
               type="url"
+              inputMode="url"
               value={instagram}
               onChange={(e) => handleSocialsInput("instagram", e)}
               placeholder="Link to Instagram account"
@@ -1718,6 +1719,7 @@ const EditUserInfoForm = ({
               ref={xRef}
               disabled={isLoading}
               type="url"
+              inputMode="url"
               value={x}
               onChange={(e) => handleSocialsInput("x", e)}
               placeholder="Link to X account"

@@ -36,6 +36,7 @@ const SearchBar = ({
     <div className={styles.searchBarContainer}>
       <div className={styles.bar}>
         <input
+          inputMode="text"
           name="search-bar"
           id="search-bar"
           ref={searchBoxRef}

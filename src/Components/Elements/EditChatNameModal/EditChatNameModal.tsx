@@ -60,6 +60,7 @@ const EditChatNameModal = () => {
             : "Add name to group chat"}
         </header>
         <input
+          inputMode="text"
           value={chatName ? chatName : ""}
           onChange={(e) => handleChatNameInput(e)}
           type="text"

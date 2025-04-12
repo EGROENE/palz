@@ -1034,6 +1034,7 @@ const EventForm = ({
         <input
           name="event-title"
           id="event-title"
+          inputMode="text"
           ref={titleRef}
           onFocus={() => setFocusedElement("title")}
           onBlur={() => setFocusedElement(undefined)}
@@ -1102,6 +1103,7 @@ const EventForm = ({
           <input
             name="event-city"
             id="event-city"
+            inputMode="text"
             ref={cityRef}
             onFocus={() => setFocusedElement("city")}
             onBlur={() => setFocusedElement(undefined)}
@@ -1139,6 +1141,7 @@ const EventForm = ({
           <input
             name="event-state-province"
             id="event-state-province"
+            inputMode="text"
             ref={stateRef}
             onFocus={() => setFocusedElement("state")}
             onBlur={() => setFocusedElement(undefined)}
@@ -1270,6 +1273,7 @@ const EventForm = ({
         <input
           name="event-address"
           id="event-address"
+          inputMode="text"
           ref={addressRef}
           onFocus={() => setFocusedElement("address")}
           onBlur={() => setFocusedElement(undefined)}
@@ -1296,6 +1300,7 @@ const EventForm = ({
               <input
                 name="event-start-date"
                 id="event-start-date"
+                inputMode="text"
                 value={
                   eventStartDateMidnightUTCInMS > 0
                     ? getDateFieldValue(eventStartDateMidnightUTCInMS)
