@@ -148,6 +148,31 @@
   .add-members-modal .dropdown-search {
     margin-bottom: 2rem;
   }
+
+  .eventDetailsContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .eventMainInfoTextContainerNoImage {
+    width: 75%;
+  }
+
+  .eventMainInfoTextContainerWithImage {
+    padding: 0;
+    width: 75%;
+    border-left: none;
+    text-align: center;
+  }
+
+  .eventDetailsContainer .slideshowContainer {
+    width: 100%;
+  }
+
+  .slideshowImgContainer img {
+    width: 93%;
+    height: 12rem;
+  }
 }
 
 @media screen and (max-width: 914px) {
@@ -172,6 +197,10 @@
 
   .add-members-modal-container {
     width: 84%;
+  }
+
+  .event-organizers-container {
+    justify-content: center;
   }
 }
 
@@ -254,6 +283,11 @@
 
   .message.sent {
     left: 47%;
+  }
+
+  .slideshowImgContainer img {
+    width: 86%;
+    height: 8rem;
   }
 }
 
@@ -353,6 +387,10 @@
 @media screen and (max-width: 800px) {
   .settings-theme-and-delete-account-container div .theme-element-container {
     width: 43%;
+  }
+
+  .eventMainInfoContainer h1 {
+    font-size: 2.5rem;
   }
 }
 
@@ -553,6 +591,10 @@
   .chat-modal-two-options-buttons-container button {
     font-size: 0.6rem;
   }
+
+  .eventMainInfoTextContainerNoImage {
+    width: 100%;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -714,6 +756,10 @@
   .create-new-chat-modal-buttons button {
     font-size: 0.75rem;
   }
+
+  .eventDetailsContainer .slideshowContainer {
+    width: 124%;
+  }
 }
 
 @media screen and (max-width: 500px) {
@@ -747,6 +793,10 @@
 
   .chat-modal-two-options-hero {
     height: 50%;
+  }
+
+  .organizer-tabs-container {
+    justify-content: center;
   }
 }
 
