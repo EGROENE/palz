@@ -69,13 +69,10 @@ const ListedUser = ({
         {objectLink ? (
           <Link to={objectLink} target="_blank">
             <div className={styles.listedUserTextsContainer}>
-              {title && (
-                <p className={styles.userTitle} style={{ color: randomColor }}>
-                  {title}
-                </p>
-              )}
+              {title && <p className={styles.userTitle}>{title}</p>}
               <p
                 className={styles.listedUserName}
+                style={{ color: randomColor }}
               >{`${user?.firstName} ${user?.lastName}`}</p>
               <p className={styles.listedUserUsername}>{user?.username}</p>
             </div>

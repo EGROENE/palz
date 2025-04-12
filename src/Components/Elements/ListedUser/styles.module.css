@@ -1,5 +1,6 @@
 .userTitle {
   font-size: 1rem;
+  color: gray !important;
 }
 
 .listedUserBtnsContainer button {
