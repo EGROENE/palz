@@ -255,19 +255,21 @@ const EventPage = () => {
               ) : (
                 <p>Organizer: </p>
               )}
-              {organizers.map((organizer) => (
-                <Link
-                  key={organizer._id}
-                  to={`/users/${organizer.username}`}
-                  onClick={() => setCurrentOtherUser(organizer)}
-                >
-                  <Tab
-                    info={organizer}
-                    randomColor={randomColor}
-                    userMayNotDelete={true}
-                  />
-                </Link>
-              ))}
+              <div className="organizer-tabs-container">
+                {organizers.map((organizer) => (
+                  <Link
+                    key={organizer._id}
+                    to={`/users/${organizer.username}`}
+                    onClick={() => setCurrentOtherUser(organizer)}
+                  >
+                    <Tab
+                      info={organizer}
+                      randomColor={randomColor}
+                      userMayNotDelete={true}
+                    />
+                  </Link>
+                ))}
+              </div>
             </div>
             <div>
               <p>{currentEvent?.description}</p>

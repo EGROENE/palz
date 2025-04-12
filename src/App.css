@@ -376,6 +376,12 @@
   justify-content: flex-start;
 }
 
+.organizer-tabs-container {
+  display: flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
 .eventMainInfoContainer {
   display: flex;
   flex-direction: column;
