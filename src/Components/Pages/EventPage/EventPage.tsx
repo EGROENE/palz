@@ -8,7 +8,6 @@ import toast from "react-hot-toast";
 import ImageSlideshow from "../../Elements/ImageSlideshow/ImageSlideshow";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
 import Tab from "../../Elements/Tab/Tab";
-import styles from "./styles.module.css";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useChatContext } from "../../../Hooks/useChatContext";
 
@@ -244,13 +243,13 @@ const EventPage = () => {
               border: `2px solid ${randomColor}`,
               boxShadow: `${randomColor} 0px 7px 90px`,
             }}
-            className={styles.eventMainInfoContainer}
+            className="eventMainInfoContainer"
           >
             {status && (
               <p style={{ backgroundColor: randomColor, padding: "0.5rem" }}>{status}</p>
             )}
             <h1 style={{ "color": randomColor }}>{currentEvent.title}</h1>
-            <div className={styles.organizersContainer}>
+            <div className="organizersContainer">
               {currentEvent.organizers.length > 1 ? (
                 <p>Organizers: </p>
               ) : (
@@ -277,20 +276,13 @@ const EventPage = () => {
               )}
             </div>
 
-            <div className={styles.eventDetailsContainer}>
+            <div className="eventDetailsContainer">
               <div
-                style={
-                  currentEvent.images && currentEvent.images.length > 0
-                    ? {
-                        borderLeft: `2px solid ${randomColor}`,
-                        borderTop: `2px solid ${randomColor}`,
-                      }
-                    : { border: `2px solid ${randomColor}` }
-                }
+                style={{ borderColor: randomColor }}
                 className={
                   currentEvent.images && currentEvent.images.length > 0
-                    ? styles.eventMainInfoTextContainerWithImage
-                    : styles.eventMainInfoTextContainerNoImage
+                    ? "eventMainInfoTextContainerWithImage"
+                    : "eventMainInfoTextContainerNoImage"
                 }
               >
                 <div>
