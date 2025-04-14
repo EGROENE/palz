@@ -7,7 +7,8 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 import { TChat } from "../../../types";
 
 const NavBar = () => {
-  const { showSidebar, setShowSidebar, currentRoute } = useMainContext();
+  const { showSidebar, setShowSidebar, currentRoute, setShowMobileNavOptions } =
+    useMainContext();
   const { logout, profileImage, currentUser, userCreatedAccount } = useUserContext();
   const { getTotalNumberOfUnreadMessages, fetchChatsQuery } = useChatContext();
 
@@ -93,7 +94,11 @@ const NavBar = () => {
         <img src="../src/assets/palz.png" />
         <header>PALZ</header>
       </Link>
-      <i id="hamburger" className="fas fa-hamburger"></i>
+      <i
+        onClick={() => setShowMobileNavOptions(true)}
+        id="hamburger"
+        className="fas fa-hamburger"
+      ></i>
     </div>
   );
 };
