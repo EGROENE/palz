@@ -33,6 +33,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [displayedItemsFiltered, setDisplayedItemsFiltered] = useState<
     (TEvent | TUser)[]
   >(displayedItems.slice(0, displayedItemsCount));
+  const [showMobileNavOptions, setShowMobileNavOptions] = useState<boolean>(false);
 
   useEffect(() => {
     setDisplayedItemsFiltered(displayedItems.slice(0, displayedItemsCount));
@@ -82,6 +83,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mainContextValues: TMainContext = {
+    showMobileNavOptions,
+    setShowMobileNavOptions,
     currentRoute,
     displayedItemsCountInterval,
     setDisplayedItemsCountInterval,

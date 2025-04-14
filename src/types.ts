@@ -224,6 +224,8 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  showMobileNavOptions: boolean;
+  setShowMobileNavOptions: React.Dispatch<React.SetStateAction<boolean>>;
   currentRoute: string;
   displayedItemsCount: number | undefined;
   setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>;
