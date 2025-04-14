@@ -1040,6 +1040,40 @@ form textarea {
   cursor: pointer;
 }
 
+.mobile-nav-options {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: var(--background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 201;
+  margin-left: -3rem;
+}
+
+.mobile-nav-options i {
+  color: var(--text-color);
+}
+
+.mobile-nav-options-container {
+  height: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.mobile-nav-options-container a,
+.mobile-nav-options-container div {
+  font-family: var(--text-font);
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+}
+
 .chat-container {
   background: black;
   height: 75%;
