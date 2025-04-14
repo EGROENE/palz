@@ -26,6 +26,7 @@ import { useChatContext } from "./Hooks/useChatContext";
 import ChatModal from "./Components/Elements/ChatModal/ChatModal";
 import Footer from "./Components/Elements/Footer/Footer";
 import TermsAndConditions from "./Components/Pages/TermsAndConditions/TermsAndConditions";
+import MobileNavOptions from "./Components/Elements/MobileNavOptions/MobileNavOptions";
 
 function App() {
   const {
@@ -39,6 +40,7 @@ function App() {
     displayedItemsFiltered,
     displayedItemsCountInterval,
     setShowSidebar,
+    showMobileNavOptions,
   } = useMainContext();
   const {
     userCreatedAccount,
@@ -193,6 +195,7 @@ function App() {
         )}
         {chatCreationInProgress && <LoadingModal message="Creating chat..." />}
         {showChatModal && <ChatModal />}
+        {showMobileNavOptions && <MobileNavOptions />}
 
         <Routes>
           <Route path="/" element={baseURLElement} />
