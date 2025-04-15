@@ -163,6 +163,8 @@ function App() {
   };
   const baseURLElement = getBaseURLElement();
 
+  console.log(baseURLElement.type.name);
+
   return (
     <div className="app" data-theme={theme}>
       <div
