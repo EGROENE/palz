@@ -8,14 +8,14 @@ import {
 } from "./types";
 
 const getAllUsers = (): Promise<TUser[]> => {
-  return fetch("http://localhost:4000/palz/users", {
+  return fetch("https://palz.onrender.com/palz/users", {
     method: "GET",
     redirect: "follow",
   }).then((response) => response.json() as Promise<TUser[]>);
 };
 
 const getAllEvents = (): Promise<TEvent[]> => {
-  return fetch("http://localhost:4000/palz/events", {
+  return fetch("https://palz.onrender.com/palz/events", {
     method: "GET",
     redirect: "follow",
   }).then((response) => response.json() as Promise<TEvent[]>);
@@ -68,7 +68,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "whoCanSeeEventsInvitedTo": newUserData.whoCanSeeEventsInvitedTo,
   });
 
-  return fetch("http://localhost:4000/palz/users/", {
+  return fetch("https://palz.onrender.com/palz/users/", {
     method: "POST",
     headers: myHeaders,
     body: raw,
@@ -92,7 +92,7 @@ const addToBlockedUsers = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${blocker?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${blocker?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -115,7 +115,7 @@ const removeFromBlockedUsers = (blocker: TUser, blockeeID: string): Promise<Resp
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${blocker?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${blocker?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -132,7 +132,7 @@ const patchUpdatedUserInfo = (
 
   const raw = JSON.stringify(userValuesToUpdate);
 
-  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -149,7 +149,7 @@ const updateUserProfileImage = (
 
   const raw = JSON.stringify({ profileImage: newImage });
 
-  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -167,7 +167,7 @@ const deletePhoneNumber = (user: TUser | null): Promise<Response> => {
     "phoneNumberWithoutCountryCode": "",
   });
 
-  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -185,7 +185,7 @@ const deleteLocation = (user: TUser | null): Promise<Response> => {
     "country": "",
   });
 
-  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -201,7 +201,7 @@ const deleteUserAbout = (user: TUser | null): Promise<Response> => {
     "about": "",
   });
 
-  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -228,7 +228,7 @@ const deleteSocialMedium = (
 
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -247,7 +247,7 @@ const deleteUserInterest = (user: TUser | null, interest: string): Promise<Respo
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -274,7 +274,7 @@ const addUserInterest = (user: TUser | null, interest: string): Promise<Response
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${user?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${user?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -304,7 +304,7 @@ const addEventInterest = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/events/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -326,7 +326,7 @@ const deleteEventInterest = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${event?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -338,7 +338,7 @@ const deleteUser = (userID: string | undefined): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json");
 
-  return fetch(`http://localhost:4000/palz/users/${userID}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${userID}`, {
     method: "DELETE",
     headers: myHeaders,
     redirect: "follow",
@@ -364,7 +364,7 @@ const addUserRSVP = (user: TUser | null, event: TEvent): Promise<Response> => {
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/events/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -394,7 +394,7 @@ const addToDisinterestedUsers = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/events/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -413,7 +413,7 @@ const deleteUserRSVP = (user: TUser | null, event: TEvent) => {
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/events/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -450,7 +450,7 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
     "relatedInterests": eventData.relatedInterests,
   });
 
-  return fetch("http://localhost:4000/palz/events", {
+  return fetch("https://palz.onrender.com/palz/events", {
     method: "POST",
     headers: myHeaders,
     body: raw,
@@ -467,7 +467,7 @@ const updateEvent = (
 
   const raw = JSON.stringify(eventValuesToUpdate);
 
-  return fetch(`http://localhost:4000/palz/events/${event._id}`, {
+  return fetch(`https://palz.onrender.com/palz/events/${event._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -484,7 +484,7 @@ const addEventImage = (
 
   const raw = JSON.stringify({ images: event?.images?.concat(newImage) });
 
-  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/events/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -505,7 +505,7 @@ const removeEventImage = (event: TEvent | undefined, imageToRemove: string | unk
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/events/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -517,7 +517,7 @@ const deleteEvent = (event: TEvent | undefined): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/events/${event?._id}`, {
     method: "DELETE",
     headers: myHeaders,
     redirect: "follow",
@@ -535,7 +535,7 @@ const removeInvitee = (event: TEvent, user: TUser | null): Promise<Response> => 
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event._id}`, {
+  return fetch(`https://palz.onrender.com/palz/events/${event._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -554,7 +554,7 @@ const removeOrganizer = (event: TEvent, user: TUser | null): Promise<Response> =
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/events/${event?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -584,7 +584,7 @@ const addToFriendRequestsReceived = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${recipient?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${recipient?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -612,7 +612,7 @@ const addToFriendRequestsSent = (sender: TUser, recipient: TUser): Promise<Respo
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${sender?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${sender?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -640,7 +640,7 @@ const removeFromFriendRequestsReceived = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${recipient?._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${recipient?._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -666,7 +666,7 @@ const removeFromFriendRequestsSent = (
   };
   const raw = getRaw();
 
-  return fetch(`http://localhost:4000/palz/users/${sender._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${sender._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -690,7 +690,7 @@ const addFriendToFriendsArray = (user: TUser, friend: TUser): Promise<Response> 
     "friends": updatedFriendsArray,
   });
 
-  return fetch(`http://localhost:4000/palz/users/${user._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${user._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -708,7 +708,7 @@ const deleteFriendFromFriendsArray = (user: TUser, friend: TUser): Promise<Respo
     "friends": updatedFriendsArray,
   });
 
-  return fetch(`http://localhost:4000/palz/users/${user._id}`, {
+  return fetch(`https://palz.onrender.com/palz/users/${user._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -717,7 +717,7 @@ const deleteFriendFromFriendsArray = (user: TUser, friend: TUser): Promise<Respo
 };
 
 const getCurrentUserChats = (userID: string): Promise<TChat[]> => {
-  return fetch(`http://localhost:4000/palz/chats/${userID}`, {
+  return fetch(`https://palz.onrender.com/palz/chats/${userID}`, {
     method: "GET",
     redirect: "follow",
   }).then((response) => response.json() as Promise<TChat[]>);
@@ -738,7 +738,7 @@ const createNewChat = (newChat: TChat): Promise<Response> => {
     ...(newChat.admins && newChat.admins.length > 0 && { admins: newChat.admins }),
   });
 
-  return fetch("http://localhost:4000/palz/chats/", {
+  return fetch("https://palz.onrender.com/palz/chats/", {
     method: "POST",
     headers: myHeaders,
     body: raw,
@@ -755,7 +755,7 @@ const updateChat = (
 
   var raw = JSON.stringify(chatValuesToUpdate);
 
-  return fetch(`http://localhost:4000/palz/chats/${chat._id}`, {
+  return fetch(`https://palz.onrender.com/palz/chats/${chat._id}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
@@ -767,7 +767,7 @@ const deleteChat = (chatID: string) => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  return fetch(`http://localhost:4000/palz/chats/${chatID}`, {
+  return fetch(`https://palz.onrender.com/palz/chats/${chatID}`, {
     method: "DELETE",
     redirect: "follow",
   });
