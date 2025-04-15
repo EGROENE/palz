@@ -163,16 +163,13 @@ function App() {
   };
   const baseURLElement = getBaseURLElement();
 
-  console.log(baseURLElement.type.name);
-
   return (
     <div className="app" data-theme={theme}>
       <div
         className="page-hero"
         onClick={() => (showSidebar ? setShowSidebar(false) : undefined)}
       >
-        {baseURLElement.type.name !== "Welcome" &&
-          baseURLElement.type.name !== "LoginPage" && <NavBar />}
+        {userCreatedAccount !== null && !showWelcomeMessage && <NavBar />}
         {showSidebar && <Sidebar />}
         {showUpdateProfileImageInterface && (
           <TwoOptionsInterface
@@ -222,8 +219,7 @@ function App() {
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
-        {baseURLElement.type.name !== "Welcome" &&
-          baseURLElement.type.name !== "LoginPage" && <Footer />}
+        {userCreatedAccount !== null && !showWelcomeMessage && <Footer />}
       </div>
     </div>
   );
