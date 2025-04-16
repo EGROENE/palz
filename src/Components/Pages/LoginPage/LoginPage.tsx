@@ -40,7 +40,7 @@ const LoginPage = () => {
   return (
     <div className="login-page-container">
       <div className="login-greeting-container">
-        <img src="../src/assets/palz.png" />
+        <img src="/assets/palz.png" />
         <h1>Welcome to Palz!</h1>
         <h2>Do fun things, meet fun friends</h2>
         <div className="theme-element-container">
