@@ -1,4 +1,4 @@
-export const baseURL = "http://localhost:5173/";
+export const baseURL = "https://palz.onrender.com/";
 
 // export this to EditUserInfoForm and map through for the options in select
 export const countries = [

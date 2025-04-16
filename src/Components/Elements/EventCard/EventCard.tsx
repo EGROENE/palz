@@ -152,7 +152,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               setCurrentEvent(event);
-              navigator.clipboard.writeText(`localhost:5173/events/${event._id}`);
+              navigator.clipboard.writeText(
+                `https://palz.onrender.com/events/${event._id}`
+              );
               toast.success("Link copied!", {
                 style: {
                   background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -169,7 +171,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
           }
           onClick={() => {
             setCurrentEvent(event);
-            navigator.clipboard.writeText(`localhost:5173/events/${event._id}`);
+            navigator.clipboard.writeText(
+              `https://palz.onrender.com/events/${event._id}`
+            );
             toast.success("Link copied!", {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
