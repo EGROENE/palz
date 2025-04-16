@@ -25,7 +25,7 @@ const NavBar = () => {
       <ul className={styles.navbar}>
         <li>
           <Link className="palz-logo" to={`/${currentUser?.username}`}>
-            <img src="../src/assets/palz.png" />
+            <img src="/palz.PNG" />
             <header>PALZ</header>
           </Link>
         </li>
