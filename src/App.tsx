@@ -159,7 +159,7 @@ function App() {
     } else if (userCreatedAccount !== null && !showWelcomeMessage) {
       return <UserHomepage />;
     }
-    return <LoginPage />;
+    return <LoginPage type="login" />;
   };
   const baseURLElement = getBaseURLElement();
 
@@ -199,6 +199,8 @@ function App() {
 
         <Routes>
           <Route path="/" element={baseURLElement} />
+          <Route path="/login" element={<LoginPage type="login" />} />
+          <Route path="/signup" element={<LoginPage type="signup" />} />
           <Route path="/settings" element={<UserSettings />} />
           <Route path="/add-event" element={<AddEventPage />} />
           <Route
