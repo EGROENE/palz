@@ -24,6 +24,14 @@
   align-items: center;
 }
 
+.login-form form {
+  max-width: 50vw;
+}
+
+.login-form form .theme-element-container {
+  width: 102%;
+}
+
 .hamburger-container {
   display: flex;
   width: 83%;
