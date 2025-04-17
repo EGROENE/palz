@@ -134,7 +134,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
         </label>
       </div>
       <label>
-        <p>
+        <header className="input-label">
           Username:{" "}
           <span>
             <i
@@ -143,7 +143,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
               title="Must be 4-20 characters long & contain only alphanumeric characters"
             ></i>
           </span>
-        </p>
+        </header>
         {showUsernameCriteria && (
           <p className="input-criteria">
             Must be 4-20 characters long & contain only alphanumeric characters
