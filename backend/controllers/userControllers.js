@@ -2,6 +2,8 @@
 
 const mongoose = require("mongoose");
 
+const bcrypt = require("bcrypt");
+
 const User = require("../models/userModel");
 
 // get all users:
@@ -37,7 +39,7 @@ const getUser = async (req, res) => {
 
 // create new user
 const createNewUser = async (req, res) => {
-  const {
+  let {
     firstName,
     lastName,
     password,
@@ -80,6 +82,9 @@ const createNewUser = async (req, res) => {
 
   // add document to DB:
   try {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+    password = hashedPassword;
     const user = await User.create({
       firstName,
       lastName,
