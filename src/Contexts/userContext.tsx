@@ -831,6 +831,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const toggleSignupLogin = (): void => {
+    signupIsSelected ? navigation("/login") : navigation("/signup");
     setSignupIsSelected(!signupIsSelected);
     resetLoginOrSignupFormFieldsAndErrors();
   };
