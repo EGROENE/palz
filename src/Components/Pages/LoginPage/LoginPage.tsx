@@ -5,8 +5,9 @@ import LoginForm from "../../Forms/LoginForms/LoginForm/LoginForm";
 import { useEffect, useState } from "react";
 import { TThemeColor } from "../../../types";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
+import { useNavigate } from "react-router-dom";
 
-const LoginPage = () => {
+const LoginPage = ({ type }: { type: "login" | "signup" }) => {
   const { theme, toggleTheme } = useMainContext();
   const {
     signupIsSelected,
@@ -16,6 +17,8 @@ const LoginPage = () => {
   } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  const navigation = useNavigate();
 
   useEffect(() => {
     resetLoginOrSignupFormFieldsAndErrors();
@@ -35,6 +38,7 @@ const LoginPage = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+    type === "login" ? navigation("/login") : navigation("/signup");
   }, []);
 
   return (
