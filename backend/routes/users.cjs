@@ -18,7 +18,10 @@ router.get("/", getAllUsers);
 router.get("/:id", getUser);
 
 // POST new user:
-router.post("/", createNewUser);
+router.post("/signup", createNewUser);
+
+// login existing user
+//router.post("/login", loginUser);
 
 // DELETE a user:
 router.delete("/:id", deleteUser);
