@@ -75,6 +75,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
 
   return (
     <form
+      method="POST"
       onSubmit={(e) => handleSignupFormSubmission(e)}
       className="login-signup-edit-form"
     >

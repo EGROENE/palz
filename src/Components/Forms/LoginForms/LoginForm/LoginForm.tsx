@@ -55,6 +55,7 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
 
   return (
     <form
+      method="POST"
       onSubmit={() => {
         setTimeout(() => navigation(`${username}`), welcomeMessageDisplayTime);
       }}
