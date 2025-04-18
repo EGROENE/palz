@@ -1709,6 +1709,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     isOnSignup: boolean,
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
+    navigation("/");
     e.preventDefault();
     /*
      Check input data against most-recent allUsers. It will only be necessary to check if username or email address already exist in allUsers, as errors & completion are checked in onClick, and this function is only called if there are no errors and if all forms are complete. If username or email address do exist, alert user & reject submission; else, accept submission.
