@@ -1779,6 +1779,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             }
 
             if (res.ok) {
+              handleWelcomeMessage();
               setUserCreatedAccount(false);
               navigation("/");
               if (allUsers) {
@@ -1828,6 +1829,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             }
 
             if (res.ok) {
+              handleWelcomeMessage();
               setUserCreatedAccount(false);
               navigation("/");
               if (allUsers) {
@@ -1867,6 +1869,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               }
             }
             if (res.ok) {
+              handleWelcomeMessage();
               setCurrentUser(userData);
               navigation("/");
               queryClient.invalidateQueries({ queryKey: ["allUsers"] });
