@@ -93,7 +93,7 @@ const checkNewUserUsernameAndEmailAddress = (username: string, emailAddress: str
   });
 };
 
-const loginUser = (
+const checkReturningUserUsernameOrEmailAddressAndPassword = (
   password: string,
   username?: string,
   emailAddress?: string
@@ -822,7 +822,7 @@ const deleteChat = (chatID: string) => {
 
 const Requests = {
   checkNewUserUsernameAndEmailAddress,
-  loginUser,
+  checkReturningUserUsernameOrEmailAddressAndPassword,
   deleteChat,
   updateChat,
   createNewChat,

@@ -3,7 +3,7 @@ const express = require("express");
 // Import handlers:
 const {
   createNewUser,
-  loginUser,
+  checkReturningUserUsernameOrEmailAddressAndPassword,
   getAllUsers,
   getUser,
   deleteUser,
@@ -22,7 +22,7 @@ router.get("/:id", getUser);
 router.post("/signup", createNewUser);
 
 // login existing user
-router.post("/login", loginUser);
+router.post("/login", checkReturningUserUsernameOrEmailAddressAndPassword);
 
 // DELETE a user:
 router.delete("/:id", deleteUser);

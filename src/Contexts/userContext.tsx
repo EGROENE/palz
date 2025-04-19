@@ -1718,10 +1718,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     // Handle submit of login form:
     // maybe delete method="post" from form
-    // Maybe .invalidateQueries({ queryKey: "allUsers" }) before running loginUser request
+    // Maybe .invalidateQueries({ queryKey: "allUsers" }) before running checkReturningUserUsernameOrEmailAddressAndPassword request
     if (!isOnSignup && password) {
       if (username && username !== "") {
-        Requests.loginUser(password, username)
+        Requests.checkReturningUserUsernameOrEmailAddressAndPassword(password, username)
           .then((res) => {
             if (res.status === 401) {
               // Differentiate b/t error on username/email & error on pw
@@ -1756,7 +1756,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
 
       if (emailAddress && emailAddress !== "") {
-        Requests.loginUser(password, undefined, emailAddress)
+        Requests.checkReturningUserUsernameOrEmailAddressAndPassword(
+          password,
+          undefined,
+          emailAddress
+        )
           .then((res) => {
             console.log(res);
             if (res.status === 401) {

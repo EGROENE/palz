@@ -41,7 +41,7 @@ const getUser = async (req, res) => {
 };
 
 // login user:
-const loginUser = async (req, res) => {
+const checkReturningUserUsernameOrEmailAddressAndPassword = async (req, res) => {
   try {
     const { password } = req.body;
 
@@ -244,7 +244,7 @@ const updateUser = async (req, res) => {
 
 // export controllers:
 module.exports = {
-  loginUser,
+  checkReturningUserUsernameOrEmailAddressAndPassword,
   createNewUser,
   getAllUsers,
   getUser,
