@@ -98,7 +98,7 @@ const loginUser = async (req, res) => {
 
 // create new user
 const createNewUser = async (req, res) => {
-  const {
+  let {
     firstName,
     lastName,
     password,
@@ -141,6 +141,26 @@ const createNewUser = async (req, res) => {
 
   // add document to DB:
   try {
+    const existingUserWithSameUsername = await User.findOne({ username: username });
+    const existingUserWithSameEmailAddress = await User.findOne({
+      emailAddress: emailAddress,
+    });
+
+    if (existingUserWithSameUsername) {
+      res.statusMessage = "Username already in use";
+      return res.status(409).end();
+    }
+
+    if (existingUserWithSameEmailAddress) {
+      res.statusMessage = "E-mail address already in use";
+      return res.status(409).end();
+    }
+
+    // Encrypt password:
+    /* const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+    password = hashedPassword; */
+
     const user = await User.create({
       firstName,
       lastName,
