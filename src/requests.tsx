@@ -68,23 +68,6 @@ const createUser = (newUserData: TUser): Promise<Response> => {
     "whoCanSeeEventsInvitedTo": newUserData.whoCanSeeEventsInvitedTo,
   });
 
-  return fetch("http://localhost:4000/palz/users/", {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow",
-  });
-};
-
-const checkNewUserUsernameAndEmailAddress = (username: string, emailAddress: string) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-
-  var raw = JSON.stringify({
-    "username": username,
-    "emailAddress": emailAddress,
-  });
-
   return fetch("http://localhost:4000/palz/users/signup", {
     method: "POST",
     headers: myHeaders,
@@ -821,7 +804,6 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
-  checkNewUserUsernameAndEmailAddress,
   checkReturningUserUsernameOrEmailAddressAndPassword,
   deleteChat,
   updateChat,
