@@ -76,6 +76,36 @@ const createUser = (newUserData: TUser): Promise<Response> => {
   });
 };
 
+const loginUser = (
+  password: string,
+  username?: string,
+  emailAddress?: string
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  let raw;
+
+  if (username) {
+    raw = JSON.stringify({
+      "username": username,
+      "password": password,
+    });
+  } else if (emailAddress) {
+    raw = JSON.stringify({
+      "emailAddress": emailAddress,
+      "password": password,
+    });
+  }
+
+  return fetch("http://localhost:4000/palz/users/login", {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const addToBlockedUsers = (
   blocker: TUser,
   blockeeID: string | undefined
@@ -774,6 +804,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  loginUser,
   deleteChat,
   updateChat,
   createNewChat,
