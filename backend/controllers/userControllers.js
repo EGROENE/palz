@@ -1,10 +1,13 @@
 // Handler functions that can be referenced in users.cjs
 
 const mongoose = require("mongoose");
+//import mongoose from "mongoose";
 
-const bcrypt = require("bcrypt");
+//const bcrypt = require("bcrypt");
+//import bcrypt from "bcrypt";
 
 const User = require("../models/userModel");
+//import User from "../models/userModel.js";
 
 // get all users:
 const getAllUsers = async (req, res) => {
@@ -35,6 +38,62 @@ const getUser = async (req, res) => {
 
   // If there is a match...
   res.status(200).json(user);
+};
+
+// login user:
+const loginUser = async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    const username = req.body.username;
+    const email = req.body.emailAddress;
+
+    // Check if the user exists
+    const userWithMatchingEmailAddress = req.body.email
+      ? await User.findOne({ email })
+      : undefined;
+    const userWithMatchingUsername = req.body.username
+      ? await User.findOne({ username })
+      : undefined;
+
+    if (!userWithMatchingEmailAddress && !userWithMatchingUsername) {
+      res.statusMessage = "User not found";
+      return res.status(401).end();
+    }
+
+    // Check if the provided password matches the stored password
+    if (
+      userWithMatchingEmailAddress?.password === password ||
+      userWithMatchingUsername?.password === password
+    ) {
+      if (userWithMatchingUsername) {
+        return res.status(200).json({
+          message: "Login successful",
+          user: {
+            username: userWithMatchingUsername.username,
+          },
+        });
+      }
+      return res.status(200).json({
+        message: "Login successful",
+        user: {
+          email: userWithMatchingEmailAddress.email,
+        },
+      });
+    } else {
+      if (username) {
+        res.statusMessage = "Invalid username or password";
+        return res.status(401).end();
+      }
+      if (email) {
+        res.statusMessage = "Invalid e-mail address or password";
+        return res.status(401).end();
+      }
+    }
+  } catch (error) {
+    res.statusMessage = "Something went wrong";
+    res.status(500).end();
+  }
 };
 
 // create new user
@@ -168,6 +227,7 @@ const updateUser = async (req, res) => {
 
 // export controllers:
 module.exports = {
+  loginUser,
   createNewUser,
   getAllUsers,
   getUser,
