@@ -266,6 +266,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allUsers"] });
       setUserCreatedAccount(true);
+      setCurrentUser(userData);
     },
     onError: () => {
       setUserCreatedAccount(false);
@@ -1791,7 +1792,32 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     // Handle submit of signup form:
-    //if (isOnSignup && )
+    if (isOnSignup) {
+      if (username && username !== "" && emailAddress && emailAddress !== "") {
+        Requests.checkNewUserUsernameAndEmailAddress(username, emailAddress)
+          .then((res) => {
+            console.log(res);
+            if (res.status === 409) {
+              if (res.statusText === "Username already in use") {
+                setUsernameError(res.statusText);
+              }
+            }
+            if (res.statusText === "E-mail address already in use") {
+              setEmailError(res.statusText);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            toast.error("Could not set up your account. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          });
+      }
+    }
 
     /* queryClient
       .invalidateQueries({ queryKey: "allUsers" })
