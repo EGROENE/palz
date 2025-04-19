@@ -3,11 +3,12 @@ const express = require("express");
 // Import handlers:
 const {
   createNewUser,
+  loginUser,
   getAllUsers,
   getUser,
   deleteUser,
   updateUser,
-} = require("../controllers/userControllers");
+} = require("../controllers/userControllers.js");
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.get("/:id", getUser);
 router.post("/signup", createNewUser);
 
 // login existing user
-//router.post("/login", loginUser);
+router.post("/login", loginUser);
 
 // DELETE a user:
 router.delete("/:id", deleteUser);
