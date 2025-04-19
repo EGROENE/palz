@@ -1165,7 +1165,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // This method is used on login form, where user can input either their username or email to log in
-  const handleUsernameOrEmailInput = (input: string): void => {
+  const handleUsernameOrEmailInput = async (input: string) => {
     const inputNoWhitespaces = input.replace(/\s/g, "");
     //fetchAllUsers();
 
@@ -1705,21 +1705,99 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }),
   };
 
-  const handleSignupOrLoginFormSubmission = (
+  const handleSignupOrLoginFormSubmission = async (
     isOnSignup: boolean,
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ): void => {
-    navigation("/");
+  ) => {
     e.preventDefault();
+    setShowErrors(true);
     /*
      Check input data against most-recent allUsers. It will only be necessary to check if username or email address already exist in allUsers, as errors & completion are checked in onClick, and this function is only called if there are no errors and if all forms are complete. If username or email address do exist, alert user & reject submission; else, accept submission.
     */
-    queryClient
+
+    // Handle submit of login form:
+    // maybe delete method="post" from form
+    // Maybe .invalidateQueries({ queryKey: "allUsers" }) before running loginUser request
+    if (!isOnSignup && password) {
+      if (username && username !== "") {
+        Requests.loginUser(password, username)
+          .then((res) => {
+            if (res.status === 401) {
+              // Differentiate b/t error on username/email & error on pw
+              if (res.statusText === "User not found") {
+                setUsernameError(res.statusText);
+              }
+              if (res.statusText === "Invalid username or password") {
+                setPasswordError(res.statusText);
+              }
+            }
+
+            if (res.status === 500) {
+              toast.error("Could not log you in. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            toast.error("Could not log you in. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          });
+      }
+
+      if (emailAddress && emailAddress !== "") {
+        Requests.loginUser(password, undefined, emailAddress)
+          .then((res) => {
+            console.log(res);
+            if (res.status === 401) {
+              if (res.statusText === "User not found") {
+                setEmailError("User not found");
+              }
+              if (res.statusText === "Invalid e-mail address or password") {
+                setPasswordError(res.statusText);
+              }
+            }
+
+            if (res.status === 500) {
+              toast.error("Could not log you in. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            toast.error("Could not log you in. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          });
+      }
+    }
+
+    // Handle submit of signup form:
+    //if (isOnSignup && )
+
+    /* queryClient
       .invalidateQueries({ queryKey: "allUsers" })
       .then(() => {
-        /* 
         When signing up, it's necessary to check username & emailAddress against those already in allUsers. When logging in, it's necessary to check these against all OTHER users in allUsers.
-        */
+        
         let usernameIsUnique: boolean = false;
         let emailAddressIsUnique: boolean = false;
         if (isOnSignup) {
@@ -1745,6 +1823,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         }
 
         if (usernameIsUnique && emailAddressIsUnique) {
+          navigation("/");
           handleWelcomeMessage();
           // If user had pw visible when logging in/signing up, hide it again, so it's hidden by default on edit-user-info form in Settings
           if (!passwordIsHidden) {
@@ -1848,7 +1927,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         } else {
           window.alert("Could not complete login; please try again.");
         }
-      });
+      }); */
   };
 
   const handleFormRejection = (
