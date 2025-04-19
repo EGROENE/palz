@@ -1649,7 +1649,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     */
 
     // Handle submit of login form:
-    // maybe delete method="post" from form
     // Maybe .invalidateQueries({ queryKey: "allUsers" }) before running checkReturningUserUsernameOrEmailAddressAndPassword request
     if (!isOnSignup && password) {
       if (username && username !== "") {
@@ -1745,8 +1744,42 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               navigation("/");
               queryClient.invalidateQueries({ queryKey: ["allUsers"] });
               setUserCreatedAccount(true);
-              console.log(userData);
               setCurrentUser(userData);
+              setUserCreatedAccount(true);
+            setCurrentUser(userData);
+            setFirstName(userData.firstName);
+            setLastName(userData.lastName);
+            setUsername(userData.username);
+            setFriends(userData.friends);
+            setBlockedUsers(userData.blockedUsers);
+            setProfileImage(userData.profileImage);
+            setEmailAddress(userData.emailAddress);
+            setPassword(userData.password);
+            setPhoneCountry(userData.phoneCountry);
+            setPhoneCountryCode(userData.phoneCountryCode);
+            setPhoneNumberWithoutCountryCode(userData.phoneNumberWithoutCountryCode);
+            setUserCity(userData.city);
+            setUserState(userData.stateProvince);
+            setUserCountry(userData.country);
+            setFacebook(userData.facebook);
+            setInstagram(userData.instagram);
+            setX(userData.x);
+            setUserAbout(userData.about);
+            setWhoCanAddUserAsOrganizer(userData.whoCanAddUserAsOrganizer);
+            setWhoCanInviteUser(userData.whoCanInviteUser);
+            setProfileVisibleTo(userData.profileVisibleTo);
+            setWhoCanMessage(userData.whoCanMessage);
+            setDisplayFriendCount(userData.displayFriendCount);
+            setWhoCanSeeLocation(userData.whoCanSeeLocation);
+            setWhoCanSeeFriendsList(userData.whoCanSeeFriendsList);
+            setWhoCanSeePhoneNumber(userData.whoCanSeePhoneNumber);
+            setWhoCanSeeEmailAddress(userData.whoCanSeeEmailAddress);
+            setWhoCanSeeFacebook(userData.whoCanSeeFacebook);
+            setWhoCanSeeX(userData.whoCanSeeX);
+            setWhoCanSeeInstagram(userData.whoCanSeeInstagram);
+            setWhoCanSeeEventsOrganized(userData.whoCanSeeEventsOrganized);
+            setWhoCanSeeEventsInterestedIn(userData.whoCanSeeEventsInterestedIn);
+            setWhoCanSeeEventsInvitedTo(userData.whoCanSeeEventsInvitedTo);
             }
           })
           .catch((error) => {
