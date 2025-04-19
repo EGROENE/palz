@@ -76,6 +76,23 @@ const createUser = (newUserData: TUser): Promise<Response> => {
   });
 };
 
+const checkNewUserUsernameAndEmailAddress = (username: string, emailAddress: string) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "username": username,
+    "emailAddress": emailAddress,
+  });
+
+  return fetch("http://localhost:4000/palz/users/signup", {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const loginUser = (
   password: string,
   username?: string,
@@ -804,6 +821,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  checkNewUserUsernameAndEmailAddress,
   loginUser,
   deleteChat,
   updateChat,
