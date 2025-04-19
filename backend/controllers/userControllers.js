@@ -46,11 +46,11 @@ const loginUser = async (req, res) => {
     const { password } = req.body;
 
     const username = req.body.username;
-    const email = req.body.emailAddress;
+    const emailAddress = req.body.emailAddress;
 
     // Check if the user exists
-    const userWithMatchingEmailAddress = req.body.email
-      ? await User.findOne({ email })
+    const userWithMatchingEmailAddress = req.body.emailAddress
+      ? await User.findOne({ emailAddress })
       : undefined;
     const userWithMatchingUsername = req.body.username
       ? await User.findOne({ username })
@@ -85,7 +85,7 @@ const loginUser = async (req, res) => {
         res.statusMessage = "Invalid username or password";
         return res.status(401).end();
       }
-      if (email) {
+      if (emailAddress) {
         res.statusMessage = "Invalid e-mail address or password";
         return res.status(401).end();
       }
@@ -98,7 +98,7 @@ const loginUser = async (req, res) => {
 
 // create new user
 const createNewUser = async (req, res) => {
-  let {
+  const {
     firstName,
     lastName,
     password,
@@ -141,9 +141,6 @@ const createNewUser = async (req, res) => {
 
   // add document to DB:
   try {
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-    password = hashedPassword;
     const user = await User.create({
       firstName,
       lastName,
