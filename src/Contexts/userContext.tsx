@@ -261,25 +261,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers: [],
   };
 
-  const newUserMutation = useMutation({
-    mutationFn: (userData: TUser) => Requests.createUser(userData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-      setUserCreatedAccount(true);
-      setCurrentUser(userData);
-    },
-    onError: () => {
-      setUserCreatedAccount(false);
-      toast.error("Could not create account. Please try again later.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
-  });
-
   const updateProfileImageMutation = useMutation({
     mutationFn: ({
       currentUser,
@@ -916,17 +897,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setCurrentUser(null);
     }
 
-    /* Get most-current version of allUsers (in case another user has changed their username, so username user inputs may become available or in available. Fetching allUsers onChange of username field ensures most-current data on users exists. This is also checked onSubmit of EditUserInfoForm.) */
-    //fetchAllUsers();
-
-    const usernameIsTaken: boolean | null = allUsers
-      ? allUsers.filter((user) => user.username === inputUsername).length > 0
-      : null;
-
     if (formType === "signup") {
-      if (usernameIsTaken) {
-        setUsernameError("Username is already taken");
-      } else if (!inputUsername.length) {
+      if (!inputUsername.length) {
         setUsernameError("Please fill out this field");
       } else if (inputUsername.length < 4) {
         setUsernameError(
@@ -936,9 +908,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         setUsernameError("");
       }
     } else {
-      if (usernameIsTaken && inputUsername !== currentUser?.username) {
-        setUsernameError("Username is already taken");
-      } else if (inputUsername.length < 4) {
+      if (inputUsername.length < 4) {
         setUsernameError(
           "Username must be 4-20 characters long & may only contain alphanumeric characters"
         );
@@ -970,19 +940,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setCurrentUser(null);
     }
 
-    /* Get most-current version of allUsers (in case another user has changed their email, so email user inputs may become available or in available. Fetching allUsers onChange of email field ensures most-current data on users exists. This is also checked onSubmit of EditUserInfoForm.) */
-    //fetchAllUsers();
-
-    const emailIsTaken: boolean | null = allUsers
-      ? allUsers.filter(
-          (user) => user.emailAddress === inputEmailAddressNoWhitespaces.toLowerCase()
-        ).length > 0
-      : null;
-
     if (formType === "signup") {
-      if (emailIsTaken) {
-        setEmailError("E-mail address is taken");
-      } else if (!inputEmailAddressNoWhitespaces.length) {
+      if (!inputEmailAddressNoWhitespaces.length) {
         setEmailError("Please fill out this field");
       } else if (
         !emailIsValid(inputEmailAddressNoWhitespaces.toLowerCase()) &&
@@ -995,11 +954,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     } else {
       if (inputEmailAddressNoWhitespaces === "") {
         setEmailError("Please fill out this field");
-      } else if (
-        emailIsTaken &&
-        inputEmailAddressNoWhitespaces.toLowerCase() !== currentUser?.emailAddress
-      ) {
-        setEmailError("E-mail address is taken");
       } else if (
         !emailIsValid(inputEmailAddressNoWhitespaces.toLowerCase()) &&
         inputEmailAddressNoWhitespaces !== ""
@@ -1168,19 +1122,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   // This method is used on login form, where user can input either their username or email to log in
   const handleUsernameOrEmailInput = async (input: string) => {
     const inputNoWhitespaces = input.replace(/\s/g, "");
-    //fetchAllUsers();
-
-    const usernameExists: boolean | null =
-      allUsers && !fetchAllUsersQuery.isLoading
-        ? allUsers.map((user) => user.username).includes(inputNoWhitespaces)
-        : null;
-
-    const emailExists: boolean | null =
-      allUsers && !fetchAllUsersQuery.isLoading
-        ? allUsers
-            .map((user) => user.emailAddress)
-            .includes(inputNoWhitespaces.toLowerCase())
-        : null;
 
     // If input matches pattern for an email:
     if (emailIsValid(inputNoWhitespaces.toLowerCase())) {
@@ -1195,32 +1136,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         setEmailError("Please fill out this field");
       }
       setEmailAddress(inputNoWhitespaces);
-      // If email address isn't in database & field isn't empty string:
-      if (!emailExists && inputNoWhitespaces !== "") {
-        setEmailError("E-mail address not recognized");
-        if (password === "") {
-          setPasswordError("Please fill out this field");
-        } else if (!passwordIsValid(password)) {
-          setPasswordError("Invalid password");
-        } else {
-          setPasswordError("");
+      // If field isn't empty string:
+      if (inputNoWhitespaces !== "") {
+        if (emailError !== "") {
+          setEmailError("");
         }
-        // If email is recognized...
-      } else {
-        setEmailError("");
         if (password === "") {
           setPasswordError("Please fill out this field");
         } else if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
-          // If currentUser exists, its pw isn't equal to input pw, and password field isn't empty string...
-        } else if (currentUser?.password !== password && password !== "") {
-          setPasswordError("Password doesn't match user");
         } else {
           setPasswordError("");
         }
       }
-      // When user input is not an email address (aka, it's a username):
     } else {
+      // If input doesn't match pattern of an email address (is a username):
       const currentUser = allUsers
         ? allUsers.filter((user) => user.username === input)[0]
         : null;
@@ -1230,29 +1160,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setLoginMethod("username");
       setUsername(inputNoWhitespaces);
       if (inputNoWhitespaces === "") {
-        setEmailError("Please fill out this field");
+        setUsernameError("Please fill out this field");
       }
       // If username doesn't exist & its field contains at least 1 character:
-      if (!usernameExists && inputNoWhitespaces !== "") {
-        setUsernameError("Data not recognized");
+      if (inputNoWhitespaces !== "") {
+        if (usernameError !== "") {
+          setUsernameError("");
+        }
         // If pw isn't valid & isn't empty string...
         if (password === "") {
           setPasswordError("Please fill out this field");
         } else if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
-        } else {
-          setPasswordError("");
-        }
-        // If username is recognized & at least 1 character has been input...
-      } else {
-        setUsernameError("");
-        if (password === "") {
-          setPasswordError("Please fill out this field");
-        } else if (!passwordIsValid(password)) {
-          setPasswordError("Invalid password");
-          // If currentUser exists, its pw isn't equal to input pw, and pw field isn't empty string...
-        } else if (currentUser && currentUser.password !== password && password !== "") {
-          setPasswordError("Password doesn't match user");
         } else {
           setPasswordError("");
         }
@@ -1762,7 +1681,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           emailAddress
         )
           .then((res) => {
-            console.log(res);
             if (res.status === 401) {
               if (res.statusText === "User not found") {
                 setEmailError("User not found");
@@ -1798,20 +1716,29 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     // Handle submit of signup form:
     if (isOnSignup) {
       if (username && username !== "" && emailAddress && emailAddress !== "") {
-        Requests.checkNewUserUsernameAndEmailAddress(username, emailAddress)
+        // run newUserMutation. handle errors there
+        Requests.createUser(userData)
           .then((res) => {
             console.log(res);
             if (res.status === 409) {
               if (res.statusText === "Username already in use") {
                 setUsernameError(res.statusText);
               }
+              if (res.statusText === "E-mail address already in use") {
+                setEmailError(res.statusText);
+              }
             }
-            if (res.statusText === "E-mail address already in use") {
-              setEmailError(res.statusText);
+            if (res.ok) {
+              navigation("/");
+              queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+              setUserCreatedAccount(true);
+              console.log(userData);
+              setCurrentUser(userData);
             }
           })
           .catch((error) => {
             console.log(error);
+            setUserCreatedAccount(false);
             toast.error("Could not set up your account. Please try again.", {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
