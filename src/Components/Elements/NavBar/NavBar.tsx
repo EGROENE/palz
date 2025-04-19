@@ -32,7 +32,7 @@ const NavBar = () => {
         {currentRoute !== "/chats" && (
           <li style={{ display: "flex", alignItems: "center" }}>
             <Link to={"/chats"}>Chats</Link>
-            {totalUnreadUserMessages !== 0 && (
+            {totalUnreadUserMessages && (
               <span className="notifications-count">{totalUnreadUserMessages}</span>
             )}
           </li>
