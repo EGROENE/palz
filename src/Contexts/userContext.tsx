@@ -1638,6 +1638,110 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }),
   };
 
+  const setParallelValuesAfterLogin = (): void => {
+    setFirstName(currentUser?.firstName);
+    setLastName(currentUser?.lastName);
+    setUsername(currentUser?.username);
+    setProfileImage(currentUser?.profileImage);
+    setEmailAddress(currentUser?.emailAddress);
+    setFriends(currentUser?.friends);
+    setBlockedUsers(currentUser?.blockedUsers);
+    setPassword(currentUser?.password);
+    setPhoneCountry(currentUser?.phoneCountry);
+    setPhoneCountryCode(currentUser?.phoneCountryCode);
+    setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
+    setUserCity(currentUser?.city);
+    setUserState(currentUser?.stateProvince);
+    setUserCountry(currentUser?.country);
+    setFacebook(currentUser?.facebook);
+    setInstagram(currentUser?.instagram);
+    setX(currentUser?.x);
+    setUserAbout(currentUser?.about);
+    setWhoCanAddUserAsOrganizer(currentUser?.whoCanAddUserAsOrganizer);
+    setProfileVisibleTo(currentUser?.profileVisibleTo);
+    setWhoCanMessage(currentUser?.whoCanMessage);
+    setDisplayFriendCount(currentUser?.displayFriendCount);
+    setWhoCanSeeLocation(currentUser?.whoCanSeeLocation);
+    setWhoCanSeeFriendsList(currentUser?.whoCanSeeFriendsList);
+    setWhoCanSeePhoneNumber(currentUser?.whoCanSeePhoneNumber);
+    setWhoCanSeeEmailAddress(currentUser?.whoCanSeeEmailAddress);
+    setWhoCanSeeFacebook(currentUser?.whoCanSeeFacebook);
+    setWhoCanSeeX(currentUser?.whoCanSeeX);
+    setWhoCanSeeInstagram(currentUser?.whoCanSeeInstagram);
+    setWhoCanSeeEventsOrganized(currentUser?.whoCanSeeEventsOrganized);
+    setWhoCanSeeEventsInterestedIn(currentUser?.whoCanSeeEventsInterestedIn);
+    setWhoCanSeeEventsInvitedTo(currentUser?.whoCanSeeEventsInvitedTo);
+  };
+
+  const resetErrorMessagesAfterLogin = (): void => {
+    if (usernameError !== "") {
+      setUsernameError("");
+    }
+    if (emailError !== "") {
+      setEmailError("");
+    }
+    if (passwordError !== "") {
+      setPasswordError("");
+    }
+  };
+
+  const setParallelValuesAfterSignup = (): void => {
+    setFirstName(userData.firstName);
+    setLastName(userData.lastName);
+    setUsername(userData.username);
+    setFriends(userData.friends);
+    setBlockedUsers(userData.blockedUsers);
+    setProfileImage(userData.profileImage);
+    setEmailAddress(userData.emailAddress);
+    setPassword(userData.password);
+    setPhoneCountry(userData.phoneCountry);
+    setPhoneCountryCode(userData.phoneCountryCode);
+    setPhoneNumberWithoutCountryCode(userData.phoneNumberWithoutCountryCode);
+    setUserCity(userData.city);
+    setUserState(userData.stateProvince);
+    setUserCountry(userData.country);
+    setFacebook(userData.facebook);
+    setInstagram(userData.instagram);
+    setX(userData.x);
+    setUserAbout(userData.about);
+    setWhoCanAddUserAsOrganizer(userData.whoCanAddUserAsOrganizer);
+    setWhoCanInviteUser(userData.whoCanInviteUser);
+    setProfileVisibleTo(userData.profileVisibleTo);
+    setWhoCanMessage(userData.whoCanMessage);
+    setDisplayFriendCount(userData.displayFriendCount);
+    setWhoCanSeeLocation(userData.whoCanSeeLocation);
+    setWhoCanSeeFriendsList(userData.whoCanSeeFriendsList);
+    setWhoCanSeePhoneNumber(userData.whoCanSeePhoneNumber);
+    setWhoCanSeeEmailAddress(userData.whoCanSeeEmailAddress);
+    setWhoCanSeeFacebook(userData.whoCanSeeFacebook);
+    setWhoCanSeeX(userData.whoCanSeeX);
+    setWhoCanSeeInstagram(userData.whoCanSeeInstagram);
+    setWhoCanSeeEventsOrganized(userData.whoCanSeeEventsOrganized);
+    setWhoCanSeeEventsInterestedIn(userData.whoCanSeeEventsInterestedIn);
+    setWhoCanSeeEventsInvitedTo(userData.whoCanSeeEventsInvitedTo);
+  };
+
+  const resetErrorMessagesAfterSignup = (): void => {
+    if (firstNameError !== "") {
+      setFirstNameError("");
+    }
+    if (lastNameError !== "") {
+      setLastNameError("");
+    }
+    if (usernameError !== "") {
+      setUsernameError("");
+    }
+    if (emailError !== "") {
+      setEmailError("");
+    }
+    if (passwordError !== "") {
+      setPasswordError("");
+    }
+    if (confirmationPasswordError != "") {
+      setConfirmationPasswordError("");
+    }
+  };
+
   const handleSignupOrLoginFormSubmission = async (
     isOnSignup: boolean,
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -1672,6 +1776,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   border: "2px solid red",
                 },
               });
+            }
+
+            if (res.ok) {
+              setUserCreatedAccount(false);
+              navigation("/");
+              if (allUsers) {
+                setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+              }
+              setUserCreatedAccount(false);
+              setParallelValuesAfterLogin();
+              resetErrorMessagesAfterLogin();
             }
           })
           .catch((error) => {
@@ -1711,6 +1826,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 },
               });
             }
+
+            if (res.ok) {
+              setUserCreatedAccount(false);
+              navigation("/");
+              if (allUsers) {
+                setCurrentUser(
+                  allUsers.filter((user) => user.emailAddress === emailAddress)[0]
+                );
+              }
+              setParallelValuesAfterLogin();
+              resetErrorMessagesAfterLogin();
+            }
           })
           .catch((error) => {
             console.log(error);
@@ -1731,7 +1858,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         // run newUserMutation. handle errors there
         Requests.createUser(userData)
           .then((res) => {
-            console.log(res);
             if (res.status === 409) {
               if (res.statusText === "Username already in use") {
                 setUsernameError(res.statusText);
@@ -1745,39 +1871,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               navigation("/");
               queryClient.invalidateQueries({ queryKey: ["allUsers"] });
               setUserCreatedAccount(true);
-              setFirstName(userData.firstName);
-              setLastName(userData.lastName);
-              setUsername(userData.username);
-              setFriends(userData.friends);
-              setBlockedUsers(userData.blockedUsers);
-              setProfileImage(userData.profileImage);
-              setEmailAddress(userData.emailAddress);
-              setPassword(userData.password);
-              setPhoneCountry(userData.phoneCountry);
-              setPhoneCountryCode(userData.phoneCountryCode);
-              setPhoneNumberWithoutCountryCode(userData.phoneNumberWithoutCountryCode);
-              setUserCity(userData.city);
-              setUserState(userData.stateProvince);
-              setUserCountry(userData.country);
-              setFacebook(userData.facebook);
-              setInstagram(userData.instagram);
-              setX(userData.x);
-              setUserAbout(userData.about);
-              setWhoCanAddUserAsOrganizer(userData.whoCanAddUserAsOrganizer);
-              setWhoCanInviteUser(userData.whoCanInviteUser);
-              setProfileVisibleTo(userData.profileVisibleTo);
-              setWhoCanMessage(userData.whoCanMessage);
-              setDisplayFriendCount(userData.displayFriendCount);
-              setWhoCanSeeLocation(userData.whoCanSeeLocation);
-              setWhoCanSeeFriendsList(userData.whoCanSeeFriendsList);
-              setWhoCanSeePhoneNumber(userData.whoCanSeePhoneNumber);
-              setWhoCanSeeEmailAddress(userData.whoCanSeeEmailAddress);
-              setWhoCanSeeFacebook(userData.whoCanSeeFacebook);
-              setWhoCanSeeX(userData.whoCanSeeX);
-              setWhoCanSeeInstagram(userData.whoCanSeeInstagram);
-              setWhoCanSeeEventsOrganized(userData.whoCanSeeEventsOrganized);
-              setWhoCanSeeEventsInterestedIn(userData.whoCanSeeEventsInterestedIn);
-              setWhoCanSeeEventsInvitedTo(userData.whoCanSeeEventsInvitedTo);
+              setParallelValuesAfterSignup();
+              resetErrorMessagesAfterSignup();
             }
           })
           .catch((error) => {
@@ -1831,85 +1926,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             toggleHidePassword();
           }
           if (isOnSignup) {
-            newUserMutation.mutate(userData);
-            setUserCreatedAccount(true);
-            setCurrentUser(userData);
-            setFirstName(userData.firstName);
-            setLastName(userData.lastName);
-            setUsername(userData.username);
-            setFriends(userData.friends);
-            setBlockedUsers(userData.blockedUsers);
-            setProfileImage(userData.profileImage);
-            setEmailAddress(userData.emailAddress);
-            setPassword(userData.password);
-            setPhoneCountry(userData.phoneCountry);
-            setPhoneCountryCode(userData.phoneCountryCode);
-            setPhoneNumberWithoutCountryCode(userData.phoneNumberWithoutCountryCode);
-            setUserCity(userData.city);
-            setUserState(userData.stateProvince);
-            setUserCountry(userData.country);
-            setFacebook(userData.facebook);
-            setInstagram(userData.instagram);
-            setX(userData.x);
-            setUserAbout(userData.about);
-            setWhoCanAddUserAsOrganizer(userData.whoCanAddUserAsOrganizer);
-            setWhoCanInviteUser(userData.whoCanInviteUser);
-            setProfileVisibleTo(userData.profileVisibleTo);
-            setWhoCanMessage(userData.whoCanMessage);
-            setDisplayFriendCount(userData.displayFriendCount);
-            setWhoCanSeeLocation(userData.whoCanSeeLocation);
-            setWhoCanSeeFriendsList(userData.whoCanSeeFriendsList);
-            setWhoCanSeePhoneNumber(userData.whoCanSeePhoneNumber);
-            setWhoCanSeeEmailAddress(userData.whoCanSeeEmailAddress);
-            setWhoCanSeeFacebook(userData.whoCanSeeFacebook);
-            setWhoCanSeeX(userData.whoCanSeeX);
-            setWhoCanSeeInstagram(userData.whoCanSeeInstagram);
-            setWhoCanSeeEventsOrganized(userData.whoCanSeeEventsOrganized);
-            setWhoCanSeeEventsInterestedIn(userData.whoCanSeeEventsInterestedIn);
-            setWhoCanSeeEventsInvitedTo(userData.whoCanSeeEventsInvitedTo);
+            
           } else {
-            setUserCreatedAccount(false);
-            if (allUsers) {
-              if (emailAddress !== "") {
-                setCurrentUser(
-                  allUsers.filter((user) => user.emailAddress === emailAddress)[0]
-                );
-              } else if (username !== "") {
-                setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
-              }
-            }
-            setFirstName(currentUser?.firstName);
-            setLastName(currentUser?.lastName);
-            setUsername(currentUser?.username);
-            setProfileImage(currentUser?.profileImage);
-            setEmailAddress(currentUser?.emailAddress);
-            setFriends(currentUser?.friends);
-            setBlockedUsers(currentUser?.blockedUsers);
-            setPassword(currentUser?.password);
-            setPhoneCountry(currentUser?.phoneCountry);
-            setPhoneCountryCode(currentUser?.phoneCountryCode);
-            setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
-            setUserCity(currentUser?.city);
-            setUserState(currentUser?.stateProvince);
-            setUserCountry(currentUser?.country);
-            setFacebook(currentUser?.facebook);
-            setInstagram(currentUser?.instagram);
-            setX(currentUser?.x);
-            setUserAbout(currentUser?.about);
-            setWhoCanAddUserAsOrganizer(currentUser?.whoCanAddUserAsOrganizer);
-            setProfileVisibleTo(currentUser?.profileVisibleTo);
-            setWhoCanMessage(currentUser?.whoCanMessage);
-            setDisplayFriendCount(currentUser?.displayFriendCount);
-            setWhoCanSeeLocation(currentUser?.whoCanSeeLocation);
-            setWhoCanSeeFriendsList(currentUser?.whoCanSeeFriendsList);
-            setWhoCanSeePhoneNumber(currentUser?.whoCanSeePhoneNumber);
-            setWhoCanSeeEmailAddress(currentUser?.whoCanSeeEmailAddress);
-            setWhoCanSeeFacebook(currentUser?.whoCanSeeFacebook);
-            setWhoCanSeeX(currentUser?.whoCanSeeX);
-            setWhoCanSeeInstagram(currentUser?.whoCanSeeInstagram);
-            setWhoCanSeeEventsOrganized(currentUser?.whoCanSeeEventsOrganized);
-            setWhoCanSeeEventsInterestedIn(currentUser?.whoCanSeeEventsInterestedIn);
-            setWhoCanSeeEventsInvitedTo(currentUser?.whoCanSeeEventsInvitedTo);
           }
           setFirstNameError("");
           setLastNameError("");
