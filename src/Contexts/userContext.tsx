@@ -773,10 +773,23 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       const updatedUser = fetchAllUsersQuery.data.filter(
         (user) => user._id === currentUser._id
       )[0];
-      setCurrentUser(updatedUser);
-      setFriendRequestsSent(updatedUser?.friendRequestsSent);
-      setFriendRequestsReceived(updatedUser?.friendRequestsReceived);
-      setFriends(updatedUser?.friends);
+      if (
+        updatedUser &&
+        (!Methods.arraysAreIdentical(updatedUser.friends, currentUser.friends) ||
+          !Methods.arraysAreIdentical(
+            updatedUser.friendRequestsReceived,
+            currentUser.friendRequestsReceived
+          ) ||
+          !Methods.arraysAreIdentical(
+            updatedUser.friendRequestsSent,
+            currentUser.friendRequestsSent
+          ))
+      ) {
+        setCurrentUser(updatedUser);
+        setFriendRequestsSent(updatedUser?.friendRequestsSent);
+        setFriendRequestsReceived(updatedUser?.friendRequestsReceived);
+        setFriends(updatedUser?.friends);
+      }
     }
   }, [currentUser?._id, fetchAllUsersQuery.data]);
 
