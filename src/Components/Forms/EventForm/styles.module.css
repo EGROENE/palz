@@ -90,6 +90,10 @@
   position: relative;
 }
 
+.eventImagesContainer label {
+  margin: 1rem;
+}
+
 .eventImageContainer i {
   background-color: black;
   position: absolute;
