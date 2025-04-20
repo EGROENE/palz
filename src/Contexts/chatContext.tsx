@@ -87,10 +87,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
     queryKey: ["userChats"],
-    queryFn: () =>
-      currentUser && currentUser._id
-        ? Requests.getCurrentUserChats(currentUser._id)
-        : undefined,
+    queryFn: () => Requests.getCurrentUserChats(currentUser),
     enabled: userHasLoggedIn,
   });
   const userChats: TChat[] | undefined = fetchChatsQuery.data;
