@@ -14,9 +14,10 @@ const NavBar = () => {
 
   const userChats: TChat[] | undefined = fetchChatsQuery.data;
 
-  const totalUnreadUserMessages: string | number | undefined = userChats
-    ? getTotalNumberOfUnreadMessages(userChats)
-    : undefined;
+  const totalUnreadUserMessages: string | number | undefined =
+    userChats && userChats.length > 0
+      ? getTotalNumberOfUnreadMessages(userChats)
+      : undefined;
 
   const screenWidth: number = Number(window.screen.width);
 
