@@ -746,11 +746,13 @@ const deleteFriendFromFriendsArray = (user: TUser, friend: TUser): Promise<Respo
   });
 };
 
-const getCurrentUserChats = (userID: string): Promise<TChat[]> => {
-  return fetch(`http://localhost:4000/palz/chats/${userID}`, {
-    method: "GET",
-    redirect: "follow",
-  }).then((response) => response.json() as Promise<TChat[]>);
+const getCurrentUserChats = (user: TUser | null): Promise<TChat[]> | undefined => {
+  if (user) {
+    return fetch(`http://localhost:4000/palz/chats/${user._id}`, {
+      method: "GET",
+      redirect: "follow",
+    }).then((response) => response.json() as Promise<TChat[]>);
+  }
 };
 
 const createNewChat = (newChat: TChat): Promise<Response> => {
