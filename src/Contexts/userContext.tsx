@@ -1180,6 +1180,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         if (usernameError !== "") {
           setUsernameError("");
         }
+        if (inputNoWhitespaces.length < 4) {
+          setUsernameError("Username must be at least 4 characters long");
+        } else {
+          setUsernameError("");
+        }
         // If pw isn't valid & isn't empty string...
         if (password === "") {
           setPasswordError("Please fill out this field");
