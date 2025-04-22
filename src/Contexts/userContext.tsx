@@ -1866,17 +1866,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         Requests.createUser(userData)
           .then((res) => {
             if (res.status === 409) {
-              if (res.statusText === "Username & e-mail address already in use") {
-                setUsernameError(res.statusText.slice(0, 10) + res.statusText.slice(27));
-                setEmailError(
-                  res.statusText[12].toUpperCase() + res.statusText.slice(13)
-                );
+              if (res.statusText === "USERNAME & EMAIL TAKEN") {
+                setUsernameError("Username already in use");
+                setEmailError("E-mail address already in use");
               }
-              if (res.statusText === "Username already in use") {
-                setUsernameError(res.statusText);
+              if (res.statusText === "USERNAME TAKEN") {
+                setUsernameError("Username already in use");
               }
-              if (res.statusText === "E-mail address already in use") {
-                setEmailError(res.statusText);
+              if (res.statusText === "EMAIL TAKEN") {
+                setEmailError("E-mail address already in use");
               }
             }
             if (res.ok) {
