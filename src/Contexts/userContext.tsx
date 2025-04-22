@@ -1009,7 +1009,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           currentUser.password !== inputPWNoWhitespaces &&
           inputPWNoWhitespaces !== ""
         ) {
-          setPasswordError("Password doesn't match user");
+          setPasswordError("Invalid credentials");
           // If input pw simply isn't valid...
         } else if (!passwordIsValid(inputPWNoWhitespaces)) {
           setPasswordError("Invalid password");
