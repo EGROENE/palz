@@ -1861,11 +1861,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     // Handle submit of signup form:
     if (isOnSignup) {
-      if (username && username !== "" && emailAddress && emailAddress !== "") {
+      if ((username && username !== "") || (emailAddress && emailAddress !== "")) {
         // run newUserMutation. handle errors there
         Requests.createUser(userData)
           .then((res) => {
             if (res.status === 409) {
+              if (res.statusText === "Username & e-mail address already in use") {
+                setUsernameError(res.statusText.slice(0, 10) + res.statusText.slice(27));
+                setEmailError(
+                  res.statusText[12].toUpperCase() + res.statusText.slice(13)
+                );
+              }
               if (res.statusText === "Username already in use") {
                 setUsernameError(res.statusText);
               }

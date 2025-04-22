@@ -146,12 +146,19 @@ const createNewUser = async (req, res) => {
       emailAddress: emailAddress,
     });
 
+    if (existingUserWithSameUsername && existingUserWithSameEmailAddress) {
+      res.statusMessage = "Username & e-mail address already in use";
+      return res.status(409).end();
+    }
+
     if (existingUserWithSameUsername) {
+      console.log(1);
       res.statusMessage = "Username already in use";
       return res.status(409).end();
     }
 
     if (existingUserWithSameEmailAddress) {
+      console.log(2);
       res.statusMessage = "E-mail address already in use";
       return res.status(409).end();
     }
