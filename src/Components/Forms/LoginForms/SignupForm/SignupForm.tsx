@@ -74,7 +74,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
       onSubmit={() => {
         setTimeout(() => navigation(`${username}`), welcomeMessageDisplayTime);
       }}
-      className="login-signup-edit-form"
+      className="login-signup-form"
     >
       <div>
         <label>
