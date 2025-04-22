@@ -44,10 +44,6 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
 
   // After a couple seconds after signup, change url to /users/*username*:
   const navigation = useNavigate();
-  const handleSignupFormSubmission = (e: React.FormEvent<HTMLFormElement>) => {
-    handleSignupOrLoginFormSubmission(true, e);
-    setTimeout(() => navigation(`/${username}`), welcomeMessageDisplayTime);
-  };
 
   const [focusedElement, setFocusedElement] = useState<
     | "firstName"
@@ -75,8 +71,9 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
 
   return (
     <form
-      method="POST"
-      onSubmit={(e) => handleSignupFormSubmission(e)}
+      onSubmit={() => {
+        setTimeout(() => navigation(`${username}`), welcomeMessageDisplayTime);
+      }}
       className="login-signup-edit-form"
     >
       <div>
@@ -290,7 +287,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
           type={areNoSignupFormErrors ? "submit" : "button"}
           onClick={(e) =>
             areNoSignupFormErrors && allSignupFormFieldsFilled
-              ? undefined
+              ? handleSignupOrLoginFormSubmission(true, e)
               : handleFormRejection(e)
           }
         >
