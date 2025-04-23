@@ -270,20 +270,39 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       base64: unknown;
     }) => Requests.updateUserProfileImage(currentUser, base64),
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-      if (fetchAllUsersQuery.data && currentUser) {
-        allUsers = fetchAllUsersQuery.data;
-        setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-      }
       if (data.ok) {
-        setProfileImage(variables.base64);
-        toast.success("Profile image updated", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid green",
-          },
-        });
+        if (currentUser && currentUser._id) {
+          Requests.getUserByID(currentUser._id)
+            .then((res) => {
+              if (res.ok) {
+                res.json().then((user) => {
+                  setCurrentUser(user);
+                  setProfileImage(variables.base64);
+                  toast.success("Profile image updated", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid green",
+                    },
+                  });
+                });
+              } else {
+                toast.error(
+                  "Could not update profile image. Please make sure the image is 50MB or less & try again.",
+                  {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  }
+                );
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
       }
     },
     onError: (error) => {
