@@ -329,18 +329,31 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       placeholder: string;
     }) => Requests.updateUserProfileImage(currentUser, placeholder),
     onSuccess: () => {
-      toast("Profile image removed", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-      setProfileImage("");
-      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-      if (fetchAllUsersQuery.data && currentUser) {
-        allUsers = fetchAllUsersQuery.data;
-        setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+      if (currentUser && currentUser._id) {
+        Requests.getUserByID(currentUser._id)
+          .then((res) =>
+            res.json().then((user) => {
+              setCurrentOtherUser(user);
+              setProfileImage("");
+              toast("Profile image removed", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            })
+          )
+          .catch((error) => {
+            console.log(error);
+            toast.error("Could not remove profile image. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          });
       }
     },
     onError: (error) => {
