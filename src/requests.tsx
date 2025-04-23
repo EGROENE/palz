@@ -14,6 +14,38 @@ const getAllUsers = (): Promise<TUser[]> => {
   }).then((response) => response.json() as Promise<TUser[]>);
 };
 
+const getUserByUsernameOrEmailAddress = (
+  password: string,
+  username?: string,
+  emailAddress?: string
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  let raw;
+
+  if (username) {
+    raw = JSON.stringify({
+      "username": username,
+      "password": password,
+    });
+  }
+
+  if (emailAddress) {
+    raw = JSON.stringify({
+      "emailAddress": emailAddress,
+      "password": password,
+    });
+  }
+
+  return fetch("http://localhost:4000/palz/users/login", {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const getAllEvents = (): Promise<TEvent[]> => {
   return fetch("http://localhost:4000/palz/events", {
     method: "GET",
@@ -69,36 +101,6 @@ const createUser = (newUserData: TUser): Promise<Response> => {
   });
 
   return fetch("http://localhost:4000/palz/users/signup", {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow",
-  });
-};
-
-const checkReturningUserUsernameOrEmailAddressAndPassword = (
-  password: string,
-  username?: string,
-  emailAddress?: string
-): Promise<Response> => {
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-
-  let raw;
-
-  if (username) {
-    raw = JSON.stringify({
-      "username": username,
-      "password": password,
-    });
-  } else if (emailAddress) {
-    raw = JSON.stringify({
-      "emailAddress": emailAddress,
-      "password": password,
-    });
-  }
-
-  return fetch("http://localhost:4000/palz/users/login", {
     method: "POST",
     headers: myHeaders,
     body: raw,
@@ -806,7 +808,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
-  checkReturningUserUsernameOrEmailAddressAndPassword,
+  getUserByUsernameOrEmailAddress,
   deleteChat,
   updateChat,
   createNewChat,
