@@ -14,6 +14,13 @@ const getAllUsers = (): Promise<TUser[]> => {
   }).then((response) => response.json() as Promise<TUser[]>);
 };
 
+const getUserByID = (id: string): Promise<Response> => {
+  return fetch(`http://localhost:4000/palz/users/${id}`, {
+    method: "GET",
+    redirect: "follow",
+  });
+};
+
 const getUserByUsernameOrEmailAddress = (
   password: string,
   username?: string,
@@ -845,5 +852,6 @@ const Requests = {
   addUserInterest,
   addEventInterest,
   deleteEventInterest,
+  getUserByID,
 };
 export default Requests;
