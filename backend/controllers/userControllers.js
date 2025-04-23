@@ -18,14 +18,14 @@ const getAllUsers = async (req, res) => {
   res.status(200).json(allUsers);
 };
 
-// get single user:
+// get single user by id:
 const getUser = async (req, res) => {
   // Get id from request parameters:
   const { id } = req.params;
 
   // Check that id is a valid MongoDB ObjectId:
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: "Bad request (invalid id)" });
+    return res.status(400).json({ error: "Bad request (invalid ida)" });
   }
 
   // assign user to document in DB that has id that matches the id defined in this method:
@@ -40,46 +40,23 @@ const getUser = async (req, res) => {
   res.status(200).json(user);
 };
 
-// login user:
-const checkReturningUserUsernameOrEmailAddressAndPassword = async (req, res) => {
+// get single user by username or email address:
+const getUserByUsernameOrEmailAddress = async (req, res) => {
   try {
-    const { password } = req.body;
+    const { username, emailAddress, password } = req.body;
 
-    const username = req.body.username;
-    const emailAddress = req.body.emailAddress;
-
-    // Check if the user exists
-    const userWithMatchingEmailAddress = req.body.emailAddress
-      ? await User.findOne({ emailAddress })
-      : undefined;
-    const userWithMatchingUsername = req.body.username
+    const user = username
       ? await User.findOne({ username })
-      : undefined;
+      : await User.findOne({ emailAddress });
 
-    if (!userWithMatchingEmailAddress && !userWithMatchingUsername) {
-      res.statusMessage = "User not found";
-      return res.status(401).end();
+    // If no existing user has input e-mail address or username:
+    if (!user) {
+      return res.status(404).json({ error: "User doesn't exist" });
     }
 
     // Check if the provided password matches the stored password
-    if (
-      userWithMatchingEmailAddress?.password === password ||
-      userWithMatchingUsername?.password === password
-    ) {
-      if (userWithMatchingUsername) {
-        return res.status(200).json({
-          message: "Login successful",
-          user: {
-            username: userWithMatchingUsername.username,
-          },
-        });
-      }
-      return res.status(200).json({
-        message: "Login successful",
-        user: {
-          email: userWithMatchingEmailAddress.email,
-        },
-      });
+    if (user.password === password) {
+      return res.status(200).json({ user });
     } else {
       if (username) {
         res.statusMessage = "Invalid username or password";
@@ -251,7 +228,7 @@ const updateUser = async (req, res) => {
 
 // export controllers:
 module.exports = {
-  checkReturningUserUsernameOrEmailAddressAndPassword,
+  getUserByUsernameOrEmailAddress,
   createNewUser,
   getAllUsers,
   getUser,
