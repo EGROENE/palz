@@ -948,28 +948,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (fetchAllUsersQuery.data && currentUser) {
-      const updatedUser = fetchAllUsersQuery.data.filter(
-        (user) => user._id === currentUser._id
-      )[0];
-      if (
-        updatedUser &&
-        (!Methods.arraysAreIdentical(updatedUser.friends, currentUser.friends) ||
-          !Methods.arraysAreIdentical(
-            updatedUser.friendRequestsReceived,
-            currentUser.friendRequestsReceived
-          ) ||
-          !Methods.arraysAreIdentical(
-            updatedUser.friendRequestsSent,
-            currentUser.friendRequestsSent
-          ))
-      ) {
-        setCurrentUser(updatedUser);
-        setFriendRequestsSent(updatedUser?.friendRequestsSent);
-        setFriendRequestsReceived(updatedUser?.friendRequestsReceived);
-        setFriends(updatedUser?.friends);
-      }
+      setFriendRequestsSent(currentUser?.friendRequestsSent);
+      setFriendRequestsReceived(currentUser?.friendRequestsReceived);
+      setFriends(currentUser?.friends);
     }
-  }, [currentUser?._id, fetchAllUsersQuery.data]);
+  }, [currentUser?._id, currentUser, fetchAllUsersQuery.data]);
 
   // Called when user switches b/t login & signup forms & when user logs out
   // Only necessary to reset errors for fields on login and/or signup form
