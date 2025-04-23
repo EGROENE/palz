@@ -399,22 +399,57 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  // Only if recipient receives FR from currentUser should currentUser's request go thru
   const receiveFriendRequestMutation = useMutation({
     mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
       Requests.addToFriendRequestsReceived(sender, recipient),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-      if (fetchAllUsersQuery.data && currentUser) {
-        allUsers = fetchAllUsersQuery.data;
-        setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+    onSuccess: (data, variables) => {
+      if (data.ok) {
+        if (currentUser && currentUser._id) {
+          Requests.getUserByID(currentUser._id)
+            .then((res) =>
+              res.json().then((user) => {
+                setCurrentUser(user);
+                toast.success("Friend request sent!", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid green",
+                  },
+                });
+              })
+            )
+            .catch((error) => {
+              console.log(error);
+              if (variables.recipient._id && friendRequestsSent) {
+                // Optimistic rendering: if request fails, remove recipient from friendRequestsSent:
+                setFriendRequestsSent(
+                  friendRequestsSent.filter((id) => id !== variables.recipient._id)
+                );
+
+                // If FR was sent, but recipient didn't receive it (request failed), delete sent FR from sender:
+                const removeSentFriendRequest = () =>
+                  Requests.removeFromFriendRequestsSent(
+                    variables.sender,
+                    variables.recipient
+                  ).catch((error) => {
+                    // If request to remove sent FR fails, keep trying:
+                    console.log(error);
+                    removeSentFriendRequest();
+                  });
+                removeSentFriendRequest();
+              }
+
+              toast.error("Couldn't send request. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            });
+        }
       }
-      toast.success("Friend request sent!", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid green",
-        },
-      });
     },
     onError: (error, variables) => {
       console.log(error);
