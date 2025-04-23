@@ -3,11 +3,11 @@ const express = require("express");
 // Import handlers:
 const {
   createNewUser,
-  checkReturningUserUsernameOrEmailAddressAndPassword,
   getAllUsers,
   getUser,
   deleteUser,
   updateUser,
+  getUserByUsernameOrEmailAddress,
 } = require("../controllers/userControllers.js");
 
 const router = express.Router();
@@ -15,14 +15,15 @@ const router = express.Router();
 // GET all users
 router.get("/", getAllUsers);
 
-// GET single user:
+// Get single user by username or email (used to set currentUser when user logs in):
+// Is post request, since GET cannot have a request body
+router.post("/login", getUserByUsernameOrEmailAddress);
+
+// GET single user by ID:
 router.get("/:id", getUser);
 
 // POST new user:
 router.post("/signup", createNewUser);
-
-// login existing user
-router.post("/login", checkReturningUserUsernameOrEmailAddressAndPassword);
 
 // DELETE a user:
 router.delete("/:id", deleteUser);
