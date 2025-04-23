@@ -899,28 +899,48 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
     onSuccess: (data, variables) => {
       if (data.ok) {
-        if (variables.areFriends) {
-          handleUnfriending(variables.blocker, variables.blockee);
+        if (currentUser && currentUser._id) {
+          Requests.getUserByID(currentUser._id)
+            .then((res) =>
+              res.json().then((user) => {
+                if (variables.areFriends) {
+                  handleUnfriending(variables.blocker, variables.blockee);
+                }
+                if (variables.hasSentFriendRequest) {
+                  handleRetractFriendRequest(variables.blocker, variables.blockee);
+                }
+                if (variables.hasReceivedFriendRequest) {
+                  handleRetractFriendRequest(variables.blockee, variables.blocker);
+                }
+                setCurrentUser(user);
+                toast(`You have blocked ${variables.blockee.username}.`, {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
+              })
+            )
+            .catch((error) => {
+              console.log(error);
+              if (blockedUsers && setBlockedUsers) {
+                setBlockedUsers(
+                  blockedUsers.filter((userID) => userID !== variables.blockee._id)
+                );
+              }
+              toast.error(
+                `Unable to block ${variables.blockee.username}. Please try again.`,
+                {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                }
+              );
+            });
         }
-        if (variables.hasSentFriendRequest) {
-          handleRetractFriendRequest(variables.blocker, variables.blockee);
-        }
-        if (variables.hasReceivedFriendRequest) {
-          handleRetractFriendRequest(variables.blockee, variables.blocker);
-        }
-
-        queryClient.invalidateQueries({ queryKey: "allUsers" });
-        if (allUsers && currentUser) {
-          setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-        }
-
-        toast(`You have blocked ${variables.blockee.username}.`, {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
       }
     },
     onError: (error, variables) => {
