@@ -800,11 +800,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     mutationFn: ({ receiver, sender }: { receiver: TUser; sender: TUser }) =>
       Requests.addFriendToFriendsArray(receiver, sender),
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: "allUsers" }).then(() => {
-        if (allUsers && currentUser) {
-          setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-        }
-      });
       if (data.ok) {
         const recipient = variables.receiver;
         const sender = variables.sender;
