@@ -795,6 +795,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  // On success of mutation to add friend to sender's list, run this; if this fails, reset everything
   const addToReceiverFriendsMutation = useMutation({
     mutationFn: ({ receiver, sender }: { receiver: TUser; sender: TUser }) =>
       Requests.addFriendToFriendsArray(receiver, sender),
@@ -813,6 +814,39 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           recipient,
           event,
         });
+        if (currentUser && currentUser._id) {
+          Requests.getUserByID(currentUser._id)
+            .then((res) => res.json().then((user) => setCurrentUser(user)))
+            .catch((error) => {
+              console.log(error);
+              const deleteFromUserFriends = () =>
+                Requests.deleteFriendFromFriendsArray(
+                  variables.sender,
+                  variables.receiver
+                ).catch((error) => {
+                  console.log(error);
+                  deleteFromUserFriends();
+                });
+              toast.error("Could not accept friend request. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+
+              // Revert surface-level states (remove sender from friends, add sender back to friendRequestsReceived):
+              if (friends) {
+                setFriends(friends.filter((friend) => friend !== variables.sender._id));
+              }
+
+              if (friendRequestsReceived && variables.sender._id) {
+                setFriendRequestsReceived(
+                  friendRequestsReceived.concat(variables.sender._id)
+                );
+              }
+            });
+        }
       }
     },
     onError: (error, variables) => {
