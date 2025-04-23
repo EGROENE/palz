@@ -1758,10 +1758,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     */
 
     // Handle submit of login form:
-    // Maybe .invalidateQueries({ queryKey: "allUsers" }) before running checkReturningUserUsernameOrEmailAddressAndPassword request
+    // Maybe .invalidateQueries({ queryKey: "allUsers" }) before running getUserByUsernameOrEmailAddress request
     if (!isOnSignup && password) {
       if (username && username !== "") {
-        Requests.checkReturningUserUsernameOrEmailAddressAndPassword(password, username)
+        Requests.getUserByUsernameOrEmailAddress(password, username)
           .then((res) => {
             if (res.status === 401) {
               // Differentiate b/t error on username/email & error on pw
@@ -1787,12 +1787,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               handleWelcomeMessage();
               setUserCreatedAccount(false);
               navigation("/");
-              if (allUsers) {
-                setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
-              }
               setUserCreatedAccount(false);
               setParallelValuesAfterLogin();
               resetErrorMessagesAfterLogin();
+              res.json().then((json) => setCurrentUser(json.user));
             }
           })
           .catch((error) => {
@@ -1808,11 +1806,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
 
       if (emailAddress && emailAddress !== "") {
-        Requests.checkReturningUserUsernameOrEmailAddressAndPassword(
-          password,
-          undefined,
-          emailAddress
-        )
+        Requests.getUserByUsernameOrEmailAddress(password, undefined, emailAddress)
           .then((res) => {
             if (res.status === 401) {
               if (res.statusText === "User not found") {
@@ -1837,13 +1831,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               handleWelcomeMessage();
               setUserCreatedAccount(false);
               navigation("/");
-              if (allUsers) {
-                setCurrentUser(
-                  allUsers.filter((user) => user.emailAddress === emailAddress)[0]
-                );
-              }
+              setUserCreatedAccount(false);
               setParallelValuesAfterLogin();
               resetErrorMessagesAfterLogin();
+              res.json().then((json) => setCurrentUser(json.user));
             }
           })
           .catch((error) => {
