@@ -101,6 +101,7 @@ const FriendRequests = () => {
     currentUser?.friendRequestsSent,
     fetchAllUsersQuery.isLoading,
     allUsers,
+    currentUser,
   ]);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
