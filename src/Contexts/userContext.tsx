@@ -713,7 +713,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       receiver: TUser;
       sender: TUser;
     },
-    error?: Error
+    error: Error
   ) => {
     console.log(error);
     toast.error("Could not accept friend request. Please try again.", {
