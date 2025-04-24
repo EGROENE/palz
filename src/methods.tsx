@@ -15,7 +15,7 @@ const isTUser = (value: any): value is TUser => {
   return false;
 };
 
-const arraysAreIdentical = (array1: any[], array2: any[]) => {
+const arraysAreIdentical = (array1: any[], array2: any[]): boolean => {
   if (array1.sort().join(",") === array2.sort().join(",")) {
     return true;
   }
@@ -35,16 +35,16 @@ const isValidUrl = (url: string): boolean => {
   }
 };
 
-const nameNoSpecialChars = (input: string) =>
+const nameNoSpecialChars = (input: string): string =>
   input.replace(/[^a-zA-ZÄäÖöÜüÑñÉéóÓÍí \-']/gi, "");
 
-const getCapitalizedWord = (word) => {
+const getCapitalizedWord = (word): string => {
   const firstLetterCapitalized = word && word[0].toUpperCase();
   const restOfWord = word.slice(1);
   return firstLetterCapitalized + restOfWord;
 };
 
-const formatCapitalizedName = (name) => {
+const formatCapitalizedName = (name): string => {
   let formattedWordOrWords = "";
 
   if (name !== "") {
@@ -115,7 +115,7 @@ const formatHyphensAndSpacesInString = (name: string): string => {
 
 // To avoid BS type errors & keep this method usable w/ arrays of all types, disable type checking
 // @ts-ignore
-function removeDuplicatesFromArray(arr: any[]) {
+function removeDuplicatesFromArray(arr: any[]): any[] {
   // @ts-ignore
   return arr.filter((item, index) => arr.indexOf(item) === index);
 }
