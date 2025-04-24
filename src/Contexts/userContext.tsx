@@ -447,7 +447,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     },
                   });
                 })
-                .catch((error) => handleReceiveFriendRequestFail(error))
+                .catch((error) => handleReceiveFriendRequestFail(error, variables))
             )
             .catch((error) => handleReceiveFriendRequestFail(error, variables));
         }
