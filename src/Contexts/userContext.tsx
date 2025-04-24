@@ -1514,6 +1514,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const handleUnblockUserFail = (blockee: TUser, error: Error): void => {
+    console.log(error);
+
+    if (blockedUsers && setBlockedUsers) {
+      setBlockedUsers(blockedUsers);
+    }
+    toast.error(`Unable to unblock ${blockee.username}. Please try again.`, {
+      style: {
+        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+        color: theme === "dark" ? "black" : "white",
+        border: "2px solid red",
+      },
+    });
+  };
+
   // No mutation needed here, as operation is simpler than blocking
   const handleUnblockUser = (
     blocker: TUser,
@@ -1529,36 +1544,28 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (blockee._id) {
       Requests.removeFromBlockedUsers(blocker, blockee._id)
-        .then((response) => {
-          if (!response.ok) {
-            if (blockedUsers && setBlockedUsers) {
-              setBlockedUsers(blockedUsers);
-            }
-            toast.error(`Unable to unblock ${blockee.username}. Please try again.`, {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          } else {
-            if (currentUser && currentUser._id) {
-              Requests.getUserByID(currentUser._id).then((res) =>
-                res.json().then((user) => {
-                  setCurrentUser(user);
-                  toast.success(`Unblocked ${blockee.username}.`, {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid green",
-                    },
-                  });
-                })
-              );
-            }
+        .then(() => {
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id)
+              .then((res) =>
+                res
+                  .json()
+                  .then((user) => {
+                    setCurrentUser(user);
+                    toast.success(`Unblocked ${blockee.username}.`, {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid green",
+                      },
+                    });
+                  })
+                  .catch((error) => handleUnblockUserFail(blockee, error))
+              )
+              .catch((error) => handleUnblockUserFail(blockee, error));
           }
         })
-        .catch((error) => console.log(error))
+        .catch((error) => handleUnblockUserFail(blockee, error))
         .finally(() => setIsLoading(false));
     }
   };
