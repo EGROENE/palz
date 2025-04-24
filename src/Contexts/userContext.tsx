@@ -389,16 +389,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const handleReceiveFriendRequestFail = (
-    error?: Error,
-    variables?: {
+    error: Error,
+    variables: {
       sender: TUser;
       recipient: TUser;
     }
   ) => {
-    if (error) {
-      console.log(error);
-    }
-    if (variables?.recipient._id && friendRequestsSent) {
+    console.log(error);
+    if (variables.recipient._id && friendRequestsSent) {
       // Optimistic rendering: if request fails, remove recipient from friendRequestsSent:
       setFriendRequestsSent(
         friendRequestsSent.filter((id) => id !== variables.recipient._id)
