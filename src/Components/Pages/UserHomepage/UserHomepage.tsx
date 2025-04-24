@@ -7,6 +7,7 @@ import { TEvent } from "../../../types";
 import Methods from "../../../methods";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
+import { TThemeColor } from "../../../types";
 
 const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
@@ -15,12 +16,25 @@ const UserHomepage = () => {
   const { fetchAllEventsQuery } = useEventContext();
   const allEvents = fetchAllEventsQuery.data;
 
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
   // On init rendering, hide sidebar, if displayed (better ux when returning to user homepage from Settings, etc.)
   useEffect(() => {
     if (showSidebar) {
       setShowSidebar(false);
     }
     /* @ts-ignore: Condition must be checked & Sidebar hidden on init rendering of this component only. If any of the recommended dependencies are included, Sidebar will be hidden immediately after it is displayed. */
+
+    // Set color of event card's border randomly:
+    const themeColors: TThemeColor[] = [
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
   }, []);
 
   const navigation = useNavigate();
@@ -121,7 +135,11 @@ const UserHomepage = () => {
             <div className="upcoming-events-hero">
               <h1>No upcoming events</h1>
               <p>
-                Click <Link to={"/events"}>here</Link> to find something fun to do
+                Click{" "}
+                <Link style={{ color: randomColor }} to={"/events"}>
+                  here
+                </Link>{" "}
+                to find something fun to do
               </p>
             </div>
           </>
