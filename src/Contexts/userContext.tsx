@@ -778,6 +778,29 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onError: (error, variables) => handleAddToReceiverFriendsFail(variables, error),
   });
 
+  const handleBlockUserFail = (
+    variables: {
+      blocker: TUser;
+      blockee: TUser;
+      areFriends: boolean;
+      hasSentFriendRequest: boolean;
+      hasReceivedFriendRequest: boolean;
+    },
+    error: Error
+  ): void => {
+    console.log(error);
+    if (blockedUsers && setBlockedUsers) {
+      setBlockedUsers(blockedUsers.filter((userID) => userID !== variables.blockee._id));
+    }
+    toast.error(`Unable to block ${variables.blockee.username}. Please try again.`, {
+      style: {
+        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+        color: theme === "dark" ? "black" : "white",
+        border: "2px solid red",
+      },
+    });
+  };
+
   const blockUserMutation = useMutation({
     mutationFn: ({
       blocker,
@@ -806,62 +829,34 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         if (currentUser && currentUser._id) {
           Requests.getUserByID(currentUser._id)
             .then((res) =>
-              res.json().then((user) => {
-                if (variables.areFriends) {
-                  handleUnfriending(variables.blocker, variables.blockee);
-                }
-                if (variables.hasSentFriendRequest) {
-                  handleRetractFriendRequest(variables.blocker, variables.blockee);
-                }
-                if (variables.hasReceivedFriendRequest) {
-                  handleRetractFriendRequest(variables.blockee, variables.blocker);
-                }
-                setCurrentUser(user);
-                toast(`You have blocked ${variables.blockee.username}.`, {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid red",
-                  },
-                });
-              })
+              res
+                .json()
+                .then((user) => {
+                  if (variables.areFriends) {
+                    handleUnfriending(variables.blocker, variables.blockee);
+                  }
+                  if (variables.hasSentFriendRequest) {
+                    handleRetractFriendRequest(variables.blocker, variables.blockee);
+                  }
+                  if (variables.hasReceivedFriendRequest) {
+                    handleRetractFriendRequest(variables.blockee, variables.blocker);
+                  }
+                  setCurrentUser(user);
+                  toast(`You have blocked ${variables.blockee.username}.`, {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                })
+                .catch((error) => handleBlockUserFail(variables, error))
             )
-            .catch((error) => {
-              console.log(error);
-              if (blockedUsers && setBlockedUsers) {
-                setBlockedUsers(
-                  blockedUsers.filter((userID) => userID !== variables.blockee._id)
-                );
-              }
-              toast.error(
-                `Unable to block ${variables.blockee.username}. Please try again.`,
-                {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid red",
-                  },
-                }
-              );
-            });
+            .catch((error) => handleBlockUserFail(variables, error));
         }
       }
     },
-    onError: (error, variables) => {
-      if (blockedUsers && setBlockedUsers) {
-        setBlockedUsers(
-          blockedUsers.filter((userID) => userID !== variables.blockee._id)
-        );
-      }
-      console.log(error);
-      toast.error(`Unable to block ${variables.blockee.username}. Please try again.`, {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error, variables) => handleBlockUserFail(variables, error),
     onSettled: () => setIsLoading(false),
   });
 
