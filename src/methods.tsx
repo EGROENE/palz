@@ -36,7 +36,7 @@ const isValidUrl = (url: string): boolean => {
 };
 
 const nameNoSpecialChars = (input: string) =>
-  input.replace(/[^a-zÄäÖöÜüÑñÉéóÓÍí -']/gi, "");
+  input.replace(/[^a-zA-ZÄäÖöÜüÑñÉéóÓÍí \-']/gi, "");
 
 const getCapitalizedWord = (word) => {
   const firstLetterCapitalized = word && word[0].toUpperCase();
