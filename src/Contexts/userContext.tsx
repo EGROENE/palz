@@ -1389,6 +1389,26 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     retractSentFriendRequestMutation.mutate({ sender, recipient, event });
   };
 
+  const handleUnfriendingFail = (friend: TUser, error?: Error): void => {
+    if (error) {
+      console.log(error);
+    }
+
+    toast.error(
+      `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`,
+      {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      }
+    );
+    if (friends && setFriends) {
+      setFriends(friends);
+    }
+  };
+
   const handleUnfriending = (
     user: TUser,
     friend: TUser,
@@ -1422,46 +1442,40 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             promise.then((response) => {
               if (!response.ok) {
                 allRequestsAreOK = false;
-                if (friends && setFriends) {
-                  setFriends(friends);
-                }
               }
             });
           }
         })
         .then(() => {
           if (!allRequestsAreOK) {
-            toast.error(
-              `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`,
-              {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid red",
-                },
-              }
-            );
-            if (friends && setFriends) {
-              setFriends(friends);
-            }
+            handleUnfriendingFail(friend);
           } else {
             if (currentUser && currentUser._id) {
-              Requests.getUserByID(currentUser._id).then((res) =>
-                res.json().then((user) => {
-                  setCurrentUser(user);
-                  toast(`You have unfriended ${friend.firstName} ${friend.lastName}.`, {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid red",
-                    },
-                  });
-                })
-              );
+              Requests.getUserByID(currentUser._id)
+                .then((res) =>
+                  res
+                    .json()
+                    .then((user) => {
+                      setCurrentUser(user);
+                      toast(
+                        `You have unfriended ${friend.firstName} ${friend.lastName}.`,
+                        {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        }
+                      );
+                    })
+                    .catch((error) => handleUnfriendingFail(friend, error))
+                )
+                .catch((error) => handleUnfriendingFail(friend, error));
             }
           }
         })
-        .catch((error) => console.log(error))
+        .catch((error) => handleUnfriendingFail(friend, error))
         .finally(() => setIsLoading(false));
     }
   };
