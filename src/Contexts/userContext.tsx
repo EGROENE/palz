@@ -1038,11 +1038,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         isFirstName
           ? setFirstNameError("Please fill out this field")
           : setLastNameError("Please fill out this field");
-      } /* else if (!nameIsValid(name.trim())) {
-        isFirstName
-          ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
-          : setLastNameError("Only alphabetical characters & appropriate punctuation");
-      } */ else {
+      } else {
         isFirstName ? setFirstNameError("") : setLastNameError("");
       }
     } else {
@@ -1050,11 +1046,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         isFirstName
           ? setFirstNameError("Please fill out this field")
           : setLastNameError("Please fill out this field");
-      } /* else if (!nameIsValid(name.trim()) && name.trim() !== "") {
-        isFirstName
-          ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
-          : setLastNameError("Only alphabetical characters & appropriate punctuation");
-      } */ else {
+      } else {
         isFirstName ? setFirstNameError("") : setLastNameError("");
       }
     }
