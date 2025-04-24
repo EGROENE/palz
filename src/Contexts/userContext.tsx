@@ -215,7 +215,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
 
-  // Rename to 'newUserData'
   const userData: TUser = {
     firstName: Methods.formatHyphensAndSpacesInString(
       Methods.formatCapitalizedName(firstName)
@@ -1029,7 +1028,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       ? setFirstName(Methods.nameNoSpecialChars(name))
       : setLastName(Methods.nameNoSpecialChars(name));
 
-    if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
+    /*  if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
       setCurrentUser(userData);
     } else if (
       !allSignupFormFieldsFilled &&
@@ -1037,7 +1036,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       formType === "signup"
     ) {
       setCurrentUser(null);
-    }
+    } */
 
     if (formType === "signup") {
       if (name.trim() === "") {
@@ -1076,7 +1075,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setUsername(inputUsername);
     }
 
-    if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
+    /* if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
       setCurrentUser(userData);
     } else if (
       !allSignupFormFieldsFilled &&
@@ -1084,7 +1083,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       formType === "signup"
     ) {
       setCurrentUser(null);
-    }
+    } */
 
     if (formType === "signup") {
       if (!inputUsername.length) {
@@ -1119,7 +1118,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     setEmailAddress(inputEmailAddressNoWhitespaces.toLowerCase());
 
-    if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
+    /* if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
       setCurrentUser(userData);
     } else if (
       !allSignupFormFieldsFilled &&
@@ -1127,7 +1126,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       formType === "signup"
     ) {
       setCurrentUser(null);
-    }
+    } */
 
     if (formType === "signup") {
       if (!inputEmailAddressNoWhitespaces.length) {
@@ -1238,9 +1237,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
       // If used on signup form:
     } else if (formType === "signup") {
-      allSignupFormFieldsFilled && areNoSignupFormErrors
+      /* allSignupFormFieldsFilled && areNoSignupFormErrors
         ? setCurrentUser(userData)
-        : setCurrentUser(null);
+        : setCurrentUser(null); */
 
       if (inputPWNoWhitespaces !== "") {
         // If pw isn't/is valid...
@@ -1281,7 +1280,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     /* Condition to set currentUser should be all other errors === "" && allSignupFormFieldsFilled && (confirmationPasswordError === "Passwords don't match" | confirmationPasswordError === ""), b/c, in this handler, setting of this error state value lags. */
     if (formType === "signup") {
-      if (
+      /* if (
         allSignupFormFieldsFilled &&
         firstNameError === "" &&
         lastNameError === "" &&
@@ -1294,7 +1293,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         setCurrentUser(userData);
       } else {
         setCurrentUser(null);
-      }
+      } */
 
       if (inputConfirmationPWNoWhitespaces !== password && password !== "") {
         if (inputConfirmationPWNoWhitespaces !== "") {
@@ -1317,7 +1316,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       const currentUser = allUsers
         ? allUsers.filter((user) => user.emailAddress === inputNoWhitespaces)[0]
         : null;
-      setCurrentUser(currentUser);
+      //setCurrentUser(currentUser);
       setUsername("");
       setUsernameError("");
       setLoginMethod("email");
@@ -1340,10 +1339,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       // If input doesn't match pattern of an email address (is a username):
-      const currentUser = allUsers
-        ? allUsers.filter((user) => user.username === input)[0]
-        : null;
-      setCurrentUser(currentUser);
+      //setCurrentUser(currentUser);
       setEmailAddress("");
       setEmailError("");
       setLoginMethod("username");
