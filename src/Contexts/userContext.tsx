@@ -260,6 +260,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers: [],
   };
 
+  const handleUpdateProfileImageFail = (error?: Error): void => {
+    if (error) {
+      console.log(error);
+    }
+    toast.error(
+      "Could not update profile image. Please make sure the image is 50MB or less & try again.",
+      {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      }
+    );
+  };
+
   const updateProfileImageMutation = useMutation({
     mutationFn: ({
       currentUser,
@@ -274,49 +290,29 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           Requests.getUserByID(currentUser._id)
             .then((res) => {
               if (res.ok) {
-                res.json().then((user) => {
-                  setCurrentUser(user);
-                  setProfileImage(variables.base64);
-                  toast.success("Profile image updated", {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid green",
-                    },
-                  });
-                });
+                res
+                  .json()
+                  .then((user) => {
+                    setCurrentUser(user);
+                    setProfileImage(variables.base64);
+                    toast.success("Profile image updated", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid green",
+                      },
+                    });
+                  })
+                  .catch((error) => handleUpdateProfileImageFail(error));
               } else {
-                toast.error(
-                  "Could not update profile image. Please make sure the image is 50MB or less & try again.",
-                  {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid red",
-                    },
-                  }
-                );
+                handleUpdateProfileImageFail();
               }
             })
-            .catch((error) => {
-              console.log(error);
-            });
+            .catch((error) => handleUpdateProfileImageFail(error));
         }
       }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error(
-        "Could not update profile image. Please make sure the image is 50MB or less & try again.",
-        {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        }
-      );
-    },
+    onError: (error) => handleUpdateProfileImageFail(error),
   });
 
   const removeProfileImageMutation = useMutation({
