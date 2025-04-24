@@ -1339,6 +1339,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       // If input doesn't match pattern of an email address (is a username):
+      const currentUser = allUsers
+        ? allUsers.filter((user) => user.username === input)[0]
+        : null;
       //setCurrentUser(currentUser);
       setEmailAddress("");
       setEmailError("");
@@ -1815,7 +1818,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }),
   };
 
-  const setParallelValuesAfterLogin = (): void => {
+  const setParallelValuesAfterLogin = (currentUser: TUser): void => {
     setFirstName(currentUser?.firstName);
     setLastName(currentUser?.lastName);
     setUsername(currentUser?.username);
@@ -1956,13 +1959,24 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             }
 
             if (res.ok) {
+              // Set currentUser to userData, not json res
+              /* console.log(userData);
+              setCurrentUser(userData);
               handleWelcomeMessage();
               setUserCreatedAccount(false);
               navigation("/");
               setUserCreatedAccount(false);
               setParallelValuesAfterLogin();
-              resetErrorMessagesAfterLogin();
-              res.json().then((json) => setCurrentUser(json.user));
+              resetErrorMessagesAfterLogin(); */
+              res.json().then((json) => {
+                setCurrentUser(json.user);
+                handleWelcomeMessage();
+                setUserCreatedAccount(false);
+                navigation("/");
+                setUserCreatedAccount(false);
+                setParallelValuesAfterLogin(json.user);
+                resetErrorMessagesAfterLogin();
+              });
             }
           })
           .catch((error) => {
@@ -2000,13 +2014,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             }
 
             if (res.ok) {
-              handleWelcomeMessage();
-              setUserCreatedAccount(false);
-              navigation("/");
-              setUserCreatedAccount(false);
-              setParallelValuesAfterLogin();
-              resetErrorMessagesAfterLogin();
-              res.json().then((json) => setCurrentUser(json.user));
+              res.json().then((json) => {
+                setCurrentUser(json.user);
+                handleWelcomeMessage();
+                setUserCreatedAccount(false);
+                navigation("/");
+                setUserCreatedAccount(false);
+                setParallelValuesAfterLogin(json.user);
+                resetErrorMessagesAfterLogin();
+              });
             }
           })
           .catch((error) => {
