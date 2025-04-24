@@ -484,7 +484,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         const sender = variables.sender;
         const recipient = variables.recipient;
         const event = variables.event;
-        retractReceivedFriendRequestMutation.mutate({ sender, recipient, event });
+        removeReceivedFriendRequestMutation.mutate({ sender, recipient, event });
       }
     },
     onError: (error, variables) => {
@@ -548,7 +548,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
-  const retractReceivedFriendRequestMutation = useMutation({
+  const removeReceivedFriendRequestMutation = useMutation({
     mutationFn: ({
       sender,
       recipient,
