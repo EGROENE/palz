@@ -1628,18 +1628,20 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               },
             });
           } else {
-            queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-            if (fetchAllUsersQuery.data && currentUser) {
-              allUsers = fetchAllUsersQuery.data;
-              setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+            if (currentUser && currentUser._id) {
+              Requests.getUserByID(currentUser._id).then((res) =>
+                res.json().then((user) => {
+                  setCurrentUser(user);
+                  toast.success(`Unblocked ${blockee.username}.`, {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid green",
+                    },
+                  });
+                })
+              );
             }
-            toast.success(`Unblocked ${blockee.username}.`, {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid green",
-              },
-            });
           }
         })
         .catch((error) => console.log(error))
