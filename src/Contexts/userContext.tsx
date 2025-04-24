@@ -1024,9 +1024,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     isFirstName: boolean,
     formType: "signup" | "edit-user-info"
   ) => {
+    const nameNoSpecialCharsCleaned = Methods.nameNoSpecialChars(name).replace(
+      /\s+/g,
+      " "
+    );
+
     isFirstName
-      ? setFirstName(Methods.nameNoSpecialChars(name))
-      : setLastName(Methods.nameNoSpecialChars(name));
+      ? setFirstName(nameNoSpecialCharsCleaned)
+      : setLastName(nameNoSpecialCharsCleaned);
 
     if (formType === "signup") {
       if (name.trim() === "") {
