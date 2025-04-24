@@ -541,15 +541,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const handleRemoveReceivedFriendRequestFail = (
-    error?: Error,
-    variables?: {
+    error: Error,
+    variables: {
       sender: TUser;
       recipient: TUser;
       event: "accept-request" | "retract-request" | "reject-request";
     }
   ) => {
     console.log(error);
-    if (variables?.event === "accept-request") {
+    if (variables.event === "accept-request") {
       // Remove sender & receiver from each other's 'friends' array, add back to 'received' array:
       Promise.all([
         Requests.deleteFriendFromFriendsArray(variables.sender, variables.recipient),
@@ -575,7 +575,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
-    if (variables?.event === "retract-request") {
+    if (variables.event === "retract-request") {
       const recipient = variables.recipient;
       // Optimistic rendering: add recipient back to friendRequestsSent if request fails
       if (setFriendRequestsSent && friendRequestsSent && recipient._id) {
@@ -590,7 +590,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       });
     }
 
-    if (variables?.event === "reject-request") {
+    if (variables.event === "reject-request") {
       toast.error("Could not reject friend request. Please try again.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
