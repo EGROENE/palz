@@ -260,10 +260,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers: [],
   };
 
-  const handleUpdateProfileImageFail = (error?: Error): void => {
-    if (error) {
-      console.log(error);
-    }
+  const handleUpdateProfileImageFail = (error: Error): void => {
+    console.log(error);
     toast.error(
       "Could not update profile image. Please make sure the image is 50MB or less & try again.",
       {
