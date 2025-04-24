@@ -1028,16 +1028,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       ? setFirstName(Methods.nameNoSpecialChars(name))
       : setLastName(Methods.nameNoSpecialChars(name));
 
-    /*  if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
-      setCurrentUser(userData);
-    } else if (
-      !allSignupFormFieldsFilled &&
-      !areNoSignupFormErrors &&
-      formType === "signup"
-    ) {
-      setCurrentUser(null);
-    } */
-
     if (formType === "signup") {
       if (name.trim() === "") {
         isFirstName
@@ -1047,8 +1037,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         isFirstName
           ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
           : setLastNameError("Only alphabetical characters & appropriate punctuation");
-      } else if (nameIsValid(name.trim())) {
-        isFirstName ? setFirstNameError("") : setLastNameError("");
       } */ else {
         isFirstName ? setFirstNameError("") : setLastNameError("");
       }
@@ -1074,16 +1062,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (inputUsername.length <= 20 && usernameIsValid(inputUsername)) {
       setUsername(inputUsername);
     }
-
-    /* if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
-      setCurrentUser(userData);
-    } else if (
-      !allSignupFormFieldsFilled &&
-      !areNoSignupFormErrors &&
-      formType === "signup"
-    ) {
-      setCurrentUser(null);
-    } */
 
     if (formType === "signup") {
       if (!inputUsername.length) {
@@ -1117,16 +1095,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     const inputEmailAddressNoWhitespaces = inputEmailAddress.replace(/\s/g, "");
 
     setEmailAddress(inputEmailAddressNoWhitespaces.toLowerCase());
-
-    /* if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
-      setCurrentUser(userData);
-    } else if (
-      !allSignupFormFieldsFilled &&
-      !areNoSignupFormErrors &&
-      formType === "signup"
-    ) {
-      setCurrentUser(null);
-    } */
 
     if (formType === "signup") {
       if (!inputEmailAddressNoWhitespaces.length) {
@@ -1237,10 +1205,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
       // If used on signup form:
     } else if (formType === "signup") {
-      /* allSignupFormFieldsFilled && areNoSignupFormErrors
-        ? setCurrentUser(userData)
-        : setCurrentUser(null); */
-
       if (inputPWNoWhitespaces !== "") {
         // If pw isn't/is valid...
         if (!passwordIsValid(inputPWNoWhitespaces)) {
@@ -1280,21 +1244,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     /* Condition to set currentUser should be all other errors === "" && allSignupFormFieldsFilled && (confirmationPasswordError === "Passwords don't match" | confirmationPasswordError === ""), b/c, in this handler, setting of this error state value lags. */
     if (formType === "signup") {
-      /* if (
-        allSignupFormFieldsFilled &&
-        firstNameError === "" &&
-        lastNameError === "" &&
-        usernameError === "" &&
-        emailError === "" &&
-        passwordError === "" &&
-        (confirmationPasswordError === "Passwords don't match" ||
-          confirmationPasswordError === "")
-      ) {
-        setCurrentUser(userData);
-      } else {
-        setCurrentUser(null);
-      } */
-
       if (inputConfirmationPWNoWhitespaces !== password && password !== "") {
         if (inputConfirmationPWNoWhitespaces !== "") {
           setConfirmationPasswordError("Passwords don't match");
@@ -1313,10 +1262,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     // If input matches pattern for an email:
     if (emailIsValid(inputNoWhitespaces.toLowerCase())) {
-      const currentUser = allUsers
-        ? allUsers.filter((user) => user.emailAddress === inputNoWhitespaces)[0]
-        : null;
-      //setCurrentUser(currentUser);
       setUsername("");
       setUsernameError("");
       setLoginMethod("email");
@@ -1339,10 +1284,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       // If input doesn't match pattern of an email address (is a username):
-      const currentUser = allUsers
-        ? allUsers.filter((user) => user.username === input)[0]
-        : null;
-      //setCurrentUser(currentUser);
       setEmailAddress("");
       setEmailError("");
       setLoginMethod("username");
@@ -1959,15 +1900,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             }
 
             if (res.ok) {
-              // Set currentUser to userData, not json res
-              /* console.log(userData);
-              setCurrentUser(userData);
-              handleWelcomeMessage();
-              setUserCreatedAccount(false);
-              navigation("/");
-              setUserCreatedAccount(false);
-              setParallelValuesAfterLogin();
-              resetErrorMessagesAfterLogin(); */
               res.json().then((json) => {
                 setCurrentUser(json.user);
                 handleWelcomeMessage();
@@ -2079,65 +2011,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           });
       }
     }
-
-    /* queryClient
-      .invalidateQueries({ queryKey: "allUsers" })
-      .then(() => {
-        When signing up, it's necessary to check username & emailAddress against those already in allUsers. When logging in, it's necessary to check these against all OTHER users in allUsers.
-        
-        let usernameIsUnique: boolean = false;
-        let emailAddressIsUnique: boolean = false;
-        if (isOnSignup) {
-          if (allUsers) {
-            usernameIsUnique = !allUsers.map((user) => user.username).includes(username);
-            emailAddressIsUnique = !allUsers
-              .map((user) => user.emailAddress)
-              .includes(emailAddress);
-          }
-        } else {
-          if (allUsers) {
-            const allOtherUsers =
-              loginMethod === "email"
-                ? allUsers.filter((user) => user.emailAddress !== emailAddress)
-                : allUsers.filter((user) => user.username !== username);
-            usernameIsUnique = !allOtherUsers
-              .map((user) => user.username)
-              .includes(username);
-            emailAddressIsUnique = !allOtherUsers
-              .map((user) => user.emailAddress)
-              .includes(emailAddress);
-          }
-        }
-
-        if (usernameIsUnique && emailAddressIsUnique) {
-          navigation("/");
-          handleWelcomeMessage();
-          // If user had pw visible when logging in/signing up, hide it again, so it's hidden by default on edit-user-info form in Settings
-          if (!passwordIsHidden) {
-            toggleHidePassword();
-          }
-          if (isOnSignup) {
-            
-          } else {
-          }
-          setFirstNameError("");
-          setLastNameError("");
-          setUsernameError("");
-          setEmailError("");
-          setPasswordError("");
-          setConfirmationPasswordError("");
-        } else {
-          handleFormRejection(e);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        if (isOnSignup) {
-          window.alert("Could not complete signup; please try again.");
-        } else {
-          window.alert("Could not complete login; please try again.");
-        }
-      }); */
   };
 
   const handleFormRejection = (
