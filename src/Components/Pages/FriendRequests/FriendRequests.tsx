@@ -263,6 +263,7 @@ const FriendRequests = () => {
                           buttonTwoHandlerNeedsEventParam={false}
                           buttonTwoHandlerParams={[
                             user,
+                            undefined,
                             friendRequestsSent,
                             setFriendRequestsSent,
                           ]}

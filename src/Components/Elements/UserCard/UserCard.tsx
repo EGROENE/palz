@@ -235,6 +235,7 @@ const UserCard = ({ user }: { user: TUser }) => {
               if (currentUserSentFriendRequest && currentUser && currentUserUpdated) {
                 handleRetractFriendRequest(
                   user,
+                  undefined,
                   friendRequestsSent,
                   setFriendRequestsSent
                 );

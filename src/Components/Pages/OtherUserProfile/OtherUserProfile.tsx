@@ -177,6 +177,7 @@ const OtherUserProfile = () => {
             ? () =>
                 handleRetractFriendRequest(
                   currentOtherUser,
+                  undefined,
                   friendRequestsSent,
                   setFriendRequestsSent
                 )
