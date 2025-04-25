@@ -234,7 +234,6 @@ const UserCard = ({ user }: { user: TUser }) => {
               }
               if (currentUserSentFriendRequest && currentUser && currentUserUpdated) {
                 handleRetractFriendRequest(
-                  currentUserUpdated,
                   user,
                   friendRequestsSent,
                   setFriendRequestsSent
@@ -245,12 +244,7 @@ const UserCard = ({ user }: { user: TUser }) => {
                 setShowFriendRequestResponseOptions(true);
               }
               if (currentUser && noConnectionBetweenUserAndCurrentUser) {
-                handleSendFriendRequest(
-                  currentUserUpdated,
-                  user,
-                  friendRequestsSent,
-                  setFriendRequestsSent
-                );
+                handleSendFriendRequest(user, friendRequestsSent, setFriendRequestsSent);
               }
             }}
             disabled={isLoading}

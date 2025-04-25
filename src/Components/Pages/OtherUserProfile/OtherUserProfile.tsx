@@ -176,7 +176,6 @@ const OtherUserProfile = () => {
           currentUser && currentOtherUser
             ? () =>
                 handleRetractFriendRequest(
-                  currentUser,
                   currentOtherUser,
                   friendRequestsSent,
                   setFriendRequestsSent
@@ -205,7 +204,6 @@ const OtherUserProfile = () => {
         currentUser && currentOtherUser
           ? () =>
               handleSendFriendRequest(
-                currentUser,
                 currentOtherUser,
                 friendRequestsSent,
                 setFriendRequestsSent
