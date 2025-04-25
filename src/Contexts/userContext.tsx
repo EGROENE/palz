@@ -828,10 +828,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     handleUnfriending(variables.blocker, variables.blockee);
                   }
                   if (variables.hasSentFriendRequest) {
-                    handleRetractFriendRequest(variables.blocker, variables.blockee);
+                    handleRetractFriendRequest(variables.blockee);
                   }
                   if (variables.hasReceivedFriendRequest) {
-                    handleRetractFriendRequest(variables.blockee, variables.blocker);
+                    handleRetractFriendRequest(variables.blocker);
                   }
                   setCurrentUser(user);
                   toast(`You have blocked ${variables.blockee.username}.`, {
@@ -853,7 +853,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   useEffect(() => {
-    if ( currentUser) {
+    if (currentUser) {
       setFriendRequestsSent(currentUser?.friendRequestsSent);
       setFriendRequestsReceived(currentUser?.friendRequestsReceived);
       setFriends(currentUser?.friends);
@@ -1289,7 +1289,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleSendFriendRequest = (
-    sender: TUser | undefined,
     recipient: TUser,
     friendRequestsSent?: string[],
     setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
@@ -1298,14 +1297,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
     }
 
-    if (sender) {
+    if (currentUser) {
       setIsLoading(true);
+      const sender = currentUser;
       sendFriendRequestMutation.mutate({ sender, recipient });
     }
   };
 
   const handleRetractFriendRequest = (
-    sender: TUser,
     recipient: TUser,
     friendRequestsSent?: string[],
     setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
@@ -1318,8 +1317,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       );
     }
 
-    const event = "retract-request";
-    retractSentFriendRequestMutation.mutate({ sender, recipient, event });
+    if (currentUser) {
+      const event = "retract-request";
+      const sender = currentUser;
+      retractSentFriendRequestMutation.mutate({ sender, recipient, event });
+    }
   };
 
   const handleAcceptFriendRequest = (
