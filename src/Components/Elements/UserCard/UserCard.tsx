@@ -20,7 +20,7 @@ const UserCard = ({ user }: { user: TUser }) => {
     handleAcceptFriendRequest,
     showFriendRequestResponseOptions,
     setShowFriendRequestResponseOptions,
-    handleRetractFriendRequest,
+    handleRemoveFriendRequest,
     handleSendFriendRequest,
     currentOtherUser,
     setCurrentOtherUser,
@@ -233,7 +233,7 @@ const UserCard = ({ user }: { user: TUser }) => {
                 handleUnfriending(currentUser, user, friends, setFriends);
               }
               if (currentUserSentFriendRequest && currentUser && currentUserUpdated) {
-                handleRetractFriendRequest(
+                handleRemoveFriendRequest(
                   user,
                   undefined,
                   friendRequestsSent,

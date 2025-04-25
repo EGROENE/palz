@@ -23,7 +23,7 @@ const OtherUserProfile = () => {
     currentUser,
     userCreatedAccount,
     handleSendFriendRequest,
-    handleRetractFriendRequest,
+    handleRemoveFriendRequest,
     showFriendRequestResponseOptions,
     setShowFriendRequestResponseOptions,
     handleRejectFriendRequest,
@@ -175,7 +175,7 @@ const OtherUserProfile = () => {
         handler:
           currentUser && currentOtherUser
             ? () =>
-                handleRetractFriendRequest(
+                handleRemoveFriendRequest(
                   currentOtherUser,
                   undefined,
                   friendRequestsSent,

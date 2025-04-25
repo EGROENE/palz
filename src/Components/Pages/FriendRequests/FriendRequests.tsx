@@ -25,7 +25,7 @@ const FriendRequests = () => {
     allUsers,
     handleAcceptFriendRequest,
     handleRejectFriendRequest,
-    handleRetractFriendRequest,
+    handleRemoveFriendRequest,
     setCurrentOtherUser,
     friendRequestsSent,
     setFriendRequestsSent,
@@ -259,7 +259,7 @@ const FriendRequests = () => {
                           buttonOneHandlerNeedsEventParam={false}
                           renderButtonTwo={true}
                           buttonTwoText="Retract"
-                          buttonTwoHandler={handleRetractFriendRequest}
+                          buttonTwoHandler={handleRemoveFriendRequest}
                           buttonTwoHandlerNeedsEventParam={false}
                           buttonTwoHandlerParams={[
                             user,

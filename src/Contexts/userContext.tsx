@@ -824,10 +824,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     handleUnfriending(variables.blocker, variables.blockee);
                   }
                   if (variables.hasSentFriendRequest) {
-                    handleRetractFriendRequest(variables.blockee, variables.blocker);
+                    handleRemoveFriendRequest(variables.blockee, variables.blocker);
                   }
                   if (variables.hasReceivedFriendRequest) {
-                    handleRetractFriendRequest(variables.blocker, variables.blockee);
+                    handleRemoveFriendRequest(variables.blocker, variables.blockee);
                   }
                   setCurrentUser(user);
                   toast(`You have blocked ${variables.blockee.username}.`, {
@@ -1300,7 +1300,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleRetractFriendRequest = (
+  const handleRemoveFriendRequest = (
     recipient: TUser,
     sender?: TUser,
     friendRequestsSent?: string[],
@@ -2015,7 +2015,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     showFriendRequestResponseOptions,
     setShowFriendRequestResponseOptions,
     handleSendFriendRequest,
-    handleRetractFriendRequest,
+    handleRemoveFriendRequest,
     handleUnfriending,
     handleRejectFriendRequest,
     handleAcceptFriendRequest,
