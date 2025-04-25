@@ -608,13 +608,10 @@ const addToFriendRequestsReceived = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendRequestsReceivedArray: Array<string | undefined> = [];
-  if (recipient?.friendRequestsReceived) {
-    for (const existingSenderID of recipient.friendRequestsReceived) {
-      updatedFriendRequestsReceivedArray.push(existingSenderID);
-    }
-  }
-  updatedFriendRequestsReceivedArray.push(sender._id);
+  const updatedFriendRequestsReceivedArray = [
+    ...recipient.friendRequestsReceived,
+    sender._id,
+  ];
 
   const getRaw = () => {
     return JSON.stringify({
@@ -635,14 +632,7 @@ const addToFriendRequestsSent = (sender: TUser, recipient: TUser): Promise<Respo
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedFriendRequestsSentArray =
-    recipient._id && sender.friendRequestsSent.concat(recipient._id);
-  /* if (sender?.friendRequestsSent) {
-    for (const existingRecipientID of sender.friendRequestsSent) {
-      updatedFriendRequestsSentArray.push(existingRecipientID);
-    }
-  }
-  updatedFriendRequestsSentArray.push(recipientID); */
+  let updatedFriendRequestsSentArray = [...sender.friendRequestsSent, recipient._id];
 
   const getRaw = () => {
     return JSON.stringify({
