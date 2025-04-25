@@ -609,17 +609,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     mutationFn: ({
       sender,
       recipient,
+      //@ts-ignore: though event param not used in mutationFn, it is needed in onSuccess & onError
       event,
     }: {
       sender: TUser;
       recipient: TUser;
       event: "accept-request" | "retract-request" | "reject-request";
-    }) => {
-      // Yes, this is stupid logic, but 'event' has to be used to avoid a TS error
-      return event
-        ? Requests.removeFromFriendRequestsReceived(sender, recipient)
-        : Requests.removeFromFriendRequestsReceived(sender, recipient);
-    },
+    }) => Requests.removeFromFriendRequestsReceived(sender, recipient),
     onSuccess: (data, variables) => {
       if (data.ok) {
         if (currentUser && currentUser._id) {
@@ -828,10 +824,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     handleUnfriending(variables.blocker, variables.blockee);
                   }
                   if (variables.hasSentFriendRequest) {
-                    handleRetractFriendRequest(variables.blockee);
+                    handleRetractFriendRequest(variables.blockee, variables.blocker);
                   }
                   if (variables.hasReceivedFriendRequest) {
-                    handleRetractFriendRequest(variables.blocker);
+                    handleRetractFriendRequest(variables.blocker, variables.blockee);
                   }
                   setCurrentUser(user);
                   toast(`You have blocked ${variables.blockee.username}.`, {
@@ -1306,6 +1302,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleRetractFriendRequest = (
     recipient: TUser,
+    sender?: TUser,
     friendRequestsSent?: string[],
     setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ): void => {
@@ -1318,9 +1315,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (currentUser) {
-      const event = "retract-request";
-      const sender = currentUser;
-      retractSentFriendRequestMutation.mutate({ sender, recipient, event });
+      if (currentUser._id === recipient._id && sender) {
+        const event = "reject-request";
+        removeReceivedFriendRequestMutation.mutate({ sender, recipient, event });
+      } else {
+        const event = "retract-request";
+        const sender = currentUser;
+        retractSentFriendRequestMutation.mutate({ sender, recipient, event });
+      }
     }
   };
 

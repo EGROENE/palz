@@ -292,6 +292,7 @@ export type TUserContext = {
   ) => void;
   handleRetractFriendRequest: (
     recipient: TUser,
+    sender?: TUser,
     friendRequestsSent?: string[],
     setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
