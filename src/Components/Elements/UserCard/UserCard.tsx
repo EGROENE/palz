@@ -90,7 +90,6 @@ const UserCard = ({ user }: { user: TUser }) => {
       currentUser._id &&
       user &&
       user._id &&
-      user.friends.includes(currentUser._id) &&
       friends?.includes(user._id)
     ) {
       return (
