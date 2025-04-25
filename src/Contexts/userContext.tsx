@@ -1803,6 +1803,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               }
             }
 
+            if (res.status === 404) {
+              toast.error("User doesn't exist", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            }
+
             if (res.status === 500) {
               toast.error("Could not log you in. Please try again.", {
                 style: {
@@ -1827,6 +1837,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           })
           .catch((error) => {
             console.log(error);
+            console.log("hi");
             toast.error("Could not log you in. Please try again.", {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
