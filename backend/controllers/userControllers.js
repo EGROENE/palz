@@ -25,7 +25,7 @@ const getUser = async (req, res) => {
 
   // Check that id is a valid MongoDB ObjectId:
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: "Bad request (invalid ida)" });
+    return res.status(400).json({ error: "Bad request (invalid id)" });
   }
 
   // assign user to document in DB that has id that matches the id defined in this method:
