@@ -1292,19 +1292,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleRemoveFriendRequest = (
-    recipient: TUser,
-    sender?: TUser,
-    friendRequestsSent?: string[],
-    setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
-  ): void => {
+  const handleRemoveFriendRequest = (recipient: TUser, sender?: TUser): void => {
     setIsLoading(true);
-
-    if (setFriendRequestsSent && friendRequestsSent) {
-      setFriendRequestsSent(
-        friendRequestsSent.filter((userID) => userID !== recipient._id)
-      );
-    }
 
     if (currentUser) {
       if (currentUser._id === recipient._id && sender) {
