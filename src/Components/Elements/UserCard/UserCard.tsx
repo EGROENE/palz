@@ -245,7 +245,7 @@ const UserCard = ({ user }: { user: TUser }) => {
                 setShowFriendRequestResponseOptions(true);
               }
               if (currentUser && noConnectionBetweenUserAndCurrentUser) {
-                handleSendFriendRequest(user, friendRequestsSent, setFriendRequestsSent);
+                handleSendFriendRequest(user);
               }
             }}
             disabled={isLoading}

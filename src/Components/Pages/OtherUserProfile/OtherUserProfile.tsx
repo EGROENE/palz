@@ -203,12 +203,7 @@ const OtherUserProfile = () => {
       ),
       handler:
         currentUser && currentOtherUser
-          ? () =>
-              handleSendFriendRequest(
-                currentOtherUser,
-                friendRequestsSent,
-                setFriendRequestsSent
-              )
+          ? () => handleSendFriendRequest(currentOtherUser)
           : undefined,
       paramsIncludeEvent: false,
     };
