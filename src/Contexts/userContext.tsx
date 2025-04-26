@@ -1284,15 +1284,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     removeProfileImageMutation.mutate({ currentUser, placeholder });
   };
 
-  const handleSendFriendRequest = (
-    recipient: TUser,
-    friendRequestsSent?: string[],
-    setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
-  ): void => {
-    if (friendRequestsSent && setFriendRequestsSent && recipient._id) {
-      setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
-    }
-
+  const handleSendFriendRequest = (recipient: TUser): void => {
     if (currentUser) {
       setIsLoading(true);
       const sender = currentUser;

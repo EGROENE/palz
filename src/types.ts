@@ -284,12 +284,7 @@ export type TUserContext = {
   ) => void;
   currentOtherUser: TUser | null;
   setCurrentOtherUser: React.Dispatch<React.SetStateAction<TUser | null>>;
-  handleSendFriendRequest: (
-    //sender: TUser | undefined,
-    recipient: TUser,
-    friendRequestsSent?: string[],
-    setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
-  ) => void;
+  handleSendFriendRequest: (recipient: TUser) => void;
   handleRemoveFriendRequest: (
     recipient: TUser,
     sender?: TUser,
