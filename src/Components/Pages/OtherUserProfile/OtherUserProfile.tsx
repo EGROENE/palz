@@ -29,7 +29,6 @@ const OtherUserProfile = () => {
     handleRejectFriendRequest,
     handleAcceptFriendRequest,
     friendRequestsSent,
-    setFriendRequestsSent,
     addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists,
     handleUnblockUser,
     blockedUsers,
@@ -174,13 +173,7 @@ const OtherUserProfile = () => {
         ),
         handler:
           currentUser && currentOtherUser
-            ? () =>
-                handleRemoveFriendRequest(
-                  currentOtherUser,
-                  undefined,
-                  friendRequestsSent,
-                  setFriendRequestsSent
-                )
+            ? () => handleRemoveFriendRequest(currentOtherUser)
             : undefined,
         paramsIncludeEvent: false,
       };

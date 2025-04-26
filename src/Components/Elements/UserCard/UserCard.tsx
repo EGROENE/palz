@@ -25,7 +25,6 @@ const UserCard = ({ user }: { user: TUser }) => {
     currentOtherUser,
     setCurrentOtherUser,
     friendRequestsSent,
-    setFriendRequestsSent,
     friendRequestsReceived,
     setFriendRequestsReceived,
   } = useUserContext();
@@ -233,12 +232,7 @@ const UserCard = ({ user }: { user: TUser }) => {
                 handleUnfriending(currentUser, user, friends, setFriends);
               }
               if (currentUserSentFriendRequest && currentUser && currentUserUpdated) {
-                handleRemoveFriendRequest(
-                  user,
-                  undefined,
-                  friendRequestsSent,
-                  setFriendRequestsSent
-                );
+                handleRemoveFriendRequest(user);
               }
               if (currentUserReceivedFriendRequest) {
                 setCurrentOtherUser(user);
