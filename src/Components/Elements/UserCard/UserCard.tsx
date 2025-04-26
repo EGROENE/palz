@@ -32,9 +32,6 @@ const UserCard = ({ user }: { user: TUser }) => {
     useChatContext();
 
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
-  const currentUserUpdated: TUser | undefined =
-    allUsers && allUsers.filter((user) => user._id === currentUser?._id)[0];
-
   const currentUserReceivedFriendRequest =
     user._id && friendRequestsReceived && friendRequestsReceived.includes(user._id);
 
@@ -231,7 +228,7 @@ const UserCard = ({ user }: { user: TUser }) => {
               if (currentUserAndUserAreFriends) {
                 handleUnfriending(currentUser, user, friends, setFriends);
               }
-              if (currentUserSentFriendRequest && currentUser && currentUserUpdated) {
+              if (currentUserSentFriendRequest && currentUser) {
                 handleRemoveFriendRequest(user);
               }
               if (currentUserReceivedFriendRequest) {
