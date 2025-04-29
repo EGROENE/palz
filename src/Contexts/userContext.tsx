@@ -673,37 +673,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
-  const addToSenderFriendsMutation = useMutation({
-    mutationFn: ({ sender, receiver }: { sender: TUser; receiver: TUser }) =>
-      Requests.addFriendToFriendsArray(sender, receiver),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        const receiver = variables.receiver;
-        const sender = variables.sender;
-        addToReceiverFriendsMutation.mutate({ receiver, sender });
-      }
-    },
-    onError: (error, variables) => {
-      console.log(error);
-      toast.error("Could not accept friend request. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-
-      // Revert surface-level states (remove sender from friends, add sender back to friendRequestsReceived):
-      if (friends) {
-        setFriends(friends.filter((friend) => friend !== variables.sender._id));
-      }
-
-      if (friendRequestsReceived && variables.sender._id) {
-        setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
-      }
-    },
-  });
-
   const resetFriendsAfterFailedAcceptedFriendRequest = (
     userOne: TUser,
     userTwo: TUser
@@ -741,6 +710,44 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       });
     }
   };
+
+  const addToSenderFriendsMutation = useMutation({
+    mutationFn: ({ sender, receiver }: { sender: TUser; receiver: TUser }) =>
+      Requests.addFriendToFriendsArray(sender, receiver),
+    onSuccess: (data, variables) => {
+      if (data.ok) {
+        const receiver = variables.receiver;
+        const sender = variables.sender;
+        addToReceiverFriendsMutation.mutate({ receiver, sender });
+      }
+    },
+    onError: (error, variables) => {
+      console.log(error);
+      toast.error("Could not accept friend request. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+
+      resetFriendsAfterFailedAcceptedFriendRequest(variables.sender, variables.receiver);
+
+      resetFriendRequestsAfterFailedAcceptedFriendRequest(
+        variables.sender,
+        variables.receiver
+      );
+
+      // Revert surface-level states (remove sender from friends, add sender back to friendRequestsReceived):
+      if (friends) {
+        setFriends(friends.filter((friend) => friend !== variables.sender._id));
+      }
+
+      if (friendRequestsReceived && variables.sender._id) {
+        setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
+      }
+    },
+  });
 
   const handleAddToReceiverFriendsFail = (
     variables: {
