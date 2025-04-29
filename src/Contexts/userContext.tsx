@@ -368,24 +368,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         const sender = variables.sender;
         const recipient = variables.recipient;
         receiveFriendRequestMutation.mutate({ sender, recipient });
+      } else {
+        toast.error("Couldn't send request. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
     },
-    onError: (error, variables) => {
-      console.log(error);
-      // Optimistic rendering: if request fails, remove recipient from friendRequestsSent
-      if (variables.recipient._id && friendRequestsSent) {
-        setFriendRequestsSent(
-          friendRequestsSent.filter((id) => id !== variables.recipient._id)
-        );
-      }
-      toast.error("Couldn't send request. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
+    onSettled: () => setIsLoading(false),
   });
 
   const handleReceiveFriendRequestFail = (
