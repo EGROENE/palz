@@ -33,8 +33,6 @@ const FriendRequests = () => {
     userCreatedAccount,
     logout,
     currentUser,
-    friends,
-    setFriends,
     fetchAllUsersQuery,
   } = useUserContext();
 
@@ -278,14 +276,7 @@ const FriendRequests = () => {
                           buttonOneText="Accept"
                           buttonOneLink={null}
                           buttonOneHandler={handleAcceptFriendRequest}
-                          buttonOneHandlerParams={[
-                            user,
-                            currentUser,
-                            friendRequestsReceived,
-                            setFriendRequestsReceived,
-                            friends,
-                            setFriends,
-                          ]}
+                          buttonOneHandlerParams={[user, currentUser]}
                           buttonOneHandlerNeedsEventParam={true}
                           buttonOneIsDisabled={isLoading}
                           renderButtonTwo={true}

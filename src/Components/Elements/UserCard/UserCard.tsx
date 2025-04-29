@@ -160,14 +160,7 @@ const UserCard = ({ user }: { user: TUser }) => {
             handlerOneNeedsEventParam={true}
             buttonTwoText="Accept"
             buttonTwoHandler={handleAcceptFriendRequest}
-            buttonTwoHandlerParams={[
-              currentOtherUser,
-              currentUser,
-              friendRequestsReceived,
-              setFriendRequestsReceived,
-              friends,
-              setFriends,
-            ]}
+            buttonTwoHandlerParams={[currentOtherUser, currentUser]}
             handlerTwoNeedsEventParam={true}
             closeHandler={setShowFriendRequestResponseOptions}
           />
