@@ -558,7 +558,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         Requests.deleteFriendFromFriendsArray(variables.recipient, variables.sender),
         Requests.addToFriendRequestsReceived(variables.sender, variables.recipient),
         Requests.addToFriendRequestsSent(variables.sender, variables.recipient),
-      ]).catch((error) => console.log(error));
+      ]).catch((error) => {
+        console.log(error);
+        handleRemoveReceivedFriendRequestFail(error, variables);
+      });
 
       toast.error("Could not accept friend request. Please try again.", {
         style: {
