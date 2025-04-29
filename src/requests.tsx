@@ -656,10 +656,6 @@ const removeFromFriendRequestsReceived = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  /* const updatedFriendRequestsArray = recipient?.friendRequestsReceived.filter(
-    (id) => id !== senderID
-  ); */
-
   const getRaw = () => {
     return JSON.stringify({
       "friendRequestsReceived": recipient?.friendRequestsReceived.filter(
@@ -708,12 +704,6 @@ const addFriendToFriendsArray = (user: TUser, friend: TUser): Promise<Response> 
   myHeaders.append("Content-Type", "application/json");
 
   let updatedFriendsArray = friend._id && user?.friends.concat(friend._id);
-  /* if (user?.friends) {
-    for (const existingFriendID of user.friendRequestsSent) {
-      updatedFriendsArray.push(existingFriendID);
-    }
-  } */
-  //updatedFriendsArray.push(friend);
 
   var raw = JSON.stringify({
     "friends": updatedFriendsArray,
