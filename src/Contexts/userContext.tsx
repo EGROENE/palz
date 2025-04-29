@@ -382,14 +382,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
-  const handleReceiveFriendRequestFail = (
-    error: Error,
-    variables: {
-      sender: TUser;
-      recipient: TUser;
-    }
-  ) => {
-    console.log(error);
+  const handleReceiveFriendRequestFail = (variables: {
+    sender: TUser;
+    recipient: TUser;
+  }) => {
     if (variables.recipient._id && friendRequestsSent) {
       // Optimistic rendering: if request fails, remove recipient from friendRequestsSent:
       setFriendRequestsSent(
@@ -439,13 +435,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     },
                   });
                 })
-                .catch((error) => handleReceiveFriendRequestFail(error, variables))
+                .catch((error) => {
+                  console.log(error);
+                  handleReceiveFriendRequestFail(variables);
+                })
             )
-            .catch((error) => handleReceiveFriendRequestFail(error, variables));
+            .catch((error) => {
+              console.log(error);
+              handleReceiveFriendRequestFail(variables);
+            });
         }
       }
     },
-    onError: (error, variables) => handleReceiveFriendRequestFail(error, variables),
+    onError: (error, variables) => {
+      console.log(error);
+      handleReceiveFriendRequestFail(variables);
+    },
     onSettled: () => setIsLoading(false),
   });
 
@@ -494,10 +499,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (variables.event === "reject-request") {
-      /* if (setFriendRequestsReceived && friendRequestsReceived && variables.sender._id) {
-        setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
-      } */
-
       Promise.all([
         Requests.addToFriendRequestsSent(variables.sender, variables.recipient),
         Requests.addToFriendRequestsReceived(variables.sender, variables.recipient),
@@ -542,15 +543,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
-  const handleRemoveReceivedFriendRequestFail = (
-    error: Error,
-    variables: {
-      sender: TUser;
-      recipient: TUser;
-      event: "accept-request" | "retract-request" | "reject-request";
-    }
-  ) => {
-    console.log(error);
+  const handleRemoveReceivedFriendRequestFail = (variables: {
+    sender: TUser;
+    recipient: TUser;
+    event: "accept-request" | "retract-request" | "reject-request";
+  }) => {
     if (variables.event === "accept-request") {
       // Remove sender & receiver from each other's 'friends' array, add back to 'received' array:
       Promise.all([
@@ -560,8 +557,29 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         Requests.addToFriendRequestsSent(variables.sender, variables.recipient),
       ]).catch((error) => {
         console.log(error);
-        handleRemoveReceivedFriendRequestFail(error, variables);
+        handleRemoveReceivedFriendRequestFail(variables);
       });
+      /* .finally(() => {
+          // Refresh currentUser
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id)
+              .then((res) => {
+                res
+                  .json()
+                  .then((user) => {
+                    setCurrentUser(user);
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                    handleRemoveReceivedFriendRequestFail(variables);
+                  });
+              })
+              .catch((error) => {
+                console.log(error);
+                handleRemoveReceivedFriendRequestFail(variables);
+              });
+          }
+        }); */
 
       toast.error("Could not accept friend request. Please try again.", {
         style: {
@@ -570,23 +588,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           border: "2px solid red",
         },
       });
-
-      // Revert surface-level state values (remove sender from 'friends', add sender back to friendRequestsReceived):
-      if (friends) {
-        setFriends(friends.filter((friend) => friend !== variables.sender._id));
-      }
-
-      if (friendRequestsReceived && variables.sender._id) {
-        setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
-      }
     }
 
     if (variables.event === "retract-request") {
-      const recipient = variables.recipient;
-      // Optimistic rendering: add recipient back to friendRequestsSent if request fails
-      if (setFriendRequestsSent && friendRequestsSent && recipient._id) {
-        setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
-      }
       toast.error("Could not retract request. Please try again.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -604,10 +608,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           border: "2px solid red",
         },
       });
-
-      if (setFriendRequestsReceived && friendRequestsReceived && variables.sender._id) {
-        setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
-      }
     }
   };
 
@@ -669,13 +669,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     );
                   }
                 })
-                .catch((error) => handleRemoveReceivedFriendRequestFail(error, variables))
+                .catch((error) => {
+                  console.log(error);
+                  handleRemoveReceivedFriendRequestFail(variables);
+                })
             )
-            .catch((error) => handleRemoveReceivedFriendRequestFail(error, variables));
+            .catch((error) => {
+              console.log(error);
+              handleRemoveReceivedFriendRequestFail(variables);
+            });
         }
+      } else {
+        handleRemoveReceivedFriendRequestFail(variables);
       }
     },
-    onError: (error, variables) => handleReceiveFriendRequestFail(error, variables),
+    onError: (error) => console.log(error),
     onSettled: () => setIsLoading(false),
   });
 
@@ -1346,18 +1354,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e?.preventDefault();
     setIsLoading(true);
 
+    // Also put in handleRejectFR
     if (showFriendRequestResponseOptions) {
       setShowFriendRequestResponseOptions(false);
-    }
-
-    if (friends && setFriends && sender._id) {
-      setFriends(friends.concat(sender._id));
-    }
-
-    if (friendRequestsReceived && setFriendRequestsReceived) {
-      setFriendRequestsReceived(
-        friendRequestsReceived.filter((userID) => userID !== sender._id)
-      );
     }
 
     addToSenderFriendsMutation.mutate({ sender, receiver });
@@ -1375,16 +1374,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e?.preventDefault();
 
     setIsLoading(true);
-
-    if (showFriendRequestResponseOptions) {
-      setShowFriendRequestResponseOptions(false);
-    }
-
-    if (setFriendRequestsReceived && friendRequestsReceived) {
-      setFriendRequestsReceived(
-        friendRequestsReceived.filter((userID) => userID !== sender._id)
-      );
-    }
 
     const event = "reject-request";
     const recipient = receiver;
