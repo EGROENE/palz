@@ -66,45 +66,46 @@ const UserCard = ({ user }: { user: TUser }) => {
       ? matchingCountryObject.abbreviation
       : undefined;
 
+  const getUserIsMessageable = (): boolean => {
+    const currentUserIsFriendOfFriend: boolean =
+      currentUser && currentUser._id
+        ? getCurrentOtherUserFriends(user).some(
+            (otherUserFriend) =>
+              currentUser._id && otherUserFriend.friends.includes(currentUser._id)
+          )
+        : false;
+
+    if (currentUser && currentUser._id) {
+      if (
+        user.whoCanMessage === "anyone" ||
+        (user.whoCanMessage === "friends" && user.friends.includes(currentUser._id)) ||
+        (user.whoCanMessage === "friends of friends" && currentUserIsFriendOfFriend)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const currentUserAndUserAreFriends =
+    currentUser &&
+    currentUser._id &&
+    user &&
+    user._id &&
+    friends?.includes(user._id) &&
+    user.friends.includes(currentUser._id);
+
+  const userIsMessageable: boolean = getUserIsMessageable();
+
+  const noConnectionBetweenUserAndCurrentUser =
+    !currentUserAndUserAreFriends &&
+    !currentUserSentFriendRequest &&
+    !currentUserReceivedFriendRequest;
+
   const getButtonOneText = (): JSX.Element | string => {
     if (currentUserReceivedFriendRequest) {
       return "Accept/Decline Request";
     }
-
-    const currentUserAndUserAreFriends =
-      currentUser &&
-      currentUser._id &&
-      user &&
-      user._id &&
-      friends?.includes(user._id) &&
-      user.friends.includes(currentUser._id);
-
-    const noConnectionBetweenUserAndCurrentUser =
-      !currentUserAndUserAreFriends &&
-      !currentUserSentFriendRequest &&
-      !currentUserReceivedFriendRequest;
-
-    const getUserIsMessageable = (): boolean => {
-      const currentUserIsFriendOfFriend: boolean =
-        currentUser && currentUser._id
-          ? getCurrentOtherUserFriends(user).some(
-              (otherUserFriend) =>
-                currentUser._id && otherUserFriend.friends.includes(currentUser._id)
-            )
-          : false;
-
-      if (currentUser && currentUser._id) {
-        if (
-          user.whoCanMessage === "anyone" ||
-          (user.whoCanMessage === "friends" && user.friends.includes(currentUser._id)) ||
-          (user.whoCanMessage === "friends of friends" && currentUserIsFriendOfFriend)
-        ) {
-          return true;
-        }
-      }
-      return false;
-    };
-    const userIsMessageable: boolean = getUserIsMessageable();
 
     // If currentUser has sent user friend request:
     if (currentUserSentFriendRequest) {
