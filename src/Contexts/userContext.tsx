@@ -751,10 +751,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   // Rename to something universeller, use in addToSenderFriendsMutation, too
-  const handleAddToReceiverFriendsFail = (variables: {
+  const handleAddToFriendsFail = (variables: {
     receiver: TUser;
     sender: TUser;
-  }) => {
+  }): void => {
     toast.error("Could not accept friend request. Please try again.", {
       style: {
         background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -769,15 +769,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       variables.sender,
       variables.receiver
     );
-
-    // Revert surface-level states (remove sender from friends, add sender back to friendRequestsReceived):
-    if (friends) {
-      setFriends(friends.filter((friend) => friend !== variables.sender._id));
-    }
-
-    if (friendRequestsReceived && variables.sender._id) {
-      setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
-    }
   };
 
   // On success of mutation to add friend to sender's list, run this; if this fails, reset everything
@@ -801,17 +792,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 .json()
                 .then((user) => setCurrentUser(user))
                 .catch((error) => {
-                  handleAddToReceiverFriendsFail(variables);
+                  handleAddToFriendsFail(variables);
                   console.log(error);
                 })
             )
             .catch((error) => {
-              handleAddToReceiverFriendsFail(variables);
+              handleAddToFriendsFail(variables);
               console.log(error);
             });
         }
       } else {
-        handleAddToReceiverFriendsFail(variables);
+        handleAddToFriendsFail(variables);
       }
     },
     onError: (error) => console.log(error),
