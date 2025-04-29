@@ -704,6 +704,25 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  const resetFriendsAfterFailedAcceptedFriendRequest = (
+    userOne: TUser,
+    userTwo: TUser
+  ): void => {
+    if (userTwo._id && userOne.friends.includes(userTwo._id)) {
+      Requests.deleteFriendFromFriendsArray(userOne, userTwo).catch((error) => {
+        console.log(error);
+        resetFriendsAfterFailedAcceptedFriendRequest(userOne, userTwo);
+      });
+    }
+
+    if (userOne._id && userTwo.friends.includes(userOne._id)) {
+      Requests.deleteFriendFromFriendsArray(userTwo, userOne).catch((error) => {
+        console.log(error);
+        resetFriendsAfterFailedAcceptedFriendRequest(userTwo, userOne);
+      });
+    }
+  };
+
   const handleAddToReceiverFriendsFail = (
     variables: {
       receiver: TUser;
@@ -719,13 +738,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         border: "2px solid red",
       },
     });
-    const deleteFromUserFriends = () =>
-      Requests.deleteFriendFromFriendsArray(variables?.sender, variables.receiver).catch(
-        (error) => {
-          console.log(error);
-          deleteFromUserFriends();
-        }
-      );
+
+    resetFriendsAfterFailedAcceptedFriendRequest(variables.sender, variables.receiver);
 
     // Revert surface-level states (remove sender from friends, add sender back to friendRequestsReceived):
     if (friends) {
