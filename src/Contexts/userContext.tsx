@@ -521,17 +521,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     mutationFn: ({
       sender,
       recipient,
+      // @ts-ignore: event is not needed in mutationFn, but is needed in onSuccess callback
       event,
     }: {
       sender: TUser;
       recipient: TUser;
       event: "accept-request" | "retract-request" | "reject-request";
-    }) => {
-      // Yes, this is stupid logic, but 'event' has to be used to avoid a TS error
-      return event
-        ? Requests.removeFromFriendRequestsSent(sender, recipient)
-        : Requests.removeFromFriendRequestsSent(sender, recipient);
-    },
+    }) => Requests.removeFromFriendRequestsSent(sender, recipient),
     onSuccess: (data, variables) => {
       if (data.ok) {
         const sender = variables.sender;
