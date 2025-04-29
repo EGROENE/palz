@@ -718,39 +718,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const addToSenderFriendsMutation = useMutation({
-    mutationFn: ({ sender, receiver }: { sender: TUser; receiver: TUser }) =>
-      Requests.addFriendToFriendsArray(sender, receiver),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        const receiver = variables.receiver;
-        const sender = variables.sender;
-        addToReceiverFriendsMutation.mutate({ receiver, sender });
-      } else {
-        toast.error("Could not accept friend request. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-
-        resetFriendsAfterFailedAcceptedFriendRequest(
-          variables.sender,
-          variables.receiver
-        );
-
-        resetFriendRequestsAfterFailedAcceptedFriendRequest(
-          variables.sender,
-          variables.receiver
-        );
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
-
-  // Rename to something universeller, use in addToSenderFriendsMutation, too
   const handleAddToFriendsFail = (variables: {
     receiver: TUser;
     sender: TUser;
@@ -770,6 +737,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       variables.receiver
     );
   };
+
+  const addToSenderFriendsMutation = useMutation({
+    mutationFn: ({ sender, receiver }: { sender: TUser; receiver: TUser }) =>
+      Requests.addFriendToFriendsArray(sender, receiver),
+    onSuccess: (data, variables) => {
+      if (data.ok) {
+        const receiver = variables.receiver;
+        const sender = variables.sender;
+        addToReceiverFriendsMutation.mutate({ receiver, sender });
+      } else {
+        handleAddToFriendsFail(variables);
+      }
+    },
+    onError: (error) => console.log(error),
+    onSettled: () => setIsLoading(false),
+  });
 
   // On success of mutation to add friend to sender's list, run this; if this fails, reset everything
   const addToReceiverFriendsMutation = useMutation({
