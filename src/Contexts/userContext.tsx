@@ -1331,42 +1331,36 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleUnfriending = (user: TUser, friend: TUser): void => {
-    Requests.deleteFriendFromFriendsArray(user, friend)
+    Promise.all([
+      Requests.deleteFriendFromFriendsArray(user, friend),
+      Requests.deleteFriendFromFriendsArray(friend, user),
+    ])
       .then((res) => {
-        if (res.ok) {
-          Requests.deleteFriendFromFriendsArray(friend, user).then((res) => {
-            if (currentUser && currentUser._id && res.ok) {
-              Requests.getUserByID(currentUser._id)
-                .then((res) =>
-                  res
-                    .json()
-                    .then((user) => {
-                      setCurrentUser(user);
-                      toast(
-                        `You have unfriended ${friend.firstName} ${friend.lastName}.`,
-                        {
-                          style: {
-                            background:
-                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                            color: theme === "dark" ? "black" : "white",
-                            border: "2px solid red",
-                          },
-                        }
-                      );
-                    })
-                    .catch((error) => {
-                      console.log(error);
-                      handleUnfriendingFail(friend);
-                    })
-                )
-                .catch((error) => {
-                  console.log(error);
-                  handleUnfriendingFail(friend);
-                });
-            } else {
-              handleUnfriendingFail(friend);
-            }
-          });
+        if (currentUser && currentUser._id && res[0].ok && res[1].ok) {
+          Requests.getUserByID(currentUser._id)
+            .then((res) => {
+              if (res.ok) {
+                res
+                  .json()
+                  .then((user) => {
+                    setCurrentUser(user);
+                    toast(`You have unfriended ${friend.firstName} ${friend.lastName}.`, {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    });
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                    handleUnfriendingFail(friend);
+                  });
+              } else {
+                handleUnfriendingFail(friend);
+              }
+            })
+            .catch((error) => console.log(error));
         } else {
           handleUnfriendingFail(friend);
         }
