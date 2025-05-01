@@ -260,8 +260,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers: [],
   };
 
-  const handleUpdateProfileImageFail = (error: Error): void => {
-    console.log(error);
+  const handleUpdateProfileImageFail = (): void => {
     toast.error(
       "Could not update profile image. Please make sure the image is 50MB or less & try again.",
       {
@@ -300,13 +299,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     },
                   });
                 })
-                .catch((error) => handleUpdateProfileImageFail(error));
+                .catch((error) => {
+                  console.log(error);
+                  handleUpdateProfileImageFail();
+                });
             })
-            .catch((error) => handleUpdateProfileImageFail(error));
+            .catch((error) => {
+              console.log(error);
+              handleUpdateProfileImageFail();
+            });
         }
+      } else {
+        handleUpdateProfileImageFail();
       }
     },
-    onError: (error) => handleUpdateProfileImageFail(error),
+    onError: (error) => console.log(error),
   });
 
   const removeProfileImageMutation = useMutation({
