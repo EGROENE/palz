@@ -397,11 +397,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     recipient: TUser;
   }) => {
     if (variables.recipient._id && friendRequestsSent) {
-      // Optimistic rendering: if request fails, remove recipient from friendRequestsSent:
-      setFriendRequestsSent(
-        friendRequestsSent.filter((id) => id !== variables.recipient._id)
-      );
-
       // If FR was sent, but recipient didn't receive it (request failed), delete sent FR from sender:
       const removeSentFriendRequest = () =>
         Requests.removeFromFriendRequestsSent(
