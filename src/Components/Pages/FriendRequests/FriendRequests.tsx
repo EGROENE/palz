@@ -147,8 +147,6 @@ const FriendRequests = () => {
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
-  //const currentUser: TUser = allUsers.filter((user) => user.username === username)[0];
-
   const userHasPendingRequests: boolean =
     currentUser &&
     (currentUser.friendRequestsReceived.length > 0 ||
