@@ -302,10 +302,6 @@ export type TUserContext = {
   handleRejectFriendRequest: (
     sender: TUser,
     receiver: TUser,
-    friendRequestsReceived?: string[],
-    setFriendRequestsReceived?: React.Dispatch<
-      React.SetStateAction<string[] | undefined>
-    >,
     e?: React.ChangeEvent<HTMLInputElement>
   ) => void;
   accountDeletionInProgress: boolean;

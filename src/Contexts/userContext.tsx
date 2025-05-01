@@ -1359,10 +1359,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleRejectFriendRequest = (
     sender: TUser,
     receiver: TUser,
-    friendRequestsReceived?: string[],
-    setFriendRequestsReceived?: React.Dispatch<
-      React.SetStateAction<string[] | undefined>
-    >,
     e?: React.ChangeEvent<HTMLInputElement>
   ) => {
     e?.preventDefault();
