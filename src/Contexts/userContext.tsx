@@ -836,9 +836,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (currentUser) {
-      setFriendRequestsSent(currentUser?.friendRequestsSent);
-      setFriendRequestsReceived(currentUser?.friendRequestsReceived);
-      setFriends(currentUser?.friends);
+      setFriendRequestsSent(currentUser.friendRequestsSent);
+      setFriendRequestsReceived(currentUser.friendRequestsReceived);
+      setFriends(currentUser.friends);
+      setBlockedUsers(currentUser.blockedUsers)
     }
   }, [currentUser]);
 
