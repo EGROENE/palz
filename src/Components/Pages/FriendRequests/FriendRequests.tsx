@@ -52,6 +52,44 @@ const FriendRequests = () => {
     setDisplayedItemsCount(4);
     setDisplayedItemsCountInterval(4);
     window.scrollTo(0, 0);
+
+    if (userCreatedAccount === null || !currentUser) {
+      logout();
+      toast.error("Please log in before accessing this page.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    }
+
+    // Determine if sent/received requests should be shown:
+    if (
+      friendRequestsReceived &&
+      friendRequestsSent &&
+      (friendRequestsReceived.length > 0 || friendRequestsSent.length > 0)
+    ) {
+      if (friendRequestsSent.length > 0) {
+        setRequestsVisible("sent");
+      } else {
+        setRequestsVisible("received");
+      }
+    }
+
+    if (showSidebar) {
+      setShowSidebar(false);
+    }
+
+    const themeColors: TThemeColor[] = [
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
   }, []);
 
   // Upon change of requestsVisible, set displayedItems & displayedItemsFiltered arrays:
@@ -117,46 +155,6 @@ const FriendRequests = () => {
       currentUser.friendRequestsSent.length > 0)
       ? true
       : false;
-
-  useEffect(() => {
-    if (userCreatedAccount === null || !currentUser) {
-      logout();
-      toast.error("Please log in before accessing this page.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    }
-
-    // Determine if sent/received requests should be shown:
-    if (
-      friendRequestsReceived &&
-      friendRequestsSent &&
-      (friendRequestsReceived.length > 0 || friendRequestsSent.length > 0)
-    ) {
-      if (friendRequestsSent.length > 0) {
-        setRequestsVisible("sent");
-      } else {
-        setRequestsVisible("received");
-      }
-    }
-
-    if (showSidebar) {
-      setShowSidebar(false);
-    }
-
-    const themeColors: TThemeColor[] = [
-      "var(--primary-color)",
-      "var(--secondary-color)",
-      "var(--tertiary-color)",
-      "var(--fourth-color)",
-      "var(--fifth-color)",
-    ];
-    const randomNumber = Math.floor(Math.random() * themeColors.length);
-    setRandomColor(themeColors[randomNumber]);
-  }, []);
 
   const friendRequestsSentFiltered: string[] = friendRequestsSent
     ? Methods.removeDuplicatesFromArray(friendRequestsSent)
