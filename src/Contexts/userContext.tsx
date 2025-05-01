@@ -1469,8 +1469,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const handleUnblockUserFail = (blockee: TUser, error: Error): void => {
-    console.log(error);
+  const handleUnblockUserFail = (blockee: TUser): void => {
 
     if (blockedUsers && setBlockedUsers) {
       setBlockedUsers(blockedUsers);
@@ -1515,12 +1514,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                       },
                     });
                   })
-                  .catch((error) => handleUnblockUserFail(blockee, error))
+                  .catch((error) => {
+                    console.log(error)
+                    handleUnblockUserFail(blockee)})
               )
-              .catch((error) => handleUnblockUserFail(blockee, error));
+              .catch((error) => {
+                console.log(error)
+                handleUnblockUserFail(blockee)});
           }
         })
-        .catch((error) => handleUnblockUserFail(blockee, error))
+        .catch((error) => {
+          console.log(error)
+          handleUnblockUserFail(blockee)})
         .finally(() => setIsLoading(false));
     }
   };
