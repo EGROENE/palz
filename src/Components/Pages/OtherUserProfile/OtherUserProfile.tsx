@@ -34,7 +34,6 @@ const OtherUserProfile = () => {
     blockedUsers,
     setBlockedUsers,
     friendRequestsReceived,
-    setFriendRequestsReceived,
     handleUnfriending,
     friends,
     setFriends,
@@ -667,12 +666,7 @@ const OtherUserProfile = () => {
             header={`Respond to friend request from ${currentOtherUser.firstName} ${currentOtherUser.lastName} (${currentOtherUser.username})`}
             buttonOneText="Decline"
             buttonOneHandler={handleRejectFriendRequest}
-            buttonOneHandlerParams={[
-              currentOtherUser,
-              currentUser,
-              friendRequestsReceived,
-              setFriendRequestsReceived,
-            ]}
+            buttonOneHandlerParams={[currentOtherUser, currentUser]}
             handlerOneNeedsEventParam={true}
             buttonTwoText="Accept"
             buttonTwoHandler={handleAcceptFriendRequest}

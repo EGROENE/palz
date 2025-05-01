@@ -26,7 +26,6 @@ const UserCard = ({ user }: { user: TUser }) => {
     setCurrentOtherUser,
     friendRequestsSent,
     friendRequestsReceived,
-    setFriendRequestsReceived,
   } = useUserContext();
   const { getCurrentOtherUserFriends, getStartOrOpenChatWithUserHandler } =
     useChatContext();
@@ -151,12 +150,7 @@ const UserCard = ({ user }: { user: TUser }) => {
             header={`Respond to friend request from ${currentOtherUser.firstName} ${currentOtherUser.lastName} (${currentOtherUser.username})`}
             buttonOneText="Decline"
             buttonOneHandler={handleRejectFriendRequest}
-            buttonOneHandlerParams={[
-              currentOtherUser,
-              currentUser,
-              friendRequestsReceived,
-              setFriendRequestsReceived,
-            ]}
+            buttonOneHandlerParams={[currentOtherUser, currentUser]}
             handlerOneNeedsEventParam={true}
             buttonTwoText="Accept"
             buttonTwoHandler={handleAcceptFriendRequest}

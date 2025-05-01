@@ -29,7 +29,6 @@ const FriendRequests = () => {
     setCurrentOtherUser,
     friendRequestsSent,
     friendRequestsReceived,
-    setFriendRequestsReceived,
     userCreatedAccount,
     logout,
     currentUser,
@@ -282,12 +281,7 @@ const FriendRequests = () => {
                           renderButtonTwo={true}
                           buttonTwoText="Reject"
                           buttonTwoHandler={handleRejectFriendRequest}
-                          buttonTwoHandlerParams={[
-                            user,
-                            currentUser,
-                            friendRequestsReceived,
-                            setFriendRequestsReceived,
-                          ]}
+                          buttonTwoHandlerParams={[user, currentUser]}
                           buttonTwoHandlerNeedsEventParam={true}
                           buttonTwoIsDisabled={isLoading}
                           buttonTwoLink={null}
