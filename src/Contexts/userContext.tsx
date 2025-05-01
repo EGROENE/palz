@@ -1431,37 +1431,35 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (blockee._id) {
       Requests.removeFromBlockedUsers(blocker, blockee._id)
-        .then(() => {
-          if (currentUser && currentUser._id) {
+        .then((res) => {
+          if (currentUser && currentUser._id && res.ok) {
             Requests.getUserByID(currentUser._id)
-              .then((res) =>
-                res
-                  .json()
-                  .then((user) => {
-                    setCurrentUser(user);
-                    toast.success(`Unblocked ${blockee.username}.`, {
-                      style: {
-                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                        color: theme === "dark" ? "black" : "white",
-                        border: "2px solid green",
-                      },
-                    });
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                    handleUnblockUserFail(blockee);
-                  })
-              )
-              .catch((error) => {
-                console.log(error);
-                handleUnblockUserFail(blockee);
-              });
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      setCurrentUser(user);
+                      toast.success(`Unblocked ${blockee.username}.`, {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid green",
+                        },
+                      });
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  handleUnblockUserFail(blockee);
+                }
+              })
+              .catch((error) => console.log(error));
+          } else {
+            handleUnblockUserFail(blockee);
           }
         })
-        .catch((error) => {
-          console.log(error);
-          handleUnblockUserFail(blockee);
-        })
+        .catch((error) => console.log(error))
         .finally(() => setIsLoading(false));
     }
   };
