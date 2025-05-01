@@ -5,6 +5,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { TThemeColor } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
+import Methods from "../../../methods";
 
 const Sidebar = () => {
   const { showSidebar, setShowSidebar, theme, currentRoute } = useMainContext();
@@ -130,7 +131,7 @@ const Sidebar = () => {
                 Friend Requests{" "}
                 {friendRequestsReceived && friendRequestsReceived.length > 0 && (
                   <span className="notifications-count">
-                    {friendRequestsReceived.length}
+                    {Methods.removeDuplicatesFromArray(friendRequestsReceived).length}
                   </span>
                 )}
               </>
