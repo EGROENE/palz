@@ -1007,41 +1007,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     // Handle input pw on login form:
     if (formType === "login") {
-      // Get current user (if username/email has been entered) so that its password can be compared to input pw:
-      const currentUser: TUser | null =
-        loginMethod === "username"
-          ? allUsers
-            ? allUsers.filter((user) => user.username === username)[0]
-            : null
-          : allUsers
-          ? allUsers.filter((user) => user.emailAddress === emailAddress)[0]
-          : null;
-
       // If currentUser exists & there is non-whitespace input in password field:
-      if (currentUser) {
-        // If input pw is empty string...
-        if (inputPWNoWhitespaces === "") {
-          setPasswordError("Please fill out this field");
-          // If input pw isn't empty string & is unequal to current user's pw, and input pw isn't empty string...
-        } else if (
-          currentUser.password !== inputPWNoWhitespaces &&
-          inputPWNoWhitespaces !== ""
-        ) {
-          setPasswordError("Invalid credentials");
-          // If input pw simply isn't valid...
-        } else if (!passwordIsValid(inputPWNoWhitespaces)) {
-          setPasswordError("Invalid password");
-          // If no error conditions are true, remove error message...
-        } else {
-          setPasswordError("");
-        }
-      }
-
-      // If user enters password w/o first having input username or email (can only check for validity)...
-      if (!currentUser) {
-        !passwordIsValid(inputPWNoWhitespaces)
-          ? setPasswordError("Invalid password")
-          : setPasswordError("");
+      // If input pw is empty string...
+      if (inputPWNoWhitespaces === "") {
+        setPasswordError("Please fill out this field");
+        // If input pw isn't empty string & is unequal to current user's pw, and input pw isn't empty string...
+      } else if (!passwordIsValid(inputPWNoWhitespaces)) {
+        setPasswordError("Invalid password");
+        // If no error conditions are true, remove error message...
+      } else {
+        setPasswordError("");
       }
       // Handle input pw on edit-user-info form:
     } else if (formType === "edit-user-info") {
