@@ -332,7 +332,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         Requests.getUserByID(currentUser._id)
           .then((res) =>
             res.json().then((user) => {
-              setCurrentOtherUser(user);
+              setCurrentUser(user);
               setProfileImage("");
               toast("Profile image removed", {
                 style: {
@@ -755,13 +755,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const handleBlockUserFail = (blockeeUsername: string | undefined): void => {
-    toast.error(`Unable to block ${blockeeUsername ? blockeeUsername : "user"}. Please try again.`, {
-      style: {
-        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-        color: theme === "dark" ? "black" : "white",
-        border: "2px solid red",
-      },
-    });
+    toast.error(
+      `Unable to block ${blockeeUsername ? blockeeUsername : "user"}. Please try again.`,
+      {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      }
+    );
   };
 
   const blockUserMutation = useMutation({
@@ -839,7 +842,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setFriendRequestsSent(currentUser.friendRequestsSent);
       setFriendRequestsReceived(currentUser.friendRequestsReceived);
       setFriends(currentUser.friends);
-      setBlockedUsers(currentUser.blockedUsers)
+      setBlockedUsers(currentUser.blockedUsers);
     }
   }, [currentUser]);
 
