@@ -288,12 +288,7 @@ export type TUserContext = {
   handleRemoveFriendRequest: (recipient: TUser, sender?: TUser) => void;
   showFriendRequestResponseOptions: boolean;
   setShowFriendRequestResponseOptions: React.Dispatch<React.SetStateAction<boolean>>;
-  handleUnfriending: (
-    user: TUser,
-    friend: TUser,
-    friends?: string[],
-    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
-  ) => void;
+  handleUnfriending: (user: TUser, friend: TUser) => void;
   handleAcceptFriendRequest: (
     sender: TUser,
     receiver: TUser,

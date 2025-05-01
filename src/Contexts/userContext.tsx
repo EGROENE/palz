@@ -1383,12 +1383,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const handleUnfriending = (
-    user: TUser,
-    friend: TUser,
-    friends?: string[],
-    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
-  ): void => {
+  const handleUnfriending = (user: TUser, friend: TUser): void => {
     Requests.deleteFriendFromFriendsArray(user, friend)
       .then((res) => {
         if (res.ok) {
