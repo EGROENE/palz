@@ -14,7 +14,6 @@ const UserCard = ({ user }: { user: TUser }) => {
   const { currentUser, allUsers } = useUserContext();
   const {
     friends,
-    setFriends,
     handleUnfriending,
     handleRejectFriendRequest,
     handleAcceptFriendRequest,
@@ -208,7 +207,7 @@ const UserCard = ({ user }: { user: TUser }) => {
             }
             onClick={() => {
               if (currentUserAndUserAreFriends) {
-                handleUnfriending(currentUser, user, friends, setFriends);
+                handleUnfriending(currentUser, user);
               }
               if (currentUserSentFriendRequest && currentUser) {
                 handleRemoveFriendRequest(user);

@@ -36,7 +36,6 @@ const OtherUserProfile = () => {
     friendRequestsReceived,
     handleUnfriending,
     friends,
-    setFriends,
     fetchAllUsersQuery,
   } = useUserContext();
   const allUsers = fetchAllUsersQuery.data;
@@ -226,7 +225,7 @@ const OtherUserProfile = () => {
     ),
     handler:
       currentUser && currentOtherUser
-        ? () => handleUnfriending(currentUser, currentOtherUser, friends, setFriends)
+        ? () => handleUnfriending(currentUser, currentOtherUser)
         : undefined,
     paramsIncludeEvent: false,
   };
