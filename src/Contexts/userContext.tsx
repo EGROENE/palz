@@ -754,14 +754,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
-  const handleBlockUserFail = (variables: {
-    blocker: TUser;
-    blockee: TUser;
-    areFriends: boolean;
-    hasSentFriendRequest: boolean;
-    hasReceivedFriendRequest: boolean;
-  }): void => {
-    toast.error(`Unable to block ${variables.blockee.username}. Please try again.`, {
+  const handleBlockUserFail = (blockeeUsername: string | undefined): void => {
+    toast.error(`Unable to block ${blockeeUsername ? blockeeUsername : "user"}. Please try again.`, {
       style: {
         background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
         color: theme === "dark" ? "black" : "white",
@@ -822,18 +816,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         },
                       });
                     } else {
-                      handleBlockUserFail(variables);
+                      handleBlockUserFail(variables.blockee.username);
                     }
                   })
                   .catch((error) => console.log(error));
               } else {
-                handleBlockUserFail(variables);
+                handleBlockUserFail(variables.blockee.username);
               }
             })
             .catch((error) => console.log(error));
         }
       } else {
-        handleBlockUserFail(variables);
+        handleBlockUserFail(variables.blockee.username);
       }
     },
     onError: (error) => console.log(error),
