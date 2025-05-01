@@ -579,58 +579,61 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       if (data.ok) {
         if (currentUser && currentUser._id) {
           Requests.getUserByID(currentUser._id)
-            .then((res) =>
-              res
-                .json()
-                .then((user) => {
-                  setCurrentUser(user);
-                  if (variables.event === "accept-request") {
-                    toast.success(
-                      `You are now friends with ${variables.sender.firstName} ${variables.sender.lastName}!`,
-                      {
-                        style: {
-                          background:
-                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                          color: theme === "dark" ? "black" : "white",
-                          border: "2px solid green",
-                        },
+            .then((res) => {
+              if (res.ok) {
+                res
+                  .json()
+                  .then((user) => {
+                    if (user) {
+                      setCurrentUser(user);
+                      if (variables.event === "accept-request") {
+                        toast.success(
+                          `You are now friends with ${variables.sender.firstName} ${variables.sender.lastName}!`,
+                          {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid green",
+                            },
+                          }
+                        );
                       }
-                    );
-                  }
 
-                  if (variables.event === "retract-request") {
-                    toast("Friend request retracted", {
-                      style: {
-                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                        color: theme === "dark" ? "black" : "white",
-                        border: "2px solid red",
-                      },
-                    });
-                  }
-
-                  if (variables.event === "reject-request") {
-                    toast(
-                      `Rejected friend request from ${variables.sender.firstName} ${variables.sender.lastName}.`,
-                      {
-                        style: {
-                          background:
-                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                          color: theme === "dark" ? "black" : "white",
-                          border: "2px solid red",
-                        },
+                      if (variables.event === "retract-request") {
+                        toast("Friend request retracted", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
                       }
-                    );
-                  }
-                })
-                .catch((error) => {
-                  console.log(error);
-                  handleRemoveFriendRequestFail(variables);
-                })
-            )
-            .catch((error) => {
-              console.log(error);
-              handleRemoveFriendRequestFail(variables);
-            });
+
+                      if (variables.event === "reject-request") {
+                        toast(
+                          `Rejected friend request from ${variables.sender.firstName} ${variables.sender.lastName}.`,
+                          {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid red",
+                            },
+                          }
+                        );
+                      }
+                    } else {
+                      handleRemoveFriendRequestFail(variables)
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              } else {
+                handleRemoveFriendRequestFail(variables);
+              }
+            })
+            .catch((error) => console.log(error));
         }
       } else {
         handleRemoveFriendRequestFail(variables);
