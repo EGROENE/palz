@@ -286,28 +286,31 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         if (currentUser && currentUser._id) {
           Requests.getUserByID(currentUser._id)
             .then((res) => {
-              res
-                .json()
-                .then((user) => {
-                  setCurrentUser(user);
-                  setProfileImage(variables.base64);
-                  toast.success("Profile image updated", {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid green",
-                    },
-                  });
-                })
-                .catch((error) => {
-                  console.log(error);
-                  handleUpdateProfileImageFail();
-                });
+              if (res.ok) {
+                res
+                  .json()
+                  .then((user) => {
+                    if (user) {
+                      setCurrentUser(user);
+                      setProfileImage(variables.base64);
+                      toast.success("Profile image updated", {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid green",
+                        },
+                      });
+                    } else {
+                      handleUpdateProfileImageFail();
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              } else {
+                handleUpdateProfileImageFail();
+              }
             })
-            .catch((error) => {
-              console.log(error);
-              handleUpdateProfileImageFail();
-            });
+            .catch((error) => console.log(error));
         }
       } else {
         handleUpdateProfileImageFail();
