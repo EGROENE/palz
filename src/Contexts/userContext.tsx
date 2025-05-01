@@ -806,37 +806,40 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       if (data.ok) {
         if (currentUser && currentUser._id) {
           Requests.getUserByID(currentUser._id)
-            .then((res) =>
-              res
-                .json()
-                .then((user) => {
-                  if (variables.areFriends) {
-                    handleUnfriending(variables.blocker, variables.blockee);
-                  }
-                  if (variables.hasSentFriendRequest) {
-                    handleRemoveFriendRequest(variables.blockee, variables.blocker);
-                  }
-                  if (variables.hasReceivedFriendRequest) {
-                    handleRemoveFriendRequest(variables.blocker, variables.blockee);
-                  }
-                  setCurrentUser(user);
-                  toast(`You have blocked ${variables.blockee.username}.`, {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid red",
-                    },
-                  });
-                })
-                .catch((error) => {
-                  console.log(error);
-                  handleBlockUserFail(variables);
-                })
-            )
-            .catch((error) => {
-              console.log(error);
-              handleBlockUserFail(variables);
-            });
+            .then((res) => {
+              if (res.ok) {
+                res
+                  .json()
+                  .then((user) => {
+                    if (user) {
+                      if (variables.areFriends) {
+                        handleUnfriending(variables.blocker, variables.blockee);
+                      }
+                      if (variables.hasSentFriendRequest) {
+                        handleRemoveFriendRequest(variables.blockee, variables.blocker);
+                      }
+                      if (variables.hasReceivedFriendRequest) {
+                        handleRemoveFriendRequest(variables.blocker, variables.blockee);
+                      }
+                      setCurrentUser(user);
+                      toast(`You have blocked ${variables.blockee.username}.`, {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid red",
+                        },
+                      });
+                    } else {
+                      handleBlockUserFail(variables);
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              } else {
+                handleBlockUserFail(variables);
+              }
+            })
+            .catch((error) => console.log(error));
         }
       } else {
         handleBlockUserFail(variables);
