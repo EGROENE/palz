@@ -806,17 +806,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
-  const handleBlockUserFail = (
-    variables: {
-      blocker: TUser;
-      blockee: TUser;
-      areFriends: boolean;
-      hasSentFriendRequest: boolean;
-      hasReceivedFriendRequest: boolean;
-    },
-    error: Error
-  ): void => {
-    console.log(error);
+  const handleBlockUserFail = (variables: {
+    blocker: TUser;
+    blockee: TUser;
+    areFriends: boolean;
+    hasSentFriendRequest: boolean;
+    hasReceivedFriendRequest: boolean;
+  }): void => {
     if (blockedUsers && setBlockedUsers) {
       setBlockedUsers(blockedUsers.filter((userID) => userID !== variables.blockee._id));
     }
@@ -878,13 +874,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     },
                   });
                 })
-                .catch((error) => handleBlockUserFail(variables, error))
+                .catch((error) => {
+                  console.log(error);
+                  handleBlockUserFail(variables);
+                })
             )
-            .catch((error) => handleBlockUserFail(variables, error));
+            .catch((error) => {
+              console.log(error);
+              handleBlockUserFail(variables);
+            });
         }
       }
     },
-    onError: (error, variables) => handleBlockUserFail(variables, error),
+    onError: (error, variables) => {
+      console.log(error);
+      handleBlockUserFail(variables);
+    },
     onSettled: () => setIsLoading(false),
   });
 
@@ -1470,7 +1475,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleUnblockUserFail = (blockee: TUser): void => {
-
     if (blockedUsers && setBlockedUsers) {
       setBlockedUsers(blockedUsers);
     }
@@ -1515,17 +1519,20 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     });
                   })
                   .catch((error) => {
-                    console.log(error)
-                    handleUnblockUserFail(blockee)})
+                    console.log(error);
+                    handleUnblockUserFail(blockee);
+                  })
               )
               .catch((error) => {
-                console.log(error)
-                handleUnblockUserFail(blockee)});
+                console.log(error);
+                handleUnblockUserFail(blockee);
+              });
           }
         })
         .catch((error) => {
-          console.log(error)
-          handleUnblockUserFail(blockee)})
+          console.log(error);
+          handleUnblockUserFail(blockee);
+        })
         .finally(() => setIsLoading(false));
     }
   };
