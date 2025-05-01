@@ -1370,11 +1370,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     retractSentFriendRequestMutation.mutate({ sender, recipient, event });
   };
 
-  const handleUnfriendingFail = (friend: TUser, error?: Error): void => {
-    if (error) {
-      console.log(error);
-    }
-
+  const handleUnfriendingFail = (friend: TUser): void => {
     toast.error(
       `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`,
       {
@@ -1385,9 +1381,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         },
       }
     );
-    if (friends && setFriends) {
-      setFriends(friends);
-    }
   };
 
   const handleUnfriending = (
@@ -1396,42 +1389,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     friends?: string[],
     setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ): void => {
-    if (friends && setFriends) {
-      setFriends(friends.filter((userID) => userID !== friend._id));
-    }
-
-    const removeUserFromFriendsFriendsArray = friend
-      ? Requests.deleteFriendFromFriendsArray(user, friend)
-      : undefined;
-
-    const removeFriendFromUserFriendsArray = user
-      ? Requests.deleteFriendFromFriendsArray(friend, user)
-      : undefined;
-
-    const promisesToAwait =
-      removeUserFromFriendsFriendsArray && removeFriendFromUserFriendsArray
-        ? [removeUserFromFriendsFriendsArray, removeFriendFromUserFriendsArray]
-        : undefined;
-
-    let allRequestsAreOK = true;
-
-    if (promisesToAwait) {
-      setIsLoading(true);
-      Promise.all(promisesToAwait)
-        .then(() => {
-          for (const promise of promisesToAwait) {
-            promise.then((response) => {
-              if (!response.ok) {
-                allRequestsAreOK = false;
-              }
-            });
-          }
-        })
-        .then(() => {
-          if (!allRequestsAreOK) {
-            handleUnfriendingFail(friend);
-          } else {
-            if (currentUser && currentUser._id) {
+    Requests.deleteFriendFromFriendsArray(user, friend)
+      .then((res) => {
+        if (res.ok) {
+          Requests.deleteFriendFromFriendsArray(friend, user).then((res) => {
+            if (currentUser && currentUser._id && res.ok) {
               Requests.getUserByID(currentUser._id)
                 .then((res) =>
                   res
@@ -1450,15 +1412,25 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         }
                       );
                     })
-                    .catch((error) => handleUnfriendingFail(friend, error))
+                    .catch((error) => {
+                      console.log(error);
+                      handleUnfriendingFail(friend);
+                    })
                 )
-                .catch((error) => handleUnfriendingFail(friend, error));
+                .catch((error) => {
+                  console.log(error);
+                  handleUnfriendingFail(friend);
+                });
+            } else {
+              handleUnfriendingFail(friend);
             }
-          }
-        })
-        .catch((error) => handleUnfriendingFail(friend, error))
-        .finally(() => setIsLoading(false));
-    }
+          });
+        } else {
+          handleUnfriendingFail(friend);
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   // Defined here, since used in DropdownChecklist & EventForm
