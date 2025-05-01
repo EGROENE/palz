@@ -761,10 +761,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     hasSentFriendRequest: boolean;
     hasReceivedFriendRequest: boolean;
   }): void => {
-    if (blockedUsers && setBlockedUsers) {
-      setBlockedUsers(blockedUsers.filter((userID) => userID !== variables.blockee._id));
-    }
-
     toast.error(`Unable to block ${variables.blockee.username}. Please try again.`, {
       style: {
         background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
