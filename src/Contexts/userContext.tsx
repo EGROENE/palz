@@ -625,7 +625,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         );
                       }
                     } else {
-                      handleRemoveFriendRequestFail(variables)
+                      handleRemoveFriendRequestFail(variables);
                     }
                   })
                   .catch((error) => console.log(error));
@@ -733,19 +733,23 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         });
         if (currentUser && currentUser._id) {
           Requests.getUserByID(currentUser._id)
-            .then((res) =>
-              res
-                .json()
-                .then((user) => setCurrentUser(user))
-                .catch((error) => {
-                  handleAddToFriendsFail(variables);
-                  console.log(error);
-                })
-            )
-            .catch((error) => {
-              handleAddToFriendsFail(variables);
-              console.log(error);
-            });
+            .then((res) => {
+              if (res.ok) {
+                res
+                  .json()
+                  .then((user) => {
+                    if (user) {
+                      setCurrentUser(user);
+                    } else {
+                      handleAddToFriendsFail(variables);
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              } else {
+                handleAddToFriendsFail(variables);
+              }
+            })
+            .catch((error) => console.log(error));
         }
       } else {
         handleAddToFriendsFail(variables);
