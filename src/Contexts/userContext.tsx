@@ -568,27 +568,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         console.log(error);
         handleRemoveReceivedFriendRequestFail(variables);
       });
-      /* .finally(() => {
-          // Refresh currentUser
-          if (currentUser && currentUser._id) {
-            Requests.getUserByID(currentUser._id)
-              .then((res) => {
-                res
-                  .json()
-                  .then((user) => {
-                    setCurrentUser(user);
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                    handleRemoveReceivedFriendRequestFail(variables);
-                  });
-              })
-              .catch((error) => {
-                console.log(error);
-                handleRemoveReceivedFriendRequestFail(variables);
-              });
-          }
-        }); */
 
       toast.error("Could not accept friend request. Please try again.", {
         style: {
