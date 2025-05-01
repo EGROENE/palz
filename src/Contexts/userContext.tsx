@@ -751,6 +751,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (blockedUsers && setBlockedUsers) {
       setBlockedUsers(blockedUsers.filter((userID) => userID !== variables.blockee._id));
     }
+
     toast.error(`Unable to block ${variables.blockee.username}. Please try again.`, {
       style: {
         background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -819,12 +820,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               handleBlockUserFail(variables);
             });
         }
+      } else {
+        handleBlockUserFail(variables);
       }
     },
-    onError: (error, variables) => {
-      console.log(error);
-      handleBlockUserFail(variables);
-    },
+    onError: (error) => console.log(error),
     onSettled: () => setIsLoading(false),
   });
 
