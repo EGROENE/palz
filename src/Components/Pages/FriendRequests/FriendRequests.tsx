@@ -35,14 +35,6 @@ const FriendRequests = () => {
     fetchAllUsersQuery,
   } = useUserContext();
 
-  const friendRequestsReceivedUSERS: TUser[] | undefined = allUsers?.filter(
-    (user) => user._id && friendRequestsReceived?.includes(user._id)
-  );
-
-  const friendRequestsSentUSERS: TUser[] | undefined = allUsers?.filter(
-    (user) => user._id && friendRequestsSent?.includes(user._id)
-  );
-
   const [requestsVisible, setRequestsVisible] = useState<"sent" | "received" | null>(
     null
   );
@@ -95,54 +87,63 @@ const FriendRequests = () => {
   // Upon change of requestsVisible, set displayedItems & displayedItemsFiltered arrays:
   /* Remember, these 2 arrays must both exist so the amount of items displayed can be compared to how many items there are in total. */
   useEffect(() => {
-    if (
-      requestsVisible === "received" &&
-      friendRequestsReceived &&
-      friendRequestsReceivedUSERS &&
-      friendRequestsSent &&
-      friendRequestsSentUSERS
-    ) {
-      if (friendRequestsReceived.length === 0) {
-        if (friendRequestsSentUSERS.length > 0) {
-          setRequestsVisible("sent");
-          setDisplayedItems(friendRequestsSentUSERS);
-          setDisplayedItemsFiltered(
-            friendRequestsSentUSERS.slice(0, displayedItemsCount)
-          );
-        }
-      } else {
-        setDisplayedItems(friendRequestsReceivedUSERS);
-        setDisplayedItemsFiltered(
-          friendRequestsReceivedUSERS.slice(0, displayedItemsCount)
-        );
-      }
-    }
-    if (
-      requestsVisible === "sent" &&
-      friendRequestsReceived &&
-      friendRequestsReceivedUSERS &&
-      friendRequestsSent &&
-      friendRequestsSentUSERS
-    ) {
-      if (friendRequestsSent.length === 0) {
-        if (friendRequestsReceivedUSERS.length > 0) {
+    const friendRequestsReceivedUSERS: TUser[] | undefined = allUsers?.filter(
+      (user) => user._id && friendRequestsReceived?.includes(user._id)
+    );
+
+    const friendRequestsSentUSERS: TUser[] | undefined = allUsers?.filter(
+      (user) => user._id && friendRequestsSent?.includes(user._id)
+    );
+
+    if (currentUser) {
+      if (
+        requestsVisible === "received" &&
+        friendRequestsReceivedUSERS &&
+        friendRequestsSentUSERS
+      ) {
+        if (currentUser.friendRequestsReceived.length === 0) {
+          if (currentUser.friendRequestsSent.length > 0) {
+            setRequestsVisible("sent");
+            setDisplayedItems(friendRequestsSentUSERS);
+            setDisplayedItemsFiltered(
+              friendRequestsSentUSERS.slice(0, displayedItemsCount)
+            );
+          }
+        } else {
           setDisplayedItems(friendRequestsReceivedUSERS);
           setDisplayedItemsFiltered(
             friendRequestsReceivedUSERS.slice(0, displayedItemsCount)
           );
         }
-      } else {
-        setDisplayedItems(friendRequestsSentUSERS);
-        setDisplayedItemsFiltered(friendRequestsSentUSERS.slice(0, displayedItemsCount));
+      }
+      if (
+        requestsVisible === "sent" &&
+        friendRequestsReceivedUSERS &&
+        friendRequestsSentUSERS
+      ) {
+        if (currentUser.friendRequestsSent.length === 0) {
+          if (currentUser.friendRequestsReceived.length > 0) {
+            setRequestsVisible("received");
+            setDisplayedItems(friendRequestsReceivedUSERS);
+            setDisplayedItemsFiltered(
+              friendRequestsReceivedUSERS.slice(0, displayedItemsCount)
+            );
+          }
+        } else {
+          setDisplayedItems(friendRequestsSentUSERS);
+          setDisplayedItemsFiltered(
+            friendRequestsSentUSERS.slice(0, displayedItemsCount)
+          );
+        }
       }
     }
   }, [
     requestsVisible,
+    currentUser,
+    friendRequestsSent,
+    friendRequestsReceived,
     currentUser?.friendRequestsReceived,
     currentUser?.friendRequestsSent,
-    fetchAllUsersQuery.isLoading,
-    allUsers,
-    currentUser,
   ]);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -172,7 +173,7 @@ const FriendRequests = () => {
         !fetchAllUsersQuery.isError &&
         (userHasPendingRequests === null ||
         (currentUser?.friendRequestsSent.length === 0 &&
-          currentUser.friendRequestsReceived.length === 0) ? (
+          currentUser?.friendRequestsReceived.length === 0) ? (
           <h2>No pending friend requests</h2>
         ) : (
           <>
