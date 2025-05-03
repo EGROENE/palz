@@ -86,12 +86,7 @@ const UserCard = ({ user }: { user: TUser }) => {
   };
 
   const currentUserAndUserAreFriends =
-    currentUser &&
-    currentUser._id &&
-    user &&
-    user._id &&
-    friends?.includes(user._id) &&
-    user.friends.includes(currentUser._id);
+    currentUser && currentUser._id && user && user._id && friends?.includes(user._id);
 
   const userIsMessageable: boolean = getUserIsMessageable();
 
