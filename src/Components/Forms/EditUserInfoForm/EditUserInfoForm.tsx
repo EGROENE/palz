@@ -25,7 +25,6 @@ const EditUserInfoForm = ({
   let {
     whoCanMessage,
     setWhoCanMessage,
-    fetchAllUsersQuery,
     currentUser,
     setCurrentUser,
     allUsers,
@@ -168,41 +167,6 @@ const EditUserInfoForm = ({
     | undefined
   >();
 
-  // If user data has changed, setCurrentUser:
-  // Every item on TUser object that can be changed in this form should be in dependency array
-  useEffect(() => {
-    if (allUsers) {
-      if (username === currentUser?.username) {
-        setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
-      } else {
-        setCurrentUser(allUsers.filter((user) => user.emailAddress === emailAddress)[0]);
-      }
-    }
-  }, [
-    setCurrentUser,
-    allUsers,
-    username,
-    emailAddress,
-    currentUser?.firstName,
-    currentUser?.lastName,
-    currentUser?.emailAddress,
-    currentUser?.username,
-    currentUser?.password,
-    currentUser?.phoneCountry,
-    currentUser?.phoneCountryCode,
-    currentUser?.phoneNumberWithoutCountryCode,
-    currentUser?.city,
-    currentUser?.stateProvince,
-    currentUser?.country,
-    currentUser?.facebook,
-    currentUser?.instagram,
-    currentUser?.x,
-    currentUser?.about,
-    currentUser?.whoCanAddUserAsOrganizer,
-    currentUser?.whoCanInviteUser,
-    currentUser?.profileVisibleTo,
-  ]);
-
   const queryClient = useQueryClient();
 
   // Function that resets form values to what they are in currentUser
@@ -327,71 +291,103 @@ const EditUserInfoForm = ({
                   },
                 });
               } else {
-                queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-                if (fetchAllUsersQuery.data && currentUser) {
-                  allUsers = fetchAllUsersQuery.data;
-                  setCurrentUser(
-                    allUsers.filter((user) => user._id === currentUser._id)[0]
-                  );
-                }
+                if (currentUser && currentUser._id) {
+                  Requests.getUserByID(currentUser._id)
+                    .then((res) => {
+                      if (res.ok) {
+                        res
+                          .json()
+                          .then((user) => {
+                            if (user) {
+                              setCurrentUser(user);
+                              toast.success("Profile info updated", {
+                                style: {
+                                  background:
+                                    theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                                  color: theme === "dark" ? "black" : "white",
+                                  border: "2px solid green",
+                                },
+                              });
 
-                toast.success("Profile info updated", {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid green",
-                  },
-                });
+                              /* Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first, which won't happen) */
+                              if (userValuesToUpdate.firstName) {
+                                setFirstName(userValuesToUpdate.firstName);
+                              }
+                              if (userValuesToUpdate.lastName) {
+                                setLastName(userValuesToUpdate.lastName);
+                              }
+                              if (userValuesToUpdate.emailAddress) {
+                                setEmailAddress(userValuesToUpdate.emailAddress);
+                              }
+                              if (userValuesToUpdate.password) {
+                                setPassword(userValuesToUpdate.password);
+                              }
+                              if (userValuesToUpdate.phoneCountry) {
+                                setPhoneCountry(userValuesToUpdate.phoneCountry);
+                              }
+                              if (userValuesToUpdate.phoneCountryCode) {
+                                setPhoneCountryCode(userValuesToUpdate.phoneCountryCode);
+                              }
+                              if (userValuesToUpdate.phoneNumberWithoutCountryCode) {
+                                setPhoneNumberWithoutCountryCode(
+                                  userValuesToUpdate.phoneNumberWithoutCountryCode
+                                );
+                              }
+                              if (userValuesToUpdate.city) {
+                                setUserCity(userValuesToUpdate.city);
+                              }
+                              if (userValuesToUpdate.stateProvince) {
+                                setUserState(userValuesToUpdate.stateProvince);
+                              }
+                              if (userValuesToUpdate.country) {
+                                setUserCountry(userValuesToUpdate.country);
+                              }
+                              if (userValuesToUpdate.facebook) {
+                                setFacebook(userValuesToUpdate.facebook);
+                              }
+                              if (userValuesToUpdate.instagram) {
+                                setInstagram(userValuesToUpdate.instagram);
+                              }
+                              if (userValuesToUpdate.x) {
+                                setX(userValuesToUpdate.x);
+                              }
+                              if (userValuesToUpdate.about) {
+                                setUserAbout(userValuesToUpdate.about);
+                              }
 
-                /* Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first, which won't happen) */
-                if (userValuesToUpdate.firstName) {
-                  setFirstName(userValuesToUpdate.firstName);
-                }
-                if (userValuesToUpdate.lastName) {
-                  setLastName(userValuesToUpdate.lastName);
-                }
-                if (userValuesToUpdate.emailAddress) {
-                  setEmailAddress(userValuesToUpdate.emailAddress);
-                }
-                if (userValuesToUpdate.password) {
-                  setPassword(userValuesToUpdate.password);
-                }
-                if (userValuesToUpdate.phoneCountry) {
-                  setPhoneCountry(userValuesToUpdate.phoneCountry);
-                }
-                if (userValuesToUpdate.phoneCountryCode) {
-                  setPhoneCountryCode(userValuesToUpdate.phoneCountryCode);
-                }
-                if (userValuesToUpdate.phoneNumberWithoutCountryCode) {
-                  setPhoneNumberWithoutCountryCode(
-                    userValuesToUpdate.phoneNumberWithoutCountryCode
-                  );
-                }
-                if (userValuesToUpdate.city) {
-                  setUserCity(userValuesToUpdate.city);
-                }
-                if (userValuesToUpdate.stateProvince) {
-                  setUserState(userValuesToUpdate.stateProvince);
-                }
-                if (userValuesToUpdate.country) {
-                  setUserCountry(userValuesToUpdate.country);
-                }
-                if (userValuesToUpdate.facebook) {
-                  setFacebook(userValuesToUpdate.facebook);
-                }
-                if (userValuesToUpdate.instagram) {
-                  setInstagram(userValuesToUpdate.instagram);
-                }
-                if (userValuesToUpdate.x) {
-                  setX(userValuesToUpdate.x);
-                }
-                if (userValuesToUpdate.about) {
-                  setUserAbout(userValuesToUpdate.about);
-                }
-
-                // Hide PW again if unhidden on submit of edit-user-info form
-                if (!passwordIsHidden) {
-                  toggleHidePassword();
+                              // Hide PW again if unhidden on submit of edit-user-info form
+                              if (!passwordIsHidden) {
+                                toggleHidePassword();
+                              }
+                            } else {
+                              toast.error(
+                                "Could not update profile info. Please try again.",
+                                {
+                                  style: {
+                                    background:
+                                      theme === "light"
+                                        ? "#242424"
+                                        : "rgb(233, 231, 228)",
+                                    color: theme === "dark" ? "black" : "white",
+                                    border: "2px solid red",
+                                  },
+                                }
+                              );
+                            }
+                          })
+                          .catch((error) => console.log(error));
+                      } else {
+                        toast.error("Could not update profile info. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    })
+                    .catch((error) => console.log(error));
                 }
               }
             })
@@ -961,23 +957,52 @@ const EditUserInfoForm = ({
             },
           });
         } else {
-          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-          if (fetchAllUsersQuery.data && currentUser) {
-            allUsers = fetchAllUsersQuery.data;
-            setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id)
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        setCurrentUser(user);
+                        toast("Phone number deleted", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                        setPhoneCountry("");
+                        setPhoneCountryCode("");
+                        setPhoneNumberWithoutCountryCode("");
+                        setShowCountryPhoneCodes(false);
+                        setPhoneNumberMinAndMaxLength(1, 13);
+                      } else {
+                        toast.error("Could not delete phone number. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  toast.error("Could not delete phone number. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
           }
-          toast("Phone number deleted", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          setPhoneCountry("");
-          setPhoneCountryCode("");
-          setPhoneNumberWithoutCountryCode("");
-          setShowCountryPhoneCodes(false);
-          setPhoneNumberMinAndMaxLength(1, 13);
         }
       })
       .catch((error) => console.log(error))
@@ -1002,22 +1027,50 @@ const EditUserInfoForm = ({
             },
           });
         } else {
-          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-          if (fetchAllUsersQuery.data && currentUser) {
-            allUsers = fetchAllUsersQuery.data;
-            setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id)
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        toast("Location deleted", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                        setUserCity("");
+                        setUserState("");
+                        setUserCountry("");
+                        setLocationError("");
+                      } else {
+                        toast.error("Could not delete location. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  toast.error("Could not delete location. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
           }
-          toast("Location deleted", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          setUserCity("");
-          setUserState("");
-          setUserCountry("");
-          setLocationError("");
         }
       })
       .catch((error) => console.log(error))
@@ -1046,24 +1099,58 @@ const EditUserInfoForm = ({
             }
           );
         } else {
-          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-          if (fetchAllUsersQuery.data && currentUser) {
-            allUsers = fetchAllUsersQuery.data;
-            setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-          }
-          toast(`${medium.toUpperCase()} link deleted`, {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          if (medium === "facebook") {
-            setFacebook("");
-          } else if (medium === "instagram") {
-            setInstagram("");
-          } else if (medium === "x") {
-            setX("");
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id)
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        toast(`${medium.toUpperCase()} link deleted`, {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                        if (medium === "facebook") {
+                          setFacebook("");
+                        } else if (medium === "instagram") {
+                          setInstagram("");
+                        } else if (medium === "x") {
+                          setX("");
+                        }
+                      } else {
+                        toast.error(
+                          `Could not delete ${medium.toUpperCase()} link. Please try again.`,
+                          {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid red",
+                            },
+                          }
+                        );
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  toast.error(
+                    `Could not delete ${medium.toUpperCase()} link. Please try again.`,
+                    {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    }
+                  );
+                }
+              })
+              .catch((error) => console.log(error));
           }
         }
       })
@@ -1089,19 +1176,50 @@ const EditUserInfoForm = ({
             },
           });
         } else {
-          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-          if (fetchAllUsersQuery.data && currentUser) {
-            allUsers = fetchAllUsersQuery.data;
-            setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id)
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        toast(`'About' section deleted`, {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                        setUserAbout("");
+                      } else {
+                        toast.error(
+                          `Could not delete 'About' section. Please try again.`,
+                          {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid red",
+                            },
+                          }
+                        );
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  toast.error(`Could not delete 'About' section. Please try again.`, {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
           }
-          toast(`'About' section deleted`, {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          setUserAbout("");
         }
       })
       .catch((error) => console.log(error))
