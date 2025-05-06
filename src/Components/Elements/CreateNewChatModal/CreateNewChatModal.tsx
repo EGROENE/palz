@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 // in chat preview, if no messages, show NO MESSAGES YET if no messages exist in chat
 
 const CreateNewChatModal = () => {
-  const { allOtherUsers, currentUser } = useUserContext();
+  const { allOtherUsers, currentUser, getCurrentOtherUserFriends } = useUserContext();
   const {
     admins,
     handleCreateChat,
@@ -34,7 +34,6 @@ const CreateNewChatModal = () => {
     setPotentialChatMembers,
     chatMembersSearchQuery,
     setChatMembersSearchQuery,
-    getCurrentOtherUserFriends,
     handleChatNameInput,
     handleSearchChatMembersInput,
   } = useChatContext();
@@ -207,7 +206,7 @@ const CreateNewChatModal = () => {
           <>
             <header>Choose group name (optional)</header>
             <input
-            inputMode="text"
+              inputMode="text"
               value={chatName ? chatName : ""}
               onChange={(e) => handleChatNameInput(e)}
               type="text"

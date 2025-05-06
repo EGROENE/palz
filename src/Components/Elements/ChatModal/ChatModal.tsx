@@ -11,7 +11,8 @@ import ListedUser from "../ListedUser/ListedUser";
 import ChatModalTwoOptions from "../ChatModalTwoOptions/ChatModalTwoOptions";
 
 const ChatModal = () => {
-  const { allOtherUsers, currentUser, setCurrentOtherUser } = useUserContext();
+  const { allOtherUsers, currentUser, setCurrentOtherUser, getCurrentOtherUserFriends } =
+    useUserContext();
   const {
     startConversation,
     setMessageBeingEdited,
@@ -31,7 +32,6 @@ const ChatModal = () => {
     setChatMembersSearchQuery,
     showPotentialChatMembers,
     setShowPotentialChatMembers,
-    getCurrentOtherUserFriends,
     setPotentialChatMembers,
     usersToAddToChat,
     handleRemoveUserFromChat,

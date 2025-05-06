@@ -25,9 +25,9 @@ const UserCard = ({ user }: { user: TUser }) => {
     setCurrentOtherUser,
     friendRequestsSent,
     friendRequestsReceived,
+    getCurrentOtherUserFriends,
   } = useUserContext();
-  const { getCurrentOtherUserFriends, getStartOrOpenChatWithUserHandler } =
-    useChatContext();
+  const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
   const currentUserReceivedFriendRequest =

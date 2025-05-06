@@ -23,11 +23,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     currentUser,
     userHasLoggedIn,
     allOtherUsers,
-    fetchAllUsersQuery,
     setCurrentOtherUser,
     currentOtherUser,
   } = useUserContext();
-  const allUsers = fetchAllUsersQuery.data;
   const { showInvitees, setShowInvitees, showRSVPs, setShowRSVPs } = useEventContext();
 
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
@@ -590,15 +588,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
   };
 
-  const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
-    if (allUsers) {
-      return allUsers.filter(
-        (user) => user && user._id && otherUser.friends.includes(user._id)
-      );
-    }
-    return [];
-  };
-
   const handleSearchChatMembersInput = (
     e: React.ChangeEvent<HTMLInputElement>,
     showList: boolean,
@@ -839,7 +828,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     handleOpenChat,
     handleChatNameInput,
     handleSearchChatMembersInput,
-    getCurrentOtherUserFriends,
     showPotentialChatMembers,
     setShowPotentialChatMembers,
     potentialChatMembers,

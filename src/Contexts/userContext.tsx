@@ -260,6 +260,15 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers: [],
   };
 
+  const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
+      if (allUsers) {
+        return allUsers.filter(
+          (user) => user && user._id && otherUser.friends.includes(user._id)
+        );
+      }
+      return [];
+    };
+
   const handleUpdateProfileImageFail = (): void => {
     toast.error(
       "Could not update profile image. Please make sure the image is 50MB or less & try again.",
@@ -1896,6 +1905,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setBlockedUsers,
     handleUnblockUser,
     addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists,
+    getCurrentOtherUserFriends,
     whoCanMessage,
     setWhoCanMessage,
     currentOtherUser,
