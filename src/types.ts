@@ -81,6 +81,27 @@ export type TUser = {
     | undefined;
 };
 
+export type TOtherUser = {
+  _id?: string;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  username: string | undefined;
+  city?: string;
+  stateProvince?: string;
+  country?: string;
+  phoneCountry?: string;
+  phoneCountryCode?: string;
+  phoneNumberWithoutCountryCode?: string;
+  emailAddress?: string | undefined;
+  instagram?: string;
+  facebook?: string;
+  x?: string;
+  profileImage: string;
+  about: string;
+  friends?: string[];
+  interests: string[];
+};
+
 export type TEvent = {
   _id?: string;
   blockedUsersEvent: string[];
