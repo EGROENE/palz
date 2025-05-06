@@ -5,13 +5,159 @@ import {
   TEventValuesToUpdate,
   TUserValuesToUpdate,
   TChatValuesToUpdate,
+  TOtherUser,
 } from "./types";
 
-const getAllUsers = (): Promise<TUser[]> => {
+// Change name to 'getAllOtherUsers'
+const getAllUsers = (currentUser: TUser | null): Promise<TOtherUser[]> => {
   return fetch("http://localhost:4000/palz/users", {
     method: "GET",
     redirect: "follow",
-  }).then((response) => response.json() as Promise<TUser[]>);
+  }).then((response) => {
+    return response.json().then((allUsers: TUser[]) => {
+      if (currentUser) {
+        const otherUsers: TUser[] = allUsers.filter(
+          (user) => user._id !== currentUser._id
+        );
+        /*
+        filter out users whose profile isn't visible to currentUser b/c of privacy settings (if currentUser is blocked, or if otherUser's profile isn't visible to currentUser due to otherUser's privacy settings):
+        */
+        const visibleOtherUsers: TUser[] = otherUsers.filter((otherUser) => {
+          if (currentUser._id) {
+            const currentUserIsFriend: boolean =
+              currentUser && currentUser._id
+                ? otherUser.friends.includes(currentUser._id)
+                : false;
+
+            const currentUserIsFriendOfFriend: boolean = otherUsers.some(
+              (user) =>
+                user &&
+                user._id &&
+                currentUser &&
+                currentUser._id &&
+                otherUser.friends.includes(user._id) &&
+                user.friends.includes(currentUser._id)
+            );
+
+            const currentUserIsBlocked: boolean = otherUser.blockedUsers.includes(
+              currentUser._id
+            );
+
+            if (
+              !currentUserIsBlocked &&
+              (otherUser.profileVisibleTo === "anyone" ||
+                (otherUser.profileVisibleTo === "friends" && currentUserIsFriend) ||
+                (otherUser.profileVisibleTo === "friends of friends" &&
+                  currentUserIsFriendOfFriend))
+            ) {
+              return otherUser;
+            }
+          }
+        });
+
+        return visibleOtherUsers.map((otherUser) => {
+          const currentUserIsFriend: boolean =
+            currentUser && currentUser._id
+              ? otherUser.friends.includes(currentUser._id)
+              : false;
+
+          const currentUserIsFriendOfFriend: boolean = otherUsers.some(
+            (user) =>
+              user &&
+              user._id &&
+              currentUser &&
+              currentUser._id &&
+              otherUser.friends.includes(user._id) &&
+              user.friends.includes(currentUser._id)
+          );
+
+          const showLocation: boolean =
+            otherUser.whoCanSeeLocation === "anyone" ||
+            (otherUser.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
+            (otherUser.whoCanSeeLocation === "friends of friends" &&
+              currentUserIsFriendOfFriend);
+
+          const showPhoneNumber: boolean =
+            otherUser.whoCanSeePhoneNumber === "anyone" ||
+            (otherUser.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
+            (otherUser.whoCanSeePhoneNumber === "friends of friends" &&
+              currentUserIsFriendOfFriend);
+
+          const showEmailAddress: boolean =
+            otherUser.whoCanSeeEmailAddress === "anyone" ||
+            (otherUser.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
+            (otherUser.whoCanSeeEmailAddress === "friends of friends" &&
+              currentUserIsFriendOfFriend);
+
+          const showInstagram: boolean =
+            otherUser.whoCanSeeInstagram === "anyone" ||
+            (otherUser.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
+            (otherUser.whoCanSeeInstagram === "friends of friends" &&
+              currentUserIsFriendOfFriend);
+
+          const showFacebook: boolean =
+            otherUser.whoCanSeeFacebook === "anyone" ||
+            (otherUser.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
+            (otherUser.whoCanSeeFacebook === "friends of friends" &&
+              currentUserIsFriendOfFriend);
+
+          const showX: boolean =
+            otherUser.whoCanSeeX === "anyone" ||
+            (otherUser.whoCanSeeX === "friends" && currentUserIsFriend) ||
+            (otherUser.whoCanSeeX === "friends of friends" &&
+              currentUserIsFriendOfFriend);
+
+          const showFriends: boolean =
+            otherUser.whoCanSeeFriendsList === "anyone" ||
+            (otherUser.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
+            (otherUser.whoCanSeeFriendsList === "friends of friends" &&
+              currentUserIsFriendOfFriend);
+
+          return {
+            "_id": otherUser._id,
+            "firstName": otherUser.firstName,
+            "lastName": otherUser.lastName,
+            "username": otherUser.username,
+            "profileImage": otherUser.profileImage,
+            "interests": otherUser.interests,
+            ...(showLocation && {
+              city: otherUser.city,
+            }),
+            ...(showLocation && {
+              stateProvince: otherUser.stateProvince,
+            }),
+            ...(showLocation && {
+              country: otherUser.country,
+            }),
+            ...(showPhoneNumber && {
+              phoneCountry: otherUser.phoneCountry,
+            }),
+            ...(showPhoneNumber && {
+              phoneCountryCode: otherUser.phoneCountryCode,
+            }),
+            ...(showPhoneNumber && {
+              phoneNumberWithoutCountryCode: otherUser.phoneNumberWithoutCountryCode,
+            }),
+            ...(showEmailAddress && {
+              emailAddress: otherUser.emailAddress,
+            }),
+            ...(showInstagram && {
+              instagram: otherUser.instagram,
+            }),
+            ...(showFacebook && {
+              facebook: otherUser.facebook,
+            }),
+            ...(showX && {
+              x: otherUser.x,
+            }),
+            ...(showFriends && {
+              friends: otherUser.friends,
+            }),
+          };
+        });
+      }
+    }) as Promise<TOtherUser[]>;
+  });
 };
 
 const getUserByID = (id: string): Promise<Response> => {
