@@ -203,17 +203,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const queryClient = useQueryClient();
 
+  const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
+
   const fetchAllUsersQuery: UseQueryResult<TUser[], Error> = useQuery({
     queryKey: ["allUsers"],
     // queryFn can be a callback that takes an object that can be logged to the console, where queryKey can be seen (put console log in .then() of promise)
-    queryFn: Requests.getAllUsers,
-    // enabled: boolean,
+    queryFn: () => Requests.getAllUsers(currentUser),
+    enabled: userHasLoggedIn,
     // staleTime: number,
     // refetchInterval: number
   });
   let allUsers: TUser[] | undefined = fetchAllUsersQuery.data;
-
-  const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
 
   const userData: TUser = {
     firstName: Methods.formatHyphensAndSpacesInString(
@@ -261,13 +261,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
-      if (allUsers) {
-        return allUsers.filter(
-          (user) => user && user._id && otherUser.friends.includes(user._id)
-        );
-      }
-      return [];
-    };
+    if (allUsers) {
+      return allUsers.filter(
+        (user) => user && user._id && otherUser.friends.includes(user._id)
+      );
+    }
+    return [];
+  };
 
   const handleUpdateProfileImageFail = (): void => {
     toast.error(
