@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useState, useEffect, SetStateAction } from "react";
-import { TUserContext, TUser, TUserValuesToUpdate } from "../types";
+import { TUserContext, TUser, TUserValuesToUpdate, TOtherUser } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -205,7 +205,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
 
-  const fetchAllVisibleOtherUsersQuery: UseQueryResult<TUser[], Error> = useQuery({
+  const fetchAllVisibleOtherUsersQuery: UseQueryResult<TOtherUser[], Error> = useQuery({
     queryKey: ["allUsers"],
     // queryFn can be a callback that takes an object that can be logged to the console, where queryKey can be seen (put console log in .then() of promise)
     queryFn: () => Requests.getAllVisibleOtherUsers(currentUser),
@@ -213,7 +213,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     // staleTime: number,
     // refetchInterval: number
   });
-  let allUsers: TUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+  let allUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
   const userData: TUser = {
     firstName: Methods.formatHyphensAndSpacesInString(
@@ -1884,10 +1884,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setCurrentOtherUser(null);
     resetLoginOrSignupFormFieldsAndErrors();
     setProfileImage("");
-    window.location.reload(); // reload pg in order to reduce memory usage
+    window.location.reload(); // reload pg in order to give memory a fresh start
   };
 
-  const allOtherUsers: TUser[] =
+  const allOtherUsers: TOtherUser[] =
     allUsers && currentUser
       ? allUsers.filter((user) => user._id !== currentUser._id)
       : [];

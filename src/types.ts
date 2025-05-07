@@ -281,8 +281,8 @@ export type TMainContext = {
 
 export type TUserContext = {
   userHasLoggedIn: boolean;
-  allOtherUsers: TUser[];
-  fetchAllVisibleOtherUsersQuery: UseQueryResult<TUser[], Error>;
+  allOtherUsers: TOtherUser[];
+  fetchAllVisibleOtherUsersQuery: UseQueryResult<TOtherUser[], Error>;
   friends: string[] | undefined;
   setFriends: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   friendRequestsSent: string[] | undefined;
@@ -556,7 +556,7 @@ export type TUserContext = {
   >;
   userCreatedAccount: null | boolean;
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
-  allUsers: TUser[] | undefined;
+  allUsers: TOtherUser[] | undefined;
   currentUser: TUser | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser | null>>;
   updateProfileImageMutation: UseMutationResult<
