@@ -724,7 +724,7 @@ export type TEventContext = {
   setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
   eventEditIsInProgress: boolean;
   setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
-  handleAddRemoveBlockedUserOnEvent: (user?: TUser) => void;
+  handleAddRemoveBlockedUserOnEvent: (user?: TOtherUser) => void;
   handleAddUserRSVP: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent

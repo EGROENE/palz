@@ -619,7 +619,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const navigation = useNavigate();
 
-  const handleAddRemoveBlockedUserOnEvent = (user?: TUser): void => {
+  const handleAddRemoveBlockedUserOnEvent = (user?: TOtherUser): void => {
     //e?.preventDefault();
     if (user && user._id) {
       if (blockedUsersEvent.includes(user._id)) {
