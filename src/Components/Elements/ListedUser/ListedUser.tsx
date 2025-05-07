@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { TUser, TThemeColor } from "../../../types";
+import { TThemeColor, TOtherUser } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
@@ -25,7 +25,7 @@ const ListedUser = ({
 }: {
   renderButtonOne: boolean;
   renderButtonTwo: boolean;
-  user?: TUser;
+  user?: TOtherUser;
   title?: string;
   buttonOneText?: string;
   buttonOneHandler?: Function;

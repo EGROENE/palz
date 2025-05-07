@@ -1,4 +1,4 @@
-import { TUser } from "../../../types";
+import { TOtherUser } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
@@ -16,7 +16,7 @@ const Tab = ({
   userMayNotDelete,
   specialIcon,
 }: {
-  info: TUser | string;
+  info: TOtherUser | string;
   addHandler?: Function;
   addHandlerParams?: any[];
   addHandlerNeedsEventParam?: boolean;
