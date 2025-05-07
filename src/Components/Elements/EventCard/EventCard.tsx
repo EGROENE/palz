@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import { TEvent, TThemeColor } from "../../../types";
+import { TEvent, TOtherUser, TThemeColor } from "../../../types";
 import { Link } from "react-router-dom";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
@@ -10,7 +10,10 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 
 const EventCard = ({ event }: { event: TEvent }) => {
   const { isLoading, theme } = useMainContext();
-  const { currentUser, allUsers } = useUserContext();
+  const { currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
+
+  const otherVisibleUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+
   const {
     handleAddUserRSVP,
     handleDeleteUserRSVP,
@@ -49,9 +52,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
     : false;
 
   const refinedOrganizers: string[] = [];
-  if (allUsers) {
+  if (otherVisibleUsers) {
     for (const organizer of event.organizers) {
-      if (allUsers.map((user) => user._id).includes(organizer)) {
+      if (otherVisibleUsers.map((user) => user._id).includes(organizer)) {
         refinedOrganizers.push(organizer);
       }
     }
@@ -59,10 +62,10 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   const getOrganizersUsernames = (): (string | undefined)[] => {
     const usernameArray: Array<string | undefined> = [];
-    if (allUsers) {
+    if (otherVisibleUsers) {
       for (const organizerID of refinedOrganizers) {
         usernameArray.push(
-          allUsers.filter((user) => user._id === organizerID)[0].username
+          otherVisibleUsers.filter((user) => user._id === organizerID)[0].username
         );
       }
     }
