@@ -72,7 +72,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [showPotentialChatMembers, setShowPotentialChatMembers] =
     useState<boolean>(false);
 
-  const [potentialChatMembers, setPotentialChatMembers] = useState<TUser[]>([]);
+  const [potentialChatMembers, setPotentialChatMembers] = useState<TOtherUser[]>([]);
 
   const [chatMembersSearchQuery, setChatMembersSearchQuery] = useState<string>("");
 
