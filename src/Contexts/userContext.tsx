@@ -205,7 +205,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
 
-  const fetchAllUsersQuery: UseQueryResult<TUser[], Error> = useQuery({
+  const fetchAllVisibleOtherUsersQuery: UseQueryResult<TUser[], Error> = useQuery({
     queryKey: ["allUsers"],
     // queryFn can be a callback that takes an object that can be logged to the console, where queryKey can be seen (put console log in .then() of promise)
     queryFn: () => Requests.getAllVisibleOtherUsers(currentUser),
@@ -213,7 +213,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     // staleTime: number,
     // refetchInterval: number
   });
-  let allUsers: TUser[] | undefined = fetchAllUsersQuery.data;
+  let allUsers: TUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
   const userData: TUser = {
     firstName: Methods.formatHyphensAndSpacesInString(
@@ -1897,7 +1897,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     userHasLoggedIn,
     removeProfileImageMutation,
     updateProfileImageMutation,
-    fetchAllUsersQuery,
+    fetchAllVisibleOtherUsersQuery,
     displayFriendCount,
     setDisplayFriendCount,
     whoCanSeeLocation,

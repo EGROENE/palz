@@ -11,7 +11,7 @@ import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoading
 
 const UsersEvents = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, fetchAllUsersQuery, logout } =
+  const { currentUser, userCreatedAccount, fetchAllVisibleOtherUsersQuery, logout } =
     useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
 
@@ -122,14 +122,14 @@ const UsersEvents = () => {
     .some((eventArray) => eventArray && eventArray.length > 0);
 
   const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+    !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
 
   const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
+    fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllUsersQuery.isError) {
-      return fetchAllUsersQuery;
+    if (fetchAllVisibleOtherUsersQuery.isError) {
+      return fetchAllVisibleOtherUsersQuery;
     }
     return fetchAllEventsQuery;
   };

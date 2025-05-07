@@ -56,7 +56,7 @@ const InterestsSection = ({
       inputInterest === displayedAdditionalInterests[0]) ||
     inputInterest === "";
 
-  const { currentUser, allUsers, fetchAllUsersQuery } = useUserContext();
+  const { currentUser, allUsers, fetchAllVisibleOtherUsersQuery } = useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
 
   const allEvents = fetchAllEventsQuery.data;

@@ -34,7 +34,7 @@ const DisplayedCardsPage = ({
     blockedUsers,
     logout,
     friends,
-    fetchAllUsersQuery,
+    fetchAllVisibleOtherUsersQuery,
   } = useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
 
@@ -92,7 +92,7 @@ const DisplayedCardsPage = ({
     if (showFilterOptions) {
       setShowFilterOptions(false);
     }
-  }, [fetchAllUsersQuery.isLoading, usedFor]);
+  }, [fetchAllVisibleOtherUsersQuery.isLoading, usedFor]);
 
   const now = Date.now();
 
@@ -705,28 +705,30 @@ const DisplayedCardsPage = ({
     }
     return Object.keys(friendFilterOptions);
   };
-  const filterOptions = !fetchAllUsersQuery.isLoading ? getFilterOptions() : [];
+  const filterOptions = !fetchAllVisibleOtherUsersQuery.isLoading
+    ? getFilterOptions()
+    : [];
 
-  // When used for events, both fetchAllUsersQuery & fetchAllEventsQuery will have to be successful for users to be displayed
-  // If used for displaying users not related to an event, only fetchAllUsersQuery will have to succeed for users to be shown
+  // When used for events, both fetchAllVisibleOtherUsersQuery & fetchAllEventsQuery will have to be successful for users to be displayed
+  // If used for displaying users not related to an event, only fetchAllVisibleOtherUsersQuery will have to succeed for users to be shown
   const isNoFetchError: boolean =
     usedFor === "potential-friends" || usedFor === "my-friends"
-      ? !fetchAllUsersQuery.isError
-      : !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+      ? !fetchAllVisibleOtherUsersQuery.isError
+      : !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
 
   const fetchIsLoading: boolean =
     usedFor === "potential-friends" || usedFor === "my-friends"
-      ? fetchAllUsersQuery.isLoading
-      : fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
+      ? fetchAllVisibleOtherUsersQuery.isLoading
+      : fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
     if (usedFor !== "potential-friends" && usedFor !== "my-friends") {
-      if (fetchAllUsersQuery.isError) {
-        return fetchAllUsersQuery;
+      if (fetchAllVisibleOtherUsersQuery.isError) {
+        return fetchAllVisibleOtherUsersQuery;
       }
       return fetchAllEventsQuery;
     }
-    return fetchAllUsersQuery;
+    return fetchAllVisibleOtherUsersQuery;
   };
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 

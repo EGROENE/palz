@@ -19,7 +19,7 @@ const EventPage = () => {
     userCreatedAccount,
     setCurrentOtherUser,
     logout,
-    fetchAllUsersQuery,
+    fetchAllVisibleOtherUsersQuery,
   } = useUserContext();
   const {
     handleAddUserRSVP,
@@ -195,10 +195,10 @@ const EventPage = () => {
   const status: string | undefined = getStatus();
 
   const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+    !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
 
   const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
+    fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
 
   return (
     <>

@@ -12,7 +12,7 @@ import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoading
 const AddEventPage = () => {
   const navigation = useNavigate();
   const { isLoading, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, logout, fetchAllUsersQuery } =
+  const { currentUser, userCreatedAccount, logout, fetchAllVisibleOtherUsersQuery } =
     useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
 
@@ -46,14 +46,14 @@ const AddEventPage = () => {
   }, [currentUser, navigation, userCreatedAccount]);
 
   const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+    !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
 
   const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
+    fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllUsersQuery.isError) {
-      return fetchAllUsersQuery;
+    if (fetchAllVisibleOtherUsersQuery.isError) {
+      return fetchAllVisibleOtherUsersQuery;
     }
     return fetchAllEventsQuery;
   };

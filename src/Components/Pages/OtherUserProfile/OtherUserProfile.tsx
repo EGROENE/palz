@@ -36,9 +36,9 @@ const OtherUserProfile = () => {
     friendRequestsReceived,
     handleUnfriending,
     friends,
-    fetchAllUsersQuery,
+    fetchAllVisibleOtherUsersQuery,
   } = useUserContext();
-  const allUsers = fetchAllUsersQuery.data;
+  const allUsers = fetchAllVisibleOtherUsersQuery.data;
   const {
     fetchAllEventsQuery,
     handleRemoveInvitee,
@@ -425,14 +425,14 @@ const OtherUserProfile = () => {
   const currentUserCanSeeFriendsList: boolean = getCurrentUserCanSeeFriendsList();
 
   const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+    !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
 
   const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
+    fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllUsersQuery.isError) {
-      return fetchAllUsersQuery;
+    if (fetchAllVisibleOtherUsersQuery.isError) {
+      return fetchAllVisibleOtherUsersQuery;
     }
     return fetchAllEventsQuery;
   };

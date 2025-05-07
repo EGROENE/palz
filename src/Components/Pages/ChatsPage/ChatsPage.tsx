@@ -15,7 +15,8 @@ import EditChatNameModal from "../../Elements/EditChatNameModal/EditChatNameModa
 
 const ChatsPage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, fetchAllUsersQuery } = useUserContext();
+  const { currentUser, userCreatedAccount, fetchAllVisibleOtherUsersQuery } =
+    useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
   const {
     fetchChatsQuery,
@@ -54,17 +55,17 @@ const ChatsPage = () => {
 
   const isNoFetchError: boolean =
     !fetchAllEventsQuery.isError &&
-    !fetchAllUsersQuery.isError &&
+    !fetchAllVisibleOtherUsersQuery.isError &&
     !fetchChatsQuery.isError;
 
   const fetchIsLoading: boolean =
     fetchAllEventsQuery.isLoading ||
-    fetchAllUsersQuery.isLoading ||
+    fetchAllVisibleOtherUsersQuery.isLoading ||
     fetchChatsQuery.isLoading;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllUsersQuery.isError) {
-      return fetchAllUsersQuery;
+    if (fetchAllVisibleOtherUsersQuery.isError) {
+      return fetchAllVisibleOtherUsersQuery;
     }
     if (fetchChatsQuery.isError) {
       return fetchChatsQuery;

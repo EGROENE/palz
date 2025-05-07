@@ -13,7 +13,7 @@ const LoginPage = ({ type }: { type: "login" | "signup" }) => {
     signupIsSelected,
     toggleSignupLogin,
     resetLoginOrSignupFormFieldsAndErrors,
-    fetchAllUsersQuery,
+    fetchAllVisibleOtherUsersQuery,
   } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -61,7 +61,10 @@ const LoginPage = ({ type }: { type: "login" | "signup" }) => {
           </button>
         </div>
       </div>
-      <QueryLoadingOrError query={fetchAllUsersQuery} errorMessage="Error loading data" />
+      <QueryLoadingOrError
+        query={fetchAllVisibleOtherUsersQuery}
+        errorMessage="Error loading data"
+      />
       <div className="login-form">
         <div className="login-options-container">
           <div>

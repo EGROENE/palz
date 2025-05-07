@@ -11,7 +11,7 @@ import { TThemeColor } from "../../../types";
 
 const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, username, fetchAllUsersQuery } =
+  const { currentUser, userCreatedAccount, username, fetchAllVisibleOtherUsersQuery } =
     useUserContext();
   const { fetchAllEventsQuery } = useEventContext();
   const allEvents = fetchAllEventsQuery.data;
@@ -78,13 +78,13 @@ const UserHomepage = () => {
         )
       );
     }
-  }, [fetchAllUsersQuery.data, fetchAllEventsQuery.data, currentUser]);
+  }, [fetchAllVisibleOtherUsersQuery.data, fetchAllEventsQuery.data, currentUser]);
 
   const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+    !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
 
   const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
+    fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
 
   return (
     <>
@@ -95,7 +95,7 @@ const UserHomepage = () => {
         </header>
       )}
       {fetchAllEventsQuery.isError ||
-        (fetchAllUsersQuery.isError && (
+        (fetchAllVisibleOtherUsersQuery.isError && (
           <div className="query-error-container">
             <header className="query-status-text">"Error fetching data.</header>
             <div className="theme-element-container">

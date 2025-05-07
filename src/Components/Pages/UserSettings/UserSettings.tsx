@@ -61,7 +61,7 @@ const UserSettings = () => {
     setAccountDeletionInProgress,
     handleUnblockUser,
     blockedUsers,
-    fetchAllUsersQuery,
+    fetchAllVisibleOtherUsersQuery,
     setCurrentUser,
     userCreatedAccount,
   } = useUserContext();
@@ -311,8 +311,8 @@ const UserSettings = () => {
                 queryClient.refetchQueries({ queryKey: ["allEvents"] });
                 queryClient.invalidateQueries({ queryKey: "userChats" });
                 queryClient.refetchQueries({ queryKey: ["userChats"] });
-                if (fetchAllUsersQuery.data) {
-                  allUsers = fetchAllUsersQuery.data;
+                if (fetchAllVisibleOtherUsersQuery.data) {
+                  allUsers = fetchAllVisibleOtherUsersQuery.data;
                 }
                 toast("You have deleted your account. We're sorry to see you go!", {
                   style: {
@@ -346,14 +346,14 @@ const UserSettings = () => {
       {" "}
       <h1>Settings</h1>
       <QueryLoadingOrError
-        query={fetchAllUsersQuery}
+        query={fetchAllVisibleOtherUsersQuery}
         errorMessage="Error fetching data"
       />
-      {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && isLoading && (
-        <LoadingModal message="Saving changes..." />
-      )}
-      {!fetchAllUsersQuery.isError &&
-        !fetchAllUsersQuery.isLoading &&
+      {!fetchAllVisibleOtherUsersQuery.isError &&
+        !fetchAllVisibleOtherUsersQuery.isLoading &&
+        isLoading && <LoadingModal message="Saving changes..." />}
+      {!fetchAllVisibleOtherUsersQuery.isError &&
+        !fetchAllVisibleOtherUsersQuery.isLoading &&
         showBlockedUsers && (
           <UserListModal
             listType="blocked-users"
@@ -368,70 +368,75 @@ const UserSettings = () => {
             randomColor={randomColor}
           />
         )}
-      {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && (
-        <EditUserInfoForm
-          randomColor={randomColor}
-          isLoading={isLoading}
-          setIsLoading={setIsLoading}
-        />
-      )}
-      {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && currentUser && (
-        <header className="independent-header">
-          Blocked Users{" "}
-          <span
-            tabIndex={0}
-            aria-hidden="false"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                setShowBlockedUsers(!showBlockedUsers);
-              }
-            }}
-            style={{ "color": randomColor }}
-            className={styles.showModule}
-            onClick={() => setShowBlockedUsers(!showBlockedUsers)}
-          >
-            See List
-          </span>
-        </header>
-      )}
-      {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && (
-        <InterestsSection
-          isDisabled={isLoading}
-          randomColor={randomColor}
-          interestsRelation="user"
-          handleAddInterest={handleAddUserInterest}
-          handleRemoveInterest={handleDeleteUserInterest}
-        />
-      )}
-      {!fetchAllUsersQuery.isError && !fetchAllUsersQuery.isLoading && (
-        <div className="settings-theme-and-delete-account-container">
-          <div>
-            <h3>Delete Account</h3>
-            <p>
-              Any events of which you are the sole organizer will be deleted & all your
-              account information will be lost.
-            </p>
-            <button
-              onClick={() => setShowAreYouSureInterface(true)}
-              className="delete-button"
+      {!fetchAllVisibleOtherUsersQuery.isError &&
+        !fetchAllVisibleOtherUsersQuery.isLoading && (
+          <EditUserInfoForm
+            randomColor={randomColor}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+          />
+        )}
+      {!fetchAllVisibleOtherUsersQuery.isError &&
+        !fetchAllVisibleOtherUsersQuery.isLoading &&
+        currentUser && (
+          <header className="independent-header">
+            Blocked Users{" "}
+            <span
+              tabIndex={0}
+              aria-hidden="false"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setShowBlockedUsers(!showBlockedUsers);
+                }
+              }}
+              style={{ "color": randomColor }}
+              className={styles.showModule}
+              onClick={() => setShowBlockedUsers(!showBlockedUsers)}
             >
-              Delete Account
-            </button>
-          </div>
-
-          <div>
-            <h3>Change Site Theme</h3>
-            <p>{theme === "dark" ? "Theme is set to dark" : "Theme is set to light"}</p>
-            <div className="theme-element-container">
-              <button onClick={() => toggleTheme()}>
-                {theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+              See List
+            </span>
+          </header>
+        )}
+      {!fetchAllVisibleOtherUsersQuery.isError &&
+        !fetchAllVisibleOtherUsersQuery.isLoading && (
+          <InterestsSection
+            isDisabled={isLoading}
+            randomColor={randomColor}
+            interestsRelation="user"
+            handleAddInterest={handleAddUserInterest}
+            handleRemoveInterest={handleDeleteUserInterest}
+          />
+        )}
+      {!fetchAllVisibleOtherUsersQuery.isError &&
+        !fetchAllVisibleOtherUsersQuery.isLoading && (
+          <div className="settings-theme-and-delete-account-container">
+            <div>
+              <h3>Delete Account</h3>
+              <p>
+                Any events of which you are the sole organizer will be deleted & all your
+                account information will be lost.
+              </p>
+              <button
+                onClick={() => setShowAreYouSureInterface(true)}
+                className="delete-button"
+              >
+                Delete Account
               </button>
             </div>
+
+            <div>
+              <h3>Change Site Theme</h3>
+              <p>{theme === "dark" ? "Theme is set to dark" : "Theme is set to light"}</p>
+              <div className="theme-element-container">
+                <button onClick={() => toggleTheme()}>
+                  {theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
-      {!fetchAllUsersQuery.isError &&
-        !fetchAllUsersQuery.isLoading &&
+        )}
+      {!fetchAllVisibleOtherUsersQuery.isError &&
+        !fetchAllVisibleOtherUsersQuery.isLoading &&
         showAreYouSureInterface && (
           <TwoOptionsInterface
             header="Are you sure you want to permanently delete your account?"

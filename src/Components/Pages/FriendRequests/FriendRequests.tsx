@@ -32,7 +32,7 @@ const FriendRequests = () => {
     userCreatedAccount,
     logout,
     currentUser,
-    fetchAllUsersQuery,
+    fetchAllVisibleOtherUsersQuery,
   } = useUserContext();
 
   const [requestsVisible, setRequestsVisible] = useState<"sent" | "received" | null>(
@@ -166,11 +166,11 @@ const FriendRequests = () => {
     <>
       <h1>Friend Requests</h1>
       <QueryLoadingOrError
-        query={fetchAllUsersQuery}
+        query={fetchAllVisibleOtherUsersQuery}
         errorMessage="Error loading friend requests"
       />
-      {!fetchAllUsersQuery.isLoading &&
-        !fetchAllUsersQuery.isError &&
+      {!fetchAllVisibleOtherUsersQuery.isLoading &&
+        !fetchAllVisibleOtherUsersQuery.isError &&
         (userHasPendingRequests === null ||
         (currentUser?.friendRequestsSent.length === 0 &&
           currentUser?.friendRequestsReceived.length === 0) ? (
