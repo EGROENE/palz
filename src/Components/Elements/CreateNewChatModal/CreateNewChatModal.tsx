@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 // in chat preview, if no messages, show NO MESSAGES YET if no messages exist in chat
 
 const CreateNewChatModal = () => {
-  const { allOtherUsers, currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
+  const { currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
 
   const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
 
@@ -142,15 +142,17 @@ const CreateNewChatModal = () => {
           name="chat-members-search"
           id="chat-members-search"
           randomColor={randomColor}
-          inputOnChange={(e) =>
-            handleSearchChatMembersInput(
-              e,
-              showPotentialChatMembers,
-              setShowPotentialChatMembers,
-              allOtherUsers,
-              initiatePotentialChatMembers
-            )
-          }
+          inputOnChange={(e) => {
+            if (visibleOtherUsers) {
+              return handleSearchChatMembersInput(
+                e,
+                showPotentialChatMembers,
+                setShowPotentialChatMembers,
+                visibleOtherUsers,
+                initiatePotentialChatMembers
+              );
+            }
+          }}
           placeholder="Search users by username, first/last names"
           query={chatMembersSearchQuery}
           clearQueryOnClick={() => {
