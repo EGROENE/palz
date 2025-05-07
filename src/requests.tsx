@@ -8,7 +8,6 @@ import {
   TOtherUser,
 } from "./types";
 
-// Change name to 'getAllOtherUsers'
 const getAllVisibleUsers = (currentUser: TUser | null): Promise<TOtherUser[]> => {
   return fetch("http://localhost:4000/palz/users", {
     method: "GET",
