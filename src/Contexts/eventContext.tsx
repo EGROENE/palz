@@ -666,7 +666,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAddRemoveUserAsInvitee = (
     invitees: string[],
     setInvitees: React.Dispatch<React.SetStateAction<string[]>>,
-    user?: TUser
+    user?: TOtherUser
   ): void => {
     if (user?._id) {
       if (invitees.includes(user._id)) {
@@ -678,7 +678,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /* eventValuesToUpdate is to be used on EventForm. It's an object that represents updated values on event, which are sent to the event in the DB in a PATCH request
+  /* 
+  eventValuesToUpdate is to be used on EventForm. It's an object that represents updated values on event, which are sent to the event in the DB in a PATCH request
    */
   const getValuesToUpdate = (): TEventValuesToUpdate | undefined => {
     // interestedUsers omitted from type b/c that is not controllable with this form, rather changes depending on other users RSVPing or de-RSVPing.

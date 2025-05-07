@@ -705,7 +705,7 @@ export type TEventContext = {
   handleAddRemoveUserAsInvitee: (
     invitees: string[],
     setInvitees: React.Dispatch<React.SetStateAction<string[]>>,
-    user?: TUser
+    user?: TOtherUser
   ) => void;
   handleRemoveInvitee: (
     event: TEvent,
