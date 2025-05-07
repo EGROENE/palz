@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TThemeColor, TUser } from "../../../types";
+import { TOtherUser, TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -13,7 +13,10 @@ import mongoose from "mongoose";
 // in chat preview, if no messages, show NO MESSAGES YET if no messages exist in chat
 
 const CreateNewChatModal = () => {
-  const { allOtherUsers, currentUser } = useUserContext();
+  const { allOtherUsers, currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
+
+  const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
+
   const {
     admins,
     handleCreateChat,
@@ -85,11 +88,13 @@ const CreateNewChatModal = () => {
 
   const chatCanBeCreated = chatNameError === "" && usersToAddToChat.length > 0;
 
-  let usersToAdd: TUser[] = [];
-  for (const userID of usersToAddToChat) {
-    for (const otherUser of allOtherUsers) {
-      if (otherUser._id === userID) {
-        usersToAdd.push(otherUser);
+  let usersToAdd: TOtherUser[] = [];
+  if (visibleOtherUsers) {
+    for (const userID of usersToAddToChat) {
+      for (const otherUser of visibleOtherUsers) {
+        if (otherUser._id === userID) {
+          usersToAdd.push(otherUser);
+        }
       }
     }
   }
