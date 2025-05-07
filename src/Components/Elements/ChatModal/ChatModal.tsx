@@ -268,7 +268,7 @@ const ChatModal = () => {
     }
   };
 
-  const getButtonOneText = (listedChatMember: TUser): string => {
+  const getButtonOneText = (listedChatMember: TOtherUser): string => {
     const listedChatMemberIsAdmin: boolean =
       currentChat &&
       currentChat.admins &&
