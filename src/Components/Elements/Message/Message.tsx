@@ -1,4 +1,4 @@
-import { TMessage, TThemeColor, TUser } from "../../../types";
+import { TMessage, TOtherUser, TThemeColor } from "../../../types";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useChatContext } from "../../../Hooks/useChatContext";
@@ -13,14 +13,17 @@ const Message = ({
   randomColor?: TThemeColor;
 }) => {
   const { theme } = useMainContext();
-  const { currentUser, allUsers } = useUserContext();
+  const { currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
+
+  const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
+
   const { handleDeleteMessage, currentChat, startEditingMessage } = useChatContext();
 
   const [showAreYouSureYouWantToDeleteMessage, setShowAreYouSureYouWantToDeleteMessage] =
     useState<boolean>(false);
 
-  const sender: TUser | undefined = allUsers
-    ? allUsers.filter((user) => user._id === message.sender)[0]
+  const sender: TOtherUser | undefined = visibleOtherUsers
+    ? visibleOtherUsers.filter((user) => user._id === message.sender)[0]
     : undefined;
 
   const dateOfSend = new Date(message.timeSent);
