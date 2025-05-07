@@ -241,7 +241,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const addUserRSVPMutation = useMutation({
-    mutationFn: ({ user, event }: { user: TUser; event: TEvent }) =>
+    mutationFn: ({ user, event }: { user: TOtherUser | TUser; event: TEvent }) =>
       Requests.addUserRSVP(user, event),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: "allEvents" });
