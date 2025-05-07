@@ -9,11 +9,9 @@ import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import Methods from "../../../methods";
 import ListedUser from "../ListedUser/ListedUser";
 import ChatModalTwoOptions from "../ChatModalTwoOptions/ChatModalTwoOptions";
-import Requests from "../../../requests";
 
 const ChatModal = () => {
-  const { allOtherUsers, currentUser, setCurrentOtherUser, getOtherUserFriends } =
-    useUserContext();
+  const { allOtherUsers, currentUser, setCurrentOtherUser } = useUserContext();
   const {
     startConversation,
     setMessageBeingEdited,
@@ -33,7 +31,6 @@ const ChatModal = () => {
     setChatMembersSearchQuery,
     showPotentialChatMembers,
     setShowPotentialChatMembers,
-    setPotentialChatMembers,
     usersToAddToChat,
     handleRemoveUserFromChat,
     handleAddRemoveUserFromChat,
@@ -66,6 +63,7 @@ const ChatModal = () => {
     showAreYouSureYouWantToDeleteChat,
     showAreYouSureYouWantToLeaveChat,
     setShowEditChatNameModal,
+    initiatePotentialChatMembers,
   } = useChatContext();
 
   /* 
@@ -111,48 +109,6 @@ const ChatModal = () => {
     setTimeout(() => scrollToLatestMessage(), 500);
     //scrollToLatestMessage();
   }, []);
-
-  const initiatePotentialChatMembers = (): void => {
-    setPotentialChatMembers(
-      allOtherUsers.filter((otherUser) => {
-        const userIsNotAlreadyInCurrentChat: boolean =
-          otherUser._id && currentChat && currentChat.members.includes(otherUser._id)
-            ? false
-            : true;
-
-        const currentUserIsFriendOfFriend: boolean =
-          currentUser && currentUser._id && otherUser._id
-            ? getOtherUserFriends(otherUser._id).some(
-                (otherUserFriend) =>
-                  currentUser._id && otherUserFriend.friends.includes(currentUser._id)
-              )
-            : false;
-
-        const currentUserIsFriend: boolean =
-          currentUser && currentUser._id && otherUser._id
-            ? currentUser.friends.includes(otherUser._id)
-            : false;
-
-        if (otherUser._id) {
-          Requests.getUserByID(otherUser._id).then((response) => {
-            if (response.ok) {
-              response.json().then((otherUser) => {
-                if (
-                  userIsNotAlreadyInCurrentChat &&
-                  (otherUser.whoCanMessage === "anyone" ||
-                    (otherUser.whoCanMessage === "friends" && currentUserIsFriend) ||
-                    (otherUser.whoCanMessage === "friends of friends" &&
-                      currentUserIsFriendOfFriend))
-                ) {
-                  return otherUser;
-                }
-              });
-            }
-          });
-        }
-      })
-    );
-  };
 
   useEffect(() => {
     initiatePotentialChatMembers();

@@ -797,7 +797,52 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const initiatePotentialChatMembers = (): void => {
+    if (visibleOtherUsers) {
+      setPotentialChatMembers(
+        visibleOtherUsers.filter((otherUser) => {
+          const userIsNotAlreadyInCurrentChat: boolean =
+            otherUser._id && currentChat && currentChat.members.includes(otherUser._id)
+              ? false
+              : true;
+
+          const currentUserIsFriendOfFriend: boolean =
+            currentUser && currentUser._id && otherUser._id
+              ? getOtherUserFriends(otherUser._id).some(
+                  (otherUserFriend) =>
+                    currentUser._id && otherUserFriend.friends.includes(currentUser._id)
+                )
+              : false;
+
+          const currentUserIsFriend: boolean =
+            currentUser && currentUser._id && otherUser._id
+              ? currentUser.friends.includes(otherUser._id)
+              : false;
+
+          if (otherUser._id) {
+            Requests.getUserByID(otherUser._id).then((response) => {
+              if (response.ok) {
+                response.json().then((otherUser) => {
+                  if (
+                    userIsNotAlreadyInCurrentChat &&
+                    (otherUser.whoCanMessage === "anyone" ||
+                      (otherUser.whoCanMessage === "friends" && currentUserIsFriend) ||
+                      (otherUser.whoCanMessage === "friends of friends" &&
+                        currentUserIsFriendOfFriend))
+                  ) {
+                    return otherUser;
+                  }
+                });
+              }
+            });
+          }
+        })
+      );
+    }
+  };
+
   const chatContextValues: TChatContext = {
+    initiatePotentialChatMembers,
     handleUpdateChatName,
     showEditChatNameModal,
     setShowEditChatNameModal,

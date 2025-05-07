@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 // in chat preview, if no messages, show NO MESSAGES YET if no messages exist in chat
 
 const CreateNewChatModal = () => {
-  const { allOtherUsers, currentUser, getOtherUserFriends } = useUserContext();
+  const { allOtherUsers, currentUser } = useUserContext();
   const {
     admins,
     handleCreateChat,
@@ -31,11 +31,11 @@ const CreateNewChatModal = () => {
     showPotentialChatMembers,
     setShowPotentialChatMembers,
     potentialChatMembers,
-    setPotentialChatMembers,
     chatMembersSearchQuery,
     setChatMembersSearchQuery,
     handleChatNameInput,
     handleSearchChatMembersInput,
+    initiatePotentialChatMembers,
   } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -52,40 +52,6 @@ const CreateNewChatModal = () => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
   }, []);
-
-  const initiatePotentialChatMembers = (): void => {
-    setPotentialChatMembers(
-      allOtherUsers.filter((otherUser) => {
-        const currentUserIsBlocked =
-          currentUser && currentUser._id
-            ? otherUser.blockedUsers.includes(currentUser._id)
-            : false;
-
-        const currentUserIsFriendOfFriend: boolean =
-          currentUser && currentUser._id && otherUser._id
-            ? getOtherUserFriends(otherUser._id).some(
-                (otherUserFriend) =>
-                  currentUser._id && otherUserFriend.friends.includes(currentUser._id)
-              )
-            : false;
-
-        const currentUserIsFriend: boolean =
-          currentUser && currentUser._id
-            ? otherUser.friends.includes(currentUser._id)
-            : false;
-
-        if (
-          !currentUserIsBlocked &&
-          (otherUser.whoCanMessage === "anyone" ||
-            (otherUser.whoCanMessage === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanMessage === "friends of friends" &&
-              currentUserIsFriendOfFriend))
-        ) {
-          return otherUser;
-        }
-      })
-    );
-  };
 
   useEffect(() => {
     initiatePotentialChatMembers();
