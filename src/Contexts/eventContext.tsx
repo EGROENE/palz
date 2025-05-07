@@ -1,6 +1,6 @@
 import { useState, createContext, ReactNode, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { TEventContext, TUser, TEvent, TEventValuesToUpdate } from "../types";
+import { TEventContext, TUser, TEvent, TEventValuesToUpdate, TOtherUser } from "../types";
 import Methods from "../methods";
 import Requests from "../requests";
 import { useMainContext } from "../Hooks/useMainContext";
@@ -636,7 +636,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAddRemoveUserAsOrganizer = (
     organizers: string[],
     setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
-    user: TUser,
+    user: TOtherUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     if (user && user._id && currentUser && currentUser._id) {
