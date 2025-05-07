@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Message from "../Message/Message";
-import { TThemeColor, TUser } from "../../../types";
+import { TOtherUser, TThemeColor, TUser } from "../../../types";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -340,7 +340,7 @@ const ChatModal = () => {
     return "Add Admin";
   };
 
-  let usersToAdd: TUser[] = [];
+  let usersToAdd: TOtherUser[] = [];
   for (const userID of usersToAddToChat) {
     for (const otherUser of allOtherUsers) {
       if (otherUser._id === userID) {
