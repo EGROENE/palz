@@ -119,11 +119,6 @@ const ChatModal = () => {
             ? false
             : true;
 
-        const currentUserIsBlocked: boolean =
-          currentUser && currentUser._id
-            ? otherUser.blockedUsers.includes(currentUser._id)
-            : false;
-
         const currentUserIsFriendOfFriend: boolean =
           currentUser && currentUser._id && otherUser._id
             ? getOtherUserFriends(otherUser._id).some(
