@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TEvent, TThemeColor } from "../../../types";
+import { TEvent, TOtherUser, TThemeColor } from "../../../types";
 import Methods from "../../../methods";
 import InterestsModal from "../InterestsModal/InterestsModal";
 import Tab from "../Tab/Tab";
@@ -56,7 +56,10 @@ const InterestsSection = ({
       inputInterest === displayedAdditionalInterests[0]) ||
     inputInterest === "";
 
-  const { currentUser, allUsers, fetchAllVisibleOtherUsersQuery } = useUserContext();
+  const { currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
+
+  const otherVisibleUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+
   const { fetchAllEventsQuery } = useEventContext();
 
   const allEvents = fetchAllEventsQuery.data;
@@ -65,8 +68,10 @@ const InterestsSection = ({
   // This will be passed to InterestsModal; for each item in array, an addable interest displays
   /* Users can add interests to an existing event (on EditEventPage), a new event (on AddEventPage), or to their own profile (on UserSettings). These conditions are handled respectively in function below. */
   const getAddableInterests = (): string[] => {
-    const allUserInterests: string[] = allUsers
-      ? Methods.removeDuplicatesFromArray(allUsers.map((user) => user.interests).flat())
+    const allUserInterests: string[] = otherVisibleUsers
+      ? Methods.removeDuplicatesFromArray(
+          otherVisibleUsers.map((user) => user.interests).flat()
+        )
       : [];
     const allEventInterests: string[] = allEvents
       ? Methods.removeDuplicatesFromArray(
@@ -100,9 +105,9 @@ const InterestsSection = ({
     }
     // Default case; if updating user interests:
     // Returns allOtherUserInterests + allEventInterests - interests that exist on currentUser
-    const allOtherUserInterests: string[] = allUsers
+    const allOtherUserInterests: string[] = otherVisibleUsers
       ? Methods.removeDuplicatesFromArray(
-          allUsers
+          otherVisibleUsers
             .filter((user) => user.username !== currentUser?.username)
             .map((user) => user.interests)
             .flat()
@@ -114,7 +119,7 @@ const InterestsSection = ({
         .filter((int) => !currentUser?.interests.includes(int))
     );
   };
-  const addableInterests: string[] | null = fetchAllUsersQuery.isSuccess
+  const addableInterests: string[] | null = fetchAllVisibleOtherUsersQuery.isSuccess
     ? getAddableInterests()
     : null;
 
