@@ -93,18 +93,47 @@ const UserSettings = () => {
             },
           });
         } else {
-          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-          if (fetchAllUsersQuery.data && currentUser) {
-            allUsers = fetchAllUsersQuery.data;
-            setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id)
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        setCurrentUser(user);
+                        toast.success(`'${interest}' added to interests`, {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid green",
+                          },
+                        });
+                      } else {
+                        toast.error("Could not add interest. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  toast.error("Could not add interest. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
           }
-          toast.success(`'${interest}' added to interests`, {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid green",
-            },
-          });
         }
       })
       .catch((error) => console.log(error))
@@ -128,18 +157,47 @@ const UserSettings = () => {
             },
           });
         } else {
-          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-          if (fetchAllUsersQuery.data && currentUser) {
-            allUsers = fetchAllUsersQuery.data;
-            setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id)
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        setCurrentUser(user);
+                        toast(`'${interest}' removed from interests`, {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      } else {
+                        toast.error("Could not delete interest. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  toast.error("Could not delete interest. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
           }
-          toast(`'${interest}' removed from interests`, {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
         }
       })
       .catch((error) => console.log(error))
