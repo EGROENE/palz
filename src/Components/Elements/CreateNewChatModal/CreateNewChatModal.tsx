@@ -62,8 +62,8 @@ const CreateNewChatModal = () => {
             : false;
 
         const currentUserIsFriendOfFriend: boolean =
-          currentUser && currentUser._id
-            ? getCurrentOtherUserFriends(otherUser).some(
+          currentUser && currentUser._id && otherUser._id
+            ? getCurrentOtherUserFriends(otherUser._id).some(
                 (otherUserFriend) =>
                   currentUser._id && otherUserFriend.friends.includes(currentUser._id)
               )
