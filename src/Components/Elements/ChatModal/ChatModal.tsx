@@ -233,7 +233,7 @@ const ChatModal = () => {
     setMessagesContainerScrollBottom(scrollBottom);
   };
 
-  const getButtonOneHandler = (listedChatMember: TUser) => {
+  const getButtonOneHandler = (listedChatMember: TOtherUser) => {
     const listedChatMemberIsAdmin: boolean =
       currentChat &&
       currentChat.admins &&
