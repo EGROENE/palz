@@ -182,7 +182,9 @@ const ChatModal = () => {
     setShowPotentialChatMembers(false);
   };
 
-  const [otherChatMember, setOtherChatMember] = useState<TUser | undefined>(undefined);
+  const [otherChatMember, setOtherChatMember] = useState<TOtherUser | undefined>(
+    undefined
+  );
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
