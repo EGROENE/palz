@@ -369,7 +369,6 @@ const ChatModal = () => {
     otherChatMember._id &&
     currentUser &&
     currentUser._id &&
-    otherChatMember.friends.includes(currentUser._id) &&
     currentUser.friends.includes(otherChatMember._id)
       ? true
       : false;
