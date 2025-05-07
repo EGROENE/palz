@@ -208,7 +208,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const fetchAllUsersQuery: UseQueryResult<TUser[], Error> = useQuery({
     queryKey: ["allUsers"],
     // queryFn can be a callback that takes an object that can be logged to the console, where queryKey can be seen (put console log in .then() of promise)
-    queryFn: () => Requests.getAllVisibleUsers(currentUser),
+    queryFn: () => Requests.getAllVisibleOtherUsers(currentUser),
     enabled: userHasLoggedIn,
     // staleTime: number,
     // refetchInterval: number

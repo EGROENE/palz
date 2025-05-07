@@ -8,7 +8,7 @@ import {
   TOtherUser,
 } from "./types";
 
-const getAllVisibleUsers = (currentUser: TUser | null): Promise<TOtherUser[]> => {
+const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[]> => {
   return fetch("http://localhost:4000/palz/users", {
     method: "GET",
     redirect: "follow",
@@ -964,7 +964,7 @@ const Requests = {
   deleteEvent,
   addUserRSVP,
   deleteUserRSVP,
-  getAllVisibleUsers,
+  getAllVisibleOtherUsers,
   getAllEvents,
   createUser,
   patchUpdatedUserInfo,
