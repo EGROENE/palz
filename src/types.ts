@@ -740,7 +740,7 @@ export type TChatContext = {
   handleUpdateChatName: (chat: TChat) => void;
   showEditChatNameModal: boolean;
   setShowEditChatNameModal: React.Dispatch<React.SetStateAction<boolean>>;
-  startConversation: (otherUser: TUser) => void;
+  startConversation: (otherUser: TOtherUser) => void;
   getStartOrOpenChatWithUserHandler: (otherUser: TUser) => void;
   getTotalNumberOfUnreadMessages: (chatArray: TChat[]) => string | number;
   handleSaveEditedMessage: (chat: TChat, editedMessage: TMessage) => void;
