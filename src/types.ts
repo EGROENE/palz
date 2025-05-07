@@ -304,7 +304,7 @@ export type TUserContext = {
     setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   currentOtherUser: TUser | null;
-  getCurrentOtherUserFriends: (otherUser: TUser) => TUser[];
+  getCurrentOtherUserFriends: (otherUserID: string) => TUser[];
   setCurrentOtherUser: React.Dispatch<React.SetStateAction<TUser | null>>;
   handleSendFriendRequest: (recipient: TUser) => void;
   handleRemoveFriendRequest: (recipient: TUser, sender?: TUser) => void;

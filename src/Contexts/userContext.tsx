@@ -260,13 +260,38 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers: [],
   };
 
-  const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
-    if (allUsers) {
-      return allUsers.filter(
-        (user) => user && user._id && otherUser.friends.includes(user._id)
-      );
-    }
-    return [];
+  /* 
+  To be used whenever there is not already access to otherUser's friends list, as request is made to DB in order to access the friends list
+  */
+  const getCurrentOtherUserFriends = (otherUserID: string): TUser[] => {
+    /*
+    First, get TUser object (so that friends list can be accessed) by using getUserByID w/ param otherUserID. Then, loop thru each of otherUser friends, getting access to their friends lists by using getUserByID request w/ otherUser friend's _id. Then, push each of their friends to otherUserFriends, & return this at end of function.
+    */
+    let otherUserFriends: TUser[] = [];
+    Requests.getUserByID(otherUserID)
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((otherUser) => {
+            for (const otherUserFriendID of otherUser.friends) {
+              Requests.getUserByID(otherUserFriendID)
+                .then((response) => {
+                  if (response.ok) {
+                    response.json().then((otherUserFriend) => {
+                      otherUserFriends.push(otherUserFriend);
+                    });
+                  } else {
+                    getCurrentOtherUserFriends(otherUserID);
+                  }
+                })
+                .catch((error) => console.log(error));
+            }
+          });
+        } else {
+          getCurrentOtherUserFriends(otherUserID);
+        }
+      })
+      .catch((error) => console.log(error));
+    return otherUserFriends;
   };
 
   const handleUpdateProfileImageFail = (): void => {
