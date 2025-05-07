@@ -476,7 +476,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleAddRemoveUserFromChat = (
-    user: TUser,
+    user: TOtherUser,
     usersToAddToChat: string[],
     setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>
   ): void => {

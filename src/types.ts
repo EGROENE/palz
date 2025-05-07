@@ -807,7 +807,7 @@ export type TChatContext = {
   setChatNameError: React.Dispatch<React.SetStateAction<string>>;
   handleRemoveUserFromChat: (user: TUser, chat: TChat) => void;
   handleAddRemoveUserFromChat: (
-    user: TUser,
+    user: TOtherUser,
     usersToAddToChat: string[],
     setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>,
     chat?: TChat
