@@ -11,7 +11,7 @@ import ListedUser from "../ListedUser/ListedUser";
 import ChatModalTwoOptions from "../ChatModalTwoOptions/ChatModalTwoOptions";
 
 const ChatModal = () => {
-  const { allOtherUsers, currentUser, setCurrentOtherUser, getCurrentOtherUserFriends } =
+  const { allOtherUsers, currentUser, setCurrentOtherUser, getOtherUserFriends } =
     useUserContext();
   const {
     startConversation,
@@ -126,7 +126,7 @@ const ChatModal = () => {
 
         const currentUserIsFriendOfFriend: boolean =
           currentUser && currentUser._id && otherUser._id
-            ? getCurrentOtherUserFriends(otherUser._id).some(
+            ? getOtherUserFriends(otherUser._id).some(
                 (otherUserFriend) =>
                   currentUser._id && otherUserFriend.friends.includes(currentUser._id)
               )

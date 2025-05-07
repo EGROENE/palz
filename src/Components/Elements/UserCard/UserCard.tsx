@@ -25,7 +25,7 @@ const UserCard = ({ user }: { user: TUser }) => {
     setCurrentOtherUser,
     friendRequestsSent,
     friendRequestsReceived,
-    getCurrentOtherUserFriends,
+    getOtherUserFriends,
   } = useUserContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
@@ -67,7 +67,7 @@ const UserCard = ({ user }: { user: TUser }) => {
   const getUserIsMessageable = (): boolean => {
     const currentUserIsFriendOfFriend: boolean =
       currentUser && currentUser._id && user._id
-        ? getCurrentOtherUserFriends(user._id).some(
+        ? getOtherUserFriends(user._id).some(
             (otherUserFriend) =>
               currentUser._id && otherUserFriend.friends.includes(currentUser._id)
           )

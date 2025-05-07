@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 // in chat preview, if no messages, show NO MESSAGES YET if no messages exist in chat
 
 const CreateNewChatModal = () => {
-  const { allOtherUsers, currentUser, getCurrentOtherUserFriends } = useUserContext();
+  const { allOtherUsers, currentUser, getOtherUserFriends } = useUserContext();
   const {
     admins,
     handleCreateChat,
@@ -63,7 +63,7 @@ const CreateNewChatModal = () => {
 
         const currentUserIsFriendOfFriend: boolean =
           currentUser && currentUser._id && otherUser._id
-            ? getCurrentOtherUserFriends(otherUser._id).some(
+            ? getOtherUserFriends(otherUser._id).some(
                 (otherUserFriend) =>
                   currentUser._id && otherUserFriend.friends.includes(currentUser._id)
               )
