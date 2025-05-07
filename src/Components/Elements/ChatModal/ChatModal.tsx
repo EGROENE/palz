@@ -128,8 +128,8 @@ const ChatModal = () => {
             : false;
 
         const currentUserIsFriend: boolean =
-          currentUser && currentUser._id
-            ? otherUser.friends.includes(currentUser._id)
+          currentUser && currentUser._id && otherUser._id
+            ? currentUser.friends.includes(otherUser._id)
             : false;
 
         if (
