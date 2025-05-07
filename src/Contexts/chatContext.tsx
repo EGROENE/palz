@@ -29,10 +29,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const {
     currentUser,
     userHasLoggedIn,
-    allOtherUsers,
     setCurrentOtherUser,
     currentOtherUser,
+    fetchAllVisibleOtherUsersQuery,
   } = useUserContext();
+
+  const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
+
   const { showInvitees, setShowInvitees, showRSVPs, setShowRSVPs } = useEventContext();
 
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
@@ -379,11 +382,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
-  const getChatMembers = (members: string[]): TUser[] => {
-    let chatMembers: TUser[] = [];
-    for (const user of allOtherUsers) {
-      if (user._id && members.includes(user._id)) {
-        chatMembers.push(user);
+  const getChatMembers = (members: string[]): TOtherUser[] => {
+    let chatMembers: TOtherUser[] = [];
+    if (visibleOtherUsers) {
+      for (const user of visibleOtherUsers) {
+        if (user._id && members.includes(user._id)) {
+          chatMembers.push(user);
+        }
       }
     }
     return chatMembers;
