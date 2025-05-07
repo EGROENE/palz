@@ -1,7 +1,7 @@
 import React from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import { TUser, TEvent } from "../../../types";
+import { TEvent, TOtherUser } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import { useChatContext } from "../../../Hooks/useChatContext";
@@ -23,7 +23,7 @@ const DropdownChecklist = ({
   action: Function;
   actionParams?: any[];
   actionEventParamNeeded: boolean;
-  displayedItemsArray: TUser[]; // type can be changed later if used for non-user lists
+  displayedItemsArray: TOtherUser[]; // type can be changed later if used for non-user lists
   storageArray: any[];
   setStorageArray: React.Dispatch<React.SetStateAction<any[]>>;
   displayedItemsCount: number | undefined;
@@ -50,7 +50,7 @@ const DropdownChecklist = ({
     handleAddRemoveUserFromChat,
   } = useChatContext();
 
-  let displayedItemsArrayFiltered: TUser[] = [];
+  let displayedItemsArrayFiltered: TOtherUser[] = [];
   if (displayedItemsCount && displayedItemsCount <= displayedItemsArray.length) {
     for (let i = 0; i < displayedItemsCount; i++) {
       displayedItemsArrayFiltered.push(displayedItemsArray[i]);
@@ -59,7 +59,7 @@ const DropdownChecklist = ({
     displayedItemsArrayFiltered = displayedItemsArray;
   }
 
-  const getActionParams = (user: TUser): any[] => {
+  const getActionParams = (user: TOtherUser): any[] => {
     if (!actionParams) {
       // for handleAddRemoveUserAsOrganizer:
       if (usedFor === "potential-co-organizers" && user && event) {
@@ -90,7 +90,7 @@ const DropdownChecklist = ({
     return actionParams;
   };
 
-  const getOnChangeHandler = (user: TUser) => {
+  const getOnChangeHandler = (user: TOtherUser) => {
     if (usedFor === "potential-co-organizers") {
       return () => handleAddRemoveUserAsOrganizer(storageArray, setStorageArray, user);
     }
