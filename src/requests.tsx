@@ -529,7 +529,10 @@ const deleteUser = (userID: string | undefined): Promise<Response> => {
   });
 };
 
-const addUserRSVP = (user: TUser | null, event: TEvent): Promise<Response> => {
+const addUserRSVP = (
+  user: TOtherUser | TUser | null,
+  event: TEvent
+): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
