@@ -1,5 +1,12 @@
 import { ReactNode, useState, createContext } from "react";
-import { TChatContext, TChat, TUser, TChatValuesToUpdate, TMessage } from "../types";
+import {
+  TChatContext,
+  TChat,
+  TUser,
+  TChatValuesToUpdate,
+  TMessage,
+  TOtherUser,
+} from "../types";
 import { useUserContext } from "../Hooks/useUserContext";
 import Requests from "../requests";
 import {
@@ -739,7 +746,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     return unreadMessages > 9 ? "9+" : unreadMessages;
   };
 
-  const startConversation = (otherUser: TUser): void => {
+  const startConversation = (otherUser: TOtherUser): void => {
     const userChats = fetchChatsQuery.data;
 
     if (showInvitees) {
