@@ -791,7 +791,7 @@ export type TChatContext = {
     e: React.ChangeEvent<HTMLInputElement>,
     showList: boolean,
     setShowList: React.Dispatch<React.SetStateAction<boolean>>,
-    searchArray: TUser[],
+    searchArray: TOtherUser[],
     resetFunction: Function
   ) => void;
   showPotentialChatMembers: boolean;

@@ -604,7 +604,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.ChangeEvent<HTMLInputElement>,
     showList: boolean,
     setShowList: React.Dispatch<React.SetStateAction<boolean>>,
-    searchArray: TUser[],
+    searchArray: TOtherUser[],
     resetFunction: Function
   ): void => {
     e.preventDefault();
@@ -614,7 +614,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     const input = e.target.value.toLowerCase().replace(/s\+/g, " ");
     setChatMembersSearchQuery(input);
 
-    let matchingUsers: TUser[] = [];
+    let matchingUsers: TOtherUser[] = [];
     if (input.replace(/\s+/g, "") !== "") {
       for (const user of searchArray) {
         if (user.username && user.firstName && user.lastName) {
