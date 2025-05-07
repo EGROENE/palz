@@ -9,6 +9,7 @@ import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import Methods from "../../../methods";
 import ListedUser from "../ListedUser/ListedUser";
 import ChatModalTwoOptions from "../ChatModalTwoOptions/ChatModalTwoOptions";
+import Requests from "../../../requests";
 
 const ChatModal = () => {
   const { allOtherUsers, currentUser, setCurrentOtherUser, getOtherUserFriends } =
@@ -132,15 +133,22 @@ const ChatModal = () => {
             ? currentUser.friends.includes(otherUser._id)
             : false;
 
-        if (
-          userIsNotAlreadyInCurrentChat &&
-          !currentUserIsBlocked &&
-          (otherUser.whoCanMessage === "anyone" ||
-            (otherUser.whoCanMessage === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanMessage === "friends of friends" &&
-              currentUserIsFriendOfFriend))
-        ) {
-          return otherUser;
+        if (otherUser._id) {
+          Requests.getUserByID(otherUser._id).then((response) => {
+            if (response.ok) {
+              response.json().then((otherUser) => {
+                if (
+                  userIsNotAlreadyInCurrentChat &&
+                  (otherUser.whoCanMessage === "anyone" ||
+                    (otherUser.whoCanMessage === "friends" && currentUserIsFriend) ||
+                    (otherUser.whoCanMessage === "friends of friends" &&
+                      currentUserIsFriendOfFriend))
+                ) {
+                  return otherUser;
+                }
+              });
+            }
+          });
         }
       })
     );
