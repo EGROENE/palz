@@ -411,7 +411,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       if (data.ok) {
         const sender = variables.sender;
         const recipient = variables.recipient;
-        receiveFriendRequestMutation.mutate({ sender, recipient });
+
+        if (recipient._id) {
+          Requests.getUserByID(recipient._id).then((res) =>
+            res
+              .json()
+              .then((recipient) =>
+                receiveFriendRequestMutation.mutate({ sender, recipient })
+              )
+          );
+        }
       } else {
         toast.error("Couldn't send request. Please try again.", {
           style: {
@@ -455,14 +464,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Only if recipient receives FR from currentUser should currentUser's request go thru
   const receiveFriendRequestMutation = useMutation({
-    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TOtherUser }) => {
-      // @ts-ignore: recipient._id will be defined as long as recipient is defined. Ignore TS error b/c, if logic to check if recipient._id is put into mutationFn, an error on mutationFn occurs, since something will only be returned if recipient._id is defined.
-      return Requests.getUserByID(recipient._id).then((res) =>
-        res.json().then((recipient) => {
-          return Requests.addToFriendRequestsReceived(sender, recipient);
-        })
-      );
-    },
+    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
+      Requests.addToFriendRequestsReceived(sender, recipient),
     onSuccess: (data, variables) => {
       if (data.ok) {
         if (currentUser && currentUser._id) {
