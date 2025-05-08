@@ -489,7 +489,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const removeOrganizerMutation = useMutation({
-    mutationFn: ({ event, user }: { event: TEvent; user: TUser }) =>
+    mutationFn: ({ event, user }: { event: TEvent; user: TUser | TOtherUser }) =>
       Requests.removeOrganizer(event, user),
     onSuccess: (data) => {
       if (data.ok) {
