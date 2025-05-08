@@ -268,7 +268,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const removeUserRSVPMutation = useMutation({
-    mutationFn: ({ user, event }: { user: TUser; event: TEvent }) =>
+    mutationFn: ({ user, event }: { user: TUser | TOtherUser; event: TEvent }) =>
       Requests.deleteUserRSVP(user, event),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: "allEvents" });
@@ -567,7 +567,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleDeleteUserRSVP = (
     event: TEvent,
-    user: TUser,
+    user: TUser | TOtherUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     e?.preventDefault();
