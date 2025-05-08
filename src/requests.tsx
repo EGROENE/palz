@@ -733,7 +733,10 @@ const removeInvitee = (
   });
 };
 
-const removeOrganizer = (event: TEvent, user: TUser | null): Promise<Response> => {
+const removeOrganizer = (
+  event: TEvent,
+  user: TUser | TOtherUser | null
+): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
