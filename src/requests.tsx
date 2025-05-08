@@ -829,7 +829,7 @@ const removeFromFriendRequestsReceived = (
 
 const removeFromFriendRequestsSent = (
   sender: TUser,
-  recipient: TUser
+  recipient: TOtherUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
