@@ -32,6 +32,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setCurrentOtherUser,
     currentOtherUser,
     fetchAllVisibleOtherUsersQuery,
+    getOtherUserFriends,
   } = useUserContext();
 
   const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
