@@ -434,7 +434,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleReceiveFriendRequestFail = (variables: {
     sender: TUser;
-    recipient: TUser;
+    recipient: TOtherUser;
   }) => {
     if (variables.recipient._id && friendRequestsSent) {
       // If FR was sent, but recipient didn't receive it (request failed), delete sent FR from sender:
