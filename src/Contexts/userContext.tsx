@@ -511,26 +511,32 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     if (variables.event === "accept-request") {
       // Remove sender & receiver from each other's 'friends' array, add sender back to receivers FR-received array:
-      Promise.all([
-        Requests.deleteFriendFromFriendsArray(variables.sender, variables.recipient),
-        Requests.deleteFriendFromFriendsArray(variables.recipient, variables.sender),
-        Requests.addToFriendRequestsSent(variables.sender, variables.recipient),
-        Requests.addToFriendRequestsReceived(variables.sender, variables.recipient),
-      ])
-        .then((res) => {
-          if (res.some((promiseResult) => !promiseResult.ok)) {
-            handleRemoveFriendRequestFail(variables);
-          }
-        })
-        .catch((error) => console.log(error));
-
-      toast.error("Could not accept friend request. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
+      if (variables.recipient._id) {
+        Requests.getUserByID(variables.recipient._id).then((res) =>
+          res.json().then((recipient) => {
+            Promise.all([
+              Requests.deleteFriendFromFriendsArray(variables.sender, recipient),
+              Requests.deleteFriendFromFriendsArray(recipient, variables.sender),
+              Requests.addToFriendRequestsSent(variables.sender, recipient),
+              Requests.addToFriendRequestsReceived(variables.sender, recipient),
+            ])
+              .then((res) => {
+                if (res.some((promiseResult) => !promiseResult.ok)) {
+                  handleRemoveFriendRequestFail(variables);
+                }
+              })
+              .catch((error) => console.log(error));
+  
+            toast.error("Could not accept friend request. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          })
+        );
+      }
     }
 
     if (variables.event === "retract-request") {
