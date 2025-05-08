@@ -1423,7 +1423,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   // maybe pass in a TUser[] & its setter in order to optimistically render UserCards on FindPalz/MyPalz, FriendRequests
   const addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists = (
     blocker: TUser,
-    blockee: TUser,
+    blockee: TOtherUser,
     blockedUsers?: string[] | undefined,
     setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
   ): void => {
@@ -1431,25 +1431,33 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setBlockedUsers(blockedUsers.concat(blockee._id));
     }
     setIsLoading(true);
-    const areFriends: boolean =
-      blocker._id &&
-      blockee._id &&
-      (blocker.friends.includes(blockee._id) || blockee.friends.includes(blocker._id))
-        ? true
-        : false;
-    const hasSentFriendRequest: boolean = blockee._id
-      ? blocker.friendRequestsSent.includes(blockee._id)
-      : false;
-    const hasReceivedFriendRequest: boolean = blockee._id
-      ? blocker.friendRequestsReceived.includes(blockee._id)
-      : false;
-    blockUserMutation.mutate({
-      blocker,
-      blockee,
-      areFriends,
-      hasSentFriendRequest,
-      hasReceivedFriendRequest,
-    });
+
+    if (blockee._id) {
+      Requests.getUserByID(blockee._id).then((res) =>
+        res.json().then((blockee) => {
+          const areFriends: boolean =
+            blocker._id &&
+            blockee._id &&
+            (blocker.friends.includes(blockee._id) ||
+              blockee.friends.includes(blocker._id))
+              ? true
+              : false;
+          const hasSentFriendRequest: boolean = blockee._id
+            ? blocker.friendRequestsSent.includes(blockee._id)
+            : false;
+          const hasReceivedFriendRequest: boolean = blockee._id
+            ? blocker.friendRequestsReceived.includes(blockee._id)
+            : false;
+          blockUserMutation.mutate({
+            blocker,
+            blockee,
+            areFriends,
+            hasSentFriendRequest,
+            hasReceivedFriendRequest,
+          });
+        })
+      );
+    }
   };
 
   const handleUnblockUserFail = (blockee: TUser): void => {
