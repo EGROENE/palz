@@ -509,7 +509,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleRemoveFriendRequestFail = (variables: {
     sender: TUser;
-    recipient: TUser;
+    recipient: TOtherUser;
     event: "accept-request" | "retract-request" | "reject-request";
   }) => {
     if (variables.event === "accept-request") {
@@ -588,7 +588,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       event,
     }: {
       sender: TUser;
-      recipient: TUser;
+      recipient: TOtherUser;
       event: "accept-request" | "retract-request" | "reject-request";
     }) => Requests.removeFromFriendRequestsSent(sender, recipient),
     onSuccess: (data, variables) => {
