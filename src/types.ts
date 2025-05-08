@@ -583,7 +583,7 @@ export type TEventContext = {
   handleRemoveOrganizer: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
-    user: TUser | null
+    user: TUser | TOtherUser | null
   ) => void;
   showRSVPs: boolean;
   setShowRSVPs: React.Dispatch<React.SetStateAction<boolean>>;

@@ -607,7 +607,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleRemoveOrganizer = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
-    user: TUser | null
+    user: TUser | TOtherUser | null
   ) => {
     e.preventDefault();
     setIsLoading(true);
