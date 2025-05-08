@@ -1327,7 +1327,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleAcceptFriendRequest = (
     sender: TUser,
-    receiver: TUser,
+    receiver: TOtherUser,
     e?: React.ChangeEvent<HTMLInputElement>
   ): void => {
     e?.preventDefault();
@@ -1338,7 +1338,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setShowFriendRequestResponseOptions(false);
     }
 
-    addToSenderFriendsMutation.mutate({ sender, receiver });
+    if (receiver._id) {
+      Requests.getUserByID(receiver._id).then((res) =>
+        res.json().then((receiver) => {
+          addToSenderFriendsMutation.mutate({ sender, receiver });
+        })
+      );
+    }
   };
 
   const handleRejectFriendRequest = (
