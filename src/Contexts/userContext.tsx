@@ -593,7 +593,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         const sender = variables.sender;
         const recipient = variables.recipient;
         const event = variables.event;
-        removeReceivedFriendRequestMutation.mutate({ sender, recipient, event });
+
+        if (recipient._id) {
+          Requests.getUserByID(recipient._id).then((res) =>
+            res
+              .json()
+              .then((recipient) =>
+                removeReceivedFriendRequestMutation.mutate({ sender, recipient, event })
+              )
+          );
+        }
       } else {
         handleRemoveFriendRequestFail(variables);
       }
@@ -610,16 +619,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       event,
     }: {
       sender: TUser;
-      recipient: TOtherUser;
+      recipient: TUser;
       event: "accept-request" | "retract-request" | "reject-request";
-    }) => {
-      // @ts-ignore: recipient._id will be defined as long as recipient is defined. Ignore TS error b/c, if logic to check if recipient._id is put into mutationFn, an error on mutationFn occurs, since something will only be returned if recipient._id is defined.
-      return Requests.getUserByID(recipient._id).then((res) =>
-        res.json().then((recipient) => {
-          return Requests.removeFromFriendRequestsReceived(sender, recipient);
-        })
-      );
-    },
+    }) => Requests.removeFromFriendRequestsReceived(sender, recipient),
     onSuccess: (data, variables) => {
       if (data.ok) {
         if (currentUser && currentUser._id) {
