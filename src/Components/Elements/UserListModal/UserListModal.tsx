@@ -1,5 +1,5 @@
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TOtherUser, TUser } from "../../../types";
+import { TOtherUser } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import { useMainContext } from "../../../Hooks/useMainContext";
@@ -108,16 +108,26 @@ const UserListModal = ({
     return undefined;
   };
 
-  const getButtonTwoHandlerParams = (user: TUser) => {
-    if (!buttonTwoHandlerParams) {
-      if (
-        listType === "rsvpd-users" ||
-        (listType === "invitees" &&
-          (buttonTwoHandler === handleRemoveInvitee ||
-            buttonTwoHandler === handleDeleteUserRSVP))
-      ) {
-        return [currentEvent, user];
-      }
+  const getButtonTwoHandlerParams = (user: TOtherUser) => {
+    if (user._id) {
+      Requests.getUserByID(user._id).then((res) => {
+        if (res.ok) {
+          res.json().then((userObject) => {
+            if (!buttonTwoHandlerParams) {
+              if (
+                listType === "rsvpd-users" ||
+                (listType === "invitees" &&
+                  (buttonTwoHandler === handleRemoveInvitee ||
+                    buttonTwoHandler === handleDeleteUserRSVP))
+              ) {
+                return [currentEvent, userObject];
+              }
+            }
+          });
+        } else {
+          getButtonTwoHandlerParams(user);
+        }
+      });
     }
     return undefined;
   };
