@@ -5,6 +5,7 @@ import { useEventContext } from "../../../Hooks/useEventContext";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import QueryLoadingOrError from "../QueryLoadingOrError/QueryLoadingOrError";
 import { useChatContext } from "../../../Hooks/useChatContext";
+import Requests from "../../../requests";
 
 /* Component contains a modal w/ background, as well as a list of users. In every user box, there is user image, name, username, & button that will eventually make it possible to message user & a button that removes user from list. To be used on event pages to show list of RSVPs & list of invitees. */
 const UserListModal = ({
@@ -79,17 +80,30 @@ const UserListModal = ({
 
   const displayedUserCount = userArray.length;
 
-  const getButtonOneHandlerParams = (user: TUser) => {
-    if (!buttonOneHandlerParams) {
-      if (listType === "blocked-users" && buttonOneHandler === handleUnblockUser) {
-        return [currentUser, user, blockedUsers, setBlockedUsers];
-      }
-      if (
-        (listType === "invitees" || listType === "rsvpd-users") &&
-        buttonOneHandler === startConversation
-      ) {
-        return [user];
-      }
+  const getButtonOneHandlerParams = (user: TOtherUser) => {
+    if (user._id) {
+      Requests.getUserByID(user._id).then((res) => {
+        if (res.ok) {
+          res.json().then((userObject) => {
+            if (!buttonOneHandlerParams) {
+              if (
+                listType === "blocked-users" &&
+                buttonOneHandler === handleUnblockUser
+              ) {
+                return [currentUser, userObject, blockedUsers, setBlockedUsers];
+              }
+              if (
+                (listType === "invitees" || listType === "rsvpd-users") &&
+                buttonOneHandler === startConversation
+              ) {
+                return [userObject];
+              }
+            }
+          });
+        } else {
+          getButtonOneHandlerParams(user);
+        }
+      });
     }
     return undefined;
   };
