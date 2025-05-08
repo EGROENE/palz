@@ -405,14 +405,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   Success of a sent friend request depends on if both of the mutations below are successful, so call second mutation in onSuccess of mutation that runs first. Display toast of send-friend-request success or failure in onSuccess/onError of second mutation that runs. setIsLoading(false) upon settling of second mutation that runs.
   */
   const sendFriendRequestMutation = useMutation({
-    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TOtherUser }) => {
-      // @ts-ignore: recipient._id will be defined as long as recipient is defined. Ignore TS error b/c, if logic to check if recipient._id is put into mutationFn, an error on mutationFn occurs, since something will only be returned if recipient._id is defined.
-      return Requests.getUserByID(recipient._id).then((res) =>
-        res.json().then((recipient) => {
-          return Requests.addToFriendRequestsSent(sender, recipient);
-        })
-      );
-    },
+    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
+      Requests.addToFriendRequestsSent(sender, recipient),
     onSuccess: (data, variables) => {
       if (data.ok) {
         const sender = variables.sender;
@@ -1306,7 +1300,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (currentUser) {
       setIsLoading(true);
       const sender = currentUser;
-      sendFriendRequestMutation.mutate({ sender, recipient });
+
+      if (recipient._id) {
+        Requests.getUserByID(recipient._id).then((res) =>
+          res
+            .json()
+            .then((recipient) => sendFriendRequestMutation.mutate({ sender, recipient }))
+        );
+      }
     }
   };
 
