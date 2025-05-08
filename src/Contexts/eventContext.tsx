@@ -589,7 +589,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Handler for user to decline invitation. Should remove them from invitees array in DB:
   const handleRemoveInvitee = (
     event: TEvent,
     user: TUser | TOtherUser | null,
