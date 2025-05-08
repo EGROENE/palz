@@ -709,7 +709,7 @@ export type TEventContext = {
   ) => void;
   handleRemoveInvitee: (
     event: TEvent,
-    user: TUser | null,
+    user: TUser | TOtherUser | null,
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
   handleDeclineInvitation: (
