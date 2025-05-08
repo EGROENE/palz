@@ -711,7 +711,10 @@ const deleteEvent = (event: TEvent | undefined): Promise<Response> => {
   });
 };
 
-const removeInvitee = (event: TEvent, user: TUser | null): Promise<Response> => {
+const removeInvitee = (
+  event: TEvent,
+  user: TUser | TOtherUser | null
+): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
