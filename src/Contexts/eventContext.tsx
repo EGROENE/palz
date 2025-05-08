@@ -461,7 +461,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const removeInviteeMutation = useMutation({
-    mutationFn: ({ event, user }: { event: TEvent; user: TUser }) =>
+    mutationFn: ({ event, user }: { event: TEvent; user: TUser | TOtherUser }) =>
       Requests.removeInvitee(event, user),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: "allEvents" });
@@ -592,7 +592,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   // Handler for user to decline invitation. Should remove them from invitees array in DB:
   const handleRemoveInvitee = (
     event: TEvent,
-    user: TUser | null,
+    user: TUser | TOtherUser | null,
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     e.preventDefault();
