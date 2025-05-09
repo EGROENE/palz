@@ -315,8 +315,8 @@ const DisplayedCardsPage = ({
   };
   const friendsOfFriends = getFriendsOfFriends();
 
-  const getPotentialFriendsWithCommonInterests = (): TUser[] => {
-    let potentialFriendsWithCommonInterests: TUser[] = [];
+  const getPotentialFriendsWithCommonInterests = (): TOtherUser[] => {
+    let potentialFriendsWithCommonInterests: TOtherUser[] = [];
     if (currentUser?.interests && displayablePotentialFriends) {
       for (const interest of currentUser.interests) {
         for (const potentialFriend of displayablePotentialFriends) {
