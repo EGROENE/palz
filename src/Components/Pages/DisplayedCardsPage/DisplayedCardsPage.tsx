@@ -542,8 +542,9 @@ const DisplayedCardsPage = ({
           let eventOrganizerNames: string[] = [];
           let eventOrganizerUsernames: string[] = [];
           for (const id of event.organizers) {
-            const matchingUser: TUser | undefined =
-              allUsers && allUsers.filter((user) => user?._id === id)[0];
+            const matchingUser: TOtherUser | undefined =
+              visibleOtherUsers &&
+              visibleOtherUsers.filter((user) => user?._id === id)[0];
 
             const fullName: string = `${matchingUser?.firstName?.toLowerCase()} ${matchingUser?.lastName?.toLowerCase()}`;
             eventOrganizerNames.push(fullName);
