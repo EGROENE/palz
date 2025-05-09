@@ -51,8 +51,17 @@ const OtherUserProfile = () => {
     useChatContext();
   const userChats = fetchChatsQuery.data;
   const { username } = useParams();
-  const currentOtherUser =
-    allUsers && allUsers.filter((user) => user.username === username)[0];
+
+  const currentOtherUserID: string | undefined = visibleOtherUsers?.filter(
+    (visibleOtherUser) => visibleOtherUser.username === username
+  )[0]._id;
+
+  let currentOtherUser: TUser | undefined;
+  if (currentOtherUserID) {
+    Requests.getUserByID(currentOtherUserID).then((res) =>
+      res.json().then((user) => (currentOtherUser = user))
+    );
+  }
 
   const [showFriends, setShowFriends] = useState<boolean>(false);
   const [showMutualFriends, setShowMutualFriends] = useState<boolean>(false);
