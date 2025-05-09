@@ -359,15 +359,25 @@ const DisplayedCardsPage = ({
   //////////////////////////////////////////////////////////////
 
   // FRIENDS VARIABLES
-  const currentUserPalz: TUser[] = [];
-  if (friends && allUsers) {
-    for (const id of friends) {
-      currentUserPalz.push(allUsers.filter((user) => user._id === id)[0]);
+  const getCurrentUserFriends = (): TUser[] => {
+    let currentUserFriends: TUser[] = [];
+    if (currentUser) {
+      for (const friendID of currentUser.friends) {
+        Requests.getUserByID(friendID).then((res) =>
+          res
+            .json()
+            .then((currentUserFriend: TUser) =>
+              currentUserFriends.push(currentUserFriend)
+            )
+        );
+      }
     }
-  }
+    return currentUserFriends;
+  };
+  const currentUserFriends: TUser[] = getCurrentUserFriends();
 
   const friendsWithCommonInterests: TUser[] = [];
-  for (const pal of currentUserPalz) {
+  for (const pal of currentUserFriends) {
     if (currentUser?.interests) {
       for (const interest of currentUser.interests) {
         if (pal && pal.interests.includes(interest)) {
@@ -378,15 +388,15 @@ const DisplayedCardsPage = ({
   }
   const friendFilterOptions = {
     ...(currentUser?.city !== "" && {
-      "in my city": currentUserPalz.filter((user) => user.city === currentUser?.city),
+      "in my city": currentUserFriends.filter((user) => user.city === currentUser?.city),
     }),
     ...(currentUser?.stateProvince !== "" && {
-      "in my state": currentUserPalz.filter(
+      "in my state": currentUserFriends.filter(
         (user) => user.stateProvince === currentUser?.stateProvince
       ),
     }),
     ...(currentUser?.country !== "" && {
-      "in my country": currentUserPalz.filter(
+      "in my country": currentUserFriends.filter(
         (user) => user.country === currentUser?.country
       ),
     }),
@@ -395,7 +405,7 @@ const DisplayedCardsPage = ({
     }),
   };
 
-  const resetDisplayedFriends = (): void => setDisplayedItems(currentUserPalz);
+  const resetDisplayedFriends = (): void => setDisplayedItems(currentUserFriends);
 
   // Upon change of friends, resetDisplayedFriends or -PotentialFriends, depending on usedFor. Account in resetDisplayedFriends for any existing filters or search terms, or clear all filters & search terms when resetting
   useEffect(() => {
@@ -602,7 +612,7 @@ const DisplayedCardsPage = ({
       if (usedFor === "my-friends") {
         let newDisplayedFriends: TUser[] = [];
         // search pot. friends by first/last name, city/state/country, username
-        for (const pal of currentUserPalz) {
+        for (const pal of currentUserFriends) {
           if (
             pal.firstName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
             pal.lastName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
