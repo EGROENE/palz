@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import { useState, useEffect, useRef } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TUser, TEvent, TThemeColor } from "../../../types";
+import { TUser, TEvent, TThemeColor, TOtherUser } from "../../../types";
 import Methods from "../../../methods";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
@@ -141,9 +141,9 @@ const EventForm = ({
   const blockeesRef = useRef<HTMLInputElement | null>(null);
   ///////
 
-  const [potentialCoOrganizers, setPotentialCoOrganizers] = useState<TUser[]>([]);
-  const [potentialInvitees, setPotentialInvitees] = useState<TUser[]>([]);
-  const [potentialBlockees, setPotentialBlockees] = useState<TUser[]>([]);
+  const [potentialCoOrganizers, setPotentialCoOrganizers] = useState<TOtherUser[]>([]);
+  const [potentialInvitees, setPotentialInvitees] = useState<TOtherUser[]>([]);
+  const [potentialBlockees, setPotentialBlockees] = useState<TOtherUser[]>([]);
   const [coOrganizersSearchQuery, setCoOrganizersSearchQuery] = useState<string>("");
   const [inviteesSearchQuery, setInviteesSearchQuery] = useState<string>("");
   const [blockeesSearchQuery, setBlockeesSearchQuery] = useState<string>("");
