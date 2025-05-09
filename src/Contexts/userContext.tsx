@@ -186,7 +186,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
-  const [currentOtherUser, setCurrentOtherUser] = useLocalStorage<TUser | null>(
+  const [currentOtherUser, setCurrentOtherUser] = useLocalStorage<TOtherUser | null>(
     "currentOtherUser",
     null
   );
