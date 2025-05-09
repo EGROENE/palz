@@ -252,7 +252,11 @@ const OtherUserProfile = () => {
     ),
     handler:
       currentUser && currentOtherUser
-        ? () => handleUnfriending(currentUser, currentOtherUser)
+        ? () => {
+            if (currentOtherUser) {
+              return handleUnfriending(currentUser, currentOtherUser);
+            }
+          }
         : undefined,
     paramsIncludeEvent: false,
   };
