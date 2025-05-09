@@ -372,7 +372,7 @@ const OtherUserProfile = () => {
       ? matchingCountryObject.abbreviation
       : undefined;
 
-  const getCurrentUserPalz = (): TUser[] => {
+  const getCurrentUserFriends = (): TUser[] => {
     let currentUserFriends: TUser[] = [];
     if (currentUser) {
       for (const friendID of currentUser.friends) {
@@ -387,7 +387,7 @@ const OtherUserProfile = () => {
     }
     return currentUserFriends;
   };
-  const currentUserFriends: TUser[] = getCurrentUserPalz();
+  const currentUserFriends: TUser[] = getCurrentUserFriends();
 
   // get TUser object that matches each id in friends array of each of currentUser's friends
   let friendsOfCurrentUserFriends: TUser[] = [];
