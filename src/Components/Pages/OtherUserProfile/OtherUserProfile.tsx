@@ -137,7 +137,7 @@ const OtherUserProfile = () => {
   // Second, go thru all currentOtherUser friends & map their TUser object into currentOtherUserFriends
   const getCurrentOtherUserFriends = (): TUser[] => {
     let currentOtherUserFriends: TUser[] = [];
-    if (currentOtherUser._id) {
+    if (currentOtherUser && currentOtherUser._id) {
       Requests.getUserByID(currentOtherUser._id).then((res) =>
         res.json().then((currentOtherUser: TUser) => {
           for (const friendID of currentOtherUser.friends) {
