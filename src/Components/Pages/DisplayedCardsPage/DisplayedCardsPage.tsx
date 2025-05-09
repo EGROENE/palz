@@ -31,7 +31,6 @@ const DisplayedCardsPage = ({
   const {
     currentUser,
     userCreatedAccount,
-    blockedUsers,
     logout,
     friends,
     fetchAllVisibleOtherUsersQuery,
@@ -588,23 +587,33 @@ const DisplayedCardsPage = ({
         let newDisplayedPotentialFriends: TUser[] = [];
         // search pot. friends by first/last name, city/state/country, username
         for (const potentialFriend of displayablePotentialFriends) {
-          if (
-            potentialFriend.firstName
-              ?.toLowerCase()
-              .includes(inputCleaned.toLowerCase()) ||
-            potentialFriend.lastName
-              ?.toLowerCase()
-              .includes(inputCleaned.toLowerCase()) ||
-            potentialFriend.username
-              ?.toLowerCase()
-              .includes(inputCleaned.toLowerCase()) ||
-            potentialFriend.city.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            potentialFriend.country.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            potentialFriend.stateProvince
-              .toLowerCase()
-              .includes(inputCleaned.toLowerCase())
-          ) {
-            newDisplayedPotentialFriends.push(potentialFriend);
+          if (potentialFriend._id) {
+            Requests.getUserByID(potentialFriend._id).then((res) =>
+              res.json().then((potentialFriend) => {
+                if (
+                  potentialFriend.firstName
+                    ?.toLowerCase()
+                    .includes(inputCleaned.toLowerCase()) ||
+                  potentialFriend.lastName
+                    ?.toLowerCase()
+                    .includes(inputCleaned.toLowerCase()) ||
+                  potentialFriend.username
+                    ?.toLowerCase()
+                    .includes(inputCleaned.toLowerCase()) ||
+                  potentialFriend.city
+                    .toLowerCase()
+                    .includes(inputCleaned.toLowerCase()) ||
+                  potentialFriend.country
+                    .toLowerCase()
+                    .includes(inputCleaned.toLowerCase()) ||
+                  potentialFriend.stateProvince
+                    .toLowerCase()
+                    .includes(inputCleaned.toLowerCase())
+                ) {
+                  newDisplayedPotentialFriends.push(potentialFriend);
+                }
+              })
+            );
           }
         }
         setDisplayedItems(newDisplayedPotentialFriends);
