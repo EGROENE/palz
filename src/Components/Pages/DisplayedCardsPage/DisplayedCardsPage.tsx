@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import EventCard from "../../Elements/EventCard/EventCard";
 import UserCard from "../../Elements/UserCard/UserCard";
 import Methods from "../../../methods";
-import { TEvent, TThemeColor, TUser } from "../../../types";
+import { TEvent, TThemeColor, TUser, TOtherUser } from "../../../types";
 import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
@@ -28,7 +28,6 @@ const DisplayedCardsPage = ({
     displayedItemsFiltered,
   } = useMainContext();
   const {
-    allUsers,
     currentUser,
     userCreatedAccount,
     blockedUsers,
@@ -36,6 +35,9 @@ const DisplayedCardsPage = ({
     friends,
     fetchAllVisibleOtherUsersQuery,
   } = useUserContext();
+
+  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+
   const { fetchAllEventsQuery } = useEventContext();
 
   const allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
@@ -122,7 +124,7 @@ const DisplayedCardsPage = ({
             let eventOrganizerNames: string[] = [];
             let eventOrganizerUsernames: string[] = [];
             for (const id of event.organizers) {
-              const matchingUser: TUser | undefined = allUsers?.filter(
+              const matchingUser: TOtherUser | undefined = visibleOtherUsers?.filter(
                 (user) => user?._id === id
               )[0];
 
@@ -280,66 +282,29 @@ const DisplayedCardsPage = ({
   //////////////////////////////////////////
 
   // POTENTIAL-FRIENDS VARIABLES
-  /* display only users whose profile is visible to anyone, to friends & currentUser is friend, and friends of friends & currentUser is a friend of a user's friend, and who hasn't blocked currentUser, and whom currentUser hasn't blocked. */
-  const allOtherNonFriendUsers: TUser[] | undefined = allUsers?.filter(
-    (user) =>
-      currentUser?._id &&
-      user._id &&
-      user._id !== currentUser._id &&
-      !friends?.includes(user._id) &&
-      !user.blockedUsers.includes(currentUser._id) &&
-      !blockedUsers?.includes(user._id)
-  );
-
-  const nonFriendUsersVisibleToAnyone: TUser[] | undefined =
-    allOtherNonFriendUsers?.filter((user) => user.profileVisibleTo === "anyone");
-
-  const nonFriendUsersVisibleToFriendsOfFriends: TUser[] | undefined =
-    allOtherNonFriendUsers?.filter(
-      (user) => user.profileVisibleTo === "friends of friends"
-    );
-
-  /* Function to return for display an array of users whose profiles are visible to anyone, or to friends of friends & currentUser is a friend of a friend */
-  const getDisplayablePotentialFriends = (): TUser[] => {
-    let displayablePotentialFriends = nonFriendUsersVisibleToAnyone;
-
-    if (
-      nonFriendUsersVisibleToFriendsOfFriends &&
-      allUsers &&
-      displayablePotentialFriends
-    ) {
-      for (const user of nonFriendUsersVisibleToFriendsOfFriends) {
-        // for each friend of user, check if their friends arr includes currentUser._id
-        // will need to get TUser of friend, not just id
-        const userFriends: TUser[] = []; // array of user's friends in TUser form
-        // Push user in allUsers w/ id that matches friendID into userFriends
-        for (const friendID of user.friends) {
-          userFriends.push(allUsers.filter((u) => u._id === friendID)[0]);
+  const getDisplayedPotentialFriends = (): TOtherUser[] => {
+    if (visibleOtherUsers && currentUser) {
+      return visibleOtherUsers.filter((visibleOtherUser) => {
+        if (visibleOtherUser._id) {
+          return !currentUser.friends.includes(visibleOtherUser._id);
         }
-        /* for every friend of userFriends, check if their friends list includes currentUser._id & push to displayablePotentialFriends if it does */
-        for (const friend of userFriends) {
-          if (currentUser?._id && friend.friends.includes(currentUser._id)) {
-            displayablePotentialFriends.push(friend);
-          }
-        }
-      }
-      return displayablePotentialFriends;
+      });
     }
     return [];
   };
-  const displayablePotentialFriends = getDisplayablePotentialFriends();
+  const displayablePotentialFriends: TOtherUser[] = getDisplayedPotentialFriends();
 
   const getFriendsOfFriends = (): TUser[] => {
     // get TUser object that matches each id in currentUser.friends:
-    let currentUserFriends: TUser[] = [];
+    let currentUserPalz: TUser[] = [];
     if (currentUser?.friends && allUsers) {
       for (const friendID of currentUser.friends) {
-        currentUserFriends.push(allUsers.filter((u) => u._id === friendID)[0]);
+        currentUserPalz.push(allUsers.filter((u) => u._id === friendID)[0]);
       }
     }
     // get TUser object that matches each id in friends array of each of currentUser's friends
     let friendsOfFriends: TUser[] = [];
-    for (const friend of currentUserFriends) {
+    for (const friend of currentUserPalz) {
       if (friend && friend.friends.length > 0 && allUsers) {
         for (const friendID of friend.friends) {
           const friendOfFriend: TUser | undefined = allUsers.filter(
@@ -734,7 +699,6 @@ const DisplayedCardsPage = ({
 
   return (
     <>
-      {" "}
       <h1>{pageHeading}</h1>
       {!fetchIsLoading &&
         isNoFetchError &&
