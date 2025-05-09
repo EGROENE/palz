@@ -254,8 +254,10 @@ export type TMainContext = {
   setDisplayedItemsCountInterval: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  displayedItemsFiltered: (TUser | TEvent)[];
-  setDisplayedItemsFiltered: React.Dispatch<React.SetStateAction<(TUser | TEvent)[]>>;
+  displayedItemsFiltered: (TOtherUser | TEvent)[];
+  setDisplayedItemsFiltered: React.Dispatch<
+    React.SetStateAction<(TOtherUser | TEvent)[]>
+  >;
   handleLoadMoreOnScroll: (
     displayedItemsCount: number | undefined,
     setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>,
@@ -264,8 +266,8 @@ export type TMainContext = {
     displayedItemsCountInterval: number | undefined,
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ) => void;
-  displayedItems: (TUser | TEvent)[];
-  setDisplayedItems: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
+  displayedItems: (TOtherUser | TEvent)[];
+  setDisplayedItems: React.Dispatch<React.SetStateAction<(TEvent | TOtherUser)[]>>;
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   theme: "dark" | "light";
