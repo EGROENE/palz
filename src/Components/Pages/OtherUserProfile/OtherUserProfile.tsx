@@ -10,6 +10,7 @@ import { TThemeColor, TUser, TEvent, TChat } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { countries } from "../../../constants";
 import Methods from "../../../methods";
+import Requests from "../../../requests";
 import Tab from "../../Elements/Tab/Tab";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
@@ -123,11 +124,28 @@ const OtherUserProfile = () => {
   const usersAreFriends: boolean =
     currentOtherUser?._id && friends?.includes(currentOtherUser._id) ? true : false;
 
-  const currentOtherUserFriends: TUser[] | undefined =
-    currentOtherUser &&
-    allUsers.filter(
-      (user) => user && user._id && currentOtherUser.friends.includes(user._id)
-    );
+  // First, get currentOtherUser as TUser
+  // Second, go thru all currentOtherUser friends & map their TUser object into currentOtherUserFriends
+  const getCurrentOtherUserFriends = (): TUser[] => {
+    let currentOtherUserFriends: TUser[] = [];
+    if (currentOtherUser._id) {
+      Requests.getUserByID(currentOtherUser._id).then((res) =>
+        res.json().then((currentOtherUser: TUser) => {
+          currentOtherUser.friends.map((friendID: string) => {
+            Requests.getUserByID(friendID).then((res) =>
+              res
+                .json()
+                .then((currentOtherUserFriend) =>
+                  currentOtherUserFriends.push(currentOtherUserFriend)
+                )
+            );
+          });
+        })
+      );
+    }
+    return currentOtherUserFriends;
+  };
+  let currentOtherUserFriends: TUser[] = getCurrentOtherUserFriends();
 
   const currentUserIsFriendOfFriend: boolean =
     currentUser && currentOtherUser && currentOtherUserFriends
