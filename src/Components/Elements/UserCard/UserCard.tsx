@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { TUser, TThemeColor } from "../../../types";
+import { TUser, TThemeColor, TOtherUser } from "../../../types";
 import { countries } from "../../../constants";
 import { useState, useEffect } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
@@ -11,7 +11,9 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 
 const UserCard = ({ user }: { user: TUser }) => {
   const { isLoading } = useMainContext();
-  const { currentUser, allUsers } = useUserContext();
+  const { currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
+  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+
   const {
     friends,
     handleUnfriending,
