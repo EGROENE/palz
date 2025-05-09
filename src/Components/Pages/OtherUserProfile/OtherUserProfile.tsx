@@ -131,7 +131,7 @@ const OtherUserProfile = () => {
     if (currentOtherUser._id) {
       Requests.getUserByID(currentOtherUser._id).then((res) =>
         res.json().then((currentOtherUser: TUser) => {
-          currentOtherUser.friends.map((friendID: string) => {
+          for (const friendID of currentOtherUser.friends) {
             Requests.getUserByID(friendID).then((res) =>
               res
                 .json()
@@ -139,7 +139,7 @@ const OtherUserProfile = () => {
                   currentOtherUserFriends.push(currentOtherUserFriend)
                 )
             );
-          });
+          }
         })
       );
     }
