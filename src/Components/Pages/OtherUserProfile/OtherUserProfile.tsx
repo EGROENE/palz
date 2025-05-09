@@ -39,7 +39,7 @@ const OtherUserProfile = () => {
     friends,
     fetchAllVisibleOtherUsersQuery,
   } = useUserContext();
-  const allUsers = fetchAllVisibleOtherUsersQuery.data;
+  const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
   const {
     fetchAllEventsQuery,
     handleRemoveInvitee,
@@ -403,18 +403,7 @@ const OtherUserProfile = () => {
   };
   const currentUserPalz: TUser[] = getCurrentUserPalz();
 
-  const getCurrentOtherUserPalz = (): TUser[] => {
-    let currentOtherUserPalz = [];
-    if (allUsers && currentOtherUser) {
-      for (const palID of currentOtherUser.friends) {
-        currentOtherUserPalz.push(allUsers.filter((user) => user._id === palID)[0]);
-      }
-    }
-    return currentOtherUserPalz;
-  };
-  const currentOtherUserPalz: TUser[] = getCurrentOtherUserPalz();
-
-  const combinedPalz: TUser[] = currentUserPalz.concat(currentOtherUserPalz);
+  const combinedPalz: TUser[] = currentUserPalz.concat(currentOtherUserFriends);
 
   const palzInCommon = Methods.removeDuplicatesFromArray(
     combinedPalz.filter(
