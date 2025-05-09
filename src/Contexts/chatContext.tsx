@@ -503,7 +503,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
   };
 
-  const handleAddAdminToChat = (user: TUser, chat: TChat): void => {
+  const handleAddAdminToChat = (user: TOtherUser, chat: TChat): void => {
     setCurrentOtherUser(user);
     const updatedAdmins = chat.admins && user._id ? chat.admins.concat(user._id) : [];
     const chatValuesToUpdate = { admins: updatedAdmins };
