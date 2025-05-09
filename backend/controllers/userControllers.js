@@ -1,20 +1,21 @@
 // Handler functions that can be referenced in users.cjs
 
 const mongoose = require("mongoose");
-//import mongoose from "mongoose";
 
 //const bcrypt = require("bcrypt");
-//import bcrypt from "bcrypt";
 
 const User = require("../models/userModel");
-//import User from "../models/userModel.js";
 
-// get all users:
+/* 
+get all users (who haven't blocked currentUser & whose 'profileVisibleTo' setting doesn't prevent currentUser from seeing it):
+*/
+// Change name to 'getAllOtherUsers'
 const getAllUsers = async (req, res) => {
-  // leave obj in .find() blank, as all users are being fetched
   // .sort({createdAt: -1}) could be added to sort most recently added to earliest added, for example
+
   const allUsers = await User.find({});
 
+  // return array of other users w/ certain fields excluded (each should match TOtherUser)
   res.status(200).json(allUsers);
 };
 
