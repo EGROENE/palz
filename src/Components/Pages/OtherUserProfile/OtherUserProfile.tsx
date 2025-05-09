@@ -333,8 +333,16 @@ const OtherUserProfile = () => {
             <i className="fas fa-lock-open"></i> Unblock
           </>
         ),
-        handler: () =>
-          handleUnblockUser(currentUser, currentOtherUser, blockedUsers, setBlockedUsers),
+        handler: () => {
+          if (currentOtherUser) {
+            return handleUnblockUser(
+              currentUser,
+              currentOtherUser,
+              blockedUsers,
+              setBlockedUsers
+            );
+          }
+        },
         paramsIncludeEvent: false,
       };
     }
