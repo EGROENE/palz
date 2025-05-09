@@ -446,7 +446,7 @@ const DisplayedCardsPage = ({
     // If at least one filter, display events that can be described by the filter(s)
     // Else, if no filters (when user clears them all), reset to all events whose start or end is in future
     if (updatedActiveFiltersArray.length > 0) {
-      let newDisplayedItems: (TEvent | TUser)[] = [];
+      let newDisplayedItems: (TEvent | TOtherUser)[] = [];
       for (const filter of updatedActiveFiltersArray) {
         if (usedFor === "events") {
           const indexOfArrayInFilterOptions =
