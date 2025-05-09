@@ -8,6 +8,7 @@ import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import TwoOptionsInterface from "../TwoOptionsInterface/TwoOptionsInterface";
 import { Link } from "react-router-dom";
 import { useChatContext } from "../../../Hooks/useChatContext";
+import Requests from "../../../requests";
 
 const UserCard = ({ user }: { user: TUser }) => {
   const { isLoading } = useMainContext();
@@ -130,12 +131,27 @@ const UserCard = ({ user }: { user: TUser }) => {
 
   const buttonOneText = getButtonOneText();
 
-  const friendsInCommon: TUser[] = allUsers
-    ? allUsers?.filter(
-        (u) =>
-          u._id && user.friends.includes(u._id) && currentUser?.friends.includes(u._id)
-      )
-    : [];
+  const getFriendsInCommon = (): TOtherUser[] | undefined => {
+    if (user._id) {
+      Requests.getUserByID(user._id).then((res) =>
+        res.json().then((user) => {
+          let friendsInCommon: TOtherUser[] = [];
+          visibleOtherUsers?.filter((visibleOtherUser) => {
+            if (
+              visibleOtherUser._id &&
+              user.friends.includes(visibleOtherUser._id) &&
+              currentUser?.friends.includes(visibleOtherUser._id)
+            ) {
+              friendsInCommon.push(visibleOtherUser);
+            }
+          });
+          return friendsInCommon;
+        })
+      );
+    }
+    return undefined;
+  };
+  const friendsInCommon: TOtherUser[] | undefined = getFriendsInCommon();
 
   return (
     <>
