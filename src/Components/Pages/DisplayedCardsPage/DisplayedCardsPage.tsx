@@ -11,6 +11,7 @@ import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
+import Requests from "../../../requests";
 
 const DisplayedCardsPage = ({
   usedFor,
@@ -294,33 +295,23 @@ const DisplayedCardsPage = ({
   };
   const displayablePotentialFriends: TOtherUser[] = getDisplayedPotentialFriends();
 
-  const getFriendsOfFriends = (): TUser[] => {
-    // get TUser object that matches each id in currentUser.friends:
-    let currentUserPalz: TUser[] = [];
-    if (currentUser?.friends && allUsers) {
-      for (const friendID of currentUser.friends) {
-        currentUserPalz.push(allUsers.filter((u) => u._id === friendID)[0]);
+  const getFriendsOfFriends = (): TOtherUser[] => {
+    // First, fetch TUser object for each currentUser friend
+    // Then, map array of TOtherUser from visibleOtherUsers based on friend id
+    if (currentUser && visibleOtherUsers) {
+      for (const currentUserFriendID of currentUser.friends) {
+        Requests.getUserByID(currentUserFriendID).then((res) =>
+          res.json().then((currentUserFriend: TUser) => {
+            return visibleOtherUsers.filter((visibleOtherUser) => {
+              if (visibleOtherUser._id) {
+                return currentUserFriend.friends.includes(visibleOtherUser._id);
+              }
+            });
+          })
+        );
       }
     }
-    // get TUser object that matches each id in friends array of each of currentUser's friends
-    let friendsOfFriends: TUser[] = [];
-    for (const friend of currentUserPalz) {
-      if (friend && friend.friends.length > 0 && allUsers) {
-        for (const friendID of friend.friends) {
-          const friendOfFriend: TUser | undefined = allUsers.filter(
-            (u) =>
-              friendID !== currentUser?._id &&
-              !currentUser?.friends.includes(friendID) &&
-              u._id === friendID
-          )[0];
-          /* Necessary to check that friendOfFriend is truthy b/c it would sometimes be undefined if no user in allUsers fit the criteria (without this check, undefined would be pushed to friendsOfFriends) */
-          if (friendOfFriend) {
-            friendsOfFriends.push(friendOfFriend);
-          }
-        }
-      }
-    }
-    return friendsOfFriends;
+    return [];
   };
   const friendsOfFriends = getFriendsOfFriends();
 
