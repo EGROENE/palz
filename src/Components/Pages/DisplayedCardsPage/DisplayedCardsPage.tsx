@@ -467,7 +467,7 @@ const DisplayedCardsPage = ({
           const indexOfArrayInFilterOptions = Object.keys(
             potentialFriendFilterOptions
           ).indexOf(filter);
-          const filterOptionPotentialFriends: TUser[] = Object.values(
+          const filterOptionPotentialFriends: TOtherUser[] = Object.values(
             potentialFriendFilterOptions
           )[indexOfArrayInFilterOptions];
           for (const filterOptionPotentialFriend of filterOptionPotentialFriends) {
