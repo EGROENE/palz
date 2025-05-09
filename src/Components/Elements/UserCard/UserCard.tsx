@@ -224,7 +224,7 @@ const UserCard = ({ user }: { user: TUser }) => {
                 handleUnfriending(currentUser, user);
               }
               if (currentUserSentFriendRequest && currentUser) {
-                handleRemoveFriendRequest(user);
+                handleRemoveFriendRequest(user, currentUser);
               }
               if (currentUserReceivedFriendRequest) {
                 setCurrentOtherUser(user);
