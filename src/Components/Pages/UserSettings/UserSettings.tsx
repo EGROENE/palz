@@ -5,7 +5,7 @@ import EditUserInfoForm from "../../Forms/EditUserInfoForm/EditUserInfoForm";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import Requests from "../../../requests";
 import toast from "react-hot-toast";
-import { TThemeColor } from "../../../types";
+import { TOtherUser, TThemeColor } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
@@ -54,17 +54,17 @@ const UserSettings = () => {
     useMainContext();
   let {
     currentUser,
-    allUsers,
     logout,
     passwordIsHidden,
     setPasswordIsHidden,
     setAccountDeletionInProgress,
     handleUnblockUser,
-    blockedUsers,
     fetchAllVisibleOtherUsersQuery,
     setCurrentUser,
     userCreatedAccount,
   } = useUserContext();
+  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+
   const { fetchAllEventsQuery } = useEventContext();
   const allEvents = fetchAllEventsQuery.data;
 
@@ -237,12 +237,18 @@ const UserSettings = () => {
     }
 
     // Delete user from friendRequestsReceived & friends arrays in other users' DB documents:
-    if (currentUser && allUsers) {
-      for (const user of allUsers) {
-        promisesToAwait.push(
-          Requests.removeFromFriendRequestsReceived(currentUser, user),
-          Requests.deleteFriendFromFriendsArray(user, currentUser)
-        );
+    if (currentUser && visibleOtherUsers) {
+      for (const user of visibleOtherUsers) {
+        if (user._id) {
+          Requests.getUserByID(user._id).then((res) =>
+            res.json().then((user) => {
+              promisesToAwait.push(
+                Requests.removeFromFriendRequestsReceived(currentUser, user),
+                Requests.deleteFriendFromFriendsArray(user, currentUser)
+              );
+            })
+          );
+        }
       }
     }
 
@@ -311,9 +317,6 @@ const UserSettings = () => {
                 queryClient.refetchQueries({ queryKey: ["allEvents"] });
                 queryClient.invalidateQueries({ queryKey: "userChats" });
                 queryClient.refetchQueries({ queryKey: ["userChats"] });
-                if (fetchAllVisibleOtherUsersQuery.data) {
-                  allUsers = fetchAllVisibleOtherUsersQuery.data;
-                }
                 toast("You have deleted your account. We're sorry to see you go!", {
                   style: {
                     background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -332,10 +335,8 @@ const UserSettings = () => {
   };
 
   const getBlockedUsersArray = (): string[] => {
-    if (allUsers && currentUser) {
-      if (blockedUsers && blockedUsers.length > 0) {
-        return blockedUsers;
-      }
+    if (currentUser) {
+      return currentUser.blockedUsers;
     }
     return [];
   };
