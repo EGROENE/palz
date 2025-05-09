@@ -1322,10 +1322,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleRemoveFriendRequest = (recipient: TUser, sender?: TUser): void => {
+  const handleRemoveFriendRequest = (
+    recipient: TUser | undefined,
+    sender: TUser
+  ): void => {
     setIsLoading(true);
 
-    if (currentUser) {
+    if (currentUser && recipient) {
       if (currentUser._id === recipient._id && sender) {
         const event = "reject-request";
         removeReceivedFriendRequestMutation.mutate({ sender, recipient, event });
