@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TUser, TThemeColor } from "../../../types";
+import { TThemeColor, TOtherUser } from "../../../types";
 import ListedUser from "../../Elements/ListedUser/ListedUser";
 import styles from "./styles.module.css";
 import toast from "react-hot-toast";
@@ -22,7 +22,6 @@ const FriendRequests = () => {
     displayedItemsCount,
   } = useMainContext();
   const {
-    allUsers,
     handleAcceptFriendRequest,
     handleRejectFriendRequest,
     handleRemoveFriendRequest,
@@ -34,6 +33,7 @@ const FriendRequests = () => {
     currentUser,
     fetchAllVisibleOtherUsersQuery,
   } = useUserContext();
+  const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
 
   const [requestsVisible, setRequestsVisible] = useState<"sent" | "received" | null>(
     null
@@ -87,11 +87,12 @@ const FriendRequests = () => {
   // Upon change of requestsVisible, set displayedItems & displayedItemsFiltered arrays:
   /* Remember, these 2 arrays must both exist so the amount of items displayed can be compared to how many items there are in total. */
   useEffect(() => {
-    const friendRequestsReceivedUSERS: TUser[] | undefined = allUsers?.filter(
-      (user) => user._id && friendRequestsReceived?.includes(user._id)
-    );
+    const friendRequestsReceivedUSERS: TOtherUser[] | undefined =
+      visibleOtherUsers?.filter(
+        (user) => user._id && friendRequestsReceived?.includes(user._id)
+      );
 
-    const friendRequestsSentUSERS: TUser[] | undefined = allUsers?.filter(
+    const friendRequestsSentUSERS: TOtherUser[] | undefined = visibleOtherUsers?.filter(
       (user) => user._id && friendRequestsSent?.includes(user._id)
     );
 
