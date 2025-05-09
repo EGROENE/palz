@@ -393,10 +393,14 @@ const OtherUserProfile = () => {
     : false;
 
   const getCurrentUserPalz = (): TUser[] => {
-    let currentUserPalz = [];
-    if (allUsers && currentUser) {
-      for (const palID of currentUser.friends) {
-        currentUserPalz.push(allUsers.filter((user) => user._id === palID)[0]);
+    let currentUserPalz: TUser[] = [];
+    if (currentUser) {
+      for (const friendID of currentUser.friends) {
+        Requests.getUserByID(friendID).then((res) =>
+          res
+            .json()
+            .then((currentUserFriend: TUser) => currentUserPalz.push(currentUserFriend))
+        );
       }
     }
     return currentUserPalz;
