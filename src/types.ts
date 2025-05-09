@@ -741,7 +741,7 @@ export type TChatContext = {
   showEditChatNameModal: boolean;
   setShowEditChatNameModal: React.Dispatch<React.SetStateAction<boolean>>;
   startConversation: (otherUser: TOtherUser) => void;
-  getStartOrOpenChatWithUserHandler: (otherUser: TUser) => void;
+  getStartOrOpenChatWithUserHandler: (otherUser: TOtherUser | TUser | undefined) => void;
   getTotalNumberOfUnreadMessages: (chatArray: TChat[]) => string | number;
   handleSaveEditedMessage: (chat: TChat, editedMessage: TMessage) => void;
   cancelEditingMessage: () => void;

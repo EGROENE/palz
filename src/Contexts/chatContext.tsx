@@ -687,34 +687,38 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const getStartOrOpenChatWithUserHandler = (otherUser: TUser): void => {
-    const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
-      (chat) =>
-        chat.members.length === 2 &&
-        currentUser &&
-        currentUser._id &&
-        chat.members.includes(currentUser._id) &&
-        otherUser._id &&
-        chat.members.includes(otherUser._id)
-    )[0];
+  const getStartOrOpenChatWithUserHandler = (
+    otherUser: TOtherUser | TUser | undefined
+  ): void => {
+    if (otherUser) {
+      const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
+        (chat) =>
+          chat.members.length === 2 &&
+          currentUser &&
+          currentUser._id &&
+          chat.members.includes(currentUser._id) &&
+          otherUser._id &&
+          chat.members.includes(otherUser._id)
+      )[0];
 
-    if (existingChatWithListedChatMember) {
-      return handleOpenChat(existingChatWithListedChatMember);
+      if (existingChatWithListedChatMember) {
+        return handleOpenChat(existingChatWithListedChatMember);
+      }
+
+      const newChatMembers: string[] =
+        otherUser._id && currentUser && currentUser._id
+          ? [otherUser._id, currentUser._id]
+          : [];
+
+      return handleCreateChat({
+        _id: new mongoose.Types.ObjectId().toString(),
+        members: newChatMembers,
+        messages: [],
+        chatName: "",
+        chatType: "two-member",
+        dateCreated: Date.now(),
+      });
     }
-
-    const newChatMembers: string[] =
-      otherUser._id && currentUser && currentUser._id
-        ? [otherUser._id, currentUser._id]
-        : [];
-
-    return handleCreateChat({
-      _id: new mongoose.Types.ObjectId().toString(),
-      members: newChatMembers,
-      messages: [],
-      chatName: "",
-      chatType: "two-member",
-      dateCreated: Date.now(),
-    });
   };
 
   const getNumberOfUnreadMessagesInChat = (chat: TChat): string | number => {
