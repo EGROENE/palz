@@ -431,7 +431,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     deleteChatMutation.mutate({ chatID });
   };
 
-  const handleRemoveUserFromChat = (user: TUser, chat?: TChat): void => {
+  const handleRemoveUserFromChat = (user: TOtherUser, chat?: TChat): void => {
     if (chat && chat.admins && user._id && user) {
       let updatedAdmins: string[] = [];
       const updatedMembers: string[] = chat.members.filter(
