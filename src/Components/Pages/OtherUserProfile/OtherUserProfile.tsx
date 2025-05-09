@@ -198,7 +198,7 @@ const OtherUserProfile = () => {
         ),
         handler:
           currentUser && currentOtherUser
-            ? () => handleRemoveFriendRequest(currentOtherUser)
+            ? () => handleRemoveFriendRequest(currentOtherUser, currentUser)
             : undefined,
         paramsIncludeEvent: false,
       };
@@ -392,18 +392,11 @@ const OtherUserProfile = () => {
   // get TUser object that matches each id in friends array of each of currentUser's friends
   let friendsOfCurrentUserFriends: TUser[] = [];
   for (const friend of currentUserFriends) {
-    if (friend && friend.friends.length > 0 && allUsers) {
+    if (friend && friend.friends.length > 0) {
       for (const friendID of friend.friends) {
-        const friendOfFriend: TUser | undefined = allUsers.filter(
-          (u) =>
-            friendID !== currentUser?._id &&
-            !currentUser?.friends.includes(friendID) &&
-            u._id === friendID
-        )[0];
-        /* Necessary to check that friendOfFriend is truthy b/c it would sometimes be undefined if no user in allUsers fit the criteria (without this check, undefined would be pushed to friendsOfFriends) */
-        if (friendOfFriend) {
-          friendsOfCurrentUserFriends.push(friendOfFriend);
-        }
+        Requests.getUserByID(friendID).then((res) =>
+          res.json().then((friend: TUser) => friendsOfCurrentUserFriends.push(friend))
+        );
       }
     }
   }
