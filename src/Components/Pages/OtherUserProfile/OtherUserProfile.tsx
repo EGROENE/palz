@@ -373,23 +373,25 @@ const OtherUserProfile = () => {
       : undefined;
 
   const getCurrentUserPalz = (): TUser[] => {
-    let currentUserPalz: TUser[] = [];
+    let currentUserFriends: TUser[] = [];
     if (currentUser) {
       for (const friendID of currentUser.friends) {
         Requests.getUserByID(friendID).then((res) =>
           res
             .json()
-            .then((currentUserFriend: TUser) => currentUserPalz.push(currentUserFriend))
+            .then((currentUserFriend: TUser) =>
+              currentUserFriends.push(currentUserFriend)
+            )
         );
       }
     }
-    return currentUserPalz;
+    return currentUserFriends;
   };
-  const currentUserPalz: TUser[] = getCurrentUserPalz();
+  const currentUserFriends: TUser[] = getCurrentUserPalz();
 
   // get TUser object that matches each id in friends array of each of currentUser's friends
   let friendsOfCurrentUserFriends: TUser[] = [];
-  for (const friend of currentUserPalz) {
+  for (const friend of currentUserFriends) {
     if (friend && friend.friends.length > 0 && allUsers) {
       for (const friendID of friend.friends) {
         const friendOfFriend: TUser | undefined = allUsers.filter(
@@ -409,7 +411,7 @@ const OtherUserProfile = () => {
     ? friendsOfCurrentUserFriends.includes(currentOtherUser)
     : false;
 
-  const combinedPalz: TUser[] = currentUserPalz.concat(currentOtherUserFriends);
+  const combinedPalz: TUser[] = currentUserFriends.concat(currentOtherUserFriends);
 
   const palzInCommon = Methods.removeDuplicatesFromArray(
     combinedPalz.filter(
