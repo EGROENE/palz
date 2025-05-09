@@ -205,6 +205,7 @@ const UserCard = ({ user }: { user: TUser }) => {
           </div>
         )}
         {user.whoCanSeeFriendsList &&
+          friendsInCommon &&
           friendsInCommon.length > 0 &&
           (friendsInCommon.length === 1 ? (
             <p>{`${friendsInCommon.length} friend in common`}</p>
