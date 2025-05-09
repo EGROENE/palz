@@ -1,4 +1,4 @@
-import { TThemeColor, TUser, TEvent } from "../../../types";
+import { TThemeColor, TUser, TEvent, TOtherUser } from "../../../types";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -14,13 +14,14 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 const EventPage = () => {
   const { isLoading, theme } = useMainContext();
   const {
-    allUsers,
     currentUser,
     userCreatedAccount,
     setCurrentOtherUser,
     logout,
     fetchAllVisibleOtherUsersQuery,
   } = useUserContext();
+  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+
   const {
     handleAddUserRSVP,
     handleDeleteUserRSVP,
@@ -66,9 +67,11 @@ const EventPage = () => {
 
         const eventOrganizersID: string[] = currentEvent.organizers.map((org) => org);
         const eventOrganizers: TUser[] = [];
-        if (allUsers) {
+        if (visibleOtherUsers) {
           for (const org of eventOrganizersID) {
-            eventOrganizers.push(allUsers?.filter((user) => user._id === org)[0]);
+            eventOrganizers.push(
+              visibleOtherUsers?.filter((user) => user._id === org)[0]
+            );
           }
         }
 
@@ -128,9 +131,9 @@ const EventPage = () => {
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
   useEffect(() => {
     const refIntUsers = [];
-    if (currentEvent && allUsers) {
+    if (currentEvent && visibleOtherUsers) {
       for (const userID of currentEvent.interestedUsers) {
-        for (const user of allUsers) {
+        for (const user of visibleOtherUsers) {
           if (user._id === userID) {
             refIntUsers.push(user);
           }
@@ -138,16 +141,16 @@ const EventPage = () => {
       }
     }
     setRefinedInterestedUsers(refIntUsers);
-  }, [allUsers, allEvents]);
+  }, [fetchAllVisibleOtherUsersQuery.data, allEvents]);
 
   const nextEventDateTime = currentEvent
     ? new Date(currentEvent.eventStartDateTimeInMS)
     : undefined;
 
   let organizers: TUser[] = [];
-  if (currentEvent?.organizers && allUsers) {
+  if (currentEvent?.organizers && visibleOtherUsers) {
     for (const id of currentEvent.organizers) {
-      const organizerUserObject = allUsers.filter((user) => user._id === id)[0];
+      const organizerUserObject = visibleOtherUsers.filter((user) => user._id === id)[0];
       organizers.push(organizerUserObject);
     }
   }
