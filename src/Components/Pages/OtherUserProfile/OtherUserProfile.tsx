@@ -372,16 +372,24 @@ const OtherUserProfile = () => {
       ? matchingCountryObject.abbreviation
       : undefined;
 
-  // get TUser object that matches each id in currentUser.friends:
-  let currentUserFriends: TUser[] = [];
-  if (currentUser?.friends && allUsers) {
-    for (const friendID of currentUser.friends) {
-      currentUserFriends.push(allUsers.filter((u) => u._id === friendID)[0]);
+  const getCurrentUserPalz = (): TUser[] => {
+    let currentUserPalz: TUser[] = [];
+    if (currentUser) {
+      for (const friendID of currentUser.friends) {
+        Requests.getUserByID(friendID).then((res) =>
+          res
+            .json()
+            .then((currentUserFriend: TUser) => currentUserPalz.push(currentUserFriend))
+        );
+      }
     }
-  }
+    return currentUserPalz;
+  };
+  const currentUserPalz: TUser[] = getCurrentUserPalz();
+
   // get TUser object that matches each id in friends array of each of currentUser's friends
   let friendsOfCurrentUserFriends: TUser[] = [];
-  for (const friend of currentUserFriends) {
+  for (const friend of currentUserPalz) {
     if (friend && friend.friends.length > 0 && allUsers) {
       for (const friendID of friend.friends) {
         const friendOfFriend: TUser | undefined = allUsers.filter(
@@ -400,21 +408,6 @@ const OtherUserProfile = () => {
   const usersAreFriendsOfFriends = currentOtherUser
     ? friendsOfCurrentUserFriends.includes(currentOtherUser)
     : false;
-
-  const getCurrentUserPalz = (): TUser[] => {
-    let currentUserPalz: TUser[] = [];
-    if (currentUser) {
-      for (const friendID of currentUser.friends) {
-        Requests.getUserByID(friendID).then((res) =>
-          res
-            .json()
-            .then((currentUserFriend: TUser) => currentUserPalz.push(currentUserFriend))
-        );
-      }
-    }
-    return currentUserPalz;
-  };
-  const currentUserPalz: TUser[] = getCurrentUserPalz();
 
   const combinedPalz: TUser[] = currentUserPalz.concat(currentOtherUserFriends);
 
