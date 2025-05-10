@@ -6,6 +6,63 @@ const mongoose = require("mongoose");
 
 const User = require("../models/userModel");
 
+const getUserByUsernamePhoneNumberOrEmailAddress = async (req, res) => {
+  try {
+    const {
+      emailAddress,
+      phoneCountryCode,
+      username,
+      phoneNumberWithoutCountryCode,
+      _id,
+    } = req.body;
+
+    // Check that id is a valid MongoDB ObjectId:
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({ error: "Bad request (invalid id)" });
+    }
+
+    const currentUser = await User.findById(_id);
+
+    const userWithUsername = await User.findOne({ username });
+
+    const userWithEmail = await User.findOne({ emailAddress });
+
+    const userWithPhoneNumber = await User.findOne({
+      phoneCountryCode: phoneCountryCode,
+      phoneNumberWithoutCountryCode: phoneNumberWithoutCountryCode,
+    });
+
+    if (
+      userWithUsername._id.toString() !== currentUser._id.toString() &&
+      userWithEmail._id.toString() !== currentUser._id.toString() &&
+      userWithPhoneNumber._id.toString() !== currentUser._id.toString()
+    ) {
+      res.statusMessage = "UNIQUE FIELDS ALL TAKEN";
+      return res.status(401).end();
+    }
+
+    if (userWithUsername._id.toString() !== currentUser._id.toString()) {
+      res.statusMessage = "Username already in use";
+      return res.status(401).end();
+    }
+
+    if (userWithEmail._id.toString() !== currentUser._id.toString()) {
+      res.statusMessage = "E-mail address already in use";
+      return res.status(401).end();
+    }
+
+    if (userWithPhoneNumber._id !== currentUser._id) {
+      res.statusMessage = "Phone number already in use";
+      return res.status(401).end();
+    }
+
+    return res.status(200).json({ user });
+  } catch (error) {
+    res.statusMessage = "Something went wrong";
+    return res.status(500).end();
+  }
+};
+
 /* 
 get all users (who haven't blocked currentUser & whose 'profileVisibleTo' setting doesn't prevent currentUser from seeing it):
 */
@@ -230,6 +287,7 @@ const updateUser = async (req, res) => {
 // export controllers:
 module.exports = {
   getUserByUsernameOrEmailAddress,
+  getUserByUsernamePhoneNumberOrEmailAddress,
   createNewUser,
   getAllUsers,
   getUser,
