@@ -166,6 +166,36 @@ const getUserByID = (id: string): Promise<Response> => {
   });
 };
 
+const getUserByUsernamePhoneNumberOrEmailAddress = (
+  _id: string,
+  username: string,
+  emailAddress: string,
+  phoneCountryCode?: string,
+  phoneNumberWithoutCountryCode?: string
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "_id": _id,
+    "username": username,
+    "emailAddress": emailAddress,
+    ...(phoneCountryCode && {
+      phoneCountryCode: phoneCountryCode,
+    }),
+    ...(phoneNumberWithoutCountryCode && {
+      phoneNumberWithoutCountryCode: phoneNumberWithoutCountryCode,
+    }),
+  });
+
+  return fetch("http://localhost:4000/palz/users/settings", {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const getUserByUsernameOrEmailAddress = (
   password: string,
   username?: string,
@@ -949,6 +979,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getUserByUsernamePhoneNumberOrEmailAddress,
   getUserByUsernameOrEmailAddress,
   deleteChat,
   updateChat,
