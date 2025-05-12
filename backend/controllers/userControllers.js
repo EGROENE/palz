@@ -15,6 +15,7 @@ const getUserByUsernamePhoneNumberOrEmailAddress = async (req, res) => {
       phoneNumberWithoutCountryCode,
       _id,
     } = req.body;
+    console.log(username);
 
     // Check that id is a valid MongoDB ObjectId:
     if (!mongoose.Types.ObjectId.isValid(_id)) {
@@ -33,26 +34,35 @@ const getUserByUsernamePhoneNumberOrEmailAddress = async (req, res) => {
     });
 
     if (
+      userWithUsername &&
+      userWithEmail &&
+      userWithPhoneNumber &&
       userWithUsername._id.toString() !== currentUser._id.toString() &&
       userWithEmail._id.toString() !== currentUser._id.toString() &&
       userWithPhoneNumber._id.toString() !== currentUser._id.toString()
     ) {
-      res.statusMessage = "UNIQUE FIELDS ALL TAKEN";
+      res.statusMessage = "ALL TAKEN";
       return res.status(401).end();
     }
 
-    if (userWithUsername._id.toString() !== currentUser._id.toString()) {
-      res.statusMessage = "Username already in use";
+    if (
+      userWithUsername &&
+      userWithUsername._id.toString() !== currentUser._id.toString()
+    ) {
+      res.statusMessage = "USERNAME TAKEN";
       return res.status(401).end();
     }
 
-    if (userWithEmail._id.toString() !== currentUser._id.toString()) {
-      res.statusMessage = "E-mail address already in use";
+    if (userWithEmail && userWithEmail._id.toString() !== currentUser._id.toString()) {
+      res.statusMessage = "EMAIL TAKEN";
       return res.status(401).end();
     }
 
-    if (userWithPhoneNumber._id !== currentUser._id) {
-      res.statusMessage = "Phone number already in use";
+    if (
+      userWithPhoneNumber &&
+      userWithPhoneNumber._id.toString() !== currentUser._id.toString()
+    ) {
+      res.statusMessage = "PHONE NUMBER TAKEN";
       return res.status(401).end();
     }
 
