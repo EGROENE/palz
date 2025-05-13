@@ -10,6 +10,7 @@ import UserListModal from "../../Elements/UserListModal/UserListModal";
 import Tab from "../../Elements/Tab/Tab";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useChatContext } from "../../../Hooks/useChatContext";
+import Requests from "../../../requests";
 
 const EventPage = () => {
   const { isLoading, theme } = useMainContext();
@@ -19,6 +20,7 @@ const EventPage = () => {
     setCurrentOtherUser,
     logout,
     fetchAllVisibleOtherUsersQuery,
+    getOtherUserFriends,
   } = useUserContext();
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
@@ -54,46 +56,55 @@ const EventPage = () => {
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
+  const [
+    currentUserHasBeenBlockedByAnOrganizer,
+    setCurrentUserHasBeenBlockedByAnOrganizer,
+  ] = useState<boolean>(false);
+
   /* 
   If event is private & currentUser isn't organizer or invitee, or if currentUser was blocked by one of the organizers, currentUser doesn't have access to event
   */
-  const getUserDoesNotHaveAccess = (): boolean => {
+  const eventOrganizersIDs: string[] | undefined = currentEvent?.organizers.map(
+    (org) => org
+  );
+
+  const getEventOrganizers = async (): Promise<TUser[]> => {
+    let eventOrganizers: TUser[] = [];
+    if (visibleOtherUsers && eventOrganizersIDs) {
+      for (const org of eventOrganizersIDs) {
+        await Requests.getUserByID(org).then((res) =>
+          res.json().then((organizer: TUser) => eventOrganizers.push(organizer))
+        );
+      }
+    }
+    return eventOrganizers;
+  };
+
+  getEventOrganizers().then((userArray) => {
     if (currentUser && currentUser._id) {
-      if (currentEvent) {
-        const eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee =
-          currentEvent.publicity === "private" &&
-          (currentEvent.invitees.includes(currentUser._id) ||
-            currentEvent.organizers.includes(currentUser._id));
-
-        const eventOrganizersID: string[] = currentEvent.organizers.map((org) => org);
-        const eventOrganizers: TUser[] = [];
-        if (visibleOtherUsers) {
-          for (const org of eventOrganizersID) {
-            eventOrganizers.push(
-              visibleOtherUsers?.filter((user) => user._id === org)[0]
-            );
-          }
-        }
-
-        const currentUserHasBeenBlockedByAnOrganizer: boolean = eventOrganizers
-          .map((org) => org.blockedUsers)
-          .flat()
-          .includes(currentUser._id);
-
-        if (
-          eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee ||
-          currentUserHasBeenBlockedByAnOrganizer
-        ) {
-          return true;
+      for (const organizer of userArray) {
+        if (organizer.blockedUsers.includes(currentUser._id)) {
+          setCurrentUserHasBeenBlockedByAnOrganizer(true);
         }
       }
     }
-    if (!currentUser || userCreatedAccount === null) {
-      return true;
-    }
-    return false;
-  };
-  const userDoesNotHaveAccess = getUserDoesNotHaveAccess();
+  });
+
+  const eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee =
+    currentEvent &&
+    currentUser &&
+    currentUser._id &&
+    currentEvent.publicity === "private" &&
+    (!currentEvent.invitees.includes(currentUser._id) ||
+      !currentEvent.organizers.includes(currentUser._id))
+      ? true
+      : false;
+
+  const userDoesNotHaveAccess: boolean =
+    eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee ||
+    currentUserHasBeenBlockedByAnOrganizer ||
+    !currentUser ||
+    userCreatedAccount === null;
 
   useEffect(() => {
     // Redirect user to their homepage or to login page if event is private & they are not an invitee or organizer
@@ -126,7 +137,12 @@ const EventPage = () => {
     setCurrentEvent(currentEvent);
 
     window.scrollTo(0, 0);
-  }, []);
+  }, [currentUserHasBeenBlockedByAnOrganizer]);
+
+  // Don't push users to this who have not blocked user, but profileVisibleTo setting prevents currentUser from seeing them
+  // maybe set organizers: TOtherUser in state
+  //let organizers: TUser[] = [];
+  const [organizers, setOrganizers] = useState<TOtherUser[]>([]);
 
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
   useEffect(() => {
@@ -141,19 +157,48 @@ const EventPage = () => {
       }
     }
     setRefinedInterestedUsers(refIntUsers);
+
+    if (currentEvent?.organizers) {
+      let organizersTOtherUser: TOtherUser[] = [];
+      for (const id of currentEvent.organizers) {
+        if (id && currentUser && currentUser._id) {
+          Requests.getUserByID(id).then((res) =>
+            res.json().then((organizer: TUser) => {
+              const currentUserIsFriendOfFriend: boolean =
+                currentUser && currentUser._id && organizer._id
+                  ? getOtherUserFriends(organizer._id).some(
+                      (otherUserFriend) =>
+                        currentUser._id &&
+                        otherUserFriend.friends.includes(currentUser._id)
+                    )
+                  : false;
+
+              if (
+                organizer._id === id &&
+                currentUser._id &&
+                (organizer.profileVisibleTo === "anyone" ||
+                  (organizer.profileVisibleTo === "friends" &&
+                    organizer.friends.includes(currentUser._id)) ||
+                  (organizer.profileVisibleTo === "friends of friends" &&
+                    currentUserIsFriendOfFriend))
+              ) {
+                if (visibleOtherUsers) {
+                  organizers.push(
+                    visibleOtherUsers.filter((user) => user._id === organizer._id)[0]
+                  );
+                }
+              }
+            })
+          );
+        }
+      }
+      setOrganizers(organizersTOtherUser);
+    }
   }, [fetchAllVisibleOtherUsersQuery.data, allEvents]);
 
   const nextEventDateTime = currentEvent
     ? new Date(currentEvent.eventStartDateTimeInMS)
     : undefined;
-
-  let organizers: TUser[] = [];
-  if (currentEvent?.organizers && visibleOtherUsers) {
-    for (const id of currentEvent.organizers) {
-      const organizerUserObject = visibleOtherUsers.filter((user) => user._id === id)[0];
-      organizers.push(organizerUserObject);
-    }
-  }
 
   // Explicitly return true or false to avoid TS error
   const userIsOrganizer: boolean =
@@ -205,7 +250,7 @@ const EventPage = () => {
 
   return (
     <>
-      {isNoFetchError && !fetchIsLoading && currentEvent && (
+      {isNoFetchError && !fetchIsLoading && currentEvent && !userDoesNotHaveAccess && (
         <>
           {showInvitees && (
             <UserListModal
