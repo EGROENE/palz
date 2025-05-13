@@ -77,6 +77,13 @@ const EventPage = () => {
         );
       }
     }
+    if (visibleOtherUsers && eventOrganizersIDs) {
+      setOrganizers(
+        visibleOtherUsers.filter(
+          (otherUser) => otherUser._id && eventOrganizersIDs.includes(otherUser._id)
+        )
+      );
+    }
     return eventOrganizers;
   };
 
