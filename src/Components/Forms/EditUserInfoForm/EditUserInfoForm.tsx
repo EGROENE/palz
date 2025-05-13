@@ -10,7 +10,6 @@ import toast from "react-hot-toast";
 import Methods from "../../../methods";
 import { TThemeColor } from "../../../types";
 import { useMainContext } from "../../../Hooks/useMainContext";
-import { useQueryClient } from "@tanstack/react-query";
 
 const EditUserInfoForm = ({
   randomColor,
@@ -27,7 +26,6 @@ const EditUserInfoForm = ({
     setWhoCanMessage,
     currentUser,
     setCurrentUser,
-    allUsers,
     userValuesToUpdate,
     whoCanAddUserAsOrganizer,
     setWhoCanAddUserAsOrganizer,
@@ -166,8 +164,6 @@ const EditUserInfoForm = ({
     | "confirmPassword"
     | undefined
   >();
-
-  const queryClient = useQueryClient();
 
   // Function that resets form values to what they are in currentUser
   // Called upon first render of this component or if user cancels changes they made to edit-user-info form
@@ -422,13 +418,6 @@ const EditUserInfoForm = ({
     value: string | undefined,
     countryCode: string // used instead of phoneCountryCode b/c it's more current
   ): void => {
-    //fetchAllUsers();
-    const phoneNumberTaken: boolean | undefined =
-      allUsers &&
-      allUsers
-        .filter((user) => user._id !== currentUser?._id)
-        .map((user) => user.phoneCountryCode + user.phoneNumberWithoutCountryCode)
-        .includes(countryCode + value);
     // If input doesn't meet length req or if it doesn't meet length req and countryCode is blank:
     if (
       !(typeof value === "string" && value?.length >= min && value?.length <= max) ||
@@ -445,8 +434,6 @@ const EditUserInfoForm = ({
       // If input meets length req & countryCode still not selected:
     } else if (countryCode === "") {
       setPhoneNumberError("Please select a country");
-    } else if (phoneNumberTaken) {
-      setPhoneNumberError("Phone number already in use");
     } else {
       setPhoneNumberError("");
     }
