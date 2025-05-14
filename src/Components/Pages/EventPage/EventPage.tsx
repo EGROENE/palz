@@ -38,7 +38,7 @@ const EventPage = () => {
   const { startConversation } = useChatContext();
 
   //const [event, setEvent] = useState<TEvent | undefined>();
-  const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
+  const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TOtherUser[]>([]);
 
   // Get most current version of event to which this page pertains:
   const { eventID } = useParams();
@@ -87,12 +87,15 @@ const EventPage = () => {
       }
     }
 
-    if (visibleOtherUsers) {
+    if (visibleOtherUsers && currentUser) {
       setOrganizersWhoseProfileIsVisible(
-        eventOrganizers.map(
-          (organizer) =>
-            visibleOtherUsers?.filter((otherUser) => otherUser._id === organizer._id)[0]
-        )
+        eventOrganizers
+          .filter((organizer) => organizer._id !== currentUser._id)
+          .map((organizer) => {
+            return visibleOtherUsers.filter(
+              (otherUser) => otherUser._id === organizer._id
+            )[0];
+          })
       );
 
       setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile(
@@ -308,6 +311,15 @@ const EventPage = () => {
                 <p>Organizer: </p>
               )}
               <div className="organizer-tabs-container">
+                {currentUser &&
+                  currentUser._id &&
+                  eventOrganizersIDs?.includes(currentUser._id) && (
+                    <Tab
+                      info={currentUser}
+                      randomColor={randomColor}
+                      userMayNotDelete={true}
+                    />
+                  )}
                 {organizersWhoseProfileIsVisible.map((organizer) => (
                   <Link
                     key={organizer._id}
