@@ -42,6 +42,17 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       userHasLoggedIn && (currentURL === "/add-event" || currentURL === "/edit-event"),
   });
 
+  const fetchPotentialInviteesQuery: UseQueryResult<TOtherUser[], Error> = useQuery({
+    queryKey: ["potentialCoOrganizers"],
+    queryFn: () =>
+      Requests.getPotentialInvitees(
+        currentURL === "/add-event" ? "new" : "edit",
+        currentUser && currentUser._id ? currentUser._id : undefined
+      ),
+    enabled:
+      userHasLoggedIn && (currentURL === "/add-event" || currentURL === "/edit-event"),
+  });
+
   const [currentEvent, setCurrentEvent] = useLocalStorage<TEvent | undefined>(
     "currentEvent",
     undefined
@@ -776,6 +787,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const eventContextValues: TEventContext = {
     fetchPotentialCoOrganizersQuery,
+    fetchPotentialInviteesQuery,
     handleRemoveOrganizer,
     showRSVPs,
     setShowRSVPs,
