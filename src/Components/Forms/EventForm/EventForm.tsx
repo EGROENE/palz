@@ -24,8 +24,35 @@ const EventForm = ({
 }) => {
   const { showSidebar, setShowSidebar, isLoading, setIsLoading, theme } =
     useMainContext();
-  const { handleCityStateCountryInput, allUsers, currentUser, blockedUsers } =
-    useUserContext();
+  const {
+    handleCityStateCountryInput,
+    fetchAllVisibleOtherUsersQuery,
+    currentUser,
+    blockedUsers,
+  } = useUserContext();
+
+  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+
+  const currentUserFriends: TOtherUser[] | undefined = visibleOtherUsers
+    ? visibleOtherUsers.filter(
+        (user) => user._id && currentUser?.friends.includes(user._id)
+      )
+    : undefined;
+
+  const currentUserNonFriends: TOtherUser[] | undefined = visibleOtherUsers
+    ? visibleOtherUsers.filter(
+        (user) => user._id && !currentUser?.friends.includes(user._id)
+      )
+    : undefined;
+
+  /* 
+    Make allOtherUsers consist first of currentUser's friends, then all others. This way, friends will display at top if potential-invitee, -blockee, & -co-organizer lists
+    */
+  const allOtherUsers: TOtherUser[] | undefined =
+    currentUserFriends &&
+    currentUserNonFriends &&
+    currentUserFriends.concat(currentUserNonFriends);
+
   const {
     handleAddRemoveBlockedUserOnEvent,
     handleAddRemoveUserAsInvitee,
@@ -241,20 +268,6 @@ const EventForm = ({
       );
     }
   }, [invitees, organizers, blockedUsersEvent]);
-
-  // Make allOtherUsers consist first of currentUser's friends, then all others
-  const currentUserFriends = allUsers
-    ? allUsers.filter((user) => user._id && currentUser?.friends.includes(user._id))
-    : undefined;
-  const currentUserNonFriends = allUsers
-    ? allUsers
-        .filter((user) => user._id !== currentUser?._id)
-        .filter((user) => user._id && !currentUser?.friends.includes(user._id))
-    : undefined;
-  const allOtherUsers =
-    currentUserFriends &&
-    currentUserNonFriends &&
-    currentUserFriends.concat(currentUserNonFriends);
 
   // INPUT HANDLERS
   const handleEventTitleInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -642,7 +655,7 @@ const EventForm = ({
         setShowPotentialCoOrganizers(true);
         if (inputCleaned.replace(/\s+/g, "") !== "") {
           // If input w/o spaces is not empty string
-          const matchingUsers: TUser[] = [];
+          const matchingUsers: TOtherUser[] = [];
           for (const user of allOtherUsers) {
             if (
               user.firstName &&
@@ -678,7 +691,7 @@ const EventForm = ({
         setInviteesSearchQuery(inputCleaned);
         setShowPotentialInvitees(true);
         if (inputCleaned.replace(/\s+/g, "") !== "") {
-          const matchingUsers: TUser[] = [];
+          const matchingUsers: TOtherUser[] = [];
           for (const user of allOtherUsers) {
             if (
               user.firstName &&
@@ -713,7 +726,7 @@ const EventForm = ({
         setBlockeesSearchQuery(inputCleaned);
         setShowPotentialBlockees(true);
         if (inputCleaned.replace(/\s+/g, "") !== "") {
-          const matchingUsers: TUser[] = [];
+          const matchingUsers: TOtherUser[] = [];
           for (const user of allOtherUsers) {
             if (
               user.firstName &&
@@ -882,11 +895,11 @@ const EventForm = ({
   };
   const resortedCountries = getResortedCountries();
 
-  const getUsersWhoAreOrganizers = (): TUser[] => {
-    const usersWhoAreOrganizers: TUser[] = [];
-    if (allUsers) {
+  const getUsersWhoAreOrganizers = (): TOtherUser[] => {
+    const usersWhoAreOrganizers: TOtherUser[] = [];
+    if (visibleOtherUsers) {
       for (const organizer of organizers) {
-        const user = allUsers.filter((user) => user._id === organizer)[0];
+        const user = visibleOtherUsers.filter((user) => user._id === organizer)[0];
         usersWhoAreOrganizers.push(user);
       }
     }
@@ -894,11 +907,11 @@ const EventForm = ({
   };
   const usersWhoAreOrganizers = getUsersWhoAreOrganizers();
 
-  const getUsersWhoAreInvitees = (): TUser[] => {
-    const usersWhoAreInvitees: TUser[] = [];
-    if (allUsers) {
+  const getUsersWhoAreInvitees = (): TOtherUser[] => {
+    const usersWhoAreInvitees: TOtherUser[] = [];
+    if (visibleOtherUsers) {
       for (const invitee of invitees) {
-        const user = allUsers.filter((user) => user._id === invitee)[0];
+        const user = visibleOtherUsers.filter((user) => user._id === invitee)[0];
         usersWhoAreInvitees.push(user);
       }
     }
@@ -906,11 +919,11 @@ const EventForm = ({
   };
   const usersWhoAreInvitees = getUsersWhoAreInvitees();
 
-  const getUsersWhoAreBlocked = (): TUser[] => {
-    const blockedUsers: TUser[] = [];
-    if (allUsers) {
+  const getUsersWhoAreBlocked = (): TOtherUser[] => {
+    const blockedUsers: TOtherUser[] = [];
+    if (visibleOtherUsers) {
       for (const blockee of blockedUsersEvent) {
-        const user = allUsers.filter((user) => user._id === blockee)[0];
+        const user = visibleOtherUsers.filter((user) => user._id === blockee)[0];
         blockedUsers.push(user);
       }
     }
