@@ -61,6 +61,15 @@ const EventPage = () => {
     setCurrentUserHasBeenBlockedByAnOrganizer,
   ] = useState<boolean>(false);
 
+  const [
+    organizersWhoHaveNotBlockedUserButHaveHiddenProfile,
+    setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile,
+  ] = useState<TOtherUser[]>([]);
+
+  const [organizersWhoseProfileIsVisible, setOrganizersWhoseProfileIsVisible] = useState<
+    TOtherUser[]
+  >([]);
+
   /* 
   If event is private & currentUser isn't organizer or invitee, or if currentUser was blocked by one of the organizers, currentUser doesn't have access to event
   */
@@ -77,13 +86,43 @@ const EventPage = () => {
         );
       }
     }
-    if (visibleOtherUsers && eventOrganizersIDs) {
-      setOrganizers(
-        visibleOtherUsers.filter(
-          (otherUser) => otherUser._id && eventOrganizersIDs.includes(otherUser._id)
+
+    if (visibleOtherUsers) {
+      setOrganizersWhoseProfileIsVisible(
+        eventOrganizers.map(
+          (organizer) =>
+            visibleOtherUsers?.filter((otherUser) => otherUser._id === organizer._id)[0]
         )
       );
+
+      setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile(
+        eventOrganizers?.filter((organizer) => {
+          if (organizer._id && currentUser && currentUser._id) {
+            const currentUserIsFriend = organizer.friends.includes(currentUser._id);
+
+            const currentUserIsFriendOfFriend: boolean =
+              currentUser && currentUser._id && organizer._id
+                ? getOtherUserFriends(organizer._id).some(
+                    (otherUserFriend) =>
+                      currentUser._id && otherUserFriend.friends.includes(currentUser._id)
+                  )
+                : false;
+
+            // Return TOtherUser version of event organizer
+            if (
+              (organizer.profileVisibleTo === "friends" && !currentUserIsFriend) ||
+              (organizer.profileVisibleTo === "friends of friends" &&
+                !currentUserIsFriendOfFriend)
+            ) {
+              return visibleOtherUsers.filter(
+                (otherUser) => otherUser._id === organizer._id
+              )[0];
+            }
+          }
+        })
+      );
     }
+
     return eventOrganizers;
   };
 
@@ -136,8 +175,6 @@ const EventPage = () => {
     window.scrollTo(0, 0);
   }, [currentUserHasBeenBlockedByAnOrganizer]);
 
-  const [organizers, setOrganizers] = useState<TOtherUser[]>([]);
-
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
   useEffect(() => {
     getEventOrganizers().then((userArray) => {
@@ -161,43 +198,6 @@ const EventPage = () => {
       }
     }
     setRefinedInterestedUsers(refIntUsers);
-
-    if (currentEvent?.organizers) {
-      let organizersTOtherUser: TOtherUser[] = [];
-      for (const id of currentEvent.organizers) {
-        if (id && currentUser && currentUser._id) {
-          Requests.getUserByID(id).then((res) =>
-            res.json().then((organizer: TUser) => {
-              const currentUserIsFriendOfFriend: boolean =
-                currentUser && currentUser._id && organizer._id
-                  ? getOtherUserFriends(organizer._id).some(
-                      (otherUserFriend) =>
-                        currentUser._id &&
-                        otherUserFriend.friends.includes(currentUser._id)
-                    )
-                  : false;
-
-              if (
-                organizer._id === id &&
-                currentUser._id &&
-                (organizer.profileVisibleTo === "anyone" ||
-                  (organizer.profileVisibleTo === "friends" &&
-                    organizer.friends.includes(currentUser._id)) ||
-                  (organizer.profileVisibleTo === "friends of friends" &&
-                    currentUserIsFriendOfFriend))
-              ) {
-                if (visibleOtherUsers) {
-                  organizers.push(
-                    visibleOtherUsers.filter((user) => user._id === organizer._id)[0]
-                  );
-                }
-              }
-            })
-          );
-        }
-      }
-      setOrganizers(organizersTOtherUser);
-    }
   }, [fetchAllVisibleOtherUsersQuery.data, allEvents]);
 
   const nextEventDateTime = currentEvent
@@ -308,7 +308,7 @@ const EventPage = () => {
                 <p>Organizer: </p>
               )}
               <div className="organizer-tabs-container">
-                {organizers.map((organizer) => (
+                {organizersWhoseProfileIsVisible.map((organizer) => (
                   <Link
                     key={organizer._id}
                     to={`/users/${organizer.username}`}
@@ -320,6 +320,14 @@ const EventPage = () => {
                       userMayNotDelete={true}
                     />
                   </Link>
+                ))}
+                {organizersWhoHaveNotBlockedUserButHaveHiddenProfile.map((organizer) => (
+                  <Tab
+                    key={organizer._id}
+                    info={organizer}
+                    randomColor={randomColor}
+                    userMayNotDelete={true}
+                  />
                 ))}
               </div>
             </div>
