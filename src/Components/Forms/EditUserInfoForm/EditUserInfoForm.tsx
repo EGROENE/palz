@@ -3112,6 +3112,26 @@ const EditUserInfoForm = ({
                   aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
+                      setWhoCanInviteUser("friends");
+                    }
+                  }}
+                >
+                  <input
+                    tabIndex={0}
+                    id="friends of friends-can-invite"
+                    onChange={() => setWhoCanInviteUser("friends of friends")}
+                    checked={whoCanInviteUser === "friends of friends"}
+                    name="who-can-invite"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
                       setWhoCanInviteUser("nobody");
                     }
                   }}
