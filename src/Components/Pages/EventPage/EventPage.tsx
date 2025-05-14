@@ -136,9 +136,6 @@ const EventPage = () => {
     window.scrollTo(0, 0);
   }, [currentUserHasBeenBlockedByAnOrganizer]);
 
-  // Don't push users to this who have not blocked user, but profileVisibleTo setting prevents currentUser from seeing them
-  // maybe set organizers: TOtherUser in state
-  //let organizers: TUser[] = [];
   const [organizers, setOrganizers] = useState<TOtherUser[]>([]);
 
   /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
