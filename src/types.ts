@@ -31,7 +31,12 @@ export type TUser = {
   subscriptionType: "free" | "bronze" | "silver" | "gold" | "platinum";
   hostingCredits: number;
   interests: string[];
-  whoCanAddUserAsOrganizer: "friends" | "anyone" | "nobody" | undefined;
+  whoCanAddUserAsOrganizer:
+    | "friends"
+    | "friends of friends"
+    | "anyone"
+    | "nobody"
+    | undefined;
   whoCanInviteUser: "friends" | "anyone" | "nobody" | undefined;
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
   friendRequestsReceived: string[];
@@ -174,7 +179,12 @@ export type TUserValuesToUpdate = {
   facebook?: string | undefined;
   instagram?: string | undefined;
   x?: string | undefined;
-  whoCanAddUserAsOrganizer?: "anyone" | "friends" | "nobody" | undefined;
+  whoCanAddUserAsOrganizer?:
+    | "anyone"
+    | "friends"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
   whoCanInviteUser?: "anyone" | "friends" | "nobody" | undefined;
   profileVisibleTo?: "anyone" | "friends" | "friends of friends" | undefined;
   whoCanMessage?: "anyone" | "friends" | "nobody" | "friends of friends" | undefined;
@@ -446,9 +456,16 @@ export type TUserContext = {
   setUserAbout: React.Dispatch<React.SetStateAction<string | undefined>>;
   userAboutError: string;
   setUserAboutError: React.Dispatch<React.SetStateAction<string>>;
-  whoCanAddUserAsOrganizer: "anyone" | "friends" | "nobody" | undefined;
+  whoCanAddUserAsOrganizer:
+    | "anyone"
+    | "friends"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
   setWhoCanAddUserAsOrganizer: React.Dispatch<
-    React.SetStateAction<"anyone" | "friends" | "nobody" | undefined>
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
   >;
   whoCanInviteUser: "anyone" | "friends" | "nobody" | undefined;
   setWhoCanInviteUser: React.Dispatch<
