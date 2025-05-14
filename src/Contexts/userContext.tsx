@@ -96,7 +96,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     string | undefined
   >("userAbout", "");
   const [whoCanAddUserAsOrganizer, setWhoCanAddUserAsOrganizer] = useSessionStorage<
-    "anyone" | "friends" | "nobody" | undefined
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanAddUserAsOrganizer", "anyone");
   const [whoCanInviteUser, setWhoCanInviteUser] = useSessionStorage<
     "anyone" | "friends" | "nobody" | undefined
