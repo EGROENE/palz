@@ -3027,6 +3027,26 @@ const EditUserInfoForm = ({
                   aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
+                      setWhoCanAddUserAsOrganizer("friends of friends");
+                    }
+                  }}
+                >
+                  <input
+                    tabIndex={0}
+                    id="friends-of-friends-can-add-as-organizer"
+                    onChange={() => setWhoCanAddUserAsOrganizer("friends of friends")}
+                    checked={whoCanAddUserAsOrganizer === "friends of friends"}
+                    name="who-can-add-as-co-organizer"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
+                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
                       setWhoCanAddUserAsOrganizer("nobody");
                     }
                   }}
