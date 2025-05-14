@@ -37,7 +37,7 @@ export type TUser = {
     | "anyone"
     | "nobody"
     | undefined;
-  whoCanInviteUser: "friends" | "anyone" | "nobody" | undefined;
+  whoCanInviteUser: "friends" | "friends of friends" | "anyone" | "nobody" | undefined;
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
   friendRequestsReceived: string[];
   friendRequestsSent: string[];
@@ -185,7 +185,7 @@ export type TUserValuesToUpdate = {
     | "nobody"
     | "friends of friends"
     | undefined;
-  whoCanInviteUser?: "anyone" | "friends" | "nobody" | undefined;
+  whoCanInviteUser?: "anyone" | "friends" | "friends of friends" | "nobody" | undefined;
   profileVisibleTo?: "anyone" | "friends" | "friends of friends" | undefined;
   whoCanMessage?: "anyone" | "friends" | "nobody" | "friends of friends" | undefined;
   whoCanSeeLocation?: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
@@ -467,9 +467,11 @@ export type TUserContext = {
       "anyone" | "friends" | "nobody" | "friends of friends" | undefined
     >
   >;
-  whoCanInviteUser: "anyone" | "friends" | "nobody" | undefined;
+  whoCanInviteUser: "anyone" | "friends" | "friends of friends" | "nobody" | undefined;
   setWhoCanInviteUser: React.Dispatch<
-    React.SetStateAction<"anyone" | "friends" | "nobody" | undefined>
+    React.SetStateAction<
+      "anyone" | "friends" | "friends of friends" | "nobody" | undefined
+    >
   >;
   profileVisibleTo: "anyone" | "friends" | "friends of friends" | undefined;
   setProfileVisibleTo: React.Dispatch<
