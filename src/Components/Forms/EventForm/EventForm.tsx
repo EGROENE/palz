@@ -46,9 +46,9 @@ const EventForm = ({
     : undefined;
 
   /* 
-    Make allOtherUsers consist first of currentUser's friends, then all others. This way, friends will display at top if potential-invitee, -blockee, & -co-organizer lists
+    Make allOtherUsersFriendsFirst consist first of currentUser's friends, then all others. This way, friends will display at top if potential-invitee, -blockee, & -co-organizer lists
     */
-  const allOtherUsers: TOtherUser[] | undefined =
+  const allOtherUsersFriendsFirst: TOtherUser[] | undefined =
     currentUserFriends &&
     currentUserNonFriends &&
     currentUserFriends.concat(currentUserNonFriends);
@@ -218,9 +218,9 @@ const EventForm = ({
   }, [usedFor]);
 
   useEffect(() => {
-    if (allOtherUsers) {
+    if (allOtherUsersFriendsFirst) {
       setPotentialCoOrganizers(
-        allOtherUsers.filter((user) => {
+        allOtherUsersFriendsFirst.filter((user) => {
           if (user._id) {
             return (
               (user.whoCanAddUserAsOrganizer === "anyone" ||
@@ -237,7 +237,7 @@ const EventForm = ({
       );
 
       setPotentialInvitees(
-        allOtherUsers.filter((user) => {
+        allOtherUsersFriendsFirst.filter((user) => {
           if (user._id) {
             return (
               (user.whoCanInviteUser === "anyone" ||
@@ -254,7 +254,7 @@ const EventForm = ({
       );
 
       setPotentialBlockees(
-        allOtherUsers.filter((user) => {
+        allOtherUsersFriendsFirst.filter((user) => {
           if (user._id) {
             return (
               !organizers.includes(user._id) &&
@@ -649,14 +649,14 @@ const EventForm = ({
   ): void => {
     e.preventDefault();
     const inputCleaned = e.target.value.replace(/\s+/g, " ");
-    if (allOtherUsers) {
+    if (allOtherUsersFriendsFirst) {
       if (field === "co-organizers") {
         setCoOrganizersSearchQuery(inputCleaned);
         setShowPotentialCoOrganizers(true);
         if (inputCleaned.replace(/\s+/g, "") !== "") {
           // If input w/o spaces is not empty string
           const matchingUsers: TOtherUser[] = [];
-          for (const user of allOtherUsers) {
+          for (const user of allOtherUsersFriendsFirst) {
             if (
               user.firstName &&
               user.lastName &&
@@ -674,7 +674,7 @@ const EventForm = ({
         } else {
           // setPotentialCoOrganizers to original value
           setPotentialCoOrganizers(
-            allOtherUsers.filter((user) => {
+            allOtherUsersFriendsFirst.filter((user) => {
               if (user._id) {
                 return (
                   (user.whoCanAddUserAsOrganizer === "anyone" ||
@@ -692,7 +692,7 @@ const EventForm = ({
         setShowPotentialInvitees(true);
         if (inputCleaned.replace(/\s+/g, "") !== "") {
           const matchingUsers: TOtherUser[] = [];
-          for (const user of allOtherUsers) {
+          for (const user of allOtherUsersFriendsFirst) {
             if (
               user.firstName &&
               user.lastName &&
@@ -709,7 +709,7 @@ const EventForm = ({
           setPotentialInvitees(matchingUsers);
         } else {
           setPotentialInvitees(
-            allOtherUsers.filter((user) => {
+            allOtherUsersFriendsFirst.filter((user) => {
               if (user._id) {
                 return (
                   (user.whoCanInviteUser === "anyone" ||
@@ -727,7 +727,7 @@ const EventForm = ({
         setShowPotentialBlockees(true);
         if (inputCleaned.replace(/\s+/g, "") !== "") {
           const matchingUsers: TOtherUser[] = [];
-          for (const user of allOtherUsers) {
+          for (const user of allOtherUsersFriendsFirst) {
             if (
               user.firstName &&
               user.lastName &&
@@ -743,7 +743,7 @@ const EventForm = ({
           }
           setPotentialBlockees(matchingUsers);
         } else {
-          setPotentialBlockees(allOtherUsers);
+          setPotentialBlockees(allOtherUsersFriendsFirst);
         }
       }
     }
@@ -1625,9 +1625,9 @@ const EventForm = ({
           placeholder="Search users by username, first/last names"
           clearQueryOnClick={() => {
             setCoOrganizersSearchQuery("");
-            if (allOtherUsers) {
+            if (allOtherUsersFriendsFirst) {
               setPotentialCoOrganizers(
-                allOtherUsers.filter((user) => {
+                allOtherUsersFriendsFirst.filter((user) => {
                   if (user._id) {
                     return (
                       (user.whoCanAddUserAsOrganizer === "anyone" ||
@@ -1700,9 +1700,9 @@ const EventForm = ({
           placeholder="Search users by username, first/last names"
           clearQueryOnClick={() => {
             setInviteesSearchQuery("");
-            if (allOtherUsers) {
+            if (allOtherUsersFriendsFirst) {
               setPotentialInvitees(
-                allOtherUsers.filter((user) => {
+                allOtherUsersFriendsFirst.filter((user) => {
                   if (user._id) {
                     return (
                       (user.whoCanInviteUser === "anyone" ||
@@ -1775,8 +1775,8 @@ const EventForm = ({
           placeholder="Search users by username, first/last names"
           clearQueryOnClick={() => {
             setBlockeesSearchQuery("");
-            if (allOtherUsers) {
-              setPotentialBlockees(allOtherUsers);
+            if (allOtherUsersFriendsFirst) {
+              setPotentialBlockees(allOtherUsersFriendsFirst);
             }
           }}
           showList={showPotentialBlockees}
