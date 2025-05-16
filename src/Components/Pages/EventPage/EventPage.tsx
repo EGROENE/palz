@@ -178,7 +178,7 @@ const EventPage = () => {
     window.scrollTo(0, 0);
   }, [currentUserHasBeenBlockedByAnOrganizer]);
 
-  /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
+  /* Every time fetchAllVisibleOtherUsersQuery.data or allEvents change, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
   useEffect(() => {
     getEventOrganizers().then((userArray) => {
       if (currentUser && currentUser._id) {
