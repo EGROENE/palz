@@ -1411,48 +1411,67 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const handleUnfriending = (user: TUser, friend: TUser): void => {
-    Promise.all([
-      Requests.deleteFriendFromFriendsArray(user, friend),
-      Requests.deleteFriendFromFriendsArray(friend, user),
-    ])
-      .then((res) => {
-        if (currentUser && currentUser._id && res[0].ok && res[1].ok) {
-          Requests.getUserByID(currentUser._id)
-            .then((res) => {
-              if (res.ok) {
-                res
-                  .json()
-                  .then((user) => {
-                    if (user) {
-                      setCurrentUser(user);
-                      toast(
-                        `You have unfriended ${friend.firstName} ${friend.lastName}.`,
-                        {
-                          style: {
-                            background:
-                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                            color: theme === "dark" ? "black" : "white",
-                            border: "2px solid red",
-                          },
+  const handleUnfriending = (user: TOtherUser, friend: TOtherUser): void => {
+    if (user._id) {
+      Requests.getUserByID(user._id)
+        .then((res) =>
+          res.json().then((user: TUser) => {
+            if (friend._id) {
+              Requests.getUserByID(friend._id)
+                .then((res) =>
+                  res.json().then((friend: TUser) => {
+                    setIsLoading(true);
+                    Promise.all([
+                      Requests.deleteFriendFromFriendsArray(user, friend),
+                      Requests.deleteFriendFromFriendsArray(friend, user),
+                    ])
+                      .then((res) => {
+                        if (currentUser && currentUser._id && res[0].ok && res[1].ok) {
+                          Requests.getUserByID(currentUser._id)
+                            .then((res) => {
+                              if (res.ok) {
+                                res
+                                  .json()
+                                  .then((user) => {
+                                    if (user) {
+                                      setCurrentUser(user);
+                                      toast(
+                                        `You have unfriended ${friend.firstName} ${friend.lastName}.`,
+                                        {
+                                          style: {
+                                            background:
+                                              theme === "light"
+                                                ? "#242424"
+                                                : "rgb(233, 231, 228)",
+                                            color: theme === "dark" ? "black" : "white",
+                                            border: "2px solid red",
+                                          },
+                                        }
+                                      );
+                                    } else {
+                                      handleUnfriendingFail(friend);
+                                    }
+                                  })
+                                  .catch((error) => console.log(error));
+                              } else {
+                                handleUnfriendingFail(friend);
+                              }
+                            })
+                            .catch((error) => console.log(error));
+                        } else {
+                          handleUnfriendingFail(friend);
                         }
-                      );
-                    } else {
-                      handleUnfriendingFail(friend);
-                    }
+                      })
+                      .catch((error) => console.log(error))
+                      .finally(() => setIsLoading(false));
                   })
-                  .catch((error) => console.log(error));
-              } else {
-                handleUnfriendingFail(friend);
-              }
-            })
-            .catch((error) => console.log(error));
-        } else {
-          handleUnfriendingFail(friend);
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
+                )
+                .catch((error) => console.log(error));
+            }
+          })
+        )
+        .catch((error) => console.log(error));
+    }
   };
 
   // Defined here, since used in DropdownChecklist & EventForm
