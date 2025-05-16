@@ -1892,6 +1892,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               setCurrentUser(userData);
               navigation("/");
               queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+              queryClient.refetchQueries({ queryKey: ["allUsers"] });
               setUserCreatedAccount(true);
               setParallelValuesAfterSignup();
               resetErrorMessagesAfterSignup();
