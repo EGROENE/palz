@@ -12,8 +12,14 @@ import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoading
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
 const EditEventPage = ({ event }: { event?: TEvent }) => {
   const { isLoading, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, logout } = useUserContext();
-  const { currentEvent, fetchAllEventsQuery } = useEventContext();
+  const { currentUser, userCreatedAccount, logout, fetchAllVisibleOtherUsersQuery } =
+    useUserContext();
+  const {
+    currentEvent,
+    fetchAllEventsQuery,
+    fetchPotentialInviteesQuery,
+    fetchPotentialCoOrganizersQuery,
+  } = useEventContext();
 
   const navigation = useNavigate();
 
@@ -71,15 +77,44 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
     }
   }, [event, navigation]);
 
+  const getQueryForQueryLoadingOrErrorComponent = () => {
+    if (fetchAllVisibleOtherUsersQuery.isError) {
+      return fetchAllVisibleOtherUsersQuery;
+    } else if (fetchPotentialCoOrganizersQuery.isError) {
+      return fetchPotentialCoOrganizersQuery;
+    } else if (fetchPotentialInviteesQuery.isError) {
+      return fetchPotentialInviteesQuery;
+    }
+    return fetchAllEventsQuery;
+  };
+  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
+
+  const aQueryIsLoading: boolean =
+    fetchAllEventsQuery.isLoading ||
+    fetchAllVisibleOtherUsersQuery.isLoading ||
+    fetchPotentialCoOrganizersQuery.isLoading ||
+    fetchPotentialInviteesQuery.isLoading;
+
+  const isNoFetchError: boolean =
+    !fetchAllEventsQuery.isError &&
+    !fetchAllVisibleOtherUsersQuery.isError &&
+    !fetchPotentialCoOrganizersQuery.isError &&
+    !fetchPotentialInviteesQuery.isError;
+
   return (
     <>
       {isLoading && <LoadingModal message="Saving changes..." />}
       <h1>Edit Event</h1>
+      {aQueryIsLoading && (
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
+          Loading...
+        </header>
+      )}
       <QueryLoadingOrError
-        query={fetchAllEventsQuery}
+        query={queryForQueryLoadingOrError}
         errorMessage="Error fetching event"
       />
-      {!fetchAllEventsQuery.isLoading && !fetchAllEventsQuery.isError && (
+      {isNoFetchError && !aQueryIsLoading && (
         <EventForm randomColor={randomColor} usedFor="edit-event" event={event} />
       )}
     </>

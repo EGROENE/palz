@@ -14,7 +14,11 @@ const AddEventPage = () => {
   const { isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout, fetchAllVisibleOtherUsersQuery } =
     useUserContext();
-  const { fetchAllEventsQuery } = useEventContext();
+  const {
+    fetchAllEventsQuery,
+    fetchPotentialCoOrganizersQuery,
+    fetchPotentialInviteesQuery,
+  } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -46,28 +50,43 @@ const AddEventPage = () => {
   }, [currentUser, navigation, userCreatedAccount]);
 
   const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
-
-  const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
+    !fetchAllEventsQuery.isError &&
+    !fetchAllVisibleOtherUsersQuery.isError &&
+    !fetchPotentialCoOrganizersQuery.isError &&
+    !fetchPotentialInviteesQuery.isError;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
     if (fetchAllVisibleOtherUsersQuery.isError) {
       return fetchAllVisibleOtherUsersQuery;
+    } else if (fetchPotentialCoOrganizersQuery.isError) {
+      return fetchPotentialCoOrganizersQuery;
+    } else if (fetchPotentialInviteesQuery.isError) {
+      return fetchPotentialInviteesQuery;
     }
     return fetchAllEventsQuery;
   };
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
+  const aQueryIsLoading: boolean =
+    fetchAllEventsQuery.isLoading ||
+    fetchAllVisibleOtherUsersQuery.isLoading ||
+    fetchPotentialCoOrganizersQuery.isLoading ||
+    fetchPotentialInviteesQuery.isLoading;
+
   return (
     <>
       {isLoading && <LoadingModal message="Adding event..." />}
       <h1>Add New Event</h1>
+      {aQueryIsLoading && (
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
+          Loading...
+        </header>
+      )}
       <QueryLoadingOrError
         query={queryForQueryLoadingOrError}
         errorMessage="Error fetching data."
       />
-      {!fetchIsLoading && isNoFetchError && (
+      {!aQueryIsLoading && isNoFetchError && (
         <EventForm randomColor={randomColor} usedFor="add-event" />
       )}
     </>
