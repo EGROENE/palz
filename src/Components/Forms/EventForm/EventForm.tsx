@@ -29,26 +29,6 @@ const EventForm = ({
 
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
-  const currentUserFriends: TOtherUser[] | undefined = visibleOtherUsers
-    ? visibleOtherUsers.filter(
-        (user) => user._id && currentUser?.friends.includes(user._id)
-      )
-    : undefined;
-
-  const currentUserNonFriends: TOtherUser[] | undefined = visibleOtherUsers
-    ? visibleOtherUsers.filter(
-        (user) => user._id && !currentUser?.friends.includes(user._id)
-      )
-    : undefined;
-
-  /* 
-    Make allOtherUsersFriendsFirst consist first of currentUser's friends, then all others. This way, friends will display at top if potential-invitee, -blockee, & -co-organizer lists
-    */
-  const allOtherUsersFriendsFirst: TOtherUser[] | undefined =
-    currentUserFriends &&
-    currentUserNonFriends &&
-    currentUserFriends.concat(currentUserNonFriends);
-
   const {
     handleAddRemoveBlockedUserOnEvent,
     handleAddRemoveUserAsInvitee,
