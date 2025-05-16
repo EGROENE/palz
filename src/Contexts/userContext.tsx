@@ -206,7 +206,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
 
   const fetchAllVisibleOtherUsersQuery: UseQueryResult<TOtherUser[], Error> = useQuery({
-    queryKey: ["allUsers"],
+    queryKey: ["allVisibleOtherUsers"],
     // queryFn can be a callback that takes an object that can be logged to the console, where queryKey can be seen (put console log in .then() of promise)
     queryFn: () => Requests.getAllVisibleOtherUsers(currentUser),
     enabled: userHasLoggedIn,
@@ -1762,7 +1762,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     */
 
     // Handle submit of login form:
-    // Maybe .invalidateQueries({ queryKey: "allUsers" }) before running getUserByUsernameOrEmailAddress request
+    // Maybe .invalidateQueries({ queryKey: "allVisibleOtherUsers" }) before running getUserByUsernameOrEmailAddress request
     if (!isOnSignup && password) {
       if (username && username !== "") {
         Requests.getUserByUsernameOrEmailAddress(password, username)
@@ -1891,8 +1891,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               handleWelcomeMessage();
               setCurrentUser(userData);
               navigation("/");
-              queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-              queryClient.refetchQueries({ queryKey: ["allUsers"] });
+              queryClient.invalidateQueries({ queryKey: ["allVisibleOtherUsers"] });
+              queryClient.refetchQueries({ queryKey: ["allVisibleOtherUsers"] });
               setUserCreatedAccount(true);
               setParallelValuesAfterSignup();
               resetErrorMessagesAfterSignup();
