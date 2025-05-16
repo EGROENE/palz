@@ -75,6 +75,8 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
       });
       logout();
     }
+
+    window.scrollTo(0, 0);
   }, [event, navigation]);
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
