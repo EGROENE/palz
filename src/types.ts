@@ -576,7 +576,6 @@ export type TUserContext = {
   >;
   userCreatedAccount: null | boolean;
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
-  allUsers: TOtherUser[] | undefined;
   currentUser: TUser | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser | null>>;
   updateProfileImageMutation: UseMutationResult<

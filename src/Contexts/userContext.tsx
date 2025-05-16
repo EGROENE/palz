@@ -213,7 +213,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     // staleTime: number,
     // refetchInterval: number
   });
-  let allUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
   const userData: TUser = {
     firstName: Methods.formatHyphensAndSpacesInString(
@@ -2083,7 +2082,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setProfileVisibleTo,
     showUpdateProfileImageInterface,
     setShowUpdateProfileImageInterface,
-    allUsers,
     currentUser,
     setCurrentUser,
     userCreatedAccount,
