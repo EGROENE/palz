@@ -1936,13 +1936,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     window.location.reload(); // reload pg in order to give memory a fresh start
   };
 
-  const allOtherUsers: TOtherUser[] =
-    allUsers && currentUser
-      ? allUsers.filter((user) => user._id !== currentUser._id)
-      : [];
-
   const userContextValues: TUserContext = {
-    allOtherUsers,
     userHasLoggedIn,
     removeProfileImageMutation,
     updateProfileImageMutation,
