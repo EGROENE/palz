@@ -858,14 +858,17 @@ const EventForm = ({
   const resortedCountries = getResortedCountries();
 
   const getUsersWhoAreOrganizers = (): TOtherUser[] => {
-    const usersWhoAreOrganizers: TOtherUser[] = [];
+    const usersWhoAreOrganizers: (TOtherUser | TUser)[] = [];
     if (visibleOtherUsers) {
       for (const organizer of organizers) {
         const user = visibleOtherUsers.filter((user) => user._id === organizer)[0];
         usersWhoAreOrganizers.push(user);
       }
+      if (currentUser && currentUser._id && organizers.includes(currentUser._id)) {
+        usersWhoAreOrganizers.push(currentUser);
+      }
     }
-    return usersWhoAreOrganizers;
+    return usersWhoAreOrganizers.filter((user) => user !== undefined);
   };
   const usersWhoAreOrganizers = getUsersWhoAreOrganizers();
 
