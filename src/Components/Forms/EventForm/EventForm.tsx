@@ -880,7 +880,7 @@ const EventForm = ({
         usersWhoAreInvitees.push(user);
       }
     }
-    return usersWhoAreInvitees;
+    return usersWhoAreInvitees.filter((user) => user !== undefined);
   };
   const usersWhoAreInvitees = getUsersWhoAreInvitees();
 
