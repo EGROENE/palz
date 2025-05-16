@@ -235,7 +235,7 @@ const getPotentialCoOrganizers = (
 ): Promise<TOtherUser[]> => {
   const url: string = eventType === "new" ? "add-event" : "edit-event";
 
-  return fetch(`http://localhost:4000/palz/${url}`, {
+  return fetch(`http://localhost:4000/palz/users/${url}`, {
     method: "GET",
     redirect: "follow",
   }).then((response) => {
@@ -384,7 +384,7 @@ const getPotentialInvitees = (
 ): Promise<TOtherUser[]> => {
   const url: string = eventType === "new" ? "add-event" : "edit-event";
 
-  return fetch(`http://localhost:4000/palz/${url}`, {
+  return fetch(`http://localhost:4000/palz/users/${url}`, {
     method: "GET",
     redirect: "follow",
   }).then((response) => {
