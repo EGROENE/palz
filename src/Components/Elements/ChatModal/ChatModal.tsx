@@ -11,7 +11,11 @@ import ListedUser from "../ListedUser/ListedUser";
 import ChatModalTwoOptions from "../ChatModalTwoOptions/ChatModalTwoOptions";
 
 const ChatModal = () => {
-  const { allOtherUsers, currentUser, setCurrentOtherUser } = useUserContext();
+  const { currentUser, setCurrentOtherUser, fetchAllVisibleOtherUsersQuery } =
+    useUserContext();
+
+  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+
   const {
     startConversation,
     setMessageBeingEdited,
@@ -302,10 +306,12 @@ const ChatModal = () => {
   };
 
   let usersToAdd: TOtherUser[] = [];
-  for (const userID of usersToAddToChat) {
-    for (const otherUser of allOtherUsers) {
-      if (otherUser._id === userID) {
-        usersToAdd.push(otherUser);
+  if (visibleOtherUsers) {
+    for (const userID of usersToAddToChat) {
+      for (const otherUser of visibleOtherUsers) {
+        if (otherUser._id === userID) {
+          usersToAdd.push(otherUser);
+        }
       }
     }
   }
@@ -789,15 +795,17 @@ const ChatModal = () => {
               randomColor={randomColor}
               showList={showPotentialChatMembers}
               setShowList={setShowPotentialChatMembers}
-              inputOnChange={(e) =>
-                handleSearchChatMembersInput(
-                  e,
-                  showPotentialChatMembers,
-                  setShowPotentialChatMembers,
-                  allOtherUsers,
-                  initiatePotentialChatMembers
-                )
-              }
+              inputOnChange={(e) => {
+                if (visibleOtherUsers) {
+                  return handleSearchChatMembersInput(
+                    e,
+                    showPotentialChatMembers,
+                    setShowPotentialChatMembers,
+                    visibleOtherUsers,
+                    initiatePotentialChatMembers
+                  );
+                }
+              }}
               dropdownChecklist={
                 <DropdownChecklist
                   usedFor="potential-additional-chat-members"
