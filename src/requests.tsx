@@ -1132,7 +1132,7 @@ const addToFriendRequestsSent = (sender: TUser, recipient: TUser): Promise<Respo
 };
 
 const removeFromFriendRequestsReceived = (
-  sender: TUser,
+  sender: TOtherUser,
   recipient: TUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
