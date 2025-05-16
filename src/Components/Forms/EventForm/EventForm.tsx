@@ -24,12 +24,8 @@ const EventForm = ({
 }) => {
   const { showSidebar, setShowSidebar, isLoading, setIsLoading, theme } =
     useMainContext();
-  const {
-    handleCityStateCountryInput,
-    fetchAllVisibleOtherUsersQuery,
-    currentUser,
-    blockedUsers,
-  } = useUserContext();
+  const { handleCityStateCountryInput, fetchAllVisibleOtherUsersQuery, currentUser } =
+    useUserContext();
 
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
