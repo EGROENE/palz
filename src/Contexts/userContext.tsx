@@ -1516,7 +1516,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleUnblockUserFail = (blockee: TUser): void => {
+  const handleUnblockUserFail = (blockee: TOtherUser): void => {
     if (blockedUsers && setBlockedUsers) {
       setBlockedUsers(blockedUsers);
     }
@@ -1532,7 +1532,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   // No mutation needed here, as operation is simpler than blocking
   const handleUnblockUser = (
     blocker: TUser,
-    blockee: TUser,
+    blockee: TOtherUser,
     blockedUsers?: string[] | undefined,
     setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
   ): void => {

@@ -310,7 +310,7 @@ export type TUserContext = {
   ) => void;
   handleUnblockUser: (
     blocker: TUser,
-    blockee: TUser,
+    blockee: TOtherUser,
     blockedUsers?: string[] | undefined,
     setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
