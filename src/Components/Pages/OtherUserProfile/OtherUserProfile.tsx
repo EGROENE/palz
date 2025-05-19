@@ -6,7 +6,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import styles from "./styles.module.css";
-import { TThemeColor, TUser, TEvent, TChat } from "../../../types";
+import { TThemeColor, TUser, TEvent, TChat, TOtherUser } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { countries } from "../../../constants";
 import Methods from "../../../methods";
@@ -16,6 +16,7 @@ import UserListModal from "../../Elements/UserListModal/UserListModal";
 import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSection";
 import { useChatContext } from "../../../Hooks/useChatContext";
+import useLocalStorage from "use-local-storage";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
@@ -56,19 +57,207 @@ const OtherUserProfile = () => {
     (visibleOtherUser) => visibleOtherUser.username === username
   )[0]._id;
 
-  let currentOtherUser: TUser | undefined;
-  if (currentOtherUserID) {
-    Requests.getUserByID(currentOtherUserID).then((res) =>
-      res.json().then((user) => (currentOtherUser = user))
-    );
-  }
+  const [currentOtherUserSECURE, setCurrentOtherUserSECURE] = useLocalStorage<
+    TOtherUser | undefined
+  >("currentOtherUserSECURE", undefined);
+
+  const getCurrentOtherUser = async (): Promise<TUser> => {
+    let currentOtherUser: TUser[] = [];
+    if (currentOtherUserID) {
+      await Requests.getUserByID(currentOtherUserID).then((res) =>
+        res.json().then((otherUser: TUser) => currentOtherUser.push(otherUser))
+      );
+    }
+    return currentOtherUser[0];
+  };
 
   const [showFriends, setShowFriends] = useState<boolean>(false);
   const [showMutualFriends, setShowMutualFriends] = useState<boolean>(false);
+  const [currentUserMayMessage, setCurrentUserMayMessage] = useState<boolean>(false);
+  const [showFacebook, setShowFacebook] = useState<boolean>(false);
+  const [showInstagram, setShowInstagram] = useState<boolean>(false);
+  const [showX, setShowX] = useState<boolean>(false);
+  const [currentUserCanSeeLocation, setCurrentUserCanSeeLocation] =
+    useState<boolean>(false);
+  const [currentUserCanSeeFriendsList, setCurrentUserCanSeeFriendsList] =
+    useState<boolean>(false);
+  const [currentUserIsFriendOfFriend, setCurrentUserIsFriendOfFriend] =
+    useState<boolean>(false);
+  const [matchingCountryObject, setMatchingCountryObject] = useState<
+    | {
+        country: string;
+        abbreviation: string;
+        phoneCode: string;
+      }
+    | undefined
+  >(undefined);
+  const [userCountryAbbreviation, setUserCountryAbbreviation] = useState<string>("");
+  const [palzInCommon, setPalzInCommon] = useState<TOtherUser[]>([]);
+
+  // put in other useEffect w/ empty dep array if no dependencies added to this one, or if only dependency is username
+  useEffect(() => {
+    setCurrentOtherUserSECURE(
+      visibleOtherUsers?.filter((otherUser) => otherUser._id === currentOtherUserID)[0]
+    );
+
+    getCurrentOtherUser().then((currentOtherUser: TUser) => {
+      // Determine if currentUser may send user a message:
+      if (
+        currentUser &&
+        !aQueryIsLoading &&
+        currentUser._id &&
+        currentOtherUser._id &&
+        (currentOtherUser.whoCanMessage === "anyone" ||
+          (currentOtherUser.whoCanMessage === "friends" &&
+            currentOtherUser.friends.includes(currentUser._id) &&
+            currentUser?.friends.includes(currentOtherUser._id)) ||
+          (currentOtherUser.whoCanMessage === "friends of friends" &&
+            currentUserIsFriendOfFriend))
+      ) {
+        setCurrentUserMayMessage(true);
+      } else {
+        setCurrentUserMayMessage(false);
+      }
+
+      // Set currentUserCanSeeLocation:
+      if (
+        !aQueryIsLoading &&
+        currentUser?._id &&
+        currentOtherUser.whoCanSeeLocation !== "nobody" &&
+        (currentOtherUser.whoCanSeeLocation === "anyone" ||
+          (currentOtherUser.whoCanSeeLocation === "friends of friends" &&
+            currentUserIsFriendOfFriend) ||
+          (currentOtherUser.whoCanSeeLocation === "friends" &&
+            currentOtherUser.friends.includes(currentUser._id))) &&
+        currentOtherUserSECURE &&
+        currentOtherUserSECURE.city !== "" &&
+        currentOtherUserSECURE &&
+        currentOtherUserSECURE.stateProvince !== "" &&
+        currentOtherUserSECURE &&
+        currentOtherUserSECURE.country !== ""
+      ) {
+        setCurrentUserCanSeeLocation(true);
+      }
+
+      // Determine if currentUser may see friends list:
+      const currentUserIsFriend: boolean =
+        currentUser && currentUser._id && !aQueryIsLoading
+          ? currentOtherUser.friends.includes(currentUser._id)
+          : false;
+
+      if (
+        ((!aQueryIsLoading &&
+          currentUserIsFriend &&
+          currentOtherUser.whoCanSeeFriendsList === "friends") ||
+          (!aQueryIsLoading && currentOtherUser.whoCanSeeFriendsList === "anyone") ||
+          (!aQueryIsLoading &&
+            currentOtherUser.whoCanSeeFriendsList === "friends of friends" &&
+            currentUserIsFriendOfFriend)) &&
+        currentOtherUser.friends.length > 0
+      ) {
+        setCurrentUserCanSeeFriendsList(true);
+      }
+
+      // Set palzInCommon:
+      const currentUserFriends: TOtherUser[] = visibleOtherUsers
+        ? visibleOtherUsers.filter((otherUser) => {
+            if (currentUser && otherUser._id) {
+              if (currentUser.friends.includes(otherUser._id)) {
+                return otherUser;
+              }
+            }
+          })
+        : [];
+
+      const currentOtherUserFriends: TOtherUser[] = visibleOtherUsers
+        ? visibleOtherUsers.filter((otherUser) => {
+            if (otherUser._id) {
+              if (currentOtherUser.friends.includes(otherUser._id)) {
+                return otherUser;
+              }
+            }
+          })
+        : [];
+
+      const combinedPalz: TOtherUser[] = currentUserFriends.concat(
+        currentOtherUserFriends
+      );
+
+      setPalzInCommon(
+        Methods.removeDuplicatesFromArray(
+          combinedPalz.filter(
+            (pal) => combinedPalz.indexOf(pal) !== combinedPalz.lastIndexOf(pal)
+          )
+        )
+      );
+
+      // Set currentOtherUser's country object:
+      if (!aQueryIsLoading) {
+        setMatchingCountryObject(
+          countries.filter((country) => country.country === currentOtherUser.country)[0]
+        );
+      }
+
+      // Set country abbreviation:
+      if (!aQueryIsLoading && currentOtherUser.country !== "" && matchingCountryObject) {
+        setUserCountryAbbreviation(matchingCountryObject.abbreviation);
+      }
+
+      // Set currentUserIsFriendOfFriend:
+      const getCurrentOtherUserFriends = async (): Promise<TUser[]> => {
+        let currentOtherUserFriends: TUser[] = [];
+        if (currentOtherUserID) {
+          for (const friendID of currentOtherUser.friends) {
+            await Requests.getUserByID(friendID).then((res) =>
+              res
+                .json()
+                .then((currentOtherUserFriend) =>
+                  currentOtherUserFriends.push(currentOtherUserFriend)
+                )
+            );
+          }
+        }
+        return currentOtherUserFriends;
+      };
+
+      getCurrentOtherUserFriends().then((currentOtherUserFriends) => {
+        if (currentUser && currentUser._id) {
+          for (const friend of currentOtherUserFriends) {
+            if (friend.friends.includes(currentUser._id)) {
+              setCurrentUserIsFriendOfFriend(true);
+            }
+          }
+        }
+      });
+
+      // Set showFacebook:
+      if (getSocialMediumIsVisible("facebook")) {
+      }
+      setShowFacebook(
+        getSocialMediumIsVisible("facebook") && currentOtherUserSECURE
+          ? currentOtherUserSECURE.facebook !== ""
+          : false
+      );
+
+      // Set showInstagram:
+      setShowInstagram(
+        getSocialMediumIsVisible("instagram") && currentOtherUserSECURE
+          ? currentOtherUserSECURE.instagram !== ""
+          : false
+      );
+
+      // Set showX:
+      setShowX(
+        getSocialMediumIsVisible("x") && currentOtherUserSECURE
+          ? currentOtherUserSECURE.x !== ""
+          : false
+      );
+    });
+  }, [username, fetchAllVisibleOtherUsersQuery.data, fetchAllEventsQuery.data]);
 
   const currentOtherUserIsBlocked: boolean =
-    blockedUsers && currentOtherUser && currentOtherUser._id
-      ? blockedUsers.includes(currentOtherUser._id)
+    blockedUsers && currentOtherUserID
+      ? blockedUsers.includes(currentOtherUserID)
       : false;
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -118,71 +307,33 @@ const OtherUserProfile = () => {
     }
 
     // If logged-in user is blocked by currentOtherUser:
-    if (currentUser?._id && currentOtherUser?.blockedUsers.includes(currentUser._id)) {
-      toast("You do not have access to this page", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-      navigation(`/${currentUser?.username}`);
-    }
+    getCurrentOtherUser().then((currentOtherUser) => {
+      if (
+        !aQueryIsLoading &&
+        currentUser &&
+        currentUser._id &&
+        currentOtherUser.blockedUsers.includes(currentUser._id)
+      ) {
+        toast("You do not have access to this page", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+        navigation(`/${currentUser?.username}`);
+      }
+    });
   }, [currentUser, navigation, userCreatedAccount]);
 
   const usersAreFriends: boolean =
-    currentOtherUser?._id && friends?.includes(currentOtherUser._id) ? true : false;
-
-  // First, get currentOtherUser as TUser
-  // Second, go thru all currentOtherUser friends & map their TUser object into currentOtherUserFriends
-  const getCurrentOtherUserFriends = (): TUser[] => {
-    let currentOtherUserFriends: TUser[] = [];
-    if (currentOtherUser && currentOtherUser._id) {
-      Requests.getUserByID(currentOtherUser._id).then((res) =>
-        res.json().then((currentOtherUser: TUser) => {
-          for (const friendID of currentOtherUser.friends) {
-            Requests.getUserByID(friendID).then((res) =>
-              res
-                .json()
-                .then((currentOtherUserFriend) =>
-                  currentOtherUserFriends.push(currentOtherUserFriend)
-                )
-            );
-          }
-        })
-      );
-    }
-    return currentOtherUserFriends;
-  };
-  let currentOtherUserFriends: TUser[] = getCurrentOtherUserFriends();
-
-  const currentUserIsFriendOfFriend: boolean =
-    currentUser && currentOtherUser && currentOtherUserFriends
-      ? currentOtherUserFriends.some(
-          (user) => currentUser._id && user.friends.includes(currentUser._id)
-        )
-      : false;
-
-  const currentUserMayMessage: boolean =
-    currentUser && currentUser._id && currentOtherUser?._id
-      ? currentOtherUser.whoCanMessage === "anyone" ||
-        (currentUser._id &&
-          currentOtherUser.whoCanMessage === "friends" &&
-          currentOtherUser.friends.includes(currentUser._id) &&
-          currentUser?.friends.includes(currentOtherUser._id)) ||
-        (currentUserIsFriendOfFriend &&
-          currentOtherUser.whoCanMessage === "friends of friends")
-      : false;
+    currentOtherUserID && friends?.includes(currentOtherUserID) ? true : false;
 
   const currentUserHasSentFriendRequest: boolean =
-    currentOtherUser?._id && friendRequestsSent?.includes(currentOtherUser._id)
-      ? true
-      : false;
+    currentOtherUserID && friendRequestsSent?.includes(currentOtherUserID) ? true : false;
 
   const currentUserHasReceivedFriendRequest: boolean =
-    currentOtherUser?._id &&
-    currentOtherUser &&
-    friendRequestsReceived?.includes(currentOtherUser._id)
+    currentOtherUserID && friendRequestsReceived?.includes(currentOtherUserID)
       ? true
       : false;
 
@@ -197,8 +348,8 @@ const OtherUserProfile = () => {
           </>
         ),
         handler:
-          currentUser && currentOtherUser
-            ? () => handleRemoveFriendRequest(currentOtherUser, currentUser)
+          currentUser && currentOtherUserSECURE
+            ? () => handleRemoveFriendRequest(currentOtherUserSECURE, currentUser)
             : undefined,
         paramsIncludeEvent: false,
       };
@@ -220,8 +371,8 @@ const OtherUserProfile = () => {
         </>
       ),
       handler:
-        currentUser && currentOtherUser
-          ? () => handleSendFriendRequest(currentOtherUser)
+        currentUser && currentOtherUserSECURE
+          ? () => handleSendFriendRequest(currentOtherUserSECURE)
           : undefined,
       paramsIncludeEvent: false,
     };
@@ -237,8 +388,8 @@ const OtherUserProfile = () => {
         {` Message`}
       </>
     ),
-    handler: currentOtherUser
-      ? () => getStartOrOpenChatWithUserHandler(currentOtherUser)
+    handler: currentOtherUserSECURE
+      ? () => getStartOrOpenChatWithUserHandler(currentOtherUserSECURE)
       : undefined,
     paramsIncludeEvent: false,
   };
@@ -251,10 +402,10 @@ const OtherUserProfile = () => {
       </>
     ),
     handler:
-      currentUser && currentOtherUser
+      currentUser && currentOtherUserSECURE
         ? () => {
-            if (currentOtherUser) {
-              return handleUnfriending(currentUser, currentOtherUser);
+            if (currentOtherUserSECURE) {
+              return handleUnfriending(currentUser, currentOtherUserSECURE);
             }
           }
         : undefined,
@@ -269,11 +420,10 @@ const OtherUserProfile = () => {
           (chat) =>
             currentUser &&
             currentUser._id &&
-            currentOtherUser &&
-            currentOtherUser._id &&
+            currentOtherUserID &&
             chat.members.length === 2 &&
             chat.members.includes(currentUser._id) &&
-            chat.members.includes(currentOtherUser._id)
+            chat.members.includes(currentOtherUserID)
         )[0]
       : undefined;
 
@@ -288,24 +438,24 @@ const OtherUserProfile = () => {
       allEvents &&
       currentUser &&
       currentUser._id &&
-      currentOtherUser &&
-      currentOtherUser._id
+      currentOtherUserID &&
+      currentOtherUserSECURE
     ) {
       for (const event of allEvents) {
         // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
         if (event.creator === currentUser._id) {
-          if (event.invitees.includes(currentOtherUser._id)) {
-            handleRemoveInvitee(event, currentOtherUser, e);
+          if (event.invitees.includes(currentOtherUserID)) {
+            handleRemoveInvitee(event, currentOtherUserSECURE, e);
           }
 
           // Remove blockee's RSVP:
-          if (event.interestedUsers.includes(currentOtherUser._id)) {
-            handleDeleteUserRSVP(event, currentOtherUser, e);
+          if (event.interestedUsers.includes(currentOtherUserID)) {
+            handleDeleteUserRSVP(event, currentOtherUserSECURE, e);
           }
 
           // Remove blockee as organizer:
-          if (event.organizers.includes(currentOtherUser._id)) {
-            handleRemoveOrganizer(e, event, currentOtherUser);
+          if (event.organizers.includes(currentOtherUserID)) {
+            handleRemoveOrganizer(e, event, currentOtherUserSECURE);
           }
         }
 
@@ -314,10 +464,10 @@ const OtherUserProfile = () => {
     }
 
     // Add to blockedUsers (representative value in state), remove from friend requests, friends lists:
-    if (currentUser && currentOtherUser) {
+    if (currentUser && currentOtherUserSECURE) {
       addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists(
         currentUser,
-        currentOtherUser,
+        currentOtherUserSECURE,
         blockedUsers,
         setBlockedUsers
       );
@@ -325,7 +475,7 @@ const OtherUserProfile = () => {
   };
 
   const getBlockButton = () => {
-    if (currentOtherUserIsBlocked && currentUser && currentOtherUser) {
+    if (currentOtherUserIsBlocked && currentUser && currentOtherUserSECURE) {
       return {
         type: "unblock",
         buttonText: (
@@ -334,10 +484,10 @@ const OtherUserProfile = () => {
           </>
         ),
         handler: () => {
-          if (currentOtherUser) {
+          if (currentOtherUserSECURE) {
             return handleUnblockUser(
               currentUser,
-              currentOtherUser,
+              currentOtherUserSECURE,
               blockedUsers,
               setBlockedUsers
             );
@@ -369,21 +519,6 @@ const OtherUserProfile = () => {
   };
   const displayedButtons = getDisplayedButtons();
 
-  const matchingCountryObject:
-    | {
-        country: string;
-        abbreviation: string;
-        phoneCode: string;
-      }
-    | undefined = countries.filter(
-    (country) => country.country === currentOtherUser?.country
-  )[0];
-
-  const userCountryAbbreviation: string | undefined =
-    currentOtherUser?.country !== "" && matchingCountryObject
-      ? matchingCountryObject.abbreviation
-      : undefined;
-
   const getCurrentUserFriends = (): TUser[] => {
     let currentUserFriends: TUser[] = [];
     if (currentUser) {
@@ -412,66 +547,21 @@ const OtherUserProfile = () => {
       }
     }
   }
-  const usersAreFriendsOfFriends = currentOtherUser
-    ? friendsOfCurrentUserFriends.includes(currentOtherUser)
-    : false;
-
-  const combinedPalz: TUser[] = currentUserFriends.concat(currentOtherUserFriends);
-
-  const palzInCommon = Methods.removeDuplicatesFromArray(
-    combinedPalz.filter(
-      (pal) => combinedPalz.indexOf(pal) !== combinedPalz.lastIndexOf(pal)
-    )
-  );
-
-  const getCurrentUserCanSeeFriendsList = (): boolean => {
-    if (currentUser && currentUser._id) {
-      const currentUserIsFriend: boolean =
-        currentOtherUser && currentOtherUser && currentOtherUser._id
-          ? currentOtherUser.friends.includes(currentUser._id) &&
-            currentUser.friends.includes(currentOtherUser._id)
-          : false;
-
-      if (
-        currentOtherUser?.whoCanSeeFriendsList === "anyone" ||
-        currentUserIsFriend ||
-        currentUserIsFriendOfFriend
-      ) {
-        return true;
-      }
-    }
-    return false;
-  };
-  const currentUserCanSeeFriendsList: boolean = getCurrentUserCanSeeFriendsList();
-
-  const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
-
-  const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
-
-  const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllVisibleOtherUsersQuery.isError) {
-      return fetchAllVisibleOtherUsersQuery;
-    }
-    return fetchAllEventsQuery;
-  };
-  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
   const now = Date.now();
 
   const pastEventsUserOrganized: TEvent[] | undefined = allEvents?.filter(
     (event) =>
-      currentOtherUser?._id &&
+      currentOtherUserID &&
       event.creator !== currentUser?._id &&
-      event.organizers.includes(currentOtherUser._id) &&
+      event.organizers.includes(currentOtherUserID) &&
       event.eventEndDateTimeInMS < now
   );
 
   const pastEventsUserRSVPd: TEvent[] | undefined = allEvents?.filter(
     (event) =>
-      currentOtherUser?._id &&
-      event.interestedUsers.includes(currentOtherUser._id) &&
+      currentOtherUserID &&
+      event.interestedUsers.includes(currentOtherUserID) &&
       event.eventEndDateTimeInMS < now
   );
 
@@ -479,32 +569,32 @@ const OtherUserProfile = () => {
     (event) =>
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
-      currentOtherUser?._id &&
-      event.organizers.includes(currentOtherUser._id)
+      currentOtherUserID &&
+      event.organizers.includes(currentOtherUserID)
   );
 
   const upcomingEventsUserInvitedTo: TEvent[] | undefined = allEvents?.filter(
     (event) =>
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
-      currentOtherUser?._id &&
-      event.invitees.includes(currentOtherUser._id)
+      currentOtherUserID &&
+      event.invitees.includes(currentOtherUserID)
   );
 
   const upcomingEventsUserRSVPdTo: TEvent[] | undefined = allEvents?.filter(
     (event) =>
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
-      currentOtherUser?._id &&
-      event.interestedUsers.includes(currentOtherUser._id)
+      currentOtherUserID &&
+      event.interestedUsers.includes(currentOtherUserID)
   );
 
   const ongoingEvents: TEvent[] | undefined = allEvents?.filter((event) => {
     event.eventStartDateTimeInMS < now &&
       event.eventEndDateTimeInMS > now &&
-      currentOtherUser?._id &&
-      (event.organizers.includes(currentOtherUser._id) ||
-        event.interestedUsers.includes(currentOtherUser._id));
+      currentOtherUserID &&
+      (event.organizers.includes(currentOtherUserID) ||
+        event.interestedUsers.includes(currentOtherUserID));
   });
 
   type TDisplayedEvent = {
@@ -547,82 +637,89 @@ const OtherUserProfile = () => {
     .some((eventArray) => eventArray && eventArray.length > 0);
 
   const getCurrentUserMaySeeEvent = (event: TDisplayedEvent): boolean => {
-    const currentUserIsFriendOfFriend: boolean =
-      currentUser && currentOtherUser && currentOtherUserFriends
-        ? currentOtherUserFriends.some(
-            (user) => currentUser._id && user.friends.includes(currentUser._id)
-          )
-        : false;
+    if (currentOtherUserID) {
+      Requests.getUserByID(currentOtherUserID).then((res) =>
+        res.json().then((currentOtherUser: TUser) => {
+          if (currentUser && currentUser._id && currentOtherUser) {
+            if (event.type === "interested-event") {
+              if (
+                currentOtherUser.whoCanSeeEventsInterestedIn === "anyone" ||
+                (currentOtherUser.whoCanSeeEventsInterestedIn === "friends" &&
+                  currentOtherUser.friends.includes(currentUser._id)) ||
+                (currentOtherUser.whoCanSeeEventsInterestedIn === "friends of friends" &&
+                  currentUserIsFriendOfFriend)
+              ) {
+                return true;
+              }
+            }
 
-    if (currentUser && currentUser._id && currentOtherUser) {
-      if (event.type === "interested-event") {
-        if (
-          currentOtherUser.whoCanSeeEventsInterestedIn === "anyone" ||
-          (currentOtherUser.whoCanSeeEventsInterestedIn === "friends" &&
-            currentOtherUser.friends.includes(currentUser._id)) ||
-          (currentOtherUser.whoCanSeeEventsInterestedIn === "friends of friends" &&
-            currentUserIsFriendOfFriend)
-        ) {
-          return true;
-        }
-      }
+            if (event.type === "organized-event") {
+              if (
+                currentOtherUser.whoCanSeeEventsOrganized === "anyone" ||
+                (currentOtherUser.whoCanSeeEventsOrganized === "friends" &&
+                  currentOtherUser.friends.includes(currentUser._id)) ||
+                (currentOtherUser.whoCanSeeEventsOrganized === "friends of friends" &&
+                  currentUserIsFriendOfFriend)
+              ) {
+                return true;
+              }
+            }
 
-      if (event.type === "organized-event") {
-        if (
-          currentOtherUser.whoCanSeeEventsOrganized === "anyone" ||
-          (currentOtherUser.whoCanSeeEventsOrganized === "friends" &&
-            currentOtherUser.friends.includes(currentUser._id)) ||
-          (currentOtherUser.whoCanSeeEventsOrganized === "friends of friends" &&
-            currentUserIsFriendOfFriend)
-        ) {
-          return true;
-        }
-      }
-
-      if (event.type === "invited-event") {
-        if (
-          currentOtherUser.whoCanSeeEventsInvitedTo === "anyone" ||
-          (currentOtherUser.whoCanSeeEventsInvitedTo === "friends" &&
-            currentOtherUser.friends.includes(currentUser._id)) ||
-          (currentOtherUser.whoCanSeeEventsInvitedTo === "friends of friends" &&
-            currentUserIsFriendOfFriend)
-        ) {
-          return true;
-        }
-      }
+            if (event.type === "invited-event") {
+              if (
+                currentOtherUser.whoCanSeeEventsInvitedTo === "anyone" ||
+                (currentOtherUser.whoCanSeeEventsInvitedTo === "friends" &&
+                  currentOtherUser.friends.includes(currentUser._id)) ||
+                (currentOtherUser.whoCanSeeEventsInvitedTo === "friends of friends" &&
+                  currentUserIsFriendOfFriend)
+              ) {
+                return true;
+              }
+            }
+          }
+        })
+      );
     }
     return false;
   };
 
   const getSocialMediumIsVisible = (medium: "facebook" | "instagram" | "x"): boolean => {
-    if (currentUser && currentUser._id) {
-      if (
-        (medium === "facebook" && currentOtherUser?.whoCanSeeFacebook === "anyone") ||
-        (currentOtherUser?.whoCanSeeFacebook === "friends" &&
-          currentOtherUser.friends.includes(currentUser._id)) ||
-        (currentOtherUser?.whoCanSeeFacebook === "friends of friends" &&
-          currentUserIsFriendOfFriend)
-      ) {
-        return true;
-      }
-      if (
-        (medium === "instagram" && currentOtherUser?.whoCanSeeInstagram === "anyone") ||
-        (currentOtherUser?.whoCanSeeInstagram === "friends" &&
-          currentOtherUser.friends.includes(currentUser._id)) ||
-        (currentOtherUser?.whoCanSeeInstagram === "friends of friends" &&
-          currentUserIsFriendOfFriend)
-      ) {
-        return true;
-      }
-      if (
-        (medium === "x" && currentOtherUser?.whoCanSeeX === "anyone") ||
-        (currentOtherUser?.whoCanSeeX === "friends" &&
-          currentOtherUser.friends.includes(currentUser._id)) ||
-        (currentOtherUser?.whoCanSeeX === "friends of friends" &&
-          currentUserIsFriendOfFriend)
-      ) {
-        return true;
-      }
+    if (currentOtherUserID) {
+      Requests.getUserByID(currentOtherUserID).then((res) =>
+        res.json().then((currentOtherUser: TUser) => {
+          if (currentUser && currentUser._id) {
+            if (
+              (medium === "facebook" &&
+                currentOtherUser?.whoCanSeeFacebook === "anyone") ||
+              (currentOtherUser?.whoCanSeeFacebook === "friends" &&
+                currentOtherUser.friends.includes(currentUser._id)) ||
+              (currentOtherUser?.whoCanSeeFacebook === "friends of friends" &&
+                currentUserIsFriendOfFriend)
+            ) {
+              return true;
+            }
+            if (
+              (medium === "instagram" &&
+                currentOtherUser?.whoCanSeeInstagram === "anyone") ||
+              (currentOtherUser?.whoCanSeeInstagram === "friends" &&
+                currentOtherUser.friends.includes(currentUser._id)) ||
+              (currentOtherUser?.whoCanSeeInstagram === "friends of friends" &&
+                currentUserIsFriendOfFriend)
+            ) {
+              return true;
+            }
+            if (
+              (medium === "x" && currentOtherUser?.whoCanSeeX === "anyone") ||
+              (currentOtherUser?.whoCanSeeX === "friends" &&
+                currentOtherUser.friends.includes(currentUser._id)) ||
+              (currentOtherUser?.whoCanSeeX === "friends of friends" &&
+                currentUserIsFriendOfFriend)
+            ) {
+              return true;
+            }
+          }
+        })
+      );
     }
     return false;
   };
@@ -631,9 +728,9 @@ const OtherUserProfile = () => {
     const currentUserChats = fetchChatsQuery.data;
 
     let chatsInCommon = [];
-    if (currentUserChats && currentOtherUser && currentOtherUser._id) {
+    if (currentUserChats && currentOtherUserID) {
       for (const chat of currentUserChats) {
-        if (chat.members.length > 2 && chat.members.includes(currentOtherUser._id)) {
+        if (chat.members.length > 2 && chat.members.includes(currentOtherUserID)) {
           chatsInCommon.push(chat);
         }
       }
@@ -657,258 +754,265 @@ const OtherUserProfile = () => {
   };
   const palzInCommonText = getPalzInCommonText();
 
-  const showFacebook: boolean =
-    currentOtherUser && getSocialMediumIsVisible("facebook")
-      ? currentOtherUser.facebook !== ""
-      : false;
+  const isNoFetchError: boolean =
+    !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
 
-  const showInstagram: boolean =
-    currentOtherUser && getSocialMediumIsVisible("instagram")
-      ? currentOtherUser.instagram !== ""
-      : false;
+  const getQueryForQueryLoadingOrErrorComponent = () => {
+    if (fetchAllVisibleOtherUsersQuery.isError) {
+      return fetchAllVisibleOtherUsersQuery;
+    }
+    return fetchAllEventsQuery;
+  };
+  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
-  const showX: boolean =
-    currentOtherUser && getSocialMediumIsVisible("x") ? currentOtherUser.x !== "" : false;
+  const aQueryIsLoading: boolean =
+    fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
 
   return (
     <>
-      {" "}
-      <QueryLoadingOrError
-        query={queryForQueryLoadingOrError}
-        errorMessage="Error fetching data"
-      />
-      {!fetchIsLoading &&
-        isNoFetchError &&
-        showFriendRequestResponseOptions &&
-        currentOtherUser && (
-          <TwoOptionsInterface
-            header={`Respond to friend request from ${currentOtherUser.firstName} ${currentOtherUser.lastName} (${currentOtherUser.username})`}
-            buttonOneText="Decline"
-            buttonOneHandler={handleRejectFriendRequest}
-            buttonOneHandlerParams={[currentOtherUser, currentUser]}
-            handlerOneNeedsEventParam={true}
-            buttonTwoText="Accept"
-            buttonTwoHandler={handleAcceptFriendRequest}
-            buttonTwoHandlerParams={[currentOtherUser, currentUser]}
-            handlerTwoNeedsEventParam={true}
-            closeHandler={setShowFriendRequestResponseOptions}
-          />
-        )}
-      {!fetchIsLoading && isNoFetchError && currentOtherUser && (
+      {aQueryIsLoading && (
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
+          Loading...
+        </header>
+      )}
+      {!isNoFetchError && (
+        <QueryLoadingOrError
+          query={queryForQueryLoadingOrError}
+          errorMessage="Error fetching data"
+        />
+      )}
+      {currentOtherUserSECURE && isNoFetchError && !aQueryIsLoading && (
         <>
-          <div
-            className={styles.kopfzeile}
-            style={{ borderBottom: `3px solid ${randomColor}` }}
-          >
-            <div style={{ boxShadow: "unset" }} className="theme-element-container">
-              <img
-                className={styles.profileImage}
-                src={
-                  currentOtherUser.profileImage !== "" &&
-                  typeof currentOtherUser.profileImage === "string"
-                    ? currentOtherUser.profileImage
-                    : defaultProfileImage
-                }
-              />
-            </div>
-            <div className={styles.mainInfoContainer}>
-              <header style={{ color: `${randomColor}` }}>
-                {currentOtherUser.firstName} {currentOtherUser.lastName}
-              </header>
-              <p style={{ color: randomColor }}>{currentOtherUser.username}</p>
-              {currentUser?._id &&
-                currentOtherUser.whoCanSeeLocation !== "nobody" &&
-                (currentOtherUser.whoCanSeeLocation === "anyone" ||
-                  (currentOtherUser.whoCanSeeLocation === "friends of friends" &&
-                    usersAreFriendsOfFriends) ||
-                  (currentOtherUser.whoCanSeeLocation === "friends" &&
-                    currentOtherUser.friends.includes(currentUser._id))) &&
-                currentOtherUser.city !== "" &&
-                currentOtherUser.stateProvince !== "" &&
-                currentOtherUser.country !== "" && (
-                  <div className={styles.userLocationContainer}>
+          {showFriendRequestResponseOptions && (
+            <TwoOptionsInterface
+              header={`Respond to friend request from ${currentOtherUserSECURE.firstName} ${currentOtherUserSECURE.lastName} (${currentOtherUserSECURE.username})`}
+              buttonOneText="Decline"
+              buttonOneHandler={handleRejectFriendRequest}
+              buttonOneHandlerParams={[currentOtherUserSECURE, currentUser]}
+              handlerOneNeedsEventParam={true}
+              buttonTwoText="Accept"
+              buttonTwoHandler={handleAcceptFriendRequest}
+              buttonTwoHandlerParams={[currentOtherUserSECURE, currentUser]}
+              handlerTwoNeedsEventParam={true}
+              closeHandler={setShowFriendRequestResponseOptions}
+            />
+          )}
+          {!aQueryIsLoading && isNoFetchError && currentOtherUserSECURE && (
+            <>
+              <div
+                className={styles.kopfzeile}
+                style={{ borderBottom: `3px solid ${randomColor}` }}
+              >
+                <div style={{ boxShadow: "unset" }} className="theme-element-container">
+                  <img
+                    className={styles.profileImage}
+                    src={
+                      currentOtherUserSECURE.profileImage !== "" &&
+                      typeof currentOtherUserSECURE.profileImage === "string"
+                        ? currentOtherUserSECURE.profileImage
+                        : defaultProfileImage
+                    }
+                  />
+                </div>
+                <div className={styles.mainInfoContainer}>
+                  <header style={{ color: `${randomColor}` }}>
+                    {currentOtherUserSECURE.firstName} {currentOtherUserSECURE.lastName}
+                  </header>
+                  <p style={{ color: randomColor }}>{currentOtherUserSECURE.username}</p>
+                  {currentUserCanSeeLocation && (
+                    <div className={styles.userLocationContainer}>
+                      <p
+                        style={{ color: randomColor }}
+                      >{`${currentOtherUserSECURE.city}, ${currentOtherUserSECURE.stateProvince}`}</p>
+                      <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
+                    </div>
+                  )}
+                  <p
+                    style={{ color: randomColor }}
+                    className={
+                      palzInCommon.length > 2 ? `${styles.mutualFriendsLink}` : undefined
+                    }
+                    onClick={
+                      palzInCommon.length > 2
+                        ? () => setShowMutualFriends(true)
+                        : undefined
+                    }
+                  >
+                    {palzInCommonText}
+                    {palzInCommon.length > 2 && (
+                      <i
+                        style={{
+                          transform: "rotate(22.5deg)",
+                          fontSize: "1.25rem",
+                          marginLeft: "0.25rem",
+                        }}
+                        className="fas fa-arrow-up"
+                      ></i>
+                    )}
+                  </p>
+
+                  {numberOfGroupChatsInCommon > 1 && (
                     <p
                       style={{ color: randomColor }}
-                    >{`${currentOtherUser.city}, ${currentOtherUser.stateProvince}`}</p>
-                    <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
+                    >{`You are in ${numberOfGroupChatsInCommon} group chats together`}</p>
+                  )}
+                  {numberOfGroupChatsInCommon === 1 && (
+                    <p
+                      style={{ color: randomColor }}
+                    >{`You are in ${numberOfGroupChatsInCommon} group chat together`}</p>
+                  )}
+                  {(showFacebook || showInstagram || showX) && (
+                    <div className={styles.socialLinksContainer}>
+                      {getSocialMediumIsVisible("facebook") && (
+                        <a
+                          title={`${currentOtherUserSECURE.username}'s Facebook Profile`}
+                          href={`${currentOtherUserSECURE.facebook}`}
+                          target="_blank"
+                        >
+                          <span className="fab fa-facebook"></span>
+                        </a>
+                      )}
+                      {getSocialMediumIsVisible("instagram") &&
+                        currentOtherUserSECURE.instagram !== "" && (
+                          <a
+                            title={`${currentOtherUserSECURE.username}'s Instagram Profile`}
+                            href={`${currentOtherUserSECURE.instagram}`}
+                            target="_blank"
+                          >
+                            <span className="fab fa-instagram"></span>
+                          </a>
+                        )}
+                      {getSocialMediumIsVisible("x") &&
+                        currentOtherUserSECURE.x !== "" && (
+                          <a
+                            title={`${currentOtherUserSECURE.username}'s X Profile`}
+                            href={`${currentOtherUserSECURE.x}`}
+                            target="_blank"
+                          >
+                            <span className="fab fa-twitter-square"></span>
+                          </a>
+                        )}
+                    </div>
+                  )}
+                  <div className={styles.actionButtonsContainer}>
+                    {displayedButtons.map(
+                      (button) =>
+                        button && (
+                          <div
+                            key={button.type}
+                            style={{ maxHeight: "3rem", display: "flex" }}
+                            className="theme-element-container"
+                          >
+                            <button disabled={isLoading} onClick={button.handler}>
+                              {button.buttonText}
+                            </button>
+                          </div>
+                        )
+                    )}
+                  </div>
+                </div>
+              </div>
+              <section className="furtherInfoSection">
+                {currentOtherUserSECURE.about !== "" && (
+                  <div className={styles.about}>
+                    <header>About me :</header>
+                    <p>{currentOtherUserSECURE.about}</p>
                   </div>
                 )}
-              <p
-                style={{ color: randomColor }}
-                className={
-                  palzInCommon.length > 2 ? `${styles.mutualFriendsLink}` : undefined
-                }
-                onClick={
-                  palzInCommon.length > 2 ? () => setShowMutualFriends(true) : undefined
-                }
-              >
-                {palzInCommonText}
-                {palzInCommon.length > 2 && (
-                  <i
-                    style={{
-                      transform: "rotate(22.5deg)",
-                      fontSize: "1.25rem",
-                      marginLeft: "0.25rem",
-                    }}
-                    className="fas fa-arrow-up"
-                  ></i>
+                {currentOtherUserSECURE.interests.length > 0 ? (
+                  <div className={styles.infoPoint}>
+                    <header>I'm interested in : </header>
+                    <span>
+                      {currentOtherUserSECURE.interests.map((int) => (
+                        <Tab
+                          key={int}
+                          randomColor={randomColor}
+                          info={int}
+                          userMayNotDelete={true}
+                        />
+                      ))}
+                    </span>
+                  </div>
+                ) : (
+                  <p>No interests to show</p>
                 )}
-              </p>
-
-              {numberOfGroupChatsInCommon > 1 && (
-                <p
-                  style={{ color: randomColor }}
-                >{`You are in ${numberOfGroupChatsInCommon} group chats together`}</p>
-              )}
-              {numberOfGroupChatsInCommon === 1 && (
-                <p
-                  style={{ color: randomColor }}
-                >{`You are in ${numberOfGroupChatsInCommon} group chat together`}</p>
-              )}
-              {(showFacebook || showInstagram || showX) && (
-                <div className={styles.socialLinksContainer}>
-                  {getSocialMediumIsVisible("facebook") &&
-                    currentOtherUser.facebook !== "" && (
-                      <a
-                        title={`${currentOtherUser.username}'s Facebook Profile`}
-                        href={`${currentOtherUser.facebook}`}
-                        target="_blank"
+                {currentUserCanSeeFriendsList && (
+                  <div className={styles.infoPoint}>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <header
+                        tabIndex={0}
+                        aria-hidden="false"
+                        className={styles.clickableHeader}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            setShowFriends(true);
+                          }
+                        }}
+                        onClick={() => setShowFriends(true)}
                       >
-                        <span className="fab fa-facebook"></span>
-                      </a>
-                    )}
-                  {getSocialMediumIsVisible("instagram") &&
-                    currentOtherUser.instagram !== "" && (
-                      <a
-                        title={`${currentOtherUser.username}'s Instagram Profile`}
-                        href={`${currentOtherUser.instagram}`}
-                        target="_blank"
-                      >
-                        <span className="fab fa-instagram"></span>
-                      </a>
-                    )}
-                  {getSocialMediumIsVisible("x") && currentOtherUser.x !== "" && (
-                    <a
-                      title={`${currentOtherUser.username}'s X Profile`}
-                      href={`${currentOtherUser.x}`}
-                      target="_blank"
-                    >
-                      <span className="fab fa-twitter-square"></span>
-                    </a>
+                        See friends
+                      </header>
+                      <i
+                        style={{
+                          transform: "rotate(22.5deg)",
+                          fontSize: "1.25rem",
+                          marginLeft: "0.25rem",
+                          color: randomColor,
+                        }}
+                        className="fas fa-arrow-up"
+                      ></i>
+                    </div>
+                  </div>
+                )}
+                {showMutualFriends && (
+                  <UserListModal
+                    listType="mutual-friends"
+                    renderButtonOne={true}
+                    buttonOneText="View Profile"
+                    renderButtonTwo={false}
+                    closeModalMethod={setShowMutualFriends}
+                    header="Mutual Friends"
+                    userIDArray={palzInCommon.map((pal) => pal._id)}
+                    randomColor={randomColor}
+                  />
+                )}
+                {showFriends && (
+                  <UserListModal
+                    listType="other-user-friends"
+                    renderButtonOne={true}
+                    renderButtonTwo={false}
+                    closeModalMethod={setShowFriends}
+                    header={`${currentOtherUserSECURE.username} 's palz`}
+                    userIDArray={palzInCommon
+                      .map((pal) => pal._id && pal._id)
+                      .filter((pal) => {
+                        if (pal) {
+                          return !currentUser?.friends.includes(pal);
+                        }
+                      })}
+                    buttonOneText="View Profile"
+                    randomColor={randomColor}
+                  />
+                )}
+                {!aQueryIsLoading &&
+                  isNoFetchError &&
+                  userEventsExist &&
+                  usersEvents.map(
+                    (event) =>
+                      event &&
+                      getCurrentUserMaySeeEvent(event) &&
+                      event.array &&
+                      event.array.length > 0 && (
+                        <UserEventsSection
+                          key={event.header}
+                          eventsArray={event.array}
+                          header={event.header}
+                        />
+                      )
                   )}
-                </div>
-              )}
-              <div className={styles.actionButtonsContainer}>
-                {displayedButtons.map(
-                  (button) =>
-                    button && (
-                      <div
-                        key={button.type}
-                        style={{ maxHeight: "3rem", display: "flex" }}
-                        className="theme-element-container"
-                      >
-                        <button disabled={isLoading} onClick={button.handler}>
-                          {button.buttonText}
-                        </button>
-                      </div>
-                    )
-                )}
-              </div>
-            </div>
-          </div>
-          <section className="furtherInfoSection">
-            {currentOtherUser.about !== "" && (
-              <div className={styles.about}>
-                <header>About me :</header>
-                <p>{currentOtherUser.about}</p>
-              </div>
-            )}
-            {currentOtherUser.interests.length > 0 ? (
-              <div className={styles.infoPoint}>
-                <header>I'm interested in : </header>
-                <span>
-                  {currentOtherUser.interests.map((int) => (
-                    <Tab
-                      key={int}
-                      randomColor={randomColor}
-                      info={int}
-                      userMayNotDelete={true}
-                    />
-                  ))}
-                </span>
-              </div>
-            ) : (
-              <p>No interests to show</p>
-            )}
-            {currentOtherUser.friends.length > 0 && currentUserCanSeeFriendsList && (
-              <div className={styles.infoPoint}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <header
-                    tabIndex={0}
-                    aria-hidden="false"
-                    className={styles.clickableHeader}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        setShowFriends(true);
-                      }
-                    }}
-                    onClick={() => setShowFriends(true)}
-                  >
-                    See friends
-                  </header>
-                  <i
-                    style={{
-                      transform: "rotate(22.5deg)",
-                      fontSize: "1.25rem",
-                      marginLeft: "0.25rem",
-                      color: randomColor,
-                    }}
-                    className="fas fa-arrow-up"
-                  ></i>
-                </div>
-              </div>
-            )}
-            {showMutualFriends && (
-              <UserListModal
-                listType="mutual-friends"
-                renderButtonOne={true}
-                buttonOneText="View Profile"
-                renderButtonTwo={false}
-                closeModalMethod={setShowMutualFriends}
-                header="Mutual Friends"
-                userIDArray={palzInCommon.map((pal) => pal._id)}
-                randomColor={randomColor}
-              />
-            )}
-            {showFriends && (
-              <UserListModal
-                listType="other-user-friends"
-                renderButtonOne={true}
-                renderButtonTwo={false}
-                closeModalMethod={setShowFriends}
-                header={`${currentOtherUser.username} 's palz`}
-                userIDArray={currentOtherUser.friends}
-                buttonOneText="View Profile"
-                randomColor={randomColor}
-              />
-            )}
-            {!fetchIsLoading &&
-              isNoFetchError &&
-              userEventsExist &&
-              usersEvents.map(
-                (event) =>
-                  event &&
-                  getCurrentUserMaySeeEvent(event) &&
-                  event.array &&
-                  event.array.length > 0 && (
-                    <UserEventsSection
-                      key={event.header}
-                      eventsArray={event.array}
-                      header={event.header}
-                    />
-                  )
-              )}
-          </section>
+              </section>
+            </>
+          )}
         </>
       )}
     </>
