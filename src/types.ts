@@ -331,7 +331,7 @@ export type TUserContext = {
     e?: React.ChangeEvent<HTMLInputElement>
   ) => void;
   handleRejectFriendRequest: (
-    sender: TUser,
+    sender: TOtherUser,
     receiver: TUser,
     e?: React.ChangeEvent<HTMLInputElement>
   ) => void;

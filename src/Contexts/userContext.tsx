@@ -1385,7 +1385,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleRejectFriendRequest = (
-    sender: TUser,
+    sender: TOtherUser,
     receiver: TUser,
     e?: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -1395,9 +1395,26 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     const event = "reject-request";
     const recipient = receiver;
-    retractSentFriendRequestMutation.mutate({ sender, recipient, event });
-  };
 
+    if (sender._id) {
+      Requests.getUserByID(sender._id)
+        .then((res) =>
+          res.json().then((sender: TUser) => {
+            retractSentFriendRequestMutation.mutate({ sender, recipient, event });
+          })
+        )
+        .catch((error) => {
+          console.log(error);
+          toast.error("Could not remove friend request. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        });
+    }
+  };
   const handleUnfriendingFail = (friend: TUser): void => {
     toast.error(
       `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`,
