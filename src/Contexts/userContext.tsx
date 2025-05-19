@@ -1363,7 +1363,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleAcceptFriendRequest = (
-    sender: TUser,
+    sender: TOtherUser,
     receiver: TOtherUser,
     e?: React.ChangeEvent<HTMLInputElement>
   ): void => {
@@ -1375,12 +1375,40 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setShowFriendRequestResponseOptions(false);
     }
 
-    if (receiver._id) {
-      Requests.getUserByID(receiver._id).then((res) =>
-        res.json().then((receiver) => {
-          addToSenderFriendsMutation.mutate({ sender, receiver });
-        })
-      );
+    if (sender._id) {
+      Requests.getUserByID(sender._id)
+        .then((res) =>
+          res.json().then((sender) => {
+            if (receiver._id) {
+              Requests.getUserByID(receiver._id)
+                .then((res) =>
+                  res.json().then((receiver) => {
+                    addToSenderFriendsMutation.mutate({ sender, receiver });
+                  })
+                )
+                .catch((error) => {
+                  console.log(error);
+                  toast.error("Could not accept friend request. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                });
+            }
+          })
+        )
+        .catch((error) => {
+          console.log(error);
+          toast.error("Could not accept friend request. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        });
     }
   };
 
