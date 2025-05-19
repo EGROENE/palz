@@ -119,6 +119,7 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
             "username": otherUser.username,
             "profileImage": otherUser.profileImage,
             "interests": otherUser.interests,
+            "about": otherUser.about,
             ...(showLocation && {
               city: otherUser.city,
             }),
