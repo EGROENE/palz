@@ -255,6 +255,8 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  error: string | undefined;
+  setError: React.Dispatch<React.SetStateAction<string | undefined>>;
   showMobileNavOptions: boolean;
   setShowMobileNavOptions: React.Dispatch<React.SetStateAction<boolean>>;
   currentRoute: string;

@@ -20,6 +20,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
 
   const currentRoute: string = useLocation().pathname;
 
+  const [error, setError] = useState<string | undefined>();
+
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
@@ -83,6 +85,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mainContextValues: TMainContext = {
+    error,
+    setError,
     showMobileNavOptions,
     setShowMobileNavOptions,
     currentRoute,
