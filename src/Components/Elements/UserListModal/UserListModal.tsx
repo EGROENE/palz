@@ -82,52 +82,62 @@ const UserListModal = ({
 
   const getButtonOneHandlerParams = (user: TOtherUser) => {
     if (user._id) {
-      Requests.getUserByID(user._id).then((res) => {
-        if (res.ok) {
-          res.json().then((userObject) => {
-            if (!buttonOneHandlerParams) {
-              if (
-                listType === "blocked-users" &&
-                buttonOneHandler === handleUnblockUser
-              ) {
-                return [currentUser, userObject, blockedUsers, setBlockedUsers];
-              }
-              if (
-                (listType === "invitees" || listType === "rsvpd-users") &&
-                buttonOneHandler === startConversation
-              ) {
-                return [userObject];
-              }
-            }
-          });
-        } else {
-          getButtonOneHandlerParams(user);
-        }
-      });
+      Requests.getUserByID(user._id)
+        .then((res) => {
+          if (res.ok) {
+            res
+              .json()
+              .then((userObject) => {
+                if (!buttonOneHandlerParams) {
+                  if (
+                    listType === "blocked-users" &&
+                    buttonOneHandler === handleUnblockUser
+                  ) {
+                    return [currentUser, userObject, blockedUsers, setBlockedUsers];
+                  }
+                  if (
+                    (listType === "invitees" || listType === "rsvpd-users") &&
+                    buttonOneHandler === startConversation
+                  ) {
+                    return [userObject];
+                  }
+                }
+              })
+              .catch((error) => console.log(error));
+          } else {
+            getButtonOneHandlerParams(user);
+          }
+        })
+        .catch((error) => console.log(error));
     }
     return undefined;
   };
 
   const getButtonTwoHandlerParams = (user: TOtherUser) => {
     if (user._id) {
-      Requests.getUserByID(user._id).then((res) => {
-        if (res.ok) {
-          res.json().then((userObject) => {
-            if (!buttonTwoHandlerParams) {
-              if (
-                listType === "rsvpd-users" ||
-                (listType === "invitees" &&
-                  (buttonTwoHandler === handleRemoveInvitee ||
-                    buttonTwoHandler === handleDeleteUserRSVP))
-              ) {
-                return [currentEvent, userObject];
-              }
-            }
-          });
-        } else {
-          getButtonTwoHandlerParams(user);
-        }
-      });
+      Requests.getUserByID(user._id)
+        .then((res) => {
+          if (res.ok) {
+            res
+              .json()
+              .then((userObject) => {
+                if (!buttonTwoHandlerParams) {
+                  if (
+                    listType === "rsvpd-users" ||
+                    (listType === "invitees" &&
+                      (buttonTwoHandler === handleRemoveInvitee ||
+                        buttonTwoHandler === handleDeleteUserRSVP))
+                  ) {
+                    return [currentEvent, userObject];
+                  }
+                }
+              })
+              .catch((error) => console.log(error));
+          } else {
+            getButtonTwoHandlerParams(user);
+          }
+        })
+        .catch((error) => console.log(error));
     }
     return undefined;
   };

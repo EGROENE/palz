@@ -20,7 +20,7 @@ import useLocalStorage from "use-local-storage";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
-  const { theme, isLoading } = useMainContext();
+  const { theme, isLoading, error, setError } = useMainContext();
   const {
     currentUser,
     userCreatedAccount,
@@ -53,6 +53,10 @@ const OtherUserProfile = () => {
   const userChats = fetchChatsQuery.data;
   const { username } = useParams();
 
+  if (error) {
+    throw new Error(error);
+  }
+
   const currentOtherUserID: string | undefined = visibleOtherUsers?.filter(
     (visibleOtherUser) => visibleOtherUser.username === username
   )[0]._id;
@@ -64,9 +68,15 @@ const OtherUserProfile = () => {
   const getCurrentOtherUser = async (): Promise<TUser> => {
     let currentOtherUser: TUser[] = [];
     if (currentOtherUserID) {
-      await Requests.getUserByID(currentOtherUserID).then((res) =>
-        res.json().then((otherUser: TUser) => currentOtherUser.push(otherUser))
-      );
+      await Requests.getUserByID(currentOtherUserID)
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((otherUser: TUser) => currentOtherUser.push(otherUser));
+          } else {
+            setError("Error fetching currentOtherUser (TUser)");
+          }
+        })
+        .catch((error) => console.log(error));
     }
     return currentOtherUser[0];
   };
@@ -208,13 +218,19 @@ const OtherUserProfile = () => {
         let currentOtherUserFriends: TUser[] = [];
         if (currentOtherUserID) {
           for (const friendID of currentOtherUser.friends) {
-            await Requests.getUserByID(friendID).then((res) =>
-              res
-                .json()
-                .then((currentOtherUserFriend) =>
-                  currentOtherUserFriends.push(currentOtherUserFriend)
-                )
-            );
+            await Requests.getUserByID(friendID)
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((currentOtherUserFriend) =>
+                      currentOtherUserFriends.push(currentOtherUserFriend)
+                    );
+                } else {
+                  setError("Error fetching currentOtherUserFriends (TUser[])");
+                }
+              })
+              .catch((error) => console.log(error));
           }
         }
         return currentOtherUserFriends;
@@ -523,13 +539,19 @@ const OtherUserProfile = () => {
     let currentUserFriends: TUser[] = [];
     if (currentUser) {
       for (const friendID of currentUser.friends) {
-        Requests.getUserByID(friendID).then((res) =>
-          res
-            .json()
-            .then((currentUserFriend: TUser) =>
-              currentUserFriends.push(currentUserFriend)
-            )
-        );
+        Requests.getUserByID(friendID)
+          .then((res) => {
+            if (res.ok) {
+              res
+                .json()
+                .then((currentUserFriend: TUser) =>
+                  currentUserFriends.push(currentUserFriend)
+                );
+            } else {
+              setError("Error fetching currentUser friends");
+            }
+          })
+          .catch((error) => console.log(error));
       }
     }
     return currentUserFriends;
@@ -541,9 +563,17 @@ const OtherUserProfile = () => {
   for (const friend of currentUserFriends) {
     if (friend && friend.friends.length > 0) {
       for (const friendID of friend.friends) {
-        Requests.getUserByID(friendID).then((res) =>
-          res.json().then((friend: TUser) => friendsOfCurrentUserFriends.push(friend))
-        );
+        Requests.getUserByID(friendID)
+          .then((res) => {
+            if (res.ok) {
+              res
+                .json()
+                .then((friend: TUser) => friendsOfCurrentUserFriends.push(friend));
+            } else {
+              setError("Error fetching friend (TUser)");
+            }
+          })
+          .catch((error) => console.log(error));
       }
     }
   }
@@ -638,88 +668,101 @@ const OtherUserProfile = () => {
 
   const getCurrentUserMaySeeEvent = (event: TDisplayedEvent): boolean => {
     if (currentOtherUserID) {
-      Requests.getUserByID(currentOtherUserID).then((res) =>
-        res.json().then((currentOtherUser: TUser) => {
-          if (currentUser && currentUser._id && currentOtherUser) {
-            if (event.type === "interested-event") {
-              if (
-                currentOtherUser.whoCanSeeEventsInterestedIn === "anyone" ||
-                (currentOtherUser.whoCanSeeEventsInterestedIn === "friends" &&
-                  currentOtherUser.friends.includes(currentUser._id)) ||
-                (currentOtherUser.whoCanSeeEventsInterestedIn === "friends of friends" &&
-                  currentUserIsFriendOfFriend)
-              ) {
-                return true;
-              }
-            }
+      Requests.getUserByID(currentOtherUserID)
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((currentOtherUser: TUser) => {
+              if (currentUser && currentUser._id && currentOtherUser) {
+                if (event.type === "interested-event") {
+                  if (
+                    currentOtherUser.whoCanSeeEventsInterestedIn === "anyone" ||
+                    (currentOtherUser.whoCanSeeEventsInterestedIn === "friends" &&
+                      currentOtherUser.friends.includes(currentUser._id)) ||
+                    (currentOtherUser.whoCanSeeEventsInterestedIn ===
+                      "friends of friends" &&
+                      currentUserIsFriendOfFriend)
+                  ) {
+                    return true;
+                  }
+                }
 
-            if (event.type === "organized-event") {
-              if (
-                currentOtherUser.whoCanSeeEventsOrganized === "anyone" ||
-                (currentOtherUser.whoCanSeeEventsOrganized === "friends" &&
-                  currentOtherUser.friends.includes(currentUser._id)) ||
-                (currentOtherUser.whoCanSeeEventsOrganized === "friends of friends" &&
-                  currentUserIsFriendOfFriend)
-              ) {
-                return true;
-              }
-            }
+                if (event.type === "organized-event") {
+                  if (
+                    currentOtherUser.whoCanSeeEventsOrganized === "anyone" ||
+                    (currentOtherUser.whoCanSeeEventsOrganized === "friends" &&
+                      currentOtherUser.friends.includes(currentUser._id)) ||
+                    (currentOtherUser.whoCanSeeEventsOrganized === "friends of friends" &&
+                      currentUserIsFriendOfFriend)
+                  ) {
+                    return true;
+                  }
+                }
 
-            if (event.type === "invited-event") {
-              if (
-                currentOtherUser.whoCanSeeEventsInvitedTo === "anyone" ||
-                (currentOtherUser.whoCanSeeEventsInvitedTo === "friends" &&
-                  currentOtherUser.friends.includes(currentUser._id)) ||
-                (currentOtherUser.whoCanSeeEventsInvitedTo === "friends of friends" &&
-                  currentUserIsFriendOfFriend)
-              ) {
-                return true;
+                if (event.type === "invited-event") {
+                  if (
+                    currentOtherUser.whoCanSeeEventsInvitedTo === "anyone" ||
+                    (currentOtherUser.whoCanSeeEventsInvitedTo === "friends" &&
+                      currentOtherUser.friends.includes(currentUser._id)) ||
+                    (currentOtherUser.whoCanSeeEventsInvitedTo === "friends of friends" &&
+                      currentUserIsFriendOfFriend)
+                  ) {
+                    return true;
+                  }
+                }
               }
-            }
+            });
+          } else {
+            return false;
           }
         })
-      );
+        .catch((error) => console.log(error));
     }
     return false;
   };
 
   const getSocialMediumIsVisible = (medium: "facebook" | "instagram" | "x"): boolean => {
     if (currentOtherUserID) {
-      Requests.getUserByID(currentOtherUserID).then((res) =>
-        res.json().then((currentOtherUser: TUser) => {
-          if (currentUser && currentUser._id) {
-            if (
-              (medium === "facebook" &&
-                currentOtherUser?.whoCanSeeFacebook === "anyone") ||
-              (currentOtherUser?.whoCanSeeFacebook === "friends" &&
-                currentOtherUser.friends.includes(currentUser._id)) ||
-              (currentOtherUser?.whoCanSeeFacebook === "friends of friends" &&
-                currentUserIsFriendOfFriend)
-            ) {
-              return true;
-            }
-            if (
-              (medium === "instagram" &&
-                currentOtherUser?.whoCanSeeInstagram === "anyone") ||
-              (currentOtherUser?.whoCanSeeInstagram === "friends" &&
-                currentOtherUser.friends.includes(currentUser._id)) ||
-              (currentOtherUser?.whoCanSeeInstagram === "friends of friends" &&
-                currentUserIsFriendOfFriend)
-            ) {
-              return true;
-            }
-            if (
-              (medium === "x" && currentOtherUser?.whoCanSeeX === "anyone") ||
-              (currentOtherUser?.whoCanSeeX === "friends" &&
-                currentOtherUser.friends.includes(currentUser._id)) ||
-              (currentOtherUser?.whoCanSeeX === "friends of friends" &&
-                currentUserIsFriendOfFriend)
-            ) {
-              return true;
-            }
+      Requests.getUserByID(currentOtherUserID)
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((currentOtherUser: TUser) => {
+              if (currentUser && currentUser._id) {
+                if (
+                  (medium === "facebook" &&
+                    currentOtherUser?.whoCanSeeFacebook === "anyone") ||
+                  (currentOtherUser?.whoCanSeeFacebook === "friends" &&
+                    currentOtherUser.friends.includes(currentUser._id)) ||
+                  (currentOtherUser?.whoCanSeeFacebook === "friends of friends" &&
+                    currentUserIsFriendOfFriend)
+                ) {
+                  return true;
+                }
+                if (
+                  (medium === "instagram" &&
+                    currentOtherUser?.whoCanSeeInstagram === "anyone") ||
+                  (currentOtherUser?.whoCanSeeInstagram === "friends" &&
+                    currentOtherUser.friends.includes(currentUser._id)) ||
+                  (currentOtherUser?.whoCanSeeInstagram === "friends of friends" &&
+                    currentUserIsFriendOfFriend)
+                ) {
+                  return true;
+                }
+                if (
+                  (medium === "x" && currentOtherUser?.whoCanSeeX === "anyone") ||
+                  (currentOtherUser?.whoCanSeeX === "friends" &&
+                    currentOtherUser.friends.includes(currentUser._id)) ||
+                  (currentOtherUser?.whoCanSeeX === "friends of friends" &&
+                    currentUserIsFriendOfFriend)
+                ) {
+                  return true;
+                }
+              }
+            });
+          } else {
+            return false;
           }
         })
-      );
+        .catch((error) => console.log(error));
     }
     return false;
   };

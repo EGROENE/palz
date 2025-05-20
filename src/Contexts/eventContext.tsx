@@ -190,38 +190,39 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const addEventImageMutation = useMutation({
     mutationFn: ({ event, base64 }: { event: TEvent; base64: string }) =>
       Requests.addEventImage(event, base64),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-      queryClient.refetchQueries({ queryKey: ["allEvents"] });
-      if (currentEvent && fetchAllEventsQuery.data) {
-        allEvents = fetchAllEventsQuery.data;
-        const updatedEvent = allEvents.filter(
-          (event) => event._id === currentEvent._id
-        )[0];
-        setCurrentEvent(updatedEvent);
-      }
-      toast.success("Event image added", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid green",
-        },
-      });
-    },
-    onError: (error, variables) => {
-      console.log(error);
-      setEventImages(eventImages?.filter((image) => image !== variables.base64));
-      toast.error(
-        "Could not add event image. Please ensure image is size is 50MB or less & try again.",
-        {
+    onSuccess: (data, variables) => {
+      if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
+        queryClient.refetchQueries({ queryKey: ["allEvents"] });
+        if (currentEvent && fetchAllEventsQuery.data) {
+          allEvents = fetchAllEventsQuery.data;
+          const updatedEvent = allEvents.filter(
+            (event) => event._id === currentEvent._id
+          )[0];
+          setCurrentEvent(updatedEvent);
+        }
+        toast.success("Event image added", {
           style: {
             background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
             color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
+            border: "2px solid green",
           },
-        }
-      );
+        });
+      } else {
+        setEventImages(eventImages?.filter((image) => image !== variables.base64));
+        toast.error(
+          "Could not add event image. Please ensure image is size is 50MB or less & try again.",
+          {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          }
+        );
+      }
     },
+    onError: (error) => console.log(error),
   });
 
   const removeEventImageMutation = useMutation({
@@ -232,90 +233,92 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       event: TEvent;
       imageToBeRemoved: string;
     }) => Requests.removeEventImage(event, imageToBeRemoved),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-      queryClient.refetchQueries({ queryKey: ["allEvents"] });
-      allEvents = fetchAllEventsQuery.data;
-      if (currentEvent && fetchAllEventsQuery.data) {
+    onSuccess: (data, variables) => {
+      if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
+        queryClient.refetchQueries({ queryKey: ["allEvents"] });
         allEvents = fetchAllEventsQuery.data;
-        const updatedEvent = allEvents.filter(
-          (event) => event._id === currentEvent._id
-        )[0];
-        setCurrentEvent(updatedEvent);
+        if (currentEvent && fetchAllEventsQuery.data) {
+          allEvents = fetchAllEventsQuery.data;
+          const updatedEvent = allEvents.filter(
+            (event) => event._id === currentEvent._id
+          )[0];
+          setCurrentEvent(updatedEvent);
+        }
+        toast("Event image removed", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      } else {
+        setEventImages(eventImages?.concat(variables.imageToBeRemoved));
+        toast.error("Could not remove event image. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
-      toast("Event image removed", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
     },
-    onError: (error, variables) => {
-      setEventImages(eventImages?.concat(variables.imageToBeRemoved));
-      console.log(error);
-      toast.error("Could not remove event image. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
   });
 
   const addUserRSVPMutation = useMutation({
     mutationFn: ({ user, event }: { user: TOtherUser | TUser; event: TEvent }) =>
       Requests.addUserRSVP(user, event),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: "allEvents" });
-      queryClient.refetchQueries({ queryKey: ["allEvents"] });
-      toast.success("RSVP added!", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid green",
-        },
-      });
+    onSuccess: (data) => {
+      if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.refetchQueries({ queryKey: ["allEvents"] });
+        toast.success("RSVP added!", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid green",
+          },
+        });
+      } else {
+        toast.error("Could not RSVP to event. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Could not RSVP to event. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
     onSettled: () => setIsLoading(false),
   });
 
   const removeUserRSVPMutation = useMutation({
     mutationFn: ({ user, event }: { user: TUser | TOtherUser; event: TEvent }) =>
       Requests.deleteUserRSVP(user, event),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: "allEvents" });
-      queryClient.refetchQueries({ queryKey: ["allEvents"] });
-      toast("RSVP deleted", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
+    onSuccess: (data) => {
+      if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.refetchQueries({ queryKey: ["allEvents"] });
+        toast("RSVP deleted", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      } else {
+        toast.error("Could not remove RSVP. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
     },
-    onError: (error) => {
-      console.log(error);
-
-      toast.error("Could not remove RSVP. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
     onSettled: () => setIsLoading(false),
   });
 
@@ -327,69 +330,70 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       event: TEvent;
       eventValuesToUpdate: TEventValuesToUpdate;
     }) => Requests.updateEvent(event, eventValuesToUpdate),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: "allEvents" });
-      queryClient.refetchQueries({ queryKey: ["allEvents"] });
+    onSuccess: (data) => {
+      if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.refetchQueries({ queryKey: ["allEvents"] });
 
-      toast.success("Event updated!", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid green",
-        },
-      });
+        toast.success("Event updated!", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid green",
+          },
+        });
 
-      /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
-      if (eventValuesToUpdate?.title) {
-        setEventTitle(eventValuesToUpdate.title);
-      }
-      if (eventValuesToUpdate?.organizers) {
-        setOrganizers(eventValuesToUpdate.organizers);
-      }
-      if (eventValuesToUpdate?.invitees) {
-        setInvitees(eventValuesToUpdate.invitees);
-      }
-      if (eventValuesToUpdate?.blockedUsersEvent) {
-        setBlockedUsersEvent(eventValuesToUpdate.blockedUsersEvent);
-      }
-      if (eventValuesToUpdate?.description) {
-        setEventDescription(eventValuesToUpdate.description);
-      }
-      if (eventValuesToUpdate?.additionalInfo) {
-        setEventAdditionalInfo(eventValuesToUpdate.additionalInfo);
-      }
-      if (eventValuesToUpdate?.city) {
-        setEventCity(eventValuesToUpdate.city);
-      }
-      if (eventValuesToUpdate?.stateProvince) {
-        setEventState(eventValuesToUpdate.stateProvince);
-      }
-      if (eventValuesToUpdate?.country) {
-        setEventCountry(eventValuesToUpdate.country);
-      }
-      if (eventValuesToUpdate?.publicity) {
-        setPublicity(eventValuesToUpdate.publicity);
-      }
-      if (eventValuesToUpdate?.maxParticipants) {
-        setMaxParticipants(eventValuesToUpdate.maxParticipants);
-      }
-      if (eventValuesToUpdate?.address) {
-        setEventAddress(eventValuesToUpdate.address);
-      }
-      if (eventValuesToUpdate?.relatedInterests) {
-        setRelatedInterests(eventValuesToUpdate.relatedInterests);
+        /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
+        if (eventValuesToUpdate?.title) {
+          setEventTitle(eventValuesToUpdate.title);
+        }
+        if (eventValuesToUpdate?.organizers) {
+          setOrganizers(eventValuesToUpdate.organizers);
+        }
+        if (eventValuesToUpdate?.invitees) {
+          setInvitees(eventValuesToUpdate.invitees);
+        }
+        if (eventValuesToUpdate?.blockedUsersEvent) {
+          setBlockedUsersEvent(eventValuesToUpdate.blockedUsersEvent);
+        }
+        if (eventValuesToUpdate?.description) {
+          setEventDescription(eventValuesToUpdate.description);
+        }
+        if (eventValuesToUpdate?.additionalInfo) {
+          setEventAdditionalInfo(eventValuesToUpdate.additionalInfo);
+        }
+        if (eventValuesToUpdate?.city) {
+          setEventCity(eventValuesToUpdate.city);
+        }
+        if (eventValuesToUpdate?.stateProvince) {
+          setEventState(eventValuesToUpdate.stateProvince);
+        }
+        if (eventValuesToUpdate?.country) {
+          setEventCountry(eventValuesToUpdate.country);
+        }
+        if (eventValuesToUpdate?.publicity) {
+          setPublicity(eventValuesToUpdate.publicity);
+        }
+        if (eventValuesToUpdate?.maxParticipants) {
+          setMaxParticipants(eventValuesToUpdate.maxParticipants);
+        }
+        if (eventValuesToUpdate?.address) {
+          setEventAddress(eventValuesToUpdate.address);
+        }
+        if (eventValuesToUpdate?.relatedInterests) {
+          setRelatedInterests(eventValuesToUpdate.relatedInterests);
+        }
+      } else {
+        toast.error("Could not update event. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Could not update event. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
     onSettled: () => {
       setEventEditIsInProgress(false);
       setIsLoading(false);
@@ -399,28 +403,29 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const createEventMutation = useMutation({
     mutationFn: ({ eventInfos }: { eventInfos: TEvent }) =>
       Requests.createEvent(eventInfos),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: "allEvents" });
-      queryClient.refetchQueries({ queryKey: ["allEvents"] });
-      toast.success("Event created!", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid green",
-        },
-      });
-      navigation(`/${currentUser?.username}/events`);
+    onSuccess: (data) => {
+      if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.refetchQueries({ queryKey: ["allEvents"] });
+        toast.success("Event created!", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid green",
+          },
+        });
+        navigation(`/${currentUser?.username}/events`);
+      } else {
+        toast.error("Could not create event. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Could not create event. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
     onSettled: () => {
       setAddEventIsInProgress(false);
       setIsLoading(false);
@@ -429,28 +434,30 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteEventMutation = useMutation({
     mutationFn: ({ event }: { event: TEvent }) => Requests.deleteEvent(event),
-    onSuccess: () => {
-      setCurrentEvent(undefined);
-      queryClient.invalidateQueries({ queryKey: "allEvents" });
-      queryClient.refetchQueries({ queryKey: ["allEvents"] });
-      toast("Event deleted", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-      navigation(`/${currentUser?.username}`);
+    onSuccess: (data) => {
+      if (data.ok) {
+        setCurrentEvent(undefined);
+        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.refetchQueries({ queryKey: ["allEvents"] });
+        toast("Event deleted", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+        navigation(`/${currentUser?.username}`);
+      } else {
+        toast.error("Could not delete event. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
     },
-    onError: () => {
-      toast.error("Could not delete event. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
     onSettled: () => {
       setEventDeletionIsInProgress(false);
       setIsLoading(false);
@@ -460,55 +467,57 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const addToDisinterestedUsersMutation = useMutation({
     mutationFn: ({ user, event }: { user: TUser; event: TEvent }) =>
       Requests.addToDisinterestedUsers(user, event),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: "allEvents" });
-      queryClient.refetchQueries({ queryKey: ["allEvents"] });
-      toast("Invitation declined.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
+    onSuccess: (data) => {
+      if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.refetchQueries({ queryKey: ["allEvents"] });
+        toast("Invitation declined.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      } else {
+        toast.error("Could not decline invitation. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Could not decline invitation. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
     onSettled: () => setIsLoading(false),
   });
 
   const removeInviteeMutation = useMutation({
     mutationFn: ({ event, user }: { event: TEvent; user: TUser | TOtherUser }) =>
       Requests.removeInvitee(event, user),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: "allEvents" });
-      queryClient.refetchQueries({ queryKey: ["allEvents"] });
+    onSuccess: (data) => {
+      if (data.ok) {
+        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.refetchQueries({ queryKey: ["allEvents"] });
 
-      toast("Invitee removed", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
+        toast("Invitee removed", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      } else {
+        toast.error("Could not remove invitee. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Could not remove invitee. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
     onSettled: () => setIsLoading(false),
   });
 
@@ -519,7 +528,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       if (data.ok) {
         queryClient.invalidateQueries({ queryKey: "allEvents" });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
-
         toast("Event organizer removed", {
           style: {
             background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -528,19 +536,16 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           },
         });
       } else {
-        throw Error;
+        toast.error("Could not remove invitee. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Could not remove invitee. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
     onSettled: () => setIsLoading(false),
   });
 
@@ -561,19 +566,16 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
         // Redirect to currentUser's homepage, as they've lost rights to edit event:
         navigation(`/${currentUser?.username}`);
       } else {
-        throw Error;
+        toast.error("Unable to remove you as organizer; please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Unable to remove you as organizer; please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
     onSettled: () => setIsLoading(false),
   });
 

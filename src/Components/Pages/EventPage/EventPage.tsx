@@ -13,7 +13,12 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 import Requests from "../../../requests";
 
 const EventPage = () => {
-  const { isLoading, theme } = useMainContext();
+  const { isLoading, theme, error, setError } = useMainContext();
+
+  if (error) {
+    throw new Error(error);
+  }
+
   const {
     currentUser,
     userCreatedAccount,
@@ -81,9 +86,15 @@ const EventPage = () => {
     let eventOrganizers: TUser[] = [];
     if (visibleOtherUsers && eventOrganizersIDs) {
       for (const org of eventOrganizersIDs) {
-        await Requests.getUserByID(org).then((res) =>
-          res.json().then((organizer: TUser) => eventOrganizers.push(organizer))
-        );
+        await Requests.getUserByID(org)
+          .then((res) => {
+            if (res.ok) {
+              res.json().then((organizer: TUser) => eventOrganizers.push(organizer));
+            } else {
+              setError("Error fetching event organizers");
+            }
+          })
+          .catch((error) => console.log(error));
       }
     }
 

@@ -296,18 +296,24 @@ const DisplayedCardsPage = ({
 
   const getFriendsOfFriends = (): TOtherUser[] => {
     // First, fetch TUser object for each currentUser friend
-    // Then, map array of TOtherUser from visibleOtherUsers based on friend id
+    // Then, populate array of TOtherUser from visibleOtherUsers based on friend id
     if (currentUser && visibleOtherUsers) {
       for (const currentUserFriendID of currentUser.friends) {
-        Requests.getUserByID(currentUserFriendID).then((res) =>
-          res.json().then((currentUserFriend: TUser) => {
-            return visibleOtherUsers.filter((visibleOtherUser) => {
-              if (visibleOtherUser._id) {
-                return currentUserFriend.friends.includes(visibleOtherUser._id);
-              }
-            });
+        Requests.getUserByID(currentUserFriendID)
+          .then((res) => {
+            if (res.ok) {
+              res.json().then((currentUserFriend: TUser) => {
+                return visibleOtherUsers.filter((visibleOtherUser) => {
+                  if (visibleOtherUser._id) {
+                    return currentUserFriend.friends.includes(visibleOtherUser._id);
+                  }
+                });
+              });
+            } else {
+              return [];
+            }
           })
-        );
+          .catch((error) => console.log(error));
       }
     }
     return [];
@@ -362,13 +368,19 @@ const DisplayedCardsPage = ({
     let currentUserFriends: TUser[] = [];
     if (currentUser) {
       for (const friendID of currentUser.friends) {
-        Requests.getUserByID(friendID).then((res) =>
-          res
-            .json()
-            .then((currentUserFriend: TUser) =>
-              currentUserFriends.push(currentUserFriend)
-            )
-        );
+        Requests.getUserByID(friendID)
+          .then((res) => {
+            if (res.ok) {
+              res
+                .json()
+                .then((currentUserFriend: TUser) =>
+                  currentUserFriends.push(currentUserFriend)
+                );
+            } else {
+              return [];
+            }
+          })
+          .catch((error) => console.log(error));
       }
     }
     return currentUserFriends;
@@ -588,32 +600,47 @@ const DisplayedCardsPage = ({
         // search pot. friends by first/last name, city/state/country, username
         for (const potentialFriend of displayablePotentialFriends) {
           if (potentialFriend._id) {
-            Requests.getUserByID(potentialFriend._id).then((res) =>
-              res.json().then((potentialFriend) => {
-                if (
-                  potentialFriend.firstName
-                    ?.toLowerCase()
-                    .includes(inputCleaned.toLowerCase()) ||
-                  potentialFriend.lastName
-                    ?.toLowerCase()
-                    .includes(inputCleaned.toLowerCase()) ||
-                  potentialFriend.username
-                    ?.toLowerCase()
-                    .includes(inputCleaned.toLowerCase()) ||
-                  potentialFriend.city
-                    .toLowerCase()
-                    .includes(inputCleaned.toLowerCase()) ||
-                  potentialFriend.country
-                    .toLowerCase()
-                    .includes(inputCleaned.toLowerCase()) ||
-                  potentialFriend.stateProvince
-                    .toLowerCase()
-                    .includes(inputCleaned.toLowerCase())
-                ) {
-                  newDisplayedPotentialFriends.push(potentialFriend);
+            Requests.getUserByID(potentialFriend._id)
+              .then((res) => {
+                if (res.ok) {
+                  res.json().then((potentialFriend) => {
+                    if (
+                      potentialFriend.firstName
+                        ?.toLowerCase()
+                        .includes(inputCleaned.toLowerCase()) ||
+                      potentialFriend.lastName
+                        ?.toLowerCase()
+                        .includes(inputCleaned.toLowerCase()) ||
+                      potentialFriend.username
+                        ?.toLowerCase()
+                        .includes(inputCleaned.toLowerCase()) ||
+                      potentialFriend.city
+                        .toLowerCase()
+                        .includes(inputCleaned.toLowerCase()) ||
+                      potentialFriend.country
+                        .toLowerCase()
+                        .includes(inputCleaned.toLowerCase()) ||
+                      potentialFriend.stateProvince
+                        .toLowerCase()
+                        .includes(inputCleaned.toLowerCase())
+                    ) {
+                      newDisplayedPotentialFriends.push(potentialFriend);
+                    }
+                  });
+                } else {
+                  toast.error(
+                    `Cannot perform search. Please, clear the searchbox & try again.`,
+                    {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    }
+                  );
                 }
               })
-            );
+              .catch((error) => console.log(error));
           }
         }
         setDisplayedItems(newDisplayedPotentialFriends);

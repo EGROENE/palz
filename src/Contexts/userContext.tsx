@@ -19,7 +19,11 @@ export const UserContext = createContext<TUserContext | null>(null);
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const navigation = useNavigate();
 
-  const { handleWelcomeMessage, theme, setIsLoading } = useMainContext();
+  const { handleWelcomeMessage, theme, setIsLoading, setError, error } = useMainContext();
+
+  if (error) {
+    throw new Error(error);
+  }
 
   const [currentUser, setCurrentUser] = useLocalStorage<TUser | null>(
     "currentUser",
@@ -279,14 +283,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                       otherUserFriends.push(otherUserFriend);
                     });
                   } else {
-                    getOtherUserFriends(otherUserID);
+                    setError("Error getting other user's friends (TUser[])");
                   }
                 })
                 .catch((error) => console.log(error));
             }
           });
         } else {
-          getOtherUserFriends(otherUserID);
+          setError("Error getting other user's friends (TUser[])");
         }
       })
       .catch((error) => console.log(error));
@@ -363,41 +367,33 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: () => {
       if (currentUser && currentUser._id) {
         Requests.getUserByID(currentUser._id)
-          .then((res) =>
-            res.json().then((user) => {
-              setCurrentUser(user);
-              setProfileImage("");
-              toast("Profile image removed", {
+          .then((res) => {
+            if (res.ok) {
+              res.json().then((user) => {
+                setCurrentUser(user);
+                setProfileImage("");
+                toast("Profile image removed", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
+              });
+            } else {
+              toast.error("Could not remove profile image. Please try again.", {
                 style: {
                   background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
                   color: theme === "dark" ? "black" : "white",
                   border: "2px solid red",
                 },
               });
-            })
-          )
-          .catch((error) => {
-            console.log(error);
-            toast.error("Could not remove profile image. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          });
+            }
+          })
+          .catch((error) => console.log(error));
       }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Could not remove profile image. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
   });
 
   /* 
@@ -412,13 +408,25 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         const recipient = variables.recipient;
 
         if (recipient._id) {
-          Requests.getUserByID(recipient._id).then((res) =>
-            res
-              .json()
-              .then((recipient) =>
-                receiveFriendRequestMutation.mutate({ sender, recipient })
-              )
-          );
+          Requests.getUserByID(recipient._id)
+            .then((res) => {
+              if (res.ok) {
+                res
+                  .json()
+                  .then((recipient) =>
+                    receiveFriendRequestMutation.mutate({ sender, recipient })
+                  );
+              } else {
+                toast.error("Couldn't send request. Please try again.", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
+              }
+            })
+            .catch((error) => console.log(error));
         }
       } else {
         toast.error("Couldn't send request. Please try again.", {
@@ -440,25 +448,20 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     if (variables.recipient._id && friendRequestsSent) {
       // If FR was sent, but recipient didn't receive it (request failed), delete sent FR from sender:
-      const removeSentFriendRequest = () =>
-        Requests.removeFromFriendRequestsSent(
-          variables.sender,
-          variables.recipient
-        ).catch((error) => {
-          // If request to remove sent FR fails, keep trying:
-          console.log(error);
-          removeSentFriendRequest();
-        });
-      removeSentFriendRequest();
+      Requests.removeFromFriendRequestsSent(variables.sender, variables.recipient)
+        .then((res) => {
+          if (!res.ok) {
+            toast.error("Couldn't send request. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        })
+        .catch((error) => console.log(error));
     }
-
-    toast.error("Couldn't send request. Please try again.", {
-      style: {
-        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-        color: theme === "dark" ? "black" : "white",
-        border: "2px solid red",
-      },
-    });
   };
 
   // Only if recipient receives FR from currentUser should currentUser's request go thru
@@ -509,81 +512,98 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     event: "accept-request" | "retract-request" | "reject-request";
   }) => {
     if (variables.recipientID) {
-      Requests.getUserByID(variables.recipientID).then((res) =>
-        res.json().then((recipient) => {
-          if (variables.sender._id) {
-            Requests.getUserByID(variables.sender._id).then((res) =>
-              res.json().then((sender) => {
-                if (variables.event === "accept-request") {
-                  // Remove sender & receiver from each other's 'friends' array, add sender back to receivers FR-received array:
-                  Promise.all([
-                    Requests.deleteFriendFromFriendsArray(sender, recipient),
-                    Requests.deleteFriendFromFriendsArray(recipient, sender),
-                    Requests.addToFriendRequestsSent(sender, recipient),
-                    Requests.addToFriendRequestsReceived(sender, recipient),
-                  ])
-                    .then((res) => {
-                      if (res.some((promiseResult) => !promiseResult.ok)) {
-                        handleRemoveFriendRequestFail(variables);
+      Requests.getUserByID(variables.recipientID)
+        .then((res) =>
+          res.json().then((recipient) => {
+            if (variables.sender._id) {
+              Requests.getUserByID(variables.sender._id)
+                .then((res) => {
+                  if (res.ok) {
+                    res.json().then((sender) => {
+                      if (variables.event === "accept-request") {
+                        // Remove sender & receiver from each other's 'friends' array, add sender back to receivers FR-received array:
+                        Promise.all([
+                          Requests.deleteFriendFromFriendsArray(sender, recipient),
+                          Requests.deleteFriendFromFriendsArray(recipient, sender),
+                          Requests.addToFriendRequestsSent(sender, recipient),
+                          Requests.addToFriendRequestsReceived(sender, recipient),
+                        ])
+                          .then((res) => {
+                            if (res.some((promiseResult) => !promiseResult.ok)) {
+                              handleRemoveFriendRequestFail(variables);
+                            }
+                          })
+                          .catch((error) => console.log(error));
+
+                        toast.error(
+                          "Could not accept friend request. Please try again.",
+                          {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid red",
+                            },
+                          }
+                        );
                       }
-                    })
-                    .catch((error) => console.log(error));
 
-                  toast.error("Could not accept friend request. Please try again.", {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid red",
-                    },
-                  });
-                }
+                      if (variables.event === "retract-request") {
+                        Promise.all([
+                          Requests.addToFriendRequestsSent(sender, recipient),
+                          Requests.addToFriendRequestsReceived(sender, recipient),
+                        ])
+                          .then((res) => {
+                            if (res.some((promiseResult) => !promiseResult.ok)) {
+                              handleRemoveFriendRequestFail(variables);
+                            }
+                          })
+                          .catch((error) => console.log(error));
 
-                if (variables.event === "retract-request") {
-                  Promise.all([
-                    Requests.addToFriendRequestsSent(sender, recipient),
-                    Requests.addToFriendRequestsReceived(sender, recipient),
-                  ])
-                    .then((res) => {
-                      if (res.some((promiseResult) => !promiseResult.ok)) {
-                        handleRemoveFriendRequestFail(variables);
+                        toast.error("Couldn't retract request. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
                       }
-                    })
-                    .catch((error) => console.log(error));
 
-                  toast.error("Couldn't retract request. Please try again.", {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid red",
-                    },
-                  });
-                }
+                      if (variables.event === "reject-request") {
+                        Promise.all([
+                          Requests.addToFriendRequestsSent(sender, recipient),
+                          Requests.addToFriendRequestsReceived(sender, recipient),
+                        ])
+                          .then((res) => {
+                            if (res.some((promiseResult) => !promiseResult.ok)) {
+                              handleRemoveFriendRequestFail(variables);
+                            }
+                          })
+                          .catch((error) => console.log(error));
 
-                if (variables.event === "reject-request") {
-                  Promise.all([
-                    Requests.addToFriendRequestsSent(sender, recipient),
-                    Requests.addToFriendRequestsReceived(sender, recipient),
-                  ])
-                    .then((res) => {
-                      if (res.some((promiseResult) => !promiseResult.ok)) {
-                        handleRemoveFriendRequestFail(variables);
+                        toast.error(
+                          "Could not reject friend request. Please try again.",
+                          {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid red",
+                            },
+                          }
+                        );
                       }
-                    })
-                    .catch((error) => console.log(error));
-
-                  toast.error("Could not reject friend request. Please try again.", {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid red",
-                    },
-                  });
-                }
-              })
-            );
-          }
-        })
-      );
+                    });
+                  } else {
+                    handleRemoveFriendRequestFail(variables);
+                  }
+                })
+                .catch((error) => console.log(error));
+            }
+          })
+        )
+        .catch((error) => console.log(error));
     }
   };
 
@@ -606,18 +626,27 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         const event = variables.event;
 
         if (recipient._id) {
-          Requests.getUserByID(recipient._id).then((res) =>
-            res.json().then((recipient) => {
-              if (recipient._id) {
-                const recipientID = recipient._id;
-                removeReceivedFriendRequestMutation.mutate({
-                  sender,
-                  recipientID,
-                  event,
+          Requests.getUserByID(recipient._id)
+            .then((res) => {
+              if (res.ok) {
+                res.json().then((recipient) => {
+                  if (recipient._id) {
+                    const recipientID = recipient._id;
+                    removeReceivedFriendRequestMutation.mutate({
+                      sender,
+                      recipientID,
+                      event,
+                    });
+                  }
                 });
+              } else {
+                const sender = variables.sender;
+                const recipientID = variables.recipient._id;
+                const event = variables.event;
+                handleRemoveFriendRequestFail({ sender, recipientID, event });
               }
             })
-          );
+            .catch((error) => console.log(error));
         }
       } else {
         const sender = variables.sender;
@@ -722,17 +751,23 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     userTwo: TUser
   ): void => {
     if (userTwo._id && userOne.friends.includes(userTwo._id)) {
-      Requests.deleteFriendFromFriendsArray(userOne, userTwo).catch((error) => {
-        console.log(error);
-        resetFriendsAfterFailedAcceptedFriendRequest(userOne, userTwo);
-      });
+      Requests.deleteFriendFromFriendsArray(userOne, userTwo)
+        .then((res) => {
+          if (!res.ok) {
+            resetFriendsAfterFailedAcceptedFriendRequest(userOne, userTwo);
+          }
+        })
+        .catch((error) => console.log(error));
     }
 
     if (userOne._id && userTwo.friends.includes(userOne._id)) {
-      Requests.deleteFriendFromFriendsArray(userTwo, userOne).catch((error) => {
-        console.log(error);
-        resetFriendsAfterFailedAcceptedFriendRequest(userTwo, userOne);
-      });
+      Requests.deleteFriendFromFriendsArray(userTwo, userOne)
+        .then((res) => {
+          if (!res.ok) {
+            resetFriendsAfterFailedAcceptedFriendRequest(userTwo, userOne);
+          }
+        })
+        .catch((error) => console.log(error));
     }
   };
 
@@ -741,17 +776,23 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     recipient: TUser
   ): void => {
     if (recipient._id && !sender.friendRequestsSent.includes(recipient._id)) {
-      Requests.addToFriendRequestsSent(sender, recipient).catch((error) => {
-        console.log(error);
-        resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, recipient);
-      });
+      Requests.addToFriendRequestsSent(sender, recipient)
+        .then((res) => {
+          if (!res.ok) {
+            resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, recipient);
+          }
+        })
+        .catch((error) => console.log(error));
     }
 
     if (sender._id && !recipient.friendRequestsReceived.includes(sender._id)) {
-      Requests.addToFriendRequestsReceived(sender, recipient).catch((error) => {
-        console.log(error);
-        resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, recipient);
-      });
+      Requests.addToFriendRequestsReceived(sender, recipient)
+        .then((res) => {
+          if (!res.ok) {
+            resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, recipient);
+          }
+        })
+        .catch((error) => console.log(error));
     }
   };
 
@@ -1334,11 +1375,25 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       const sender = currentUser;
 
       if (recipient._id) {
-        Requests.getUserByID(recipient._id).then((res) =>
-          res
-            .json()
-            .then((recipient) => sendFriendRequestMutation.mutate({ sender, recipient }))
-        );
+        Requests.getUserByID(recipient._id)
+          .then((res) => {
+            if (res.ok) {
+              res
+                .json()
+                .then((recipient) =>
+                  sendFriendRequestMutation.mutate({ sender, recipient })
+                );
+            } else {
+              toast.error("Couldn't send request. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            }
+          })
+          .catch((error) => console.log(error));
       }
     }
   };
@@ -1377,38 +1432,41 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (sender._id) {
       Requests.getUserByID(sender._id)
-        .then((res) =>
-          res.json().then((sender) => {
-            if (receiver._id) {
-              Requests.getUserByID(receiver._id)
-                .then((res) =>
-                  res.json().then((receiver) => {
-                    addToSenderFriendsMutation.mutate({ sender, receiver });
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((sender) => {
+              if (receiver._id) {
+                Requests.getUserByID(receiver._id)
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((receiver) => {
+                        addToSenderFriendsMutation.mutate({ sender, receiver });
+                      });
+                    } else {
+                      toast.error("Could not accept friend request. Please try again.", {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid red",
+                        },
+                      });
+                    }
                   })
-                )
-                .catch((error) => {
-                  console.log(error);
-                  toast.error("Could not accept friend request. Please try again.", {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid red",
-                    },
-                  });
-                });
-            }
-          })
-        )
-        .catch((error) => {
-          console.log(error);
-          toast.error("Could not accept friend request. Please try again.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        });
+                  .catch((error) => console.log(error));
+              }
+            });
+          } else {
+            toast.error("Could not accept friend request. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        })
+        .catch((error) => console.log(error));
     }
   };
 
@@ -1426,24 +1484,25 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (sender._id) {
       Requests.getUserByID(sender._id)
-        .then((res) =>
-          res.json().then((sender: TUser) => {
-            retractSentFriendRequestMutation.mutate({ sender, recipient, event });
-          })
-        )
-        .catch((error) => {
-          console.log(error);
-          toast.error("Could not remove friend request. Please try again.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        });
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((sender: TUser) => {
+              retractSentFriendRequestMutation.mutate({ sender, recipient, event });
+            });
+          } else {
+            toast.error("Could not remove friend request. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        })
+        .catch((error) => console.log(error));
     }
   };
-  const handleUnfriendingFail = (friend: TUser): void => {
+  const handleUnfriendingFail = (friend: TOtherUser): void => {
     toast.error(
       `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`,
       {
@@ -1459,62 +1518,76 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleUnfriending = (user: TOtherUser, friend: TOtherUser): void => {
     if (user._id) {
       Requests.getUserByID(user._id)
-        .then((res) =>
-          res.json().then((user: TUser) => {
-            if (friend._id) {
-              Requests.getUserByID(friend._id)
-                .then((res) =>
-                  res.json().then((friend: TUser) => {
-                    setIsLoading(true);
-                    Promise.all([
-                      Requests.deleteFriendFromFriendsArray(user, friend),
-                      Requests.deleteFriendFromFriendsArray(friend, user),
-                    ])
-                      .then((res) => {
-                        if (currentUser && currentUser._id && res[0].ok && res[1].ok) {
-                          Requests.getUserByID(currentUser._id)
-                            .then((res) => {
-                              if (res.ok) {
-                                res
-                                  .json()
-                                  .then((user) => {
-                                    if (user) {
-                                      setCurrentUser(user);
-                                      toast(
-                                        `You have unfriended ${friend.firstName} ${friend.lastName}.`,
-                                        {
-                                          style: {
-                                            background:
-                                              theme === "light"
-                                                ? "#242424"
-                                                : "rgb(233, 231, 228)",
-                                            color: theme === "dark" ? "black" : "white",
-                                            border: "2px solid red",
-                                          },
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((user: TUser) => {
+              if (friend._id) {
+                Requests.getUserByID(friend._id)
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((friend: TUser) => {
+                        setIsLoading(true);
+                        Promise.all([
+                          Requests.deleteFriendFromFriendsArray(user, friend),
+                          Requests.deleteFriendFromFriendsArray(friend, user),
+                        ])
+                          .then((res) => {
+                            if (
+                              currentUser &&
+                              currentUser._id &&
+                              res[0].ok &&
+                              res[1].ok
+                            ) {
+                              Requests.getUserByID(currentUser._id)
+                                .then((res) => {
+                                  if (res.ok) {
+                                    res
+                                      .json()
+                                      .then((user) => {
+                                        if (user) {
+                                          setCurrentUser(user);
+                                          toast(
+                                            `You have unfriended ${friend.firstName} ${friend.lastName}.`,
+                                            {
+                                              style: {
+                                                background:
+                                                  theme === "light"
+                                                    ? "#242424"
+                                                    : "rgb(233, 231, 228)",
+                                                color:
+                                                  theme === "dark" ? "black" : "white",
+                                                border: "2px solid red",
+                                              },
+                                            }
+                                          );
+                                        } else {
+                                          handleUnfriendingFail(friend);
                                         }
-                                      );
-                                    } else {
-                                      handleUnfriendingFail(friend);
-                                    }
-                                  })
-                                  .catch((error) => console.log(error));
-                              } else {
-                                handleUnfriendingFail(friend);
-                              }
-                            })
-                            .catch((error) => console.log(error));
-                        } else {
-                          handleUnfriendingFail(friend);
-                        }
-                      })
-                      .catch((error) => console.log(error))
-                      .finally(() => setIsLoading(false));
+                                      })
+                                      .catch((error) => console.log(error));
+                                  } else {
+                                    handleUnfriendingFail(friend);
+                                  }
+                                })
+                                .catch((error) => console.log(error));
+                            } else {
+                              handleUnfriendingFail(friend);
+                            }
+                          })
+                          .catch((error) => console.log(error))
+                          .finally(() => setIsLoading(false));
+                      });
+                    } else {
+                      handleUnfriendingFail(friend);
+                    }
                   })
-                )
-                .catch((error) => console.log(error));
-            }
-          })
-        )
+                  .catch((error) => console.log(error));
+              }
+            });
+          } else {
+            handleUnfriendingFail(friend);
+          }
+        })
         .catch((error) => console.log(error));
     }
   };
@@ -1534,30 +1607,42 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
 
     if (blockee._id) {
-      Requests.getUserByID(blockee._id).then((res) =>
-        res.json().then((blockee) => {
-          const areFriends: boolean =
-            blocker._id &&
-            blockee._id &&
-            (blocker.friends.includes(blockee._id) ||
-              blockee.friends.includes(blocker._id))
-              ? true
-              : false;
-          const hasSentFriendRequest: boolean = blockee._id
-            ? blocker.friendRequestsSent.includes(blockee._id)
-            : false;
-          const hasReceivedFriendRequest: boolean = blockee._id
-            ? blocker.friendRequestsReceived.includes(blockee._id)
-            : false;
-          blockUserMutation.mutate({
-            blocker,
-            blockee,
-            areFriends,
-            hasSentFriendRequest,
-            hasReceivedFriendRequest,
-          });
+      Requests.getUserByID(blockee._id)
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((blockee) => {
+              const areFriends: boolean =
+                blocker._id &&
+                blockee._id &&
+                (blocker.friends.includes(blockee._id) ||
+                  blockee.friends.includes(blocker._id))
+                  ? true
+                  : false;
+              const hasSentFriendRequest: boolean = blockee._id
+                ? blocker.friendRequestsSent.includes(blockee._id)
+                : false;
+              const hasReceivedFriendRequest: boolean = blockee._id
+                ? blocker.friendRequestsReceived.includes(blockee._id)
+                : false;
+              blockUserMutation.mutate({
+                blocker,
+                blockee,
+                areFriends,
+                hasSentFriendRequest,
+                hasReceivedFriendRequest,
+              });
+            });
+          } else {
+            toast.error("Could not block user. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
         })
-      );
+        .catch((error) => console.log(error));
     }
   };
 
@@ -1861,9 +1946,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               if (res.statusText === "Invalid username or password") {
                 setPasswordError(res.statusText);
               }
-            }
-
-            if (res.status === 404) {
+            } else if (res.status === 404) {
               toast.error("User doesn't exist", {
                 style: {
                   background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -1871,9 +1954,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   border: "2px solid red",
                 },
               });
-            }
-
-            if (res.status === 500) {
+            } else if (res.status === 500) {
               toast.error("Could not log you in. Please try again.", {
                 style: {
                   background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -1881,9 +1962,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   border: "2px solid red",
                 },
               });
-            }
-
-            if (res.ok) {
+            } else if (res.ok) {
               res.json().then((json) => {
                 setCurrentUser(json.user);
                 handleWelcomeMessage();
@@ -1893,19 +1972,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 setParallelValuesAfterLogin(json.user);
                 resetErrorMessagesAfterLogin();
               });
+            } else {
+              toast.error("Could not log you in. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
             }
           })
-          .catch((error) => {
-            console.log(error);
-            console.log("hi");
-            toast.error("Could not log you in. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          });
+          .catch((error) => console.log(error));
       }
 
       if (emailAddress && emailAddress !== "") {
@@ -1918,9 +1995,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               if (res.statusText === "Invalid e-mail address or password") {
                 setPasswordError(res.statusText);
               }
-            }
-
-            if (res.status === 500) {
+            } else if (res.status === 500) {
               toast.error("Could not log you in. Please try again.", {
                 style: {
                   background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -1928,9 +2003,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   border: "2px solid red",
                 },
               });
-            }
-
-            if (res.ok) {
+            } else if (res.ok) {
               res.json().then((json) => {
                 setCurrentUser(json.user);
                 handleWelcomeMessage();
@@ -1940,18 +2013,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 setParallelValuesAfterLogin(json.user);
                 resetErrorMessagesAfterLogin();
               });
+            } else {
+              toast.error("Could not log you in. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
             }
           })
-          .catch((error) => {
-            console.log(error);
-            toast.error("Could not log you in. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          });
+          .catch((error) => console.log(error));
       }
     }
 
@@ -1972,8 +2044,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               if (res.statusText === "EMAIL TAKEN") {
                 setEmailError("E-mail address already in use");
               }
-            }
-            if (res.ok) {
+            } else if (res.ok) {
               handleWelcomeMessage();
               setCurrentUser(userData);
               navigation("/");
@@ -1982,19 +2053,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               setUserCreatedAccount(true);
               setParallelValuesAfterSignup();
               resetErrorMessagesAfterSignup();
+            } else {
+              setUserCreatedAccount(false);
+              toast.error("Could not set up your account. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
             }
           })
-          .catch((error) => {
-            console.log(error);
-            setUserCreatedAccount(false);
-            toast.error("Could not set up your account. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          });
+          .catch((error) => console.log(error));
       }
     }
   };

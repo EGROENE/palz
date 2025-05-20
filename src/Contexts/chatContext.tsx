@@ -25,7 +25,12 @@ import { useEventContext } from "../Hooks/useEventContext";
 export const ChatContext = createContext<TChatContext | null>(null);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
-  const { theme } = useMainContext();
+  const { theme, setError, error } = useMainContext();
+
+  if (error) {
+    throw new Error(error);
+  }
+
   const {
     currentUser,
     userHasLoggedIn,
@@ -218,40 +223,96 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           });
         }
       } else {
-        throw Error;
-      }
-    },
-    onError: (error, variables) => {
-      console.log(error);
-      if (variables.purpose === "send-message") {
-        toast.error("Could not send message. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-      if (variables.purpose === "delete-message") {
-        toast.error("Could not delete message. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-      if (variables.purpose === "add-members") {
-        if (usersToAddToChat.length > 1) {
-          toast.error("Could not add users to chat. Please try again.", {
+        if (variables.purpose === "send-message") {
+          toast.error("Could not send message. Please try again.", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
               color: theme === "dark" ? "black" : "white",
               border: "2px solid red",
             },
           });
-        } else {
-          toast.error("Could not add user to chat. Please try again.", {
+        }
+        if (variables.purpose === "delete-message") {
+          toast.error("Could not delete message. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+        if (variables.purpose === "add-members") {
+          if (usersToAddToChat.length > 1) {
+            toast.error("Could not add users to chat. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          } else {
+            toast.error("Could not add user to chat. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        }
+        if (variables.purpose === "remove-self-from-chat") {
+          toast.error(`Could not remove you from chat. Please try again.`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+        if (variables.purpose === "remove-member") {
+          toast.error(
+            `Could not remove ${currentOtherUser?.username} from chat. Please try again.`,
+            {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            }
+          );
+        }
+        if (variables.purpose === "add-admin") {
+          toast.error(
+            `Could not add ${currentOtherUser?.username} as admin. Please try again.`,
+            {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            }
+          );
+        }
+        if (variables.purpose === "remove-admin") {
+          toast(`Could not remove you as admin; please try again.`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+        if (variables.purpose === "edit-message") {
+          toast.error("Could not save edits; please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+        if (variables.purpose === "update-chat-name") {
+          toast.error("Could not update chat name; please try again.", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
               color: theme === "dark" ? "black" : "white",
@@ -260,67 +321,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           });
         }
       }
-      if (variables.purpose === "remove-self-from-chat") {
-        toast.error(`Could not remove you from chat. Please try again.`, {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-      if (variables.purpose === "remove-member") {
-        toast.error(
-          `Could not remove ${currentOtherUser?.username} from chat. Please try again.`,
-          {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          }
-        );
-      }
-      if (variables.purpose === "add-admin") {
-        toast.error(
-          `Could not add ${currentOtherUser?.username} as admin. Please try again.`,
-          {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          }
-        );
-      }
-      if (variables.purpose === "remove-admin") {
-        toast(`Could not remove you as admin; please try again.`, {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-      if (variables.purpose === "edit-message") {
-        toast.error("Could not save edits; please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-      if (variables.purpose === "update-chat-name") {
-        toast.error("Could not update chat name; please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
     },
+    onError: (error) => console.log(error),
   });
 
   const createChatMutation = useMutation({
@@ -334,20 +336,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         queryClient.invalidateQueries({ queryKey: "userChats" });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
       } else {
-        throw Error;
+        toast.error("Unable to create chat. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
     },
-    onError: (error) => {
-      console.log(error);
-      // notify by toast of inability to create chat. allow retry
-      toast.error("Unable to create chat. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
     onSettled: () => setChatCreationInProgress(false),
   });
 
@@ -368,19 +366,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           },
         });
       } else {
-        throw Error;
+        toast.error("Could not delete chat. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Could not delete chat. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
   });
 
   const getChatMembers = (members: string[]): TOtherUser[] => {
@@ -825,21 +820,25 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
               : false;
 
           if (otherUser._id) {
-            Requests.getUserByID(otherUser._id).then((response) => {
-              if (response.ok) {
-                response.json().then((otherUser) => {
-                  if (
-                    userIsNotAlreadyInCurrentChat &&
-                    (otherUser.whoCanMessage === "anyone" ||
-                      (otherUser.whoCanMessage === "friends" && currentUserIsFriend) ||
-                      (otherUser.whoCanMessage === "friends of friends" &&
-                        currentUserIsFriendOfFriend))
-                  ) {
-                    return otherUser;
-                  }
-                });
-              }
-            });
+            Requests.getUserByID(otherUser._id)
+              .then((response) => {
+                if (response.ok) {
+                  response.json().then((otherUser) => {
+                    if (
+                      userIsNotAlreadyInCurrentChat &&
+                      (otherUser.whoCanMessage === "anyone" ||
+                        (otherUser.whoCanMessage === "friends" && currentUserIsFriend) ||
+                        (otherUser.whoCanMessage === "friends of friends" &&
+                          currentUserIsFriendOfFriend))
+                    ) {
+                      return otherUser;
+                    }
+                  });
+                } else {
+                  setError("Error initiating potential chat members");
+                }
+              })
+              .catch((error) => console.log(error));
           }
         })
       );

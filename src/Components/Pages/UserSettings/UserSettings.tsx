@@ -50,8 +50,21 @@ const UserSettings = () => {
     }
   }, []);
 
-  const { theme, toggleTheme, showSidebar, setShowSidebar, isLoading, setIsLoading } =
-    useMainContext();
+  const {
+    theme,
+    toggleTheme,
+    showSidebar,
+    setShowSidebar,
+    isLoading,
+    setIsLoading,
+    setError,
+    error,
+  } = useMainContext();
+
+  if (error) {
+    throw new Error(error);
+  }
+
   let {
     currentUser,
     logout,
@@ -240,14 +253,22 @@ const UserSettings = () => {
     if (currentUser && visibleOtherUsers) {
       for (const user of visibleOtherUsers) {
         if (user._id) {
-          Requests.getUserByID(user._id).then((res) =>
-            res.json().then((user) => {
-              promisesToAwait.push(
-                Requests.removeFromFriendRequestsReceived(currentUser, user),
-                Requests.deleteFriendFromFriendsArray(user, currentUser)
-              );
+          Requests.getUserByID(user._id)
+            .then((res) => {
+              if (res.ok) {
+                res.json().then((user) => {
+                  promisesToAwait.push(
+                    Requests.removeFromFriendRequestsReceived(currentUser, user),
+                    Requests.deleteFriendFromFriendsArray(user, currentUser)
+                  );
+                });
+              } else {
+                setError(
+                  "Error deleting account (error deleting users from friends & friend-requests arrays)"
+                );
+              }
             })
-          );
+            .catch((error) => console.log(error));
         }
       }
     }

@@ -133,21 +133,33 @@ const UserCard = ({ user }: { user: TUser }) => {
 
   const getFriendsInCommon = (): TOtherUser[] | undefined => {
     if (user._id) {
-      Requests.getUserByID(user._id).then((res) =>
-        res.json().then((user) => {
-          let friendsInCommon: TOtherUser[] = [];
-          visibleOtherUsers?.filter((visibleOtherUser) => {
-            if (
-              visibleOtherUser._id &&
-              user.friends.includes(visibleOtherUser._id) &&
-              currentUser?.friends.includes(visibleOtherUser._id)
-            ) {
-              friendsInCommon.push(visibleOtherUser);
-            }
-          });
-          return friendsInCommon;
+      Requests.getUserByID(user._id)
+        .then((res) => {
+          if (res.ok) {
+            res
+              .json()
+              .then((user: TUser) => {
+                let friendsInCommon: TOtherUser[] = [];
+                visibleOtherUsers?.filter((visibleOtherUser) => {
+                  if (
+                    visibleOtherUser._id &&
+                    user.friends.includes(visibleOtherUser._id) &&
+                    currentUser?.friends.includes(visibleOtherUser._id)
+                  ) {
+                    friendsInCommon.push(visibleOtherUser);
+                  }
+                });
+                return friendsInCommon;
+              })
+              .catch((error) => console.log(error));
+          } else {
+            return undefined;
+          }
         })
-      );
+        .catch((error) => {
+          console.log(error);
+          return undefined;
+        });
     }
     return undefined;
   };
