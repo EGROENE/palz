@@ -1515,7 +1515,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const handleUnfriending = (user: TOtherUser, friend: TOtherUser): void => {
+  const handleUnfriending = (user: TOtherUser | TUser, friend: TOtherUser | TUser): void => {
     if (user._id) {
       Requests.getUserByID(user._id)
         .then((res) => {
