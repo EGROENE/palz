@@ -63,22 +63,33 @@ const OtherUserProfile = () => {
 
   const [currentOtherUserSECURE, setCurrentOtherUserSECURE] = useLocalStorage<
     TOtherUser | undefined
-  >("currentOtherUserSECURE", undefined);
+  >(
+    "currentOtherUserSECURE",
+    visibleOtherUsers?.filter((otherUser) => otherUser.username === username)[0]
+  );
 
-  const getCurrentOtherUser = async (): Promise<TUser> => {
-    let currentOtherUser: TUser[] = [];
+  const getCurrentOtherUser = (
+    currentOtherUserID: string
+  ): Promise<TUser | undefined> | undefined => {
     if (currentOtherUserID) {
-      await Requests.getUserByID(currentOtherUserID)
+      return Requests.getUserByID(currentOtherUserID)
         .then((res) => {
           if (res.ok) {
-            res.json().then((otherUser: TUser) => currentOtherUser.push(otherUser));
+            return res.json().then((otherUser: TUser) => {
+              //currentOtherUser.push(otherUser);
+              return otherUser;
+            });
           } else {
             setError("Error fetching currentOtherUser (TUser)");
+            return undefined;
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error);
+          return undefined;
+        });
     }
-    return currentOtherUser[0];
+    return undefined;
   };
 
   const [showFriends, setShowFriends] = useState<boolean>(false);
@@ -107,169 +118,188 @@ const OtherUserProfile = () => {
   // put in other useEffect w/ empty dep array if no dependencies added to this one, or if only dependency is username
   useEffect(() => {
     setCurrentOtherUserSECURE(
-      visibleOtherUsers?.filter((otherUser) => otherUser._id === currentOtherUserID)[0]
+      visibleOtherUsers?.filter((otherUser) => otherUser.username === username)[0]
     );
 
-    getCurrentOtherUser().then((currentOtherUser: TUser) => {
-      // Determine if currentUser may send user a message:
-      if (
-        currentUser &&
-        !aQueryIsLoading &&
-        currentUser._id &&
-        currentOtherUser._id &&
-        (currentOtherUser.whoCanMessage === "anyone" ||
-          (currentOtherUser.whoCanMessage === "friends" &&
-            currentOtherUser.friends.includes(currentUser._id) &&
-            currentUser?.friends.includes(currentOtherUser._id)) ||
-          (currentOtherUser.whoCanMessage === "friends of friends" &&
-            currentUserIsFriendOfFriend))
-      ) {
-        setCurrentUserMayMessage(true);
-      } else {
-        setCurrentUserMayMessage(false);
-      }
-
-      // Set currentUserCanSeeLocation:
-      if (
-        !aQueryIsLoading &&
-        currentUser?._id &&
-        currentOtherUser.whoCanSeeLocation !== "nobody" &&
-        (currentOtherUser.whoCanSeeLocation === "anyone" ||
-          (currentOtherUser.whoCanSeeLocation === "friends of friends" &&
-            currentUserIsFriendOfFriend) ||
-          (currentOtherUser.whoCanSeeLocation === "friends" &&
-            currentOtherUser.friends.includes(currentUser._id))) &&
-        currentOtherUserSECURE &&
-        currentOtherUserSECURE.city !== "" &&
-        currentOtherUserSECURE &&
-        currentOtherUserSECURE.stateProvince !== "" &&
-        currentOtherUserSECURE &&
-        currentOtherUserSECURE.country !== ""
-      ) {
-        setCurrentUserCanSeeLocation(true);
-      }
-
-      // Determine if currentUser may see friends list:
-      const currentUserIsFriend: boolean =
-        currentUser && currentUser._id && !aQueryIsLoading
-          ? currentOtherUser.friends.includes(currentUser._id)
-          : false;
-
-      if (
-        ((!aQueryIsLoading &&
-          currentUserIsFriend &&
-          currentOtherUser.whoCanSeeFriendsList === "friends") ||
-          (!aQueryIsLoading && currentOtherUser.whoCanSeeFriendsList === "anyone") ||
-          (!aQueryIsLoading &&
-            currentOtherUser.whoCanSeeFriendsList === "friends of friends" &&
-            currentUserIsFriendOfFriend)) &&
-        currentOtherUser.friends.length > 0
-      ) {
-        setCurrentUserCanSeeFriendsList(true);
-      }
-
-      // Set palzInCommon:
-      const currentUserFriends: TOtherUser[] = visibleOtherUsers
-        ? visibleOtherUsers.filter((otherUser) => {
-            if (currentUser && otherUser._id) {
-              if (currentUser.friends.includes(otherUser._id)) {
-                return otherUser;
-              }
+    if (currentOtherUserID) {
+      const currentUserPromise: Promise<TUser | undefined> | undefined =
+        getCurrentOtherUser(currentOtherUserID);
+      currentUserPromise &&
+        currentUserPromise.then((currentOtherUser) => {
+          if (currentOtherUser) {
+            // Determine if currentUser may send user a message:
+            if (
+              currentUser &&
+              !aQueryIsLoading &&
+              currentUser._id &&
+              currentOtherUser._id &&
+              (currentOtherUser.whoCanMessage === "anyone" ||
+                (currentOtherUser.whoCanMessage === "friends" &&
+                  currentOtherUser.friends.includes(currentUser._id) &&
+                  currentUser?.friends.includes(currentOtherUser._id)) ||
+                (currentOtherUser.whoCanMessage === "friends of friends" &&
+                  currentUserIsFriendOfFriend))
+            ) {
+              setCurrentUserMayMessage(true);
+            } else {
+              setCurrentUserMayMessage(false);
             }
-          })
-        : [];
 
-      const currentOtherUserFriends: TOtherUser[] = visibleOtherUsers
-        ? visibleOtherUsers.filter((otherUser) => {
-            if (otherUser._id) {
-              if (currentOtherUser.friends.includes(otherUser._id)) {
-                return otherUser;
-              }
+            // Set currentUserCanSeeLocation:
+            if (
+              !aQueryIsLoading &&
+              currentUser?._id &&
+              currentOtherUser.whoCanSeeLocation !== "nobody" &&
+              (currentOtherUser.whoCanSeeLocation === "anyone" ||
+                (currentOtherUser.whoCanSeeLocation === "friends of friends" &&
+                  currentUserIsFriendOfFriend) ||
+                (currentOtherUser.whoCanSeeLocation === "friends" &&
+                  currentOtherUser.friends.includes(currentUser._id))) &&
+              currentOtherUserSECURE &&
+              currentOtherUserSECURE.city !== "" &&
+              currentOtherUserSECURE &&
+              currentOtherUserSECURE.stateProvince !== "" &&
+              currentOtherUserSECURE &&
+              currentOtherUserSECURE.country !== ""
+            ) {
+              setCurrentUserCanSeeLocation(true);
             }
-          })
-        : [];
 
-      const combinedPalz: TOtherUser[] = currentUserFriends.concat(
-        currentOtherUserFriends
-      );
+            // Determine if currentUser may see friends list:
+            const currentUserIsFriend: boolean =
+              currentUser && currentUser._id && !aQueryIsLoading
+                ? currentOtherUser.friends.includes(currentUser._id)
+                : false;
 
-      setPalzInCommon(
-        Methods.removeDuplicatesFromArray(
-          combinedPalz.filter(
-            (pal) => combinedPalz.indexOf(pal) !== combinedPalz.lastIndexOf(pal)
-          )
-        )
-      );
+            if (
+              ((!aQueryIsLoading &&
+                currentUserIsFriend &&
+                currentOtherUser.whoCanSeeFriendsList === "friends") ||
+                (!aQueryIsLoading &&
+                  currentOtherUser.whoCanSeeFriendsList === "anyone") ||
+                (!aQueryIsLoading &&
+                  currentOtherUser.whoCanSeeFriendsList === "friends of friends" &&
+                  currentUserIsFriendOfFriend)) &&
+              currentOtherUser.friends.length > 0
+            ) {
+              setCurrentUserCanSeeFriendsList(true);
+            }
 
-      // Set currentOtherUser's country object:
-      if (!aQueryIsLoading) {
-        setMatchingCountryObject(
-          countries.filter((country) => country.country === currentOtherUser.country)[0]
-        );
-      }
+            // Set palzInCommon:
+            const currentUserFriends: TOtherUser[] = visibleOtherUsers
+              ? visibleOtherUsers.filter((otherUser) => {
+                  if (currentUser && otherUser._id) {
+                    if (currentUser.friends.includes(otherUser._id)) {
+                      return otherUser;
+                    }
+                  }
+                })
+              : [];
 
-      // Set country abbreviation:
-      if (!aQueryIsLoading && currentOtherUser.country !== "" && matchingCountryObject) {
-        setUserCountryAbbreviation(matchingCountryObject.abbreviation);
-      }
+            const currentOtherUserFriends: TOtherUser[] = visibleOtherUsers
+              ? visibleOtherUsers.filter((otherUser) => {
+                  if (otherUser._id) {
+                    if (currentOtherUser.friends.includes(otherUser._id)) {
+                      return otherUser;
+                    }
+                  }
+                })
+              : [];
 
-      // Set currentUserIsFriendOfFriend:
-      const getCurrentOtherUserFriends = async (): Promise<TUser[]> => {
-        let currentOtherUserFriends: TUser[] = [];
-        if (currentOtherUserID) {
-          for (const friendID of currentOtherUser.friends) {
-            await Requests.getUserByID(friendID)
-              .then((res) => {
-                if (res.ok) {
-                  res
-                    .json()
-                    .then((currentOtherUserFriend) =>
-                      currentOtherUserFriends.push(currentOtherUserFriend)
-                    );
-                } else {
-                  setError("Error fetching currentOtherUserFriends (TUser[])");
+            const combinedPalz: TOtherUser[] = currentUserFriends.concat(
+              currentOtherUserFriends
+            );
+
+            setPalzInCommon(
+              Methods.removeDuplicatesFromArray(
+                combinedPalz.filter(
+                  (pal) => combinedPalz.indexOf(pal) !== combinedPalz.lastIndexOf(pal)
+                )
+              )
+            );
+
+            // Set currentOtherUser's country object:
+            if (!aQueryIsLoading) {
+              setMatchingCountryObject(
+                countries.filter(
+                  (country) => country.country === currentOtherUser.country
+                )[0]
+              );
+            }
+
+            // Set country abbreviation:
+            if (
+              !aQueryIsLoading &&
+              currentOtherUser.country !== "" &&
+              matchingCountryObject
+            ) {
+              setUserCountryAbbreviation(matchingCountryObject.abbreviation);
+            }
+
+            // Set currentUserIsFriendOfFriend:
+            const getCurrentOtherUserFriends = async (): Promise<TUser[]> => {
+              let currentOtherUserFriends: TUser[] = [];
+              if (currentOtherUserID) {
+                for (const friendID of currentOtherUser.friends) {
+                  await Requests.getUserByID(friendID)
+                    .then((res) => {
+                      if (res.ok) {
+                        res
+                          .json()
+                          .then((currentOtherUserFriend) =>
+                            currentOtherUserFriends.push(currentOtherUserFriend)
+                          );
+                      } else {
+                        setError("Error fetching currentOtherUserFriends (TUser[])");
+                      }
+                    })
+                    .catch((error) => console.log(error));
                 }
-              })
-              .catch((error) => console.log(error));
-          }
-        }
-        return currentOtherUserFriends;
-      };
+              }
+              return currentOtherUserFriends;
+            };
 
-      getCurrentOtherUserFriends().then((currentOtherUserFriends) => {
-        if (currentUser && currentUser._id) {
-          for (const friend of currentOtherUserFriends) {
-            if (friend.friends.includes(currentUser._id)) {
-              setCurrentUserIsFriendOfFriend(true);
+            getCurrentOtherUserFriends().then((currentOtherUserFriends) => {
+              if (currentUser && currentUser._id) {
+                for (const friend of currentOtherUserFriends) {
+                  if (friend.friends.includes(currentUser._id)) {
+                    setCurrentUserIsFriendOfFriend(true);
+                  }
+                }
+              }
+            });
+
+            // Set showFacebook:
+            if (getSocialMediumIsVisible("facebook")) {
             }
+            setShowFacebook(
+              getSocialMediumIsVisible("facebook") && currentOtherUserSECURE
+                ? currentOtherUserSECURE.facebook !== ""
+                : false
+            );
+
+            // Set showInstagram:
+            setShowInstagram(
+              getSocialMediumIsVisible("instagram") && currentOtherUserSECURE
+                ? currentOtherUserSECURE.instagram !== ""
+                : false
+            );
+
+            // Set showX:
+            setShowX(
+              getSocialMediumIsVisible("x") && currentOtherUserSECURE
+                ? currentOtherUserSECURE.x !== ""
+                : false
+            );
           }
-        }
-      });
-
-      // Set showFacebook:
-      if (getSocialMediumIsVisible("facebook")) {
-      }
-      setShowFacebook(
-        getSocialMediumIsVisible("facebook") && currentOtherUserSECURE
-          ? currentOtherUserSECURE.facebook !== ""
-          : false
-      );
-
-      // Set showInstagram:
-      setShowInstagram(
-        getSocialMediumIsVisible("instagram") && currentOtherUserSECURE
-          ? currentOtherUserSECURE.instagram !== ""
-          : false
-      );
-
-      // Set showX:
-      setShowX(
-        getSocialMediumIsVisible("x") && currentOtherUserSECURE
-          ? currentOtherUserSECURE.x !== ""
-          : false
-      );
-    });
-  }, [username, fetchAllVisibleOtherUsersQuery.data, fetchAllEventsQuery.data]);
+        });
+    }
+  }, [
+    username,
+    fetchAllVisibleOtherUsersQuery.data,
+    fetchAllEventsQuery.data,
+    currentOtherUserID,
+  ]);
 
   const currentOtherUserIsBlocked: boolean =
     blockedUsers && currentOtherUserID
@@ -323,23 +353,29 @@ const OtherUserProfile = () => {
     }
 
     // If logged-in user is blocked by currentOtherUser:
-    getCurrentOtherUser().then((currentOtherUser) => {
-      if (
-        !aQueryIsLoading &&
-        currentUser &&
-        currentUser._id &&
-        currentOtherUser.blockedUsers.includes(currentUser._id)
-      ) {
-        toast("You do not have access to this page", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
+    if (currentOtherUserID) {
+      const currentUserPromise: Promise<TUser | undefined> | undefined =
+        getCurrentOtherUser(currentOtherUserID);
+      currentUserPromise &&
+        currentUserPromise.then((currentOtherUser) => {
+          if (
+            !aQueryIsLoading &&
+            currentOtherUser &&
+            currentUser &&
+            currentUser._id &&
+            currentOtherUser.blockedUsers.includes(currentUser._id)
+          ) {
+            toast("You do not have access to this page", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+            navigation(`/${currentUser?.username}`);
+          }
         });
-        navigation(`/${currentUser?.username}`);
-      }
-    });
+    }
   }, [currentUser, navigation, userCreatedAccount]);
 
   const usersAreFriends: boolean =
