@@ -10,13 +10,12 @@ import { Link } from "react-router-dom";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Requests from "../../../requests";
 
-const UserCard = ({ user }: { user: TUser }) => {
-  const { isLoading } = useMainContext();
+const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
+  const { isLoading, setError } = useMainContext();
   const { currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
   const {
-    friends,
     handleUnfriending,
     handleRejectFriendRequest,
     handleAcceptFriendRequest,
@@ -28,20 +27,146 @@ const UserCard = ({ user }: { user: TUser }) => {
     setCurrentOtherUser,
     friendRequestsSent,
     friendRequestsReceived,
-    getOtherUserFriends,
   } = useUserContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
   const currentUserReceivedFriendRequest =
-    user._id && friendRequestsReceived && friendRequestsReceived.includes(user._id);
+    userSECURE._id &&
+    friendRequestsReceived &&
+    friendRequestsReceived.includes(userSECURE._id);
 
   const currentUserSentFriendRequest =
-    user._id && friendRequestsSent && friendRequestsSent.includes(user._id);
+    userSECURE._id && friendRequestsSent && friendRequestsSent.includes(userSECURE._id);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
+  const [friendsInCommon, setFriendsInCommon] = useState<TOtherUser[] | undefined>(
+    undefined
+  );
+
+  const [currentUserIsFriendOfFriend, setCurrentUserIsFriendOfFriend] =
+    useState<boolean>(false);
+
+  const [currentUserCanSeeLocation, setCurrentUserCanSeeLocation] =
+    useState<boolean>(false);
+
+  const [userIsMessageable, setUserIsMessageable] = useState<boolean>(false);
+
+  const [currentUserAndUserAreFriends, setCurrentUserAndUserAreFriends] =
+    useState<boolean>(false);
+
+  const [currentUserCanSeeFriends, setCurrentUserCanSeeFriends] =
+    useState<boolean>(false);
+
   useEffect(() => {
+    // Get user's TUser object, set values that depend on its properties:
+    if (userSECURE._id) {
+      Requests.getUserByID(userSECURE._id)
+        .then((res) => {
+          if (res.ok) {
+            res
+              .json()
+              .then((user: TUser) => {
+                // Set currentUserCanSeeFriends:
+                if (
+                  user.whoCanSeeFriendsList === "anyone" ||
+                  (user.whoCanSeeFriendsList === "friends" &&
+                    currentUserAndUserAreFriends) ||
+                  (user.whoCanSeeFriendsList === "friends of friends" &&
+                    currentUserIsFriendOfFriend)
+                ) {
+                  setCurrentUserCanSeeFriends(true);
+                }
+
+                // Set currentUserCanSeeLocation:
+                if (
+                  user.whoCanSeeLocation === "anyone" ||
+                  (user.whoCanSeeLocation === "friends" &&
+                    currentUserAndUserAreFriends) ||
+                  (user.whoCanSeeLocation === "friends of friends" &&
+                    currentUserIsFriendOfFriend)
+                ) {
+                  setCurrentUserCanSeeLocation(true);
+                }
+
+                // Set friendsInCommon:
+                let friendsInCommon: TOtherUser[] = [];
+                visibleOtherUsers?.filter((visibleOtherUser) => {
+                  if (
+                    visibleOtherUser._id &&
+                    user.friends.includes(visibleOtherUser._id) &&
+                    currentUser?.friends.includes(visibleOtherUser._id)
+                  ) {
+                    friendsInCommon.push(visibleOtherUser);
+                  }
+                });
+                setFriendsInCommon(friendsInCommon);
+
+                // Set currentUserIsFriendOfFriend:
+                const getCurrentOtherUserFriends = async (): Promise<TUser[]> => {
+                  let currentOtherUserFriends: TUser[] = [];
+                  for (const friendID of user.friends) {
+                    await Requests.getUserByID(friendID)
+                      .then((res) => {
+                        if (res.ok) {
+                          res
+                            .json()
+                            .then((currentOtherUserFriend) =>
+                              currentOtherUserFriends.push(currentOtherUserFriend)
+                            );
+                        } else {
+                          setError("Error fetching user's friends (TUser[])");
+                        }
+                      })
+                      .catch((error) => console.log(error));
+                  }
+                  return currentOtherUserFriends;
+                };
+
+                getCurrentOtherUserFriends().then((currentOtherUserFriends) => {
+                  if (currentUser && currentUser._id) {
+                    for (const friend of currentOtherUserFriends) {
+                      if (friend.friends.includes(currentUser._id)) {
+                        setCurrentUserIsFriendOfFriend(true);
+                      }
+                    }
+                  }
+                });
+
+                // Set userIsMessageable:
+                if (currentUser && currentUser._id) {
+                  if (
+                    user.whoCanMessage === "anyone" ||
+                    (user.whoCanMessage === "friends" &&
+                      user.friends.includes(currentUser._id)) ||
+                    (user.whoCanMessage === "friends of friends" &&
+                      currentUserIsFriendOfFriend)
+                  ) {
+                    setUserIsMessageable(true);
+                  }
+                }
+
+                // setCurrentUserAndUserAreFriends:
+                if (
+                  currentUser &&
+                  currentUser._id &&
+                  user._id &&
+                  currentUser.friends.includes(user._id) &&
+                  user.friends.includes(currentUser._id)
+                ) {
+                  setCurrentUserAndUserAreFriends(true);
+                }
+              })
+              .catch((error) => console.log(error));
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          return undefined;
+        });
+    }
+
     // Set color of event card's border randomly:
     const themeColors: TThemeColor[] = [
       "var(--primary-color)",
@@ -60,38 +185,14 @@ const UserCard = ({ user }: { user: TUser }) => {
         abbreviation: string;
         phoneCode: string;
       }
-    | undefined = countries.filter((country) => country.country === user.country)[0];
+    | undefined = countries.filter(
+    (country) => country.country === userSECURE.country
+  )[0];
 
   const userCountryAbbreviation: string | undefined =
-    user.country !== "" && matchingCountryObject
+    userSECURE?.country !== "" && matchingCountryObject && currentUserCanSeeLocation
       ? matchingCountryObject.abbreviation
       : undefined;
-
-  const getUserIsMessageable = (): boolean => {
-    const currentUserIsFriendOfFriend: boolean =
-      currentUser && currentUser._id && user._id
-        ? getOtherUserFriends(user._id).some(
-            (otherUserFriend) =>
-              currentUser._id && otherUserFriend.friends.includes(currentUser._id)
-          )
-        : false;
-
-    if (currentUser && currentUser._id) {
-      if (
-        user.whoCanMessage === "anyone" ||
-        (user.whoCanMessage === "friends" && user.friends.includes(currentUser._id)) ||
-        (user.whoCanMessage === "friends of friends" && currentUserIsFriendOfFriend)
-      ) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const currentUserAndUserAreFriends =
-    currentUser && currentUser._id && user && user._id && friends?.includes(user._id);
-
-  const userIsMessageable: boolean = getUserIsMessageable();
 
   const noConnectionBetweenUserAndCurrentUser =
     !currentUserAndUserAreFriends &&
@@ -131,45 +232,11 @@ const UserCard = ({ user }: { user: TUser }) => {
 
   const buttonOneText = getButtonOneText();
 
-  const getFriendsInCommon = (): TOtherUser[] | undefined => {
-    if (user._id) {
-      Requests.getUserByID(user._id)
-        .then((res) => {
-          if (res.ok) {
-            res
-              .json()
-              .then((user: TUser) => {
-                let friendsInCommon: TOtherUser[] = [];
-                visibleOtherUsers?.filter((visibleOtherUser) => {
-                  if (
-                    visibleOtherUser._id &&
-                    user.friends.includes(visibleOtherUser._id) &&
-                    currentUser?.friends.includes(visibleOtherUser._id)
-                  ) {
-                    friendsInCommon.push(visibleOtherUser);
-                  }
-                });
-                return friendsInCommon;
-              })
-              .catch((error) => console.log(error));
-          } else {
-            return undefined;
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          return undefined;
-        });
-    }
-    return undefined;
-  };
-  const friendsInCommon: TOtherUser[] | undefined = getFriendsInCommon();
-
   return (
     <>
       {showFriendRequestResponseOptions &&
         currentOtherUser &&
-        currentOtherUser._id === user._id && (
+        currentOtherUser._id === userSECURE._id && (
           <TwoOptionsInterface
             header={`Respond to friend request from ${currentOtherUser.firstName} ${currentOtherUser.lastName} (${currentOtherUser.username})`}
             buttonOneText="Decline"
@@ -192,7 +259,7 @@ const UserCard = ({ user }: { user: TUser }) => {
         {userIsMessageable && (
           <div className={styles.userCardMessageBtnContainer}>
             <i
-              onClick={() => getStartOrOpenChatWithUserHandler(user)}
+              onClick={() => getStartOrOpenChatWithUserHandler(userSECURE)}
               className="fas fa-comments"
             ></i>
           </div>
@@ -200,23 +267,26 @@ const UserCard = ({ user }: { user: TUser }) => {
         <img
           style={{ border: `2px solid ${randomColor}` }}
           src={
-            user.profileImage !== "" && typeof user.profileImage === "string"
-              ? user.profileImage
+            userSECURE.profileImage !== "" && typeof userSECURE.profileImage === "string"
+              ? userSECURE.profileImage
               : defaultProfileImage
           }
           alt="profile image"
         />
         <header>
-          {user.firstName} {user.lastName}
+          {userSECURE.firstName} {userSECURE.lastName}
         </header>
-        <p>{user.username}</p>
-        {user.country !== "" && (
-          <div className={styles.userCardLocationContainer}>
-            <p>{`${user.city}, ${user.stateProvince}`}</p>
-            <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
-          </div>
-        )}
-        {user.whoCanSeeFriendsList &&
+        <p>{userSECURE.username}</p>
+        {userSECURE.country !== "" &&
+          userSECURE.city !== "" &&
+          userSECURE.stateProvince !== "" &&
+          currentUserCanSeeLocation && (
+            <div className={styles.userCardLocationContainer}>
+              <p>{`${userSECURE.city}, ${userSECURE.stateProvince}`}</p>
+              <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
+            </div>
+          )}
+        {currentUserCanSeeFriends &&
           friendsInCommon &&
           friendsInCommon.length > 0 &&
           (friendsInCommon.length === 1 ? (
@@ -232,27 +302,36 @@ const UserCard = ({ user }: { user: TUser }) => {
                 : { backgroundColor: `${randomColor}`, color: "white" }
             }
             onClick={() => {
-              if (currentUserAndUserAreFriends) {
-                handleUnfriending(currentUser, user);
+              if (currentUserAndUserAreFriends && currentUser && userSECURE) {
+                handleUnfriending(currentUser, userSECURE);
               }
               if (currentUserSentFriendRequest && currentUser) {
-                handleRemoveFriendRequest(user, currentUser);
+                handleRemoveFriendRequest(userSECURE, currentUser);
               }
               if (currentUserReceivedFriendRequest) {
-                setCurrentOtherUser(user);
+                setCurrentOtherUser(userSECURE);
                 setShowFriendRequestResponseOptions(true);
               }
               if (currentUser && noConnectionBetweenUserAndCurrentUser) {
-                handleSendFriendRequest(user);
+                handleSendFriendRequest(userSECURE);
               }
             }}
             disabled={isLoading}
           >
             {buttonOneText}
           </button>
-          <Link to={`/users/${user.username}`}>
+          <Link to={`/users/${userSECURE.username}`}>
             <div className="theme-element-container">
-              <button onClick={() => setCurrentOtherUser(user)} disabled={isLoading}>
+              <button
+                onClick={() => {
+                  if (userSECURE._id) {
+                    Requests.getUserByID(userSECURE._id).then((res) =>
+                      res.json().then((user: TUser) => setCurrentOtherUser(user))
+                    );
+                  }
+                }}
+                disabled={isLoading}
+              >
                 View Profile
               </button>
             </div>
