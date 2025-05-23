@@ -635,26 +635,13 @@ const DisplayedCardsPage = ({
         // search pot. friends by first/last name, city/state/country, username
         if (currentUserFriends) {
           for (const pal of currentUserFriends) {
-            if (pal._id) {
-              Requests.getUserByID(pal._id).then((res) =>
-                res.json().then((pal: TUser) => {
-                  if (
-                    pal.firstName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-                    pal.lastName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-                    pal.username?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-                    (pal.whoCanSeeLocation !== "nobody" &&
-                      pal.city?.toLowerCase().includes(inputCleaned.toLowerCase())) ||
-                    (pal.whoCanSeeLocation !== "nobody" &&
-                      pal.country?.toLowerCase().includes(inputCleaned.toLowerCase())) ||
-                    (pal.whoCanSeeLocation !== "nobody" &&
-                      pal.stateProvince
-                        ?.toLowerCase()
-                        .includes(inputCleaned.toLowerCase()))
-                  ) {
-                    newDisplayedFriends.push(pal);
-                  }
-                })
-              );
+            if (
+              pal.firstName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+              pal.lastName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+              pal.username?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+              pal.interests.includes(inputCleaned.toLowerCase())
+            ) {
+              newDisplayedFriends.push(pal);
             }
           }
         }
@@ -795,10 +782,10 @@ const DisplayedCardsPage = ({
               input={searchTerm}
               placeholder={
                 usedFor === "events"
-                  ? "Search events"
+                  ? "Search events by "
                   : usedFor === "potential-friends"
-                  ? "Search potential palz"
-                  : "Search palz"
+                  ? "Search potential palz by first/last name, interests"
+                  : "Search palz by first/last name, interests"
               }
               inputHandler={handleSearchTermInput}
               clearInputHandler={handleClearSearchTerm}
