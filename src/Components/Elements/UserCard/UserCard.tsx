@@ -12,7 +12,9 @@ import Requests from "../../../requests";
 
 const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
   const { isLoading, setError } = useMainContext();
+
   const { currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
+
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
   const {
@@ -28,6 +30,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
     friendRequestsSent,
     friendRequestsReceived,
   } = useUserContext();
+
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
   // Will update on time, unlike currentUser, when allUsers is changed (like when user sends/retracts friend request)
@@ -323,13 +326,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
           <Link to={`/users/${userSECURE.username}`}>
             <div className="theme-element-container">
               <button
-                onClick={() => {
-                  if (userSECURE._id) {
-                    Requests.getUserByID(userSECURE._id).then((res) =>
-                      res.json().then((user: TUser) => setCurrentOtherUser(user))
-                    );
-                  }
-                }}
+                onClick={() => setCurrentOtherUser(userSECURE)}
                 disabled={isLoading}
               >
                 View Profile
