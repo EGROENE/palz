@@ -36,7 +36,6 @@ const DisplayedCardsPage = ({
     logout,
     friends,
     fetchAllVisibleOtherUsersQuery,
-    getOtherUserFriends,
   } = useUserContext();
 
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
@@ -611,69 +610,21 @@ const DisplayedCardsPage = ({
       }
 
       if (usedFor === "potential-friends") {
-        let newDisplayedPotentialFriends: TUser[] = [];
+        let newDisplayedPotentialFriends: TOtherUser[] = [];
         // search pot. friends by first/last name, city/state/country, username
         for (const potentialFriend of displayablePotentialFriends) {
           if (potentialFriend._id) {
-            Requests.getUserByID(potentialFriend._id)
-              .then((res) => {
-                if (res.ok) {
-                  res.json().then((potentialFriend: TUser) => {
-                    const currentUserIsFriendOfFriend: boolean =
-                      currentUser && currentUser._id && potentialFriend._id
-                        ? getOtherUserFriends(potentialFriend._id).some(
-                            (otherUserFriend: TUser) =>
-                              currentUser._id &&
-                              otherUserFriend.friends.includes(currentUser._id)
-                          )
-                        : false;
-
-                    // must be defined for every potential friend, so def here & not in state
-                    const currentUserMaySeeLocation: boolean =
-                      potentialFriend.whoCanSeeLocation === "anyone" ||
-                      (potentialFriend.whoCanSeeLocation === "friends of friends" &&
-                        currentUserIsFriendOfFriend);
-
-                    if (
-                      potentialFriend.firstName
-                        ?.toLowerCase()
-                        .includes(inputCleaned.toLowerCase()) ||
-                      potentialFriend.lastName
-                        ?.toLowerCase()
-                        .includes(inputCleaned.toLowerCase()) ||
-                      potentialFriend.username
-                        ?.toLowerCase()
-                        .includes(inputCleaned.toLowerCase()) ||
-                      (currentUserMaySeeLocation &&
-                        potentialFriend.city
-                          .toLowerCase()
-                          .includes(inputCleaned.toLowerCase())) ||
-                      (currentUserMaySeeLocation &&
-                        potentialFriend.country
-                          .toLowerCase()
-                          .includes(inputCleaned.toLowerCase())) ||
-                      (currentUserMaySeeLocation &&
-                        potentialFriend.stateProvince
-                          .toLowerCase()
-                          .includes(inputCleaned.toLowerCase()))
-                    ) {
-                      newDisplayedPotentialFriends.push(potentialFriend);
-                    }
-                  });
-                } else {
-                  toast.error(
-                    `Cannot perform search. Please, clear the searchbox & try again.`,
-                    {
-                      style: {
-                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                        color: theme === "dark" ? "black" : "white",
-                        border: "2px solid red",
-                      },
-                    }
-                  );
-                }
-              })
-              .catch((error) => console.log(error));
+            if (
+              potentialFriend.firstName
+                ?.toLowerCase()
+                .includes(inputCleaned.toLowerCase()) ||
+              potentialFriend.lastName
+                ?.toLowerCase()
+                .includes(inputCleaned.toLowerCase()) ||
+              potentialFriend.username?.toLowerCase().includes(inputCleaned.toLowerCase())
+            ) {
+              newDisplayedPotentialFriends.push(potentialFriend);
+            }
           }
         }
         setDisplayedItems(newDisplayedPotentialFriends);
@@ -855,7 +806,7 @@ const DisplayedCardsPage = ({
               title={
                 usedFor === "events"
                   ? "Search by title, organizers, description, related interests, or location"
-                  : "Search by first/last name, username, or location"
+                  : "Search by first/last name, or username"
               }
               searchBoxRef={searchBoxRef}
               setSearchBoxIsFocused={setSearchBoxIsFocused}
