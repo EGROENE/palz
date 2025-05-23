@@ -440,7 +440,7 @@ const DisplayedCardsPage = ({
     if (usedFor === "potential-friends") {
       resetDisplayedPotentialFriends();
     }
-  }, [friends]);
+  }, [friends, fetchAllVisibleOtherUsersQuery.data, currentUserFriends]);
   ////////////////////////////////////////////////////////////
 
   const navigation = useNavigate();
