@@ -27,6 +27,8 @@ const DisplayedCardsPage = ({
     setDisplayedItems,
     setDisplayedItemsCountInterval,
     displayedItemsFiltered,
+    error,
+    setError,
   } = useMainContext();
   const {
     currentUser,
@@ -34,6 +36,7 @@ const DisplayedCardsPage = ({
     logout,
     friends,
     fetchAllVisibleOtherUsersQuery,
+    getOtherUserFriends,
   } = useUserContext();
 
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
@@ -43,9 +46,20 @@ const DisplayedCardsPage = ({
   const allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
 
   const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
+
   const toggleShowFilterOptions = (): void => setShowFilterOptions(!showFilterOptions);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  const [friendsOfFriends, setFriendsOfFriends] = useState<TOtherUser[] | undefined>();
+
+  const [currentUserFriends, setCurrentUserFriends] = useState<
+    TOtherUser[] | undefined
+  >();
+
+  if (error) {
+    throw new Error(error);
+  }
 
   useEffect(() => {
     const themeColors: TThemeColor[] = [
@@ -93,6 +107,41 @@ const DisplayedCardsPage = ({
 
     if (showFilterOptions) {
       setShowFilterOptions(false);
+    }
+
+    if (currentUser && visibleOtherUsers) {
+      // Set currentUserFriends: TOtherUser:
+      setCurrentUserFriends(
+        visibleOtherUsers.filter((visibleOtherUser) => {
+          if (visibleOtherUser._id) {
+            return currentUser.friends.includes(visibleOtherUser._id);
+          }
+        })
+      );
+
+      // Set friendsOfFriends: TOtherUser:
+      let fsOfFs: TOtherUser[] = [];
+      for (const currentUserFriendID of currentUser.friends) {
+        Requests.getUserByID(currentUserFriendID)
+          .then((res) => {
+            if (res.ok) {
+              res.json().then((currentUserFriend: TUser) => {
+                for (const visibleOtherUser of visibleOtherUsers) {
+                  if (visibleOtherUser._id) {
+                    // Push visibleOtherUser to fOfFs if their _id is in currentUserFriends.friends:
+                    if (currentUserFriend.friends.includes(visibleOtherUser._id)) {
+                      fsOfFs.push(visibleOtherUser);
+                    }
+                  }
+                }
+              });
+            } else {
+              setError("Could not fetch currentUserFriend");
+            }
+          })
+          .catch((error) => console.log(error));
+      }
+      setFriendsOfFriends(fsOfFs);
     }
   }, [fetchAllVisibleOtherUsersQuery.isLoading, usedFor]);
 
@@ -294,32 +343,6 @@ const DisplayedCardsPage = ({
   };
   const displayablePotentialFriends: TOtherUser[] = getDisplayedPotentialFriends();
 
-  const getFriendsOfFriends = (): TOtherUser[] => {
-    // First, fetch TUser object for each currentUser friend
-    // Then, populate array of TOtherUser from visibleOtherUsers based on friend id
-    if (currentUser && visibleOtherUsers) {
-      for (const currentUserFriendID of currentUser.friends) {
-        Requests.getUserByID(currentUserFriendID)
-          .then((res) => {
-            if (res.ok) {
-              res.json().then((currentUserFriend: TUser) => {
-                return visibleOtherUsers.filter((visibleOtherUser) => {
-                  if (visibleOtherUser._id) {
-                    return currentUserFriend.friends.includes(visibleOtherUser._id);
-                  }
-                });
-              });
-            } else {
-              return [];
-            }
-          })
-          .catch((error) => console.log(error));
-      }
-    }
-    return [];
-  };
-  const friendsOfFriends = getFriendsOfFriends();
-
   const getPotentialFriendsWithCommonInterests = (): TOtherUser[] => {
     let potentialFriendsWithCommonInterests: TOtherUser[] = [];
     if (currentUser?.interests && displayablePotentialFriends) {
@@ -364,59 +387,49 @@ const DisplayedCardsPage = ({
   //////////////////////////////////////////////////////////////
 
   // FRIENDS VARIABLES
-  const getCurrentUserFriends = (): TUser[] => {
-    let currentUserFriends: TUser[] = [];
-    if (currentUser) {
-      for (const friendID of currentUser.friends) {
-        Requests.getUserByID(friendID)
-          .then((res) => {
-            if (res.ok) {
-              res
-                .json()
-                .then((currentUserFriend: TUser) =>
-                  currentUserFriends.push(currentUserFriend)
-                );
-            } else {
-              return [];
-            }
-          })
-          .catch((error) => console.log(error));
-      }
-    }
-    return currentUserFriends;
-  };
-  const currentUserFriends: TUser[] = getCurrentUserFriends();
-
-  const friendsWithCommonInterests: TUser[] = [];
-  for (const pal of currentUserFriends) {
-    if (currentUser?.interests) {
-      for (const interest of currentUser.interests) {
-        if (pal && pal.interests.includes(interest)) {
-          friendsWithCommonInterests.push(pal);
+  const friendsWithCommonInterests: TOtherUser[] = [];
+  if (currentUserFriends) {
+    for (const pal of currentUserFriends) {
+      if (currentUser?.interests) {
+        for (const interest of currentUser.interests) {
+          if (pal && pal.interests.includes(interest)) {
+            friendsWithCommonInterests.push(pal);
+          }
         }
       }
     }
   }
+
   const friendFilterOptions = {
-    ...(currentUser?.city !== "" && {
-      "in my city": currentUserFriends.filter((user) => user.city === currentUser?.city),
-    }),
-    ...(currentUser?.stateProvince !== "" && {
-      "in my state": currentUserFriends.filter(
-        (user) => user.stateProvince === currentUser?.stateProvince
-      ),
-    }),
-    ...(currentUser?.country !== "" && {
-      "in my country": currentUserFriends.filter(
-        (user) => user.country === currentUser?.country
-      ),
-    }),
-    ...(currentUser?.interests.length && {
-      "common interests": friendsWithCommonInterests,
-    }),
+    ...(currentUser?.city !== "" &&
+      currentUserFriends && {
+        "in my city": currentUserFriends.filter(
+          (user) => user.city === currentUser?.city
+        ),
+      }),
+    ...(currentUser?.stateProvince !== "" &&
+      currentUserFriends && {
+        "in my state": currentUserFriends.filter(
+          (user) => user.stateProvince === currentUser?.stateProvince
+        ),
+      }),
+    ...(currentUser?.country !== "" &&
+      currentUserFriends && {
+        "in my country": currentUserFriends.filter(
+          (user) => user.country === currentUser?.country
+        ),
+      }),
+    ...(currentUser?.interests.length &&
+      currentUserFriends && {
+        "common interests": friendsWithCommonInterests,
+      }),
   };
 
-  const resetDisplayedFriends = (): void => setDisplayedItems(currentUserFriends);
+  const resetDisplayedFriends = (): void => {
+    if (currentUserFriends) {
+      setDisplayedItems(currentUserFriends);
+    }
+  };
 
   // Upon change of friends, resetDisplayedFriends or -PotentialFriends, depending on usedFor. Account in resetDisplayedFriends for any existing filters or search terms, or clear all filters & search terms when resetting
   useEffect(() => {
@@ -495,8 +508,10 @@ const DisplayedCardsPage = ({
         if (usedFor === "my-friends") {
           const indexOfArrayInFilterOptions =
             Object.keys(friendFilterOptions).indexOf(filter);
-          const filterOptionFriends: TUser[] =
+
+          const filterOptionFriends: TOtherUser[] =
             Object.values(friendFilterOptions)[indexOfArrayInFilterOptions];
+
           for (const filterOptionFriend of filterOptionFriends) {
             if (
               !newDisplayedItems
@@ -603,7 +618,22 @@ const DisplayedCardsPage = ({
             Requests.getUserByID(potentialFriend._id)
               .then((res) => {
                 if (res.ok) {
-                  res.json().then((potentialFriend) => {
+                  res.json().then((potentialFriend: TUser) => {
+                    const currentUserIsFriendOfFriend: boolean =
+                      currentUser && currentUser._id && potentialFriend._id
+                        ? getOtherUserFriends(potentialFriend._id).some(
+                            (otherUserFriend: TUser) =>
+                              currentUser._id &&
+                              otherUserFriend.friends.includes(currentUser._id)
+                          )
+                        : false;
+
+                    // must be defined for every potential friend, so def here & not in state
+                    const currentUserMaySeeLocation: boolean =
+                      potentialFriend.whoCanSeeLocation === "anyone" ||
+                      (potentialFriend.whoCanSeeLocation === "friends of friends" &&
+                        currentUserIsFriendOfFriend);
+
                     if (
                       potentialFriend.firstName
                         ?.toLowerCase()
@@ -614,15 +644,18 @@ const DisplayedCardsPage = ({
                       potentialFriend.username
                         ?.toLowerCase()
                         .includes(inputCleaned.toLowerCase()) ||
-                      potentialFriend.city
-                        .toLowerCase()
-                        .includes(inputCleaned.toLowerCase()) ||
-                      potentialFriend.country
-                        .toLowerCase()
-                        .includes(inputCleaned.toLowerCase()) ||
-                      potentialFriend.stateProvince
-                        .toLowerCase()
-                        .includes(inputCleaned.toLowerCase())
+                      (currentUserMaySeeLocation &&
+                        potentialFriend.city
+                          .toLowerCase()
+                          .includes(inputCleaned.toLowerCase())) ||
+                      (currentUserMaySeeLocation &&
+                        potentialFriend.country
+                          .toLowerCase()
+                          .includes(inputCleaned.toLowerCase())) ||
+                      (currentUserMaySeeLocation &&
+                        potentialFriend.stateProvince
+                          .toLowerCase()
+                          .includes(inputCleaned.toLowerCase()))
                     ) {
                       newDisplayedPotentialFriends.push(potentialFriend);
                     }
@@ -647,18 +680,31 @@ const DisplayedCardsPage = ({
       }
 
       if (usedFor === "my-friends") {
-        let newDisplayedFriends: TUser[] = [];
+        let newDisplayedFriends: TOtherUser[] = [];
         // search pot. friends by first/last name, city/state/country, username
-        for (const pal of currentUserFriends) {
-          if (
-            pal.firstName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            pal.lastName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            pal.username?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            pal.city.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            pal.country.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            pal.stateProvince.toLowerCase().includes(inputCleaned.toLowerCase())
-          ) {
-            newDisplayedFriends.push(pal);
+        if (currentUserFriends) {
+          for (const pal of currentUserFriends) {
+            if (pal._id) {
+              Requests.getUserByID(pal._id).then((res) =>
+                res.json().then((pal: TUser) => {
+                  if (
+                    pal.firstName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+                    pal.lastName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+                    pal.username?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+                    (pal.whoCanSeeLocation !== "nobody" &&
+                      pal.city?.toLowerCase().includes(inputCleaned.toLowerCase())) ||
+                    (pal.whoCanSeeLocation !== "nobody" &&
+                      pal.country?.toLowerCase().includes(inputCleaned.toLowerCase())) ||
+                    (pal.whoCanSeeLocation !== "nobody" &&
+                      pal.stateProvince
+                        ?.toLowerCase()
+                        .includes(inputCleaned.toLowerCase()))
+                  ) {
+                    newDisplayedFriends.push(pal);
+                  }
+                })
+              );
+            }
           }
         }
         setDisplayedItems(newDisplayedFriends);
