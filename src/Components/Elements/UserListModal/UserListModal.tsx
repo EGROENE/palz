@@ -1,5 +1,5 @@
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TOtherUser } from "../../../types";
+import { TOtherUser, TUser } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import { useMainContext } from "../../../Hooks/useMainContext";
@@ -87,19 +87,19 @@ const UserListModal = ({
           if (res.ok) {
             res
               .json()
-              .then((userObject) => {
+              .then((user: TUser) => {
                 if (!buttonOneHandlerParams) {
                   if (
                     listType === "blocked-users" &&
                     buttonOneHandler === handleUnblockUser
                   ) {
-                    return [currentUser, userObject, blockedUsers, setBlockedUsers];
+                    return [currentUser, user, blockedUsers, setBlockedUsers];
                   }
                   if (
                     (listType === "invitees" || listType === "rsvpd-users") &&
                     buttonOneHandler === startConversation
                   ) {
-                    return [userObject];
+                    return [user];
                   }
                 }
               })
@@ -120,7 +120,7 @@ const UserListModal = ({
           if (res.ok) {
             res
               .json()
-              .then((userObject) => {
+              .then((user: TUser) => {
                 if (!buttonTwoHandlerParams) {
                   if (
                     listType === "rsvpd-users" ||
@@ -128,7 +128,7 @@ const UserListModal = ({
                       (buttonTwoHandler === handleRemoveInvitee ||
                         buttonTwoHandler === handleDeleteUserRSVP))
                   ) {
-                    return [currentEvent, userObject];
+                    return [currentEvent, user];
                   }
                 }
               })
