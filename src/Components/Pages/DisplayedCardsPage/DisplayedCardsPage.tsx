@@ -845,7 +845,8 @@ const DisplayedCardsPage = ({
               )}
           {(usedFor === "potential-friends" || usedFor === "my-friends") &&
             Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
-              (item) => Methods.isTUser(item) && <UserCard key={item._id} user={item} />
+              (item) =>
+                Methods.isTUser(item) && <UserCard key={item._id} userSECURE={item} />
             )}
         </div>
       )}
