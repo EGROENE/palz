@@ -621,7 +621,10 @@ const DisplayedCardsPage = ({
               potentialFriend.lastName
                 ?.toLowerCase()
                 .includes(inputCleaned.toLowerCase()) ||
-              potentialFriend.username?.toLowerCase().includes(inputCleaned.toLowerCase())
+              potentialFriend.username
+                ?.toLowerCase()
+                .includes(inputCleaned.toLowerCase()) ||
+              potentialFriend.interests.includes(inputCleaned.toLowerCase())
             ) {
               newDisplayedPotentialFriends.push(potentialFriend);
             }
