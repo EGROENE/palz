@@ -11,7 +11,11 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 import Requests from "../../../requests";
 
 const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
-  const { isLoading, setError } = useMainContext();
+  const { isLoading, error, setError } = useMainContext();
+
+  if (error) {
+    throw new Error(error);
+  }
 
   const { currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
 
