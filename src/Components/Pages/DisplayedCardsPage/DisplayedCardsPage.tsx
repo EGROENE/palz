@@ -601,7 +601,8 @@ const DisplayedCardsPage = ({
             event.description.toLowerCase().includes(inputCleaned.toLowerCase()) ||
             isOrganizerNameMatch ||
             isUsernameMatch ||
-            event.stateProvince?.toLowerCase().includes(inputCleaned.toLowerCase())
+            event.stateProvince?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+            event.relatedInterests.includes(inputCleaned.toLowerCase())
           ) {
             newDisplayedEvents.push(event);
           }
@@ -785,7 +786,7 @@ const DisplayedCardsPage = ({
               input={searchTerm}
               placeholder={
                 usedFor === "events"
-                  ? "Search events by "
+                  ? "Search events"
                   : usedFor === "potential-friends"
                   ? "Search potential palz by first/last name, interests"
                   : "Search palz by first/last name, interests"
