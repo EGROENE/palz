@@ -251,15 +251,6 @@ const OtherUserProfile = () => {
               );
             }
 
-            // Set country abbreviation:
-            if (
-              !aQueryIsLoading &&
-              currentOtherUser.country !== "" &&
-              matchingCountryObject
-            ) {
-              setUserCountryAbbreviation(matchingCountryObject.abbreviation);
-            }
-
             // Set currentUserIsFriendOfFriend:
             const getCurrentOtherUserFriends = async (): Promise<TUser[]> => {
               let currentOtherUserFriends: TUser[] = [];
