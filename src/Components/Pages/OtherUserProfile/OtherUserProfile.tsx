@@ -113,7 +113,6 @@ const OtherUserProfile = () => {
       }
     | undefined
   >(undefined);
-  const [userCountryAbbreviation, setUserCountryAbbreviation] = useState<string>("");
   const [palzInCommon, setPalzInCommon] = useState<TOtherUser[]>([]);
   const [currentOtherUserFriendsSECURE, setCurrentOtherUserFriendsSECURE] = useState<
     TOtherUser[]
@@ -122,7 +121,7 @@ const OtherUserProfile = () => {
 
   // put in other useEffect w/ empty dep array if no dependencies added to this one, or if only dependency is username
   useEffect(() => {
-    setPalzInCommonText(undefined)
+    setPalzInCommonText(undefined);
     setCurrentOtherUserSECURE(
       visibleOtherUsers?.filter((otherUser) => otherUser.username === username)[0]
     );
@@ -885,7 +884,9 @@ const OtherUserProfile = () => {
                         <p
                           style={{ color: randomColor }}
                         >{`${currentOtherUserSECURE.city}, ${currentOtherUserSECURE.stateProvince}`}</p>
-                        <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
+                        <img
+                          src={`/flags/4x3/${matchingCountryObject?.abbreviation}.svg`}
+                        />
                       </div>
                     )}
                   {palzInCommonText && (
