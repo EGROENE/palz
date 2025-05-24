@@ -122,6 +122,7 @@ const OtherUserProfile = () => {
 
   // put in other useEffect w/ empty dep array if no dependencies added to this one, or if only dependency is username
   useEffect(() => {
+    setPalzInCommonText(undefined)
     setCurrentOtherUserSECURE(
       visibleOtherUsers?.filter((otherUser) => otherUser.username === username)[0]
     );
@@ -887,29 +888,33 @@ const OtherUserProfile = () => {
                         <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
                       </div>
                     )}
-                  <p
-                    style={{ color: randomColor }}
-                    className={
-                      palzInCommon.length > 2 ? `${styles.mutualFriendsLink}` : undefined
-                    }
-                    onClick={
-                      palzInCommon.length > 2
-                        ? () => setShowMutualFriends(true)
-                        : undefined
-                    }
-                  >
-                    {palzInCommonText}
-                    {palzInCommon.length > 2 && (
-                      <i
-                        style={{
-                          transform: "rotate(22.5deg)",
-                          fontSize: "1.25rem",
-                          marginLeft: "0.25rem",
-                        }}
-                        className="fas fa-arrow-up"
-                      ></i>
-                    )}
-                  </p>
+                  {palzInCommonText && (
+                    <p
+                      style={{ color: randomColor }}
+                      className={
+                        palzInCommon.length > 2
+                          ? `${styles.mutualFriendsLink}`
+                          : undefined
+                      }
+                      onClick={
+                        palzInCommon.length > 2
+                          ? () => setShowMutualFriends(true)
+                          : undefined
+                      }
+                    >
+                      {palzInCommonText}
+                      {palzInCommon.length > 2 && (
+                        <i
+                          style={{
+                            transform: "rotate(22.5deg)",
+                            fontSize: "1.25rem",
+                            marginLeft: "0.25rem",
+                          }}
+                          className="fas fa-arrow-up"
+                        ></i>
+                      )}
+                    </p>
+                  )}
 
                   {numberOfGroupChatsInCommon > 1 && (
                     <p
