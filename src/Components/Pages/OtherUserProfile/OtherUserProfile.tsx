@@ -23,6 +23,7 @@ const OtherUserProfile = () => {
   const { theme, isLoading, error, setError } = useMainContext();
   const {
     currentUser,
+    currentOtherUser,
     userCreatedAccount,
     handleSendFriendRequest,
     handleRemoveFriendRequest,
@@ -114,6 +115,10 @@ const OtherUserProfile = () => {
   >(undefined);
   const [userCountryAbbreviation, setUserCountryAbbreviation] = useState<string>("");
   const [palzInCommon, setPalzInCommon] = useState<TOtherUser[]>([]);
+  const [currentOtherUserFriendsSECURE, setCurrentOtherUserFriendsSECURE] = useState<
+    TOtherUser[]
+  >([]);
+  const [palzInCommonText, setPalzInCommonText] = useState<string | undefined>(undefined);
 
   // put in other useEffect w/ empty dep array if no dependencies added to this one, or if only dependency is username
   useEffect(() => {
@@ -210,13 +215,32 @@ const OtherUserProfile = () => {
               currentOtherUserFriends
             );
 
-            setPalzInCommon(
-              Methods.removeDuplicatesFromArray(
-                combinedPalz.filter(
-                  (pal) => combinedPalz.indexOf(pal) !== combinedPalz.lastIndexOf(pal)
-                )
+            const pic: TOtherUser[] = Methods.removeDuplicatesFromArray(
+              combinedPalz.filter(
+                (pal) =>
+                  currentUserFriends.includes(pal) &&
+                  currentOtherUserFriends.includes(pal)
               )
             );
+
+            setPalzInCommon(pic);
+
+            if (pic.length > 2) {
+              setPalzInCommonText(
+                `You are both friends with ${pic
+                  .slice(0, 3)
+                  .map((pal) => `${pal.firstName} ${pal.lastName}`)
+                  .join(", ")} +${pic.length - 2} more`
+              );
+            } else if (pic.length > 0) {
+              setPalzInCommonText(
+                `You are both friends with ${pic
+                  .map((pal) => `${pal.firstName} ${pal.lastName}`)
+                  .join(" & ")}`
+              );
+            } else {
+              setPalzInCommonText("No mutual friends");
+            }
 
             // Set currentOtherUser's country object:
             if (!aQueryIsLoading) {
@@ -256,10 +280,20 @@ const OtherUserProfile = () => {
                     .catch((error) => console.log(error));
                 }
               }
+              // Set currentOtherUserFriendsSECURE:
+              if (visibleOtherUsers) {
+                setCurrentOtherUserFriendsSECURE(
+                  visibleOtherUsers.filter((visibleOtherUser) => {
+                    if (visibleOtherUser._id) {
+                      return currentOtherUser.friends.includes(visibleOtherUser._id);
+                    }
+                  })
+                );
+              }
               return currentOtherUserFriends;
             };
 
-            getCurrentOtherUserFriends().then((currentOtherUserFriends) => {
+            getCurrentOtherUserFriends().then((currentOtherUserFriends: TUser[]) => {
               if (currentUser && currentUser._id) {
                 for (const friend of currentOtherUserFriends) {
                   if (friend.friends.includes(currentUser._id)) {
@@ -299,6 +333,7 @@ const OtherUserProfile = () => {
     fetchAllVisibleOtherUsersQuery.data,
     fetchAllEventsQuery.data,
     currentOtherUserID,
+    currentOtherUser,
   ]);
 
   const currentOtherUserIsBlocked: boolean =
@@ -571,49 +606,6 @@ const OtherUserProfile = () => {
   };
   const displayedButtons = getDisplayedButtons();
 
-  const getCurrentUserFriends = (): TUser[] => {
-    let currentUserFriends: TUser[] = [];
-    if (currentUser) {
-      for (const friendID of currentUser.friends) {
-        Requests.getUserByID(friendID)
-          .then((res) => {
-            if (res.ok) {
-              res
-                .json()
-                .then((currentUserFriend: TUser) =>
-                  currentUserFriends.push(currentUserFriend)
-                );
-            } else {
-              setError("Error fetching currentUser friends");
-            }
-          })
-          .catch((error) => console.log(error));
-      }
-    }
-    return currentUserFriends;
-  };
-  const currentUserFriends: TUser[] = getCurrentUserFriends();
-
-  // get TUser object that matches each id in friends array of each of currentUser's friends
-  let friendsOfCurrentUserFriends: TUser[] = [];
-  for (const friend of currentUserFriends) {
-    if (friend && friend.friends.length > 0) {
-      for (const friendID of friend.friends) {
-        Requests.getUserByID(friendID)
-          .then((res) => {
-            if (res.ok) {
-              res
-                .json()
-                .then((friend: TUser) => friendsOfCurrentUserFriends.push(friend));
-            } else {
-              setError("Error fetching friend (TUser)");
-            }
-          })
-          .catch((error) => console.log(error));
-      }
-    }
-  }
-
   const now = Date.now();
 
   const pastEventsUserOrganized: TEvent[] | undefined = allEvents?.filter(
@@ -818,21 +810,6 @@ const OtherUserProfile = () => {
   };
   const numberOfGroupChatsInCommon = getNumberOfGroupChatsInCommon();
 
-  const getPalzInCommonText = (): string => {
-    if (palzInCommon.length > 2) {
-      return `You are both friends with ${palzInCommon
-        .slice(0, 3)
-        .map((pal) => `${pal.firstName} ${pal.lastName}`)
-        .join(", ")} +${palzInCommon.length - 2} more`;
-    } else if (palzInCommon.length > 0) {
-      return `You are both friends with ${palzInCommon
-        .map((pal) => `${pal.firstName} ${pal.lastName}`)
-        .join(" & ")}`;
-    }
-    return "No mutual friends";
-  };
-  const palzInCommonText = getPalzInCommonText();
-
   const isNoFetchError: boolean =
     !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
 
@@ -898,14 +875,18 @@ const OtherUserProfile = () => {
                     {currentOtherUserSECURE.firstName} {currentOtherUserSECURE.lastName}
                   </header>
                   <p style={{ color: randomColor }}>{currentOtherUserSECURE.username}</p>
-                  {currentUserCanSeeLocation && (
-                    <div className={styles.userLocationContainer}>
-                      <p
-                        style={{ color: randomColor }}
-                      >{`${currentOtherUserSECURE.city}, ${currentOtherUserSECURE.stateProvince}`}</p>
-                      <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
-                    </div>
-                  )}
+                  {currentUserCanSeeLocation &&
+                    currentOtherUser &&
+                    currentOtherUser.city !== "" &&
+                    currentOtherUser.stateProvince !== "" &&
+                    currentOtherUser.country !== "" && (
+                      <div className={styles.userLocationContainer}>
+                        <p
+                          style={{ color: randomColor }}
+                        >{`${currentOtherUserSECURE.city}, ${currentOtherUserSECURE.stateProvince}`}</p>
+                        <img src={`/flags/4x3/${userCountryAbbreviation}.svg`} />
+                      </div>
+                    )}
                   <p
                     style={{ color: randomColor }}
                     className={
@@ -1062,13 +1043,9 @@ const OtherUserProfile = () => {
                     renderButtonTwo={false}
                     closeModalMethod={setShowFriends}
                     header={`${currentOtherUserSECURE.username} 's palz`}
-                    userIDArray={palzInCommon
-                      .map((pal) => pal._id && pal._id)
-                      .filter((pal) => {
-                        if (pal) {
-                          return !currentUser?.friends.includes(pal);
-                        }
-                      })}
+                    userIDArray={currentOtherUserFriendsSECURE.map(
+                      (friend) => friend._id
+                    )}
                     buttonOneText="View Profile"
                     randomColor={randomColor}
                   />
