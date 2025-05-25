@@ -15,7 +15,6 @@ const getUserByUsernamePhoneNumberOrEmailAddress = async (req, res) => {
       phoneNumberWithoutCountryCode,
       _id,
     } = req.body;
-    console.log(username);
 
     // Check that id is a valid MongoDB ObjectId:
     if (!mongoose.Types.ObjectId.isValid(_id)) {
