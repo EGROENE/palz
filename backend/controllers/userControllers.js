@@ -196,13 +196,11 @@ const createNewUser = async (req, res) => {
     }
 
     if (existingUserWithSameUsername) {
-      console.log(1);
       res.statusMessage = "USERNAME TAKEN";
       return res.status(409).end();
     }
 
     if (existingUserWithSameEmailAddress) {
-      console.log(2);
       res.statusMessage = "EMAIL TAKEN";
       return res.status(409).end();
     }
