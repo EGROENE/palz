@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  index: {
+    type: String,
+    required: true,
+  },
   firstName: {
     type: String,
     required: true,
