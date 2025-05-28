@@ -143,6 +143,7 @@ const getUserByUsernameOrEmailAddress = async (req, res) => {
 // create new user
 const createNewUser = async (req, res) => {
   let {
+    _id,
     index,
     firstName,
     lastName,
@@ -212,6 +213,7 @@ const createNewUser = async (req, res) => {
     password = hashedPassword; */
 
     const user = await User.create({
+      _id,
       index,
       firstName,
       lastName,
