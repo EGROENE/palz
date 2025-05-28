@@ -548,6 +548,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
   myHeaders.append("Content-Type", "application/json");
 
   const raw = JSON.stringify({
+    "index": newUserData.index,
     "firstName": newUserData.firstName,
     "lastName": newUserData.lastName,
     "username": newUserData.username,
