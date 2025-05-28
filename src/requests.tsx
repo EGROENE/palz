@@ -33,7 +33,7 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
           if (currentUser._id) {
             const currentUserIsFriend: boolean =
               currentUser && currentUser._id
-                ? otherUser.friends.includes(currentUser._id)
+                ? otherUser.friends.includes(currentUser._id.toString())
                 : false;
 
             const currentUserIsFriendOfFriend: boolean = otherUsers.some(
@@ -42,12 +42,12 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
                 user._id &&
                 currentUser &&
                 currentUser._id &&
-                otherUser.friends.includes(user._id) &&
-                user.friends.includes(currentUser._id)
+                otherUser.friends.includes(user._id.toString()) &&
+                user.friends.includes(currentUser._id.toString())
             );
 
             const currentUserIsBlocked: boolean = otherUser.blockedUsers.includes(
-              currentUser._id
+              currentUser._id.toString()
             );
 
             if (
@@ -65,7 +65,7 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
         return visibleOtherUsers.map((otherUser) => {
           const currentUserIsFriend: boolean =
             currentUser && currentUser._id
-              ? otherUser.friends.includes(currentUser._id)
+              ? otherUser.friends.includes(currentUser._id.toString())
               : false;
 
           const currentUserIsFriendOfFriend: boolean = otherUsers.some(
@@ -74,8 +74,8 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
               user._id &&
               currentUser &&
               currentUser._id &&
-              otherUser.friends.includes(user._id) &&
-              user.friends.includes(currentUser._id)
+              otherUser.friends.includes(user._id.toString()) &&
+              user.friends.includes(currentUser._id.toString())
           );
 
           const showLocation: boolean =
@@ -264,7 +264,7 @@ const getPotentialCoOrganizers = (
                 user &&
                 user._id &&
                 currentUserID &&
-                otherUser.friends.includes(user._id) &&
+                otherUser.friends.includes(user._id.toString()) &&
                 user.friends.includes(currentUserID)
             );
 
@@ -295,7 +295,7 @@ const getPotentialCoOrganizers = (
               user &&
               user._id &&
               currentUserID &&
-              otherUser.friends.includes(user._id) &&
+              otherUser.friends.includes(user._id.toString()) &&
               user.friends.includes(currentUserID)
           );
 
@@ -413,7 +413,7 @@ const getPotentialInvitees = (
                 user &&
                 user._id &&
                 currentUserID &&
-                otherUser.friends.includes(user._id) &&
+                otherUser.friends.includes(user._id.toString()) &&
                 user.friends.includes(currentUserID)
             );
 
@@ -443,7 +443,7 @@ const getPotentialInvitees = (
               user &&
               user._id &&
               currentUserID &&
-              otherUser.friends.includes(user._id) &&
+              otherUser.friends.includes(user._id.toString()) &&
               user.friends.includes(currentUserID)
           );
 
@@ -548,6 +548,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
   myHeaders.append("Content-Type", "application/json");
 
   const raw = JSON.stringify({
+    "_id": newUserData._id,
     "index": newUserData.index,
     "firstName": newUserData.firstName,
     "lastName": newUserData.lastName,
@@ -861,6 +862,8 @@ const deleteUser = (userID: string | undefined): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json");
 
+  console.log(userID);
+
   return fetch(`http://localhost:4000/palz/users/${userID}`, {
     method: "DELETE",
     headers: myHeaders,
@@ -880,7 +883,7 @@ const addUserRSVP = (
     updatedInterestedUsersArray.push(intUser);
   }
   if (user && user._id) {
-    updatedInterestedUsersArray.push(user._id);
+    updatedInterestedUsersArray.push(user._id.toString());
   }
 
   const getRaw = () => {
@@ -910,7 +913,7 @@ const addToDisinterestedUsers = (
     updatedDisinterestedUsersArray.push(disintUser);
   }
   if (user?.username) {
-    updatedDisinterestedUsersArray.push(user._id);
+    updatedDisinterestedUsersArray.push(user?._id?.toString());
   }
 
   const getRaw = () => {
@@ -1196,7 +1199,7 @@ const addFriendToFriendsArray = (user: TUser, friend: TUser): Promise<Response> 
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedFriendsArray = friend._id && user?.friends.concat(friend._id);
+  let updatedFriendsArray = friend._id && user?.friends.concat(friend._id.toString());
 
   var raw = JSON.stringify({
     "friends": updatedFriendsArray,
