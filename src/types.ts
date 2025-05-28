@@ -10,7 +10,7 @@ export type TThemeColor =
   | "var(--fifth-color)";
 
 export type TUser = {
-  _id?: string;
+  _id?: string | mongoose.Types.ObjectId;
   index: string | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
@@ -88,7 +88,7 @@ export type TUser = {
 };
 
 export type TOtherUser = {
-  _id?: string;
+  _id?: string | mongoose.Types.ObjectId;
   index: string | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
