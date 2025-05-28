@@ -170,7 +170,9 @@ function App() {
         onClick={() => (showSidebar ? setShowSidebar(false) : undefined)}
       >
         {baseURLElement.type.name !== "Welcome" &&
-          baseURLElement.type.name !== "LoginPage" && <NavBar />}
+          baseURLElement.type.name !== "LoginPage" &&
+          currentUser &&
+          userCreatedAccount !== null && <NavBar />}
         {showSidebar && <Sidebar />}
         {showUpdateProfileImageInterface && (
           <TwoOptionsInterface
@@ -223,7 +225,9 @@ function App() {
           <Route path="*" element={<Error404 />} />
         </Routes>
         {baseURLElement.type.name !== "Welcome" &&
-          baseURLElement.type.name !== "LoginPage" && <Footer />}
+          baseURLElement.type.name !== "LoginPage" &&
+          currentUser &&
+          userCreatedAccount !== null && <Footer />}
       </div>
     </div>
   );
