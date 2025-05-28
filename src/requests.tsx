@@ -8,6 +8,14 @@ import {
   TOtherUser,
 } from "./types";
 
+const getAllUsers = () => {
+  return fetch("http://localhost:4000/palz/users", {
+    method: "GET",
+    redirect: "follow",
+  }).then((response) => response);
+};
+
+// Get rid of this eventually, once requests for different types of user groups are made
 const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[]> => {
   return fetch("http://localhost:4000/palz/users", {
     method: "GET",
@@ -114,6 +122,7 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
 
           return {
             "_id": otherUser._id,
+            "index:": otherUser.index,
             "firstName": otherUser.firstName,
             "lastName": otherUser.lastName,
             "username": otherUser.username,
@@ -1278,6 +1287,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getAllUsers,
   getPotentialCoOrganizers,
   getPotentialInvitees,
   getUserByUsernamePhoneNumberOrEmailAddress,
