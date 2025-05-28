@@ -46,7 +46,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
 
   /* Some values on currentUser are kept separately from currentUser. These are initialized to corresponding values from DB. These will be compared to values in DB when user changes these in Settings to render certain form UI. They can also be used for optimistic rendering, in that they update quicker than state values that depend on request to DB going thru, then state values being set after that. Corresponding values in DB are still updated in the background; if these requests fail, then these parallel state values below will reset to what they were before the change.*/
-  const [index, setIndex] = useSessionStorage<string | undefined>("index", undefined);
+  const [index, setIndex] = useSessionStorage<number | undefined>("index", undefined);
   const [firstName, setFirstName, removeFirstName] = useSessionStorage<
     string | undefined
   >("firstName", "");
@@ -2043,7 +2043,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         Requests.getAllUsers()
           .then((res) => {
             if (res.ok) {
-              res.json().then((allUsers) => setIndex(allUsers.length.toString()));
+              res.json().then((allUsers) => setIndex(allUsers.length));
               Requests.createUser(userData)
                 .then((res) => {
                   if (res.status === 409) {
