@@ -45,6 +45,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
 
   /* Some values on currentUser are kept separately from currentUser. These are initialized to corresponding values from DB. These will be compared to values in DB when user changes these in Settings to render certain form UI. They can also be used for optimistic rendering, in that they update quicker than state values that depend on request to DB going thru, then state values being set after that. Corresponding values in DB are still updated in the background; if these requests fail, then these parallel state values below will reset to what they were before the change.*/
+  const [index, setIndex] = useSessionStorage<string | undefined>("index", undefined);
   const [firstName, setFirstName, removeFirstName] = useSessionStorage<
     string | undefined
   >("firstName", "");
@@ -219,6 +220,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const userData: TUser = {
+    index: index,
     firstName: Methods.formatHyphensAndSpacesInString(
       Methods.formatCapitalizedName(firstName)
     ),
@@ -1515,7 +1517,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const handleUnfriending = (user: TOtherUser | TUser, friend: TOtherUser | TUser): void => {
+  const handleUnfriending = (
+    user: TOtherUser | TUser,
+    friend: TOtherUser | TUser
+  ): void => {
     if (user._id) {
       Requests.getUserByID(user._id)
         .then((res) => {
@@ -1819,6 +1824,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const setParallelValuesAfterLogin = (currentUser: TUser): void => {
+    setIndex(currentUser?.index);
     setFirstName(currentUser?.firstName);
     setLastName(currentUser?.lastName);
     setUsername(currentUser?.username);
@@ -1866,6 +1872,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const setParallelValuesAfterSignup = (): void => {
+    setIndex(userData.index);
     setFirstName(userData.firstName);
     setLastName(userData.lastName);
     setUsername(userData.username);
@@ -2031,28 +2038,44 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (isOnSignup) {
       if ((username && username !== "") || (emailAddress && emailAddress !== "")) {
         // run newUserMutation. handle errors there
-        Requests.createUser(userData)
+        Requests.getAllUsers()
           .then((res) => {
-            if (res.status === 409) {
-              if (res.statusText === "USERNAME & EMAIL TAKEN") {
-                setUsernameError("Username already in use");
-                setEmailError("E-mail address already in use");
-              }
-              if (res.statusText === "USERNAME TAKEN") {
-                setUsernameError("Username already in use");
-              }
-              if (res.statusText === "EMAIL TAKEN") {
-                setEmailError("E-mail address already in use");
-              }
-            } else if (res.ok) {
-              handleWelcomeMessage();
-              setCurrentUser(userData);
-              navigation("/");
-              queryClient.invalidateQueries({ queryKey: ["allVisibleOtherUsers"] });
-              queryClient.refetchQueries({ queryKey: ["allVisibleOtherUsers"] });
-              setUserCreatedAccount(true);
-              setParallelValuesAfterSignup();
-              resetErrorMessagesAfterSignup();
+            if (res.ok) {
+              res.json().then((allUsers) => setIndex(allUsers.length.toString()));
+              Requests.createUser(userData)
+                .then((res) => {
+                  if (res.status === 409) {
+                    if (res.statusText === "USERNAME & EMAIL TAKEN") {
+                      setUsernameError("Username already in use");
+                      setEmailError("E-mail address already in use");
+                    }
+                    if (res.statusText === "USERNAME TAKEN") {
+                      setUsernameError("Username already in use");
+                    }
+                    if (res.statusText === "EMAIL TAKEN") {
+                      setEmailError("E-mail address already in use");
+                    }
+                  } else if (res.ok) {
+                    handleWelcomeMessage();
+                    setCurrentUser(userData);
+                    navigation("/");
+                    queryClient.invalidateQueries({ queryKey: ["allVisibleOtherUsers"] });
+                    queryClient.refetchQueries({ queryKey: ["allVisibleOtherUsers"] });
+                    setUserCreatedAccount(true);
+                    setParallelValuesAfterSignup();
+                    resetErrorMessagesAfterSignup();
+                  } else {
+                    setUserCreatedAccount(false);
+                    toast.error("Could not set up your account. Please try again.", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    });
+                  }
+                })
+                .catch((error) => console.log(error));
             } else {
               setUserCreatedAccount(false);
               toast.error("Could not set up your account. Please try again.", {
