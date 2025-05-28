@@ -2060,7 +2060,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   } else if (res.ok) {
                     handleWelcomeMessage();
                     setCurrentUser(userData);
-                    console.log(userData._id);
                     navigation("/");
                     queryClient.invalidateQueries({ queryKey: ["allVisibleOtherUsers"] });
                     queryClient.refetchQueries({ queryKey: ["allVisibleOtherUsers"] });
