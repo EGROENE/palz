@@ -382,7 +382,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     let chatMembers: TOtherUser[] = [];
     if (visibleOtherUsers) {
       for (const user of visibleOtherUsers) {
-        if (user._id && members.includes(user._id)) {
+        if (user._id && members.includes(user._id.toString())) {
           chatMembers.push(user);
         }
       }
@@ -432,7 +432,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       const updatedMembers: string[] = chat.members.filter(
         (member) => member !== user._id
       );
-      if (chat.admins.includes(user._id)) {
+      if (chat.admins.includes(user._id.toString())) {
         // if user is only admin left, inform by toast that they can't leave until another admin is assigned:
         if (chat.admins.length - 1 === 0) {
           toast.error("Please assign another admin before leaving the chat.", {
@@ -477,12 +477,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>
   ): void => {
     if (user._id) {
-      if (usersToAddToChat.includes(user._id)) {
+      if (usersToAddToChat.includes(user._id.toString())) {
         setUsersToAddToChat(
           usersToAddToChat.filter((userToAdd) => userToAdd !== user._id)
         );
       } else {
-        setUsersToAddToChat(usersToAddToChat.concat(user._id));
+        setUsersToAddToChat(usersToAddToChat.concat(user._id.toString()));
       }
     }
   };
@@ -500,7 +500,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleAddAdminToChat = (user: TOtherUser, chat: TChat): void => {
     setCurrentOtherUser(user);
-    const updatedAdmins = chat.admins && user._id ? chat.admins.concat(user._id) : [];
+    const updatedAdmins =
+      chat.admins && user._id ? chat.admins.concat(user._id.toString()) : [];
     const chatValuesToUpdate = { admins: updatedAdmins };
     const purpose = "add-admin";
     updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
@@ -530,7 +531,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
     const newMessage: TMessage = {
       _id: messageId,
-      sender: currentUser && currentUser._id ? currentUser._id : "",
+      sender: currentUser && currentUser._id ? currentUser._id.toString() : "",
       content: content.trim(),
       image: "",
       timeSent: now,
@@ -648,9 +649,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         currentUser &&
         currentUser._id &&
         message.sender !== currentUser._id &&
-        !usersWhoSawMessage.includes(currentUser._id)
+        !usersWhoSawMessage.includes(currentUser._id.toString())
       ) {
-        message.seenBy.push({ user: currentUser._id, time: now });
+        message.seenBy.push({ user: currentUser._id.toString(), time: now });
       }
       return message;
     });
@@ -691,9 +692,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           chat.members.length === 2 &&
           currentUser &&
           currentUser._id &&
-          chat.members.includes(currentUser._id) &&
+          chat.members.includes(currentUser._id.toString()) &&
           otherUser._id &&
-          chat.members.includes(otherUser._id)
+          chat.members.includes(otherUser._id.toString())
       )[0];
 
       if (existingChatWithListedChatMember) {
@@ -702,7 +703,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
       const newChatMembers: string[] =
         otherUser._id && currentUser && currentUser._id
-          ? [otherUser._id, currentUser._id]
+          ? [otherUser._id.toString(), currentUser._id.toString()]
           : [];
 
       return handleCreateChat({
@@ -722,7 +723,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       for (const message of chat.messages) {
         const usersWhoSawMessage: string[] = message.seenBy.map((obj) => obj.user);
         if (
-          !usersWhoSawMessage.includes(currentUser._id) &&
+          !usersWhoSawMessage.includes(currentUser._id.toString()) &&
           message.sender !== currentUser._id
         ) {
           unreadMessages.push(message);
@@ -771,9 +772,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         chat.members.length === 2 &&
         currentUser &&
         currentUser._id &&
-        chat.members.includes(currentUser._id) &&
+        chat.members.includes(currentUser._id.toString()) &&
         otherUser._id &&
-        chat.members.includes(otherUser._id)
+        chat.members.includes(otherUser._id.toString())
     )[0];
 
     if (existingChatWithListedChatMember) {
@@ -781,7 +782,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     } else {
       const newChatMembers: string[] =
         otherUser._id && currentUser && currentUser._id
-          ? [otherUser._id, currentUser._id]
+          ? [otherUser._id.toString(), currentUser._id.toString()]
           : [];
       return handleCreateChat({
         _id: new mongoose.Types.ObjectId().toString(),
@@ -792,7 +793,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         dateCreated: Date.now(),
         ...(usersToAddToChat.length >= 2 &&
           currentUser &&
-          currentUser._id && { admins: [currentUser._id] }),
+          currentUser._id && { admins: [currentUser._id.toString()] }),
       });
     }
   };
@@ -802,25 +803,28 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       setPotentialChatMembers(
         visibleOtherUsers.filter((otherUser) => {
           const userIsNotAlreadyInCurrentChat: boolean =
-            otherUser._id && currentChat && currentChat.members.includes(otherUser._id)
+            otherUser._id &&
+            currentChat &&
+            currentChat.members.includes(otherUser._id.toString())
               ? false
               : true;
 
           const currentUserIsFriendOfFriend: boolean =
             currentUser && currentUser._id && otherUser._id
-              ? getOtherUserFriends(otherUser._id).some(
+              ? getOtherUserFriends(otherUser._id.toString()).some(
                   (otherUserFriend) =>
-                    currentUser._id && otherUserFriend.friends.includes(currentUser._id)
+                    currentUser._id &&
+                    otherUserFriend.friends.includes(currentUser._id.toString())
                 )
               : false;
 
           const currentUserIsFriend: boolean =
             currentUser && currentUser._id && otherUser._id
-              ? currentUser.friends.includes(otherUser._id)
+              ? currentUser.friends.includes(otherUser._id.toString())
               : false;
 
           if (otherUser._id) {
-            Requests.getUserByID(otherUser._id)
+            Requests.getUserByID(otherUser._id.toString())
               .then((response) => {
                 if (response.ok) {
                   response.json().then((otherUser) => {

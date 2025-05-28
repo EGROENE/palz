@@ -107,7 +107,7 @@ const UserSettings = () => {
           });
         } else {
           if (currentUser && currentUser._id) {
-            Requests.getUserByID(currentUser._id)
+            Requests.getUserByID(currentUser._id.toString())
               .then((res) => {
                 if (res.ok) {
                   res
@@ -171,7 +171,7 @@ const UserSettings = () => {
           });
         } else {
           if (currentUser && currentUser._id) {
-            Requests.getUserByID(currentUser._id)
+            Requests.getUserByID(currentUser._id.toString())
               .then((res) => {
                 if (res.ok) {
                   res
@@ -240,7 +240,7 @@ const UserSettings = () => {
         if (
           currentUser?._id &&
           event.organizers.length === 1 &&
-          event.organizers.includes(currentUser._id)
+          event.organizers.includes(currentUser._id.toString())
         ) {
           promisesToAwait.push(Requests.deleteEvent(event));
         } else {
@@ -253,7 +253,7 @@ const UserSettings = () => {
     if (currentUser && visibleOtherUsers) {
       for (const user of visibleOtherUsers) {
         if (user._id) {
-          Requests.getUserByID(user._id)
+          Requests.getUserByID(user._id.toString())
             .then((res) => {
               if (res.ok) {
                 res.json().then((user) => {
@@ -281,7 +281,7 @@ const UserSettings = () => {
           (member) => member !== currentUser._id
         );
         let updatedChatAdmins;
-        if (userChat.admins?.includes(currentUser._id)) {
+        if (userChat.admins?.includes(currentUser._id.toString())) {
           // If user is sole admin of chat, delete chat; else, replace their _id w/ 'Deleted User':
           if (userChat.admins.length - 1 === 0) {
             promisesToAwait.push(Requests.deleteChat(userChat._id.toString()));
@@ -314,6 +314,7 @@ const UserSettings = () => {
       .then(() => {
         // run after the others have finished
         if (!requestToDeleteUserIDFromAllArraysIsOK) {
+          console.log(1);
           toast.error("Account deletion incomplete; please try again.", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -322,9 +323,11 @@ const UserSettings = () => {
             },
           });
         } else {
-          Requests.deleteUser(currentUser?._id)
+          Requests.deleteUser(currentUser?._id?.toString())
             .then((response) => {
               if (!response.ok) {
+                console.log(currentUser);
+                console.log(0);
                 toast.error("Account deletion incomplete; please try again.", {
                   style: {
                     background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",

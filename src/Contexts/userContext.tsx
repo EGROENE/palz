@@ -13,6 +13,7 @@ import {
   useQuery,
   UseQueryResult,
 } from "@tanstack/react-query";
+import mongoose from "mongoose";
 
 export const UserContext = createContext<TUserContext | null>(null);
 
@@ -220,6 +221,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const userData: TUser = {
+    _id: new mongoose.Types.ObjectId(),
     index: index,
     firstName: Methods.formatHyphensAndSpacesInString(
       Methods.formatCapitalizedName(firstName)
@@ -323,7 +325,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: (data, variables) => {
       if (data.ok) {
         if (currentUser && currentUser._id) {
-          Requests.getUserByID(currentUser._id)
+          Requests.getUserByID(currentUser._id.toString())
             .then((res) => {
               if (res.ok) {
                 res
@@ -368,7 +370,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }) => Requests.updateUserProfileImage(currentUser, placeholder),
     onSuccess: () => {
       if (currentUser && currentUser._id) {
-        Requests.getUserByID(currentUser._id)
+        Requests.getUserByID(currentUser._id.toString())
           .then((res) => {
             if (res.ok) {
               res.json().then((user) => {
@@ -410,7 +412,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         const recipient = variables.recipient;
 
         if (recipient._id) {
-          Requests.getUserByID(recipient._id)
+          Requests.getUserByID(recipient._id.toString())
             .then((res) => {
               if (res.ok) {
                 res
@@ -473,7 +475,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: (data, variables) => {
       if (data.ok) {
         if (currentUser && currentUser._id) {
-          Requests.getUserByID(currentUser._id)
+          Requests.getUserByID(currentUser._id.toString())
             .then((res) => {
               if (res.ok) {
                 res
@@ -518,7 +520,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         .then((res) =>
           res.json().then((recipient) => {
             if (variables.sender._id) {
-              Requests.getUserByID(variables.sender._id)
+              Requests.getUserByID(variables.sender._id.toString())
                 .then((res) => {
                   if (res.ok) {
                     res.json().then((sender) => {
@@ -628,7 +630,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         const event = variables.event;
 
         if (recipient._id) {
-          Requests.getUserByID(recipient._id)
+          Requests.getUserByID(recipient._id.toString())
             .then((res) => {
               if (res.ok) {
                 res.json().then((recipient) => {
@@ -643,7 +645,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 });
               } else {
                 const sender = variables.sender;
-                const recipientID = variables.recipient._id;
+                const recipientID = variables.recipient._id?.toString();
                 const event = variables.event;
                 handleRemoveFriendRequestFail({ sender, recipientID, event });
               }
@@ -652,7 +654,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         }
       } else {
         const sender = variables.sender;
-        const recipientID = variables.recipient._id;
+        const recipientID = variables.recipient._id?.toString();
         const event = variables.event;
         handleRemoveFriendRequestFail({ sender, recipientID, event });
       }
@@ -683,7 +685,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: (data, variables) => {
       if (data.ok) {
         if (currentUser && currentUser._id) {
-          Requests.getUserByID(currentUser._id)
+          Requests.getUserByID(currentUser._id.toString())
             .then((res) => {
               if (res.ok) {
                 res
@@ -752,7 +754,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     userOne: TUser,
     userTwo: TUser
   ): void => {
-    if (userTwo._id && userOne.friends.includes(userTwo._id)) {
+    if (userTwo._id && userOne.friends.includes(userTwo._id.toString())) {
       Requests.deleteFriendFromFriendsArray(userOne, userTwo)
         .then((res) => {
           if (!res.ok) {
@@ -762,7 +764,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         .catch((error) => console.log(error));
     }
 
-    if (userOne._id && userTwo.friends.includes(userOne._id)) {
+    if (userOne._id && userTwo.friends.includes(userOne._id.toString())) {
       Requests.deleteFriendFromFriendsArray(userTwo, userOne)
         .then((res) => {
           if (!res.ok) {
@@ -777,7 +779,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     sender: TUser,
     recipient: TUser
   ): void => {
-    if (recipient._id && !sender.friendRequestsSent.includes(recipient._id)) {
+    if (recipient._id && !sender.friendRequestsSent.includes(recipient._id.toString())) {
       Requests.addToFriendRequestsSent(sender, recipient)
         .then((res) => {
           if (!res.ok) {
@@ -787,7 +789,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         .catch((error) => console.log(error));
     }
 
-    if (sender._id && !recipient.friendRequestsReceived.includes(sender._id)) {
+    if (sender._id && !recipient.friendRequestsReceived.includes(sender._id.toString())) {
       Requests.addToFriendRequestsReceived(sender, recipient)
         .then((res) => {
           if (!res.ok) {
@@ -849,7 +851,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           event,
         });
         if (currentUser && currentUser._id) {
-          Requests.getUserByID(currentUser._id)
+          Requests.getUserByID(currentUser._id.toString())
             .then((res) => {
               if (res.ok) {
                 res
@@ -908,14 +910,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         hasSentFriendRequest !== undefined &&
         hasReceivedFriendRequest !== undefined
       ) {
-        return Requests.addToBlockedUsers(blocker, blockee?._id);
+        return Requests.addToBlockedUsers(blocker, blockee?._id?.toString());
       }
-      return Requests.addToBlockedUsers(blocker, blockee?._id);
+      return Requests.addToBlockedUsers(blocker, blockee?._id?.toString());
     },
     onSuccess: (data, variables) => {
       if (data.ok) {
         if (currentUser && currentUser._id) {
-          Requests.getUserByID(currentUser._id)
+          Requests.getUserByID(currentUser._id.toString())
             .then((res) => {
               if (res.ok) {
                 res
@@ -1377,7 +1379,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       const sender = currentUser;
 
       if (recipient._id) {
-        Requests.getUserByID(recipient._id)
+        Requests.getUserByID(recipient._id.toString())
           .then((res) => {
             if (res.ok) {
               res
@@ -1409,7 +1411,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (currentUser && recipient) {
       if (currentUser._id === recipient._id && sender && recipient._id) {
         const event = "reject-request";
-        const recipientID = recipient._id;
+        const recipientID = recipient._id.toString();
         removeReceivedFriendRequestMutation.mutate({ sender, recipientID, event });
       } else {
         const event = "retract-request";
@@ -1433,12 +1435,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (sender._id) {
-      Requests.getUserByID(sender._id)
+      Requests.getUserByID(sender._id.toString())
         .then((res) => {
           if (res.ok) {
             res.json().then((sender) => {
               if (receiver._id) {
-                Requests.getUserByID(receiver._id)
+                Requests.getUserByID(receiver._id.toString())
                   .then((res) => {
                     if (res.ok) {
                       res.json().then((receiver) => {
@@ -1485,7 +1487,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     const recipient = receiver;
 
     if (sender._id) {
-      Requests.getUserByID(sender._id)
+      Requests.getUserByID(sender._id.toString())
         .then((res) => {
           if (res.ok) {
             res.json().then((sender: TUser) => {
@@ -1522,12 +1524,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     friend: TOtherUser | TUser
   ): void => {
     if (user._id) {
-      Requests.getUserByID(user._id)
+      Requests.getUserByID(user._id.toString())
         .then((res) => {
           if (res.ok) {
             res.json().then((user: TUser) => {
               if (friend._id) {
-                Requests.getUserByID(friend._id)
+                Requests.getUserByID(friend._id.toString())
                   .then((res) => {
                     if (res.ok) {
                       res.json().then((friend: TUser) => {
@@ -1543,7 +1545,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                               res[0].ok &&
                               res[1].ok
                             ) {
-                              Requests.getUserByID(currentUser._id)
+                              Requests.getUserByID(currentUser._id.toString())
                                 .then((res) => {
                                   if (res.ok) {
                                     res
@@ -1607,12 +1609,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
   ): void => {
     if (blockedUsers && setBlockedUsers && blockee._id) {
-      setBlockedUsers(blockedUsers.concat(blockee._id));
+      setBlockedUsers(blockedUsers.concat(blockee._id.toString()));
     }
     setIsLoading(true);
 
     if (blockee._id) {
-      Requests.getUserByID(blockee._id)
+      Requests.getUserByID(blockee._id.toString())
         .then((res) => {
           if (res.ok) {
             res.json().then((blockee) => {
@@ -1678,10 +1680,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (blockee._id) {
-      Requests.removeFromBlockedUsers(blocker, blockee._id)
+      Requests.removeFromBlockedUsers(blocker, blockee._id.toString())
         .then((res) => {
           if (currentUser && currentUser._id && res.ok) {
-            Requests.getUserByID(currentUser._id)
+            Requests.getUserByID(currentUser._id.toString())
               .then((res) => {
                 if (res.ok) {
                   res
@@ -2058,6 +2060,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   } else if (res.ok) {
                     handleWelcomeMessage();
                     setCurrentUser(userData);
+                    console.log(userData._id);
                     navigation("/");
                     queryClient.invalidateQueries({ queryKey: ["allVisibleOtherUsers"] });
                     queryClient.refetchQueries({ queryKey: ["allVisibleOtherUsers"] });

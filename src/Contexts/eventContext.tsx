@@ -36,7 +36,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     queryFn: () =>
       Requests.getPotentialCoOrganizers(
         currentURL === "/add-event" ? "new" : "edit",
-        currentUser && currentUser._id ? currentUser._id : undefined
+        currentUser && currentUser._id && currentUser._id.toString()
+          ? currentUser._id.toString()
+          : undefined
       ),
     enabled:
       userHasLoggedIn && (currentURL === "/add-event" || currentURL === "/edit-event"),
@@ -47,7 +49,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     queryFn: () =>
       Requests.getPotentialInvitees(
         currentURL === "/add-event" ? "new" : "edit",
-        currentUser && currentUser._id ? currentUser._id : undefined
+        currentUser && currentUser._id && currentUser._id.toString()
+          ? currentUser._id.toString()
+          : undefined
       ),
     enabled:
       userHasLoggedIn && (currentURL === "/add-event" || currentURL === "/edit-event"),
@@ -647,12 +651,12 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAddRemoveBlockedUserOnEvent = (user?: TOtherUser): void => {
     //e?.preventDefault();
     if (user && user._id) {
-      if (blockedUsersEvent.includes(user._id)) {
+      if (blockedUsersEvent.includes(user._id.toString())) {
         setBlockedUsersEvent(
           blockedUsersEvent.filter((blockeeID) => blockeeID !== user._id)
         );
       } else {
-        setBlockedUsersEvent(blockedUsersEvent.concat(user._id));
+        setBlockedUsersEvent(blockedUsersEvent.concat(user._id.toString()));
       }
     }
   };
@@ -665,7 +669,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     if (user && user._id && currentUser && currentUser._id) {
-      if (organizers.includes(user._id)) {
+      if (organizers.includes(user._id.toString())) {
         if (user._id === currentUser._id) {
           e?.preventDefault();
           // Remove self as organizer:
@@ -683,7 +687,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
         }
       } else {
         // Add non-current user as organizer
-        setOrganizers(organizers.concat(user._id));
+        setOrganizers(organizers.concat(user._id.toString()));
       }
     }
   };
@@ -694,11 +698,11 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     user?: TOtherUser
   ): void => {
     if (user?._id) {
-      if (invitees.includes(user._id)) {
+      if (invitees.includes(user._id.toString())) {
         // Remove user as invitee
         setInvitees(invitees.filter((inviteeID) => inviteeID !== user?._id));
       } else {
-        setInvitees(invitees.concat(user._id));
+        setInvitees(invitees.concat(user._id.toString()));
       }
     }
   };
