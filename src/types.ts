@@ -11,7 +11,7 @@ export type TThemeColor =
 
 export type TUser = {
   _id?: string | mongoose.Types.ObjectId;
-  index: string | undefined;
+  index: number | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
   username: string | undefined;
@@ -89,7 +89,7 @@ export type TUser = {
 
 export type TOtherUser = {
   _id?: string | mongoose.Types.ObjectId;
-  index: string | undefined;
+  index: number | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
   username: string | undefined;
