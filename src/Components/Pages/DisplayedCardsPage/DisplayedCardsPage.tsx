@@ -800,7 +800,7 @@ const DisplayedCardsPage = ({
     }
     return undefined;
   };
-  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
+  const queryWithError = getQueryForQueryLoadingOrErrorComponent();
 
   return (
     <>
@@ -923,7 +923,7 @@ const DisplayedCardsPage = ({
         </>
       )}
       {potentialFriendsFetchError && <p>{potentialFriendsFetchError}</p>}
-      {queryForQueryLoadingOrError && queryForQueryLoadingOrError.error && (
+      {queryWithError && queryWithError.error && (
         <div className="query-error-container">
           <header className="query-status-text">Error fetching data.</header>
           <div className="theme-element-container">

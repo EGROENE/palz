@@ -811,7 +811,7 @@ const OtherUserProfile = () => {
     }
     return undefined;
   };
-  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
+  const queryWithError = getQueryForQueryLoadingOrErrorComponent();
 
   const aQueryIsLoading: boolean =
     fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
@@ -823,7 +823,7 @@ const OtherUserProfile = () => {
           Loading...
         </header>
       )}
-      {queryForQueryLoadingOrError && (
+      {queryWithError && (
         <div className="query-error-container">
           <header className="query-status-text">Error fetching data. </header>
           <div className="theme-element-container">

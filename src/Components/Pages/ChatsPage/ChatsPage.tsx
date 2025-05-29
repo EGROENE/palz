@@ -72,7 +72,7 @@ const ChatsPage = () => {
     }
     return undefined;
   };
-  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
+  const queryWithError = getQueryForQueryLoadingOrErrorComponent();
 
   useEffect(() => {
     if (!currentUser || userCreatedAccount === null) {
@@ -114,7 +114,7 @@ const ChatsPage = () => {
           Loading...
         </header>
       )}
-      {queryForQueryLoadingOrError && (
+      {queryWithError && (
         <div className="query-error-container">
           <header className="query-status-text">Error fetching data.</header>
           <div className="theme-element-container">

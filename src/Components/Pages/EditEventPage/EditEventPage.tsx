@@ -93,7 +93,7 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
     }
     return undefined;
   };
-  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
+  const queryWithError = getQueryForQueryLoadingOrErrorComponent();
 
   const aQueryIsLoading: boolean =
     fetchAllEventsQuery.isLoading ||
@@ -116,7 +116,7 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
           Loading...
         </header>
       )}
-      {queryForQueryLoadingOrError && (
+      {queryWithError && (
         <div className="query-error-container">
           <header className="query-status-text">Error fetching data.</header>
           <div className="theme-element-container">

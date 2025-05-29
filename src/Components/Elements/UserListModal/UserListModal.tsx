@@ -174,7 +174,7 @@ const UserListModal = ({
     }
     return undefined;
   };
-  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
+  const queryWithError = getQueryForQueryLoadingOrErrorComponent();
 
   return (
     <div tabIndex={0} aria-hidden="false" className="modal-background">
@@ -232,11 +232,9 @@ const UserListModal = ({
             Loading...
           </header>
         )}
-        {queryForQueryLoadingOrError && queryForQueryLoadingOrError.error && (
+        {queryWithError && queryWithError.error && (
           <div className="query-error-container">
-            <header className="query-status-text">
-             Error fetching data.
-            </header>
+            <header className="query-status-text">Error fetching data.</header>
             <div className="theme-element-container">
               <button onClick={() => window.location.reload()}>Retry</button>
             </div>
