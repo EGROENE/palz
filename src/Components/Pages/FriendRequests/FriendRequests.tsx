@@ -89,11 +89,11 @@ const FriendRequests = () => {
   useEffect(() => {
     const friendRequestsReceivedUSERS: TOtherUser[] | undefined =
       visibleOtherUsers?.filter(
-        (user) => user._id && friendRequestsReceived?.includes(user._id)
+        (user) => user._id && friendRequestsReceived?.includes(user._id.toString())
       );
 
     const friendRequestsSentUSERS: TOtherUser[] | undefined = visibleOtherUsers?.filter(
-      (user) => user._id && friendRequestsSent?.includes(user._id)
+      (user) => user._id && friendRequestsSent?.includes(user._id.toString())
     );
 
     if (currentUser) {
@@ -243,7 +243,7 @@ const FriendRequests = () => {
                     (user) =>
                       Methods.isTUser(user) && (
                         <ListedUser
-                          key={user._id}
+                          key={user._id?.toString()}
                           renderButtonOne={true}
                           user={user}
                           buttonOneText="See Profile"
@@ -267,7 +267,7 @@ const FriendRequests = () => {
                     (user) =>
                       Methods.isTUser(user) && (
                         <ListedUser
-                          key={user._id}
+                          key={user._id?.toString()}
                           renderButtonOne={true}
                           user={user}
                           buttonOneText="Accept"
