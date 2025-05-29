@@ -29,6 +29,8 @@ const DisplayedCardsPage = ({
     displayedItemsFiltered,
     error,
     setError,
+    isLoading,
+    setIsLoading,
   } = useMainContext();
   const {
     currentUser,
@@ -56,9 +58,75 @@ const DisplayedCardsPage = ({
     TOtherUser[] | undefined
   >();
 
+  const [potentialFriendsStart, setPotentialFriendsStart] = useState<number>(0);
+  const potentialFriendsLimit = 9;
+
+  // Maybe provide btn in case of fetch error that calls getPotentialFriends again.
+  const [potentialFriendsFetchError, setPotentialFriendsFetchError] = useState<
+    string | undefined
+  >();
+
   if (error) {
     throw new Error(error);
   }
+
+  const [potentialFriends, setPotentialFriends] = useState<TOtherUser[]>([]);
+
+  // Put requests for MyPalz & Explore Events in here. Their start/limits should be in dep array. Use conditions to determine which request should run.
+  // Find way to set potentialFriendsStart to index of last item in potentialFriends
+  useEffect(() => {
+    if (usedFor === "potential-friends") {
+      setIsLoading(true);
+      Requests.getPotentialFriends(
+        currentUser,
+        potentialFriendsStart,
+        potentialFriendsLimit
+      )
+        .then((batchOfPotentialFriends) => {
+          setPotentialFriends(potentialFriends.concat(batchOfPotentialFriends));
+
+          // scroll handler needs to be called w/ updated potentialFriends
+          window.addEventListener("scroll", () =>
+            handleLoadMorePotentialFriendsOnScroll(
+              potentialFriends.concat(batchOfPotentialFriends)
+            )
+          );
+        })
+        .catch((error) => {
+          setPotentialFriendsFetchError(
+            "Could not fetch potential friends. Try reloading the page."
+          );
+          console.log(error);
+        })
+        .finally(() => setIsLoading(false));
+    }
+  }, [potentialFriendsStart]);
+
+  const handleLoadMorePotentialFriendsOnScroll = (
+    potentialFriends: TOtherUser[],
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
+  ): void => {
+    const eHTMLElement = e?.target as HTMLElement;
+    const scrollTop = e ? eHTMLElement.scrollTop : null;
+    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
+    const clientHeight = e ? eHTMLElement.clientHeight : null;
+
+    const bottomReached =
+      e && scrollTop && clientHeight
+        ? scrollTop + clientHeight === scrollHeight
+        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
+
+    if (bottomReached) {
+      if (usedFor === "potential-friends") {
+        // Set potentialFriendsStart to index of last element in potentialFriends array (may need to subtract items just added to potentialFriends array to get the right item)
+        const lastItemInPotentialFriends: TOtherUser =
+          potentialFriends[potentialFriends.length - 1];
+        if (lastItemInPotentialFriends.index) {
+          setPotentialFriendsStart(lastItemInPotentialFriends.index + 1);
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     const themeColors: TThemeColor[] = [
@@ -70,6 +138,7 @@ const DisplayedCardsPage = ({
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+
     window.scrollTo(0, 0);
   }, []);
 
@@ -704,7 +773,9 @@ const DisplayedCardsPage = ({
   // If used for displaying users not related to an event, only fetchAllVisibleOtherUsersQuery will have to succeed for users to be shown
   const isNoFetchError: boolean =
     usedFor === "potential-friends" || usedFor === "my-friends"
-      ? !fetchAllVisibleOtherUsersQuery.isError
+      ? !fetchAllVisibleOtherUsersQuery.isError &&
+        !potentialFriendsFetchError &&
+        potentialFriendsFetchError !== ""
       : !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
 
   const fetchIsLoading: boolean =
@@ -818,26 +889,32 @@ const DisplayedCardsPage = ({
           </search>
         )}
       {!fetchIsLoading && isNoFetchError && (
-        <div className="all-cards-container">
-          {usedFor === "events" &&
-            displayedItemsFiltered.every((event) => Methods.isTEvent(event)) &&
-            Methods.removeDuplicatesFromArray(displayedItemsFiltered)
-              .filter((event) =>
-                currentUser && currentUser._id
-                  ? !event.blockedUsersEvent.includes(currentUser._id)
-                  : event
-              )
-              .map(
+        <>
+          <div className="all-cards-container">
+            {usedFor === "events" &&
+              displayedItemsFiltered.every((event) => Methods.isTEvent(event)) &&
+              Methods.removeDuplicatesFromArray(displayedItemsFiltered)
+                .filter((event) =>
+                  currentUser && currentUser._id
+                    ? !event.blockedUsersEvent.includes(currentUser._id)
+                    : event
+                )
+                .map(
+                  (item) =>
+                    Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
+                )}
+            {(usedFor === "potential-friends" || usedFor === "my-friends") &&
+              Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
                 (item) =>
-                  Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
+                  Methods.isTUser(item) &&
+                  item &&
+                  item._id && <UserCard key={item._id.toString()} userSECURE={item} />
               )}
-          {(usedFor === "potential-friends" || usedFor === "my-friends") &&
-            Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
-              (item) =>
-                Methods.isTUser(item) && <UserCard key={item._id} userSECURE={item} />
-            )}
-        </div>
+          </div>
+          {isLoading && <p>Loading...</p>}
+        </>
       )}
+      {potentialFriendsFetchError && <p>{potentialFriendsFetchError}</p>}
       <QueryLoadingOrError
         query={queryForQueryLoadingOrError}
         errorMessage={
