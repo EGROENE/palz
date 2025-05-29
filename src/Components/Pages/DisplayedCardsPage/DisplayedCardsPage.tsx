@@ -59,6 +59,7 @@ const DisplayedCardsPage = ({
   >();
 
   const [potentialFriendsStart, setPotentialFriendsStart] = useState<number>(0);
+
   const potentialFriendsLimit = 9;
 
   // Maybe provide btn in case of fetch error that calls getPotentialFriends again.
@@ -100,7 +101,7 @@ const DisplayedCardsPage = ({
         })
         .finally(() => setIsLoading(false));
     }
-  }, [potentialFriendsStart]);
+  }, [potentialFriendsStart, potentialFriendsLimit]);
 
   const handleLoadMorePotentialFriendsOnScroll = (
     potentialFriends: TOtherUser[],
@@ -119,6 +120,7 @@ const DisplayedCardsPage = ({
     if (bottomReached) {
       if (usedFor === "potential-friends") {
         // Set potentialFriendsStart to index of last element in potentialFriends array (may need to subtract items just added to potentialFriends array to get the right item)
+        console.log(potentialFriends);
         const lastItemInPotentialFriends: TOtherUser =
           potentialFriends[potentialFriends.length - 1];
         if (lastItemInPotentialFriends.index) {
@@ -182,7 +184,7 @@ const DisplayedCardsPage = ({
       setCurrentUserFriends(
         visibleOtherUsers.filter((visibleOtherUser) => {
           if (visibleOtherUser._id) {
-            return currentUser.friends.includes(visibleOtherUser._id);
+            return currentUser.friends.includes(visibleOtherUser._id.toString());
           }
         })
       );
@@ -197,7 +199,9 @@ const DisplayedCardsPage = ({
                 for (const visibleOtherUser of visibleOtherUsers) {
                   if (visibleOtherUser._id) {
                     // Push visibleOtherUser to fOfFs if their _id is in currentUserFriends.friends:
-                    if (currentUserFriend.friends.includes(visibleOtherUser._id)) {
+                    if (
+                      currentUserFriend.friends.includes(visibleOtherUser._id.toString())
+                    ) {
                       fsOfFs.push(visibleOtherUser);
                     }
                   }
@@ -311,8 +315,8 @@ const DisplayedCardsPage = ({
       (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
       (event.publicity === "public" ||
         (currentUser?._id &&
-          (event.invitees.includes(currentUser._id) ||
-            event.organizers.includes(currentUser._id))))
+          (event.invitees.includes(currentUser._id.toString()) ||
+            event.organizers.includes(currentUser._id.toString()))))
   );
 
   const getEventsByCurrentUserInterests = (): TEvent[] => {
@@ -403,7 +407,7 @@ const DisplayedCardsPage = ({
     if (visibleOtherUsers && currentUser) {
       return visibleOtherUsers.filter((visibleOtherUser) => {
         if (visibleOtherUser._id) {
-          return !currentUser.friends.includes(visibleOtherUser._id);
+          return !currentUser.friends.includes(visibleOtherUser._id.toString());
         }
       });
     }
