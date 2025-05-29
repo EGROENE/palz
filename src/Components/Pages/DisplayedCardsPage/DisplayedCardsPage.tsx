@@ -83,14 +83,19 @@ const DisplayedCardsPage = ({
         potentialFriendsLimit
       )
         .then((batchOfPotentialFriends) => {
-          setPotentialFriends(potentialFriends.concat(batchOfPotentialFriends));
-
-          // scroll handler needs to be called w/ updated potentialFriends
-          window.addEventListener("scroll", () =>
-            handleLoadMorePotentialFriendsOnScroll(
-              potentialFriends.concat(batchOfPotentialFriends)
-            )
-          );
+          if (batchOfPotentialFriends) {
+            setPotentialFriends(potentialFriends.concat(batchOfPotentialFriends));
+            // scroll handler needs to be called w/ updated potentialFriends
+            window.addEventListener("scroll", () =>
+              handleLoadMorePotentialFriendsOnScroll(
+                potentialFriends.concat(batchOfPotentialFriends)
+              )
+            );
+          } else {
+            setPotentialFriendsFetchError(
+              "Could not load potential friends. Try reloading the page."
+            );
+          }
         })
         .catch((error) => {
           setPotentialFriendsFetchError(
