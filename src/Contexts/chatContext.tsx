@@ -131,7 +131,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }) => Requests.updateChat(chat, chatValuesToUpdate),
     onSuccess: (data, variables) => {
       if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: "userChats" });
+        queryClient.invalidateQueries({ queryKey: ["userChats"] });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
         setCurrentChat(variables.chat);
         if (inputMessage !== "") {
@@ -333,7 +333,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         handleOpenChat(variables.chat);
         setShowCreateNewChatModal(false);
         setUsersToAddToChat([]);
-        queryClient.invalidateQueries({ queryKey: "userChats" });
+        queryClient.invalidateQueries({ queryKey: ["userChats"] });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
       } else {
         toast.error("Unable to create chat. Please try again.", {
@@ -353,7 +353,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     mutationFn: ({ chatID }: { chatID: string }) => Requests.deleteChat(chatID),
     onSuccess: (data) => {
       if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: "userChats" });
+        queryClient.invalidateQueries({ queryKey: ["userChats"] });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
         setShowAreYouSureYouWantToDeleteChat(false);
         setShowChatModal(false);

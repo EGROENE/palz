@@ -275,7 +275,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addUserRSVP(user, event),
     onSuccess: (data) => {
       if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
         toast.success("RSVP added!", {
           style: {
@@ -303,7 +303,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.deleteUserRSVP(user, event),
     onSuccess: (data) => {
       if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
         toast("RSVP deleted", {
           style: {
@@ -336,7 +336,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }) => Requests.updateEvent(event, eventValuesToUpdate),
     onSuccess: (data) => {
       if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
 
         toast.success("Event updated!", {
@@ -409,7 +409,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.createEvent(eventInfos),
     onSuccess: (data) => {
       if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
         toast.success("Event created!", {
           style: {
@@ -441,7 +441,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: (data) => {
       if (data.ok) {
         setCurrentEvent(undefined);
-        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
         toast("Event deleted", {
           style: {
@@ -473,7 +473,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.addToDisinterestedUsers(user, event),
     onSuccess: (data) => {
       if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
         toast("Invitation declined.", {
           style: {
@@ -501,7 +501,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.removeInvitee(event, user),
     onSuccess: (data) => {
       if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
 
         toast("Invitee removed", {
@@ -530,7 +530,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       Requests.removeOrganizer(event, user),
     onSuccess: (data) => {
       if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: "allEvents" });
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
         toast("Event organizer removed", {
           style: {
