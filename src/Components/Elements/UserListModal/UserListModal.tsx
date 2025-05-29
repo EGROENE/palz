@@ -82,7 +82,7 @@ const UserListModal = ({
 
   const getButtonOneHandlerParams = (user: TOtherUser) => {
     if (user._id) {
-      Requests.getUserByID(user._id)
+      Requests.getUserByID(user._id.toString())
         .then((res) => {
           if (res.ok) {
             res
@@ -115,7 +115,7 @@ const UserListModal = ({
 
   const getButtonTwoHandlerParams = (user: TOtherUser) => {
     if (user._id) {
-      Requests.getUserByID(user._id)
+      Requests.getUserByID(user._id.toString())
         .then((res) => {
           if (res.ok) {
             res
@@ -193,7 +193,7 @@ const UserListModal = ({
           (displayedUserCount > 0 ? (
             userArray.map((user) => (
               <ListedUser
-                key={user._id}
+                key={user._id?.toString()}
                 renderButtonOne={renderButtonOne}
                 renderButtonTwo={renderButtonTwo}
                 user={user}
