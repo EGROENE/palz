@@ -13,7 +13,6 @@ import Methods from "../../../methods";
 import Requests from "../../../requests";
 import Tab from "../../Elements/Tab/Tab";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSection";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import useLocalStorage from "use-local-storage";
@@ -807,8 +806,10 @@ const OtherUserProfile = () => {
   const getQueryForQueryLoadingOrErrorComponent = () => {
     if (fetchAllVisibleOtherUsersQuery.isError) {
       return fetchAllVisibleOtherUsersQuery;
+    } else if (fetchAllEventsQuery.isError) {
+      return fetchAllEventsQuery;
     }
-    return fetchAllEventsQuery;
+    return undefined;
   };
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
@@ -822,11 +823,13 @@ const OtherUserProfile = () => {
           Loading...
         </header>
       )}
-      {!isNoFetchError && (
-        <QueryLoadingOrError
-          query={queryForQueryLoadingOrError}
-          errorMessage="Error fetching data"
-        />
+      {queryForQueryLoadingOrError && (
+        <div className="query-error-container">
+          <header className="query-status-text">Error fetching data. </header>
+          <div className="theme-element-container">
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        </div>
       )}
       {currentOtherUserSECURE && isNoFetchError && !aQueryIsLoading && (
         <>

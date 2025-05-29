@@ -3,7 +3,6 @@ import { TOtherUser, TUser } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import { useMainContext } from "../../../Hooks/useMainContext";
-import QueryLoadingOrError from "../QueryLoadingOrError/QueryLoadingOrError";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Requests from "../../../requests";
 
@@ -165,10 +164,15 @@ const UserListModal = ({
     if (listType !== "blocked-users" && listType !== "other-user-friends") {
       if (fetchAllVisibleOtherUsersQuery.isError) {
         return fetchAllVisibleOtherUsersQuery;
+      } else if (fetchAllEventsQuery.isError) {
+        return fetchAllEventsQuery;
       }
-      return fetchAllEventsQuery;
+    } else if (listType === "blocked-users" || listType === "other-user-friends") {
+      if (fetchAllVisibleOtherUsersQuery.isError) {
+        return fetchAllVisibleOtherUsersQuery;
+      }
     }
-    return fetchAllVisibleOtherUsersQuery;
+    return undefined;
   };
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
@@ -223,10 +227,21 @@ const UserListModal = ({
           ) : (
             <p>No users to show</p>
           ))}
-        <QueryLoadingOrError
-          query={queryForQueryLoadingOrError}
-          errorMessage="Error fetching users"
-        />
+        {fetchIsLoading && (
+          <header style={{ marginTop: "3rem" }} className="query-status-text">
+            Loading...
+          </header>
+        )}
+        {queryForQueryLoadingOrError && queryForQueryLoadingOrError.error && (
+          <div className="query-error-container">
+            <header className="query-status-text">
+             Error fetching data.
+            </header>
+            <div className="theme-element-container">
+              <button onClick={() => window.location.reload()}>Retry</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

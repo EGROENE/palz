@@ -4,7 +4,6 @@ import SignupForm from "../../Forms/LoginForms/SignupForm/SignupForm";
 import LoginForm from "../../Forms/LoginForms/LoginForm/LoginForm";
 import { useEffect, useState } from "react";
 import { TThemeColor } from "../../../types";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = ({ type }: { type: "login" | "signup" }) => {
@@ -61,10 +60,19 @@ const LoginPage = ({ type }: { type: "login" | "signup" }) => {
           </button>
         </div>
       </div>
-      <QueryLoadingOrError
-        query={fetchAllVisibleOtherUsersQuery}
-        errorMessage="Error loading data"
-      />
+      {fetchAllVisibleOtherUsersQuery.isLoading && (
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
+          Loading...
+        </header>
+      )}
+      {fetchAllVisibleOtherUsersQuery.isError && (
+        <div className="query-error-container">
+          <header className="query-status-text">Error fetching data.</header>
+          <div className="theme-element-container">
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        </div>
+      )}
       <div className="login-form">
         <div className="login-options-container">
           <div>

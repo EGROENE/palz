@@ -7,7 +7,6 @@ import { TEvent, TThemeColor } from "../../../types";
 import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSection";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 
 const UsersEvents = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
@@ -130,18 +129,29 @@ const UsersEvents = () => {
   const getQueryForQueryLoadingOrErrorComponent = () => {
     if (fetchAllVisibleOtherUsersQuery.isError) {
       return fetchAllVisibleOtherUsersQuery;
+    } else if (fetchAllEventsQuery.isError) {
+      return fetchAllEventsQuery;
     }
-    return fetchAllEventsQuery;
+    return undefined;
   };
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
   return (
     <>
       <h1>Your Events</h1>
-      <QueryLoadingOrError
-        query={queryForQueryLoadingOrError}
-        errorMessage="Couldn't fetch data"
-      />
+      {fetchIsLoading && (
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
+          Loading...
+        </header>
+      )}
+      {queryForQueryLoadingOrError && (
+        <div className="query-error-container">
+          <header className="query-status-text">Error fetching data.</header>
+          <div className="theme-element-container">
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        </div>
+      )}
       {isNoFetchError &&
         !fetchIsLoading &&
         userEventsExist &&

@@ -6,7 +6,6 @@ import ListedUser from "../../Elements/ListedUser/ListedUser";
 import styles from "./styles.module.css";
 import toast from "react-hot-toast";
 import Methods from "../../../methods";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 
 const FriendRequests = () => {
   const {
@@ -166,10 +165,19 @@ const FriendRequests = () => {
   return (
     <>
       <h1>Friend Requests</h1>
-      <QueryLoadingOrError
-        query={fetchAllVisibleOtherUsersQuery}
-        errorMessage="Error loading friend requests"
-      />
+      {fetchAllVisibleOtherUsersQuery.isLoading && (
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
+          Loading...
+        </header>
+      )}
+      {fetchAllVisibleOtherUsersQuery.isError && (
+        <div className="query-error-container">
+          <header className="query-status-text">Error fetching data. </header>
+          <div className="theme-element-container">
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        </div>
+      )}
       {!fetchAllVisibleOtherUsersQuery.isLoading &&
         !fetchAllVisibleOtherUsersQuery.isError &&
         (userHasPendingRequests === null ||

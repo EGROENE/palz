@@ -7,7 +7,6 @@ import EventForm from "../../Forms/EventForm/EventForm";
 import { TThemeColor } from "../../../types";
 import toast from "react-hot-toast";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 
 const AddEventPage = () => {
   const navigation = useNavigate();
@@ -62,8 +61,10 @@ const AddEventPage = () => {
       return fetchPotentialCoOrganizersQuery;
     } else if (fetchPotentialInviteesQuery.isError) {
       return fetchPotentialInviteesQuery;
+    } else if (fetchAllEventsQuery.isError) {
+      return fetchAllEventsQuery;
     }
-    return fetchAllEventsQuery;
+    return undefined;
   };
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
@@ -82,10 +83,14 @@ const AddEventPage = () => {
           Loading...
         </header>
       )}
-      <QueryLoadingOrError
-        query={queryForQueryLoadingOrError}
-        errorMessage="Error fetching data."
-      />
+      {queryForQueryLoadingOrError && (
+        <div className="query-error-container">
+          <header className="query-status-text">Error fetching data.</header>
+          <div className="theme-element-container">
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        </div>
+      )}
       {!aQueryIsLoading && isNoFetchError && (
         <EventForm randomColor={randomColor} usedFor="add-event" />
       )}

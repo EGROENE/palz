@@ -7,7 +7,6 @@ import EventForm from "../../Forms/EventForm/EventForm";
 import toast from "react-hot-toast";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
 const EditEventPage = ({ event }: { event?: TEvent }) => {
@@ -89,8 +88,10 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
       return fetchPotentialCoOrganizersQuery;
     } else if (fetchPotentialInviteesQuery.isError) {
       return fetchPotentialInviteesQuery;
+    } else if (fetchAllEventsQuery.isError) {
+      return fetchAllEventsQuery;
     }
-    return fetchAllEventsQuery;
+    return undefined;
   };
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
@@ -115,10 +116,14 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
           Loading...
         </header>
       )}
-      <QueryLoadingOrError
-        query={queryForQueryLoadingOrError}
-        errorMessage="Error fetching event"
-      />
+      {queryForQueryLoadingOrError && (
+        <div className="query-error-container">
+          <header className="query-status-text">Error fetching data.</header>
+          <div className="theme-element-container">
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        </div>
+      )}
       {isNoFetchError && !aQueryIsLoading && (
         <EventForm randomColor={randomColor} usedFor="edit-event" event={event} />
       )}

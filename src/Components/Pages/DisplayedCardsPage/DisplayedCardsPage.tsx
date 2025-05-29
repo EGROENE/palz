@@ -10,7 +10,6 @@ import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 import Requests from "../../../requests";
 
 const DisplayedCardsPage = ({
@@ -791,10 +790,15 @@ const DisplayedCardsPage = ({
     if (usedFor !== "potential-friends" && usedFor !== "my-friends") {
       if (fetchAllVisibleOtherUsersQuery.isError) {
         return fetchAllVisibleOtherUsersQuery;
+      } else if (fetchAllEventsQuery.isError) {
+        return fetchAllEventsQuery;
       }
-      return fetchAllEventsQuery;
+    } else if (usedFor === "potential-friends" || usedFor === "my-friends") {
+      if (fetchAllVisibleOtherUsersQuery.isError) {
+        return fetchAllVisibleOtherUsersQuery;
+      }
     }
-    return fetchAllVisibleOtherUsersQuery;
+    return undefined;
   };
   const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
 
@@ -919,12 +923,19 @@ const DisplayedCardsPage = ({
         </>
       )}
       {potentialFriendsFetchError && <p>{potentialFriendsFetchError}</p>}
-      <QueryLoadingOrError
-        query={queryForQueryLoadingOrError}
-        errorMessage={
-          usedFor !== "events" ? "Error fetching users" : "Error fetching events"
-        }
-      />
+      {queryForQueryLoadingOrError && queryForQueryLoadingOrError.error && (
+        <div className="query-error-container">
+          <header className="query-status-text">Error fetching data.</header>
+          <div className="theme-element-container">
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        </div>
+      )}
+      {fetchIsLoading && (
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
+          Loading...
+        </header>
+      )}
     </>
   );
 };

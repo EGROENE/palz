@@ -12,7 +12,6 @@ import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
 import styles from "./styles.module.css";
 import { useQueryClient } from "@tanstack/react-query";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 import { useChatContext } from "../../../Hooks/useChatContext";
 
 const UserSettings = () => {
@@ -370,10 +369,19 @@ const UserSettings = () => {
     <>
       {" "}
       <h1>Settings</h1>
-      <QueryLoadingOrError
-        query={fetchAllVisibleOtherUsersQuery}
-        errorMessage="Error fetching data"
-      />
+      {fetchAllVisibleOtherUsersQuery.isLoading && (
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
+          Loading...
+        </header>
+      )}
+      {fetchAllVisibleOtherUsersQuery.isError && (
+        <div className="query-error-container">
+          <header className="query-status-text">Error fetching data.</header>
+          <div className="theme-element-container">
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        </div>
+      )}
       {!fetchAllVisibleOtherUsersQuery.isError &&
         !fetchAllVisibleOtherUsersQuery.isLoading &&
         isLoading && <LoadingModal message="Saving changes..." />}
