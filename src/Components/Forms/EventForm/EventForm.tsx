@@ -200,7 +200,7 @@ const EventForm = ({
     if (fetchPotentialCoOrganizersQuery.data) {
       setPotentialCoOrganizers(
         fetchPotentialCoOrganizersQuery.data.filter(
-          (user) => user._id && !blockedUsersEvent.includes(user._id)
+          (user) => user._id && !blockedUsersEvent.includes(user._id.toString())
         )
       );
     }
@@ -208,7 +208,7 @@ const EventForm = ({
     if (fetchPotentialInviteesQuery.data) {
       setPotentialInvitees(
         fetchPotentialInviteesQuery.data.filter(
-          (user) => user._id && !blockedUsersEvent.includes(user._id)
+          (user) => user._id && !blockedUsersEvent.includes(user._id.toString())
         )
       );
     }
@@ -218,8 +218,8 @@ const EventForm = ({
         visibleOtherUsers.filter(
           (otherUser) =>
             otherUser._id &&
-            !invitees.includes(otherUser._id) &&
-            !organizers.includes(otherUser._id)
+            !invitees.includes(otherUser._id.toString()) &&
+            !organizers.includes(otherUser._id.toString())
         )
       );
     }
@@ -840,7 +840,11 @@ const EventForm = ({
         const user = visibleOtherUsers.filter((user) => user._id === organizer)[0];
         usersWhoAreOrganizers.push(user);
       }
-      if (currentUser && currentUser._id && organizers.includes(currentUser._id)) {
+      if (
+        currentUser &&
+        currentUser._id &&
+        organizers.includes(currentUser._id.toString())
+      ) {
         usersWhoAreOrganizers.push(currentUser);
       }
     }
@@ -952,7 +956,7 @@ const EventForm = ({
 
   const eventInfos: TEvent = {
     title: eventTitle.trim(),
-    creator: currentUser?._id,
+    creator: currentUser?._id?.toString(),
     organizers: organizers,
     invitees: invitees,
     blockedUsersEvent: blockedUsersEvent,
@@ -1524,7 +1528,7 @@ const EventForm = ({
               .filter((user) => user.username !== currentUser?.username)
               .map((user) => (
                 <Tab
-                  key={user._id}
+                  key={user._id?.toString()}
                   info={user}
                   removeHandler={handleAddRemoveUserAsOrganizer}
                   removeHandlerNeedsEventParam={true}
@@ -1601,7 +1605,7 @@ const EventForm = ({
             usersWhoAreInvitees.length > 0 &&
             usersWhoAreInvitees.map((user) => (
               <Tab
-                key={user._id}
+                key={user._id?.toString()}
                 info={user}
                 removeHandler={handleAddRemoveUserAsInvitee}
                 removeHandlerNeedsEventParam={false}
@@ -1665,7 +1669,7 @@ const EventForm = ({
             usersWhoAreBlocked.length > 0 &&
             usersWhoAreBlocked.map((user) => (
               <Tab
-                key={user._id}
+                key={user._id?.toString()}
                 info={user}
                 removeHandler={handleAddRemoveBlockedUserOnEvent}
                 removeHandlerNeedsEventParam={false}
@@ -1764,7 +1768,7 @@ const EventForm = ({
       {currentEvent &&
         currentUser &&
         currentUser._id &&
-        currentEvent.organizers.includes(currentUser._id) && (
+        currentEvent.organizers.includes(currentUser._id.toString()) && (
           <button
             type="button"
             onClick={() => setShowAreYouSureDeleteEvent(true)}

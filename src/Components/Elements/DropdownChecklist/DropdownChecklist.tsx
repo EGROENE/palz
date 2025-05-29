@@ -140,7 +140,7 @@ const DropdownChecklist = ({
               }
             }
           }}
-          key={user._id}
+          key={user._id?.toString()}
           onClick={
             actionEventParamNeeded
               ? (e) => action(...getActionParams(user), e)
@@ -149,11 +149,11 @@ const DropdownChecklist = ({
           className={styles.otherUserOption}
         >
           <input
-            name={`${usedFor}-${user._id}`}
-            id={`${usedFor}-${user._id}`}
+            name={`${usedFor}-${user._id?.toString()}`}
+            id={`${usedFor}-${user._id?.toString()}`}
             disabled={isLoading}
             onChange={getOnChangeHandler(user)}
-            checked={storageArray.includes(user._id)}
+            checked={storageArray.includes(user._id?.toString())}
             type="checkbox"
           />
           <div title={`${user.firstName} ${user.lastName}`}>

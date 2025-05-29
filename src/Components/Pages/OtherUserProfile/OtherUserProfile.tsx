@@ -16,6 +16,7 @@ import UserListModal from "../../Elements/UserListModal/UserListModal";
 import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSection";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import useLocalStorage from "use-local-storage";
+import mongoose from "mongoose";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
@@ -57,9 +58,10 @@ const OtherUserProfile = () => {
     throw new Error(error);
   }
 
-  const currentOtherUserID: string | undefined = visibleOtherUsers?.filter(
-    (visibleOtherUser) => visibleOtherUser.username === username
-  )[0]._id;
+  const currentOtherUserID: string | mongoose.Types.ObjectId | undefined =
+    visibleOtherUsers?.filter(
+      (visibleOtherUser) => visibleOtherUser.username === username
+    )[0]._id;
 
   const [currentOtherUserSECURE, setCurrentOtherUserSECURE] = useLocalStorage<
     TOtherUser | undefined
@@ -127,7 +129,7 @@ const OtherUserProfile = () => {
 
     if (currentOtherUserID) {
       const currentUserPromise: Promise<TUser | undefined> | undefined =
-        getCurrentOtherUser(currentOtherUserID);
+        getCurrentOtherUser(currentOtherUserID.toString());
       currentUserPromise &&
         currentUserPromise.then((currentOtherUser) => {
           if (currentOtherUser) {
@@ -139,8 +141,8 @@ const OtherUserProfile = () => {
               currentOtherUser._id &&
               (currentOtherUser.whoCanMessage === "anyone" ||
                 (currentOtherUser.whoCanMessage === "friends" &&
-                  currentOtherUser.friends.includes(currentUser._id) &&
-                  currentUser?.friends.includes(currentOtherUser._id)) ||
+                  currentOtherUser.friends.includes(currentUser._id.toString()) &&
+                  currentUser?.friends.includes(currentOtherUser._id.toString())) ||
                 (currentOtherUser.whoCanMessage === "friends of friends" &&
                   currentUserIsFriendOfFriend))
             ) {
@@ -158,7 +160,7 @@ const OtherUserProfile = () => {
                 (currentOtherUser.whoCanSeeLocation === "friends of friends" &&
                   currentUserIsFriendOfFriend) ||
                 (currentOtherUser.whoCanSeeLocation === "friends" &&
-                  currentOtherUser.friends.includes(currentUser._id))) &&
+                  currentOtherUser.friends.includes(currentUser._id.toString()))) &&
               currentOtherUserSECURE &&
               currentOtherUserSECURE.city !== "" &&
               currentOtherUserSECURE &&
@@ -172,7 +174,7 @@ const OtherUserProfile = () => {
             // Determine if currentUser may see friends list:
             const currentUserIsFriend: boolean =
               currentUser && currentUser._id && !aQueryIsLoading
-                ? currentOtherUser.friends.includes(currentUser._id)
+                ? currentOtherUser.friends.includes(currentUser._id.toString())
                 : false;
 
             if (
@@ -193,7 +195,7 @@ const OtherUserProfile = () => {
             const currentUserFriends: TOtherUser[] = visibleOtherUsers
               ? visibleOtherUsers.filter((otherUser) => {
                   if (currentUser && otherUser._id) {
-                    if (currentUser.friends.includes(otherUser._id)) {
+                    if (currentUser.friends.includes(otherUser._id.toString())) {
                       return otherUser;
                     }
                   }
@@ -203,7 +205,7 @@ const OtherUserProfile = () => {
             const currentOtherUserFriends: TOtherUser[] = visibleOtherUsers
               ? visibleOtherUsers.filter((otherUser) => {
                   if (otherUser._id) {
-                    if (currentOtherUser.friends.includes(otherUser._id)) {
+                    if (currentOtherUser.friends.includes(otherUser._id.toString())) {
                       return otherUser;
                     }
                   }
@@ -275,7 +277,9 @@ const OtherUserProfile = () => {
                 setCurrentOtherUserFriendsSECURE(
                   visibleOtherUsers.filter((visibleOtherUser) => {
                     if (visibleOtherUser._id) {
-                      return currentOtherUser.friends.includes(visibleOtherUser._id);
+                      return currentOtherUser.friends.includes(
+                        visibleOtherUser._id.toString()
+                      );
                     }
                   })
                 );
@@ -286,7 +290,7 @@ const OtherUserProfile = () => {
             getCurrentOtherUserFriends().then((currentOtherUserFriends: TUser[]) => {
               if (currentUser && currentUser._id) {
                 for (const friend of currentOtherUserFriends) {
-                  if (friend.friends.includes(currentUser._id)) {
+                  if (friend.friends.includes(currentUser._id.toString())) {
                     setCurrentUserIsFriendOfFriend(true);
                   }
                 }
@@ -328,7 +332,7 @@ const OtherUserProfile = () => {
 
   const currentOtherUserIsBlocked: boolean =
     blockedUsers && currentOtherUserID
-      ? blockedUsers.includes(currentOtherUserID)
+      ? blockedUsers.includes(currentOtherUserID.toString())
       : false;
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -380,7 +384,7 @@ const OtherUserProfile = () => {
     // If logged-in user is blocked by currentOtherUser:
     if (currentOtherUserID) {
       const currentUserPromise: Promise<TUser | undefined> | undefined =
-        getCurrentOtherUser(currentOtherUserID);
+        getCurrentOtherUser(currentOtherUserID.toString());
       currentUserPromise &&
         currentUserPromise.then((currentOtherUser) => {
           if (
@@ -388,7 +392,7 @@ const OtherUserProfile = () => {
             currentOtherUser &&
             currentUser &&
             currentUser._id &&
-            currentOtherUser.blockedUsers.includes(currentUser._id)
+            currentOtherUser.blockedUsers.includes(currentUser._id.toString())
           ) {
             toast("You do not have access to this page", {
               style: {
@@ -404,13 +408,15 @@ const OtherUserProfile = () => {
   }, [currentUser, navigation, userCreatedAccount]);
 
   const usersAreFriends: boolean =
-    currentOtherUserID && friends?.includes(currentOtherUserID) ? true : false;
+    currentOtherUserID && friends?.includes(currentOtherUserID.toString()) ? true : false;
 
   const currentUserHasSentFriendRequest: boolean =
-    currentOtherUserID && friendRequestsSent?.includes(currentOtherUserID) ? true : false;
+    currentOtherUserID && friendRequestsSent?.includes(currentOtherUserID.toString())
+      ? true
+      : false;
 
   const currentUserHasReceivedFriendRequest: boolean =
-    currentOtherUserID && friendRequestsReceived?.includes(currentOtherUserID)
+    currentOtherUserID && friendRequestsReceived?.includes(currentOtherUserID.toString())
       ? true
       : false;
 
@@ -499,8 +505,8 @@ const OtherUserProfile = () => {
             currentUser._id &&
             currentOtherUserID &&
             chat.members.length === 2 &&
-            chat.members.includes(currentUser._id) &&
-            chat.members.includes(currentOtherUserID)
+            chat.members.includes(currentUser._id.toString()) &&
+            chat.members.includes(currentOtherUserID.toString())
         )[0]
       : undefined;
 
@@ -521,17 +527,17 @@ const OtherUserProfile = () => {
       for (const event of allEvents) {
         // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
         if (event.creator === currentUser._id) {
-          if (event.invitees.includes(currentOtherUserID)) {
+          if (event.invitees.includes(currentOtherUserID.toString())) {
             handleRemoveInvitee(event, currentOtherUserSECURE, e);
           }
 
           // Remove blockee's RSVP:
-          if (event.interestedUsers.includes(currentOtherUserID)) {
+          if (event.interestedUsers.includes(currentOtherUserID.toString())) {
             handleDeleteUserRSVP(event, currentOtherUserSECURE, e);
           }
 
           // Remove blockee as organizer:
-          if (event.organizers.includes(currentOtherUserID)) {
+          if (event.organizers.includes(currentOtherUserID.toString())) {
             handleRemoveOrganizer(e, event, currentOtherUserSECURE);
           }
         }
@@ -602,14 +608,14 @@ const OtherUserProfile = () => {
     (event) =>
       currentOtherUserID &&
       event.creator !== currentUser?._id &&
-      event.organizers.includes(currentOtherUserID) &&
+      event.organizers.includes(currentOtherUserID.toString()) &&
       event.eventEndDateTimeInMS < now
   );
 
   const pastEventsUserRSVPd: TEvent[] | undefined = allEvents?.filter(
     (event) =>
       currentOtherUserID &&
-      event.interestedUsers.includes(currentOtherUserID) &&
+      event.interestedUsers.includes(currentOtherUserID.toString()) &&
       event.eventEndDateTimeInMS < now
   );
 
@@ -618,7 +624,7 @@ const OtherUserProfile = () => {
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
       currentOtherUserID &&
-      event.organizers.includes(currentOtherUserID)
+      event.organizers.includes(currentOtherUserID.toString())
   );
 
   const upcomingEventsUserInvitedTo: TEvent[] | undefined = allEvents?.filter(
@@ -626,7 +632,7 @@ const OtherUserProfile = () => {
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
       currentOtherUserID &&
-      event.invitees.includes(currentOtherUserID)
+      event.invitees.includes(currentOtherUserID.toString())
   );
 
   const upcomingEventsUserRSVPdTo: TEvent[] | undefined = allEvents?.filter(
@@ -634,15 +640,15 @@ const OtherUserProfile = () => {
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
       currentOtherUserID &&
-      event.interestedUsers.includes(currentOtherUserID)
+      event.interestedUsers.includes(currentOtherUserID.toString())
   );
 
   const ongoingEvents: TEvent[] | undefined = allEvents?.filter((event) => {
     event.eventStartDateTimeInMS < now &&
       event.eventEndDateTimeInMS > now &&
       currentOtherUserID &&
-      (event.organizers.includes(currentOtherUserID) ||
-        event.interestedUsers.includes(currentOtherUserID));
+      (event.organizers.includes(currentOtherUserID.toString()) ||
+        event.interestedUsers.includes(currentOtherUserID.toString()));
   });
 
   type TDisplayedEvent = {
@@ -686,7 +692,7 @@ const OtherUserProfile = () => {
 
   const getCurrentUserMaySeeEvent = (event: TDisplayedEvent): boolean => {
     if (currentOtherUserID) {
-      Requests.getUserByID(currentOtherUserID)
+      Requests.getUserByID(currentOtherUserID.toString())
         .then((res) => {
           if (res.ok) {
             res.json().then((currentOtherUser: TUser) => {
@@ -695,7 +701,7 @@ const OtherUserProfile = () => {
                   if (
                     currentOtherUser.whoCanSeeEventsInterestedIn === "anyone" ||
                     (currentOtherUser.whoCanSeeEventsInterestedIn === "friends" &&
-                      currentOtherUser.friends.includes(currentUser._id)) ||
+                      currentOtherUser.friends.includes(currentUser._id.toString())) ||
                     (currentOtherUser.whoCanSeeEventsInterestedIn ===
                       "friends of friends" &&
                       currentUserIsFriendOfFriend)
@@ -708,7 +714,7 @@ const OtherUserProfile = () => {
                   if (
                     currentOtherUser.whoCanSeeEventsOrganized === "anyone" ||
                     (currentOtherUser.whoCanSeeEventsOrganized === "friends" &&
-                      currentOtherUser.friends.includes(currentUser._id)) ||
+                      currentOtherUser.friends.includes(currentUser._id.toString())) ||
                     (currentOtherUser.whoCanSeeEventsOrganized === "friends of friends" &&
                       currentUserIsFriendOfFriend)
                   ) {
@@ -720,7 +726,7 @@ const OtherUserProfile = () => {
                   if (
                     currentOtherUser.whoCanSeeEventsInvitedTo === "anyone" ||
                     (currentOtherUser.whoCanSeeEventsInvitedTo === "friends" &&
-                      currentOtherUser.friends.includes(currentUser._id)) ||
+                      currentOtherUser.friends.includes(currentUser._id.toString())) ||
                     (currentOtherUser.whoCanSeeEventsInvitedTo === "friends of friends" &&
                       currentUserIsFriendOfFriend)
                   ) {
@@ -740,7 +746,7 @@ const OtherUserProfile = () => {
 
   const getSocialMediumIsVisible = (medium: "facebook" | "instagram" | "x"): boolean => {
     if (currentOtherUserID) {
-      Requests.getUserByID(currentOtherUserID)
+      Requests.getUserByID(currentOtherUserID.toString())
         .then((res) => {
           if (res.ok) {
             res.json().then((currentOtherUser: TUser) => {
@@ -749,7 +755,7 @@ const OtherUserProfile = () => {
                   (medium === "facebook" &&
                     currentOtherUser?.whoCanSeeFacebook === "anyone") ||
                   (currentOtherUser?.whoCanSeeFacebook === "friends" &&
-                    currentOtherUser.friends.includes(currentUser._id)) ||
+                    currentOtherUser.friends.includes(currentUser._id.toString())) ||
                   (currentOtherUser?.whoCanSeeFacebook === "friends of friends" &&
                     currentUserIsFriendOfFriend)
                 ) {
@@ -759,7 +765,7 @@ const OtherUserProfile = () => {
                   (medium === "instagram" &&
                     currentOtherUser?.whoCanSeeInstagram === "anyone") ||
                   (currentOtherUser?.whoCanSeeInstagram === "friends" &&
-                    currentOtherUser.friends.includes(currentUser._id)) ||
+                    currentOtherUser.friends.includes(currentUser._id.toString())) ||
                   (currentOtherUser?.whoCanSeeInstagram === "friends of friends" &&
                     currentUserIsFriendOfFriend)
                 ) {
@@ -768,7 +774,7 @@ const OtherUserProfile = () => {
                 if (
                   (medium === "x" && currentOtherUser?.whoCanSeeX === "anyone") ||
                   (currentOtherUser?.whoCanSeeX === "friends" &&
-                    currentOtherUser.friends.includes(currentUser._id)) ||
+                    currentOtherUser.friends.includes(currentUser._id.toString())) ||
                   (currentOtherUser?.whoCanSeeX === "friends of friends" &&
                     currentUserIsFriendOfFriend)
                 ) {
@@ -791,7 +797,10 @@ const OtherUserProfile = () => {
     let chatsInCommon = [];
     if (currentUserChats && currentOtherUserID) {
       for (const chat of currentUserChats) {
-        if (chat.members.length > 2 && chat.members.includes(currentOtherUserID)) {
+        if (
+          chat.members.length > 2 &&
+          chat.members.includes(currentOtherUserID.toString())
+        ) {
           chatsInCommon.push(chat);
         }
       }
@@ -1032,7 +1041,7 @@ const OtherUserProfile = () => {
                     renderButtonTwo={false}
                     closeModalMethod={setShowMutualFriends}
                     header="Mutual Friends"
-                    userIDArray={palzInCommon.map((pal) => pal._id)}
+                    userIDArray={palzInCommon.map((pal) => pal._id?.toString())}
                     randomColor={randomColor}
                   />
                 )}
@@ -1043,8 +1052,8 @@ const OtherUserProfile = () => {
                     renderButtonTwo={false}
                     closeModalMethod={setShowFriends}
                     header={`${currentOtherUserSECURE.username} 's palz`}
-                    userIDArray={currentOtherUserFriendsSECURE.map(
-                      (friend) => friend._id
+                    userIDArray={currentOtherUserFriendsSECURE.map((friend) =>
+                      friend._id?.toString()
                     )}
                     buttonOneText="View Profile"
                     randomColor={randomColor}

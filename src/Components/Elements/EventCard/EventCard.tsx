@@ -25,7 +25,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   const userRSVPd: boolean =
     currentUser && currentUser._id
-      ? event.interestedUsers.includes(currentUser._id)
+      ? event.interestedUsers.includes(currentUser._id.toString())
       : false;
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
@@ -44,11 +44,11 @@ const EventCard = ({ event }: { event: TEvent }) => {
   }, []);
 
   const userIsInvitee: boolean = currentUser?._id
-    ? event.invitees.includes(currentUser._id)
+    ? event.invitees.includes(currentUser._id.toString())
     : false;
 
   const userDeclinedInvitation: boolean = currentUser?._id
-    ? event.disinterestedUsers.includes(currentUser._id)
+    ? event.disinterestedUsers.includes(currentUser._id.toString())
     : false;
 
   const refinedOrganizers: string[] = [];
@@ -74,7 +74,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const organizerUsernames = getOrganizersUsernames();
 
   const userIsOrganizer =
-    currentUser && currentUser._id && refinedOrganizers.includes(currentUser._id)
+    currentUser &&
+    currentUser._id &&
+    refinedOrganizers.includes(currentUser._id.toString())
       ? true
       : false;
 

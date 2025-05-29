@@ -57,7 +57,11 @@ const ListedUser = ({
   }, []);
 
   return (
-    <div key={user?._id} className="listedUser" style={{ borderColor: randomColor }}>
+    <div
+      key={user?._id?.toString()}
+      className="listedUser"
+      style={{ borderColor: randomColor }}
+    >
       <img
         style={{ border: `2px solid ${randomColor}` }}
         src={

@@ -138,7 +138,7 @@ const Message = ({
               {sender &&
               sender._id &&
               currentChat &&
-              currentChat.members.includes(sender._id)
+              currentChat.members.includes(sender._id?.toString())
                 ? `${sender.firstName} ${sender.lastName}`
                 : "Deleted User"}
             </p>

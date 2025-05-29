@@ -236,7 +236,7 @@ const EditUserInfoForm = ({
       emailAddress
     ) {
       Requests.getUserByUsernamePhoneNumberOrEmailAddress(
-        currentUser._id,
+        currentUser._id.toString(),
         username,
         emailAddress,
         phoneCountryCode,
@@ -291,7 +291,7 @@ const EditUserInfoForm = ({
                   });
                 } else {
                   if (currentUser && currentUser._id) {
-                    Requests.getUserByID(currentUser._id)
+                    Requests.getUserByID(currentUser._id.toString())
                       .then((res) => {
                         if (res.ok) {
                           res
@@ -947,7 +947,7 @@ const EditUserInfoForm = ({
           });
         } else {
           if (currentUser && currentUser._id) {
-            Requests.getUserByID(currentUser._id)
+            Requests.getUserByID(currentUser._id.toString())
               .then((res) => {
                 if (res.ok) {
                   res
@@ -1017,7 +1017,7 @@ const EditUserInfoForm = ({
           });
         } else {
           if (currentUser && currentUser._id) {
-            Requests.getUserByID(currentUser._id)
+            Requests.getUserByID(currentUser._id.toString())
               .then((res) => {
                 if (res.ok) {
                   res
@@ -1089,7 +1089,7 @@ const EditUserInfoForm = ({
           );
         } else {
           if (currentUser && currentUser._id) {
-            Requests.getUserByID(currentUser._id)
+            Requests.getUserByID(currentUser._id.toString())
               .then((res) => {
                 if (res.ok) {
                   res
@@ -1166,7 +1166,7 @@ const EditUserInfoForm = ({
           });
         } else {
           if (currentUser && currentUser._id) {
-            Requests.getUserByID(currentUser._id)
+            Requests.getUserByID(currentUser._id.toString())
               .then((res) => {
                 if (res.ok) {
                   res
