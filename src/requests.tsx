@@ -169,6 +169,136 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
   });
 };
 
+// Create getPotentialFriends (limit, like in getAllVisibleOtherUsers, then revert that request to its original form, to be used until it's eventually not needed anymore). getPotentialFriends should be all visible users who have no blocking relationship to currentUser.
+const getPotentialFriends = async (
+  currentUser: TUser | null,
+  start: number,
+  limit: number
+) => {
+  return fetch(
+    `http://localhost:4000/palz/find-palz?start=${start}&limit=${limit}&user=${currentUser?.username}`,
+    {
+      method: "GET",
+      redirect: "follow",
+    }
+  ).then((response) => {
+    //let potentialFriends: TOtherUser[] = [];
+    return response.json().then((potentialFriends: TUser[]) => {
+      if (currentUser && currentUser._id) {
+        return potentialFriends.filter((user: TUser) => {
+          const currentUserIsFriend: boolean =
+            currentUser && currentUser._id
+              ? user.friends.includes(currentUser._id.toString())
+              : false;
+
+          const currentUserIsFriendOfFriend: boolean = potentialFriends.some(
+            (user) =>
+              user &&
+              user._id &&
+              currentUser &&
+              currentUser._id &&
+              user.friends.includes(user._id.toString()) &&
+              user.friends.includes(currentUser._id.toString())
+          );
+
+          // if currentUser is friend of friend, and user's profile is visible to friends of friends, return user
+          if (
+            user.profileVisibleTo === "anyone" ||
+            (user.profileVisibleTo === "friends of friends" &&
+              currentUserIsFriendOfFriend) ||
+            (user.profileVisibleTo === "friends" && currentUserIsFriend)
+          ) {
+            // KEEP THESE, AS THEY'RE USED TO RETURN TOtherUser OBJECT
+            const showLocation: boolean =
+              user.whoCanSeeLocation === "anyone" ||
+              (user.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
+              (user.whoCanSeeLocation === "friends of friends" &&
+                currentUserIsFriendOfFriend);
+
+            const showPhoneNumber: boolean =
+              user.whoCanSeePhoneNumber === "anyone" ||
+              (user.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
+              (user.whoCanSeePhoneNumber === "friends of friends" &&
+                currentUserIsFriendOfFriend);
+
+            const showEmailAddress: boolean =
+              user.whoCanSeeEmailAddress === "anyone" ||
+              (user.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
+              (user.whoCanSeeEmailAddress === "friends of friends" &&
+                currentUserIsFriendOfFriend);
+
+            const showInstagram: boolean =
+              user.whoCanSeeInstagram === "anyone" ||
+              (user.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
+              (user.whoCanSeeInstagram === "friends of friends" &&
+                currentUserIsFriendOfFriend);
+
+            const showFacebook: boolean =
+              user.whoCanSeeFacebook === "anyone" ||
+              (user.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
+              (user.whoCanSeeFacebook === "friends of friends" &&
+                currentUserIsFriendOfFriend);
+
+            const showX: boolean =
+              user.whoCanSeeX === "anyone" ||
+              (user.whoCanSeeX === "friends" && currentUserIsFriend) ||
+              (user.whoCanSeeX === "friends of friends" && currentUserIsFriendOfFriend);
+
+            const showFriends: boolean =
+              user.whoCanSeeFriendsList === "anyone" ||
+              (user.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
+              (user.whoCanSeeFriendsList === "friends of friends" &&
+                currentUserIsFriendOfFriend);
+            return {
+              "_id": user._id,
+              "index": user.index,
+              "firstName": user.firstName,
+              "lastName": user.lastName,
+              "username": user.username,
+              "profileImage": user.profileImage,
+              "interests": user.interests,
+              "about": user.about,
+              ...(showLocation && {
+                city: user.city,
+              }),
+              ...(showLocation && {
+                stateProvince: user.stateProvince,
+              }),
+              ...(showLocation && {
+                country: user.country,
+              }),
+              ...(showPhoneNumber && {
+                phoneCountry: user.phoneCountry,
+              }),
+              ...(showPhoneNumber && {
+                phoneCountryCode: user.phoneCountryCode,
+              }),
+              ...(showPhoneNumber && {
+                phoneNumberWithoutCountryCode: user.phoneNumberWithoutCountryCode,
+              }),
+              ...(showEmailAddress && {
+                emailAddress: user.emailAddress,
+              }),
+              ...(showInstagram && {
+                instagram: user.instagram,
+              }),
+              ...(showFacebook && {
+                facebook: user.facebook,
+              }),
+              ...(showX && {
+                x: user.x,
+              }),
+              ...(showFriends && {
+                friends: user.friends,
+              }),
+            };
+          }
+        });
+      }
+    }) as Promise<TOtherUser[]>;
+  });
+};
+
 const getUserByID = (id: string): Promise<Response> => {
   return fetch(`http://localhost:4000/palz/users/${id}`, {
     method: "GET",
@@ -1291,6 +1421,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getPotentialFriends,
   getAllUsers,
   getPotentialCoOrganizers,
   getPotentialInvitees,
