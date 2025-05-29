@@ -912,7 +912,7 @@ const DisplayedCardsPage = ({
                     Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
                 )}
             {(usedFor === "potential-friends" || usedFor === "my-friends") &&
-              Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
+              Methods.removeDuplicatesFromArray(potentialFriends).map(
                 (item) =>
                   Methods.isTUser(item) &&
                   item &&
