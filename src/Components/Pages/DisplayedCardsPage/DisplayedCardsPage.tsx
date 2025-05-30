@@ -118,9 +118,9 @@ const DisplayedCardsPage = ({
   // Find way to set potentialFriendsStart to index of last item in potentialFriends
   useEffect(() => {
     if (usedFor === "potential-friends") {
-      setIsLoading(true);
       // Initialize displayedItems:
       if (searchTerm === "") {
+        setIsLoading(true);
         Requests.getPotentialFriends(
           currentUser,
           potentialFriendsStart,
