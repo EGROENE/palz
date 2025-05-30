@@ -80,36 +80,16 @@ const UserListModal = ({
   const displayedUserCount = userArray.length;
 
   const getButtonOneHandlerParams = (user: TOtherUser) => {
-    if (user._id) {
-      Requests.getUserByID(user._id.toString())
-        .then((res) => {
-          if (res.ok) {
-            res
-              .json()
-              .then((user: TUser) => {
-                if (!buttonOneHandlerParams) {
-                  if (
-                    listType === "blocked-users" &&
-                    buttonOneHandler === handleUnblockUser
-                  ) {
-                    return [currentUser, user, blockedUsers, setBlockedUsers];
-                  }
-                  if (
-                    (listType === "invitees" || listType === "rsvpd-users") &&
-                    buttonOneHandler === startConversation
-                  ) {
-                    return [user];
-                  }
-                }
-              })
-              .catch((error) => console.log(error));
-          } else {
-            getButtonOneHandlerParams(user);
-          }
-        })
-        .catch((error) => console.log(error));
+    if (!buttonOneHandlerParams) {
+      if (listType === "blocked-users" && buttonOneHandler === handleUnblockUser) {
+        return [currentUser, user, blockedUsers, setBlockedUsers];
+      } else if (
+        (listType === "invitees" || listType === "rsvpd-users") &&
+        buttonOneHandler === startConversation
+      ) {
+        return [user];
+      }
     }
-    return undefined;
   };
 
   const getButtonTwoHandlerParams = (user: TOtherUser) => {
