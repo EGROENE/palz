@@ -61,6 +61,14 @@ const DisplayedCardsPage = ({
 
   const potentialFriendsLimit = 9;
 
+  const now = Date.now();
+
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const [searchBoxIsFocused, setSearchBoxIsFocused] = useState<boolean>(false);
+  const searchBoxRef = useRef<HTMLInputElement | null>(null);
+
   // Maybe provide btn in case of fetch error that calls getPotentialFriends again.
   const [potentialFriendsFetchError, setPotentialFriendsFetchError] = useState<
     string | undefined
@@ -72,40 +80,83 @@ const DisplayedCardsPage = ({
 
   const [potentialFriends, setPotentialFriends] = useState<TOtherUser[]>([]);
 
+  const initializePotentialFriendsSearch = (input: string) => {
+    setIsLoading(true);
+    Requests.getPotentialFriends(currentUser, 0, Infinity)
+      .then((batchOfPotentialFriends) => {
+        if (batchOfPotentialFriends) {
+          setPotentialFriends(batchOfPotentialFriends);
+          setDisplayedItems(
+            batchOfPotentialFriends.filter((pf) => {
+              // loop thru all items in pf.interests; if one includes input, return pf
+              if (
+                pf.firstName?.toLowerCase().includes(input.toLowerCase()) ||
+                pf.lastName?.toLowerCase().includes(input.toLowerCase()) ||
+                pf.username?.toLowerCase().includes(input.toLowerCase())
+              ) {
+                return pf;
+              }
+            })
+          );
+        } else {
+          setPotentialFriendsFetchError(
+            "Could not load potential friends. Try reloading the page."
+          );
+        }
+      })
+      .catch((error) => {
+        setPotentialFriendsFetchError(
+          "Could not fetch potential friends. Try reloading the page."
+        );
+        console.log(error);
+      })
+      .finally(() => setIsLoading(false));
+  };
+
   // Put requests for MyPalz & Explore Events in here. Their start/limits should be in dep array. Use conditions to determine which request should run.
   // Find way to set potentialFriendsStart to index of last item in potentialFriends
   useEffect(() => {
     if (usedFor === "potential-friends") {
       setIsLoading(true);
-      Requests.getPotentialFriends(
-        currentUser,
-        potentialFriendsStart,
-        potentialFriendsLimit
-      )
-        .then((batchOfPotentialFriends) => {
-          if (batchOfPotentialFriends) {
-            setPotentialFriends(potentialFriends.concat(batchOfPotentialFriends));
-            // scroll handler needs to be called w/ updated potentialFriends
-            window.addEventListener("scroll", () =>
-              handleLoadMorePotentialFriendsOnScroll(
-                potentialFriends.concat(batchOfPotentialFriends)
-              )
-            );
-          } else {
+      if (searchTerm === "") {
+        Requests.getPotentialFriends(
+          currentUser,
+          potentialFriendsStart,
+          potentialFriendsLimit
+        )
+          .then((batchOfPotentialFriends) => {
+            if (batchOfPotentialFriends) {
+              setDisplayedItems(displayedItems.concat(batchOfPotentialFriends));
+              if (searchTerm === "") {
+                // scroll handler needs to be called w/ updated potentialFriends
+                window.addEventListener("scroll", () =>
+                  handleLoadMorePotentialFriendsOnScroll(
+                    displayedItems.concat(batchOfPotentialFriends)
+                  )
+                );
+              } else {
+                window.removeEventListener("scroll", () =>
+                  handleLoadMorePotentialFriendsOnScroll(
+                    displayedItems.concat(batchOfPotentialFriends)
+                  )
+                );
+              }
+            } else {
+              setPotentialFriendsFetchError(
+                "Could not load potential friends. Try reloading the page."
+              );
+            }
+          })
+          .catch((error) => {
             setPotentialFriendsFetchError(
-              "Could not load potential friends. Try reloading the page."
+              "Could not fetch potential friends. Try reloading the page."
             );
-          }
-        })
-        .catch((error) => {
-          setPotentialFriendsFetchError(
-            "Could not fetch potential friends. Try reloading the page."
-          );
-          console.log(error);
-        })
-        .finally(() => setIsLoading(false));
+            console.log(error);
+          })
+          .finally(() => setIsLoading(false));
+      }
     }
-  }, [potentialFriendsStart, potentialFriendsLimit]);
+  }, [potentialFriendsStart, potentialFriendsLimit, searchTerm]);
 
   const handleLoadMorePotentialFriendsOnScroll = (
     potentialFriends: TOtherUser[],
@@ -124,10 +175,9 @@ const DisplayedCardsPage = ({
     if (bottomReached) {
       if (usedFor === "potential-friends") {
         // Set potentialFriendsStart to index of last element in potentialFriends array (may need to subtract items just added to potentialFriends array to get the right item)
-        console.log(potentialFriends);
         const lastItemInPotentialFriends: TOtherUser =
           potentialFriends[potentialFriends.length - 1];
-        if (lastItemInPotentialFriends.index) {
+        if (lastItemInPotentialFriends.index && searchTerm === "") {
           setPotentialFriendsStart(lastItemInPotentialFriends.index + 1);
         }
       }
@@ -152,7 +202,7 @@ const DisplayedCardsPage = ({
     if (usedFor === "potential-friends") {
       setDisplayedItemsCount(9);
       setDisplayedItemsCountInterval(9);
-      resetDisplayedPotentialFriends();
+      //resetDisplayedPotentialFriends();
     }
 
     if (usedFor === "my-friends") {
@@ -220,14 +270,6 @@ const DisplayedCardsPage = ({
       setFriendsOfFriends(fsOfFs);
     }
   }, [fetchAllVisibleOtherUsersQuery.isLoading, usedFor]);
-
-  const now = Date.now();
-
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
-  const [searchBoxIsFocused, setSearchBoxIsFocused] = useState<boolean>(false);
-  const searchBoxRef = useRef<HTMLInputElement | null>(null);
 
   // Re-render page as changes (for now, RSVPs) are made to events in allEvents, taking into account any existing search term or filter
   /* Before, when RSVPing/de-RSVPing, RSVP button text wasn't updating properly b/c component didn't have access to updated events in allEvents (which were updating properly) until a page refresh, but now, this UI will hot update b/c of functionality in a useEffect that updates displayedEvents that depends on allEvents. UI would not update properly if this functionality were inside a useEffect w/ an empty dependency array. */
@@ -458,8 +500,8 @@ const DisplayedCardsPage = ({
     }),
   };
 
-  const resetDisplayedPotentialFriends = (): void =>
-    setDisplayedItems(displayablePotentialFriends);
+  /* const resetDisplayedPotentialFriends = (): void =>
+    setDisplayedItems(displayablePotentialFriends); */
   //////////////////////////////////////////////////////////////
 
   // FRIENDS VARIABLES
@@ -515,7 +557,7 @@ const DisplayedCardsPage = ({
       resetDisplayedFriends();
     }
     if (usedFor === "potential-friends") {
-      resetDisplayedPotentialFriends();
+      //resetDisplayedPotentialFriends();
     }
   }, [friends, fetchAllVisibleOtherUsersQuery.data, currentUserFriends]);
   ////////////////////////////////////////////////////////////
@@ -609,7 +651,7 @@ const DisplayedCardsPage = ({
         resetDisplayedFriends();
       }
       if (usedFor === "potential-friends") {
-        resetDisplayedPotentialFriends();
+        //resetDisplayedPotentialFriends();
       }
     }
   };
@@ -623,7 +665,7 @@ const DisplayedCardsPage = ({
       resetDisplayedFriends();
     }
     if (usedFor === "potential-friends") {
-      resetDisplayedPotentialFriends();
+      //resetDisplayedPotentialFriends();
     }
   };
 
@@ -635,105 +677,72 @@ const DisplayedCardsPage = ({
     const inputCleaned = input.replace(/\s+/g, " ");
     setSearchTerm(inputCleaned);
 
-    if (inputCleaned.trim() !== "" && displayableEvents) {
-      if (usedFor === "events") {
-        let newDisplayedEvents: TEvent[] = [];
+    if (inputCleaned.trim() !== "") {
+      if (displayableEvents) {
+        if (usedFor === "events") {
+          let newDisplayedEvents: TEvent[] = [];
 
-        for (const event of displayableEvents) {
-          // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
-          let eventOrganizerNames: string[] = [];
-          let eventOrganizerUsernames: string[] = [];
-          for (const id of event.organizers) {
-            const matchingUser: TOtherUser | undefined =
-              visibleOtherUsers &&
-              visibleOtherUsers.filter((user) => user?._id === id)[0];
+          for (const event of displayableEvents) {
+            // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
+            let eventOrganizerNames: string[] = [];
+            let eventOrganizerUsernames: string[] = [];
+            for (const id of event.organizers) {
+              const matchingUser: TOtherUser | undefined =
+                visibleOtherUsers &&
+                visibleOtherUsers.filter((user) => user?._id === id)[0];
 
-            const fullName: string = `${matchingUser?.firstName?.toLowerCase()} ${matchingUser?.lastName?.toLowerCase()}`;
-            eventOrganizerNames.push(fullName);
+              const fullName: string = `${matchingUser?.firstName?.toLowerCase()} ${matchingUser?.lastName?.toLowerCase()}`;
+              eventOrganizerNames.push(fullName);
 
-            if (matchingUser?.username) {
-              eventOrganizerUsernames.push(matchingUser?.username);
+              if (matchingUser?.username) {
+                eventOrganizerUsernames.push(matchingUser?.username);
+              }
             }
-          }
-          let isOrganizerNameMatch: boolean = false;
-          for (const name of eventOrganizerNames) {
-            if (name.includes(inputCleaned.toLowerCase())) {
-              isOrganizerNameMatch = true;
+            let isOrganizerNameMatch: boolean = false;
+            for (const name of eventOrganizerNames) {
+              if (name.includes(inputCleaned.toLowerCase())) {
+                isOrganizerNameMatch = true;
+              }
             }
-          }
 
-          let isUsernameMatch: boolean = false;
-          for (const username of eventOrganizerUsernames) {
-            if (username.includes(inputCleaned.toLowerCase())) {
-              isUsernameMatch = true;
+            let isUsernameMatch: boolean = false;
+            for (const username of eventOrganizerUsernames) {
+              if (username.includes(inputCleaned.toLowerCase())) {
+                isUsernameMatch = true;
+              }
             }
-          }
 
-          if (
-            event.title.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            event.additionalInfo.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            event.address?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            event.city?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            event.country?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            event.description.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            isOrganizerNameMatch ||
-            isUsernameMatch ||
-            event.stateProvince?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-            event.relatedInterests.includes(inputCleaned.toLowerCase())
-          ) {
-            newDisplayedEvents.push(event);
-          }
-        }
-        setDisplayedItems(newDisplayedEvents);
-      }
-
-      if (usedFor === "potential-friends") {
-        let newDisplayedPotentialFriends: TOtherUser[] = [];
-        // search pot. friends by first/last name, city/state/country, username
-        for (const potentialFriend of displayablePotentialFriends) {
-          if (potentialFriend._id) {
             if (
-              potentialFriend.firstName
-                ?.toLowerCase()
-                .includes(inputCleaned.toLowerCase()) ||
-              potentialFriend.lastName
-                ?.toLowerCase()
-                .includes(inputCleaned.toLowerCase()) ||
-              potentialFriend.username
-                ?.toLowerCase()
-                .includes(inputCleaned.toLowerCase()) ||
-              potentialFriend.interests.includes(inputCleaned.toLowerCase())
+              event.title.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+              event.additionalInfo.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+              event.address?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+              event.city?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+              event.country?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+              event.description.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+              isOrganizerNameMatch ||
+              isUsernameMatch ||
+              event.stateProvince?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+              event.relatedInterests.includes(inputCleaned.toLowerCase())
             ) {
-              newDisplayedPotentialFriends.push(potentialFriend);
+              newDisplayedEvents.push(event);
             }
           }
+          setDisplayedItems(newDisplayedEvents);
         }
-        setDisplayedItems(newDisplayedPotentialFriends);
-      }
 
-      if (usedFor === "my-friends") {
-        let newDisplayedFriends: TOtherUser[] = [];
-        // search pot. friends by first/last name, city/state/country, username
-        if (currentUserFriends) {
-          for (const pal of currentUserFriends) {
-            if (
-              pal.firstName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-              pal.lastName?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-              pal.username?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-              pal.interests.includes(inputCleaned.toLowerCase())
-            ) {
-              newDisplayedFriends.push(pal);
-            }
-          }
+        if (usedFor === "potential-friends") {
+          initializePotentialFriendsSearch(inputCleaned.trim());
         }
-        setDisplayedItems(newDisplayedFriends);
       }
     } else {
       if (usedFor === "events") {
         resetDisplayedEvents();
       }
       if (usedFor === "potential-friends") {
-        resetDisplayedPotentialFriends();
+        //resetDisplayedPotentialFriends();
+        setDisplayedItems([]);
+        setPotentialFriends([]);
+        setPotentialFriendsStart(0);
       }
       if (usedFor === "my-friends") {
         resetDisplayedFriends();
@@ -750,7 +759,10 @@ const DisplayedCardsPage = ({
       resetDisplayedFriends();
     }
     if (usedFor === "potential-friends") {
-      resetDisplayedPotentialFriends();
+      //resetDisplayedPotentialFriends();
+      setDisplayedItems([]);
+      setPotentialFriends([]);
+      setPotentialFriendsStart(0);
     }
   };
   //////////////////////////////////////////////
@@ -916,15 +928,22 @@ const DisplayedCardsPage = ({
                   (item) =>
                     Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
                 )}
-            {(usedFor === "potential-friends" || usedFor === "my-friends") &&
+            {usedFor === "my-friends" &&
               Methods.removeDuplicatesFromArray(potentialFriends).map(
                 (item) =>
                   Methods.isTUser(item) &&
                   item &&
                   item._id && <UserCard key={item._id.toString()} userSECURE={item} />
               )}
+            {usedFor === "potential-friends" &&
+              Methods.removeDuplicatesFromArray(displayedItems).map(
+                (item) =>
+                  Methods.isTUser(item) &&
+                  item &&
+                  item._id && <UserCard key={item._id.toString()} userSECURE={item} />
+              )}
           </div>
-          {isLoading && <p>Loading...</p>}
+          {isLoading && <p>Loading1...</p>}
         </>
       )}
       {potentialFriendsFetchError && <p>{potentialFriendsFetchError}</p>}
@@ -938,7 +957,7 @@ const DisplayedCardsPage = ({
       )}
       {fetchIsLoading && (
         <header style={{ marginTop: "3rem" }} className="query-status-text">
-          Loading...
+          Loading3...
         </header>
       )}
     </>
