@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { TEvent, TUser, TChat } from "./types";
+import { TEvent, TUser, TChat, TOtherUser } from "./types";
 
 const isTEvent = (value: any): value is TEvent => {
   if (value.eventStartDateTimeInMS) {
@@ -13,6 +13,10 @@ const isTUser = (value: any): value is TUser => {
     return true;
   }
   return false;
+};
+
+const isTOtherUser = (value: any): value is TOtherUser => {
+  return value.username ? true : false;
 };
 
 const arraysAreIdentical = (array1: any[], array2: any[]): boolean => {
@@ -225,6 +229,7 @@ const getDateMessageSent = (message: TMessage): string => {
 
 const Methods = {
   getDateMessageSent,
+  isTOtherUser,
   sortChatsByMostRecentMessage,
   isTEvent,
   isTUser,
