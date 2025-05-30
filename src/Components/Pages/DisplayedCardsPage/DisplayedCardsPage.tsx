@@ -140,7 +140,11 @@ const DisplayedCardsPage = ({
         )
           .then((batchOfPotentialFriends) => {
             if (batchOfPotentialFriends) {
-              setDisplayedItems(displayedItems.concat(batchOfPotentialFriends));
+              if (potentialFriendsStart === 0) {
+                setDisplayedItems(batchOfPotentialFriends);
+              } else {
+                setDisplayedItems(displayedItems.concat(batchOfPotentialFriends));
+              }
               // If no search input, add handler to scroll, increasing potentialFriendsStart; if not, try removing it:
               if (searchTerm === "") {
                 // scroll handler needs to be called w/ updated potentialFriends
