@@ -82,6 +82,7 @@ const DisplayedCardsPage = ({
 
   const initializePotentialFriendsSearch = (input: string) => {
     setIsLoading(true);
+    setPotentialFriendsStart(0);
     Requests.getPotentialFriends(currentUser, 0, Infinity)
       .then((batchOfPotentialFriends) => {
         if (batchOfPotentialFriends) {
@@ -118,6 +119,7 @@ const DisplayedCardsPage = ({
   useEffect(() => {
     if (usedFor === "potential-friends") {
       setIsLoading(true);
+      // Initialize displayedItems:
       if (searchTerm === "") {
         Requests.getPotentialFriends(
           currentUser,
@@ -127,6 +129,7 @@ const DisplayedCardsPage = ({
           .then((batchOfPotentialFriends) => {
             if (batchOfPotentialFriends) {
               setDisplayedItems(displayedItems.concat(batchOfPotentialFriends));
+              // If no search input, add handler to scroll, increasing potentialFriendsStart; if not, try removing it:
               if (searchTerm === "") {
                 // scroll handler needs to be called w/ updated potentialFriends
                 window.addEventListener("scroll", () =>
@@ -552,7 +555,7 @@ const DisplayedCardsPage = ({
   // Upon change of friends, resetDisplayedFriends or -PotentialFriends, depending on usedFor. Account in resetDisplayedFriends for any existing filters or search terms, or clear all filters & search terms when resetting
   useEffect(() => {
     handleClearActiveFilters();
-    handleClearSearchTerm();
+    //handleClearSearchTerm();
     if (usedFor === "my-friends") {
       resetDisplayedFriends();
     }
