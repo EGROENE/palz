@@ -132,17 +132,21 @@ const DisplayedCardsPage = ({
               // If no search input, add handler to scroll, increasing potentialFriendsStart; if not, try removing it:
               if (searchTerm === "") {
                 // scroll handler needs to be called w/ updated potentialFriends
-                window.addEventListener("scroll", () =>
-                  handleLoadMorePotentialFriendsOnScroll(
-                    displayedItems.concat(batchOfPotentialFriends)
-                  )
-                );
+                window.addEventListener("scroll", () => {
+                  if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
+                    handleLoadMorePotentialFriendsOnScroll(
+                      displayedItems.concat(batchOfPotentialFriends)
+                    );
+                  }
+                });
               } else {
-                window.removeEventListener("scroll", () =>
-                  handleLoadMorePotentialFriendsOnScroll(
-                    displayedItems.concat(batchOfPotentialFriends)
-                  )
-                );
+                window.removeEventListener("scroll", () => {
+                  if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
+                    handleLoadMorePotentialFriendsOnScroll(
+                      displayedItems.concat(batchOfPotentialFriends)
+                    );
+                  }
+                });
               }
             } else {
               setPotentialFriendsFetchError(
