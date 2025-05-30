@@ -78,7 +78,7 @@ const DisplayedCardsPage = ({
     throw new Error(error);
   }
 
-  const [potentialFriends, setPotentialFriends] = useState<TOtherUser[]>([]);
+  const [allPotentialFriends, setAllPotentialFriends] = useState<TOtherUser[]>([]);
 
   const initializePotentialFriendsSearch = (input: string) => {
     setIsLoading(true);
@@ -86,7 +86,7 @@ const DisplayedCardsPage = ({
     Requests.getPotentialFriends(currentUser, 0, Infinity)
       .then((batchOfPotentialFriends) => {
         if (batchOfPotentialFriends) {
-          setPotentialFriends(batchOfPotentialFriends);
+          setAllPotentialFriends(batchOfPotentialFriends);
           setDisplayedItems(
             batchOfPotentialFriends.filter((pf) => {
               // loop thru all items in pf.interests; if one includes input, return pf
@@ -750,11 +750,11 @@ const DisplayedCardsPage = ({
         }
 
         if (usedFor === "potential-friends") {
-          if (potentialFriends.length === 0) {
+          if (allPotentialFriends.length === 0) {
             initializePotentialFriendsSearch(inputCleaned.trim());
           } else {
             setDisplayedItems(
-              potentialFriends.filter((pf) => {
+              allPotentialFriends.filter((pf) => {
                 // loop thru all items in pf.interests; if one includes input, return pf
                 if (
                   pf.firstName?.toLowerCase().includes(input.toLowerCase()) ||
@@ -775,7 +775,7 @@ const DisplayedCardsPage = ({
       if (usedFor === "potential-friends") {
         //resetDisplayedPotentialFriends();
         setDisplayedItems([]);
-        setPotentialFriends([]);
+        setAllPotentialFriends([]);
         setPotentialFriendsStart(0);
       }
       if (usedFor === "my-friends") {
@@ -795,7 +795,7 @@ const DisplayedCardsPage = ({
     if (usedFor === "potential-friends") {
       //resetDisplayedPotentialFriends();
       setDisplayedItems([]);
-      setPotentialFriends([]);
+      setAllPotentialFriends([]);
       setPotentialFriendsStart(0);
     }
   };
