@@ -734,7 +734,22 @@ const DisplayedCardsPage = ({
         }
 
         if (usedFor === "potential-friends") {
-          initializePotentialFriendsSearch(inputCleaned.trim());
+          if (potentialFriends.length === 0) {
+            initializePotentialFriendsSearch(inputCleaned.trim());
+          } else {
+            setDisplayedItems(
+              potentialFriends.filter((pf) => {
+                // loop thru all items in pf.interests; if one includes input, return pf
+                if (
+                  pf.firstName?.toLowerCase().includes(input.toLowerCase()) ||
+                  pf.lastName?.toLowerCase().includes(input.toLowerCase()) ||
+                  pf.username?.toLowerCase().includes(input.toLowerCase())
+                ) {
+                  return pf;
+                }
+              })
+            );
+          }
         }
       }
     } else {
