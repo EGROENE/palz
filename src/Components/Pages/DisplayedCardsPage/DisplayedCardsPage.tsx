@@ -90,10 +90,22 @@ const DisplayedCardsPage = ({
           setDisplayedItems(
             batchOfPotentialFriends.filter((pf) => {
               // loop thru all items in pf.interests; if one includes input, return pf
+              const getAnInterestIncludesSearchTerm = (): boolean => {
+                for (const interest of pf.interests) {
+                  if (interest.includes(input.toLowerCase())) {
+                    return true;
+                  }
+                }
+                return false;
+              };
+              const anInterestIncludesSearchTerm: boolean =
+                getAnInterestIncludesSearchTerm();
+
               if (
                 pf.firstName?.toLowerCase().includes(input.toLowerCase()) ||
                 pf.lastName?.toLowerCase().includes(input.toLowerCase()) ||
-                pf.username?.toLowerCase().includes(input.toLowerCase())
+                pf.username?.toLowerCase().includes(input.toLowerCase()) ||
+                anInterestIncludesSearchTerm
               ) {
                 return pf;
               }
