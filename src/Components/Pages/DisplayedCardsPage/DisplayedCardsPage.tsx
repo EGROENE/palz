@@ -841,6 +841,7 @@ const DisplayedCardsPage = ({
     <>
       <h1>{pageHeading}</h1>
       {!fetchIsLoading &&
+        !isLoading &&
         isNoFetchError &&
         displayedItems.length === 0 &&
         usedFor === "potential-friends" &&
