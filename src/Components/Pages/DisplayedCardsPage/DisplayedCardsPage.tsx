@@ -964,7 +964,7 @@ const DisplayedCardsPage = ({
                     Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
                 )}
             {usedFor === "my-friends" &&
-              Methods.removeDuplicatesFromArray(potentialFriends).map(
+              Methods.removeDuplicatesFromArray(displayedItems).map(
                 (item) =>
                   Methods.isTUser(item) &&
                   item &&
