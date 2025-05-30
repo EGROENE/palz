@@ -179,7 +179,7 @@ const DisplayedCardsPage = ({
           .finally(() => setIsLoading(false));
       }
     }
-  }, [potentialFriendsStart, potentialFriendsLimit, searchTerm]);
+  }, [potentialFriendsStart, potentialFriendsLimit, searchTerm, usedFor]);
 
   const handleLoadMorePotentialFriendsOnScroll = (
     potentialFriends: TOtherUser[],
