@@ -131,7 +131,7 @@ const DisplayedCardsPage = ({
   useEffect(() => {
     if (usedFor === "potential-friends") {
       // Initialize displayedItems:
-      if (searchTerm === "") {
+      if (searchTerm === "" && activeFilters.length === 0) {
         setIsLoading(true);
         Requests.getPotentialFriends(
           currentUser,
@@ -179,7 +179,7 @@ const DisplayedCardsPage = ({
           .finally(() => setIsLoading(false));
       }
     }
-  }, [potentialFriendsStart, potentialFriendsLimit, searchTerm, usedFor]);
+  }, [potentialFriendsStart, potentialFriendsLimit, searchTerm, usedFor, activeFilters]);
 
   const handleLoadMorePotentialFriendsOnScroll = (
     potentialFriends: TOtherUser[],
@@ -674,6 +674,7 @@ const DisplayedCardsPage = ({
         resetDisplayedFriends();
       }
       if (usedFor === "potential-friends") {
+        setPotentialFriendsStart(0);
         //resetDisplayedPotentialFriends();
       }
     }
@@ -688,6 +689,7 @@ const DisplayedCardsPage = ({
       resetDisplayedFriends();
     }
     if (usedFor === "potential-friends") {
+      setPotentialFriendsStart(0);
       //resetDisplayedPotentialFriends();
     }
   };
