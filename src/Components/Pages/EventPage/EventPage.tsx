@@ -54,7 +54,7 @@ const EventPage = () => {
 
   const userRSVPd: boolean =
     currentUser && currentUser._id && currentEvent
-      ? currentEvent.interestedUsers.includes(currentUser._id)
+      ? currentEvent.interestedUsers.includes(currentUser._id.toString())
       : false;
 
   const navigation = useNavigate();
@@ -112,13 +112,16 @@ const EventPage = () => {
       setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile(
         eventOrganizers?.filter((organizer) => {
           if (organizer._id && currentUser && currentUser._id) {
-            const currentUserIsFriend = organizer.friends.includes(currentUser._id);
+            const currentUserIsFriend = organizer.friends.includes(
+              currentUser._id.toString()
+            );
 
             const currentUserIsFriendOfFriend: boolean =
               currentUser && currentUser._id && organizer._id
-                ? getOtherUserFriends(organizer._id).some(
+                ? getOtherUserFriends(organizer._id.toString()).some(
                     (otherUserFriend) =>
-                      currentUser._id && otherUserFriend.friends.includes(currentUser._id)
+                      currentUser._id &&
+                      otherUserFriend.friends.includes(currentUser._id.toString())
                   )
                 : false;
 
@@ -145,8 +148,8 @@ const EventPage = () => {
     currentUser &&
     currentUser._id &&
     currentEvent.publicity === "private" &&
-    (!currentEvent.invitees.includes(currentUser._id) ||
-      !currentEvent.organizers.includes(currentUser._id))
+    (!currentEvent.invitees.includes(currentUser._id.toString()) ||
+      !currentEvent.organizers.includes(currentUser._id.toString()))
       ? true
       : false;
 
@@ -194,7 +197,7 @@ const EventPage = () => {
     getEventOrganizers().then((userArray) => {
       if (currentUser && currentUser._id) {
         for (const organizer of userArray) {
-          if (organizer.blockedUsers.includes(currentUser._id)) {
+          if (organizer.blockedUsers.includes(currentUser._id.toString())) {
             setCurrentUserHasBeenBlockedByAnOrganizer(true);
           }
         }
@@ -220,7 +223,9 @@ const EventPage = () => {
 
   // Explicitly return true or false to avoid TS error
   const userIsOrganizer: boolean =
-    currentUser && currentUser._id && currentEvent?.organizers.includes(currentUser._id)
+    currentUser &&
+    currentUser._id &&
+    currentEvent?.organizers.includes(currentUser._id.toString())
       ? true
       : false;
 
@@ -294,7 +299,7 @@ const EventPage = () => {
               renderButtonTwo={true}
               closeModalMethod={setShowRSVPs}
               header="RSVPs"
-              userIDArray={refinedInterestedUsers.map((user) => user._id)}
+              userIDArray={refinedInterestedUsers.map((user) => user._id?.toString())}
               buttonOneText="Message"
               buttonOneHandler={startConversation}
               buttonOneHandlerNeedsEventParam={false}
@@ -324,7 +329,7 @@ const EventPage = () => {
               <div className="organizer-tabs-container">
                 {currentUser &&
                   currentUser._id &&
-                  eventOrganizersIDs?.includes(currentUser._id) && (
+                  eventOrganizersIDs?.includes(currentUser._id.toString()) && (
                     <Tab
                       info={currentUser}
                       randomColor={randomColor}
@@ -333,7 +338,7 @@ const EventPage = () => {
                   )}
                 {organizersWhoseProfileIsVisible.map((organizer) => (
                   <Link
-                    key={organizer._id}
+                    key={organizer._id?.toString()}
                     to={`/users/${organizer.username}`}
                     onClick={() => setCurrentOtherUser(organizer)}
                   >
@@ -346,7 +351,7 @@ const EventPage = () => {
                 ))}
                 {organizersWhoHaveNotBlockedUserButHaveHiddenProfile.map((organizer) => (
                   <Tab
-                    key={organizer._id}
+                    key={organizer._id?.toString()}
                     info={organizer}
                     randomColor={randomColor}
                     userMayNotDelete={true}
@@ -385,14 +390,14 @@ const EventPage = () => {
                       <span
                         onClick={() =>
                           currentUser?._id &&
-                          currentEvent.organizers.includes(currentUser._id) &&
+                          currentEvent.organizers.includes(currentUser._id.toString()) &&
                           currentEvent.invitees.length > 0
                             ? setShowInvitees(true)
                             : undefined
                         }
                         className={
                           currentUser?._id &&
-                          currentEvent.organizers.includes(currentUser._id) &&
+                          currentEvent.organizers.includes(currentUser._id.toString()) &&
                           currentEvent.invitees.length > 0
                             ? "show-listed-users-or-invitees"
                             : undefined
@@ -405,14 +410,14 @@ const EventPage = () => {
                     <span
                       onClick={() =>
                         currentUser?._id &&
-                        currentEvent.organizers.includes(currentUser._id) &&
+                        currentEvent.organizers.includes(currentUser._id.toString()) &&
                         refinedInterestedUsers.length > 0
                           ? setShowRSVPs(true)
                           : undefined
                       }
                       className={
                         currentUser?._id &&
-                        currentEvent.organizers.includes(currentUser._id) &&
+                        currentEvent.organizers.includes(currentUser._id.toString()) &&
                         refinedInterestedUsers.length > 0
                           ? "show-listed-users-or-invitees"
                           : undefined
