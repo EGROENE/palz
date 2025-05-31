@@ -501,14 +501,25 @@ const DisplayedCardsPage = ({
 
   const potentialFriendFilterOptions = {
     ...(currentUser?.city !== "" && {
-      "in my city": displayablePotentialFriends.filter(
-        (user) => user.city === currentUser?.city
-      ),
+      "in my city": displayablePotentialFriends.filter((user) => {
+        if (
+          user.city === currentUser?.city &&
+          user.stateProvince === currentUser?.stateProvince &&
+          user.country === currentUser?.country
+        ) {
+          return user;
+        }
+      }),
     }),
     ...(currentUser?.stateProvince !== "" && {
-      "in my state": displayablePotentialFriends.filter(
-        (user) => user.stateProvince === currentUser?.stateProvince
-      ),
+      "in my state": displayablePotentialFriends.filter((user) => {
+        if (
+          user.stateProvince === currentUser?.stateProvince &&
+          user.country === currentUser?.country
+        ) {
+          return user;
+        }
+      }),
     }),
     ...(currentUser?.country !== "" && {
       "in my country": displayablePotentialFriends.filter(
@@ -544,15 +555,26 @@ const DisplayedCardsPage = ({
   const friendFilterOptions = {
     ...(currentUser?.city !== "" &&
       currentUserFriends && {
-        "in my city": currentUserFriends.filter(
-          (user) => user.city === currentUser?.city
-        ),
+        "in my city": currentUserFriends.filter((user) => {
+          if (
+            user.city === currentUser?.city &&
+            user.stateProvince === currentUser?.stateProvince &&
+            user.country === currentUser?.country
+          ) {
+            return user;
+          }
+        }),
       }),
     ...(currentUser?.stateProvince !== "" &&
       currentUserFriends && {
-        "in my state": currentUserFriends.filter(
-          (user) => user.stateProvince === currentUser?.stateProvince
-        ),
+        "in my state": currentUserFriends.filter((user) => {
+          if (
+            user.stateProvince === currentUser?.stateProvince &&
+            user.country === currentUser?.country
+          ) {
+            return user;
+          }
+        }),
       }),
     ...(currentUser?.country !== "" &&
       currentUserFriends && {
