@@ -265,6 +265,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     friendRequestsReceived: [],
     friendRequestsSent: [],
     blockedUsers: [],
+    blockedBy: [],
   };
 
   /* 
