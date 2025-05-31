@@ -37,6 +37,7 @@ const DisplayedCardsPage = ({
     logout,
     friends,
     fetchAllVisibleOtherUsersQuery,
+    getOtherUserFriends,
   } = useUserContext();
 
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
@@ -63,7 +64,9 @@ const DisplayedCardsPage = ({
 
   const now = Date.now();
 
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [activeFilters, setActiveFilters] = useState<
+    (TPotentialFriendsFilterArray | string)[]
+  >([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const [searchBoxIsFocused, setSearchBoxIsFocused] = useState<boolean>(false);
@@ -73,6 +76,14 @@ const DisplayedCardsPage = ({
   const [potentialFriendsFetchError, setPotentialFriendsFetchError] = useState<
     string | undefined
   >();
+
+  type TPotentialFriendsFilterArray = (
+    | "in my city"
+    | "in my state"
+    | "in my country"
+    | "friends of friends"
+    | "common interests"
+  )[];
 
   if (error) {
     throw new Error(error);
@@ -107,7 +118,105 @@ const DisplayedCardsPage = ({
                 pf.username?.toLowerCase().includes(input.toLowerCase()) ||
                 anInterestIncludesSearchTerm
               ) {
-                return pf;
+                const currentUserIsFriend: boolean =
+                  currentUser && currentUser._id
+                    ? pf.friends.includes(currentUser._id.toString())
+                    : false;
+
+                const currentUserIsFriendOfFriend: boolean = batchOfPotentialFriends.some(
+                  (pf) =>
+                    pf &&
+                    pf._id &&
+                    currentUser &&
+                    currentUser._id &&
+                    currentUser.friends.includes(pf._id.toString()) &&
+                    pf.friends.includes(currentUser._id.toString())
+                );
+
+                const showLocation: boolean =
+                  pf.whoCanSeeLocation === "anyone" ||
+                  (pf.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
+                  (pf.whoCanSeeLocation === "friends of friends" &&
+                    currentUserIsFriendOfFriend);
+
+                const showPhoneNumber: boolean =
+                  pf.whoCanSeePhoneNumber === "anyone" ||
+                  (pf.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
+                  (pf.whoCanSeePhoneNumber === "friends of friends" &&
+                    currentUserIsFriendOfFriend);
+
+                const showEmailAddress: boolean =
+                  pf.whoCanSeeEmailAddress === "anyone" ||
+                  (pf.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
+                  (pf.whoCanSeeEmailAddress === "friends of friends" &&
+                    currentUserIsFriendOfFriend);
+
+                const showInstagram: boolean =
+                  pf.whoCanSeeInstagram === "anyone" ||
+                  (pf.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
+                  (pf.whoCanSeeInstagram === "friends of friends" &&
+                    currentUserIsFriendOfFriend);
+
+                const showFacebook: boolean =
+                  pf.whoCanSeeFacebook === "anyone" ||
+                  (pf.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
+                  (pf.whoCanSeeFacebook === "friends of friends" &&
+                    currentUserIsFriendOfFriend);
+
+                const showX: boolean =
+                  pf.whoCanSeeX === "anyone" ||
+                  (pf.whoCanSeeX === "friends" && currentUserIsFriend) ||
+                  (pf.whoCanSeeX === "friends of friends" && currentUserIsFriendOfFriend);
+
+                const showFriends: boolean =
+                  pf.whoCanSeeFriendsList === "anyone" ||
+                  (pf.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
+                  (pf.whoCanSeeFriendsList === "friends of friends" &&
+                    currentUserIsFriendOfFriend);
+
+                return {
+                  "_id": pf._id,
+                  "index": pf.index,
+                  "firstName": pf.firstName,
+                  "lastName": pf.lastName,
+                  "username": pf.username,
+                  "profileImage": pf.profileImage,
+                  "interests": pf.interests,
+                  "about": pf.about,
+                  ...(showLocation && {
+                    city: pf.city,
+                  }),
+                  ...(showLocation && {
+                    stateProvince: pf.stateProvince,
+                  }),
+                  ...(showLocation && {
+                    country: pf.country,
+                  }),
+                  ...(showPhoneNumber && {
+                    phoneCountry: pf.phoneCountry,
+                  }),
+                  ...(showPhoneNumber && {
+                    phoneCountryCode: pf.phoneCountryCode,
+                  }),
+                  ...(showPhoneNumber && {
+                    phoneNumberWithoutCountryCode: pf.phoneNumberWithoutCountryCode,
+                  }),
+                  ...(showEmailAddress && {
+                    emailAddress: pf.emailAddress,
+                  }),
+                  ...(showInstagram && {
+                    instagram: pf.instagram,
+                  }),
+                  ...(showFacebook && {
+                    facebook: pf.facebook,
+                  }),
+                  ...(showX && {
+                    x: pf.x,
+                  }),
+                  ...(showFriends && {
+                    friends: pf.friends,
+                  }),
+                };
               }
             })
           );
@@ -126,6 +235,101 @@ const DisplayedCardsPage = ({
       .finally(() => setIsLoading(false));
   };
 
+  const initializePotentialFriendsFilter = (filters: TPotentialFriendsFilterArray) => {
+    setIsLoading(true);
+    setPotentialFriendsStart(0);
+    Requests.getPotentialFriends(currentUser, 0, Infinity)
+      .then((batchOfPotentialFriends) => {
+        if (batchOfPotentialFriends) {
+          setAllPotentialFriends(batchOfPotentialFriends);
+          let matches: TUser[] = [];
+          for (const pf of batchOfPotentialFriends) {
+            if (pf._id) {
+              for (const filter of filters) {
+                const currentUserIsFriend =
+                  currentUser && currentUser._id
+                    ? pf.friends.includes(currentUser._id.toString())
+                    : false;
+
+                const currentUserIsFriendOfFriend: boolean =
+                  currentUser && currentUser._id && pf._id
+                    ? getOtherUserFriends(pf._id.toString()).some(
+                        (otherUserFriend) =>
+                          currentUser._id &&
+                          otherUserFriend.friends.includes(currentUser._id.toString())
+                      )
+                    : false;
+
+                const currentUserMaySeeLocation: boolean =
+                  pf.whoCanSeeLocation === "anyone" ||
+                  (pf.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
+                  (pf.whoCanSeeLocation === "friends of friends" &&
+                    currentUserIsFriendOfFriend);
+
+                if (filter === "in my city") {
+                  if (
+                    currentUserMaySeeLocation &&
+                    pf.city === currentUser?.city &&
+                    pf.stateProvince === currentUser?.stateProvince &&
+                    pf.country === currentUser?.country
+                  ) {
+                    if (!matches.includes(pf)) {
+                      matches.push(pf);
+                    }
+                  }
+                }
+
+                if (filter === "in my state") {
+                  if (
+                    currentUserMaySeeLocation &&
+                    pf.stateProvince === currentUser?.stateProvince &&
+                    pf.country === currentUser?.country
+                  ) {
+                    if (!matches.includes(pf)) {
+                      matches.push(pf);
+                    }
+                  }
+                }
+
+                if (filter === "in my country") {
+                  if (currentUserMaySeeLocation && pf.country === currentUser?.country) {
+                    if (!matches.includes(pf)) {
+                      matches.push(pf);
+                    }
+                  }
+                }
+
+                if (filter === "friends of friends" && currentUserIsFriendOfFriend) {
+                  if (!matches.includes(pf)) {
+                    matches.push(pf);
+                  }
+                }
+
+                if (filter === "common interests") {
+                  if (currentUser && currentUser.interests) {
+                    for (const interest of currentUser?.interests) {
+                      if (pf.interests.includes(interest)) {
+                        if (!matches.includes(pf)) {
+                          matches.push(pf);
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          setDisplayedItems(matches);
+        } else {
+          setPotentialFriendsFetchError(
+            "Could not load potential friends. Try reloading the page."
+          );
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
+  };
+
   // Put requests for MyPalz & Explore Events in here. Their start/limits should be in dep array. Use conditions to determine which request should run.
   // Find way to set potentialFriendsStart to index of last item in potentialFriends
   useEffect(() => {
@@ -141,7 +345,111 @@ const DisplayedCardsPage = ({
           .then((batchOfPotentialFriends) => {
             if (batchOfPotentialFriends) {
               if (potentialFriendsStart === 0) {
-                setDisplayedItems(batchOfPotentialFriends);
+                setDisplayedItems(
+                  batchOfPotentialFriends.map((pf) => {
+                    const currentUserIsFriend: boolean =
+                      currentUser && currentUser._id
+                        ? pf.friends.includes(currentUser._id.toString())
+                        : false;
+
+                    const currentUserIsFriendOfFriend: boolean =
+                      batchOfPotentialFriends.some(
+                        (pf) =>
+                          pf &&
+                          pf._id &&
+                          currentUser &&
+                          currentUser._id &&
+                          currentUser.friends.includes(pf._id.toString()) &&
+                          pf.friends.includes(currentUser._id.toString())
+                      );
+
+                    const showLocation: boolean =
+                      pf.whoCanSeeLocation === "anyone" ||
+                      (pf.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
+                      (pf.whoCanSeeLocation === "friends of friends" &&
+                        currentUserIsFriendOfFriend);
+
+                    const showPhoneNumber: boolean =
+                      pf.whoCanSeePhoneNumber === "anyone" ||
+                      (pf.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
+                      (pf.whoCanSeePhoneNumber === "friends of friends" &&
+                        currentUserIsFriendOfFriend);
+
+                    const showEmailAddress: boolean =
+                      pf.whoCanSeeEmailAddress === "anyone" ||
+                      (pf.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
+                      (pf.whoCanSeeEmailAddress === "friends of friends" &&
+                        currentUserIsFriendOfFriend);
+
+                    const showInstagram: boolean =
+                      pf.whoCanSeeInstagram === "anyone" ||
+                      (pf.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
+                      (pf.whoCanSeeInstagram === "friends of friends" &&
+                        currentUserIsFriendOfFriend);
+
+                    const showFacebook: boolean =
+                      pf.whoCanSeeFacebook === "anyone" ||
+                      (pf.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
+                      (pf.whoCanSeeFacebook === "friends of friends" &&
+                        currentUserIsFriendOfFriend);
+
+                    const showX: boolean =
+                      pf.whoCanSeeX === "anyone" ||
+                      (pf.whoCanSeeX === "friends" && currentUserIsFriend) ||
+                      (pf.whoCanSeeX === "friends of friends" &&
+                        currentUserIsFriendOfFriend);
+
+                    const showFriends: boolean =
+                      pf.whoCanSeeFriendsList === "anyone" ||
+                      (pf.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
+                      (pf.whoCanSeeFriendsList === "friends of friends" &&
+                        currentUserIsFriendOfFriend);
+
+                    return {
+                      "_id": pf._id,
+                      "index": pf.index,
+                      "firstName": pf.firstName,
+                      "lastName": pf.lastName,
+                      "username": pf.username,
+                      "profileImage": pf.profileImage,
+                      "interests": pf.interests,
+                      "about": pf.about,
+                      ...(showLocation && {
+                        city: pf.city,
+                      }),
+                      ...(showLocation && {
+                        stateProvince: pf.stateProvince,
+                      }),
+                      ...(showLocation && {
+                        country: pf.country,
+                      }),
+                      ...(showPhoneNumber && {
+                        phoneCountry: pf.phoneCountry,
+                      }),
+                      ...(showPhoneNumber && {
+                        phoneCountryCode: pf.phoneCountryCode,
+                      }),
+                      ...(showPhoneNumber && {
+                        phoneNumberWithoutCountryCode: pf.phoneNumberWithoutCountryCode,
+                      }),
+                      ...(showEmailAddress && {
+                        emailAddress: pf.emailAddress,
+                      }),
+                      ...(showInstagram && {
+                        instagram: pf.instagram,
+                      }),
+                      ...(showFacebook && {
+                        facebook: pf.facebook,
+                      }),
+                      ...(showX && {
+                        x: pf.x,
+                      }),
+                      ...(showFriends && {
+                        friends: pf.friends,
+                      }),
+                    };
+                  })
+                );
               } else {
                 setDisplayedItems(displayedItems.concat(batchOfPotentialFriends));
               }
@@ -625,9 +933,10 @@ const DisplayedCardsPage = ({
   const handleAddDeleteFilter = (option: string): void => {
     setSearchTerm("");
     // If activeFilters includes option, delete it from activeFilters and vice versa:
-    const updatedActiveFiltersArray = activeFilters.includes(option)
-      ? activeFilters.filter((o) => o !== option)
-      : activeFilters.concat(option);
+    const updatedActiveFiltersArray: TPotentialFriendsFilterArray =
+      activeFilters.includes(option)
+        ? activeFilters.filter((o) => o !== option)
+        : activeFilters.concat(option);
     setActiveFilters(updatedActiveFiltersArray);
 
     // If at least one filter, display events that can be described by the filter(s)
@@ -651,21 +960,7 @@ const DisplayedCardsPage = ({
         }
 
         if (usedFor === "potential-friends") {
-          const indexOfArrayInFilterOptions = Object.keys(
-            potentialFriendFilterOptions
-          ).indexOf(filter);
-          const filterOptionPotentialFriends: TOtherUser[] = Object.values(
-            potentialFriendFilterOptions
-          )[indexOfArrayInFilterOptions];
-          for (const filterOptionPotentialFriend of filterOptionPotentialFriends) {
-            if (
-              !newDisplayedItems
-                .map((potFriend) => potFriend._id)
-                .includes(filterOptionPotentialFriend?._id)
-            ) {
-              newDisplayedItems.push(filterOptionPotentialFriend);
-            }
-          }
+          initializePotentialFriendsFilter(updatedActiveFiltersArray);
         }
 
         if (usedFor === "my-friends") {
@@ -697,7 +992,7 @@ const DisplayedCardsPage = ({
       }
       if (usedFor === "potential-friends") {
         setPotentialFriendsStart(0);
-        //resetDisplayedPotentialFriends();
+        setAllPotentialFriends([]);
       }
     }
   };
@@ -712,7 +1007,7 @@ const DisplayedCardsPage = ({
     }
     if (usedFor === "potential-friends") {
       setPotentialFriendsStart(0);
-      //resetDisplayedPotentialFriends();
+      setAllPotentialFriends([]);
     }
   };
 
