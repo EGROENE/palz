@@ -123,14 +123,13 @@ const DisplayedCardsPage = ({
                     ? pf.friends.includes(currentUser._id.toString())
                     : false;
 
-                const currentUserIsFriendOfFriend: boolean = batchOfPotentialFriends.some(
-                  (pf) =>
-                    pf &&
-                    pf._id &&
-                    currentUser &&
-                    currentUser._id &&
-                    currentUser.friends.includes(pf._id.toString()) &&
-                    pf.friends.includes(currentUser._id.toString())
+                const currentUserIsFriendOfFriend: boolean = pf.friends.some(
+                  (pfFriend) => {
+                    if (currentUser && currentUser.friends.includes(pfFriend)) {
+                      return true;
+                    }
+                    return false;
+                  }
                 );
 
                 const showLocation: boolean =
@@ -251,14 +250,14 @@ const DisplayedCardsPage = ({
                     ? pf.friends.includes(currentUser._id.toString())
                     : false;
 
-                const currentUserIsFriendOfFriend: boolean =
-                  currentUser && currentUser._id && pf._id
-                    ? getOtherUserFriends(pf._id.toString()).some(
-                        (otherUserFriend) =>
-                          currentUser._id &&
-                          otherUserFriend.friends.includes(currentUser._id.toString())
-                      )
-                    : false;
+                const currentUserIsFriendOfFriend: boolean = pf.friends.some(
+                  (pfFriend) => {
+                    if (currentUser && currentUser.friends.includes(pfFriend)) {
+                      return true;
+                    }
+                    return false;
+                  }
+                );
 
                 const currentUserMaySeeLocation: boolean =
                   pf.whoCanSeeLocation === "anyone" ||
@@ -352,16 +351,14 @@ const DisplayedCardsPage = ({
                         ? pf.friends.includes(currentUser._id.toString())
                         : false;
 
-                    const currentUserIsFriendOfFriend: boolean =
-                      batchOfPotentialFriends.some(
-                        (pf) =>
-                          pf &&
-                          pf._id &&
-                          currentUser &&
-                          currentUser._id &&
-                          currentUser.friends.includes(pf._id.toString()) &&
-                          pf.friends.includes(currentUser._id.toString())
-                      );
+                    const currentUserIsFriendOfFriend: boolean = pf.friends.some(
+                      (pfFriend) => {
+                        if (currentUser && currentUser.friends.includes(pfFriend)) {
+                          return true;
+                        }
+                        return false;
+                      }
+                    );
 
                     const showLocation: boolean =
                       pf.whoCanSeeLocation === "anyone" ||
