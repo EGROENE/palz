@@ -174,7 +174,7 @@ const getPotentialFriends = async (
   currentUser: TUser | null,
   start: number,
   limit: number
-) => {
+): Promise<TUser[] | undefined> => {
   return fetch(
     `http://localhost:4000/palz/find-palz?start=${start}&limit=${limit}&user=${currentUser?.username}`,
     {
@@ -186,10 +186,10 @@ const getPotentialFriends = async (
     return response.json().then((potentialFriends: TUser[]) => {
       if (currentUser && currentUser._id) {
         return potentialFriends.filter((user: TUser) => {
-          const currentUserIsFriend: boolean =
+          /* const currentUserIsFriend: boolean =
             currentUser && currentUser._id
               ? user.friends.includes(currentUser._id.toString())
-              : false;
+              : false; */
 
           const currentUserIsFriendOfFriend: boolean = potentialFriends.some(
             (user) =>
@@ -205,11 +205,11 @@ const getPotentialFriends = async (
           if (
             user.profileVisibleTo === "anyone" ||
             (user.profileVisibleTo === "friends of friends" &&
-              currentUserIsFriendOfFriend) ||
-            (user.profileVisibleTo === "friends" && currentUserIsFriend)
+              currentUserIsFriendOfFriend)
           ) {
+            return user;
             // KEEP THESE, AS THEY'RE USED TO RETURN TOtherUser OBJECT
-            const showLocation: boolean =
+            /*  const showLocation: boolean =
               user.whoCanSeeLocation === "anyone" ||
               (user.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
               (user.whoCanSeeLocation === "friends of friends" &&
@@ -248,8 +248,9 @@ const getPotentialFriends = async (
               user.whoCanSeeFriendsList === "anyone" ||
               (user.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
               (user.whoCanSeeFriendsList === "friends of friends" &&
-                currentUserIsFriendOfFriend);
-            return {
+                currentUserIsFriendOfFriend); */
+
+            /* return {
               "_id": user._id,
               "index": user.index,
               "firstName": user.firstName,
@@ -291,11 +292,12 @@ const getPotentialFriends = async (
               ...(showFriends && {
                 friends: user.friends,
               }),
-            };
+            }; */
+            return;
           }
         });
       }
-    }) as Promise<TOtherUser[]>;
+    });
   });
 };
 
