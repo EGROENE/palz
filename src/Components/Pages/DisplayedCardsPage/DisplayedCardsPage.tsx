@@ -37,7 +37,6 @@ const DisplayedCardsPage = ({
     logout,
     friends,
     fetchAllVisibleOtherUsersQuery,
-    getOtherUserFriends,
   } = useUserContext();
 
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
