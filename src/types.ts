@@ -43,6 +43,7 @@ export type TUser = {
   friendRequestsReceived: string[];
   friendRequestsSent: string[];
   blockedUsers: string[];
+  blockedBy: string[];
   whoCanMessage: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
   whoCanSeeLocation: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
   displayFriendCount: boolean;
