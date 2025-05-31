@@ -754,6 +754,30 @@ const addToBlockedUsers = (
   });
 };
 
+const addToBlockedBy = (
+  blockee: TUser,
+  blockerID: string | undefined
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  let updatedBlockedByArray = blockerID ? blockee.blockedUsers.concat(blockerID) : "";
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "blockedBy": updatedBlockedByArray,
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:4000/palz/users/${blockee?._id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const removeFromBlockedUsers = (blocker: TUser, blockeeID: string): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -1421,6 +1445,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  addToBlockedBy,
   getPotentialFriends,
   getAllUsers,
   getPotentialCoOrganizers,
