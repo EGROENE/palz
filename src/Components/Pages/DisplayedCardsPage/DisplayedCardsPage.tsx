@@ -59,7 +59,8 @@ const DisplayedCardsPage = ({
 
   const [potentialFriendsStart, setPotentialFriendsStart] = useState<number>(0);
 
-  const potentialFriendsLimit = 9;
+  const potentialFriendsLimit: number | undefined =
+    usedFor === "potential-friends" ? 9 : undefined;
 
   const now = Date.now();
 
@@ -332,52 +333,54 @@ const DisplayedCardsPage = ({
       // Initialize displayedItems:
       if (searchTerm === "" && activeFilters.length === 0) {
         setIsLoading(true);
-        Requests.getPotentialFriends(
-          currentUser,
-          potentialFriendsStart,
-          potentialFriendsLimit
-        )
-          .then((batchOfPotentialFriends) => {
-            if (batchOfPotentialFriends) {
-              if (potentialFriendsStart === 0) {
-                setDisplayedItems(
-                  batchOfPotentialFriends.map((pf) => getTOtherUserFromTUser(pf))
+        if (potentialFriendsLimit) {
+          Requests.getPotentialFriends(
+            currentUser,
+            potentialFriendsStart,
+            potentialFriendsLimit
+          )
+            .then((batchOfPotentialFriends) => {
+              if (batchOfPotentialFriends) {
+                if (potentialFriendsStart === 0) {
+                  setDisplayedItems(
+                    batchOfPotentialFriends.map((pf) => getTOtherUserFromTUser(pf))
+                  );
+                } else {
+                  setDisplayedItems(displayedItems.concat(batchOfPotentialFriends));
+                }
+                // If no search input, add handler to scroll, increasing potentialFriendsStart; if not, try removing it:
+                if (searchTerm === "") {
+                  // scroll handler needs to be called w/ updated potentialFriends
+                  window.addEventListener("scroll", () => {
+                    if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
+                      handleLoadMorePotentialFriendsOnScroll(
+                        displayedItems.concat(batchOfPotentialFriends)
+                      );
+                    }
+                  });
+                } else {
+                  window.removeEventListener("scroll", () => {
+                    if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
+                      handleLoadMorePotentialFriendsOnScroll(
+                        displayedItems.concat(batchOfPotentialFriends)
+                      );
+                    }
+                  });
+                }
+              } else {
+                setPotentialFriendsFetchError(
+                  "Could not load potential friends. Try reloading the page."
                 );
-              } else {
-                setDisplayedItems(displayedItems.concat(batchOfPotentialFriends));
               }
-              // If no search input, add handler to scroll, increasing potentialFriendsStart; if not, try removing it:
-              if (searchTerm === "") {
-                // scroll handler needs to be called w/ updated potentialFriends
-                window.addEventListener("scroll", () => {
-                  if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
-                    handleLoadMorePotentialFriendsOnScroll(
-                      displayedItems.concat(batchOfPotentialFriends)
-                    );
-                  }
-                });
-              } else {
-                window.removeEventListener("scroll", () => {
-                  if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
-                    handleLoadMorePotentialFriendsOnScroll(
-                      displayedItems.concat(batchOfPotentialFriends)
-                    );
-                  }
-                });
-              }
-            } else {
+            })
+            .catch((error) => {
               setPotentialFriendsFetchError(
-                "Could not load potential friends. Try reloading the page."
+                "Could not fetch potential friends. Try reloading the page."
               );
-            }
-          })
-          .catch((error) => {
-            setPotentialFriendsFetchError(
-              "Could not fetch potential friends. Try reloading the page."
-            );
-            console.log(error);
-          })
-          .finally(() => setIsLoading(false));
+              console.log(error);
+            })
+            .finally(() => setIsLoading(false));
+        }
       }
     }
   }, [potentialFriendsStart, potentialFriendsLimit, searchTerm, usedFor, activeFilters]);
