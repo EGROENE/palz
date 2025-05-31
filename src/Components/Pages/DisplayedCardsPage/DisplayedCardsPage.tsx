@@ -91,6 +91,100 @@ const DisplayedCardsPage = ({
 
   const [allPotentialFriends, setAllPotentialFriends] = useState<TOtherUser[]>([]);
 
+  const getTOtherUserFromTUser = (user: TUser): TOtherUser => {
+    const currentUserIsFriend: boolean =
+      currentUser && currentUser._id
+        ? user.friends.includes(currentUser._id.toString())
+        : false;
+
+    const currentUserIsFriendOfFriend: boolean = user.friends.some((pfFriend) => {
+      if (currentUser && currentUser.friends.includes(pfFriend)) {
+        return true;
+      }
+      return false;
+    });
+
+    const showLocation: boolean =
+      user.whoCanSeeLocation === "anyone" ||
+      (user.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
+      (user.whoCanSeeLocation === "friends of friends" && currentUserIsFriendOfFriend);
+
+    const showPhoneNumber: boolean =
+      user.whoCanSeePhoneNumber === "anyone" ||
+      (user.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
+      (user.whoCanSeePhoneNumber === "friends of friends" && currentUserIsFriendOfFriend);
+
+    const showEmailAddress: boolean =
+      user.whoCanSeeEmailAddress === "anyone" ||
+      (user.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
+      (user.whoCanSeeEmailAddress === "friends of friends" &&
+        currentUserIsFriendOfFriend);
+
+    const showInstagram: boolean =
+      user.whoCanSeeInstagram === "anyone" ||
+      (user.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
+      (user.whoCanSeeInstagram === "friends of friends" && currentUserIsFriendOfFriend);
+
+    const showFacebook: boolean =
+      user.whoCanSeeFacebook === "anyone" ||
+      (user.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
+      (user.whoCanSeeFacebook === "friends of friends" && currentUserIsFriendOfFriend);
+
+    const showX: boolean =
+      user.whoCanSeeX === "anyone" ||
+      (user.whoCanSeeX === "friends" && currentUserIsFriend) ||
+      (user.whoCanSeeX === "friends of friends" && currentUserIsFriendOfFriend);
+
+    const showFriends: boolean =
+      user.whoCanSeeFriendsList === "anyone" ||
+      (user.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
+      (user.whoCanSeeFriendsList === "friends of friends" && currentUserIsFriendOfFriend);
+
+    return {
+      "_id": user._id,
+      "index": user.index,
+      "firstName": user.firstName,
+      "lastName": user.lastName,
+      "username": user.username,
+      "profileImage": user.profileImage,
+      "interests": user.interests,
+      "about": user.about,
+      ...(showLocation && {
+        city: user.city,
+      }),
+      ...(showLocation && {
+        stateProvince: user.stateProvince,
+      }),
+      ...(showLocation && {
+        country: user.country,
+      }),
+      ...(showPhoneNumber && {
+        phoneCountry: user.phoneCountry,
+      }),
+      ...(showPhoneNumber && {
+        phoneCountryCode: user.phoneCountryCode,
+      }),
+      ...(showPhoneNumber && {
+        phoneNumberWithoutCountryCode: user.phoneNumberWithoutCountryCode,
+      }),
+      ...(showEmailAddress && {
+        emailAddress: user.emailAddress,
+      }),
+      ...(showInstagram && {
+        instagram: user.instagram,
+      }),
+      ...(showFacebook && {
+        facebook: user.facebook,
+      }),
+      ...(showX && {
+        x: user.x,
+      }),
+      ...(showFriends && {
+        friends: user.friends,
+      }),
+    };
+  };
+
   const initializePotentialFriendsSearch = (input: string) => {
     setIsLoading(true);
     setPotentialFriendsStart(0);
@@ -118,104 +212,7 @@ const DisplayedCardsPage = ({
                 pf.username?.toLowerCase().includes(input.toLowerCase()) ||
                 anInterestIncludesSearchTerm
               ) {
-                const currentUserIsFriend: boolean =
-                  currentUser && currentUser._id
-                    ? pf.friends.includes(currentUser._id.toString())
-                    : false;
-
-                const currentUserIsFriendOfFriend: boolean = pf.friends.some(
-                  (pfFriend) => {
-                    if (currentUser && currentUser.friends.includes(pfFriend)) {
-                      return true;
-                    }
-                    return false;
-                  }
-                );
-
-                const showLocation: boolean =
-                  pf.whoCanSeeLocation === "anyone" ||
-                  (pf.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
-                  (pf.whoCanSeeLocation === "friends of friends" &&
-                    currentUserIsFriendOfFriend);
-
-                const showPhoneNumber: boolean =
-                  pf.whoCanSeePhoneNumber === "anyone" ||
-                  (pf.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
-                  (pf.whoCanSeePhoneNumber === "friends of friends" &&
-                    currentUserIsFriendOfFriend);
-
-                const showEmailAddress: boolean =
-                  pf.whoCanSeeEmailAddress === "anyone" ||
-                  (pf.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
-                  (pf.whoCanSeeEmailAddress === "friends of friends" &&
-                    currentUserIsFriendOfFriend);
-
-                const showInstagram: boolean =
-                  pf.whoCanSeeInstagram === "anyone" ||
-                  (pf.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
-                  (pf.whoCanSeeInstagram === "friends of friends" &&
-                    currentUserIsFriendOfFriend);
-
-                const showFacebook: boolean =
-                  pf.whoCanSeeFacebook === "anyone" ||
-                  (pf.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
-                  (pf.whoCanSeeFacebook === "friends of friends" &&
-                    currentUserIsFriendOfFriend);
-
-                const showX: boolean =
-                  pf.whoCanSeeX === "anyone" ||
-                  (pf.whoCanSeeX === "friends" && currentUserIsFriend) ||
-                  (pf.whoCanSeeX === "friends of friends" && currentUserIsFriendOfFriend);
-
-                const showFriends: boolean =
-                  pf.whoCanSeeFriendsList === "anyone" ||
-                  (pf.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
-                  (pf.whoCanSeeFriendsList === "friends of friends" &&
-                    currentUserIsFriendOfFriend);
-
-                return {
-                  "_id": pf._id,
-                  "index": pf.index,
-                  "firstName": pf.firstName,
-                  "lastName": pf.lastName,
-                  "username": pf.username,
-                  "profileImage": pf.profileImage,
-                  "interests": pf.interests,
-                  "about": pf.about,
-                  ...(showLocation && {
-                    city: pf.city,
-                  }),
-                  ...(showLocation && {
-                    stateProvince: pf.stateProvince,
-                  }),
-                  ...(showLocation && {
-                    country: pf.country,
-                  }),
-                  ...(showPhoneNumber && {
-                    phoneCountry: pf.phoneCountry,
-                  }),
-                  ...(showPhoneNumber && {
-                    phoneCountryCode: pf.phoneCountryCode,
-                  }),
-                  ...(showPhoneNumber && {
-                    phoneNumberWithoutCountryCode: pf.phoneNumberWithoutCountryCode,
-                  }),
-                  ...(showEmailAddress && {
-                    emailAddress: pf.emailAddress,
-                  }),
-                  ...(showInstagram && {
-                    instagram: pf.instagram,
-                  }),
-                  ...(showFacebook && {
-                    facebook: pf.facebook,
-                  }),
-                  ...(showX && {
-                    x: pf.x,
-                  }),
-                  ...(showFriends && {
-                    friends: pf.friends,
-                  }),
-                };
+                return getTOtherUserFromTUser(pf);
               }
             })
           );
@@ -345,107 +342,7 @@ const DisplayedCardsPage = ({
             if (batchOfPotentialFriends) {
               if (potentialFriendsStart === 0) {
                 setDisplayedItems(
-                  batchOfPotentialFriends.map((pf) => {
-                    const currentUserIsFriend: boolean =
-                      currentUser && currentUser._id
-                        ? pf.friends.includes(currentUser._id.toString())
-                        : false;
-
-                    const currentUserIsFriendOfFriend: boolean = pf.friends.some(
-                      (pfFriend) => {
-                        if (currentUser && currentUser.friends.includes(pfFriend)) {
-                          return true;
-                        }
-                        return false;
-                      }
-                    );
-
-                    const showLocation: boolean =
-                      pf.whoCanSeeLocation === "anyone" ||
-                      (pf.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
-                      (pf.whoCanSeeLocation === "friends of friends" &&
-                        currentUserIsFriendOfFriend);
-
-                    const showPhoneNumber: boolean =
-                      pf.whoCanSeePhoneNumber === "anyone" ||
-                      (pf.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
-                      (pf.whoCanSeePhoneNumber === "friends of friends" &&
-                        currentUserIsFriendOfFriend);
-
-                    const showEmailAddress: boolean =
-                      pf.whoCanSeeEmailAddress === "anyone" ||
-                      (pf.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
-                      (pf.whoCanSeeEmailAddress === "friends of friends" &&
-                        currentUserIsFriendOfFriend);
-
-                    const showInstagram: boolean =
-                      pf.whoCanSeeInstagram === "anyone" ||
-                      (pf.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
-                      (pf.whoCanSeeInstagram === "friends of friends" &&
-                        currentUserIsFriendOfFriend);
-
-                    const showFacebook: boolean =
-                      pf.whoCanSeeFacebook === "anyone" ||
-                      (pf.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
-                      (pf.whoCanSeeFacebook === "friends of friends" &&
-                        currentUserIsFriendOfFriend);
-
-                    const showX: boolean =
-                      pf.whoCanSeeX === "anyone" ||
-                      (pf.whoCanSeeX === "friends" && currentUserIsFriend) ||
-                      (pf.whoCanSeeX === "friends of friends" &&
-                        currentUserIsFriendOfFriend);
-
-                    const showFriends: boolean =
-                      pf.whoCanSeeFriendsList === "anyone" ||
-                      (pf.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
-                      (pf.whoCanSeeFriendsList === "friends of friends" &&
-                        currentUserIsFriendOfFriend);
-
-                    return {
-                      "_id": pf._id,
-                      "index": pf.index,
-                      "firstName": pf.firstName,
-                      "lastName": pf.lastName,
-                      "username": pf.username,
-                      "profileImage": pf.profileImage,
-                      "interests": pf.interests,
-                      "about": pf.about,
-                      ...(showLocation && {
-                        city: pf.city,
-                      }),
-                      ...(showLocation && {
-                        stateProvince: pf.stateProvince,
-                      }),
-                      ...(showLocation && {
-                        country: pf.country,
-                      }),
-                      ...(showPhoneNumber && {
-                        phoneCountry: pf.phoneCountry,
-                      }),
-                      ...(showPhoneNumber && {
-                        phoneCountryCode: pf.phoneCountryCode,
-                      }),
-                      ...(showPhoneNumber && {
-                        phoneNumberWithoutCountryCode: pf.phoneNumberWithoutCountryCode,
-                      }),
-                      ...(showEmailAddress && {
-                        emailAddress: pf.emailAddress,
-                      }),
-                      ...(showInstagram && {
-                        instagram: pf.instagram,
-                      }),
-                      ...(showFacebook && {
-                        facebook: pf.facebook,
-                      }),
-                      ...(showX && {
-                        x: pf.x,
-                      }),
-                      ...(showFriends && {
-                        friends: pf.friends,
-                      }),
-                    };
-                  })
+                  batchOfPotentialFriends.map((pf) => getTOtherUserFromTUser(pf))
                 );
               } else {
                 setDisplayedItems(displayedItems.concat(batchOfPotentialFriends));
