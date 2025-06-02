@@ -76,9 +76,7 @@ const DisplayedCardsPage = ({
   const searchBoxRef = useRef<HTMLInputElement | null>(null);
 
   // Maybe provide btn in case of fetch error that calls getPotentialFriends again.
-  const [potentialFriendsFetchError, setPotentialFriendsFetchError] = useState<
-    string | undefined
-  >();
+  const [fetchError, setFetchError] = useState<string | undefined>();
 
   type TPotentialFriendsFilterArray = (
     | "in my city"
@@ -220,15 +218,11 @@ const DisplayedCardsPage = ({
             })
           );
         } else {
-          setPotentialFriendsFetchError(
-            "Could not load potential friends. Try reloading the page."
-          );
+          setFetchError("Could not load potential friends. Try reloading the page.");
         }
       })
       .catch((error) => {
-        setPotentialFriendsFetchError(
-          "Could not fetch potential friends. Try reloading the page."
-        );
+        setFetchError("Could not fetch potential friends. Try reloading the page.");
         console.log(error);
       })
       .finally(() => setIsLoading(false));
@@ -320,9 +314,7 @@ const DisplayedCardsPage = ({
           }
           setDisplayedItems(matches);
         } else {
-          setPotentialFriendsFetchError(
-            "Could not load potential friends. Try reloading the page."
-          );
+          setFetchError("Could not load potential friends. Try reloading the page.");
         }
       })
       .catch((error) => console.log(error))
@@ -371,15 +363,13 @@ const DisplayedCardsPage = ({
                   });
                 }
               } else {
-                setPotentialFriendsFetchError(
+                setFetchError(
                   "Could not load potential friends. Try reloading the page."
                 );
               }
             })
             .catch((error) => {
-              setPotentialFriendsFetchError(
-                "Could not fetch potential friends. Try reloading the page."
-              );
+              setFetchError("Could not fetch potential friends. Try reloading the page.");
               console.log(error);
             })
             .finally(() => setIsLoading(false));
@@ -948,9 +938,7 @@ const DisplayedCardsPage = ({
   // If used for displaying users not related to an event, only fetchAllVisibleOtherUsersQuery will have to succeed for users to be shown
   const isNoFetchError: boolean =
     usedFor === "potential-friends" || usedFor === "my-friends"
-      ? !fetchAllVisibleOtherUsersQuery.isError &&
-        !potentialFriendsFetchError &&
-        potentialFriendsFetchError !== ""
+      ? !fetchAllVisibleOtherUsersQuery.isError && !fetchError && fetchError !== ""
       : !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
 
   const fetchIsLoading: boolean =
@@ -1102,7 +1090,7 @@ const DisplayedCardsPage = ({
           {isLoading && <p>Loading1...</p>}
         </>
       )}
-      {potentialFriendsFetchError && <p>{potentialFriendsFetchError}</p>}
+      {fetchError && <p>{fetchError}</p>}
       {queryWithError && queryWithError.error && (
         <div className="query-error-container">
           <header className="query-status-text">Error fetching data.</header>
