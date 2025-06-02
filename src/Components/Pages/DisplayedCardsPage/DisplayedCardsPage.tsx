@@ -55,7 +55,7 @@ const DisplayedCardsPage = ({
     TOtherUser[] | undefined
   >();
 
-  const [potentialFriendsStart, setPotentialFriendsStart] = useState<number>(0);
+  const [fetchStart, setFetchStart] = useState<number>(0);
 
   const getFetchLimit = (): number => {
     if (usedFor === "potential-friends" || usedFor === "my-friends") {
@@ -190,7 +190,7 @@ const DisplayedCardsPage = ({
 
   const initializePotentialFriendsSearch = (input: string) => {
     setIsLoading(true);
-    setPotentialFriendsStart(0);
+    setFetchStart(0);
     Requests.getPotentialFriends(currentUser, 0, Infinity)
       .then((batchOfPotentialFriends) => {
         if (batchOfPotentialFriends) {
@@ -236,7 +236,7 @@ const DisplayedCardsPage = ({
 
   const initializePotentialFriendsFilter = (filters: TPotentialFriendsFilterArray) => {
     setIsLoading(true);
-    setPotentialFriendsStart(0);
+    setFetchStart(0);
     Requests.getPotentialFriends(currentUser, 0, Infinity)
       .then((batchOfPotentialFriends) => {
         if (batchOfPotentialFriends) {
@@ -330,17 +330,17 @@ const DisplayedCardsPage = ({
   };
 
   // Put requests for MyPalz & Explore Events in here. Their start/limits should be in dep array. Use conditions to determine which request should run.
-  // Find way to set potentialFriendsStart to index of last item in potentialFriends
+  // Find way to set fetchStart to index of last item in potentialFriends
   useEffect(() => {
     if (usedFor === "potential-friends") {
       // Initialize displayedItems:
       if (searchTerm === "" && activeFilters.length === 0) {
         setIsLoading(true);
         if (fetchLimit) {
-          Requests.getPotentialFriends(currentUser, potentialFriendsStart, fetchLimit)
+          Requests.getPotentialFriends(currentUser, fetchStart, fetchLimit)
             .then((batchOfPotentialFriends) => {
               if (batchOfPotentialFriends) {
-                if (potentialFriendsStart === 0) {
+                if (fetchStart === 0) {
                   setDisplayedItems(
                     batchOfPotentialFriends.map((pf) => getTOtherUserFromTUser(pf))
                   );
@@ -351,7 +351,7 @@ const DisplayedCardsPage = ({
                     )
                   );
                 }
-                // If no search input, add handler to scroll, increasing potentialFriendsStart; if not, try removing it:
+                // If no search input, add handler to scroll, increasing fetchStart; if not, try removing it:
                 if (searchTerm === "") {
                   // scroll handler needs to be called w/ updated potentialFriends
                   window.addEventListener("scroll", () => {
@@ -386,7 +386,7 @@ const DisplayedCardsPage = ({
         }
       }
     }
-  }, [potentialFriendsStart, fetchLimit, searchTerm, usedFor, activeFilters]);
+  }, [fetchStart, fetchLimit, searchTerm, usedFor, activeFilters]);
 
   const handleLoadMorePotentialFriendsOnScroll = (
     potentialFriends: TOtherUser[],
@@ -404,11 +404,11 @@ const DisplayedCardsPage = ({
 
     if (bottomReached) {
       if (usedFor === "potential-friends") {
-        // Set potentialFriendsStart to index of last element in potentialFriends array (may need to subtract items just added to potentialFriends array to get the right item)
+        // Set fetchStart to index of last element in potentialFriends array (may need to subtract items just added to potentialFriends array to get the right item)
         const lastItemInPotentialFriends: TOtherUser =
           potentialFriends[potentialFriends.length - 1];
         if (lastItemInPotentialFriends.index && searchTerm === "") {
-          setPotentialFriendsStart(lastItemInPotentialFriends.index + 1);
+          setFetchStart(lastItemInPotentialFriends.index + 1);
         }
       }
     }
@@ -791,7 +791,7 @@ const DisplayedCardsPage = ({
         resetDisplayedFriends();
       }
       if (usedFor === "potential-friends") {
-        setPotentialFriendsStart(0);
+        setFetchStart(0);
         setAllPotentialFriends([]);
       }
     }
@@ -806,7 +806,7 @@ const DisplayedCardsPage = ({
       resetDisplayedFriends();
     }
     if (usedFor === "potential-friends") {
-      setPotentialFriendsStart(0);
+      setFetchStart(0);
       setAllPotentialFriends([]);
     }
   };
@@ -899,7 +899,7 @@ const DisplayedCardsPage = ({
         //resetDisplayedPotentialFriends();
         setDisplayedItems([]);
         setAllPotentialFriends([]);
-        setPotentialFriendsStart(0);
+        setFetchStart(0);
       }
       if (usedFor === "my-friends") {
         resetDisplayedFriends();
@@ -919,7 +919,7 @@ const DisplayedCardsPage = ({
       //resetDisplayedPotentialFriends();
       setDisplayedItems([]);
       setAllPotentialFriends([]);
-      setPotentialFriendsStart(0);
+      setFetchStart(0);
     }
   };
   //////////////////////////////////////////////
