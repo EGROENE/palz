@@ -59,8 +59,13 @@ const DisplayedCardsPage = ({
 
   const [potentialFriendsStart, setPotentialFriendsStart] = useState<number>(0);
 
-  const potentialFriendsLimit: number | undefined =
-    usedFor === "potential-friends" ? 9 : undefined;
+  const getFetchLimit = (): number => {
+    if (usedFor === "potential-friends" || usedFor === "my-friends") {
+      return 9;
+    }
+    return 8;
+  };
+  const fetchLimit: number = getFetchLimit();
 
   const now = Date.now();
 
@@ -333,12 +338,8 @@ const DisplayedCardsPage = ({
       // Initialize displayedItems:
       if (searchTerm === "" && activeFilters.length === 0) {
         setIsLoading(true);
-        if (potentialFriendsLimit) {
-          Requests.getPotentialFriends(
-            currentUser,
-            potentialFriendsStart,
-            potentialFriendsLimit
-          )
+        if (fetchLimit) {
+          Requests.getPotentialFriends(currentUser, potentialFriendsStart, fetchLimit)
             .then((batchOfPotentialFriends) => {
               if (batchOfPotentialFriends) {
                 if (potentialFriendsStart === 0) {
@@ -383,7 +384,7 @@ const DisplayedCardsPage = ({
         }
       }
     }
-  }, [potentialFriendsStart, potentialFriendsLimit, searchTerm, usedFor, activeFilters]);
+  }, [potentialFriendsStart, fetchLimit, searchTerm, usedFor, activeFilters]);
 
   const handleLoadMorePotentialFriendsOnScroll = (
     potentialFriends: TOtherUser[],
