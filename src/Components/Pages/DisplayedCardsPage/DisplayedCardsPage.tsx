@@ -85,11 +85,18 @@ const DisplayedCardsPage = ({
     | "common interests"
   )[];
 
+  type TFriendsFiltersArray =
+    | "in my city"
+    | "in my state"
+    | "in my country"
+    | "common interests";
+
   if (error) {
     throw new Error(error);
   }
 
   const [allPotentialFriends, setAllPotentialFriends] = useState<TOtherUser[]>([]);
+  const [allFriends, setAllFriends] = useState<TOtherUser[]>([]);
 
   const getTOtherUserFromTUser = (user: TUser): TOtherUser => {
     const currentUserIsFriend: boolean =
@@ -320,6 +327,109 @@ const DisplayedCardsPage = ({
       .finally(() => setIsLoading(false));
   };
 
+  const initializeFriendsSearch = (input: string) => {
+    setIsLoading(true);
+    setFetchStart(0);
+    Requests.getFriends(currentUser, 0, Infinity).then((batchOfFriends) => {
+      if (batchOfFriends) {
+        setAllFriends(batchOfFriends);
+        setDisplayedItems(
+          batchOfFriends.filter((f) => {
+            const getAnInterestIncludesSearchTerm = (): boolean => {
+              for (const interest of f.interests) {
+                if (interest.includes(input.toLowerCase())) {
+                  return true;
+                }
+              }
+              return false;
+            };
+            const anInterestIncludesSearchTerm: boolean =
+              getAnInterestIncludesSearchTerm();
+
+            if (
+              f.firstName?.toLowerCase().includes(input.toLowerCase()) ||
+              f.lastName?.toLowerCase().includes(input.toLowerCase()) ||
+              f.username?.toLowerCase().includes(input.toLowerCase()) ||
+              anInterestIncludesSearchTerm
+            ) {
+              return f;
+            }
+          })
+        );
+      }
+    });
+  };
+
+  const initializeFriendsFilter = (filters: TFriendsFiltersArray) => {
+    setIsLoading(true);
+    setFetchStart(0);
+    Requests.getFriends(currentUser, 0, Infinity)
+      .then((batchOfFriends: TUser[]) => {
+        if (batchOfFriends) {
+          setAllFriends(batchOfFriends);
+          let matches: TOtherUser[] = [];
+          for (const f of batchOfFriends) {
+            if (f._id) {
+              for (const filter of filters) {
+                const currentUserMaySeeLocation: boolean =
+                  f.whoCanSeeLocation !== "nobody";
+
+                if (filter === "in my city") {
+                  if (
+                    currentUserMaySeeLocation &&
+                    f.city === currentUser?.city &&
+                    f.stateProvince === currentUser?.stateProvince &&
+                    f.country === currentUser?.country
+                  ) {
+                    if (!matches.includes(getTOtherUserFromTUser(f))) {
+                      matches.push(getTOtherUserFromTUser(f));
+                    }
+                  }
+                }
+
+                if (filter === "in my state") {
+                  if (
+                    currentUserMaySeeLocation &&
+                    f.stateProvince === currentUser?.stateProvince &&
+                    f.country === currentUser?.country
+                  ) {
+                    if (!matches.includes(getTOtherUserFromTUser(f))) {
+                      matches.push(getTOtherUserFromTUser(f));
+                    }
+                  }
+                }
+
+                if (filter === "in my country") {
+                  if (currentUserMaySeeLocation && f.country === currentUser?.country) {
+                    if (!matches.includes(getTOtherUserFromTUser(f))) {
+                      matches.push(getTOtherUserFromTUser(f));
+                    }
+                  }
+                }
+
+                if (filter === "common interests") {
+                  if (currentUser && currentUser.interests) {
+                    for (const interest of currentUser?.interests) {
+                      if (f.interests.includes(interest)) {
+                        if (!matches.includes(getTOtherUserFromTUser(f))) {
+                          matches.push(getTOtherUserFromTUser(f));
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          setDisplayedItems(matches);
+        } else {
+          setFetchError("Could not load friends. Try reloading the page.");
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
+  };
+
   // Put requests for MyPalz & Explore Events in here. Their start/limits should be in dep array. Use conditions to determine which request should run.
   // Find way to set fetchStart to index of last item in potentialFriends
   useEffect(() => {
@@ -375,8 +485,51 @@ const DisplayedCardsPage = ({
         }
       }
     }
+
+    if (usedFor === "my-friends") {
+      if (searchTerm === "" && activeFilters.length === 0) {
+        setIsLoading(true);
+        if (fetchLimit) {
+          Requests.getFriends(currentUser, fetchStart, fetchLimit)
+            .then((batchOfFriends: TOtherUser[]) => {
+              if (batchOfFriends) {
+                if (fetchStart === 0) {
+                  setDisplayedItems(batchOfFriends);
+                } else {
+                  setDisplayedItems(displayedItems.concat(batchOfFriends));
+                }
+
+                if (searchTerm === "") {
+                  // scroll handler needs to be called w/ updated potentialFriends
+                  window.addEventListener("scroll", () => {
+                    if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
+                      handleLoadMorePotentialFriendsOnScroll(
+                        displayedItems.concat(batchOfFriends)
+                      );
+                    }
+                  });
+                } else {
+                  window.removeEventListener("scroll", () => {
+                    if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
+                      handleLoadMorePotentialFriendsOnScroll(
+                        displayedItems.concat(batchOfFriends)
+                      );
+                    }
+                  });
+                }
+              } else {
+                setFetchError("Could not load friends. Try reloading the page.");
+              }
+            })
+            .catch((error) => console.log(error))
+            .finally(() => setIsLoading(false));
+        }
+      }
+    }
   }, [fetchStart, fetchLimit, searchTerm, usedFor, activeFilters]);
 
+  // rename to handleLoadMoreItemsOnScroll
+  // rename potentialFriends param to items
   const handleLoadMorePotentialFriendsOnScroll = (
     potentialFriends: TOtherUser[],
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
@@ -398,6 +551,15 @@ const DisplayedCardsPage = ({
           potentialFriends[potentialFriends.length - 1];
         if (lastItemInPotentialFriends.index && searchTerm === "") {
           setFetchStart(lastItemInPotentialFriends.index + 1);
+        }
+      }
+
+      if (usedFor === "my-friends") {
+        const lastItemInFriends: TOtherUser =
+          potentialFriends[potentialFriends.length - 1];
+
+        if (lastItemInFriends.index && searchTerm === "") {
+          setFetchStart(lastItemInFriends.index + 1);
         }
       }
     }
@@ -698,9 +860,6 @@ const DisplayedCardsPage = ({
     if (usedFor === "my-friends") {
       resetDisplayedFriends();
     }
-    if (usedFor === "potential-friends") {
-      //resetDisplayedPotentialFriends();
-    }
   }, [friends, fetchAllVisibleOtherUsersQuery.data, currentUserFriends]);
   ////////////////////////////////////////////////////////////
 
@@ -722,10 +881,9 @@ const DisplayedCardsPage = ({
   const handleAddDeleteFilter = (option: string): void => {
     setSearchTerm("");
     // If activeFilters includes option, delete it from activeFilters and vice versa:
-    const updatedActiveFiltersArray: TPotentialFriendsFilterArray =
-      activeFilters.includes(option)
-        ? activeFilters.filter((o) => o !== option)
-        : activeFilters.concat(option);
+    const updatedActiveFiltersArray: string[] = activeFilters.includes(option)
+      ? activeFilters.filter((o) => o !== option)
+      : activeFilters.concat(option);
     setActiveFilters(updatedActiveFiltersArray);
 
     // If at least one filter, display events that can be described by the filter(s)
@@ -753,21 +911,7 @@ const DisplayedCardsPage = ({
         }
 
         if (usedFor === "my-friends") {
-          const indexOfArrayInFilterOptions =
-            Object.keys(friendFilterOptions).indexOf(filter);
-
-          const filterOptionFriends: TOtherUser[] =
-            Object.values(friendFilterOptions)[indexOfArrayInFilterOptions];
-
-          for (const filterOptionFriend of filterOptionFriends) {
-            if (
-              !newDisplayedItems
-                .map((friend) => friend._id)
-                .includes(filterOptionFriend?._id)
-            ) {
-              newDisplayedItems.push(filterOptionFriend);
-            }
-          }
+          initializeFriendsFilter(updatedActiveFiltersArray);
         }
       }
       setDisplayedItems(newDisplayedItems);
@@ -777,7 +921,8 @@ const DisplayedCardsPage = ({
         resetDisplayedEvents();
       }
       if (usedFor === "my-friends") {
-        resetDisplayedFriends();
+        setFetchStart(0);
+        setAllFriends([]);
       }
       if (usedFor === "potential-friends") {
         setFetchStart(0);
@@ -792,7 +937,8 @@ const DisplayedCardsPage = ({
       resetDisplayedEvents();
     }
     if (usedFor === "my-friends") {
-      resetDisplayedFriends();
+      setFetchStart(0);
+      setAllFriends([]);
     }
     if (usedFor === "potential-friends") {
       setFetchStart(0);
@@ -879,19 +1025,39 @@ const DisplayedCardsPage = ({
             );
           }
         }
+
+        if (usedFor === "my-friends") {
+          if (allFriends.length === 0) {
+            initializeFriendsSearch(inputCleaned.trim());
+          } else {
+            setDisplayedItems(
+              allFriends.filter((f) => {
+                // loop thru all items in pf.interests; if one includes input, return pf
+                if (
+                  f.firstName?.toLowerCase().includes(input.toLowerCase()) ||
+                  f.lastName?.toLowerCase().includes(input.toLowerCase()) ||
+                  f.username?.toLowerCase().includes(input.toLowerCase())
+                ) {
+                  return f;
+                }
+              })
+            );
+          }
+        }
       }
     } else {
       if (usedFor === "events") {
         resetDisplayedEvents();
       }
       if (usedFor === "potential-friends") {
-        //resetDisplayedPotentialFriends();
         setDisplayedItems([]);
         setAllPotentialFriends([]);
         setFetchStart(0);
       }
       if (usedFor === "my-friends") {
-        resetDisplayedFriends();
+        setDisplayedItems([]);
+        setAllFriends([]);
+        setFetchStart(0);
       }
     }
   };
@@ -902,10 +1068,11 @@ const DisplayedCardsPage = ({
       resetDisplayedEvents();
     }
     if (usedFor === "my-friends") {
-      resetDisplayedFriends();
+      setDisplayedItems([]);
+      setAllFriends([]);
+      setFetchStart(0);
     }
     if (usedFor === "potential-friends") {
-      //resetDisplayedPotentialFriends();
       setDisplayedItems([]);
       setAllPotentialFriends([]);
       setFetchStart(0);
@@ -975,6 +1142,7 @@ const DisplayedCardsPage = ({
         )}
       {!fetchIsLoading &&
         isNoFetchError &&
+        !isLoading &&
         displayedItems.length === 0 &&
         usedFor === "my-friends" &&
         searchTerm === "" &&
