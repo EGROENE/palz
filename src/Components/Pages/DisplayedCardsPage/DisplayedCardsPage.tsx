@@ -51,8 +51,6 @@ const DisplayedCardsPage = ({
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
-  const [friendsOfFriends, setFriendsOfFriends] = useState<TOtherUser[] | undefined>();
-
   const [currentUserFriends, setCurrentUserFriends] = useState<
     TOtherUser[] | undefined
   >();
@@ -431,12 +429,6 @@ const DisplayedCardsPage = ({
   }, []);
 
   useEffect(() => {
-    if (usedFor === "potential-friends") {
-      setDisplayedItemsCount(9);
-      setDisplayedItemsCountInterval(9);
-      //resetDisplayedPotentialFriends();
-    }
-
     if (usedFor === "my-friends") {
       setDisplayedItemsCount(9);
       setDisplayedItemsCountInterval(9);
@@ -474,32 +466,6 @@ const DisplayedCardsPage = ({
           }
         })
       );
-
-      // Set friendsOfFriends: TOtherUser:
-      let fsOfFs: TOtherUser[] = [];
-      for (const currentUserFriendID of currentUser.friends) {
-        Requests.getUserByID(currentUserFriendID)
-          .then((res) => {
-            if (res.ok) {
-              res.json().then((currentUserFriend: TUser) => {
-                for (const visibleOtherUser of visibleOtherUsers) {
-                  if (visibleOtherUser._id) {
-                    // Push visibleOtherUser to fOfFs if their _id is in currentUserFriends.friends:
-                    if (
-                      currentUserFriend.friends.includes(visibleOtherUser._id.toString())
-                    ) {
-                      fsOfFs.push(visibleOtherUser);
-                    }
-                  }
-                }
-              });
-            } else {
-              setError("Could not fetch currentUserFriend");
-            }
-          })
-          .catch((error) => console.log(error));
-      }
-      setFriendsOfFriends(fsOfFs);
     }
   }, [fetchAllVisibleOtherUsersQuery.isLoading, usedFor]);
 
@@ -679,70 +645,6 @@ const DisplayedCardsPage = ({
     }
   };
   //////////////////////////////////////////
-
-  // POTENTIAL-FRIENDS VARIABLES
-  const getDisplayedPotentialFriends = (): TOtherUser[] => {
-    if (visibleOtherUsers && currentUser) {
-      return visibleOtherUsers.filter((visibleOtherUser) => {
-        if (visibleOtherUser._id) {
-          return !currentUser.friends.includes(visibleOtherUser._id.toString());
-        }
-      });
-    }
-    return [];
-  };
-  const displayablePotentialFriends: TOtherUser[] = getDisplayedPotentialFriends();
-
-  const getPotentialFriendsWithCommonInterests = (): TOtherUser[] => {
-    let potentialFriendsWithCommonInterests: TOtherUser[] = [];
-    if (currentUser?.interests && displayablePotentialFriends) {
-      for (const interest of currentUser.interests) {
-        for (const potentialFriend of displayablePotentialFriends) {
-          if (potentialFriend.interests.includes(interest)) {
-            potentialFriendsWithCommonInterests.push(potentialFriend);
-          }
-        }
-      }
-    }
-    return potentialFriendsWithCommonInterests;
-  };
-  const potentialFriendsWithCommonInterests = getPotentialFriendsWithCommonInterests();
-
-  const potentialFriendFilterOptions = {
-    ...(currentUser?.city !== "" && {
-      "in my city": displayablePotentialFriends.filter((user) => {
-        if (
-          user.city === currentUser?.city &&
-          user.stateProvince === currentUser?.stateProvince &&
-          user.country === currentUser?.country
-        ) {
-          return user;
-        }
-      }),
-    }),
-    ...(currentUser?.stateProvince !== "" && {
-      "in my state": displayablePotentialFriends.filter((user) => {
-        if (
-          user.stateProvince === currentUser?.stateProvince &&
-          user.country === currentUser?.country
-        ) {
-          return user;
-        }
-      }),
-    }),
-    ...(currentUser?.country !== "" && {
-      "in my country": displayablePotentialFriends.filter(
-        (user) => user.country === currentUser?.country
-      ),
-    }),
-    ...(currentUser?.friends.length && {
-      "friends of friends": friendsOfFriends,
-    }),
-    ...(currentUser?.interests.length && {
-      "common interests": potentialFriendsWithCommonInterests,
-    }),
-  };
-  //////////////////////////////////////////////////////////////
 
   // FRIENDS VARIABLES
   const friendsWithCommonInterests: TOtherUser[] = [];
@@ -1035,8 +937,6 @@ const DisplayedCardsPage = ({
   const getFilterOptions = (): string[] => {
     if (usedFor === "events") {
       return Object.keys(eventFilterOptions);
-    } else if (usedFor === "potential-friends") {
-      return Object.keys(potentialFriendFilterOptions);
     }
     return Object.keys(friendFilterOptions);
   };
