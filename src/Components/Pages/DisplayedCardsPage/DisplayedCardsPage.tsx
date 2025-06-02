@@ -30,13 +30,8 @@ const DisplayedCardsPage = ({
     isLoading,
     setIsLoading,
   } = useMainContext();
-  const {
-    currentUser,
-    userCreatedAccount,
-    logout,
-    friends,
-    fetchAllVisibleOtherUsersQuery,
-  } = useUserContext();
+  const { currentUser, userCreatedAccount, logout, fetchAllVisibleOtherUsersQuery } =
+    useUserContext();
 
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
@@ -49,10 +44,6 @@ const DisplayedCardsPage = ({
   const toggleShowFilterOptions = (): void => setShowFilterOptions(!showFilterOptions);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-
-  const [currentUserFriends, setCurrentUserFriends] = useState<
-    TOtherUser[] | undefined
-  >();
 
   const [fetchStart, setFetchStart] = useState<number>(0);
 
@@ -572,12 +563,6 @@ const DisplayedCardsPage = ({
   }, []);
 
   useEffect(() => {
-    if (usedFor === "my-friends") {
-      setDisplayedItemsCount(9);
-      setDisplayedItemsCountInterval(9);
-      resetDisplayedFriends();
-    }
-
     if (usedFor === "events") {
       setDisplayedItemsCount(8);
       setDisplayedItemsCountInterval(8);
@@ -598,17 +583,6 @@ const DisplayedCardsPage = ({
 
     if (showFilterOptions) {
       setShowFilterOptions(false);
-    }
-
-    if (currentUser && visibleOtherUsers) {
-      // Set currentUserFriends: TOtherUser:
-      setCurrentUserFriends(
-        visibleOtherUsers.filter((visibleOtherUser) => {
-          if (visibleOtherUser._id) {
-            return currentUser.friends.includes(visibleOtherUser._id.toString());
-          }
-        })
-      );
     }
   }, [fetchAllVisibleOtherUsersQuery.isLoading, usedFor]);
 
@@ -788,72 +762,6 @@ const DisplayedCardsPage = ({
     }
   };
   //////////////////////////////////////////
-
-  // FRIENDS VARIABLES
-  const friendsWithCommonInterests: TOtherUser[] = [];
-  if (currentUserFriends) {
-    for (const pal of currentUserFriends) {
-      if (currentUser?.interests) {
-        for (const interest of currentUser.interests) {
-          if (pal && pal.interests.includes(interest)) {
-            friendsWithCommonInterests.push(pal);
-          }
-        }
-      }
-    }
-  }
-
-  const friendFilterOptions = {
-    ...(currentUser?.city !== "" &&
-      currentUserFriends && {
-        "in my city": currentUserFriends.filter((user) => {
-          if (
-            user.city === currentUser?.city &&
-            user.stateProvince === currentUser?.stateProvince &&
-            user.country === currentUser?.country
-          ) {
-            return user;
-          }
-        }),
-      }),
-    ...(currentUser?.stateProvince !== "" &&
-      currentUserFriends && {
-        "in my state": currentUserFriends.filter((user) => {
-          if (
-            user.stateProvince === currentUser?.stateProvince &&
-            user.country === currentUser?.country
-          ) {
-            return user;
-          }
-        }),
-      }),
-    ...(currentUser?.country !== "" &&
-      currentUserFriends && {
-        "in my country": currentUserFriends.filter(
-          (user) => user.country === currentUser?.country
-        ),
-      }),
-    ...(currentUser?.interests.length &&
-      currentUserFriends && {
-        "common interests": friendsWithCommonInterests,
-      }),
-  };
-
-  const resetDisplayedFriends = (): void => {
-    if (currentUserFriends) {
-      setDisplayedItems(currentUserFriends);
-    }
-  };
-
-  // Upon change of friends, resetDisplayedFriends or -PotentialFriends, depending on usedFor. Account in resetDisplayedFriends for any existing filters or search terms, or clear all filters & search terms when resetting
-  useEffect(() => {
-    handleClearActiveFilters();
-    //handleClearSearchTerm();
-    if (usedFor === "my-friends") {
-      resetDisplayedFriends();
-    }
-  }, [friends, fetchAllVisibleOtherUsersQuery.data, currentUserFriends]);
-  ////////////////////////////////////////////////////////////
 
   const navigation = useNavigate();
   useEffect(() => {
@@ -1083,10 +991,7 @@ const DisplayedCardsPage = ({
   const pageHeading: string = getPageHeading();
 
   const getFilterOptions = (): string[] => {
-    if (usedFor === "events") {
-      return Object.keys(eventFilterOptions);
-    }
-    return Object.keys(friendFilterOptions);
+    return Object.keys(eventFilterOptions);
   };
   const filterOptions = !fetchAllVisibleOtherUsersQuery.isLoading
     ? getFilterOptions()
