@@ -272,7 +272,7 @@ const DisplayedCardsPage = ({
                     pf.stateProvince === currentUser?.stateProvince &&
                     pf.country === currentUser?.country
                   ) {
-                    if (!matches.includes(pf)) {
+                    if (!matches.includes(getTOtherUserFromTUser(pf))) {
                       matches.push(getTOtherUserFromTUser(pf));
                     }
                   }
@@ -284,7 +284,7 @@ const DisplayedCardsPage = ({
                     pf.stateProvince === currentUser?.stateProvince &&
                     pf.country === currentUser?.country
                   ) {
-                    if (!matches.includes(pf)) {
+                    if (!matches.includes(getTOtherUserFromTUser(pf))) {
                       matches.push(getTOtherUserFromTUser(pf));
                     }
                   }
@@ -292,14 +292,14 @@ const DisplayedCardsPage = ({
 
                 if (filter === "in my country") {
                   if (currentUserMaySeeLocation && pf.country === currentUser?.country) {
-                    if (!matches.includes(pf)) {
+                    if (!matches.includes(getTOtherUserFromTUser(pf))) {
                       matches.push(getTOtherUserFromTUser(pf));
                     }
                   }
                 }
 
                 if (filter === "friends of friends" && currentUserIsFriendOfFriend) {
-                  if (!matches.includes(pf)) {
+                  if (!matches.includes(getTOtherUserFromTUser(pf))) {
                     matches.push(getTOtherUserFromTUser(pf));
                   }
                 }
@@ -308,7 +308,7 @@ const DisplayedCardsPage = ({
                   if (currentUser && currentUser.interests) {
                     for (const interest of currentUser?.interests) {
                       if (pf.interests.includes(interest)) {
-                        if (!matches.includes(pf)) {
+                        if (!matches.includes(getTOtherUserFromTUser(pf))) {
                           matches.push(getTOtherUserFromTUser(pf));
                         }
                       }
