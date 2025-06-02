@@ -1151,7 +1151,7 @@ const DisplayedCardsPage = ({
                   item._id && <UserCard key={item._id.toString()} userSECURE={item} />
               )}
           </div>
-          {isLoading && <p>Loading1...</p>}
+          {isLoading && <p>Loading...</p>}
         </>
       )}
       {fetchError && <p>{fetchError}</p>}
@@ -1165,7 +1165,7 @@ const DisplayedCardsPage = ({
       )}
       {fetchIsLoading && (
         <header style={{ marginTop: "3rem" }} className="query-status-text">
-          Loading3...
+          Loading...
         </header>
       )}
     </>
