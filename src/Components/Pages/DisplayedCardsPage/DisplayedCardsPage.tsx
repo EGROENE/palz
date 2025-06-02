@@ -430,6 +430,39 @@ const DisplayedCardsPage = ({
       .finally(() => setIsLoading(false));
   };
 
+  const handleLoadMoreItemsOnScroll = (
+    items: TOtherUser[],
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
+  ): void => {
+    const eHTMLElement = e?.target as HTMLElement;
+    const scrollTop = e ? eHTMLElement.scrollTop : null;
+    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
+    const clientHeight = e ? eHTMLElement.clientHeight : null;
+
+    const bottomReached =
+      e && scrollTop && clientHeight
+        ? scrollTop + clientHeight === scrollHeight
+        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
+
+    if (bottomReached) {
+      if (usedFor === "potential-friends") {
+        // Set fetchStart to index of last element in potentialFriends array (may need to subtract items just added to potentialFriends array to get the right item)
+        const lastItemInPotentialFriends: TOtherUser = items[items.length - 1];
+        if (lastItemInPotentialFriends.index && searchTerm === "") {
+          setFetchStart(lastItemInPotentialFriends.index + 1);
+        }
+      }
+
+      if (usedFor === "my-friends") {
+        const lastItemInFriends: TOtherUser = items[items.length - 1];
+
+        if (lastItemInFriends.index && searchTerm === "") {
+          setFetchStart(lastItemInFriends.index + 1);
+        }
+      }
+    }
+  };
+
   // Put requests for MyPalz & Explore Events in here. Their start/limits should be in dep array. Use conditions to determine which request should run.
   // Find way to set fetchStart to index of last item in potentialFriends
   useEffect(() => {
@@ -457,7 +490,7 @@ const DisplayedCardsPage = ({
                   // scroll handler needs to be called w/ updated potentialFriends
                   window.addEventListener("scroll", () => {
                     if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
-                      handleLoadMorePotentialFriendsOnScroll(
+                      handleLoadMoreItemsOnScroll(
                         displayedItems.concat(batchOfPotentialFriends)
                       );
                     }
@@ -465,7 +498,7 @@ const DisplayedCardsPage = ({
                 } else {
                   window.removeEventListener("scroll", () => {
                     if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
-                      handleLoadMorePotentialFriendsOnScroll(
+                      handleLoadMoreItemsOnScroll(
                         displayedItems.concat(batchOfPotentialFriends)
                       );
                     }
@@ -503,17 +536,13 @@ const DisplayedCardsPage = ({
                   // scroll handler needs to be called w/ updated potentialFriends
                   window.addEventListener("scroll", () => {
                     if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
-                      handleLoadMorePotentialFriendsOnScroll(
-                        displayedItems.concat(batchOfFriends)
-                      );
+                      handleLoadMoreItemsOnScroll(displayedItems.concat(batchOfFriends));
                     }
                   });
                 } else {
                   window.removeEventListener("scroll", () => {
                     if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
-                      handleLoadMorePotentialFriendsOnScroll(
-                        displayedItems.concat(batchOfFriends)
-                      );
+                      handleLoadMoreItemsOnScroll(displayedItems.concat(batchOfFriends));
                     }
                   });
                 }
@@ -527,43 +556,6 @@ const DisplayedCardsPage = ({
       }
     }
   }, [fetchStart, fetchLimit, searchTerm, usedFor, activeFilters]);
-
-  // rename to handleLoadMoreItemsOnScroll
-  // rename potentialFriends param to items
-  const handleLoadMorePotentialFriendsOnScroll = (
-    potentialFriends: TOtherUser[],
-    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
-  ): void => {
-    const eHTMLElement = e?.target as HTMLElement;
-    const scrollTop = e ? eHTMLElement.scrollTop : null;
-    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
-    const clientHeight = e ? eHTMLElement.clientHeight : null;
-
-    const bottomReached =
-      e && scrollTop && clientHeight
-        ? scrollTop + clientHeight === scrollHeight
-        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
-
-    if (bottomReached) {
-      if (usedFor === "potential-friends") {
-        // Set fetchStart to index of last element in potentialFriends array (may need to subtract items just added to potentialFriends array to get the right item)
-        const lastItemInPotentialFriends: TOtherUser =
-          potentialFriends[potentialFriends.length - 1];
-        if (lastItemInPotentialFriends.index && searchTerm === "") {
-          setFetchStart(lastItemInPotentialFriends.index + 1);
-        }
-      }
-
-      if (usedFor === "my-friends") {
-        const lastItemInFriends: TOtherUser =
-          potentialFriends[potentialFriends.length - 1];
-
-        if (lastItemInFriends.index && searchTerm === "") {
-          setFetchStart(lastItemInFriends.index + 1);
-        }
-      }
-    }
-  };
 
   useEffect(() => {
     const themeColors: TThemeColor[] = [
