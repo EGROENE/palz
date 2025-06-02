@@ -27,7 +27,6 @@ const DisplayedCardsPage = ({
     setDisplayedItemsCountInterval,
     displayedItemsFiltered,
     error,
-    setError,
     isLoading,
     setIsLoading,
   } = useMainContext();
