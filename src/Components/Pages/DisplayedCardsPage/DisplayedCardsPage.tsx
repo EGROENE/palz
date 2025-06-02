@@ -243,7 +243,7 @@ const DisplayedCardsPage = ({
       .then((batchOfPotentialFriends) => {
         if (batchOfPotentialFriends) {
           setAllPotentialFriends(batchOfPotentialFriends);
-          let matches: TUser[] = [];
+          let matches: TOtherUser[] = [];
           for (const pf of batchOfPotentialFriends) {
             if (pf._id) {
               for (const filter of filters) {
@@ -275,7 +275,7 @@ const DisplayedCardsPage = ({
                     pf.country === currentUser?.country
                   ) {
                     if (!matches.includes(pf)) {
-                      matches.push(pf);
+                      matches.push(getTOtherUserFromTUser(pf));
                     }
                   }
                 }
@@ -287,7 +287,7 @@ const DisplayedCardsPage = ({
                     pf.country === currentUser?.country
                   ) {
                     if (!matches.includes(pf)) {
-                      matches.push(pf);
+                      matches.push(getTOtherUserFromTUser(pf));
                     }
                   }
                 }
@@ -295,14 +295,14 @@ const DisplayedCardsPage = ({
                 if (filter === "in my country") {
                   if (currentUserMaySeeLocation && pf.country === currentUser?.country) {
                     if (!matches.includes(pf)) {
-                      matches.push(pf);
+                      matches.push(getTOtherUserFromTUser(pf));
                     }
                   }
                 }
 
                 if (filter === "friends of friends" && currentUserIsFriendOfFriend) {
                   if (!matches.includes(pf)) {
-                    matches.push(pf);
+                    matches.push(getTOtherUserFromTUser(pf));
                   }
                 }
 
@@ -311,7 +311,7 @@ const DisplayedCardsPage = ({
                     for (const interest of currentUser?.interests) {
                       if (pf.interests.includes(interest)) {
                         if (!matches.includes(pf)) {
-                          matches.push(pf);
+                          matches.push(getTOtherUserFromTUser(pf));
                         }
                       }
                     }
@@ -347,7 +347,11 @@ const DisplayedCardsPage = ({
                     batchOfPotentialFriends.map((pf) => getTOtherUserFromTUser(pf))
                   );
                 } else {
-                  setDisplayedItems(displayedItems.concat(batchOfPotentialFriends));
+                  setDisplayedItems(
+                    displayedItems.concat(
+                      batchOfPotentialFriends.map((pf) => getTOtherUserFromTUser(pf))
+                    )
+                  );
                 }
                 // If no search input, add handler to scroll, increasing potentialFriendsStart; if not, try removing it:
                 if (searchTerm === "") {
@@ -738,9 +742,6 @@ const DisplayedCardsPage = ({
       "common interests": potentialFriendsWithCommonInterests,
     }),
   };
-
-  /* const resetDisplayedPotentialFriends = (): void =>
-    setDisplayedItems(displayablePotentialFriends); */
   //////////////////////////////////////////////////////////////
 
   // FRIENDS VARIABLES
