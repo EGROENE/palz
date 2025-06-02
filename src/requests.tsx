@@ -301,7 +301,11 @@ const getPotentialFriends = async (
   });
 };
 
-const getFriends = async (currentUser: TUser | null, start: number, limit: number) => {
+const getFriends = async (
+  currentUser: TUser | null,
+  start: number,
+  limit: number
+): Promise<TUser[]> => {
   return fetch(
     `http://localhost:4000/palz/find-palz?start=${start}&limit=${limit}&user=${currentUser?.username}`,
     {
@@ -309,79 +313,7 @@ const getFriends = async (currentUser: TUser | null, start: number, limit: numbe
       redirect: "follow",
     }
   ).then((response) => {
-    return response.json().then((friends: TUser[]) => {
-      for (const friend of friends) {
-        // KEEP THESE, AS THEY'RE USED TO RETURN TOtherUser OBJECT
-        const showLocation: boolean =
-          friend.whoCanSeeLocation === "anyone" || friend.whoCanSeeLocation === "friends";
-
-        const showPhoneNumber: boolean =
-          friend.whoCanSeePhoneNumber === "anyone" ||
-          friend.whoCanSeePhoneNumber === "friends";
-
-        const showEmailAddress: boolean =
-          friend.whoCanSeeEmailAddress === "anyone" ||
-          friend.whoCanSeeEmailAddress === "friends";
-
-        const showInstagram: boolean =
-          friend.whoCanSeeInstagram === "anyone" ||
-          friend.whoCanSeeInstagram === "friends";
-
-        const showFacebook: boolean =
-          friend.whoCanSeeFacebook === "anyone" || friend.whoCanSeeFacebook === "friends";
-
-        const showX: boolean =
-          friend.whoCanSeeX === "anyone" || friend.whoCanSeeX === "friends";
-
-        const showFriends: boolean =
-          friend.whoCanSeeFriendsList === "anyone" ||
-          friend.whoCanSeeFriendsList === "friends";
-
-        return {
-          "_id": friend._id,
-          "index": friend.index,
-          "firstName": friend.firstName,
-          "lastName": friend.lastName,
-          "username": friend.username,
-          "profileImage": friend.profileImage,
-          "interests": friend.interests,
-          "about": friend.about,
-          ...(showLocation && {
-            city: friend.city,
-          }),
-          ...(showLocation && {
-            stateProvince: friend.stateProvince,
-          }),
-          ...(showLocation && {
-            country: friend.country,
-          }),
-          ...(showPhoneNumber && {
-            phoneCountry: friend.phoneCountry,
-          }),
-          ...(showPhoneNumber && {
-            phoneCountryCode: friend.phoneCountryCode,
-          }),
-          ...(showPhoneNumber && {
-            phoneNumberWithoutCountryCode: friend.phoneNumberWithoutCountryCode,
-          }),
-          ...(showEmailAddress && {
-            emailAddress: friend.emailAddress,
-          }),
-          ...(showInstagram && {
-            instagram: friend.instagram,
-          }),
-          ...(showFacebook && {
-            facebook: friend.facebook,
-          }),
-          ...(showX && {
-            x: friend.x,
-          }),
-          ...(showFriends && {
-            friends: friend.friends,
-          }),
-        };
-      }
-    }) as Promise<TOtherUser[]>;
+    return response.json().then((friends: TUser[]) => friends);
   });
 };
 
