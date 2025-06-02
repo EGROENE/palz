@@ -343,7 +343,7 @@ const DisplayedCardsPage = ({
               f.username?.toLowerCase().includes(input.toLowerCase()) ||
               anInterestIncludesSearchTerm
             ) {
-              return f;
+              return getTOtherUserFromTUser(f);
             }
           })
         );
@@ -515,12 +515,16 @@ const DisplayedCardsPage = ({
         setIsLoading(true);
         if (fetchLimit) {
           Requests.getFriends(currentUser, fetchStart, fetchLimit)
-            .then((batchOfFriends: TOtherUser[]) => {
+            .then((batchOfFriends: TUser[]) => {
               if (batchOfFriends) {
                 if (fetchStart === 0) {
-                  setDisplayedItems(batchOfFriends);
+                  setDisplayedItems(batchOfFriends.map((f) => getTOtherUserFromTUser(f)));
                 } else {
-                  setDisplayedItems(displayedItems.concat(batchOfFriends));
+                  setDisplayedItems(
+                    displayedItems.concat(
+                      batchOfFriends.map((f) => getTOtherUserFromTUser(f))
+                    )
+                  );
                 }
 
                 if (searchTerm === "") {
