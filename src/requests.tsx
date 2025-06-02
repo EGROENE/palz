@@ -215,7 +215,7 @@ const getFriends = async (
   limit: number
 ): Promise<TUser[]> => {
   return fetch(
-    `http://localhost:4000/palz/find-palz?start=${start}&limit=${limit}&user=${currentUser?.username}`,
+    `http://localhost:4000/palz/my-palz?start=${start}&limit=${limit}&user=${currentUser?.username}`,
     {
       method: "GET",
       redirect: "follow",
