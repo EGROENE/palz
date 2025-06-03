@@ -209,7 +209,7 @@ function App() {
             path="/edit-event/:eventID"
             element={<EditEventPage event={currentEvent} />}
           />
-          <Route path="/events" element={<DisplayedCardsPage usedFor="events" />} />
+          <Route path="/find-events" element={<DisplayedCardsPage usedFor="events" />} />
           <Route path="/events/:eventID" element={<EventPage />} />
           <Route path="/:username/events" element={<UsersEvents />} />
           <Route path="/:username/friend-requests" element={<FriendRequests />} />
