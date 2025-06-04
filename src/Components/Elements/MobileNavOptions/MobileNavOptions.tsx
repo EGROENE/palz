@@ -37,8 +37,8 @@ const MobileNavOptions = () => {
             My Events
           </Link>
         )}
-        {currentRoute !== "/events" && (
-          <Link onClick={() => setShowMobileNavOptions(false)} to={"/events"}>
+        {currentRoute !== "/find-events" && (
+          <Link onClick={() => setShowMobileNavOptions(false)} to={"/find-events"}>
             Explore Events
           </Link>
         )}

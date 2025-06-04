@@ -15,8 +15,8 @@ const SiteLinks = () => {
           </div>
         </Link>
       )}
-      {currentRoute !== "/events" && (
-        <Link to={"/events"}>
+      {currentRoute !== "/find-events" && (
+        <Link to={"/find-events"}>
           <div className="theme-element-container">
             <button>Explore Events</button>
           </div>

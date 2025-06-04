@@ -116,8 +116,8 @@ const Sidebar = () => {
             My Events
           </Link>
         )}
-        {currentRoute !== "/events" && (
-          <Link className={styles.sidebarOption} to={"/events"}>
+        {currentRoute !== "/find-events" && (
+          <Link className={styles.sidebarOption} to={"/find-events"}>
             Explore Events
           </Link>
         )}

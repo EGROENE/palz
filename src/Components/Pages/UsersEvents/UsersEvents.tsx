@@ -183,7 +183,7 @@ const UsersEvents = () => {
                 <i className="fas fa-lightbulb"></i>
               </div>
             </Link>
-            <Link to="/events">
+            <Link to="/find-events">
               <div
                 style={{ boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }}
                 className="box-link"

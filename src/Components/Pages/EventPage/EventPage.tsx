@@ -480,7 +480,7 @@ const EventPage = () => {
       {isNoFetchError && !fetchIsLoading && !currentEvent && (
         <>
           <h1>Sorry, this event doesn't exist.</h1>
-          <Link to={"/events"}>
+          <Link to={"/find-events"}>
             <div className="theme-element-container">
               <button>Back to All Events</button>
             </div>
