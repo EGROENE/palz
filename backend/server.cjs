@@ -13,6 +13,7 @@ const cors = require("cors");
 app.use(cors());
 
 const User = require("./models/userModel");
+const Event = require("./models/eventModel");
 
 const userRoutes = require("./routes/users.cjs");
 const eventRoutes = require("./routes/events.cjs");
@@ -76,6 +77,35 @@ app.get("/palz/my-palz", async (req, res) => {
   }).limit(Number(limit));
 
   res.status(200).json(friends);
+});
+
+// Controller to get displayable events:
+app.get("/palz/find-events", async (req, res) => {
+  const { user, start, limit } = req.query;
+
+  const username = user;
+  const currentUser = await User.findOne({ username });
+  const now = Date.now();
+
+  const events = await Event.find({
+    // Get events w/ index greater than or equal to start:
+    index: { $gte: Number(start) },
+    // Get events that are either public or include currentUser as an organizer or invitee:
+    $or: [
+      { publicity: "public" },
+      { invitees: { $in: currentUser._id.toString() } },
+      { organizers: { $in: currentUser._id.toString() } },
+    ],
+    // Get events from which currentUser is not explicitly blocked:
+    blockedUsersEvent: { $nin: currentUser._id.toString() },
+    // Get events whose start or end time is later than the present moment:
+    $or: [
+      { eventStartDateTimeInMS: { $gt: now } },
+      { eventEndDateTimeInMS: { $gt: now } },
+    ],
+  }).limit(Number(limit));
+
+  res.status(200).json(events);
 });
 
 // Connect to Mongoose:
