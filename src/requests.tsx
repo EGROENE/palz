@@ -1056,6 +1056,7 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
   myHeaders.append("Content-Type", "application/json");
 
   const raw = JSON.stringify({
+    "index": eventData.index,
     "title": eventData.title,
     "creator": eventData.creator,
     "organizers": eventData.organizers,
