@@ -29,7 +29,7 @@ const eventSchema = new Schema({
   },
   additionalInfo: {
     type: String,
-    required: false,
+    required: true,
   },
   city: {
     type: String,
@@ -85,11 +85,11 @@ const eventSchema = new Schema({
   },
   images: {
     type: [String],
-    required: false,
+    required: true,
   },
   relatedInterests: {
     type: [String],
-    required: false,
+    required: true,
   },
   address: {
     type: String,
@@ -97,7 +97,7 @@ const eventSchema = new Schema({
   },
   maxParticipants: {
     type: Schema.Types.Mixed,
-    required: false,
+    required: true,
   },
 });
 
