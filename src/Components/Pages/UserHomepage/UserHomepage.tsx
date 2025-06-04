@@ -58,18 +58,18 @@ const UserHomepage = () => {
   useEffect(() => {
     if (allEvents && currentUser) {
       const userRSVPDEvents: TEvent[] = allEvents.filter(
-        (ev) => currentUser._id && ev.interestedUsers.includes(currentUser._id)
+        (ev) => currentUser._id && ev.interestedUsers.includes(currentUser._id.toString())
       );
 
       const userOrganizedEvents: TEvent[] = allEvents.filter(
-        (ev) => currentUser._id && ev.organizers.includes(currentUser._id)
+        (ev) => currentUser._id && ev.organizers.includes(currentUser._id.toString())
       );
 
       const eventsUserIsInvitedTo: TEvent[] = allEvents.filter(
         (ev) =>
           currentUser._id &&
-          ev.invitees.includes(currentUser._id) &&
-          !ev.disinterestedUsers.includes(currentUser._id)
+          ev.invitees.includes(currentUser._id.toString()) &&
+          !ev.disinterestedUsers.includes(currentUser._id.toString())
       );
 
       setAllCurrentUserEvents(
@@ -136,7 +136,7 @@ const UserHomepage = () => {
               <h1>No upcoming events</h1>
               <p>
                 Click{" "}
-                <Link style={{ color: randomColor }} to={"/events"}>
+                <Link style={{ color: randomColor }} to={"/find-events"}>
                   here
                 </Link>{" "}
                 to find something fun to do
