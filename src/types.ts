@@ -644,7 +644,7 @@ export type TEventContext = {
     Response,
     Error,
     {
-      eventInfos: TEvent;
+      eventInfo: TEvent;
     },
     unknown
   >;

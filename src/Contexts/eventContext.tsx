@@ -405,8 +405,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const createEventMutation = useMutation({
-    mutationFn: ({ eventInfos }: { eventInfos: TEvent }) =>
-      Requests.createEvent(eventInfos),
+    mutationFn: ({ eventInfo }: { eventInfo: TEvent }) => Requests.createEvent(eventInfo),
     onSuccess: (data) => {
       if (data.ok) {
         queryClient.invalidateQueries({ queryKey: ["allEvents"] });
