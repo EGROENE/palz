@@ -112,6 +112,7 @@ export type TOtherUser = {
 
 export type TEvent = {
   _id?: string;
+  index: number | undefined;
   blockedUsersEvent: string[];
   creator: string | undefined;
   title: string;
