@@ -26,6 +26,7 @@ const getEvent = async (req, res) => {
 
 const createNewEvent = async (req, res) => {
   const {
+    index,
     title,
     organizers,
     invitees,
@@ -52,6 +53,7 @@ const createNewEvent = async (req, res) => {
 
   try {
     const event = await Event.create({
+      index,
       title,
       organizers,
       invitees,
