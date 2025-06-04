@@ -12,6 +12,7 @@ import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsIn
 import { useEventContext } from "../../../Hooks/useEventContext";
 import DropdownChecklist from "../../Elements/DropdownChecklist/DropdownChecklist";
 import SearchAndDropdownList from "../../Elements/SearchAndDropdownList/SearchAndDropdownList";
+import Requests from "../../../requests";
 
 const EventForm = ({
   randomColor,
@@ -791,8 +792,22 @@ const EventForm = ({
       } else {
         // When adding a newly created event:
         if (allRequiredFieldsFilled) {
-          setAddEventIsInProgress(true);
-          createEventMutation.mutate({ eventInfos });
+          Requests.getAllEvents().then((allEvents) => {
+            if (allEvents) {
+              setAddEventIsInProgress(true);
+              eventInfos.index = allEvents.length;
+              const eventInfo = eventInfos;
+              createEventMutation.mutate({ eventInfo });
+            } else {
+              toast.error("Couldn't create event; please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            }
+          });
         }
       }
     } else {
@@ -954,7 +969,8 @@ const EventForm = ({
   };
   const submitButtonIsDisabled: boolean = getSubmitButtonIsDisabled();
 
-  const eventInfos: TEvent = {
+  let eventInfos: TEvent = {
+    index: undefined,
     title: eventTitle.trim(),
     creator: currentUser?._id?.toString(),
     organizers: organizers,
