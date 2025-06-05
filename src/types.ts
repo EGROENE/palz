@@ -116,6 +116,7 @@ export type TEventInviteeOrOrganizer = {
   firstName: string | undefined;
   lastName: string | undefined;
   profileImage: string | undefined;
+  emailAddress: string | undefined;
 };
 
 export type TEvent = {
