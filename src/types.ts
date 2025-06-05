@@ -110,14 +110,22 @@ export type TOtherUser = {
   interests: string[];
 };
 
+export type TEventInviteeOrOrganizer = {
+  _id: string | mongoose.Types.ObjectId | undefined;
+  username: string | undefined;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  profileImage: string | undefined;
+};
+
 export type TEvent = {
   _id?: string;
   index: number | undefined;
   blockedUsersEvent: string[];
   creator: string | undefined;
   title: string;
-  organizers: string[];
-  invitees: string[];
+  organizers: TEventInviteeOrOrganizer[];
+  invitees: TEventInviteeOrOrganizer[];
   description: string;
   eventStartDateMidnightUTCInMS: number;
   eventStartTimeAfterMidnightUTCInMS: number;
@@ -247,8 +255,8 @@ export type TEventValuesToUpdate = {
   eventEndDateMidnightUTCInMS?: number | undefined;
   eventEndTimeAfterMidnightUTCInMS?: number | undefined;
   eventEndDateTimeInMS?: number | undefined;
-  organizers?: string[] | undefined;
-  invitees?: string[] | undefined;
+  organizers?: TEventInviteeOrOrganizer[] | undefined;
+  invitees?: TEventInviteeOrOrganizer[] | undefined;
   description?: string | undefined;
   additionalInfo?: string | undefined;
   city?: string | undefined;
@@ -697,10 +705,10 @@ export type TEventContext = {
   setMaxParticipants: React.Dispatch<React.SetStateAction<number | null>>;
   publicity: "public" | "private";
   setPublicity: React.Dispatch<React.SetStateAction<"public" | "private">>;
-  organizers: string[];
-  setOrganizers: React.Dispatch<React.SetStateAction<string[]>>;
-  invitees: string[];
-  setInvitees: React.Dispatch<React.SetStateAction<string[]>>;
+  organizers: TEventInviteeOrOrganizer[];
+  setOrganizers: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>;
+  invitees: TEventInviteeOrOrganizer[];
+  setInvitees: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>;
   relatedInterests: string[];
   setRelatedInterests: React.Dispatch<React.SetStateAction<string[]>>;
   addEventImageMutation: UseMutationResult<
@@ -727,14 +735,14 @@ export type TEventContext = {
   setBlockedUsersEvent: React.Dispatch<React.SetStateAction<string[]>>;
   fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
-    organizers: string[],
-    setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
+    organizers: TEventInviteeOrOrganizer[],
+    setOrganizers: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>,
     user: TOtherUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
   handleAddRemoveUserAsInvitee: (
-    invitees: string[],
-    setInvitees: React.Dispatch<React.SetStateAction<string[]>>,
+    invitees: TEventInviteeOrOrganizer[],
+    setInvitees: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>,
     user?: TOtherUser
   ) => void;
   handleRemoveInvitee: (
