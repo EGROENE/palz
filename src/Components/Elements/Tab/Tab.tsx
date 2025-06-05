@@ -1,4 +1,4 @@
-import { TOtherUser } from "../../../types";
+import { TEventInviteeOrOrganizer, TOtherUser } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
@@ -16,7 +16,7 @@ const Tab = ({
   userMayNotDelete,
   specialIcon,
 }: {
-  info: TOtherUser | string;
+  info: TOtherUser | TEventInviteeOrOrganizer | string;
   addHandler?: Function;
   addHandlerParams?: any[];
   addHandlerNeedsEventParam?: boolean;
@@ -54,7 +54,7 @@ const Tab = ({
       tabIndex={0}
       aria-hidden="false"
       title={typeof info !== "string" ? `${info.firstName} ${info.lastName}` : undefined}
-      key={typeof info === "string" ? info : info._id}
+      key={typeof info === "string" ? info : info._id?.toString()}
       style={
         randomColor === "var(--primary-color)"
           ? { backgroundColor: `${randomColor}`, color: "black" }
