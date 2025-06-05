@@ -757,6 +757,7 @@ const EventForm = ({
           firstName: currentUser?.firstName,
           lastName: currentUser?.lastName,
           profileImage: currentUser?.profileImage,
+          emailAddress: currentUser?.emailAddress
         },
       ]);
       setInvitees([]);
@@ -1517,6 +1518,7 @@ const EventForm = ({
                           firstName: currentUser.firstName,
                           lastName: currentUser.lastName,
                           profileImage: currentUser.profileImage,
+                          emailAddress: currentUser.emailAddress
                         },
                       ])
                     }

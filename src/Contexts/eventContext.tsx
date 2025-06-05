@@ -706,6 +706,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             firstName: user.firstName,
             lastName: user.lastName,
             profileImage: user.profileImage,
+            emailAddress: user.emailAddress,
           })
         );
       }
@@ -730,11 +731,12 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       } else {
         setInvitees(
           invitees.concat({
-            _id: user._id,
+            _id: user._id.toString(),
             username: user.username,
             firstName: user.firstName,
             lastName: user.lastName,
             profileImage: user.profileImage,
+            emailAddress: user.emailAddress,
           })
         );
       }
