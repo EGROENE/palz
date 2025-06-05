@@ -122,6 +122,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
         boxShadow: `${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px, ${randomColor} 0px 4px 16px`,
       }}
     >
+      {status && (
+        <p style={{ backgroundColor: randomColor, padding: "0.25rem" }}>{status}</p>
+      )}
       {userIsInvitee && !userDeclinedInvitation && !userRSVPd && !maxInviteesReached && (
         <div className={styles.eventCardInvitation}>
           <div style={{ boxShadow: "none" }} className="theme-element-container">
@@ -250,7 +253,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
             </div>
           </div>
           <div className="eventCardImageContainer">
-            {status && <p style={{ backgroundColor: randomColor }}>{status}</p>}
             {event && event.images && event.images.length > 0 ? (
               <img style={{ border: `2px solid ${randomColor}` }} src={event.images[0]} />
             ) : (
