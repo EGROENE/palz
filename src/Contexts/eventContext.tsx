@@ -1,6 +1,13 @@
 import { useState, createContext, ReactNode, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { TEventContext, TUser, TEvent, TEventValuesToUpdate, TOtherUser } from "../types";
+import {
+  TEventContext,
+  TUser,
+  TEvent,
+  TEventValuesToUpdate,
+  TOtherUser,
+  TEventInviteeOrOrganizer,
+} from "../types";
 import Methods from "../methods";
 import Requests from "../requests";
 import { useMainContext } from "../Hooks/useMainContext";
@@ -142,10 +149,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [publicity, setPublicity] = useState<"public" | "private">(
     currentEvent ? currentEvent.publicity : "public"
   );
-  const [organizers, setOrganizers] = useState<string[]>(
-    currentEvent ? currentEvent.organizers : [`${currentUser?._id}`]
+  const [organizers, setOrganizers] = useState<TEventInviteeOrOrganizer[]>(
+    currentEvent ? currentEvent.organizers : []
   );
-  const [invitees, setInvitees] = useState<string[]>(
+  const [invitees, setInvitees] = useState<TEventInviteeOrOrganizer[]>(
     currentEvent ? currentEvent.invitees : []
   );
   const [relatedInterests, setRelatedInterests] = useState<string[]>(
@@ -662,13 +669,13 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Used in dropdown list of potential organizers; changes are only made to organizers variable in state
   const handleAddRemoveUserAsOrganizer = (
-    organizers: string[],
-    setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
+    organizers: TEventInviteeOrOrganizer[],
+    setOrganizers: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>,
     user: TOtherUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     if (user && user._id && currentUser && currentUser._id) {
-      if (organizers.includes(user._id.toString())) {
+      if (organizers.map((o) => o._id).includes(user._id.toString())) {
         if (user._id === currentUser._id) {
           e?.preventDefault();
           // Remove self as organizer:
@@ -682,26 +689,54 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
         } else {
           // Remove other user as organizer:
           // Only state values are updated for now; DB updated when form is saved
-          setOrganizers(organizers.filter((organizerID) => organizerID !== user._id));
+          setOrganizers(
+            organizers.filter((o) => {
+              if (o._id !== user._id) {
+                return o;
+              }
+            })
+          );
         }
       } else {
         // Add non-current user as organizer
-        setOrganizers(organizers.concat(user._id.toString()));
+        setOrganizers(
+          organizers.concat({
+            _id: user._id,
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            profileImage: user.profileImage,
+          })
+        );
       }
     }
   };
 
   const handleAddRemoveUserAsInvitee = (
-    invitees: string[],
-    setInvitees: React.Dispatch<React.SetStateAction<string[]>>,
+    invitees: TEventInviteeOrOrganizer[],
+    setInvitees: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>,
     user?: TOtherUser
   ): void => {
     if (user?._id) {
-      if (invitees.includes(user._id.toString())) {
+      if (invitees.map((i) => i._id).includes(user._id.toString())) {
         // Remove user as invitee
-        setInvitees(invitees.filter((inviteeID) => inviteeID !== user?._id));
+        setInvitees(
+          invitees.filter((i) => {
+            if (i._id !== user._id) {
+              return i;
+            }
+          })
+        );
       } else {
-        setInvitees(invitees.concat(user._id.toString()));
+        setInvitees(
+          invitees.concat({
+            _id: user._id,
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            profileImage: user.profileImage,
+          })
+        );
       }
     }
   };
