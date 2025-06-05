@@ -1178,7 +1178,11 @@ const removeInvitee = (
 
   const getRaw = () => {
     return JSON.stringify({
-      "invitees": event.invitees.filter((id) => id !== user?._id),
+      "invitees": event.invitees.filter((i) => {
+        if (i._id !== user?._id) {
+          return i;
+        }
+      }),
     });
   };
   const raw = getRaw();
@@ -1200,7 +1204,11 @@ const removeOrganizer = (
 
   const getRaw = () => {
     return JSON.stringify({
-      "organizers": event.organizers.filter((id) => id !== user?._id),
+      "organizers": event.organizers.filter((o) => {
+        if (o._id !== user?._id) {
+          return o;
+        }
+      }),
     });
   };
   const raw = getRaw();
