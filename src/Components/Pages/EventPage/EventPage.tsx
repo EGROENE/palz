@@ -54,7 +54,9 @@ const EventPage = () => {
 
   const userRSVPd: boolean =
     currentUser && currentUser._id && currentEvent
-      ? currentEvent.interestedUsers.includes(currentUser._id.toString())
+      ? currentEvent.interestedUsers
+          .map((i) => i._id)
+          .includes(currentUser._id.toString())
       : false;
 
   const navigation = useNavigate();
@@ -207,9 +209,9 @@ const EventPage = () => {
 
     const refIntUsers = [];
     if (currentEvent && visibleOtherUsers) {
-      for (const userID of currentEvent.interestedUsers) {
+      for (const userID of currentEvent.interestedUsers.map((i) => i._id)) {
         for (const user of visibleOtherUsers) {
-          if (user._id === userID) {
+          if (user._id?.toString() === userID) {
             refIntUsers.push(user);
           }
         }

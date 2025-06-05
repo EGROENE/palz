@@ -62,7 +62,7 @@ const UsersEvents = () => {
   const pastEventsUserRSVPd: TEvent[] | undefined = allEvents?.filter(
     (event) =>
       currentUser?._id &&
-      event.interestedUsers.includes(currentUser._id.toString()) &&
+      event.interestedUsers.map((i) => i._id).includes(currentUser._id.toString()) &&
       event.eventEndDateTimeInMS < now
   );
 
@@ -87,7 +87,7 @@ const UsersEvents = () => {
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
       currentUser?._id &&
-      event.interestedUsers.includes(currentUser._id.toString())
+      event.interestedUsers.map((i) => i._id).includes(currentUser._id.toString())
   );
 
   const ongoingEvents: TEvent[] | undefined = allEvents?.filter((event) => {
@@ -95,7 +95,7 @@ const UsersEvents = () => {
       event.eventEndDateTimeInMS > now &&
       currentUser?._id &&
       (event.organizers.map((o) => o._id).includes(currentUser._id.toString()) ||
-        event.interestedUsers.includes(currentUser._id.toString()));
+        event.interestedUsers.map((i) => i._id).includes(currentUser._id.toString()));
   });
 
   const usersEvents = [

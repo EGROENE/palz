@@ -30,7 +30,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   const userRSVPd: boolean =
     currentUser && currentUser._id
-      ? event.interestedUsers.includes(currentUser._id.toString())
+      ? event.interestedUsers.map((u) => u._id).includes(currentUser._id.toString())
       : false;
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
@@ -53,7 +53,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
     : false;
 
   const userDeclinedInvitation: boolean = currentUser?._id
-    ? event.disinterestedUsers.includes(currentUser._id.toString())
+    ? event.disinterestedUsers.map((i) => i._id).includes(currentUser._id.toString())
     : false;
 
   const refinedOrganizers: TEventInviteeOrOrganizer[] = [];

@@ -58,7 +58,9 @@ const UserHomepage = () => {
   useEffect(() => {
     if (allEvents && currentUser) {
       const userRSVPDEvents: TEvent[] = allEvents.filter(
-        (ev) => currentUser._id && ev.interestedUsers.includes(currentUser._id.toString())
+        (ev) =>
+          currentUser._id &&
+          ev.interestedUsers.map((i) => i._id).includes(currentUser._id.toString())
       );
 
       const userOrganizedEvents: TEvent[] = allEvents.filter(
@@ -71,7 +73,7 @@ const UserHomepage = () => {
         (ev) =>
           currentUser._id &&
           ev.invitees.map((i) => i._id).includes(currentUser._id.toString()) &&
-          !ev.disinterestedUsers.includes(currentUser._id.toString())
+          !ev.disinterestedUsers.map((i) => i._id).includes(currentUser._id.toString())
       );
 
       setAllCurrentUserEvents(
