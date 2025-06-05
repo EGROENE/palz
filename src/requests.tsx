@@ -225,6 +225,20 @@ const getFriends = async (
   });
 };
 
+const getExplorableEvents = (currentUser: TUser | null, start: number, limit: number) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Context-Type", "application/json");
+
+  return fetch(
+    `http://localhost:4000/palz/find-events/?start=${start}&limit=${limit}&user=${currentUser?.username}`,
+    {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    }
+  );
+};
+
 const getUserByID = (id: string): Promise<Response> => {
   return fetch(`http://localhost:4000/palz/users/${id}`, {
     method: "GET",
@@ -1393,6 +1407,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getExplorableEvents,
   getFriends,
   removeFromBlockedBy,
   addToBlockedBy,
