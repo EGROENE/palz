@@ -78,23 +78,24 @@ const EventPage = () => {
   /* 
   If event is private & currentUser isn't organizer or invitee, or if currentUser was blocked by one of the organizers, currentUser doesn't have access to event
   */
-  const eventOrganizersIDs: string[] | undefined = currentEvent?.organizers.map(
-    (org) => org
-  );
+  const eventOrganizersIDs: (string | undefined)[] | undefined =
+    currentEvent?.organizers.map((org) => org._id && org._id.toString());
 
   const getEventOrganizers = async (): Promise<TUser[]> => {
     let eventOrganizers: TUser[] = [];
     if (visibleOtherUsers && eventOrganizersIDs) {
       for (const org of eventOrganizersIDs) {
-        await Requests.getUserByID(org)
-          .then((res) => {
-            if (res.ok) {
-              res.json().then((organizer: TUser) => eventOrganizers.push(organizer));
-            } else {
-              setError("Error fetching event organizers");
-            }
-          })
-          .catch((error) => console.log(error));
+        if (org) {
+          await Requests.getUserByID(org)
+            .then((res) => {
+              if (res.ok) {
+                res.json().then((organizer: TUser) => eventOrganizers.push(organizer));
+              } else {
+                setError("Error fetching event organizers");
+              }
+            })
+            .catch((error) => console.log(error));
+        }
       }
     }
 
@@ -148,8 +149,8 @@ const EventPage = () => {
     currentUser &&
     currentUser._id &&
     currentEvent.publicity === "private" &&
-    (!currentEvent.invitees.includes(currentUser._id.toString()) ||
-      !currentEvent.organizers.includes(currentUser._id.toString()))
+    (!currentEvent.invitees.map((i) => i._id).includes(currentUser._id.toString()) ||
+      !currentEvent.organizers.map((o) => o._id).includes(currentUser._id.toString()))
       ? true
       : false;
 
@@ -225,7 +226,7 @@ const EventPage = () => {
   const userIsOrganizer: boolean =
     currentUser &&
     currentUser._id &&
-    currentEvent?.organizers.includes(currentUser._id.toString())
+    currentEvent?.organizers.map((o) => o._id).includes(currentUser._id.toString())
       ? true
       : false;
 
@@ -282,7 +283,7 @@ const EventPage = () => {
               renderButtonTwo={true}
               closeModalMethod={setShowInvitees}
               header="Invitees"
-              userIDArray={currentEvent.invitees}
+              userIDArray={currentEvent.invitees.map((i) => i._id?.toString())}
               buttonOneText="Message"
               buttonOneHandler={startConversation}
               buttonOneHandlerNeedsEventParam={false}
@@ -390,14 +391,18 @@ const EventPage = () => {
                       <span
                         onClick={() =>
                           currentUser?._id &&
-                          currentEvent.organizers.includes(currentUser._id.toString()) &&
+                          currentEvent.organizers
+                            .map((o) => o._id)
+                            .includes(currentUser._id.toString()) &&
                           currentEvent.invitees.length > 0
                             ? setShowInvitees(true)
                             : undefined
                         }
                         className={
                           currentUser?._id &&
-                          currentEvent.organizers.includes(currentUser._id.toString()) &&
+                          currentEvent.organizers
+                            .map((o) => o._id)
+                            .includes(currentUser._id.toString()) &&
                           currentEvent.invitees.length > 0
                             ? "show-listed-users-or-invitees"
                             : undefined
@@ -410,14 +415,18 @@ const EventPage = () => {
                     <span
                       onClick={() =>
                         currentUser?._id &&
-                        currentEvent.organizers.includes(currentUser._id.toString()) &&
+                        currentEvent.organizers
+                          .map((o) => o._id)
+                          .includes(currentUser._id.toString()) &&
                         refinedInterestedUsers.length > 0
                           ? setShowRSVPs(true)
                           : undefined
                       }
                       className={
                         currentUser?._id &&
-                        currentEvent.organizers.includes(currentUser._id.toString()) &&
+                        currentEvent.organizers
+                          .map((o) => o._id)
+                          .includes(currentUser._id.toString()) &&
                         refinedInterestedUsers.length > 0
                           ? "show-listed-users-or-invitees"
                           : undefined
