@@ -6,6 +6,7 @@ import {
   TUserValuesToUpdate,
   TChatValuesToUpdate,
   TOtherUser,
+  TEventInviteeOrOrganizer,
 } from "./types";
 
 const getAllUsers = () => {
@@ -993,13 +994,15 @@ const addUserRSVP = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedInterestedUsersArray: Array<string> = [];
-  for (const intUser of event.interestedUsers) {
-    updatedInterestedUsersArray.push(intUser);
-  }
-  if (user && user._id) {
-    updatedInterestedUsersArray.push(user._id.toString());
-  }
+  const updatedInterestedUsersArray: Array<TEventInviteeOrOrganizer> =
+    event.interestedUsers.concat({
+      _id: user?._id,
+      username: user?.username,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      emailAddress: user?.emailAddress,
+      profileImage: user?.profileImage,
+    });
 
   const getRaw = () => {
     return JSON.stringify({
@@ -1023,13 +1026,15 @@ const addToDisinterestedUsers = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedDisinterestedUsersArray: Array<string | number | undefined> = [];
-  for (const disintUser of event.disinterestedUsers) {
-    updatedDisinterestedUsersArray.push(disintUser);
-  }
-  if (user?.username) {
-    updatedDisinterestedUsersArray.push(user?._id?.toString());
-  }
+  const updatedDisinterestedUsersArray: TEventInviteeOrOrganizer[] =
+    event.disinterestedUsers.concat({
+      _id: user?._id,
+      username: user?.username,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      emailAddress: user?.emailAddress,
+      profileImage: user?.profileImage,
+    });
 
   const getRaw = () => {
     return JSON.stringify({
@@ -1052,7 +1057,11 @@ const deleteUserRSVP = (user: TUser | TOtherUser | null, event: TEvent) => {
 
   const getRaw = () => {
     return JSON.stringify({
-      "interestedUsers": event?.interestedUsers.filter((id) => id !== user?._id),
+      "interestedUsers": event?.interestedUsers.filter((iu) => {
+        if (iu._id !== user?._id) {
+          return iu;
+        }
+      }),
     });
   };
   const raw = getRaw();
