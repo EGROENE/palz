@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import { useState, useEffect, useRef } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TEvent, TUser, TThemeColor, TOtherUser } from "../../../types";
+import { TEvent, TThemeColor, TOtherUser } from "../../../types";
 import Methods from "../../../methods";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
@@ -219,8 +219,8 @@ const EventForm = ({
         visibleOtherUsers.filter(
           (otherUser) =>
             otherUser._id &&
-            !invitees.includes(otherUser._id.toString()) &&
-            !organizers.includes(otherUser._id.toString())
+            !invitees.map((i) => i._id).includes(otherUser._id.toString()) &&
+            !organizers.map((o) => o._id).includes(otherUser._id.toString())
         )
       );
     }
@@ -750,7 +750,15 @@ const EventForm = ({
       setEventAddressError("Please enter an address");
       setMaxParticipants(null);
       setPublicity("public");
-      setOrganizers([`${currentUser?._id}`]);
+      setOrganizers([
+        {
+          _id: currentUser?._id,
+          username: currentUser?.username,
+          firstName: currentUser?.firstName,
+          lastName: currentUser?.lastName,
+          profileImage: currentUser?.profileImage,
+        },
+      ]);
       setInvitees([]);
       setBlockedUsersEvent([]);
       setRelatedInterests([]);
@@ -848,36 +856,9 @@ const EventForm = ({
   };
   const resortedCountries = getResortedCountries();
 
-  const getUsersWhoAreOrganizers = (): TOtherUser[] => {
-    const usersWhoAreOrganizers: (TOtherUser | TUser)[] = [];
-    if (visibleOtherUsers) {
-      for (const organizer of organizers) {
-        const user = visibleOtherUsers.filter((user) => user._id === organizer)[0];
-        usersWhoAreOrganizers.push(user);
-      }
-      if (
-        currentUser &&
-        currentUser._id &&
-        organizers.includes(currentUser._id.toString())
-      ) {
-        usersWhoAreOrganizers.push(currentUser);
-      }
-    }
-    return usersWhoAreOrganizers.filter((user) => user !== undefined);
-  };
-  const usersWhoAreOrganizers = getUsersWhoAreOrganizers();
+  const usersWhoAreOrganizers = event?.organizers;
 
-  const getUsersWhoAreInvitees = (): TOtherUser[] => {
-    const usersWhoAreInvitees: TOtherUser[] = [];
-    if (visibleOtherUsers) {
-      for (const invitee of invitees) {
-        const user = visibleOtherUsers.filter((user) => user._id === invitee)[0];
-        usersWhoAreInvitees.push(user);
-      }
-    }
-    return usersWhoAreInvitees.filter((user) => user !== undefined);
-  };
-  const usersWhoAreInvitees = getUsersWhoAreInvitees();
+  const usersWhoAreInvitees = event?.invitees;
 
   const getUsersWhoAreBlocked = (): TOtherUser[] => {
     const blockedUsers: TOtherUser[] = [];
@@ -1515,6 +1496,7 @@ const EventForm = ({
           Co-organizers: (optional){" "}
           {currentUser &&
             !isLoading &&
+            usersWhoAreOrganizers &&
             usersWhoAreOrganizers.filter((user) => user.username !== currentUser.username)
               .length > 0 && (
               <>
@@ -1527,7 +1509,17 @@ const EventForm = ({
                 {currentEvent?.creator === currentUser?._id && (
                   <span
                     style={{ color: randomColor }}
-                    onClick={() => setOrganizers([`${currentUser?._id}`])}
+                    onClick={() =>
+                      setOrganizers([
+                        {
+                          _id: currentUser._id,
+                          username: currentUser.username,
+                          firstName: currentUser.firstName,
+                          lastName: currentUser.lastName,
+                          profileImage: currentUser.profileImage,
+                        },
+                      ])
+                    }
                   >
                     Remove All Others
                   </span>
@@ -1537,6 +1529,7 @@ const EventForm = ({
         </header>
         <div className="added-user-tab-container">
           {currentUser &&
+            usersWhoAreOrganizers &&
             usersWhoAreOrganizers.filter(
               (user) => user.username !== currentUser?.username
             ).length > 0 &&
@@ -1610,7 +1603,7 @@ const EventForm = ({
       <div className={styles.addOtherUsersArea}>
         <header className="input-label">
           Invitees: (recommended if event is private){" "}
-          {currentUser && usersWhoAreInvitees.length > 0 && (
+          {currentUser && usersWhoAreInvitees && usersWhoAreInvitees.length > 0 && (
             <span style={{ color: randomColor }} onClick={() => setInvitees([])}>
               Remove All
             </span>
@@ -1618,6 +1611,7 @@ const EventForm = ({
         </header>
         <div className="added-user-tab-container">
           {currentUser &&
+            usersWhoAreInvitees &&
             usersWhoAreInvitees.length > 0 &&
             usersWhoAreInvitees.map((user) => (
               <Tab
@@ -1784,7 +1778,9 @@ const EventForm = ({
       {currentEvent &&
         currentUser &&
         currentUser._id &&
-        currentEvent.organizers.includes(currentUser._id.toString()) && (
+        currentEvent.organizers
+          .map((o) => o._id)
+          .includes(currentUser._id.toString()) && (
           <button
             type="button"
             onClick={() => setShowAreYouSureDeleteEvent(true)}
