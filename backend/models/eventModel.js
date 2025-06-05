@@ -2,6 +2,14 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+const userInviteeSchema = new Schema({
+  _id: String | mongoose.Types.ObjectId,
+  username: String,
+  firstName: String,
+  lastName: String,
+  profileImage: String,
+});
+
 const eventSchema = new Schema({
   index: {
     type: Number,
@@ -11,30 +19,8 @@ const eventSchema = new Schema({
     type: String,
     required: true,
   },
-  organizers: {
-    type: [
-      {
-        _id: string | mongoose.Types.ObjectId | undefined,
-        username: string | undefined,
-        firstName: string | undefined,
-        lastName: string | undefined,
-        profileImage: string | undefined,
-      },
-    ],
-    required: true,
-  },
-  invitees: {
-    type: [
-      {
-        _id: string | mongoose.Types.ObjectId | undefined,
-        username: string | undefined,
-        firstName: string | undefined,
-        lastName: string | undefined,
-        profileImage: string | undefined,
-      },
-    ],
-    required: true,
-  },
+  organizers: [userInviteeSchema],
+  invitees: [userInviteeSchema],
   blockedUsersEvent: {
     type: [String],
     required: true,

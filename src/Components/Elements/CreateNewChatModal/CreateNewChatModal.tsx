@@ -127,7 +127,7 @@ const CreateNewChatModal = () => {
           <div className="added-user-tab-container">
             {usersToAdd.map((user) => (
               <Tab
-                key={user._id}
+                key={user._id?.toString()}
                 info={user}
                 removeHandler={handleRemoveUserFromChat}
                 removeHandlerNeedsEventParam={false}
@@ -195,7 +195,7 @@ const CreateNewChatModal = () => {
           <button
             onClick={() => {
               const userIDsToAddToChat = usersToAddToChat.concat(
-                currentUser && currentUser._id ? currentUser._id : ""
+                currentUser && currentUser._id ? currentUser._id.toString() : ""
               );
               handleCreateChat({
                 _id: new mongoose.Types.ObjectId().toString(),
@@ -206,7 +206,9 @@ const CreateNewChatModal = () => {
                 dateCreated: Date.now(),
                 ...(usersToAddToChat.length >= 2 &&
                   currentUser &&
-                  currentUser._id && { admins: [currentUser._id].concat(admins) }),
+                  currentUser._id && {
+                    admins: [currentUser._id.toString()].concat(admins),
+                  }),
               });
             }}
             disabled={!chatCanBeCreated}

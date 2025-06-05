@@ -41,10 +41,12 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
   const currentUserReceivedFriendRequest =
     userSECURE._id &&
     friendRequestsReceived &&
-    friendRequestsReceived.includes(userSECURE._id);
+    friendRequestsReceived.includes(userSECURE._id.toString());
 
   const currentUserSentFriendRequest =
-    userSECURE._id && friendRequestsSent && friendRequestsSent.includes(userSECURE._id);
+    userSECURE._id &&
+    friendRequestsSent &&
+    friendRequestsSent.includes(userSECURE._id.toString());
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -69,7 +71,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
   useEffect(() => {
     // Get user's TUser object, set values that depend on its properties:
     if (userSECURE._id) {
-      Requests.getUserByID(userSECURE._id)
+      Requests.getUserByID(userSECURE._id.toString())
         .then((res) => {
           if (res.ok) {
             res
@@ -102,8 +104,8 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
                 visibleOtherUsers?.filter((visibleOtherUser) => {
                   if (
                     visibleOtherUser._id &&
-                    user.friends.includes(visibleOtherUser._id) &&
-                    currentUser?.friends.includes(visibleOtherUser._id)
+                    user.friends.includes(visibleOtherUser._id.toString()) &&
+                    currentUser?.friends.includes(visibleOtherUser._id.toString())
                   ) {
                     friendsInCommon.push(visibleOtherUser);
                   }
@@ -134,7 +136,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
                 getCurrentOtherUserFriends().then((currentOtherUserFriends) => {
                   if (currentUser && currentUser._id) {
                     for (const friend of currentOtherUserFriends) {
-                      if (friend.friends.includes(currentUser._id)) {
+                      if (friend.friends.includes(currentUser._id.toString())) {
                         setCurrentUserIsFriendOfFriend(true);
                       }
                     }
@@ -146,7 +148,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
                   if (
                     user.whoCanMessage === "anyone" ||
                     (user.whoCanMessage === "friends" &&
-                      user.friends.includes(currentUser._id)) ||
+                      user.friends.includes(currentUser._id.toString())) ||
                     (user.whoCanMessage === "friends of friends" &&
                       currentUserIsFriendOfFriend)
                   ) {
@@ -159,8 +161,8 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
                   currentUser &&
                   currentUser._id &&
                   user._id &&
-                  currentUser.friends.includes(user._id) &&
-                  user.friends.includes(currentUser._id)
+                  currentUser.friends.includes(user._id.toString()) &&
+                  user.friends.includes(currentUser._id.toString())
                 ) {
                   setCurrentUserAndUserAreFriends(true);
                 }
