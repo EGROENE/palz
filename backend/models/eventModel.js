@@ -12,11 +12,27 @@ const eventSchema = new Schema({
     required: true,
   },
   organizers: {
-    type: [String],
+    type: [
+      {
+        _id: string | mongoose.Types.ObjectId | undefined,
+        username: string | undefined,
+        firstName: string | undefined,
+        lastName: string | undefined,
+        profileImage: string | undefined,
+      },
+    ],
     required: true,
   },
   invitees: {
-    type: [String],
+    type: [
+      {
+        _id: string | mongoose.Types.ObjectId | undefined,
+        username: string | undefined,
+        firstName: string | undefined,
+        lastName: string | undefined,
+        profileImage: string | undefined,
+      },
+    ],
     required: true,
   },
   blockedUsersEvent: {
