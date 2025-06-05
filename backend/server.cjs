@@ -91,11 +91,7 @@ app.get("/palz/find-events", async (req, res) => {
     // Get events w/ index greater than or equal to start:
     index: { $gte: Number(start) },
     // Get events that are either public or include currentUser as an organizer or invitee:
-    $or: [
-      { publicity: "public" },
-      { invitees: { $in: currentUser._id.toString() } },
-      { organizers: { $in: currentUser._id.toString() } },
-    ],
+    $or: [{ publicity: "public" }, { invitees: { $in: currentUser._id.toString() } }],
     // Get events from which currentUser is not explicitly blocked:
     blockedUsersEvent: { $nin: currentUser._id.toString() },
     // Get events whose start or end time is later than the present moment:
