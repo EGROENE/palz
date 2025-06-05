@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import { TEvent, TOtherUser, TThemeColor } from "../../../types";
+import {
+  TEvent,
+  TOtherUser,
+  TThemeColor,
+  TEventInviteeOrOrganizer,
+} from "../../../types";
 import { Link } from "react-router-dom";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
@@ -44,39 +49,28 @@ const EventCard = ({ event }: { event: TEvent }) => {
   }, []);
 
   const userIsInvitee: boolean = currentUser?._id
-    ? event.invitees.includes(currentUser._id.toString())
+    ? event.invitees.map((i) => i._id).includes(currentUser._id.toString())
     : false;
 
   const userDeclinedInvitation: boolean = currentUser?._id
     ? event.disinterestedUsers.includes(currentUser._id.toString())
     : false;
 
-  const refinedOrganizers: string[] = [];
+  const refinedOrganizers: TEventInviteeOrOrganizer[] = [];
   if (otherVisibleUsers) {
     for (const organizer of event.organizers) {
-      if (otherVisibleUsers.map((user) => user._id).includes(organizer)) {
+      if (otherVisibleUsers.map((user) => user._id).includes(organizer._id?.toString())) {
         refinedOrganizers.push(organizer);
       }
     }
   }
 
-  const getOrganizersUsernames = (): (string | undefined)[] => {
-    const usernameArray: Array<string | undefined> = [];
-    if (otherVisibleUsers) {
-      for (const organizerID of refinedOrganizers) {
-        usernameArray.push(
-          otherVisibleUsers.filter((user) => user._id === organizerID)[0].username
-        );
-      }
-    }
-    return usernameArray;
-  };
-  const organizerUsernames = getOrganizersUsernames();
+  const organizerUsernames = refinedOrganizers.map((o) => o.username);
 
   const userIsOrganizer =
     currentUser &&
     currentUser._id &&
-    refinedOrganizers.includes(currentUser._id.toString())
+    refinedOrganizers.map((o) => o._id).includes(currentUser._id.toString())
       ? true
       : false;
 

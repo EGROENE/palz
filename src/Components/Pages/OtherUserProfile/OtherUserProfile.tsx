@@ -527,7 +527,7 @@ const OtherUserProfile = () => {
       for (const event of allEvents) {
         // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
         if (event.creator === currentUser._id) {
-          if (event.invitees.includes(currentOtherUserID.toString())) {
+          if (event.invitees.map((i) => i._id).includes(currentOtherUserID.toString())) {
             handleRemoveInvitee(event, currentOtherUserSECURE, e);
           }
 
@@ -537,7 +537,9 @@ const OtherUserProfile = () => {
           }
 
           // Remove blockee as organizer:
-          if (event.organizers.includes(currentOtherUserID.toString())) {
+          if (
+            event.organizers.map((o) => o._id).includes(currentOtherUserID.toString())
+          ) {
             handleRemoveOrganizer(e, event, currentOtherUserSECURE);
           }
         }
@@ -608,7 +610,7 @@ const OtherUserProfile = () => {
     (event) =>
       currentOtherUserID &&
       event.creator !== currentUser?._id &&
-      event.organizers.includes(currentOtherUserID.toString()) &&
+      event.organizers.map((o) => o._id).includes(currentOtherUserID.toString()) &&
       event.eventEndDateTimeInMS < now
   );
 
@@ -624,7 +626,7 @@ const OtherUserProfile = () => {
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
       currentOtherUserID &&
-      event.organizers.includes(currentOtherUserID.toString())
+      event.organizers.map((o) => o._id).includes(currentOtherUserID.toString())
   );
 
   const upcomingEventsUserInvitedTo: TEvent[] | undefined = allEvents?.filter(
@@ -632,7 +634,7 @@ const OtherUserProfile = () => {
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
       currentOtherUserID &&
-      event.invitees.includes(currentOtherUserID.toString())
+      event.invitees.map((i) => i._id).includes(currentOtherUserID.toString())
   );
 
   const upcomingEventsUserRSVPdTo: TEvent[] | undefined = allEvents?.filter(
@@ -647,7 +649,7 @@ const OtherUserProfile = () => {
     event.eventStartDateTimeInMS < now &&
       event.eventEndDateTimeInMS > now &&
       currentOtherUserID &&
-      (event.organizers.includes(currentOtherUserID.toString()) ||
+      (event.organizers.map((o) => o._id).includes(currentOtherUserID.toString()) ||
         event.interestedUsers.includes(currentOtherUserID.toString()));
   });
 

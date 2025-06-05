@@ -62,13 +62,15 @@ const UserHomepage = () => {
       );
 
       const userOrganizedEvents: TEvent[] = allEvents.filter(
-        (ev) => currentUser._id && ev.organizers.includes(currentUser._id.toString())
+        (ev) =>
+          currentUser._id &&
+          ev.organizers.map((o) => o._id).includes(currentUser._id.toString())
       );
 
       const eventsUserIsInvitedTo: TEvent[] = allEvents.filter(
         (ev) =>
           currentUser._id &&
-          ev.invitees.includes(currentUser._id.toString()) &&
+          ev.invitees.map((i) => i._id).includes(currentUser._id.toString()) &&
           !ev.disinterestedUsers.includes(currentUser._id.toString())
       );
 

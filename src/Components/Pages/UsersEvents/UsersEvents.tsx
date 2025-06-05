@@ -55,7 +55,7 @@ const UsersEvents = () => {
     (event) =>
       currentUser?._id &&
       event.creator !== currentUser?._id &&
-      event.organizers.includes(currentUser._id.toString()) &&
+      event.organizers.map((o) => o._id).includes(currentUser._id.toString()) &&
       event.eventEndDateTimeInMS < now
   );
 
@@ -71,7 +71,7 @@ const UsersEvents = () => {
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
       currentUser?._id &&
-      event.organizers.includes(currentUser._id.toString())
+      event.organizers.map((o) => o._id).includes(currentUser._id.toString())
   );
 
   const upcomingEventsUserInvitedTo: TEvent[] | undefined = allEvents?.filter(
@@ -79,7 +79,7 @@ const UsersEvents = () => {
       event.eventStartDateTimeInMS > now &&
       event.eventEndDateTimeInMS > now &&
       currentUser?._id &&
-      event.invitees.includes(currentUser._id.toString())
+      event.invitees.map((i) => i._id).includes(currentUser._id.toString())
   );
 
   const upcomingEventsUserRSVPdTo: TEvent[] | undefined = allEvents?.filter(
@@ -94,7 +94,7 @@ const UsersEvents = () => {
     event.eventStartDateTimeInMS < now &&
       event.eventEndDateTimeInMS > now &&
       currentUser?._id &&
-      (event.organizers.includes(currentUser._id.toString()) ||
+      (event.organizers.map((o) => o._id).includes(currentUser._id.toString()) ||
         event.interestedUsers.includes(currentUser._id.toString()));
   });
 
