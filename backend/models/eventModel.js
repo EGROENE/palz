@@ -2,12 +2,13 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const userInviteeSchema = new Schema({
+const inviteeOrganizerSchema = new Schema({
   _id: String | mongoose.Types.ObjectId,
   username: String,
   firstName: String,
   lastName: String,
   profileImage: String,
+  emailAddress: String,
 });
 
 const eventSchema = new Schema({
@@ -19,8 +20,8 @@ const eventSchema = new Schema({
     type: String,
     required: true,
   },
-  organizers: [userInviteeSchema],
-  invitees: [userInviteeSchema],
+  organizers: [inviteeOrganizerSchema],
+  invitees: [inviteeOrganizerSchema],
   blockedUsersEvent: {
     type: [String],
     required: true,
