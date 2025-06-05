@@ -79,11 +79,11 @@ const eventSchema = new Schema({
     required: true,
   },
   interestedUsers: {
-    type: [String],
+    type: [inviteeOrganizerSchema],
     required: true,
   },
   disinterestedUsers: {
-    type: [String],
+    type: [inviteeOrganizerSchema],
     required: true,
   },
   images: {
