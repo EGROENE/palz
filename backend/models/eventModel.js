@@ -20,10 +20,11 @@ const eventSchema = new Schema({
     type: String,
     required: true,
   },
+  // make org/inv required
   organizers: [inviteeOrganizerSchema],
   invitees: [inviteeOrganizerSchema],
   blockedUsersEvent: {
-    type: [String],
+    type: [inviteeOrganizerSchema],
     required: true,
   },
   description: {
