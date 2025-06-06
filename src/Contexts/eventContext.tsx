@@ -161,7 +161,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventImages, setEventImages] = useState<string[]>(
     currentEvent ? currentEvent.images : []
   );
-  const [blockedUsersEvent, setBlockedUsersEvent] = useState<string[]>(
+  const [blockedUsersEvent, setBlockedUsersEvent] = useState<TEventInviteeOrOrganizer[]>(
     currentEvent ? currentEvent.blockedUsersEvent : []
   );
   ///////////////////////
@@ -657,12 +657,21 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAddRemoveBlockedUserOnEvent = (user?: TOtherUser): void => {
     //e?.preventDefault();
     if (user && user._id) {
-      if (blockedUsersEvent.includes(user._id.toString())) {
+      if (blockedUsersEvent.map((bu) => bu._id).includes(user._id.toString())) {
         setBlockedUsersEvent(
-          blockedUsersEvent.filter((blockeeID) => blockeeID !== user._id)
+          blockedUsersEvent.filter((blockee) => blockee._id !== user._id)
         );
       } else {
-        setBlockedUsersEvent(blockedUsersEvent.concat(user._id.toString()));
+        setBlockedUsersEvent(
+          blockedUsersEvent.concat({
+            _id: user._id,
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            profileImage: user.profileImage,
+            emailAddress: user.emailAddress,
+          })
+        );
       }
     }
   };
