@@ -110,6 +110,7 @@ export type TOtherUser = {
   interests: string[];
 };
 
+// Bare-bones type to give basic info on event invitees & organizers
 export type TEventInviteeOrOrganizer = {
   _id: string | mongoose.Types.ObjectId | undefined;
   username: string | undefined;
