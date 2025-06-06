@@ -201,7 +201,9 @@ const EventForm = ({
     if (fetchPotentialCoOrganizersQuery.data) {
       setPotentialCoOrganizers(
         fetchPotentialCoOrganizersQuery.data.filter(
-          (user) => user._id && !blockedUsersEvent.includes(user._id.toString())
+          (user) =>
+            user._id &&
+            !blockedUsersEvent.map((bu) => bu._id).includes(user._id.toString())
         )
       );
     }
@@ -209,7 +211,9 @@ const EventForm = ({
     if (fetchPotentialInviteesQuery.data) {
       setPotentialInvitees(
         fetchPotentialInviteesQuery.data.filter(
-          (user) => user._id && !blockedUsersEvent.includes(user._id.toString())
+          (user) =>
+            user._id &&
+            !blockedUsersEvent.map((bu) => bu._id).includes(user._id.toString())
         )
       );
     }
@@ -757,7 +761,7 @@ const EventForm = ({
           firstName: currentUser?.firstName,
           lastName: currentUser?.lastName,
           profileImage: currentUser?.profileImage,
-          emailAddress: currentUser?.emailAddress
+          emailAddress: currentUser?.emailAddress,
         },
       ]);
       setInvitees([]);
@@ -865,7 +869,7 @@ const EventForm = ({
     const blockedUsers: TOtherUser[] = [];
     if (visibleOtherUsers) {
       for (const blockee of blockedUsersEvent) {
-        const user = visibleOtherUsers.filter((user) => user._id === blockee)[0];
+        const user = visibleOtherUsers.filter((user) => user._id === blockee._id)[0];
         blockedUsers.push(user);
       }
     }
@@ -1518,7 +1522,7 @@ const EventForm = ({
                           firstName: currentUser.firstName,
                           lastName: currentUser.lastName,
                           profileImage: currentUser.profileImage,
-                          emailAddress: currentUser.emailAddress
+                          emailAddress: currentUser.emailAddress,
                         },
                       ])
                     }
