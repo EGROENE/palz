@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import {
-  TEvent,
-  TOtherUser,
-  TThemeColor,
-  TEventInviteeOrOrganizer,
-} from "../../../types";
+import { TEvent, TThemeColor } from "../../../types";
 import { Link } from "react-router-dom";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
@@ -15,9 +10,7 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 
 const EventCard = ({ event }: { event: TEvent }) => {
   const { isLoading, theme } = useMainContext();
-  const { currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
-
-  const otherVisibleUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+  const { currentUser } = useUserContext();
 
   const {
     handleAddUserRSVP,
@@ -56,21 +49,12 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ? event.disinterestedUsers.map((i) => i._id).includes(currentUser._id.toString())
     : false;
 
-  const refinedOrganizers: TEventInviteeOrOrganizer[] = [];
-  if (otherVisibleUsers) {
-    for (const organizer of event.organizers) {
-      if (otherVisibleUsers.map((user) => user._id).includes(organizer._id?.toString())) {
-        refinedOrganizers.push(organizer);
-      }
-    }
-  }
-
-  const organizerUsernames = refinedOrganizers.map((o) => o.username);
+  const organizerUsernames = event.organizers.map((o) => o.username);
 
   const userIsOrganizer =
     currentUser &&
     currentUser._id &&
-    refinedOrganizers.map((o) => o._id).includes(currentUser._id.toString())
+    event.organizers.map((o) => o._id).includes(currentUser._id.toString())
       ? true
       : false;
 
