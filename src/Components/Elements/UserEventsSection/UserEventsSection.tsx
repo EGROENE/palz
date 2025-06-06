@@ -16,7 +16,7 @@ const UserEventsSection = ({
   // Filter out events from which currentUser has been blocked:
   const eventsFromWhichCurrentUserNotBlocked: TEvent[] = eventsArray.filter((event) =>
     currentUser && currentUser._id
-      ? !event.blockedUsersEvent.includes(currentUser._id)
+      ? !event.blockedUsersEvent.includes(currentUser._id.toString())
       : eventsArray
   );
 
