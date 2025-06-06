@@ -123,7 +123,7 @@ export type TEventInviteeOrOrganizer = {
 export type TEvent = {
   _id?: string;
   index: number | undefined;
-  blockedUsersEvent: string[];
+  blockedUsersEvent: TEventInviteeOrOrganizer[];
   creator: string | undefined;
   title: string;
   organizers: TEventInviteeOrOrganizer[];
@@ -247,7 +247,7 @@ export type TUserValuesToUpdate = {
 
 export type TEventValuesToUpdate = {
   relatedInterests?: string[] | undefined;
-  blockedUsersEvent?: string[] | undefined;
+  blockedUsersEvent?: TEventInviteeOrOrganizer[] | undefined;
   images?: string[] | undefined;
   address?: string | undefined;
   maxParticipants?: number | null;
@@ -733,8 +733,8 @@ export type TEventContext = {
   >;
   eventImages: string[];
   setEventImages: React.Dispatch<React.SetStateAction<string[]>>;
-  blockedUsersEvent: string[];
-  setBlockedUsersEvent: React.Dispatch<React.SetStateAction<string[]>>;
+  blockedUsersEvent: TEventInviteeOrOrganizer[];
+  setBlockedUsersEvent: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>;
   fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
     organizers: TEventInviteeOrOrganizer[],
