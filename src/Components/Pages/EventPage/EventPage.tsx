@@ -1,4 +1,4 @@
-import { TThemeColor, TUser, TEvent, TOtherUser } from "../../../types";
+import { TThemeColor, TUser, TEvent, TEventInviteeOrOrganizer } from "../../../types";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -24,10 +24,8 @@ const EventPage = () => {
     userCreatedAccount,
     setCurrentOtherUser,
     logout,
-    fetchAllVisibleOtherUsersQuery,
     getOtherUserFriends,
   } = useUserContext();
-  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
   const {
     handleAddUserRSVP,
@@ -41,9 +39,6 @@ const EventPage = () => {
     setShowInvitees,
   } = useEventContext();
   const { startConversation } = useChatContext();
-
-  //const [event, setEvent] = useState<TEvent | undefined>();
-  const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TOtherUser[]>([]);
 
   // Get most current version of event to which this page pertains:
   const { eventID } = useParams();
@@ -71,10 +66,10 @@ const EventPage = () => {
   const [
     organizersWhoHaveNotBlockedUserButHaveHiddenProfile,
     setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile,
-  ] = useState<TOtherUser[]>([]);
+  ] = useState<TEventInviteeOrOrganizer[]>([]);
 
   const [organizersWhoseProfileIsVisible, setOrganizersWhoseProfileIsVisible] = useState<
-    TOtherUser[]
+    TEventInviteeOrOrganizer[]
   >([]);
 
   /* 
@@ -85,7 +80,8 @@ const EventPage = () => {
 
   const getEventOrganizers = async (): Promise<TUser[]> => {
     let eventOrganizers: TUser[] = [];
-    if (visibleOtherUsers && eventOrganizersIDs) {
+
+    if (eventOrganizersIDs) {
       for (const org of eventOrganizersIDs) {
         if (org) {
           await Requests.getUserByID(org)
@@ -101,45 +97,86 @@ const EventPage = () => {
       }
     }
 
-    if (visibleOtherUsers && currentUser) {
+    if (currentUser) {
       setOrganizersWhoseProfileIsVisible(
         eventOrganizers
-          .filter((organizer) => organizer._id !== currentUser._id)
+          .filter((organizer) => {
+            if (currentUser && currentUser._id) {
+              const currentUserIsFriend: boolean = organizer.friends.includes(
+                currentUser._id.toString()
+              );
+
+              const currentUserIsFriendOfFriend: boolean =
+                currentUser && currentUser._id && organizer._id
+                  ? getOtherUserFriends(organizer._id.toString()).some(
+                      (otherUserFriend) =>
+                        currentUser._id &&
+                        otherUserFriend.friends.includes(currentUser._id.toString())
+                    )
+                  : false;
+
+              // Return TOtherUser version of event organizer
+              if (
+                (organizer._id !== currentUser._id &&
+                  organizer.profileVisibleTo === "friends" &&
+                  currentUserIsFriend) ||
+                (organizer.profileVisibleTo === "friends of friends" &&
+                  currentUserIsFriendOfFriend) ||
+                organizer.profileVisibleTo === "anyone"
+              ) {
+                return organizer;
+              }
+            }
+          })
           .map((organizer) => {
-            return visibleOtherUsers.filter(
-              (otherUser) => otherUser._id === organizer._id
-            )[0];
+            return {
+              _id: organizer._id,
+              username: organizer.username,
+              firstName: organizer.firstName,
+              lastName: organizer.lastName,
+              profileImage: organizer.profileImage,
+              emailAddress: organizer.emailAddress,
+            };
           })
       );
 
       setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile(
-        eventOrganizers?.filter((organizer) => {
-          if (organizer._id && currentUser && currentUser._id) {
-            const currentUserIsFriend = organizer.friends.includes(
-              currentUser._id.toString()
-            );
+        eventOrganizers
+          .filter((organizer) => {
+            if (organizer._id && currentUser && currentUser._id) {
+              const currentUserIsFriend: boolean = organizer.friends.includes(
+                currentUser._id.toString()
+              );
 
-            const currentUserIsFriendOfFriend: boolean =
-              currentUser && currentUser._id && organizer._id
-                ? getOtherUserFriends(organizer._id.toString()).some(
-                    (otherUserFriend) =>
-                      currentUser._id &&
-                      otherUserFriend.friends.includes(currentUser._id.toString())
-                  )
-                : false;
+              const currentUserIsFriendOfFriend: boolean =
+                currentUser && currentUser._id && organizer._id
+                  ? getOtherUserFriends(organizer._id.toString()).some(
+                      (otherUserFriend) =>
+                        currentUser._id &&
+                        otherUserFriend.friends.includes(currentUser._id.toString())
+                    )
+                  : false;
 
-            // Return TOtherUser version of event organizer
-            if (
-              (organizer.profileVisibleTo === "friends" && !currentUserIsFriend) ||
-              (organizer.profileVisibleTo === "friends of friends" &&
-                !currentUserIsFriendOfFriend)
-            ) {
-              return visibleOtherUsers.filter(
-                (otherUser) => otherUser._id === organizer._id
-              )[0];
+              // Return TOtherUser version of event organizer
+              if (
+                (organizer.profileVisibleTo === "friends" && !currentUserIsFriend) ||
+                (organizer.profileVisibleTo === "friends of friends" &&
+                  !currentUserIsFriendOfFriend)
+              ) {
+                return organizer;
+              }
             }
-          }
-        })
+          })
+          .map((organizer) => {
+            return {
+              _id: organizer._id,
+              username: organizer.username,
+              firstName: organizer.firstName,
+              lastName: organizer.lastName,
+              profileImage: organizer.profileImage,
+              emailAddress: organizer.emailAddress,
+            };
+          })
       );
     }
 
@@ -206,19 +243,7 @@ const EventPage = () => {
         }
       }
     });
-
-    const refIntUsers = [];
-    if (currentEvent && visibleOtherUsers) {
-      for (const userID of currentEvent.interestedUsers.map((i) => i._id)) {
-        for (const user of visibleOtherUsers) {
-          if (user._id?.toString() === userID) {
-            refIntUsers.push(user);
-          }
-        }
-      }
-    }
-    setRefinedInterestedUsers(refIntUsers);
-  }, [fetchAllVisibleOtherUsersQuery.data, allEvents]);
+  }, [allEvents]);
 
   const nextEventDateTime = currentEvent
     ? new Date(currentEvent.eventStartDateTimeInMS)
@@ -268,11 +293,9 @@ const EventPage = () => {
   };
   const status: string | undefined = getStatus();
 
-  const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
+  const isNoFetchError: boolean = !fetchAllEventsQuery.isError;
 
-  const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
+  const fetchIsLoading: boolean = fetchAllEventsQuery.isLoading;
 
   return (
     <>
@@ -302,7 +325,9 @@ const EventPage = () => {
               renderButtonTwo={true}
               closeModalMethod={setShowRSVPs}
               header="RSVPs"
-              userIDArray={refinedInterestedUsers.map((user) => user._id?.toString())}
+              userIDArray={currentEvent.interestedUsers.map((user) =>
+                user._id?.toString()
+              )}
               buttonOneText="Message"
               buttonOneHandler={startConversation}
               buttonOneHandlerNeedsEventParam={false}
@@ -343,7 +368,38 @@ const EventPage = () => {
                   <Link
                     key={organizer._id?.toString()}
                     to={`/users/${organizer.username}`}
-                    onClick={() => setCurrentOtherUser(organizer)}
+                    onClick={() => {
+                      if (organizer._id) {
+                        Requests.getUserByID(organizer._id.toString()).then((res) => {
+                          if (res.ok) {
+                            res.json().then((organizer) =>
+                              setCurrentOtherUser({
+                                _id: organizer._id,
+                                index: undefined,
+                                firstName: organizer.firstName,
+                                lastName: organizer.lastName,
+                                username: organizer.username,
+                                city: organizer.city,
+                                stateProvince: organizer.stateProvince,
+                                country: organizer.country,
+                                phoneCountry: organizer.phoneCountry,
+                                phoneCountryCode: organizer.phoneCountryCode,
+                                phoneNumberWithoutCountryCode:
+                                  organizer.phoneNumberWithoutCountryCode,
+                                emailAddress: organizer.emailAddress,
+                                instagram: organizer.instagram,
+                                facebook: organizer.facebook,
+                                x: organizer.x,
+                                profileImage: organizer.profileImage,
+                                about: organizer.about,
+                                friends: organizer.friends,
+                                interests: organizer.interests,
+                              })
+                            );
+                          }
+                        });
+                      }
+                    }}
                   >
                     <Tab
                       info={organizer}
@@ -420,7 +476,7 @@ const EventPage = () => {
                         currentEvent.organizers
                           .map((o) => o._id)
                           .includes(currentUser._id.toString()) &&
-                        refinedInterestedUsers.length > 0
+                        currentEvent.interestedUsers.length > 0
                           ? setShowRSVPs(true)
                           : undefined
                       }
@@ -429,11 +485,11 @@ const EventPage = () => {
                         currentEvent.organizers
                           .map((o) => o._id)
                           .includes(currentUser._id.toString()) &&
-                        refinedInterestedUsers.length > 0
+                        currentEvent.interestedUsers.length > 0
                           ? "show-listed-users-or-invitees"
                           : undefined
                       }
-                    >{`${refinedInterestedUsers.length}`}</span>
+                    >{`${currentEvent.interestedUsers.length}`}</span>
                   </p>
                 </div>
               </div>
