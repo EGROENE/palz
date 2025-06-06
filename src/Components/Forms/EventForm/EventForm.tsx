@@ -865,18 +865,6 @@ const EventForm = ({
 
   const usersWhoAreInvitees = event?.invitees;
 
-  const getUsersWhoAreBlocked = (): TOtherUser[] => {
-    const blockedUsers: TOtherUser[] = [];
-    if (visibleOtherUsers) {
-      for (const blockee of blockedUsersEvent) {
-        const user = visibleOtherUsers.filter((user) => user._id === blockee._id)[0];
-        blockedUsers.push(user);
-      }
-    }
-    return blockedUsers;
-  };
-  const usersWhoAreBlocked = getUsersWhoAreBlocked();
-
   const getChangesMade = (): boolean => {
     if (currentEvent && usedFor === "edit-event") {
       return (
@@ -1682,8 +1670,10 @@ const EventForm = ({
         </header>
         <div className="added-user-tab-container">
           {currentUser &&
-            usersWhoAreBlocked.length > 0 &&
-            usersWhoAreBlocked.map((user) => (
+            event &&
+            event.blockedUsersEvent &&
+            event.blockedUsersEvent.length > 0 &&
+            event.blockedUsersEvent.map((user) => (
               <Tab
                 key={user._id?.toString()}
                 info={user}
