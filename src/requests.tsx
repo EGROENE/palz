@@ -226,7 +226,11 @@ const getFriends = async (
   });
 };
 
-const getExplorableEvents = (currentUser: TUser | null, start: number, limit: number) => {
+const getExplorableEvents = (
+  currentUser: TUser | null,
+  start: number,
+  limit: number
+): Promise<TEvent[]> => {
   var myHeaders = new Headers();
   myHeaders.append("Context-Type", "application/json");
 
@@ -237,7 +241,9 @@ const getExplorableEvents = (currentUser: TUser | null, start: number, limit: nu
       headers: myHeaders,
       redirect: "follow",
     }
-  );
+  ).then((response) => {
+    return response.json().then((explorableEvents: TEvent[]) => explorableEvents);
+  });
 };
 
 const getUserByID = (id: string): Promise<Response> => {
