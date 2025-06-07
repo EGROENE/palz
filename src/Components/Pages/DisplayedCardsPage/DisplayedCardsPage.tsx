@@ -82,12 +82,21 @@ const DisplayedCardsPage = ({
     | "in my country"
     | "common interests";
 
+  type TEventsFiltersArray =
+    | "in my city"
+    | "in my state"
+    | "in my country"
+    | "my interests"
+    | "organized by friends"
+    | "RSVP'd by friends";
+
   if (error) {
     throw new Error(error);
   }
 
   const [allPotentialFriends, setAllPotentialFriends] = useState<TOtherUser[]>([]);
   const [allFriends, setAllFriends] = useState<TOtherUser[]>([]);
+  const [allExplorableEvents, setAllExplorableEvents] = useState<TEvent[]>([]);
 
   const getTOtherUserFromTUser = (user: TUser): TOtherUser => {
     const currentUserIsFriend: boolean =
@@ -321,34 +330,37 @@ const DisplayedCardsPage = ({
   const initializeFriendsSearch = (input: string) => {
     setIsLoading(true);
     setFetchStart(0);
-    Requests.getFriends(currentUser, 0, Infinity).then((batchOfFriends) => {
-      if (batchOfFriends) {
-        setAllFriends(batchOfFriends);
-        setDisplayedItems(
-          batchOfFriends.filter((f) => {
-            const getAnInterestIncludesSearchTerm = (): boolean => {
-              for (const interest of f.interests) {
-                if (interest.includes(input.toLowerCase())) {
-                  return true;
+    Requests.getFriends(currentUser, 0, Infinity)
+      .then((batchOfFriends) => {
+        if (batchOfFriends) {
+          setAllFriends(batchOfFriends);
+          setDisplayedItems(
+            batchOfFriends.filter((f) => {
+              const getAnInterestIncludesSearchTerm = (): boolean => {
+                for (const interest of f.interests) {
+                  if (interest.includes(input.toLowerCase())) {
+                    return true;
+                  }
                 }
-              }
-              return false;
-            };
-            const anInterestIncludesSearchTerm: boolean =
-              getAnInterestIncludesSearchTerm();
+                return false;
+              };
+              const anInterestIncludesSearchTerm: boolean =
+                getAnInterestIncludesSearchTerm();
 
-            if (
-              f.firstName?.toLowerCase().includes(input.toLowerCase()) ||
-              f.lastName?.toLowerCase().includes(input.toLowerCase()) ||
-              f.username?.toLowerCase().includes(input.toLowerCase()) ||
-              anInterestIncludesSearchTerm
-            ) {
-              return getTOtherUserFromTUser(f);
-            }
-          })
-        );
-      }
-    });
+              if (
+                f.firstName?.toLowerCase().includes(input.toLowerCase()) ||
+                f.lastName?.toLowerCase().includes(input.toLowerCase()) ||
+                f.username?.toLowerCase().includes(input.toLowerCase()) ||
+                anInterestIncludesSearchTerm
+              ) {
+                return getTOtherUserFromTUser(f);
+              }
+            })
+          );
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   const initializeFriendsFilter = (filters: TFriendsFiltersArray) => {
@@ -421,8 +433,149 @@ const DisplayedCardsPage = ({
       .finally(() => setIsLoading(false));
   };
 
+  const initializeEventsSearch = (input: string) => {
+    setIsLoading(true);
+    setFetchStart(0);
+    Requests.getExplorableEvents(currentUser, 0, Infinity)
+      .then((batchOfEvents: TEvent[]) => {
+        if (batchOfEvents) {
+          setAllExplorableEvents(batchOfEvents);
+          setDisplayedItems(
+            batchOfEvents.filter((event) => {
+              const eventOrganizerNames = event.organizers.map(
+                (o) => `${o.firstName} ${o.lastName}`
+              );
+
+              const eventOrganizerUsernames = event.organizers.map((o) => o.username);
+
+              let isOrganizerNameMatch: boolean = false;
+              for (const name of eventOrganizerNames) {
+                if (name.includes(input.toLowerCase())) {
+                  isOrganizerNameMatch = true;
+                }
+              }
+
+              let isUsernameMatch: boolean = false;
+              for (const username of eventOrganizerUsernames) {
+                if (username?.includes(input.toLowerCase())) {
+                  isUsernameMatch = true;
+                }
+              }
+
+              let isInterestMatch: boolean = false;
+              for (const interest of event.relatedInterests) {
+                if (interest.includes(input.toLowerCase())) {
+                  isInterestMatch = true;
+                }
+              }
+
+              if (
+                event.title.toLowerCase().includes(input.toLowerCase()) ||
+                event.additionalInfo.toLowerCase().includes(input.toLowerCase()) ||
+                event.address?.toLowerCase().includes(input.toLowerCase()) ||
+                event.city?.toLowerCase().includes(input.toLowerCase()) ||
+                event.country?.toLowerCase().includes(input.toLowerCase()) ||
+                event.description.toLowerCase().includes(input.toLowerCase()) ||
+                isOrganizerNameMatch ||
+                isUsernameMatch ||
+                isInterestMatch ||
+                event.stateProvince?.toLowerCase().includes(input.toLowerCase())
+              ) {
+                return event;
+              }
+            })
+          );
+        } else {
+          setFetchError("Could not load events. Try reloading the page.");
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
+  };
+
+  const initializeEventsFilter = (filters: TEventsFiltersArray) => {
+    setIsLoading(true);
+    setFetchStart(0);
+    Requests.getExplorableEvents(currentUser, 0, Infinity)
+      .then((batchOfEvents: TEvent[]) => {
+        if (batchOfEvents) {
+          setAllExplorableEvents(batchOfEvents);
+          let matches: TEvent[] = [];
+          for (const ev of batchOfEvents) {
+            for (const filter of filters) {
+              if (filter === "in my city") {
+                if (
+                  currentUser &&
+                  ev.city === currentUser.city &&
+                  matches.indexOf(ev) === -1
+                ) {
+                  matches.push(ev);
+                }
+              }
+
+              if (filter === "in my state") {
+                if (
+                  currentUser &&
+                  ev.stateProvince === currentUser.stateProvince &&
+                  matches.indexOf(ev) === -1
+                ) {
+                  matches.push(ev);
+                }
+              }
+
+              if (filter === "my interests") {
+                if (
+                  ev.relatedInterests.some((int) =>
+                    currentUser?.interests.includes(int)
+                  ) &&
+                  matches.indexOf(ev) === -1
+                ) {
+                  matches.push(ev);
+                }
+              }
+
+              if (filter === "organized by friends") {
+                if (
+                  ev.organizers
+                    .map((o) => o._id)
+                    .some((o) => {
+                      if (o) {
+                        return currentUser?.friends.includes(o.toString());
+                      }
+                    }) &&
+                  matches.indexOf(ev) === -1
+                ) {
+                  matches.push(ev);
+                }
+              }
+
+              if (filter === "RSVP'd by friends") {
+                if (
+                  ev.interestedUsers
+                    .map((iu) => iu._id)
+                    .some((iu) => {
+                      if (iu) {
+                        return currentUser?.friends.includes(iu.toString());
+                      }
+                    }) &&
+                  matches.indexOf(ev) === -1
+                ) {
+                  matches.push(ev);
+                }
+              }
+            }
+          }
+          setDisplayedItems(matches);
+        } else {
+          setFetchError("Could not load events. Try reloading the page.");
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
+  };
+
   const handleLoadMoreItemsOnScroll = (
-    items: TOtherUser[],
+    items: (TOtherUser | TEvent)[],
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ): void => {
     const eHTMLElement = e?.target as HTMLElement;
@@ -439,23 +592,30 @@ const DisplayedCardsPage = ({
       if (usedFor === "potential-friends") {
         // Set fetchStart to index of last element in potentialFriends array (may need to subtract items just added to potentialFriends array to get the right item)
         const lastItemInPotentialFriends: TOtherUser = items[items.length - 1];
+
         if (lastItemInPotentialFriends.index && searchTerm === "") {
           setFetchStart(lastItemInPotentialFriends.index + 1);
         }
       }
 
       if (usedFor === "my-friends") {
-        const lastItemInFriends: TOtherUser = items[items.length - 1];
+        const lastItemInFriends = items[items.length - 1];
 
         if (lastItemInFriends.index && searchTerm === "") {
           setFetchStart(lastItemInFriends.index + 1);
         }
       }
+
+      if (usedFor === "events") {
+        const lastItemInEvents = items[items.length - 1];
+
+        if (lastItemInEvents.index && searchTerm === "") {
+          setFetchStart(lastItemInEvents.index + 1);
+        }
+      }
     }
   };
 
-  // Put requests for MyPalz & Explore Events in here. Their start/limits should be in dep array. Use conditions to determine which request should run.
-  // Find way to set fetchStart to index of last item in potentialFriends
   useEffect(() => {
     if (usedFor === "potential-friends") {
       // Initialize displayedItems:
@@ -550,6 +710,38 @@ const DisplayedCardsPage = ({
         }
       }
     }
+
+    if (usedFor === "events") {
+      if (searchTerm === "" && activeFilters.length === 0) {
+        setIsLoading(true);
+        if (fetchLimit) {
+          Requests.getExplorableEvents(currentUser, fetchStart, fetchLimit)
+            .then((batchOfEvents: TEvent[]) => {
+              if (batchOfEvents) {
+                if (fetchStart === 0) {
+                  setDisplayedItems(batchOfEvents);
+                } else {
+                  setDisplayedItems(displayedItems.concat(batchOfEvents));
+                }
+
+                if (searchTerm === "") {
+                  window.addEventListener("scroll", () => {
+                    handleLoadMoreItemsOnScroll(displayedItems.concat(batchOfEvents));
+                  });
+                } else {
+                  window.removeEventListener("scroll", () => {
+                    handleLoadMoreItemsOnScroll(displayedItems.concat(batchOfEvents));
+                  });
+                }
+              } else {
+                setFetchError("Could not load events. Try reloading the page.");
+              }
+            })
+            .catch((error) => console.log(error))
+            .finally(() => setIsLoading(false));
+        }
+      }
+    }
   }, [fetchStart, fetchLimit, searchTerm, usedFor, activeFilters]);
 
   useEffect(() => {
@@ -567,12 +759,6 @@ const DisplayedCardsPage = ({
   }, []);
 
   useEffect(() => {
-    if (usedFor === "events") {
-      setDisplayedItemsCount(8);
-      setDisplayedItemsCountInterval(8);
-      resetDisplayedEvents();
-    }
-
     if (showSidebar) {
       setShowSidebar(false);
     }
@@ -590,182 +776,39 @@ const DisplayedCardsPage = ({
     }
   }, [fetchAllVisibleOtherUsersQuery.isLoading, usedFor]);
 
-  // Re-render page as changes (for now, RSVPs) are made to events in allEvents, taking into account any existing search term or filter
-  /* Before, when RSVPing/de-RSVPing, RSVP button text wasn't updating properly b/c component didn't have access to updated events in allEvents (which were updating properly) until a page refresh, but now, this UI will hot update b/c of functionality in a useEffect that updates displayedEvents that depends on allEvents. UI would not update properly if this functionality were inside a useEffect w/ an empty dependency array. */
-  useEffect(() => {
-    if (usedFor === "events") {
-      if (searchTerm.trim() !== "") {
-        let newDisplayedEvents: TEvent[] = [];
+  const potentialFriendsFilterOptions: string[] = [
+    ...(currentUser?.city !== "" ? ["in my city"] : []),
+    ...(currentUser?.stateProvince !== "" ? "in my state" : []),
+    ...(currentUser?.country !== "" ? "in my country" : []),
+    ...(currentUser?.interests.length ? "common interests" : []),
+    ...(currentUser?.friends.length ? "friends of friends" : []),
+  ];
 
-        const allPublicEventsThatStartOrEndInFuture: TEvent[] | undefined =
-          allEvents?.filter(
-            (event) =>
-              (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
-              event.publicity === "public"
-          );
+  const friendsFilterOptions: string[] = [
+    ...(currentUser?.city !== "" ? ["in my city"] : []),
+    ...(currentUser?.stateProvince !== "" ? "in my state" : []),
+    ...(currentUser?.country !== "" ? "in my country" : []),
+    ...(currentUser?.interests.length ? "common interests" : []),
+  ];
 
-        if (allPublicEventsThatStartOrEndInFuture) {
-          for (const event of allPublicEventsThatStartOrEndInFuture) {
-            // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
-            let eventOrganizerNames: string[] = [];
-            let eventOrganizerUsernames: string[] = [];
-            for (const id of event.organizers) {
-              const matchingUser: TOtherUser | undefined = visibleOtherUsers?.filter(
-                (user) => user?._id === id
-              )[0];
+  const eventFilterOptions: string[] = [
+    ...(currentUser?.city !== "" ? ["in my city"] : []),
+    ...(currentUser?.stateProvince !== "" ? ["in my state"] : []),
+    ...(currentUser?.country !== "" ? ["in my country"] : []),
+    ...(currentUser?.interests.length ? ["my interests"] : []),
+    ...(currentUser?.friends.length ? ["organized by friends"] : []),
+    ...(currentUser?.friends.length ? ["RSVP'd by friends"] : []),
+  ];
 
-              const fullName: string = `${matchingUser?.firstName?.toLowerCase()} ${matchingUser?.lastName?.toLowerCase()}`;
-              eventOrganizerNames.push(fullName);
-
-              if (matchingUser?.username) {
-                eventOrganizerUsernames.push(matchingUser.username);
-              }
-            }
-            let isOrganizerNameMatch: boolean = false;
-            for (const name of eventOrganizerNames) {
-              if (name.includes(searchTerm.toLowerCase())) {
-                isOrganizerNameMatch = true;
-              }
-            }
-
-            let isUsernameMatch: boolean = false;
-            for (const username of eventOrganizerUsernames) {
-              if (username.includes(searchTerm.toLowerCase())) {
-                isUsernameMatch = true;
-              }
-            }
-
-            if (
-              event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              event.additionalInfo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              event.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              event.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              event.country?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              isOrganizerNameMatch ||
-              isUsernameMatch ||
-              event.stateProvince?.toLowerCase().includes(searchTerm.toLowerCase())
-            ) {
-              newDisplayedEvents.push(event);
-            }
-          }
-        }
-        setDisplayedItems(newDisplayedEvents);
-      } else if (activeFilters.length > 0) {
-        let newDisplayedEvents: TEvent[] = [];
-        for (const filter of activeFilters) {
-          const indexOfArrayInFilterOptions =
-            Object.keys(eventFilterOptions).indexOf(filter);
-          const filterOptionEvents: TEvent[] =
-            Object.values(eventFilterOptions)[indexOfArrayInFilterOptions];
-
-          for (const filterOptionEvent of filterOptionEvents) {
-            if (
-              !newDisplayedEvents.map((ev) => ev._id).includes(filterOptionEvent?._id)
-            ) {
-              newDisplayedEvents.push(filterOptionEvent);
-            }
-          }
-        }
-        setDisplayedItems(newDisplayedEvents);
-      } else {
-        resetDisplayedEvents();
-      }
+  const getFilterOptions = (): string[] => {
+    if (usedFor === "potential-friends") {
+      return potentialFriendsFilterOptions;
+    } else if (usedFor === "my-friends") {
+      return friendsFilterOptions;
     }
-  }, [allEvents]);
-
-  // EVENTS VARIABLES
-  const displayableEvents: TEvent[] | undefined = allEvents?.filter(
-    (event) =>
-      (event.eventStartDateTimeInMS > now || event.eventEndDateTimeInMS > now) &&
-      (event.publicity === "public" ||
-        (currentUser?._id &&
-          (event.invitees.includes(currentUser._id.toString()) ||
-            event.organizers.includes(currentUser._id.toString()))))
-  );
-
-  const getEventsByCurrentUserInterests = (): TEvent[] => {
-    let eventsByCurrentUserInterests = [];
-    const updatedDisplayedEvents = displayableEvents;
-    if (currentUser?.interests && updatedDisplayedEvents) {
-      for (const interest of currentUser?.interests) {
-        for (const event of updatedDisplayedEvents) {
-          if (event.relatedInterests.includes(interest)) {
-            eventsByCurrentUserInterests.push(event);
-          }
-        }
-      }
-    }
-    return eventsByCurrentUserInterests;
+    return eventFilterOptions;
   };
-  const eventsByCurrentUserInterests: TEvent[] = getEventsByCurrentUserInterests();
-
-  const getEventsOrganizedByCurrentUserFriends = (): TEvent[] => {
-    let eventsOrganizedByCurrentUserFriends = [];
-    const updatedDisplayedEvents = displayableEvents;
-    if (currentUser?.friends && updatedDisplayedEvents) {
-      for (const friend of currentUser.friends) {
-        for (const event of updatedDisplayedEvents) {
-          if (event.organizers.includes(friend)) {
-            eventsOrganizedByCurrentUserFriends.push(event);
-          }
-        }
-      }
-    }
-    return eventsOrganizedByCurrentUserFriends;
-  };
-  const eventsOrganizedByCurrentUserFriends: TEvent[] =
-    getEventsOrganizedByCurrentUserFriends();
-
-  const getEventsRSVPdByCurrentUserFriends = (): TEvent[] => {
-    let eventsRSVPdByCurrentUserFriends = [];
-    const updatedDisplayedEvents = displayableEvents;
-    if (currentUser?.friends && updatedDisplayedEvents) {
-      for (const friend of currentUser.friends) {
-        for (const event of updatedDisplayedEvents) {
-          if (event.interestedUsers.includes(friend)) {
-            eventsRSVPdByCurrentUserFriends.push(event);
-          }
-        }
-      }
-    }
-    return eventsRSVPdByCurrentUserFriends;
-  };
-  const eventsRSVPdByCurrentUserFriends: TEvent[] = getEventsRSVPdByCurrentUserFriends();
-
-  // Object containing filter options & the corresponding arrays of events
-  // for pot. friends, filter by city, state, country, friends of friends, common interests. put in var potentialFriendsFilterOptions
-  const eventFilterOptions = {
-    ...(currentUser?.city !== "" && {
-      "my city": displayableEvents?.filter((event) => event.city === currentUser?.city),
-    }),
-    ...(currentUser?.stateProvince !== "" && {
-      "my state": displayableEvents?.filter(
-        (event) => event.stateProvince === currentUser?.stateProvince
-      ),
-    }),
-    ...(currentUser?.country !== "" && {
-      "my country": displayableEvents?.filter(
-        (event) => event.country === currentUser?.country
-      ),
-    }),
-    ...(currentUser?.interests.length && {
-      "my interests": eventsByCurrentUserInterests,
-    }),
-    ...(currentUser?.friends.length && {
-      "organized by friends": eventsOrganizedByCurrentUserFriends,
-    }),
-    ...(currentUser?.friends.length && {
-      "RSVP'd by friends": eventsRSVPdByCurrentUserFriends,
-    }),
-  };
-
-  const resetDisplayedEvents = (): void => {
-    if (displayableEvents) {
-      setDisplayedItems(displayableEvents);
-    }
-  };
-  //////////////////////////////////////////
+  const filterOptions = getFilterOptions();
 
   const navigation = useNavigate();
   useEffect(() => {
@@ -790,39 +833,23 @@ const DisplayedCardsPage = ({
       : activeFilters.concat(option);
     setActiveFilters(updatedActiveFiltersArray);
 
-    // If at least one filter, display events that can be described by the filter(s)
-    // Else, if no filters (when user clears them all), reset to all events whose start or end is in future
     if (updatedActiveFiltersArray.length > 0) {
-      let newDisplayedItems: (TEvent | TOtherUser)[] = [];
-      for (const filter of updatedActiveFiltersArray) {
-        if (usedFor === "events") {
-          const indexOfArrayInFilterOptions =
-            Object.keys(eventFilterOptions).indexOf(filter);
-          const filterOptionEvents: TEvent[] =
-            Object.values(eventFilterOptions)[indexOfArrayInFilterOptions];
-
-          for (const filterOptionEvent of Methods.sortEventsSoonestToLatest(
-            filterOptionEvents
-          )) {
-            if (!newDisplayedItems.map((ev) => ev._id).includes(filterOptionEvent?._id)) {
-              newDisplayedItems.push(filterOptionEvent);
-            }
-          }
-        }
-
-        if (usedFor === "potential-friends") {
-          initializePotentialFriendsFilter(updatedActiveFiltersArray);
-        }
-
-        if (usedFor === "my-friends") {
-          initializeFriendsFilter(updatedActiveFiltersArray);
-        }
+      if (usedFor === "events") {
+        initializeEventsFilter(updatedActiveFiltersArray);
       }
-      setDisplayedItems(newDisplayedItems);
+
+      if (usedFor === "potential-friends") {
+        initializePotentialFriendsFilter(updatedActiveFiltersArray);
+      }
+
+      if (usedFor === "my-friends") {
+        initializeFriendsFilter(updatedActiveFiltersArray);
+      }
     } else {
       // Reset displayedItems if there are no longer any active filters:
       if (usedFor === "events") {
-        resetDisplayedEvents();
+        setFetchStart(0);
+        setAllExplorableEvents([]);
       }
       if (usedFor === "my-friends") {
         setFetchStart(0);
@@ -838,7 +865,8 @@ const DisplayedCardsPage = ({
   const handleClearActiveFilters = (): void => {
     setActiveFilters([]);
     if (usedFor === "events") {
-      resetDisplayedEvents();
+      setFetchStart(0);
+      setAllExplorableEvents([]);
     }
     if (usedFor === "my-friends") {
       setFetchStart(0);
@@ -859,99 +887,100 @@ const DisplayedCardsPage = ({
     setSearchTerm(inputCleaned);
 
     if (inputCleaned.trim() !== "") {
-      if (displayableEvents) {
-        if (usedFor === "events") {
-          let newDisplayedEvents: TEvent[] = [];
+      if (usedFor === "events") {
+        if (allExplorableEvents.length === 0) {
+          initializeEventsSearch(inputCleaned.trim());
+        } else {
+          setDisplayedItems(
+            allExplorableEvents.filter((ee) => {
+              const eventOrganizerNames = ee.organizers.map(
+                (o) => `${o.firstName} ${o.lastName}`
+              );
 
-          for (const event of displayableEvents) {
-            // Get arrays of organizer full names & usernames so they are searchable (need to look up user by id):
-            let eventOrganizerNames: string[] = [];
-            let eventOrganizerUsernames: string[] = [];
-            for (const id of event.organizers) {
-              const matchingUser: TOtherUser | undefined =
-                visibleOtherUsers &&
-                visibleOtherUsers.filter((user) => user?._id === id)[0];
+              const eventOrganizerUsernames = ee.organizers.map((o) => o.username);
 
-              const fullName: string = `${matchingUser?.firstName?.toLowerCase()} ${matchingUser?.lastName?.toLowerCase()}`;
-              eventOrganizerNames.push(fullName);
-
-              if (matchingUser?.username) {
-                eventOrganizerUsernames.push(matchingUser?.username);
-              }
-            }
-            let isOrganizerNameMatch: boolean = false;
-            for (const name of eventOrganizerNames) {
-              if (name.includes(inputCleaned.toLowerCase())) {
-                isOrganizerNameMatch = true;
-              }
-            }
-
-            let isUsernameMatch: boolean = false;
-            for (const username of eventOrganizerUsernames) {
-              if (username.includes(inputCleaned.toLowerCase())) {
-                isUsernameMatch = true;
-              }
-            }
-
-            if (
-              event.title.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-              event.additionalInfo.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-              event.address?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-              event.city?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-              event.country?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-              event.description.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-              isOrganizerNameMatch ||
-              isUsernameMatch ||
-              event.stateProvince?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-              event.relatedInterests.includes(inputCleaned.toLowerCase())
-            ) {
-              newDisplayedEvents.push(event);
-            }
-          }
-          setDisplayedItems(newDisplayedEvents);
-        }
-
-        if (usedFor === "potential-friends") {
-          if (allPotentialFriends.length === 0) {
-            initializePotentialFriendsSearch(inputCleaned.trim());
-          } else {
-            setDisplayedItems(
-              allPotentialFriends.filter((pf) => {
-                // loop thru all items in pf.interests; if one includes input, return pf
-                if (
-                  pf.firstName?.toLowerCase().includes(input.toLowerCase()) ||
-                  pf.lastName?.toLowerCase().includes(input.toLowerCase()) ||
-                  pf.username?.toLowerCase().includes(input.toLowerCase())
-                ) {
-                  return pf;
+              let isOrganizerNameMatch: boolean = false;
+              for (const name of eventOrganizerNames) {
+                if (name.includes(inputCleaned.toLowerCase())) {
+                  isOrganizerNameMatch = true;
                 }
-              })
-            );
-          }
-        }
+              }
 
-        if (usedFor === "my-friends") {
-          if (allFriends.length === 0) {
-            initializeFriendsSearch(inputCleaned.trim());
-          } else {
-            setDisplayedItems(
-              allFriends.filter((f) => {
-                // loop thru all items in pf.interests; if one includes input, return pf
-                if (
-                  f.firstName?.toLowerCase().includes(input.toLowerCase()) ||
-                  f.lastName?.toLowerCase().includes(input.toLowerCase()) ||
-                  f.username?.toLowerCase().includes(input.toLowerCase())
-                ) {
-                  return f;
+              let isUsernameMatch: boolean = false;
+              for (const username of eventOrganizerUsernames) {
+                if (username?.includes(inputCleaned.toLowerCase())) {
+                  isUsernameMatch = true;
                 }
-              })
-            );
-          }
+              }
+
+              let isInterestMatch: boolean = false;
+              for (const interest of ee.relatedInterests) {
+                if (interest.includes(inputCleaned.toLowerCase())) {
+                  isInterestMatch = true;
+                }
+              }
+
+              if (
+                ee.title.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+                ee.additionalInfo.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+                ee.address?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+                ee.city?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+                ee.country?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+                ee.description.toLowerCase().includes(inputCleaned.toLowerCase()) ||
+                isOrganizerNameMatch ||
+                isUsernameMatch ||
+                isInterestMatch ||
+                ee.stateProvince?.toLowerCase().includes(inputCleaned.toLowerCase())
+              ) {
+                return ee;
+              }
+            })
+          );
+        }
+      }
+
+      if (usedFor === "potential-friends") {
+        if (allPotentialFriends.length === 0) {
+          initializePotentialFriendsSearch(inputCleaned.trim());
+        } else {
+          setDisplayedItems(
+            allPotentialFriends.filter((pf) => {
+              // loop thru all items in pf.interests; if one includes input, return pf
+              if (
+                pf.firstName?.toLowerCase().includes(input.toLowerCase()) ||
+                pf.lastName?.toLowerCase().includes(input.toLowerCase()) ||
+                pf.username?.toLowerCase().includes(input.toLowerCase())
+              ) {
+                return pf;
+              }
+            })
+          );
+        }
+      }
+
+      if (usedFor === "my-friends") {
+        if (allFriends.length === 0) {
+          initializeFriendsSearch(inputCleaned.trim());
+        } else {
+          setDisplayedItems(
+            allFriends.filter((f) => {
+              // loop thru all items in pf.interests; if one includes input, return pf
+              if (
+                f.firstName?.toLowerCase().includes(input.toLowerCase()) ||
+                f.lastName?.toLowerCase().includes(input.toLowerCase()) ||
+                f.username?.toLowerCase().includes(input.toLowerCase())
+              ) {
+                return f;
+              }
+            })
+          );
         }
       }
     } else {
       if (usedFor === "events") {
-        resetDisplayedEvents();
+        setDisplayedItems([]);
+        setAllExplorableEvents([]);
+        setFetchStart(0);
       }
       if (usedFor === "potential-friends") {
         setDisplayedItems([]);
@@ -969,7 +998,9 @@ const DisplayedCardsPage = ({
   const handleClearSearchTerm = (): void => {
     setSearchTerm("");
     if (usedFor === "events") {
-      resetDisplayedEvents();
+      setDisplayedItems([]);
+      setAllExplorableEvents([]);
+      setFetchStart(0);
     }
     if (usedFor === "my-friends") {
       setDisplayedItems([]);
@@ -982,7 +1013,6 @@ const DisplayedCardsPage = ({
       setFetchStart(0);
     }
   };
-  //////////////////////////////////////////////
 
   const getPageHeading = (): string => {
     if (usedFor === "events") {
@@ -993,13 +1023,6 @@ const DisplayedCardsPage = ({
     return "My Palz";
   };
   const pageHeading: string = getPageHeading();
-
-  const getFilterOptions = (): string[] => {
-    return Object.keys(eventFilterOptions);
-  };
-  const filterOptions = !fetchAllVisibleOtherUsersQuery.isLoading
-    ? getFilterOptions()
-    : [];
 
   // When used for events, both fetchAllVisibleOtherUsersQuery & fetchAllEventsQuery will have to be successful for users to be displayed
   // If used for displaying users not related to an event, only fetchAllVisibleOtherUsersQuery will have to succeed for users to be shown
@@ -1130,16 +1153,10 @@ const DisplayedCardsPage = ({
           <div className="all-cards-container">
             {usedFor === "events" &&
               displayedItemsFiltered.every((event) => Methods.isTEvent(event)) &&
-              Methods.removeDuplicatesFromArray(displayedItemsFiltered)
-                .filter((event) =>
-                  currentUser && currentUser._id
-                    ? !event.blockedUsersEvent.includes(currentUser._id)
-                    : event
-                )
-                .map(
-                  (item) =>
-                    Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
-                )}
+              Methods.removeDuplicatesFromArray(displayedItems).map(
+                (item) =>
+                  Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
+              )}
             {usedFor === "my-friends" &&
               Methods.removeDuplicatesFromArray(displayedItems).map(
                 (item) =>
