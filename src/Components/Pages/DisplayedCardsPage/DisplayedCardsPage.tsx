@@ -27,6 +27,8 @@ const DisplayedCardsPage = ({
     error,
     isLoading,
     setIsLoading,
+    fetchStart,
+    setFetchStart,
   } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
 
@@ -39,8 +41,6 @@ const DisplayedCardsPage = ({
   const toggleShowFilterOptions = (): void => setShowFilterOptions(!showFilterOptions);
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
-
-  const [fetchStart, setFetchStart] = useState<number>(0);
 
   const getFetchLimit = (): number => {
     if (usedFor === "potential-friends" || usedFor === "my-friends") {
