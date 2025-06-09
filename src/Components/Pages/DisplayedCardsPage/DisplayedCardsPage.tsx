@@ -586,7 +586,7 @@ const DisplayedCardsPage = ({
     if (bottomReached) {
       const lastItem: TOtherUser | TEvent = items[items.length - 1];
 
-      if (lastItem.index && searchTerm === "") {
+      if (lastItem && lastItem.index && searchTerm === "") {
         setFetchStart(lastItem.index + 1);
       }
     }
