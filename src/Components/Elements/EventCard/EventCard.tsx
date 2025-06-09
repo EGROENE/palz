@@ -101,7 +101,15 @@ const EventCard = ({ event }: { event: TEvent }) => {
       }}
     >
       {status && (
-        <p style={{ backgroundColor: randomColor, padding: "0.25rem" }}>{status}</p>
+        <p
+          style={
+            randomColor === "var(--primary-color)"
+              ? { backgroundColor: randomColor, color: "black", padding: "0.25rem" }
+              : { backgroundColor: randomColor, color: "white", padding: "0.25rem" }
+          }
+        >
+          {status}
+        </p>
       )}
       {userIsInvitee && !userDeclinedInvitation && !userRSVPd && !maxInviteesReached && (
         <div className={styles.eventCardInvitation}>
