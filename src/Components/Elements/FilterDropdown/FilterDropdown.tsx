@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { TThemeColor } from "../../../types";
+import { TThemeColor, TDisplayedCardsFilter } from "../../../types";
 
 const FilterDropdown = ({
   dropdownBtnText,
@@ -12,9 +12,9 @@ const FilterDropdown = ({
   randomColor,
 }: {
   dropdownBtnText: string;
-  filterOptions: string[];
-  activeFilters: string[];
-  handleAddDeleteFilter: (option: string) => void;
+  filterOptions: TDisplayedCardsFilter[];
+  activeFilters: TDisplayedCardsFilter[];
+  handleAddDeleteFilter: (option: TDisplayedCardsFilter) => void;
   handleClearActiveFilters: () => void;
   showFilterOptions: boolean;
   toggleShowFilterOptions: () => void;
