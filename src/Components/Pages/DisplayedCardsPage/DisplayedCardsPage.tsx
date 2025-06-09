@@ -617,10 +617,52 @@ const DisplayedCardsPage = ({
   };
 
   useEffect(() => {
+    const themeColors: TThemeColor[] = [
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
+
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    if (showSidebar) {
+      setShowSidebar(false);
+    }
+
+    if (fetchStart !== 0) {
+      setFetchStart(0);
+    }
+
+    setIsLoading(true);
+
+    setDisplayedItems([]);
+
+    if (searchTerm !== "") {
+      setSearchTerm("");
+    }
+
+    if (activeFilters.length !== 0) {
+      setActiveFilters([]);
+    }
+
+    if (showFilterOptions) {
+      setShowFilterOptions(false);
+    }
+  }, [fetchAllVisibleOtherUsersQuery.isLoading, usedFor]);
+
+  useEffect(() => {
     if (usedFor === "potential-friends") {
       // Initialize displayedItems:
       if (searchTerm === "" && activeFilters.length === 0) {
-        setIsLoading(true);
+        if (!isLoading) {
+          setIsLoading(true);
+        }
         if (fetchLimit) {
           Requests.getPotentialFriends(currentUser, fetchStart, fetchLimit)
             .then((batchOfPotentialFriends) => {
@@ -672,7 +714,9 @@ const DisplayedCardsPage = ({
 
     if (usedFor === "my-friends") {
       if (searchTerm === "" && activeFilters.length === 0) {
-        setIsLoading(true);
+        if (!isLoading) {
+          setIsLoading(true);
+        }
         if (fetchLimit) {
           Requests.getFriends(currentUser, fetchStart, fetchLimit)
             .then((batchOfFriends: TUser[]) => {
@@ -713,7 +757,9 @@ const DisplayedCardsPage = ({
 
     if (usedFor === "events") {
       if (searchTerm === "" && activeFilters.length === 0) {
-        setIsLoading(true);
+        if (!isLoading) {
+          setIsLoading(true);
+        }
         if (fetchLimit) {
           Requests.getExplorableEvents(currentUser, fetchStart, fetchLimit)
             .then((batchOfEvents: TEvent[]) => {
@@ -743,38 +789,6 @@ const DisplayedCardsPage = ({
       }
     }
   }, [fetchStart, fetchLimit, searchTerm, usedFor, activeFilters]);
-
-  useEffect(() => {
-    const themeColors: TThemeColor[] = [
-      "var(--primary-color)",
-      "var(--secondary-color)",
-      "var(--tertiary-color)",
-      "var(--fourth-color)",
-      "var(--fifth-color)",
-    ];
-    const randomNumber = Math.floor(Math.random() * themeColors.length);
-    setRandomColor(themeColors[randomNumber]);
-
-    window.scrollTo(0, 0);
-  }, []);
-
-  useEffect(() => {
-    if (showSidebar) {
-      setShowSidebar(false);
-    }
-
-    if (searchTerm !== "") {
-      setSearchTerm("");
-    }
-
-    if (activeFilters.length !== 0) {
-      setActiveFilters([]);
-    }
-
-    if (showFilterOptions) {
-      setShowFilterOptions(false);
-    }
-  }, [fetchAllVisibleOtherUsersQuery.isLoading, usedFor]);
 
   const potentialFriendsFilterOptions: string[] = [
     ...(currentUser?.city !== "" ? ["in my city"] : []),
