@@ -17,9 +17,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
     throw new Error(error);
   }
 
-  const { currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
-
-  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+  const { currentUser } = useUserContext();
 
   const {
     handleUnfriending,
@@ -50,9 +48,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
-  const [friendsInCommon, setFriendsInCommon] = useState<TOtherUser[] | undefined>(
-    undefined
-  );
+  const [friendsInCommon, setFriendsInCommon] = useState<string[] | undefined>(undefined);
 
   const [currentUserIsFriendOfFriend, setCurrentUserIsFriendOfFriend] =
     useState<boolean>(false);
@@ -100,16 +96,12 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
                 }
 
                 // Set friendsInCommon:
-                let friendsInCommon: TOtherUser[] = [];
-                visibleOtherUsers?.filter((visibleOtherUser) => {
-                  if (
-                    visibleOtherUser._id &&
-                    user.friends.includes(visibleOtherUser._id.toString()) &&
-                    currentUser?.friends.includes(visibleOtherUser._id.toString())
-                  ) {
-                    friendsInCommon.push(visibleOtherUser);
+                let friendsInCommon: string[] = [];
+                for (const friend of user.friends) {
+                  if (currentUser?.friends.includes(friend)) {
+                    friendsInCommon.push(friend);
                   }
-                });
+                }
                 setFriendsInCommon(friendsInCommon);
 
                 // Set currentUserIsFriendOfFriend:
