@@ -111,14 +111,14 @@ export type TOtherUser = {
 };
 
 export type TDisplayedCardsFilter =
-    | "in my city"
-    | "in my state"
-    | "in my country"
-    | "friends of friends"
-    | "common interests"
-    | "my interests"
-    | "organized by friends"
-    | "RSVP'd by friends";
+  | "in my city"
+  | "in my state"
+  | "in my country"
+  | "friends of friends"
+  | "common interests"
+  | "my interests"
+  | "organized by friends"
+  | "RSVP'd by friends";
 
 // Bare-bones type to give basic info on event invitees & organizers
 export type TEventInviteeOrOrganizer = {
