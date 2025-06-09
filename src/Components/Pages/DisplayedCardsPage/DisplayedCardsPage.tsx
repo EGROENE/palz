@@ -617,8 +617,6 @@ const DisplayedCardsPage = ({
 
     setIsLoading(true);
 
-    setDisplayedItems([]);
-
     if (searchTerm !== "") {
       setSearchTerm("");
     }
