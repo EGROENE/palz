@@ -8,8 +8,14 @@ import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import Methods from "../../../methods";
 
 const Sidebar = () => {
-  const { showSidebar, setShowSidebar, theme, currentRoute, setFetchStart } =
-    useMainContext();
+  const {
+    showSidebar,
+    setShowSidebar,
+    theme,
+    currentRoute,
+    setFetchStart,
+    setDisplayedItems,
+  } = useMainContext();
   const {
     profileImage,
     currentUser,
@@ -119,7 +125,10 @@ const Sidebar = () => {
         )}
         {currentRoute !== "/find-events" && (
           <Link
-            onClick={() => setFetchStart(0)}
+            onClick={() => {
+              setDisplayedItems([]);
+              setFetchStart(0);
+            }}
             className={styles.sidebarOption}
             to={"/find-events"}
           >
@@ -145,7 +154,10 @@ const Sidebar = () => {
         )}
         {currentRoute !== "/find-palz" && (
           <Link
-            onClick={() => setFetchStart(0)}
+            onClick={() => {
+              setDisplayedItems([]);
+              setFetchStart(0);
+            }}
             className={styles.sidebarOption}
             to="/find-palz"
           >
@@ -154,7 +166,10 @@ const Sidebar = () => {
         )}
         {currentRoute !== "/my-palz" && (
           <Link
-            onClick={() => setFetchStart(0)}
+            onClick={() => {
+              setDisplayedItems([]);
+              setFetchStart(0);
+            }}
             className={styles.sidebarOption}
             to={"/my-palz"}
           >
