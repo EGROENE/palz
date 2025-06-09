@@ -396,6 +396,8 @@ const EventPage = () => {
                                 interests: organizer.interests,
                               })
                             );
+                          } else {
+                            setError("Could not load other user's info.");
                           }
                         });
                       }
