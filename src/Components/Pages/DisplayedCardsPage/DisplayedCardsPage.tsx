@@ -5,7 +5,13 @@ import { useNavigate, Link } from "react-router-dom";
 import EventCard from "../../Elements/EventCard/EventCard";
 import UserCard from "../../Elements/UserCard/UserCard";
 import Methods from "../../../methods";
-import { TEvent, TThemeColor, TUser, TOtherUser } from "../../../types";
+import {
+  TEvent,
+  TThemeColor,
+  TUser,
+  TOtherUser,
+  TDisplayedCardsFilter,
+} from "../../../types";
 import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
@@ -44,9 +50,7 @@ const DisplayedCardsPage = ({
   };
   const fetchLimit: number = getFetchLimit();
 
-  const [activeFilters, setActiveFilters] = useState<
-    (TPotentialFriendsFilter | string)[]
-  >([]);
+  const [activeFilters, setActiveFilters] = useState<TDisplayedCardsFilter[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const [searchBoxIsFocused, setSearchBoxIsFocused] = useState<boolean>(false);
@@ -54,27 +58,6 @@ const DisplayedCardsPage = ({
 
   // Maybe provide btn in case of fetch error that calls getPotentialFriends again.
   const [fetchError, setFetchError] = useState<string | undefined>();
-
-  type TPotentialFriendsFilter =
-    | "in my city"
-    | "in my state"
-    | "in my country"
-    | "friends of friends"
-    | "common interests";
-
-  type TFriendsFilters =
-    | "in my city"
-    | "in my state"
-    | "in my country"
-    | "common interests";
-
-  type TEventsFilters =
-    | "in my city"
-    | "in my state"
-    | "in my country"
-    | "my interests"
-    | "organized by friends"
-    | "RSVP'd by friends";
 
   if (error) {
     throw new Error(error);
@@ -220,7 +203,7 @@ const DisplayedCardsPage = ({
       .finally(() => setIsLoading(false));
   };
 
-  const initializePotentialFriendsFilter = (filters: TPotentialFriendsFilter) => {
+  const initializePotentialFriendsFilter = (filters: TDisplayedCardsFilter[]) => {
     setIsLoading(true);
     setFetchStart(0);
     Requests.getPotentialFriends(currentUser, 0, Infinity)
@@ -349,7 +332,7 @@ const DisplayedCardsPage = ({
       .finally(() => setIsLoading(false));
   };
 
-  const initializeFriendsFilter = (filters: TFriendsFilters) => {
+  const initializeFriendsFilter = (filters: TDisplayedCardsFilter[]) => {
     setIsLoading(true);
     setFetchStart(0);
     Requests.getFriends(currentUser, 0, Infinity)
@@ -479,7 +462,7 @@ const DisplayedCardsPage = ({
       .finally(() => setIsLoading(false));
   };
 
-  const initializeEventsFilter = (filters: TEventsFilters) => {
+  const initializeEventsFilter = (filters: TDisplayedCardsFilter[]) => {
     setIsLoading(true);
     setFetchStart(0);
     Requests.getExplorableEvents(currentUser, 0, Infinity)
@@ -755,22 +738,25 @@ const DisplayedCardsPage = ({
     }
   }, [fetchStart, fetchLimit, searchTerm, usedFor, activeFilters]);
 
-  const potentialFriendsFilterOptions: string[] = [
+  // @ts-ignore: Must be of type TDisplayedCardsFilter[], but, the way elements are added conditionally to array results in it being type string[], since, if a condition isn't met, an iterable must be added
+  const potentialFriendsFilterOptions: TDisplayedCardsFilter[] = [
     ...(currentUser?.city !== "" ? ["in my city"] : []),
-    ...(currentUser?.stateProvince !== "" ? "in my state" : []),
-    ...(currentUser?.country !== "" ? "in my country" : []),
-    ...(currentUser?.interests.length ? "common interests" : []),
-    ...(currentUser?.friends.length ? "friends of friends" : []),
+    ...(currentUser?.stateProvince !== "" ? ["in my state"] : []),
+    ...(currentUser?.country !== "" ? ["in my country"] : []),
+    ...(currentUser?.interests.length ? ["common interests"] : []),
+    ...(currentUser?.friends.length ? ["friends of friends"] : []),
   ];
 
-  const friendsFilterOptions: string[] = [
+  // @ts-ignore: Must be of type TDisplayedCardsFilter[], but, the way elements are added conditionally to array results in it being type string[], since, if a condition isn't met, an iterable must be added
+  const friendsFilterOptions: TDisplayedCardsFilter[] = [
     ...(currentUser?.city !== "" ? ["in my city"] : []),
-    ...(currentUser?.stateProvince !== "" ? "in my state" : []),
-    ...(currentUser?.country !== "" ? "in my country" : []),
-    ...(currentUser?.interests.length ? "common interests" : []),
+    ...(currentUser?.stateProvince !== "" ? ["in my state"] : []),
+    ...(currentUser?.country !== "" ? ["in my country"] : []),
+    ...(currentUser?.interests.length ? ["common interests"] : []),
   ];
 
-  const eventFilterOptions: string[] = [
+  // @ts-ignore: Must be of type TDisplayedCardsFilter[], but, the way elements are added conditionally to array results in it being type string[], since, if a condition isn't met, an iterable must be added
+  const eventFilterOptions: TDisplayedCardsFilter[] = [
     ...(currentUser?.city !== "" ? ["in my city"] : []),
     ...(currentUser?.stateProvince !== "" ? ["in my state"] : []),
     ...(currentUser?.country !== "" ? ["in my country"] : []),
@@ -779,7 +765,7 @@ const DisplayedCardsPage = ({
     ...(currentUser?.friends.length ? ["RSVP'd by friends"] : []),
   ];
 
-  const getFilterOptions = (): string[] => {
+  const getFilterOptions = (): TDisplayedCardsFilter[] => {
     if (usedFor === "potential-friends") {
       return potentialFriendsFilterOptions;
     } else if (usedFor === "my-friends") {
@@ -804,10 +790,12 @@ const DisplayedCardsPage = ({
   }, [currentUser, navigation, userCreatedAccount]);
 
   // HANDLERS
-  const handleAddDeleteFilter = (option: string): void => {
+  const handleAddDeleteFilter = (option: TDisplayedCardsFilter): void => {
     setSearchTerm("");
     // If activeFilters includes option, delete it from activeFilters and vice versa:
-    const updatedActiveFiltersArray: string[] = activeFilters.includes(option)
+    const updatedActiveFiltersArray: TDisplayedCardsFilter[] = activeFilters.includes(
+      option
+    )
       ? activeFilters.filter((o) => o !== option)
       : activeFilters.concat(option);
     setActiveFilters(updatedActiveFiltersArray);
