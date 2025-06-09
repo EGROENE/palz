@@ -30,10 +30,7 @@ const DisplayedCardsPage = ({
     isLoading,
     setIsLoading,
   } = useMainContext();
-  const { currentUser, userCreatedAccount, logout, fetchAllVisibleOtherUsersQuery } =
-    useUserContext();
-
-  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+  const { currentUser, userCreatedAccount, logout } = useUserContext();
 
   const { fetchAllEventsQuery } = useEventContext();
 
@@ -654,7 +651,7 @@ const DisplayedCardsPage = ({
     if (showFilterOptions) {
       setShowFilterOptions(false);
     }
-  }, [fetchAllVisibleOtherUsersQuery.isLoading, usedFor]);
+  }, [usedFor]);
 
   useEffect(() => {
     if (usedFor === "potential-friends") {
@@ -1038,33 +1035,12 @@ const DisplayedCardsPage = ({
   };
   const pageHeading: string = getPageHeading();
 
-  // When used for events, both fetchAllVisibleOtherUsersQuery & fetchAllEventsQuery will have to be successful for users to be displayed
-  // If used for displaying users not related to an event, only fetchAllVisibleOtherUsersQuery will have to succeed for users to be shown
   const isNoFetchError: boolean =
     usedFor === "potential-friends" || usedFor === "my-friends"
-      ? !fetchAllVisibleOtherUsersQuery.isError && !fetchError && fetchError !== ""
-      : !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
+      ? !fetchError && fetchError !== ""
+      : !fetchAllEventsQuery.isError;
 
-  const fetchIsLoading: boolean =
-    usedFor === "potential-friends" || usedFor === "my-friends"
-      ? fetchAllVisibleOtherUsersQuery.isLoading
-      : fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
-
-  const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (usedFor !== "potential-friends" && usedFor !== "my-friends") {
-      if (fetchAllVisibleOtherUsersQuery.isError) {
-        return fetchAllVisibleOtherUsersQuery;
-      } else if (fetchAllEventsQuery.isError) {
-        return fetchAllEventsQuery;
-      }
-    } else if (usedFor === "potential-friends" || usedFor === "my-friends") {
-      if (fetchAllVisibleOtherUsersQuery.isError) {
-        return fetchAllVisibleOtherUsersQuery;
-      }
-    }
-    return undefined;
-  };
-  const queryWithError = getQueryForQueryLoadingOrErrorComponent();
+  const fetchIsLoading: boolean = fetchAllEventsQuery.isLoading;
 
   return (
     <>
@@ -1190,14 +1166,6 @@ const DisplayedCardsPage = ({
         </>
       )}
       {fetchError && <p>{fetchError}</p>}
-      {queryWithError && queryWithError.error && (
-        <div className="query-error-container">
-          <header className="query-status-text">Error fetching data.</header>
-          <div className="theme-element-container">
-            <button onClick={() => window.location.reload()}>Retry</button>
-          </div>
-        </div>
-      )}
       {fetchIsLoading && (
         <header style={{ marginTop: "3rem" }} className="query-status-text">
           Loading...
