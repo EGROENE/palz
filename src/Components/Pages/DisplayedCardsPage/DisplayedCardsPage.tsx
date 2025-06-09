@@ -584,29 +584,10 @@ const DisplayedCardsPage = ({
         : window.innerHeight + window.scrollY >= document.body.offsetHeight;
 
     if (bottomReached) {
-      if (usedFor === "potential-friends") {
-        // Set fetchStart to index of last element in potentialFriends array (may need to subtract items just added to potentialFriends array to get the right item)
-        const lastItemInPotentialFriends: TOtherUser = items[items.length - 1];
+      const lastItem: TOtherUser | TEvent = items[items.length - 1];
 
-        if (lastItemInPotentialFriends.index && searchTerm === "") {
-          setFetchStart(lastItemInPotentialFriends.index + 1);
-        }
-      }
-
-      if (usedFor === "my-friends") {
-        const lastItemInFriends = items[items.length - 1];
-
-        if (lastItemInFriends.index && searchTerm === "") {
-          setFetchStart(lastItemInFriends.index + 1);
-        }
-      }
-
-      if (usedFor === "events") {
-        const lastItemInEvents = items[items.length - 1];
-
-        if (lastItemInEvents.index && searchTerm === "") {
-          setFetchStart(lastItemInEvents.index + 1);
-        }
+      if (lastItem.index && searchTerm === "") {
+        setFetchStart(lastItem.index + 1);
       }
     }
   };
@@ -1140,7 +1121,7 @@ const DisplayedCardsPage = ({
         <>
           <div className="all-cards-container">
             {usedFor === "events" &&
-              displayedItemsFiltered.every((event) => Methods.isTEvent(event)) &&
+              displayedItems.every((event) => Methods.isTEvent(event)) &&
               Methods.removeDuplicatesFromArray(displayedItems).map(
                 (item) =>
                   Methods.isTEvent(item) && <EventCard key={item._id} event={item} />
