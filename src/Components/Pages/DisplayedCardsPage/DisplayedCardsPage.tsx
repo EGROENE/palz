@@ -1009,8 +1009,7 @@ const DisplayedCardsPage = ({
   return (
     <>
       <h1>{pageHeading}</h1>
-      {!fetchIsLoading &&
-        !isLoading &&
+      {!isLoading &&
         isNoFetchError &&
         displayedItems.length === 0 &&
         usedFor === "potential-friends" &&
@@ -1018,8 +1017,7 @@ const DisplayedCardsPage = ({
         activeFilters.length === 0 && (
           <h2>No more potential friends. You must be popular!</h2>
         )}
-      {!fetchIsLoading &&
-        isNoFetchError &&
+      {isNoFetchError &&
         !isLoading &&
         displayedItems.length === 0 &&
         usedFor === "my-friends" &&
@@ -1040,7 +1038,7 @@ const DisplayedCardsPage = ({
             to find some!
           </h2>
         )}
-      {!fetchIsLoading &&
+      {!isLoading &&
         isNoFetchError &&
         displayedItems.length === 0 &&
         usedFor === "events" &&
@@ -1061,7 +1059,7 @@ const DisplayedCardsPage = ({
             or wait for others to do so.
           </h2>
         )}
-      {!fetchIsLoading &&
+      {!isLoading &&
         isNoFetchError &&
         (displayedItems.length > 0 ||
           (displayedItems.length === 0 && searchTerm !== "") ||
@@ -1102,7 +1100,7 @@ const DisplayedCardsPage = ({
             />
           </search>
         )}
-      {!fetchIsLoading && isNoFetchError && (
+      {isNoFetchError && (
         <>
           <div className="all-cards-container">
             {usedFor === "events" &&
@@ -1126,11 +1124,10 @@ const DisplayedCardsPage = ({
                   item._id && <UserCard key={item._id.toString()} userSECURE={item} />
               )}
           </div>
-          {isLoading && <p>Loading...</p>}
         </>
       )}
       {fetchError && <p>{fetchError}</p>}
-      {fetchIsLoading && (
+      {isLoading && (
         <header style={{ marginTop: "3rem" }} className="query-status-text">
           Loading...
         </header>
