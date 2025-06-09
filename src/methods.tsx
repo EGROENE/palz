@@ -117,12 +117,7 @@ const formatHyphensAndSpacesInString = (name: string): string => {
   return finalChars.join("");
 };
 
-// To avoid BS type errors & keep this method usable w/ arrays of all types, disable type checking
-// @ts-ignore
-function removeDuplicatesFromArray(arr: any[]): any[] {
-  // @ts-ignore
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
+const removeDuplicatesFromArray = (arr: any[]): any[] => [...new Set(arr)];
 
 const getStringArraySortedAlphabetically = (array: string[]): string[] => {
   return array.sort(function (a, b) {
