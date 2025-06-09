@@ -45,7 +45,7 @@ const DisplayedCardsPage = ({
   const fetchLimit: number = getFetchLimit();
 
   const [activeFilters, setActiveFilters] = useState<
-    (TPotentialFriendsFilterArray | string)[]
+    (TPotentialFriendsFilter | string)[]
   >([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -55,21 +55,20 @@ const DisplayedCardsPage = ({
   // Maybe provide btn in case of fetch error that calls getPotentialFriends again.
   const [fetchError, setFetchError] = useState<string | undefined>();
 
-  type TPotentialFriendsFilterArray = (
+  type TPotentialFriendsFilter =
     | "in my city"
     | "in my state"
     | "in my country"
     | "friends of friends"
-    | "common interests"
-  )[];
+    | "common interests";
 
-  type TFriendsFiltersArray =
+  type TFriendsFilters =
     | "in my city"
     | "in my state"
     | "in my country"
     | "common interests";
 
-  type TEventsFiltersArray =
+  type TEventsFilters =
     | "in my city"
     | "in my state"
     | "in my country"
@@ -221,7 +220,7 @@ const DisplayedCardsPage = ({
       .finally(() => setIsLoading(false));
   };
 
-  const initializePotentialFriendsFilter = (filters: TPotentialFriendsFilterArray) => {
+  const initializePotentialFriendsFilter = (filters: TPotentialFriendsFilter) => {
     setIsLoading(true);
     setFetchStart(0);
     Requests.getPotentialFriends(currentUser, 0, Infinity)
@@ -350,7 +349,7 @@ const DisplayedCardsPage = ({
       .finally(() => setIsLoading(false));
   };
 
-  const initializeFriendsFilter = (filters: TFriendsFiltersArray) => {
+  const initializeFriendsFilter = (filters: TFriendsFilters) => {
     setIsLoading(true);
     setFetchStart(0);
     Requests.getFriends(currentUser, 0, Infinity)
@@ -480,7 +479,7 @@ const DisplayedCardsPage = ({
       .finally(() => setIsLoading(false));
   };
 
-  const initializeEventsFilter = (filters: TEventsFiltersArray) => {
+  const initializeEventsFilter = (filters: TEventsFilters) => {
     setIsLoading(true);
     setFetchStart(0);
     Requests.getExplorableEvents(currentUser, 0, Infinity)
