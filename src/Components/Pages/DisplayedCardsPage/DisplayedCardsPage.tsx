@@ -963,21 +963,18 @@ const DisplayedCardsPage = ({
   };
 
   const handleClearSearchTerm = (): void => {
+    setDisplayedItems([]);
     setSearchTerm("");
+    setFetchStart(0);
+
     if (usedFor === "events") {
-      setDisplayedItems([]);
       setAllExplorableEvents([]);
-      setFetchStart(0);
     }
     if (usedFor === "my-friends") {
-      setDisplayedItems([]);
       setAllFriends([]);
-      setFetchStart(0);
     }
     if (usedFor === "potential-friends") {
-      setDisplayedItems([]);
       setAllPotentialFriends([]);
-      setFetchStart(0);
     }
   };
 
