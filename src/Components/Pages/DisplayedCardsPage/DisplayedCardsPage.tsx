@@ -23,7 +23,6 @@ const DisplayedCardsPage = ({
     theme,
     displayedItems,
     setDisplayedItems,
-    displayedItemsFiltered,
     error,
     isLoading,
     setIsLoading,
