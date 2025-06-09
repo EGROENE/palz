@@ -36,6 +36,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     (TEvent | TOtherUser)[]
   >(displayedItems.slice(0, displayedItemsCount));
   const [showMobileNavOptions, setShowMobileNavOptions] = useState<boolean>(false);
+  // fetchStart is here so that it can be immediately set to 0 when clicking links to DisplayedCards pages
+  const [fetchStart, setFetchStart] = useState<number>(0);
 
   useEffect(() => {
     setDisplayedItemsFiltered(displayedItems.slice(0, displayedItemsCount));
@@ -85,6 +87,8 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mainContextValues: TMainContext = {
+    fetchStart,
+    setFetchStart,
     error,
     setError,
     showMobileNavOptions,
