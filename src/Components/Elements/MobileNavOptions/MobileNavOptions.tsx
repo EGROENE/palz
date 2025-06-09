@@ -5,7 +5,7 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 import { TChat } from "../../../types";
 
 const MobileNavOptions = () => {
-  const { setShowMobileNavOptions, currentRoute } = useMainContext();
+  const { setShowMobileNavOptions, currentRoute, setFetchStart } = useMainContext();
   const { currentUser, userCreatedAccount, logout, friendRequestsReceived } =
     useUserContext();
   const { getTotalNumberOfUnreadMessages, fetchChatsQuery } = useChatContext();
@@ -38,7 +38,13 @@ const MobileNavOptions = () => {
           </Link>
         )}
         {currentRoute !== "/find-events" && (
-          <Link onClick={() => setShowMobileNavOptions(false)} to={"/find-events"}>
+          <Link
+            onClick={() => {
+              setFetchStart(0);
+              setShowMobileNavOptions(false);
+            }}
+            to={"/find-events"}
+          >
             Explore Events
           </Link>
         )}
@@ -60,12 +66,24 @@ const MobileNavOptions = () => {
           </Link>
         )}
         {currentRoute !== "/find-palz" && (
-          <Link onClick={() => setShowMobileNavOptions(false)} to="/find-palz">
+          <Link
+            onClick={() => {
+              setFetchStart(0);
+              setShowMobileNavOptions(false);
+            }}
+            to="/find-palz"
+          >
             Find Palz
           </Link>
         )}
         {currentRoute !== "/my-palz" && (
-          <Link onClick={() => setShowMobileNavOptions(false)} to={"/my-palz"}>
+          <Link
+            onClick={() => {
+              setFetchStart(0);
+              setShowMobileNavOptions(false);
+            }}
+            to={"/my-palz"}
+          >
             My Palz
           </Link>
         )}

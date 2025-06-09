@@ -3,7 +3,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { useMainContext } from "../../../Hooks/useMainContext";
 
 const SiteLinks = () => {
-  const { currentRoute } = useMainContext();
+  const { currentRoute, setFetchStart } = useMainContext();
   const { currentUser } = useUserContext();
 
   return (
@@ -16,14 +16,14 @@ const SiteLinks = () => {
         </Link>
       )}
       {currentRoute !== "/find-events" && (
-        <Link to={"/find-events"}>
+        <Link onClick={() => setFetchStart(0)} to={"/find-events"}>
           <div className="theme-element-container">
             <button>Explore Events</button>
           </div>
         </Link>
       )}
       {currentRoute !== "/find-palz" && (
-        <Link to="/find-palz">
+        <Link onClick={() => setFetchStart(0)} to="/find-palz">
           <div className="theme-element-container">
             <button>Find Palz</button>
           </div>
@@ -37,7 +37,7 @@ const SiteLinks = () => {
         </Link>
       )}
       {currentRoute !== "/my-palz" && (
-        <Link to={"/my-palz"}>
+        <Link onClick={() => setFetchStart(0)} to={"/my-palz"}>
           <div className="theme-element-container">
             <button>My Palz</button>
           </div>
