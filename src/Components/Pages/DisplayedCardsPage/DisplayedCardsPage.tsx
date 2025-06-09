@@ -9,7 +9,6 @@ import { TEvent, TThemeColor, TUser, TOtherUser } from "../../../types";
 import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
-import { useEventContext } from "../../../Hooks/useEventContext";
 import Requests from "../../../requests";
 
 const DisplayedCardsPage = ({
@@ -30,10 +29,6 @@ const DisplayedCardsPage = ({
     setFetchStart,
   } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
-
-  const { fetchAllEventsQuery } = useEventContext();
-
-  const allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
 
   const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
 
@@ -1009,12 +1004,7 @@ const DisplayedCardsPage = ({
   };
   const pageHeading: string = getPageHeading();
 
-  const isNoFetchError: boolean =
-    usedFor === "potential-friends" || usedFor === "my-friends"
-      ? !fetchError && fetchError !== ""
-      : !fetchAllEventsQuery.isError;
-
-  const fetchIsLoading: boolean = fetchAllEventsQuery.isLoading;
+  const isNoFetchError: boolean = !fetchError && fetchError !== "";
 
   return (
     <>
