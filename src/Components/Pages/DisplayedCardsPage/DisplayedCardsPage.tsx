@@ -50,8 +50,6 @@ const DisplayedCardsPage = ({
   };
   const fetchLimit: number = getFetchLimit();
 
-  const now = Date.now();
-
   const [activeFilters, setActiveFilters] = useState<
     (TPotentialFriendsFilterArray | string)[]
   >([]);
