@@ -1668,12 +1668,39 @@ const EventForm = ({
             </span>
           )}
         </header>
+        {/* Checkbox to add all blocked users to blockedUsersEvent. Only render if currentUser has blocked people. Only have it checked if all blocked users have been added to blockedUsersEvent (combination of state blockedUsersEvent & event.blockedUsersEvent). */}
+        {currentUser?.blockedUsers.length &&
+          currentUser.blockedUsers
+            .map((bu) => bu._id)
+            .some((id) => !blockedUsersEvent.map((bu) => bu._id).includes(id)) && (
+            <label className="form-sub-checkbox">
+              <input
+                name="blocked-users-event-checkbox"
+                id="blocked-users-event-checkbox"
+                type="checkbox"
+                style={{ accentColor: randomColor }}
+                onChange={() => {
+                  let newBlockees = [];
+                  for (const bu of currentUser.blockedUsers) {
+                    newBlockees.push(bu);
+                  }
+                  setBlockedUsersEvent(Methods.removeDuplicatesFromArray(newBlockees));
+                }}
+                checked={currentUser.blockedUsers.every((bu) => {
+                  if (event && event.blockedUsersEvent) {
+                    return blockedUsersEvent.indexOf(bu) !== -1;
+                  }
+                })}
+              />
+              <span>Add all users you have blocked</span>
+            </label>
+          )}
         <div className="added-user-tab-container">
           {currentUser &&
             event &&
-            event.blockedUsersEvent &&
-            event.blockedUsersEvent.length > 0 &&
-            event.blockedUsersEvent.map((user) => (
+            blockedUsersEvent &&
+            blockedUsersEvent.length > 0 &&
+            blockedUsersEvent.map((user) => (
               <Tab
                 key={user._id?.toString()}
                 info={user}
