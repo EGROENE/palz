@@ -42,8 +42,8 @@ export type TUser = {
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
   friendRequestsReceived: string[];
   friendRequestsSent: string[];
-  blockedUsers: string[];
-  blockedBy: string[];
+  blockedUsers: TEventInviteeOrOrganizer[];
+  blockedBy: TEventInviteeOrOrganizer[];
   whoCanMessage: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
   whoCanSeeLocation: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
   displayFriendCount: boolean;
