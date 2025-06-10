@@ -5,7 +5,7 @@ import EditUserInfoForm from "../../Forms/EditUserInfoForm/EditUserInfoForm";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import Requests from "../../../requests";
 import toast from "react-hot-toast";
-import { TOtherUser, TThemeColor } from "../../../types";
+import { TEventInviteeOrOrganizer, TOtherUser, TThemeColor } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
@@ -357,13 +357,13 @@ const UserSettings = () => {
       .finally(() => setAccountDeletionInProgress(false));
   };
 
-  const getBlockedUsersArray = (): string[] => {
+  const getBlockedUsersArray = (): TEventInviteeOrOrganizer[] => {
     if (currentUser) {
       return currentUser.blockedUsers;
     }
     return [];
   };
-  const blockedUsersArray: string[] = getBlockedUsersArray();
+  const blockedUsersArray: TEventInviteeOrOrganizer[] = getBlockedUsersArray();
 
   return (
     <>
@@ -394,7 +394,7 @@ const UserSettings = () => {
             renderButtonTwo={false}
             closeModalMethod={setShowBlockedUsers}
             header="Blocked Users"
-            userIDArray={blockedUsersArray}
+            userIDArray={blockedUsersArray.map((bu) => bu._id?.toString())}
             buttonOneText="Unblock"
             buttonOneHandler={handleUnblockUser}
             buttonOneHandlerNeedsEventParam={false}
