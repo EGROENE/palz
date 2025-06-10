@@ -5,7 +5,7 @@ import EditUserInfoForm from "../../Forms/EditUserInfoForm/EditUserInfoForm";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import Requests from "../../../requests";
 import toast from "react-hot-toast";
-import { TEventInviteeOrOrganizer, TOtherUser, TThemeColor } from "../../../types";
+import { TBarebonesUser, TOtherUser, TThemeColor } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
@@ -357,13 +357,13 @@ const UserSettings = () => {
       .finally(() => setAccountDeletionInProgress(false));
   };
 
-  const getBlockedUsersArray = (): TEventInviteeOrOrganizer[] => {
+  const getBlockedUsersArray = (): TBarebonesUser[] => {
     if (currentUser) {
       return currentUser.blockedUsers;
     }
     return [];
   };
-  const blockedUsersArray: TEventInviteeOrOrganizer[] = getBlockedUsersArray();
+  const blockedUsersArray: TBarebonesUser[] = getBlockedUsersArray();
 
   return (
     <>

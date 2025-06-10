@@ -6,7 +6,7 @@ import {
   TUserValuesToUpdate,
   TChatValuesToUpdate,
   TOtherUser,
-  TEventInviteeOrOrganizer,
+  TBarebonesUser,
 } from "./types";
 
 const getAllUsers = () => {
@@ -681,7 +681,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
 
 const addToBlockedUsers = (
   blocker: TUser,
-  blockee: TEventInviteeOrOrganizer
+  blockee: TBarebonesUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -703,10 +703,7 @@ const addToBlockedUsers = (
   });
 };
 
-const addToBlockedBy = (
-  blockee: TUser,
-  blocker: TEventInviteeOrOrganizer
-): Promise<Response> => {
+const addToBlockedBy = (blockee: TUser, blocker: TBarebonesUser): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -729,7 +726,7 @@ const addToBlockedBy = (
 
 const removeFromBlockedUsers = (
   blocker: TUser,
-  blockee: TEventInviteeOrOrganizer
+  blockee: TBarebonesUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -755,7 +752,7 @@ const removeFromBlockedUsers = (
 
 const removeFromBlockedBy = (
   blockee: TUser,
-  blocker: TEventInviteeOrOrganizer
+  blocker: TBarebonesUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -1010,15 +1007,16 @@ const addUserRSVP = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedInterestedUsersArray: Array<TEventInviteeOrOrganizer> =
-    event.interestedUsers.concat({
+  const updatedInterestedUsersArray: Array<TBarebonesUser> = event.interestedUsers.concat(
+    {
       _id: user?._id,
       username: user?.username,
       firstName: user?.firstName,
       lastName: user?.lastName,
       emailAddress: user?.emailAddress,
       profileImage: user?.profileImage,
-    });
+    }
+  );
 
   const getRaw = () => {
     return JSON.stringify({
@@ -1042,7 +1040,7 @@ const addToDisinterestedUsers = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedDisinterestedUsersArray: TEventInviteeOrOrganizer[] =
+  const updatedDisinterestedUsersArray: TBarebonesUser[] =
     event.disinterestedUsers.concat({
       _id: user?._id,
       username: user?.username,

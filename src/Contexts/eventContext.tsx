@@ -6,7 +6,7 @@ import {
   TEvent,
   TEventValuesToUpdate,
   TOtherUser,
-  TEventInviteeOrOrganizer,
+  TBarebonesUser,
 } from "../types";
 import Methods from "../methods";
 import Requests from "../requests";
@@ -149,10 +149,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [publicity, setPublicity] = useState<"public" | "private">(
     currentEvent ? currentEvent.publicity : "public"
   );
-  const [organizers, setOrganizers] = useState<TEventInviteeOrOrganizer[]>(
+  const [organizers, setOrganizers] = useState<TBarebonesUser[]>(
     currentEvent ? currentEvent.organizers : []
   );
-  const [invitees, setInvitees] = useState<TEventInviteeOrOrganizer[]>(
+  const [invitees, setInvitees] = useState<TBarebonesUser[]>(
     currentEvent ? currentEvent.invitees : []
   );
   const [relatedInterests, setRelatedInterests] = useState<string[]>(
@@ -161,7 +161,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventImages, setEventImages] = useState<string[]>(
     currentEvent ? currentEvent.images : []
   );
-  const [blockedUsersEvent, setBlockedUsersEvent] = useState<TEventInviteeOrOrganizer[]>(
+  const [blockedUsersEvent, setBlockedUsersEvent] = useState<TBarebonesUser[]>(
     currentEvent ? currentEvent.blockedUsersEvent : []
   );
   ///////////////////////
@@ -655,7 +655,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const navigation = useNavigate();
 
   const handleAddRemoveBlockedUserOnEvent = (
-    user?: TOtherUser | TEventInviteeOrOrganizer
+    user?: TOtherUser | TBarebonesUser
   ): void => {
     //e?.preventDefault();
     if (user && user._id) {
@@ -680,8 +680,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Used in dropdown list of potential organizers; changes are only made to organizers variable in state
   const handleAddRemoveUserAsOrganizer = (
-    organizers: TEventInviteeOrOrganizer[],
-    setOrganizers: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>,
+    organizers: TBarebonesUser[],
+    setOrganizers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>,
     user: TOtherUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
@@ -725,8 +725,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleAddRemoveUserAsInvitee = (
-    invitees: TEventInviteeOrOrganizer[],
-    setInvitees: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>,
+    invitees: TBarebonesUser[],
+    setInvitees: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>,
     user?: TOtherUser
   ): void => {
     if (user?._id) {

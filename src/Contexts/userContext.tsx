@@ -4,7 +4,7 @@ import {
   TUser,
   TUserValuesToUpdate,
   TOtherUser,
-  TEventInviteeOrOrganizer,
+  TBarebonesUser,
 } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
@@ -152,9 +152,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [whoCanSeeEventsInvitedTo, setWhoCanSeeEventsInvitedTo] = useSessionStorage<
     "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanSeeEventsInvitedTo", "nobody");
-  const [blockedUsers, setBlockedUsers] = useSessionStorage<
-    TEventInviteeOrOrganizer[] | undefined
-  >("blockedUsers", currentUser?.blockedUsers);
+  const [blockedUsers, setBlockedUsers] = useSessionStorage<TBarebonesUser[] | undefined>(
+    "blockedUsers",
+    currentUser?.blockedUsers
+  );
   const [friendRequestsSent, setFriendRequestsSent] = useSessionStorage<
     string[] | undefined
   >("friendRequestsSent", currentUser?.friendRequestsSent);
@@ -1648,10 +1649,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists = (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: TEventInviteeOrOrganizer[] | undefined,
-    setBlockedUsers?: React.Dispatch<
-      SetStateAction<TEventInviteeOrOrganizer[] | undefined>
-    >
+    blockedUsers?: TBarebonesUser[] | undefined,
+    setBlockedUsers?: React.Dispatch<SetStateAction<TBarebonesUser[] | undefined>>
   ): void => {
     if (blockedUsers && setBlockedUsers && blockee._id) {
       setBlockedUsers(
@@ -1724,10 +1723,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleUnblockUser = (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: TEventInviteeOrOrganizer[] | undefined,
-    setBlockedUsers?: React.Dispatch<
-      SetStateAction<TEventInviteeOrOrganizer[] | undefined>
-    >
+    blockedUsers?: TBarebonesUser[] | undefined,
+    setBlockedUsers?: React.Dispatch<SetStateAction<TBarebonesUser[] | undefined>>
   ): void => {
     setIsLoading(true);
 

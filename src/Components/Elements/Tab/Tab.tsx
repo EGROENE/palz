@@ -1,4 +1,4 @@
-import { TEventInviteeOrOrganizer, TOtherUser } from "../../../types";
+import { TBarebonesUser, TOtherUser } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 

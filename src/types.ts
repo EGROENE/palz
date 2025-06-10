@@ -42,8 +42,8 @@ export type TUser = {
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
   friendRequestsReceived: string[];
   friendRequestsSent: string[];
-  blockedUsers: TEventInviteeOrOrganizer[];
-  blockedBy: TEventInviteeOrOrganizer[];
+  blockedUsers: TBarebonesUser[];
+  blockedBy: TBarebonesUser[];
   whoCanMessage: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
   whoCanSeeLocation: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
   displayFriendCount: boolean;
@@ -121,7 +121,7 @@ export type TDisplayedCardsFilter =
   | "RSVP'd by friends";
 
 // Bare-bones type to give basic info on event invitees & organizers
-export type TEventInviteeOrOrganizer = {
+export type TBarebonesUser = {
   _id: string | mongoose.Types.ObjectId | undefined;
   username: string | undefined;
   firstName: string | undefined;
@@ -133,11 +133,11 @@ export type TEventInviteeOrOrganizer = {
 export type TEvent = {
   _id?: string;
   index: number | undefined;
-  blockedUsersEvent: TEventInviteeOrOrganizer[];
+  blockedUsersEvent: TBarebonesUser[];
   creator: string | undefined;
   title: string;
-  organizers: TEventInviteeOrOrganizer[];
-  invitees: TEventInviteeOrOrganizer[];
+  organizers: TBarebonesUser[];
+  invitees: TBarebonesUser[];
   description: string;
   eventStartDateMidnightUTCInMS: number;
   eventStartTimeAfterMidnightUTCInMS: number;
@@ -153,8 +153,8 @@ export type TEvent = {
   country: string | undefined;
   address: string | undefined;
   additionalInfo: string;
-  interestedUsers: TEventInviteeOrOrganizer[];
-  disinterestedUsers: TEventInviteeOrOrganizer[];
+  interestedUsers: TBarebonesUser[];
+  disinterestedUsers: TBarebonesUser[];
   relatedInterests: string[];
 };
 
@@ -257,7 +257,7 @@ export type TUserValuesToUpdate = {
 
 export type TEventValuesToUpdate = {
   relatedInterests?: string[] | undefined;
-  blockedUsersEvent?: TEventInviteeOrOrganizer[] | undefined;
+  blockedUsersEvent?: TBarebonesUser[] | undefined;
   images?: string[] | undefined;
   address?: string | undefined;
   maxParticipants?: number | null;
@@ -267,8 +267,8 @@ export type TEventValuesToUpdate = {
   eventEndDateMidnightUTCInMS?: number | undefined;
   eventEndTimeAfterMidnightUTCInMS?: number | undefined;
   eventEndDateTimeInMS?: number | undefined;
-  organizers?: TEventInviteeOrOrganizer[] | undefined;
-  invitees?: TEventInviteeOrOrganizer[] | undefined;
+  organizers?: TBarebonesUser[] | undefined;
+  invitees?: TBarebonesUser[] | undefined;
   description?: string | undefined;
   additionalInfo?: string | undefined;
   city?: string | undefined;
@@ -328,23 +328,19 @@ export type TUserContext = {
   setFriendRequestsSent: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   friendRequestsReceived: string[] | undefined;
   setFriendRequestsReceived: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  blockedUsers: TEventInviteeOrOrganizer[] | undefined;
-  setBlockedUsers: React.Dispatch<
-    React.SetStateAction<TEventInviteeOrOrganizer[] | undefined>
-  >;
+  blockedUsers: TBarebonesUser[] | undefined;
+  setBlockedUsers: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>;
   addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists: (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: TEventInviteeOrOrganizer[] | undefined,
-    setBlockedUsers?: React.Dispatch<
-      React.SetStateAction<TEventInviteeOrOrganizer[] | undefined>
-    >
+    blockedUsers?: TBarebonesUser[] | undefined,
+    setBlockedUsers?: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>
   ) => void;
   handleUnblockUser: (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: TEventInviteeOrOrganizer[] | undefined,
-    setBlockedUsers?: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[] | undefined>>
+    blockedUsers?: TBarebonesUser[] | undefined,
+    setBlockedUsers?: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>
   ) => void;
   currentOtherUser: TOtherUser | null;
   setCurrentOtherUser: React.Dispatch<React.SetStateAction<TOtherUser | null>>;
@@ -723,10 +719,10 @@ export type TEventContext = {
   setMaxParticipants: React.Dispatch<React.SetStateAction<number | null>>;
   publicity: "public" | "private";
   setPublicity: React.Dispatch<React.SetStateAction<"public" | "private">>;
-  organizers: TEventInviteeOrOrganizer[];
-  setOrganizers: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>;
-  invitees: TEventInviteeOrOrganizer[];
-  setInvitees: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>;
+  organizers: TBarebonesUser[];
+  setOrganizers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
+  invitees: TBarebonesUser[];
+  setInvitees: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   relatedInterests: string[];
   setRelatedInterests: React.Dispatch<React.SetStateAction<string[]>>;
   addEventImageMutation: UseMutationResult<
@@ -749,18 +745,18 @@ export type TEventContext = {
   >;
   eventImages: string[];
   setEventImages: React.Dispatch<React.SetStateAction<string[]>>;
-  blockedUsersEvent: TEventInviteeOrOrganizer[];
-  setBlockedUsersEvent: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>;
+  blockedUsersEvent: TBarebonesUser[];
+  setBlockedUsersEvent: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
-    organizers: TEventInviteeOrOrganizer[],
-    setOrganizers: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>,
+    organizers: TBarebonesUser[],
+    setOrganizers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>,
     user: TOtherUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
   handleAddRemoveUserAsInvitee: (
-    invitees: TEventInviteeOrOrganizer[],
-    setInvitees: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[]>>,
+    invitees: TBarebonesUser[],
+    setInvitees: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>,
     user?: TOtherUser
   ) => void;
   handleRemoveInvitee: (
@@ -780,9 +776,7 @@ export type TEventContext = {
   setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
   eventEditIsInProgress: boolean;
   setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
-  handleAddRemoveBlockedUserOnEvent: (
-    user?: TOtherUser | TEventInviteeOrOrganizer
-  ) => void;
+  handleAddRemoveBlockedUserOnEvent: (user?: TOtherUser | TBarebonesUser) => void;
   handleAddUserRSVP: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent

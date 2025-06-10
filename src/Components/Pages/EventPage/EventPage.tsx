@@ -1,4 +1,4 @@
-import { TThemeColor, TUser, TEvent, TEventInviteeOrOrganizer } from "../../../types";
+import { TThemeColor, TUser, TEvent, TBarebonesUser } from "../../../types";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -66,10 +66,10 @@ const EventPage = () => {
   const [
     organizersWhoHaveNotBlockedUserButHaveHiddenProfile,
     setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile,
-  ] = useState<TEventInviteeOrOrganizer[]>([]);
+  ] = useState<TBarebonesUser[]>([]);
 
   const [organizersWhoseProfileIsVisible, setOrganizersWhoseProfileIsVisible] = useState<
-    TEventInviteeOrOrganizer[]
+    TBarebonesUser[]
   >([]);
 
   /* 
