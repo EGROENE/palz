@@ -332,7 +332,7 @@ const OtherUserProfile = () => {
 
   const currentOtherUserIsBlocked: boolean =
     blockedUsers && currentOtherUserID
-      ? blockedUsers.includes(currentOtherUserID.toString())
+      ? blockedUsers.map((bu) => bu._id).includes(currentOtherUserID.toString())
       : false;
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -392,7 +392,9 @@ const OtherUserProfile = () => {
             currentOtherUser &&
             currentUser &&
             currentUser._id &&
-            currentOtherUser.blockedUsers.includes(currentUser._id.toString())
+            currentOtherUser.blockedUsers
+              .map((bu) => bu._id)
+              .includes(currentUser._id.toString())
           ) {
             toast("You do not have access to this page", {
               style: {
