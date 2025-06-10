@@ -832,6 +832,16 @@ form textarea {
   font-size: 1.25rem;
 }
 
+.page-hero form .form-sub-checkbox {
+  display: flex;
+  flex-direction: row;
+  margin: 0.5rem 0;
+}
+
+.page-hero form .form-sub-checkbox input {
+  width: unset;
+}
+
 .add-members-modal .clear-other-users-search-query {
   position: absolute;
   top: 9px;
