@@ -1,5 +1,11 @@
 import { createContext, ReactNode, useState, useEffect, SetStateAction } from "react";
-import { TUserContext, TUser, TUserValuesToUpdate, TOtherUser } from "../types";
+import {
+  TUserContext,
+  TUser,
+  TUserValuesToUpdate,
+  TOtherUser,
+  TEventInviteeOrOrganizer,
+} from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -146,10 +152,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [whoCanSeeEventsInvitedTo, setWhoCanSeeEventsInvitedTo] = useSessionStorage<
     "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanSeeEventsInvitedTo", "nobody");
-  const [blockedUsers, setBlockedUsers] = useSessionStorage<string[] | undefined>(
-    "blockedUsers",
-    currentUser?.blockedUsers
-  );
+  const [blockedUsers, setBlockedUsers] = useSessionStorage<
+    TEventInviteeOrOrganizer[] | undefined
+  >("blockedUsers", currentUser?.blockedUsers);
   const [friendRequestsSent, setFriendRequestsSent] = useSessionStorage<
     string[] | undefined
   >("friendRequestsSent", currentUser?.friendRequestsSent);
@@ -911,9 +916,23 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         hasSentFriendRequest !== undefined &&
         hasReceivedFriendRequest !== undefined
       ) {
-        return Requests.addToBlockedUsers(blocker, blockee?._id?.toString());
+        return Requests.addToBlockedUsers(blocker, {
+          _id: blockee._id,
+          username: blockee.username,
+          firstName: blockee.firstName,
+          lastName: blockee.lastName,
+          emailAddress: blockee.emailAddress,
+          profileImage: blockee.profileImage,
+        });
       }
-      return Requests.addToBlockedUsers(blocker, blockee?._id?.toString());
+      return Requests.addToBlockedUsers(blocker, {
+        _id: blockee._id,
+        username: blockee.username,
+        firstName: blockee.firstName,
+        lastName: blockee.lastName,
+        emailAddress: blockee.emailAddress,
+        profileImage: blockee.profileImage,
+      });
     },
     onSuccess: (data, variables) => {
       if (data.ok) {
@@ -925,10 +944,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   .json()
                   .then((cu) => {
                     if (variables.blocker._id) {
-                      Requests.addToBlockedBy(
-                        variables.blockee,
-                        variables.blocker._id.toString()
-                      )
+                      Requests.addToBlockedBy(variables.blockee, {
+                        _id: variables.blocker._id,
+                        username: variables.blocker.username,
+                        firstName: variables.blocker.firstName,
+                        lastName: variables.blocker.lastName,
+                        emailAddress: variables.blocker.emailAddress,
+                        profileImage: variables.blocker.profileImage,
+                      })
                         .then((res) => {
                           if (res.ok) {
                             if (cu) {
@@ -1625,11 +1648,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists = (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: string[] | undefined,
-    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
+    blockedUsers?: TEventInviteeOrOrganizer[] | undefined,
+    setBlockedUsers?: React.Dispatch<
+      SetStateAction<TEventInviteeOrOrganizer[] | undefined>
+    >
   ): void => {
     if (blockedUsers && setBlockedUsers && blockee._id) {
-      setBlockedUsers(blockedUsers.concat(blockee._id.toString()));
+      setBlockedUsers(
+        blockedUsers.concat({
+          _id: blockee._id,
+          username: blockee.username,
+          firstName: blockee.firstName,
+          lastName: blockee.lastName,
+          emailAddress: blockee.emailAddress,
+          profileImage: blockee.profileImage,
+        })
+      );
     }
     setIsLoading(true);
 
@@ -1690,20 +1724,29 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleUnblockUser = (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: string[] | undefined,
-    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
+    blockedUsers?: TEventInviteeOrOrganizer[] | undefined,
+    setBlockedUsers?: React.Dispatch<
+      SetStateAction<TEventInviteeOrOrganizer[] | undefined>
+    >
   ): void => {
     setIsLoading(true);
 
     if (blockedUsers && setBlockedUsers) {
-      setBlockedUsers(blockedUsers.filter((userID) => userID !== blockee._id));
+      setBlockedUsers(blockedUsers.filter((bu) => bu._id !== blockee._id));
     }
 
     // Run removeFromBlockedUsers to del blockee from currentUser's blockedUsers array
     // If that succeeds, remove currentUser from blockee's blockedBy array. blockee: TUser needs to be fetched first
     // If that succeeds, set currentUser to updated (refetched) user from DB that matches currentUser._id
     if (blockee._id) {
-      Requests.removeFromBlockedUsers(blocker, blockee._id.toString())
+      Requests.removeFromBlockedUsers(blocker, {
+        _id: blockee._id,
+        username: blockee.username,
+        firstName: blockee.firstName,
+        lastName: blockee.lastName,
+        emailAddress: blockee.emailAddress,
+        profileImage: blockee.profileImage,
+      })
         .then((res) => {
           if (currentUser && currentUser._id && res.ok && blockee._id) {
             Requests.getUserByID(blockee._id.toString())
@@ -1713,7 +1756,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     .json()
                     .then((blockee: TUser) => {
                       if (currentUser._id) {
-                        Requests.removeFromBlockedBy(blockee, currentUser._id.toString())
+                        Requests.removeFromBlockedBy(blockee, {
+                          _id: currentUser._id,
+                          username: currentUser.username,
+                          firstName: currentUser.firstName,
+                          lastName: currentUser.lastName,
+                          emailAddress: currentUser.emailAddress,
+                          profileImage: currentUser.profileImage,
+                        })
                           .then((res) => {
                             if (res.ok) {
                               if (currentUser._id) {

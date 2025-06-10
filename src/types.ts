@@ -328,19 +328,23 @@ export type TUserContext = {
   setFriendRequestsSent: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   friendRequestsReceived: string[] | undefined;
   setFriendRequestsReceived: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  blockedUsers: string[] | undefined;
-  setBlockedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+  blockedUsers: TEventInviteeOrOrganizer[] | undefined;
+  setBlockedUsers: React.Dispatch<
+    React.SetStateAction<TEventInviteeOrOrganizer[] | undefined>
+  >;
   addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists: (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: string[] | undefined,
-    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    blockedUsers?: TEventInviteeOrOrganizer[] | undefined,
+    setBlockedUsers?: React.Dispatch<
+      React.SetStateAction<TEventInviteeOrOrganizer[] | undefined>
+    >
   ) => void;
   handleUnblockUser: (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: string[] | undefined,
-    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    blockedUsers?: TEventInviteeOrOrganizer[] | undefined,
+    setBlockedUsers?: React.Dispatch<React.SetStateAction<TEventInviteeOrOrganizer[] | undefined>>
   ) => void;
   currentOtherUser: TOtherUser | null;
   setCurrentOtherUser: React.Dispatch<React.SetStateAction<TOtherUser | null>>;
