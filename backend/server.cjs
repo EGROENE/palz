@@ -114,6 +114,41 @@ app.get("/palz/find-events", async (req, res) => {
   res.status(200).json(events);
 });
 
+app.get("/palz/edit-event/:id", async (req, res) => {
+  const { user, start, limit } = req.query;
+
+  const username = user;
+  const currentUser = await User.findOne({ username });
+
+  const potentialCOs = await User.find({
+    index: { $gte: Number(start) },
+    _id: { $ne: currentUser._id.toString() },
+    // For blockedUsers & blockedBy, it may be necessary to check if currentUser._id is equal to any _ids in these arrays
+    blockedUsers: {
+      $nin: {
+        _id: currentUser._id.toString(),
+        username: currentUser.username,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        emailAddress: currentUser.emailAddress,
+        profileImage: currentUser.profileImage,
+      },
+    },
+    blockedBy: {
+      $nin: {
+        _id: currentUser._id.toString(),
+        username: currentUser.username,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        emailAddress: currentUser.emailAddress,
+        profileImage: currentUser.profileImage,
+      },
+    },
+  }).limit(Number(limit));
+
+  res.status(200).json(potentialCOs);
+});
+
 // Connect to Mongoose:
 mongoose
   .connect(process.env.MONGODB_URI)
