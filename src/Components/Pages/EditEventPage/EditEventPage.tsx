@@ -13,12 +13,8 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
   const { isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout, fetchAllVisibleOtherUsersQuery } =
     useUserContext();
-  const {
-    currentEvent,
-    fetchAllEventsQuery,
-    fetchPotentialInviteesQuery,
-    fetchPotentialCoOrganizersQuery,
-  } = useEventContext();
+  const { currentEvent, fetchAllEventsQuery, fetchPotentialInviteesQuery } =
+    useEventContext();
 
   const navigation = useNavigate();
 
@@ -84,8 +80,6 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
   const getQueryForQueryLoadingOrErrorComponent = () => {
     if (fetchAllVisibleOtherUsersQuery.isError) {
       return fetchAllVisibleOtherUsersQuery;
-    } else if (fetchPotentialCoOrganizersQuery.isError) {
-      return fetchPotentialCoOrganizersQuery;
     } else if (fetchPotentialInviteesQuery.isError) {
       return fetchPotentialInviteesQuery;
     } else if (fetchAllEventsQuery.isError) {
@@ -98,13 +92,11 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
   const aQueryIsLoading: boolean =
     fetchAllEventsQuery.isLoading ||
     fetchAllVisibleOtherUsersQuery.isLoading ||
-    fetchPotentialCoOrganizersQuery.isLoading ||
     fetchPotentialInviteesQuery.isLoading;
 
   const isNoFetchError: boolean =
     !fetchAllEventsQuery.isError &&
     !fetchAllVisibleOtherUsersQuery.isError &&
-    !fetchPotentialCoOrganizersQuery.isError &&
     !fetchPotentialInviteesQuery.isError;
 
   return (
