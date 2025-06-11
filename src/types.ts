@@ -630,7 +630,6 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
-  fetchPotentialCoOrganizersQuery: UseQueryResult<TOtherUser[], Error>;
   fetchPotentialInviteesQuery: UseQueryResult<TOtherUser[], Error>;
   handleRemoveOrganizer: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,

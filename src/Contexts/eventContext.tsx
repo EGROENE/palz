@@ -38,7 +38,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const currentURL = useLocation().pathname;
 
-  const fetchPotentialCoOrganizersQuery: UseQueryResult<TOtherUser[], Error> = useQuery({
+  /* const fetchPotentialCoOrganizersQuery: UseQueryResult<TOtherUser[], Error> = useQuery({
     queryKey: ["potentialCoOrganizers"],
     queryFn: () =>
       Requests.getPotentialCoOrganizers(
@@ -49,7 +49,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       ),
     enabled:
       userHasLoggedIn && (currentURL === "/add-event" || currentURL === "/edit-event"),
-  });
+  }); */
 
   const fetchPotentialInviteesQuery: UseQueryResult<TOtherUser[], Error> = useQuery({
     queryKey: ["potentialCoOrganizers"],
@@ -839,7 +839,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
-    fetchPotentialCoOrganizersQuery,
     fetchPotentialInviteesQuery,
     handleRemoveOrganizer,
     showRSVPs,
