@@ -128,6 +128,7 @@ export type TBarebonesUser = {
   lastName: string | undefined;
   profileImage: string | undefined;
   emailAddress: string | undefined;
+  index: number | undefined;
 };
 
 export type TEvent = {
