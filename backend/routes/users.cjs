@@ -18,8 +18,6 @@ router.get("/", getAllUsers);
 
 router.get("/add-event", getAllUsers);
 
-router.get("/edit-event", getAllUsers);
-
 // Used to check if username, email, phone number are unique when saving Settings form
 router.post("/settings", getUserByUsernamePhoneNumberOrEmailAddress);
 
