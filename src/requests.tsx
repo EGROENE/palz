@@ -1015,6 +1015,7 @@ const addUserRSVP = (
       lastName: user?.lastName,
       emailAddress: user?.emailAddress,
       profileImage: user?.profileImage,
+      index: user?.index,
     }
   );
 
@@ -1048,6 +1049,7 @@ const addToDisinterestedUsers = (
       lastName: user?.lastName,
       emailAddress: user?.emailAddress,
       profileImage: user?.profileImage,
+      index: user?.index,
     });
 
   const getRaw = () => {
