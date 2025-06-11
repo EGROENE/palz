@@ -924,6 +924,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           lastName: blockee.lastName,
           emailAddress: blockee.emailAddress,
           profileImage: blockee.profileImage,
+          index: blockee.index
         });
       }
       return Requests.addToBlockedUsers(blocker, {
@@ -933,6 +934,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         lastName: blockee.lastName,
         emailAddress: blockee.emailAddress,
         profileImage: blockee.profileImage,
+        index: blockee.index
       });
     },
     onSuccess: (data, variables) => {
@@ -952,6 +954,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         lastName: variables.blocker.lastName,
                         emailAddress: variables.blocker.emailAddress,
                         profileImage: variables.blocker.profileImage,
+                        index: variables.blocker.index
                       })
                         .then((res) => {
                           if (res.ok) {
@@ -1661,6 +1664,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           lastName: blockee.lastName,
           emailAddress: blockee.emailAddress,
           profileImage: blockee.profileImage,
+          index: blockee.index
         })
       );
     }
@@ -1743,6 +1747,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         lastName: blockee.lastName,
         emailAddress: blockee.emailAddress,
         profileImage: blockee.profileImage,
+        index: blockee.index
       })
         .then((res) => {
           if (currentUser && currentUser._id && res.ok && blockee._id) {
@@ -1760,6 +1765,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                           lastName: currentUser.lastName,
                           emailAddress: currentUser.emailAddress,
                           profileImage: currentUser.profileImage,
+                          index: currentUser.index
                         })
                           .then((res) => {
                             if (res.ok) {
