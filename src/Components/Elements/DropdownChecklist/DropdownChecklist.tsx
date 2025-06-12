@@ -1,7 +1,7 @@
 import React from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import { TBarebonesUser, TEvent } from "../../../types";
+import { TBarebonesUser, TEvent, TOtherUser } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import { useChatContext } from "../../../Hooks/useChatContext";
@@ -27,7 +27,7 @@ const DropdownChecklist = ({
   actionParams?: any[];
   actionEventParamNeeded: boolean;
   displayedItemsArray: TBarebonesUser[]; // type can be changed later if used for non-user lists
-  storageArray: any[];
+  storageArray: TBarebonesUser[] | TOtherUser[];
   setStorageArray: React.Dispatch<React.SetStateAction<any[]>>;
   event?: TEvent;
 }) => {
@@ -135,7 +135,7 @@ const DropdownChecklist = ({
             id={`${usedFor}-${user._id?.toString()}`}
             disabled={isLoading}
             onChange={getOnChangeHandler(user)}
-            checked={storageArray.includes(user._id?.toString())}
+            checked={storageArray.map((elem) => elem._id).includes(user._id)}
             type="checkbox"
           />
           <div title={`${user.firstName} ${user.lastName}`}>
