@@ -222,7 +222,7 @@ const EventForm = ({
               setPotentialCoOrganizers(potentialCoOrganizers.concat(potentialCOsSecure));
             }
           } else {
-            // DISPLAY ERROR MESSAGE IF FETCH FAILS
+            setIsFetchError(true);
           }
         })
         .catch((error) => console.log(error))
