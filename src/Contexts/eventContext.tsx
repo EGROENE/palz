@@ -729,7 +729,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAddRemoveUserAsInvitee = (
     invitees: TBarebonesUser[],
     setInvitees: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>,
-    user?: TOtherUser
+    user?: TBarebonesUser
   ): void => {
     if (user?._id) {
       if (invitees.map((i) => i._id).includes(user._id.toString())) {
