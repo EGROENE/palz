@@ -9,6 +9,7 @@ const inviteeOrganizerSchema = new Schema({
   lastName: String,
   profileImage: String,
   emailAddress: String,
+  index: Number,
 });
 
 const eventSchema = new Schema({
