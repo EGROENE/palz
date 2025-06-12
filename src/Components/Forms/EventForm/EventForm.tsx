@@ -205,18 +205,9 @@ const EventForm = ({
       )
         .then((potentialCOs) => {
           if (potentialCOs) {
-            let potentialCOsSecure: TBarebonesUser[] = [];
-            for (const p of potentialCOs) {
-              potentialCOsSecure.push({
-                _id: p._id,
-                username: p.username,
-                firstName: p.firstName,
-                lastName: p.lastName,
-                emailAddress: p.emailAddress,
-                profileImage: p.profileImage,
-                index: p.index,
-              });
-            }
+            let potentialCOsSecure: TBarebonesUser[] = potentialCOs.map((pco) =>
+              getTBarebonesUser(pco)
+            );
             if (fetchPotentialCOsStart === 0) {
               setPotentialCoOrganizers(potentialCOsSecure);
             } else {
@@ -264,15 +255,15 @@ const EventForm = ({
     }
   }, [invitees, organizers, blockedUsersEvent, fetchPotentialInviteesQuery.data]);
 
-  const getTBarebonesUser = (user: TUser): TBarebonesUser => {
+  const getTBarebonesUser = (user: TUser | null): TBarebonesUser => {
     return {
-      _id: user._id,
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      emailAddress: user.emailAddress,
-      profileImage: user.profileImage,
-      index: user.index,
+      _id: user?._id,
+      username: user?.username,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      emailAddress: user?.emailAddress,
+      profileImage: user?.profileImage,
+      index: user?.index,
     };
   };
 
@@ -321,15 +312,7 @@ const EventForm = ({
               co.firstName?.includes(input.toLowerCase()) ||
               co.lastName?.includes(input.toLowerCase())
             ) {
-              matchingPotentialCOs.push({
-                _id: co._id,
-                username: co.username,
-                emailAddress: co.emailAddress,
-                firstName: co.firstName,
-                lastName: co.lastName,
-                profileImage: co.profileImage,
-                index: co.index,
-              });
+              matchingPotentialCOs.push(getTBarebonesUser(co));
             }
           }
           setPotentialCoOrganizers(matchingPotentialCOs);
@@ -861,17 +844,7 @@ const EventForm = ({
       setEventAddressError("Please enter an address");
       setMaxParticipants(null);
       setPublicity("public");
-      setOrganizers([
-        {
-          _id: currentUser?._id,
-          username: currentUser?.username,
-          firstName: currentUser?.firstName,
-          lastName: currentUser?.lastName,
-          profileImage: currentUser?.profileImage,
-          emailAddress: currentUser?.emailAddress,
-          index: currentUser?.index,
-        },
-      ]);
+      setOrganizers([getTBarebonesUser(currentUser)]);
       setInvitees([]);
       setBlockedUsersEvent([]);
       setRelatedInterests([]);
@@ -1627,22 +1600,10 @@ const EventForm = ({
                     >
                       Remove Yourself
                     </span>
-                    {currentEvent?.creator === currentUser?._id && (
+                    {currentEvent?.creator === currentUser?._id && currentUser && (
                       <span
                         style={{ color: randomColor }}
-                        onClick={() =>
-                          setOrganizers([
-                            {
-                              _id: currentUser._id,
-                              username: currentUser.username,
-                              firstName: currentUser.firstName,
-                              lastName: currentUser.lastName,
-                              profileImage: currentUser.profileImage,
-                              emailAddress: currentUser.emailAddress,
-                              index: currentUser.index,
-                            },
-                          ])
-                        }
+                        onClick={() => setOrganizers([getTBarebonesUser(currentUser)])}
                       >
                         Remove All Others
                       </span>
