@@ -160,6 +160,7 @@ const EventForm = ({
   );
 
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
+  const [isFetchError, setIsFetchError] = useState<boolean>(false);
 
   const [showAreYouSureDeleteEvent, setShowAreYouSureDeleteEvent] =
     useState<boolean>(false);
@@ -278,7 +279,6 @@ const EventForm = ({
         : window.innerHeight + window.scrollY >= document.body.offsetHeight;
 
     if (bottomReached) {
-      console.log("fck");
       const lastItem: TOtherUser | TEvent | TBarebonesUser = items[items.length - 1];
 
       if (usedFor === "edit-event") {
@@ -1034,887 +1034,916 @@ const EventForm = ({
   };
 
   return (
-    <form className="event-form">
-      <label>
-        <header className="input-label">Title:</header>
-        <input
-          name="event-title"
-          id="event-title"
-          inputMode="text"
-          ref={titleRef}
-          onFocus={() => setFocusedElement("title")}
-          onBlur={() => setFocusedElement(undefined)}
-          style={
-            focusedElement === "title"
-              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-              : undefined
-          }
-          disabled={isLoading}
-          className={eventTitleError !== "" && showErrors ? "erroneous-field" : undefined}
-          value={eventTitle}
-          onChange={(e) => handleEventTitleInput(e)}
-          placeholder="Name your event"
-        />
-        {eventTitleError !== "" && showErrors && <p>{eventTitleError}</p>}
-      </label>
-      <label>
-        <header className="input-label">Description:</header>
-        <textarea
-          name="event-description"
-          id="event-description"
-          ref={descriptionRef}
-          onFocus={() => setFocusedElement("description")}
-          onBlur={() => setFocusedElement(undefined)}
-          style={
-            focusedElement === "description"
-              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-              : undefined
-          }
-          disabled={isLoading}
-          className={
-            eventDescriptionError !== "" && showErrors ? "erroneous-field" : undefined
-          }
-          value={eventDescription}
-          onChange={(e) => handleEventDescriptionInput(e)}
-          placeholder="Describe your event"
-        />
-        {eventDescriptionError !== "" && showErrors && <p>{eventDescriptionError}</p>}
-      </label>
-      <label>
-        <header className="input-label">Additional Info: (optional)</header>
-        <textarea
-          name="event-additional-info"
-          id="event-additional-info"
-          ref={additionalInfoRef}
-          onFocus={() => setFocusedElement("additionalInfo")}
-          onBlur={() => setFocusedElement(undefined)}
-          style={
-            focusedElement === "additionalInfo"
-              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-              : undefined
-          }
-          disabled={isLoading}
-          className={
-            eventAdditionalInfoError !== "" && showErrors ? "erroneous-field" : undefined
-          }
-          value={eventAdditionalInfo}
-          onChange={(e) => handleEventAdditionalInfo(e)}
-          placeholder="Cancelation, backup plans, anything else your guests should know"
-        />
-        {eventAdditionalInfoError !== "" && <p>{eventAdditionalInfoError}</p>}
-      </label>
-      <div className="location-inputs">
-        <label className="location-input">
-          <header className="input-label">City:</header>
-          <input
-            name="event-city"
-            id="event-city"
-            inputMode="text"
-            ref={cityRef}
-            onFocus={() => setFocusedElement("city")}
-            onBlur={() => setFocusedElement(undefined)}
-            style={
-              focusedElement === "city"
-                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                : undefined
-            }
-            disabled={isLoading}
-            className={
-              eventLocationError !== "" && showErrors ? "erroneous-field" : undefined
-            }
-            value={eventCity}
-            onChange={(e) =>
-              handleCityStateCountryInput(
-                { city: eventCity, state: eventState, country: eventCountry },
-                {
-                  citySetter: setEventCity,
-                  stateSetter: undefined,
-                  countrySetter: undefined,
-                  errorSetter: setEventLocationError,
-                  showCountriesSetter: undefined,
-                },
-                "city",
-                undefined,
-                e
-              )
-            }
-            placeholder="City"
-          />
-          {eventLocationError !== "" && showErrors && <p>{eventLocationError}</p>}
-        </label>
-        <label className="location-input">
-          <header className="input-label">State/Province:</header>
-          <input
-            name="event-state-province"
-            id="event-state-province"
-            inputMode="text"
-            ref={stateRef}
-            onFocus={() => setFocusedElement("state")}
-            onBlur={() => setFocusedElement(undefined)}
-            style={
-              focusedElement === "state"
-                ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                : undefined
-            }
-            disabled={isLoading}
-            className={
-              eventLocationError !== "" && showErrors ? "erroneous-field" : undefined
-            }
-            value={eventState}
-            onChange={(e) =>
-              handleCityStateCountryInput(
-                { city: eventCity, state: eventState, country: eventCountry },
-                {
-                  citySetter: undefined,
-                  stateSetter: setEventState,
-                  countrySetter: undefined,
-                  errorSetter: setEventLocationError,
-                },
-                "state",
-                undefined,
-                e
-              )
-            }
-            placeholder="State, province, etc."
-          />
-        </label>
-        <label className="location-countries-dropdown">
-          <header className="input-label">Country:</header>
-          <button
-            disabled={isLoading}
-            className={
-              eventLocationError !== "" && showErrors
-                ? "country-dropdown-button erroneous-field"
-                : "country-dropdown-button"
-            }
-            type="button"
-            onClick={() => setShowEventCountries(!showEventCountries)}
-          >
-            {eventCountry === "" ? (
-              "Select country:"
-            ) : (
-              <div className="flag-and-code-container">
-                <img
-                  src={`/flags/1x1/${
-                    countries.filter((country) => country.country === eventCountry)[0]
-                      .abbreviation
-                  }.svg`}
-                />
-                <span
-                  style={
-                    eventCountry && eventCountry.length >= 19
-                      ? { fontSize: "0.75rem" }
-                      : undefined
-                  }
-                >
-                  {`${
-                    countries.filter((country) => country.country === eventCountry)[0]
-                      .country
-                  }`}
-                </span>
-              </div>
-            )}
-            <i
-              style={showEventCountries ? { "rotate": "180deg" } : undefined}
-              className="fas fa-chevron-down"
-            ></i>
-          </button>
-          {showEventCountries && (
-            <ul className="dropdown-list">
-              {resortedCountries.map((country) => (
-                <li
-                  tabIndex={0}
-                  aria-hidden="false"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleCityStateCountryInput(
-                        { city: eventCity, state: eventState, country: eventCountry },
-                        {
-                          citySetter: undefined,
-                          stateSetter: undefined,
-                          countrySetter: setEventCountry,
-                          errorSetter: setEventLocationError,
-                          showCountriesSetter: setShowEventCountries,
-                        },
-                        "country",
-                        country.country,
-                        undefined
-                      );
-                    }
-                  }}
-                  style={
-                    country.country === "United States"
-                      ? {
-                          "borderBottom": "1px dotted white",
-                        }
-                      : undefined
-                  }
-                  key={country.country}
-                  onClick={() =>
-                    handleCityStateCountryInput(
-                      { city: eventCity, state: eventState, country: eventCountry },
-                      {
-                        citySetter: undefined,
-                        stateSetter: undefined,
-                        countrySetter: setEventCountry,
-                        errorSetter: setEventLocationError,
-                        showCountriesSetter: setShowEventCountries,
-                      },
-                      "country",
-                      country.country,
-                      undefined
-                    )
-                  }
-                >
-                  <img src={`/flags/1x1/${country.abbreviation}.svg`} />
-                  <span>{`${country.country}`}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </label>
-      </div>
-      <label>
-        <header className="input-label">Address:</header>
-        <input
-          name="event-address"
-          id="event-address"
-          inputMode="text"
-          ref={addressRef}
-          onFocus={() => setFocusedElement("address")}
-          onBlur={() => setFocusedElement(undefined)}
-          style={
-            focusedElement === "address"
-              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-              : undefined
-          }
-          disabled={isLoading}
-          className={
-            eventAddressError !== "" && showErrors ? "erroneous-field" : undefined
-          }
-          value={eventAddress}
-          onChange={(e) => handleEventAddressInput(e)}
-          placeholder="Number, street, postal code"
-        />
-        {eventAddressError !== "" && showErrors && <p>{eventAddressError}</p>}
-      </label>
-      <div className={styles.dateTimeInputsLine}>
-        <div className={styles.dateTimeGroupContainer}>
-          <div className={styles.dateTimeInputsContainer}>
-            <label>
-              <header className="input-label">Start Date:</header>{" "}
+    <>
+      {isFetchError && <p>Error retrieving data; please reload the page.</p>}
+      {!isFetchError && (
+        <form className="event-form">
+          <label>
+            <header className="input-label">Title:</header>
+            <input
+              name="event-title"
+              id="event-title"
+              inputMode="text"
+              ref={titleRef}
+              onFocus={() => setFocusedElement("title")}
+              onBlur={() => setFocusedElement(undefined)}
+              style={
+                focusedElement === "title"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              disabled={isLoading}
+              className={
+                eventTitleError !== "" && showErrors ? "erroneous-field" : undefined
+              }
+              value={eventTitle}
+              onChange={(e) => handleEventTitleInput(e)}
+              placeholder="Name your event"
+            />
+            {eventTitleError !== "" && showErrors && <p>{eventTitleError}</p>}
+          </label>
+          <label>
+            <header className="input-label">Description:</header>
+            <textarea
+              name="event-description"
+              id="event-description"
+              ref={descriptionRef}
+              onFocus={() => setFocusedElement("description")}
+              onBlur={() => setFocusedElement(undefined)}
+              style={
+                focusedElement === "description"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              disabled={isLoading}
+              className={
+                eventDescriptionError !== "" && showErrors ? "erroneous-field" : undefined
+              }
+              value={eventDescription}
+              onChange={(e) => handleEventDescriptionInput(e)}
+              placeholder="Describe your event"
+            />
+            {eventDescriptionError !== "" && showErrors && <p>{eventDescriptionError}</p>}
+          </label>
+          <label>
+            <header className="input-label">Additional Info: (optional)</header>
+            <textarea
+              name="event-additional-info"
+              id="event-additional-info"
+              ref={additionalInfoRef}
+              onFocus={() => setFocusedElement("additionalInfo")}
+              onBlur={() => setFocusedElement(undefined)}
+              style={
+                focusedElement === "additionalInfo"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              disabled={isLoading}
+              className={
+                eventAdditionalInfoError !== "" && showErrors
+                  ? "erroneous-field"
+                  : undefined
+              }
+              value={eventAdditionalInfo}
+              onChange={(e) => handleEventAdditionalInfo(e)}
+              placeholder="Cancelation, backup plans, anything else your guests should know"
+            />
+            {eventAdditionalInfoError !== "" && <p>{eventAdditionalInfoError}</p>}
+          </label>
+          <div className="location-inputs">
+            <label className="location-input">
+              <header className="input-label">City:</header>
               <input
-                name="event-start-date"
-                id="event-start-date"
+                name="event-city"
+                id="event-city"
                 inputMode="text"
-                value={
-                  eventStartDateMidnightUTCInMS > 0
-                    ? getDateFieldValue(eventStartDateMidnightUTCInMS)
-                    : ""
-                }
-                ref={startDateRef}
-                onFocus={() => setFocusedElement("startDate")}
+                ref={cityRef}
+                onFocus={() => setFocusedElement("city")}
                 onBlur={() => setFocusedElement(undefined)}
                 style={
-                  focusedElement === "startDate"
+                  focusedElement === "city"
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
                     : undefined
                 }
                 disabled={isLoading}
                 className={
-                  (eventStartDateTimeError === "Please fill out this field" &&
-                    showErrors) ||
-                  (eventStartDateTimeError !== "" && showErrors)
-                    ? "erroneous-field"
-                    : undefined
+                  eventLocationError !== "" && showErrors ? "erroneous-field" : undefined
                 }
-                onChange={(e) => handleDateTimeInput(e, "start-date")}
-                type="date"
+                value={eventCity}
+                onChange={(e) =>
+                  handleCityStateCountryInput(
+                    { city: eventCity, state: eventState, country: eventCountry },
+                    {
+                      citySetter: setEventCity,
+                      stateSetter: undefined,
+                      countrySetter: undefined,
+                      errorSetter: setEventLocationError,
+                      showCountriesSetter: undefined,
+                    },
+                    "city",
+                    undefined,
+                    e
+                  )
+                }
+                placeholder="City"
               />
+              {eventLocationError !== "" && showErrors && <p>{eventLocationError}</p>}
             </label>
-            <label>
-              <header className="input-label">Start Time:</header>
+            <label className="location-input">
+              <header className="input-label">State/Province:</header>
               <input
-                name="event-start-time"
-                id="event-start-time"
-                value={
-                  eventStartTimeAfterMidnightUTCInMS > -1
-                    ? getTimeFieldValue(eventStartTimeAfterMidnightUTCInMS)
-                    : ""
-                }
-                step="600"
-                disabled={isLoading}
-                ref={startTimeRef}
-                onFocus={() => setFocusedElement("startTime")}
+                name="event-state-province"
+                id="event-state-province"
+                inputMode="text"
+                ref={stateRef}
+                onFocus={() => setFocusedElement("state")}
                 onBlur={() => setFocusedElement(undefined)}
                 style={
-                  focusedElement === "startTime"
+                  focusedElement === "state"
                     ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
                     : undefined
                 }
+                disabled={isLoading}
                 className={
-                  (eventStartDateTimeError === "Please fill out this field" &&
-                    showErrors) ||
-                  (eventStartDateTimeError !== "" && showErrors)
-                    ? "erroneous-field"
-                    : undefined
+                  eventLocationError !== "" && showErrors ? "erroneous-field" : undefined
                 }
-                onChange={(e) => handleDateTimeInput(e, "start-time")}
-                type="time"
+                value={eventState}
+                onChange={(e) =>
+                  handleCityStateCountryInput(
+                    { city: eventCity, state: eventState, country: eventCountry },
+                    {
+                      citySetter: undefined,
+                      stateSetter: setEventState,
+                      countrySetter: undefined,
+                      errorSetter: setEventLocationError,
+                    },
+                    "state",
+                    undefined,
+                    e
+                  )
+                }
+                placeholder="State, province, etc."
               />
             </label>
-            {(eventStartDateMidnightUTCInMS > 0 ||
-              eventStartTimeAfterMidnightUTCInMS > -1) && (
-              <span
-                tabIndex={0}
-                aria-hidden="false"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleClearDateTime(true);
-                  }
-                }}
-                onClick={() => handleClearDateTime(true)}
-                className="remove-data"
+            <label className="location-countries-dropdown">
+              <header className="input-label">Country:</header>
+              <button
+                disabled={isLoading}
+                className={
+                  eventLocationError !== "" && showErrors
+                    ? "country-dropdown-button erroneous-field"
+                    : "country-dropdown-button"
+                }
+                type="button"
+                onClick={() => setShowEventCountries(!showEventCountries)}
               >
-                Clear Start Date/Time
-              </span>
-            )}
-          </div>
-          {eventStartDateTimeError !== "" && showErrors && (
-            <p style={{ display: "flex" }}>{eventStartDateTimeError}</p>
-          )}
-        </div>
-        <div className={styles.dateTimeGroupContainer}>
-          <div className={styles.dateTimeInputsContainer}>
-            <label>
-              <header className="input-label">End Date:</header>{" "}
-              <input
-                name="event-end-date"
-                id="event-end-date"
-                value={
-                  eventEndDateMidnightUTCInMS > 0
-                    ? getDateFieldValue(eventEndDateMidnightUTCInMS)
-                    : ""
-                }
-                ref={endDateRef}
-                onFocus={() => setFocusedElement("endDate")}
-                onBlur={() => setFocusedElement(undefined)}
-                style={
-                  focusedElement === "endDate"
-                    ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                    : undefined
-                }
-                disabled={isLoading}
-                className={
-                  eventEndDateTimeError !== "" && showErrors
-                    ? "erroneous-field"
-                    : undefined
-                }
-                onChange={(e) => handleDateTimeInput(e, "end-date")}
-                type="date"
-              />
+                {eventCountry === "" ? (
+                  "Select country:"
+                ) : (
+                  <div className="flag-and-code-container">
+                    <img
+                      src={`/flags/1x1/${
+                        countries.filter((country) => country.country === eventCountry)[0]
+                          .abbreviation
+                      }.svg`}
+                    />
+                    <span
+                      style={
+                        eventCountry && eventCountry.length >= 19
+                          ? { fontSize: "0.75rem" }
+                          : undefined
+                      }
+                    >
+                      {`${
+                        countries.filter((country) => country.country === eventCountry)[0]
+                          .country
+                      }`}
+                    </span>
+                  </div>
+                )}
+                <i
+                  style={showEventCountries ? { "rotate": "180deg" } : undefined}
+                  className="fas fa-chevron-down"
+                ></i>
+              </button>
+              {showEventCountries && (
+                <ul className="dropdown-list">
+                  {resortedCountries.map((country) => (
+                    <li
+                      tabIndex={0}
+                      aria-hidden="false"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleCityStateCountryInput(
+                            { city: eventCity, state: eventState, country: eventCountry },
+                            {
+                              citySetter: undefined,
+                              stateSetter: undefined,
+                              countrySetter: setEventCountry,
+                              errorSetter: setEventLocationError,
+                              showCountriesSetter: setShowEventCountries,
+                            },
+                            "country",
+                            country.country,
+                            undefined
+                          );
+                        }
+                      }}
+                      style={
+                        country.country === "United States"
+                          ? {
+                              "borderBottom": "1px dotted white",
+                            }
+                          : undefined
+                      }
+                      key={country.country}
+                      onClick={() =>
+                        handleCityStateCountryInput(
+                          { city: eventCity, state: eventState, country: eventCountry },
+                          {
+                            citySetter: undefined,
+                            stateSetter: undefined,
+                            countrySetter: setEventCountry,
+                            errorSetter: setEventLocationError,
+                            showCountriesSetter: setShowEventCountries,
+                          },
+                          "country",
+                          country.country,
+                          undefined
+                        )
+                      }
+                    >
+                      <img src={`/flags/1x1/${country.abbreviation}.svg`} />
+                      <span>{`${country.country}`}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </label>
-            <label>
-              <header className="input-label">End Time:</header>
-              <input
-                name="event-end-time"
-                id="event-end-time"
-                value={
-                  eventEndTimeAfterMidnightUTCInMS > -1
-                    ? getTimeFieldValue(eventEndTimeAfterMidnightUTCInMS)
-                    : ""
-                }
-                step="600"
-                disabled={isLoading}
-                ref={endTimeRef}
-                onFocus={() => setFocusedElement("endTime")}
-                onBlur={() => setFocusedElement(undefined)}
-                style={
-                  focusedElement === "endTime"
-                    ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                    : undefined
-                }
-                className={
-                  eventEndDateTimeError !== "" && showErrors
-                    ? "erroneous-field"
-                    : undefined
-                }
-                onChange={(e) => handleDateTimeInput(e, "end-time")}
-                type="time"
-              />
-            </label>
-            {(eventEndDateMidnightUTCInMS > 0 ||
-              eventEndTimeAfterMidnightUTCInMS > -1) && (
-              <span
-                tabIndex={0}
-                aria-hidden="false"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleClearDateTime(false);
-                  }
-                }}
-                onClick={() => handleClearDateTime(false)}
-                className="remove-data"
-              >
-                Clear End Date/Time
-              </span>
-            )}
           </div>
-          {eventEndDateTimeError !== "" && showErrors && (
-            <p style={{ display: "flex" }}>{eventEndDateTimeError}</p>
-          )}
-        </div>
-      </div>
-      <label>
-        <header className="input-label">
-          Maximum Participants: (optional, not including organizers)
-        </header>
-        <input
-          name="event-max-participants"
-          id="event-max-participants"
-          ref={maxParticipantsRef}
-          onFocus={() => setFocusedElement("maxParticipants")}
-          onBlur={() => setFocusedElement(undefined)}
-          style={
-            focusedElement === "maxParticipants"
-              ? {
-                  boxShadow: `0px 0px 10px 2px ${randomColor}`,
-                  outline: "none",
-                }
-              : undefined
-          }
-          disabled={isLoading}
-          className={
-            maxParticipants && !(Number(maxParticipants) > 0)
-              ? "erroneous-field"
-              : undefined
-          }
-          value={maxParticipants ? maxParticipants : ""}
-          onChange={(e) => handleMaxParticipantsInput(e)}
-          inputMode="numeric"
-          placeholder="Max number of participants"
-        />
-      </label>
-      <div className={styles.eventFormCheckboxContainer}>
-        <label>
-          <span className="input-label">Public</span>
-          <input
-            name="event-privacy-public"
-            id="event-privacy-public"
-            ref={publicRef}
-            onFocus={() => setFocusedElement("public")}
-            onBlur={() => setFocusedElement(undefined)}
-            style={
-              focusedElement === "public"
-                ? {
-                    outline: "none",
-                    width: "unset",
-                  }
-                : { width: "unset", accentColor: randomColor }
-            }
-            disabled={isLoading}
-            onChange={() => handlePublicPrivateBoxChecking("public")}
-            type="checkbox"
-            checked={publicity === "public"}
-          />
-        </label>
-        <label>
-          <span className="input-label">Private</span>
-          <input
-            name="event-privacy-private"
-            id="event-privacy-private"
-            ref={privateRef}
-            onFocus={() => setFocusedElement("private")}
-            onBlur={() => setFocusedElement(undefined)}
-            style={
-              focusedElement === "private"
-                ? {
-                    outline: "none",
-                    width: "unset",
-                    accentColor: randomColor,
-                  }
-                : { width: "unset" }
-            }
-            disabled={isLoading}
-            onChange={() => handlePublicPrivateBoxChecking("private")}
-            type="checkbox"
-            checked={publicity === "private"}
-          />
-        </label>
-      </div>
-      <div className={styles.addOtherUsersArea}>
-        <header className="input-label">
-          Co-organizers: (optional){" "}
-          {currentUser &&
-            !isLoading &&
-            usersWhoAreOrganizers &&
-            usersWhoAreOrganizers.filter((user) => user.username !== currentUser.username)
-              .length > 0 && (
-              <>
-                <span
-                  style={{ color: randomColor }}
-                  onClick={() => setShowAreYouSureRemoveCurrentUserAsOrganizer(true)}
-                >
-                  Remove Yourself
-                </span>
-                {currentEvent?.creator === currentUser?._id && (
-                  <span
-                    style={{ color: randomColor }}
-                    onClick={() =>
-                      setOrganizers([
-                        {
-                          _id: currentUser._id,
-                          username: currentUser.username,
-                          firstName: currentUser.firstName,
-                          lastName: currentUser.lastName,
-                          profileImage: currentUser.profileImage,
-                          emailAddress: currentUser.emailAddress,
-                          index: currentUser.index,
-                        },
-                      ])
+          <label>
+            <header className="input-label">Address:</header>
+            <input
+              name="event-address"
+              id="event-address"
+              inputMode="text"
+              ref={addressRef}
+              onFocus={() => setFocusedElement("address")}
+              onBlur={() => setFocusedElement(undefined)}
+              style={
+                focusedElement === "address"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              disabled={isLoading}
+              className={
+                eventAddressError !== "" && showErrors ? "erroneous-field" : undefined
+              }
+              value={eventAddress}
+              onChange={(e) => handleEventAddressInput(e)}
+              placeholder="Number, street, postal code"
+            />
+            {eventAddressError !== "" && showErrors && <p>{eventAddressError}</p>}
+          </label>
+          <div className={styles.dateTimeInputsLine}>
+            <div className={styles.dateTimeGroupContainer}>
+              <div className={styles.dateTimeInputsContainer}>
+                <label>
+                  <header className="input-label">Start Date:</header>{" "}
+                  <input
+                    name="event-start-date"
+                    id="event-start-date"
+                    inputMode="text"
+                    value={
+                      eventStartDateMidnightUTCInMS > 0
+                        ? getDateFieldValue(eventStartDateMidnightUTCInMS)
+                        : ""
                     }
+                    ref={startDateRef}
+                    onFocus={() => setFocusedElement("startDate")}
+                    onBlur={() => setFocusedElement(undefined)}
+                    style={
+                      focusedElement === "startDate"
+                        ? {
+                            boxShadow: `0px 0px 10px 2px ${randomColor}`,
+                            outline: "none",
+                          }
+                        : undefined
+                    }
+                    disabled={isLoading}
+                    className={
+                      (eventStartDateTimeError === "Please fill out this field" &&
+                        showErrors) ||
+                      (eventStartDateTimeError !== "" && showErrors)
+                        ? "erroneous-field"
+                        : undefined
+                    }
+                    onChange={(e) => handleDateTimeInput(e, "start-date")}
+                    type="date"
+                  />
+                </label>
+                <label>
+                  <header className="input-label">Start Time:</header>
+                  <input
+                    name="event-start-time"
+                    id="event-start-time"
+                    value={
+                      eventStartTimeAfterMidnightUTCInMS > -1
+                        ? getTimeFieldValue(eventStartTimeAfterMidnightUTCInMS)
+                        : ""
+                    }
+                    step="600"
+                    disabled={isLoading}
+                    ref={startTimeRef}
+                    onFocus={() => setFocusedElement("startTime")}
+                    onBlur={() => setFocusedElement(undefined)}
+                    style={
+                      focusedElement === "startTime"
+                        ? {
+                            boxShadow: `0px 0px 10px 2px ${randomColor}`,
+                            outline: "none",
+                          }
+                        : undefined
+                    }
+                    className={
+                      (eventStartDateTimeError === "Please fill out this field" &&
+                        showErrors) ||
+                      (eventStartDateTimeError !== "" && showErrors)
+                        ? "erroneous-field"
+                        : undefined
+                    }
+                    onChange={(e) => handleDateTimeInput(e, "start-time")}
+                    type="time"
+                  />
+                </label>
+                {(eventStartDateMidnightUTCInMS > 0 ||
+                  eventStartTimeAfterMidnightUTCInMS > -1) && (
+                  <span
+                    tabIndex={0}
+                    aria-hidden="false"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleClearDateTime(true);
+                      }
+                    }}
+                    onClick={() => handleClearDateTime(true)}
+                    className="remove-data"
                   >
-                    Remove All Others
+                    Clear Start Date/Time
                   </span>
                 )}
-              </>
-            )}
-        </header>
-        <div className="added-user-tab-container">
-          {currentUser &&
-            usersWhoAreOrganizers &&
-            usersWhoAreOrganizers.filter(
-              (user) => user.username !== currentUser?.username
-            ).length > 0 &&
-            usersWhoAreOrganizers
-              .filter((user) => user.username !== currentUser?.username)
-              .map((user) => (
-                <Tab
-                  key={user._id?.toString()}
-                  info={user}
-                  removeHandler={handleAddRemoveUserAsOrganizer}
-                  removeHandlerNeedsEventParam={true}
-                  removeHandlerParams={[organizers, setOrganizers, user]}
-                  randomColor={randomColor}
-                  isDisabled={isLoading}
-                  userMayNotDelete={currentEvent?.creator === user._id}
-                  specialIcon={
-                    currentEvent?.creator === user._id ? (
-                      <i
-                        style={{
-                          color: "rgb(253, 255, 8)",
-                          fontSize: "1.05rem",
-                          margin: "0 0 0 0.5rem",
-                        }}
-                        className="fas fa-crown"
-                      ></i>
-                    ) : undefined
-                  }
-                />
-              ))}
-        </div>
-        <SearchAndDropdownList
-          randomColor={randomColor}
-          name="event-co-organizers-search"
-          id="event-co-organizers-search"
-          inputRef={coOrganizersRef}
-          onFocus={() => setFocusedElement("coOrganizers")}
-          onBlur={() => setFocusedElement(undefined)}
-          style={
-            focusedElement === "coOrganizers"
-              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-              : undefined
-          }
-          isDisabled={isLoading}
-          query={coOrganizersSearchQuery}
-          inputOnChange={(e) => handleDropdownListSearchQuery(e, "co-organizers")}
-          placeholder="Search users by username, first/last names"
-          clearQueryOnClick={() => {
-            setCoOrganizersSearchQuery("");
-            /* if (fetchPotentialCoOrganizersQuery.data) {
+              </div>
+              {eventStartDateTimeError !== "" && showErrors && (
+                <p style={{ display: "flex" }}>{eventStartDateTimeError}</p>
+              )}
+            </div>
+            <div className={styles.dateTimeGroupContainer}>
+              <div className={styles.dateTimeInputsContainer}>
+                <label>
+                  <header className="input-label">End Date:</header>{" "}
+                  <input
+                    name="event-end-date"
+                    id="event-end-date"
+                    value={
+                      eventEndDateMidnightUTCInMS > 0
+                        ? getDateFieldValue(eventEndDateMidnightUTCInMS)
+                        : ""
+                    }
+                    ref={endDateRef}
+                    onFocus={() => setFocusedElement("endDate")}
+                    onBlur={() => setFocusedElement(undefined)}
+                    style={
+                      focusedElement === "endDate"
+                        ? {
+                            boxShadow: `0px 0px 10px 2px ${randomColor}`,
+                            outline: "none",
+                          }
+                        : undefined
+                    }
+                    disabled={isLoading}
+                    className={
+                      eventEndDateTimeError !== "" && showErrors
+                        ? "erroneous-field"
+                        : undefined
+                    }
+                    onChange={(e) => handleDateTimeInput(e, "end-date")}
+                    type="date"
+                  />
+                </label>
+                <label>
+                  <header className="input-label">End Time:</header>
+                  <input
+                    name="event-end-time"
+                    id="event-end-time"
+                    value={
+                      eventEndTimeAfterMidnightUTCInMS > -1
+                        ? getTimeFieldValue(eventEndTimeAfterMidnightUTCInMS)
+                        : ""
+                    }
+                    step="600"
+                    disabled={isLoading}
+                    ref={endTimeRef}
+                    onFocus={() => setFocusedElement("endTime")}
+                    onBlur={() => setFocusedElement(undefined)}
+                    style={
+                      focusedElement === "endTime"
+                        ? {
+                            boxShadow: `0px 0px 10px 2px ${randomColor}`,
+                            outline: "none",
+                          }
+                        : undefined
+                    }
+                    className={
+                      eventEndDateTimeError !== "" && showErrors
+                        ? "erroneous-field"
+                        : undefined
+                    }
+                    onChange={(e) => handleDateTimeInput(e, "end-time")}
+                    type="time"
+                  />
+                </label>
+                {(eventEndDateMidnightUTCInMS > 0 ||
+                  eventEndTimeAfterMidnightUTCInMS > -1) && (
+                  <span
+                    tabIndex={0}
+                    aria-hidden="false"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleClearDateTime(false);
+                      }
+                    }}
+                    onClick={() => handleClearDateTime(false)}
+                    className="remove-data"
+                  >
+                    Clear End Date/Time
+                  </span>
+                )}
+              </div>
+              {eventEndDateTimeError !== "" && showErrors && (
+                <p style={{ display: "flex" }}>{eventEndDateTimeError}</p>
+              )}
+            </div>
+          </div>
+          <label>
+            <header className="input-label">
+              Maximum Participants: (optional, not including organizers)
+            </header>
+            <input
+              name="event-max-participants"
+              id="event-max-participants"
+              ref={maxParticipantsRef}
+              onFocus={() => setFocusedElement("maxParticipants")}
+              onBlur={() => setFocusedElement(undefined)}
+              style={
+                focusedElement === "maxParticipants"
+                  ? {
+                      boxShadow: `0px 0px 10px 2px ${randomColor}`,
+                      outline: "none",
+                    }
+                  : undefined
+              }
+              disabled={isLoading}
+              className={
+                maxParticipants && !(Number(maxParticipants) > 0)
+                  ? "erroneous-field"
+                  : undefined
+              }
+              value={maxParticipants ? maxParticipants : ""}
+              onChange={(e) => handleMaxParticipantsInput(e)}
+              inputMode="numeric"
+              placeholder="Max number of participants"
+            />
+          </label>
+          <div className={styles.eventFormCheckboxContainer}>
+            <label>
+              <span className="input-label">Public</span>
+              <input
+                name="event-privacy-public"
+                id="event-privacy-public"
+                ref={publicRef}
+                onFocus={() => setFocusedElement("public")}
+                onBlur={() => setFocusedElement(undefined)}
+                style={
+                  focusedElement === "public"
+                    ? {
+                        outline: "none",
+                        width: "unset",
+                      }
+                    : { width: "unset", accentColor: randomColor }
+                }
+                disabled={isLoading}
+                onChange={() => handlePublicPrivateBoxChecking("public")}
+                type="checkbox"
+                checked={publicity === "public"}
+              />
+            </label>
+            <label>
+              <span className="input-label">Private</span>
+              <input
+                name="event-privacy-private"
+                id="event-privacy-private"
+                ref={privateRef}
+                onFocus={() => setFocusedElement("private")}
+                onBlur={() => setFocusedElement(undefined)}
+                style={
+                  focusedElement === "private"
+                    ? {
+                        outline: "none",
+                        width: "unset",
+                        accentColor: randomColor,
+                      }
+                    : { width: "unset" }
+                }
+                disabled={isLoading}
+                onChange={() => handlePublicPrivateBoxChecking("private")}
+                type="checkbox"
+                checked={publicity === "private"}
+              />
+            </label>
+          </div>
+          <div className={styles.addOtherUsersArea}>
+            <header className="input-label">
+              Co-organizers: (optional){" "}
+              {currentUser &&
+                !isLoading &&
+                usersWhoAreOrganizers &&
+                usersWhoAreOrganizers.filter(
+                  (user) => user.username !== currentUser.username
+                ).length > 0 && (
+                  <>
+                    <span
+                      style={{ color: randomColor }}
+                      onClick={() => setShowAreYouSureRemoveCurrentUserAsOrganizer(true)}
+                    >
+                      Remove Yourself
+                    </span>
+                    {currentEvent?.creator === currentUser?._id && (
+                      <span
+                        style={{ color: randomColor }}
+                        onClick={() =>
+                          setOrganizers([
+                            {
+                              _id: currentUser._id,
+                              username: currentUser.username,
+                              firstName: currentUser.firstName,
+                              lastName: currentUser.lastName,
+                              profileImage: currentUser.profileImage,
+                              emailAddress: currentUser.emailAddress,
+                              index: currentUser.index,
+                            },
+                          ])
+                        }
+                      >
+                        Remove All Others
+                      </span>
+                    )}
+                  </>
+                )}
+            </header>
+            <div className="added-user-tab-container">
+              {currentUser &&
+                usersWhoAreOrganizers &&
+                usersWhoAreOrganizers.filter(
+                  (user) => user.username !== currentUser?.username
+                ).length > 0 &&
+                usersWhoAreOrganizers
+                  .filter((user) => user.username !== currentUser?.username)
+                  .map((user) => (
+                    <Tab
+                      key={user._id?.toString()}
+                      info={user}
+                      removeHandler={handleAddRemoveUserAsOrganizer}
+                      removeHandlerNeedsEventParam={true}
+                      removeHandlerParams={[organizers, setOrganizers, user]}
+                      randomColor={randomColor}
+                      isDisabled={isLoading}
+                      userMayNotDelete={currentEvent?.creator === user._id}
+                      specialIcon={
+                        currentEvent?.creator === user._id ? (
+                          <i
+                            style={{
+                              color: "rgb(253, 255, 8)",
+                              fontSize: "1.05rem",
+                              margin: "0 0 0 0.5rem",
+                            }}
+                            className="fas fa-crown"
+                          ></i>
+                        ) : undefined
+                      }
+                    />
+                  ))}
+            </div>
+            <SearchAndDropdownList
+              randomColor={randomColor}
+              name="event-co-organizers-search"
+              id="event-co-organizers-search"
+              inputRef={coOrganizersRef}
+              onFocus={() => setFocusedElement("coOrganizers")}
+              onBlur={() => setFocusedElement(undefined)}
+              style={
+                focusedElement === "coOrganizers"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              isDisabled={isLoading}
+              query={coOrganizersSearchQuery}
+              inputOnChange={(e) => handleDropdownListSearchQuery(e, "co-organizers")}
+              placeholder="Search users by username, first/last names"
+              clearQueryOnClick={() => {
+                setCoOrganizersSearchQuery("");
+                /* if (fetchPotentialCoOrganizersQuery.data) {
               setPotentialCoOrganizers(fetchPotentialCoOrganizersQuery.data);
             } */
-          }}
-          dropdownChecklist={
-            <DropdownChecklist
-              fetchIsLoading={fetchIsLoading}
-              scrollHandler={handleLoadMorePotentialCOsOnScroll}
-              scrollHandlerParams={[potentialCoOrganizers]}
-              usedFor="potential-co-organizers"
-              displayedItemsArray={potentialCoOrganizers}
-              storageArray={organizers}
-              setStorageArray={setOrganizers}
-              event={currentEvent}
-              action={handleAddRemoveUserAsOrganizer}
-              actionEventParamNeeded={true}
-            />
-          }
-          showList={showPotentialCoOrganizers}
-          setShowList={setShowPotentialCoOrganizers}
-        />
-      </div>
-      <div className={styles.addOtherUsersArea}>
-        <header className="input-label">
-          Invitees: (recommended if event is private){" "}
-          {currentUser && usersWhoAreInvitees && usersWhoAreInvitees.length > 0 && (
-            <span style={{ color: randomColor }} onClick={() => setInvitees([])}>
-              Remove All
-            </span>
-          )}
-        </header>
-        <div className="added-user-tab-container">
-          {currentUser &&
-            usersWhoAreInvitees &&
-            usersWhoAreInvitees.length > 0 &&
-            usersWhoAreInvitees.map((user) => (
-              <Tab
-                key={user._id?.toString()}
-                info={user}
-                removeHandler={handleAddRemoveUserAsInvitee}
-                removeHandlerNeedsEventParam={false}
-                removeHandlerParams={[invitees, setInvitees, user]}
-                randomColor={randomColor}
-                isDisabled={isLoading}
-              />
-            ))}
-        </div>
-        <SearchAndDropdownList
-          randomColor={randomColor}
-          name="potential-invitees-search"
-          id="potential-invitees-search"
-          inputRef={inviteesRef}
-          onFocus={() => setFocusedElement("invitees")}
-          onBlur={() => setFocusedElement(undefined)}
-          style={
-            focusedElement === "invitees"
-              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-              : undefined
-          }
-          isDisabled={isLoading}
-          query={inviteesSearchQuery}
-          inputOnChange={(e) => handleDropdownListSearchQuery(e, "invitees")}
-          placeholder="Search users by username, first/last names"
-          clearQueryOnClick={() => {
-            setInviteesSearchQuery("");
-            if (fetchPotentialInviteesQuery.data) {
-              setPotentialInvitees(fetchPotentialInviteesQuery.data);
-            }
-          }}
-          showList={showPotentialInvitees}
-          setShowList={setShowPotentialInvitees}
-          dropdownChecklist={
-            <DropdownChecklist
-              usedFor="potential-invitees"
-              displayedItemsArray={potentialInvitees}
-              storageArray={invitees}
-              setStorageArray={setInvitees}
-              event={currentEvent}
-              action={handleAddRemoveUserAsInvitee}
-              actionEventParamNeeded={true}
-            />
-          }
-        />
-      </div>
-      <div className={styles.addOtherUsersArea}>
-        <header className="input-label">
-          Block users: (users whom you don't want to see this event){" "}
-          {currentUser && blockedUsersEvent.length > 0 && (
-            <span style={{ color: randomColor }} onClick={() => setBlockedUsersEvent([])}>
-              Remove All
-            </span>
-          )}
-        </header>
-        {/* Checkbox to add all blocked users to blockedUsersEvent. Only render if currentUser has blocked people. Only have it checked if all blocked users have been added to blockedUsersEvent (combination of state blockedUsersEvent & event.blockedUsersEvent). */}
-        {currentUser?.blockedUsers.length &&
-          currentUser.blockedUsers
-            .map((bu) => bu._id)
-            .some((id) => !blockedUsersEvent.map((bu) => bu._id).includes(id)) && (
-            <label className="form-sub-checkbox">
-              <input
-                name="blocked-users-event-checkbox"
-                id="blocked-users-event-checkbox"
-                type="checkbox"
-                style={{ accentColor: randomColor }}
-                onChange={() => {
-                  let newBlockees = [];
-                  for (const bu of currentUser.blockedUsers) {
-                    newBlockees.push(bu);
-                  }
-                  setBlockedUsersEvent(Methods.removeDuplicatesFromArray(newBlockees));
-                }}
-                checked={currentUser.blockedUsers.every((bu) => {
-                  if (event && event.blockedUsersEvent) {
-                    return blockedUsersEvent.indexOf(bu) !== -1;
-                  }
-                })}
-              />
-              <span>Add all users you have blocked</span>
-            </label>
-          )}
-        <div className="added-user-tab-container">
-          {currentUser &&
-            event &&
-            blockedUsersEvent &&
-            blockedUsersEvent.length > 0 &&
-            blockedUsersEvent.map((user) => (
-              <Tab
-                key={user._id?.toString()}
-                info={user}
-                removeHandler={handleAddRemoveBlockedUserOnEvent}
-                removeHandlerNeedsEventParam={false}
-                removeHandlerParams={[user]}
-                randomColor={randomColor}
-                isDisabled={isLoading}
-              />
-            ))}
-        </div>
-        <SearchAndDropdownList
-          randomColor={randomColor}
-          name="potential-blockees-search"
-          id="potential-blockees-search"
-          inputRef={blockeesRef}
-          onFocus={() => setFocusedElement("blockees")}
-          onBlur={() => setFocusedElement(undefined)}
-          style={
-            focusedElement === "blockees"
-              ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-              : undefined
-          }
-          isDisabled={isLoading}
-          query={blockeesSearchQuery}
-          inputOnChange={(e) => handleDropdownListSearchQuery(e, "blockees")}
-          placeholder="Search users by username, first/last names"
-          clearQueryOnClick={() => {
-            setBlockeesSearchQuery("");
-            if (visibleOtherUsers) {
-              setPotentialBlockees(visibleOtherUsers);
-            }
-          }}
-          showList={showPotentialBlockees}
-          setShowList={setShowPotentialBlockees}
-          dropdownChecklist={
-            <DropdownChecklist
-              usedFor="potential-blockees"
-              displayedItemsArray={potentialBlockees}
-              storageArray={blockedUsersEvent}
-              setStorageArray={setBlockedUsersEvent}
-              event={currentEvent}
-              action={handleAddRemoveBlockedUserOnEvent}
-              actionEventParamNeeded={false}
-            />
-          }
-        />
-      </div>
-      <InterestsSection
-        randomColor={randomColor}
-        interestsRelation="event"
-        newEventInterests={relatedInterests}
-        handleAddInterest={handleAddEventInterest}
-        handleRemoveInterest={handleRemoveEventInterest}
-        isDisabled={isLoading}
-      />
-      <div className={styles.eventImagesField}>
-        <header className="input-label">Images:</header>
-        {
-          <div className={styles.eventImagesContainer}>
-            {eventImages &&
-              eventImages.length > 0 &&
-              eventImages.map((img) => (
-                <div className={styles.eventImageContainer} key={img}>
-                  <i
-                    title="Remove"
-                    onClick={(e) => handleDeleteEventImage(e, img)}
-                    className="fas fa-times"
-                  ></i>
-                  <img
-                    key={typeof img === "string" ? img : undefined}
-                    src={typeof img === "string" ? img : undefined}
-                    style={{ border: `1px solid ${randomColor}` }}
-                  />
-                </div>
-              ))}
-            {eventImages && eventImages.length < 3 && (
-              <label>
-                <label title="Add Photo" htmlFor="event-image-upload">
-                  <i id="add-photo-box" className="fas fa-plus"></i>
-                </label>
-                <input
-                  id="event-image-upload"
-                  name="event-image-upload"
-                  onChange={(e) => handleAddEventImage(e)}
-                  style={{ display: "none" }}
-                  type="file"
-                  accept=".jpeg, .png, .jpg"
+              }}
+              dropdownChecklist={
+                <DropdownChecklist
+                  fetchIsLoading={fetchIsLoading}
+                  scrollHandler={handleLoadMorePotentialCOsOnScroll}
+                  scrollHandlerParams={[potentialCoOrganizers]}
+                  usedFor="potential-co-organizers"
+                  displayedItemsArray={potentialCoOrganizers}
+                  storageArray={organizers}
+                  setStorageArray={setOrganizers}
+                  event={currentEvent}
+                  action={handleAddRemoveUserAsOrganizer}
+                  actionEventParamNeeded={true}
                 />
-              </label>
-            )}
+              }
+              showList={showPotentialCoOrganizers}
+              setShowList={setShowPotentialCoOrganizers}
+            />
           </div>
-        }
-      </div>
-      {currentEvent &&
-        currentUser &&
-        currentUser._id &&
-        currentEvent.organizers
-          .map((o) => o._id)
-          .includes(currentUser._id.toString()) && (
-          <button
-            type="button"
-            onClick={() => setShowAreYouSureDeleteEvent(true)}
-            className="delete-button"
-          >
-            Delete Event
-          </button>
-        )}
-      {showAreYouSureDeleteEvent && (
-        <TwoOptionsInterface
-          header="Are you sure you want to delete this event?"
-          buttonOneText="Cancel"
-          buttonOneHandler={() => setShowAreYouSureDeleteEvent(false)}
-          handlerOneNeedsEventParam={false}
-          buttonTwoText="Delete Event"
-          buttonTwoHandler={handleDeleteEvent}
-          handlerTwoNeedsEventParam={true}
-          closeHandler={setShowAreYouSureDeleteEvent}
-        />
+          <div className={styles.addOtherUsersArea}>
+            <header className="input-label">
+              Invitees: (recommended if event is private){" "}
+              {currentUser && usersWhoAreInvitees && usersWhoAreInvitees.length > 0 && (
+                <span style={{ color: randomColor }} onClick={() => setInvitees([])}>
+                  Remove All
+                </span>
+              )}
+            </header>
+            <div className="added-user-tab-container">
+              {currentUser &&
+                usersWhoAreInvitees &&
+                usersWhoAreInvitees.length > 0 &&
+                usersWhoAreInvitees.map((user) => (
+                  <Tab
+                    key={user._id?.toString()}
+                    info={user}
+                    removeHandler={handleAddRemoveUserAsInvitee}
+                    removeHandlerNeedsEventParam={false}
+                    removeHandlerParams={[invitees, setInvitees, user]}
+                    randomColor={randomColor}
+                    isDisabled={isLoading}
+                  />
+                ))}
+            </div>
+            <SearchAndDropdownList
+              randomColor={randomColor}
+              name="potential-invitees-search"
+              id="potential-invitees-search"
+              inputRef={inviteesRef}
+              onFocus={() => setFocusedElement("invitees")}
+              onBlur={() => setFocusedElement(undefined)}
+              style={
+                focusedElement === "invitees"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              isDisabled={isLoading}
+              query={inviteesSearchQuery}
+              inputOnChange={(e) => handleDropdownListSearchQuery(e, "invitees")}
+              placeholder="Search users by username, first/last names"
+              clearQueryOnClick={() => {
+                setInviteesSearchQuery("");
+                if (fetchPotentialInviteesQuery.data) {
+                  setPotentialInvitees(fetchPotentialInviteesQuery.data);
+                }
+              }}
+              showList={showPotentialInvitees}
+              setShowList={setShowPotentialInvitees}
+              dropdownChecklist={
+                <DropdownChecklist
+                  usedFor="potential-invitees"
+                  displayedItemsArray={potentialInvitees}
+                  storageArray={invitees}
+                  setStorageArray={setInvitees}
+                  event={currentEvent}
+                  action={handleAddRemoveUserAsInvitee}
+                  actionEventParamNeeded={true}
+                />
+              }
+            />
+          </div>
+          <div className={styles.addOtherUsersArea}>
+            <header className="input-label">
+              Block users: (users whom you don't want to see this event){" "}
+              {currentUser && blockedUsersEvent.length > 0 && (
+                <span
+                  style={{ color: randomColor }}
+                  onClick={() => setBlockedUsersEvent([])}
+                >
+                  Remove All
+                </span>
+              )}
+            </header>
+            {/* Checkbox to add all blocked users to blockedUsersEvent. Only render if currentUser has blocked people. Only have it checked if all blocked users have been added to blockedUsersEvent (combination of state blockedUsersEvent & event.blockedUsersEvent). */}
+            {currentUser?.blockedUsers.length &&
+              currentUser.blockedUsers
+                .map((bu) => bu._id)
+                .some((id) => !blockedUsersEvent.map((bu) => bu._id).includes(id)) && (
+                <label className="form-sub-checkbox">
+                  <input
+                    name="blocked-users-event-checkbox"
+                    id="blocked-users-event-checkbox"
+                    type="checkbox"
+                    style={{ accentColor: randomColor }}
+                    onChange={() => {
+                      let newBlockees = [];
+                      for (const bu of currentUser.blockedUsers) {
+                        newBlockees.push(bu);
+                      }
+                      setBlockedUsersEvent(
+                        Methods.removeDuplicatesFromArray(newBlockees)
+                      );
+                    }}
+                    checked={currentUser.blockedUsers.every((bu) => {
+                      if (event && event.blockedUsersEvent) {
+                        return blockedUsersEvent.indexOf(bu) !== -1;
+                      }
+                    })}
+                  />
+                  <span>Add all users you have blocked</span>
+                </label>
+              )}
+            <div className="added-user-tab-container">
+              {currentUser &&
+                event &&
+                blockedUsersEvent &&
+                blockedUsersEvent.length > 0 &&
+                blockedUsersEvent.map((user) => (
+                  <Tab
+                    key={user._id?.toString()}
+                    info={user}
+                    removeHandler={handleAddRemoveBlockedUserOnEvent}
+                    removeHandlerNeedsEventParam={false}
+                    removeHandlerParams={[user]}
+                    randomColor={randomColor}
+                    isDisabled={isLoading}
+                  />
+                ))}
+            </div>
+            <SearchAndDropdownList
+              randomColor={randomColor}
+              name="potential-blockees-search"
+              id="potential-blockees-search"
+              inputRef={blockeesRef}
+              onFocus={() => setFocusedElement("blockees")}
+              onBlur={() => setFocusedElement(undefined)}
+              style={
+                focusedElement === "blockees"
+                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                  : undefined
+              }
+              isDisabled={isLoading}
+              query={blockeesSearchQuery}
+              inputOnChange={(e) => handleDropdownListSearchQuery(e, "blockees")}
+              placeholder="Search users by username, first/last names"
+              clearQueryOnClick={() => {
+                setBlockeesSearchQuery("");
+                if (visibleOtherUsers) {
+                  setPotentialBlockees(visibleOtherUsers);
+                }
+              }}
+              showList={showPotentialBlockees}
+              setShowList={setShowPotentialBlockees}
+              dropdownChecklist={
+                <DropdownChecklist
+                  usedFor="potential-blockees"
+                  displayedItemsArray={potentialBlockees}
+                  storageArray={blockedUsersEvent}
+                  setStorageArray={setBlockedUsersEvent}
+                  event={currentEvent}
+                  action={handleAddRemoveBlockedUserOnEvent}
+                  actionEventParamNeeded={false}
+                />
+              }
+            />
+          </div>
+          <InterestsSection
+            randomColor={randomColor}
+            interestsRelation="event"
+            newEventInterests={relatedInterests}
+            handleAddInterest={handleAddEventInterest}
+            handleRemoveInterest={handleRemoveEventInterest}
+            isDisabled={isLoading}
+          />
+          <div className={styles.eventImagesField}>
+            <header className="input-label">Images:</header>
+            {
+              <div className={styles.eventImagesContainer}>
+                {eventImages &&
+                  eventImages.length > 0 &&
+                  eventImages.map((img) => (
+                    <div className={styles.eventImageContainer} key={img}>
+                      <i
+                        title="Remove"
+                        onClick={(e) => handleDeleteEventImage(e, img)}
+                        className="fas fa-times"
+                      ></i>
+                      <img
+                        key={typeof img === "string" ? img : undefined}
+                        src={typeof img === "string" ? img : undefined}
+                        style={{ border: `1px solid ${randomColor}` }}
+                      />
+                    </div>
+                  ))}
+                {eventImages && eventImages.length < 3 && (
+                  <label>
+                    <label title="Add Photo" htmlFor="event-image-upload">
+                      <i id="add-photo-box" className="fas fa-plus"></i>
+                    </label>
+                    <input
+                      id="event-image-upload"
+                      name="event-image-upload"
+                      onChange={(e) => handleAddEventImage(e)}
+                      style={{ display: "none" }}
+                      type="file"
+                      accept=".jpeg, .png, .jpg"
+                    />
+                  </label>
+                )}
+              </div>
+            }
+          </div>
+          {currentEvent &&
+            currentUser &&
+            currentUser._id &&
+            currentEvent.organizers
+              .map((o) => o._id)
+              .includes(currentUser._id.toString()) && (
+              <button
+                type="button"
+                onClick={() => setShowAreYouSureDeleteEvent(true)}
+                className="delete-button"
+              >
+                Delete Event
+              </button>
+            )}
+          {showAreYouSureDeleteEvent && (
+            <TwoOptionsInterface
+              header="Are you sure you want to delete this event?"
+              buttonOneText="Cancel"
+              buttonOneHandler={() => setShowAreYouSureDeleteEvent(false)}
+              handlerOneNeedsEventParam={false}
+              buttonTwoText="Delete Event"
+              buttonTwoHandler={handleDeleteEvent}
+              handlerTwoNeedsEventParam={true}
+              closeHandler={setShowAreYouSureDeleteEvent}
+            />
+          )}
+          {showAreYouSureRemoveCurrentUserAsOrganizer && (
+            <TwoOptionsInterface
+              header="Are you sure you want to remove yourself as an organizer?"
+              subheader="You will no longer be able to make changes to this event, unless another user adds you as a co-organizer."
+              buttonOneText="Cancel"
+              buttonOneHandler={() =>
+                setShowAreYouSureRemoveCurrentUserAsOrganizer(false)
+              }
+              handlerOneNeedsEventParam={false}
+              buttonTwoText="Remove Myself as Organizer"
+              closeHandler={setShowAreYouSureRemoveCurrentUserAsOrganizer}
+              buttonTwoHandler={handleAddRemoveUserAsOrganizer}
+              buttonTwoHandlerParams={[organizers, setOrganizers, currentUser]}
+              handlerTwoNeedsEventParam={true}
+            />
+          )}
+          <div className="buttons-container">
+            <div className="theme-element-container">
+              <button
+                disabled={!changesMade || isLoading}
+                type="reset"
+                onClick={() => handleRevert()}
+              >
+                Revert
+              </button>
+            </div>
+            <button
+              disabled={submitButtonIsDisabled}
+              onClick={(e) => handleEventFormSubmission(e)}
+              style={
+                randomColor === "var(--primary-color)"
+                  ? { backgroundColor: `${randomColor}`, color: "black" }
+                  : { backgroundColor: `${randomColor}`, color: "white" }
+              }
+              type="submit"
+            >
+              {usedFor === "edit-event" ? "Save Changes" : "Add Event"}
+            </button>
+          </div>
+        </form>
       )}
-      {showAreYouSureRemoveCurrentUserAsOrganizer && (
-        <TwoOptionsInterface
-          header="Are you sure you want to remove yourself as an organizer?"
-          subheader="You will no longer be able to make changes to this event, unless another user adds you as a co-organizer."
-          buttonOneText="Cancel"
-          buttonOneHandler={() => setShowAreYouSureRemoveCurrentUserAsOrganizer(false)}
-          handlerOneNeedsEventParam={false}
-          buttonTwoText="Remove Myself as Organizer"
-          closeHandler={setShowAreYouSureRemoveCurrentUserAsOrganizer}
-          buttonTwoHandler={handleAddRemoveUserAsOrganizer}
-          buttonTwoHandlerParams={[organizers, setOrganizers, currentUser]}
-          handlerTwoNeedsEventParam={true}
-        />
-      )}
-      <div className="buttons-container">
-        <div className="theme-element-container">
-          <button
-            disabled={!changesMade || isLoading}
-            type="reset"
-            onClick={() => handleRevert()}
-          >
-            Revert
-          </button>
-        </div>
-        <button
-          disabled={submitButtonIsDisabled}
-          onClick={(e) => handleEventFormSubmission(e)}
-          style={
-            randomColor === "var(--primary-color)"
-              ? { backgroundColor: `${randomColor}`, color: "black" }
-              : { backgroundColor: `${randomColor}`, color: "white" }
-          }
-          type="submit"
-        >
-          {usedFor === "edit-event" ? "Save Changes" : "Add Event"}
-        </button>
-      </div>
-    </form>
+    </>
   );
 };
 export default EventForm;
