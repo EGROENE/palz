@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import { useState, useEffect, useRef } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TEvent, TThemeColor, TOtherUser, TBarebonesUser } from "../../../types";
+import { TEvent, TThemeColor, TOtherUser, TBarebonesUser, TUser } from "../../../types";
 import Methods from "../../../methods";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
@@ -145,7 +145,6 @@ const EventForm = ({
   );
   const [potentialInvitees, setPotentialInvitees] = useState<TOtherUser[]>([]);
   const [potentialBlockees, setPotentialBlockees] = useState<TOtherUser[]>([]);
-  const [coOrganizersSearchQuery, setCoOrganizersSearchQuery] = useState<string>("");
   const [inviteesSearchQuery, setInviteesSearchQuery] = useState<string>("");
   const [blockeesSearchQuery, setBlockeesSearchQuery] = useState<string>("");
   const [showPotentialCoOrganizers, setShowPotentialCoOrganizers] =
@@ -169,10 +168,9 @@ const EventForm = ({
     setShowAreYouSureRemoveCurrentUserAsOrganizer,
   ] = useState<boolean>(false);
 
+  const [allPotentialCOs, setAllPotentialCOs] = useState<TBarebonesUser[]>([]);
   const [fetchPotentialCOsStart, setFetchPotentialCOsStart] = useState<number>(0);
-  const [potentialCOsSearchTerm, setPotentialCOsSearchTerm] = useState<
-    string | undefined
-  >(undefined);
+  const [potentialCOsSearchTerm, setPotentialCOsSearchTerm] = useState<string>("");
 
   const fetchLimit = 10;
 
@@ -194,7 +192,10 @@ const EventForm = ({
 
   // useEffect to fetch more users when fetch starts change
   useEffect(() => {
-    if (allEvents && usedFor === "edit-event") {
+    if (
+      usedFor === "edit-event" &&
+      (potentialCOsSearchTerm === "" || potentialCOsSearchTerm === undefined)
+    ) {
       setFetchIsLoading(true);
       Requests.getPotentialCoOrganizers(
         "edit",
@@ -228,15 +229,15 @@ const EventForm = ({
         .catch((error) => console.log(error))
         .finally(() => setFetchIsLoading(false));
 
-      if (event) {
+      /* if (event) {
         setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
         setEventImages(event.images);
       } else if (!event && currentEvent) {
         setEventImages(currentEvent.images);
       }
-      handleRevert();
+      handleRevert(); */
     }
-  }, [fetchPotentialCOsStart]);
+  }, [fetchPotentialCOsStart, potentialCOsSearchTerm]);
 
   useEffect(() => {
     // Set updated potentialCoOrganizers, after user makes changes to 3 lists (seen in dep array):
@@ -262,6 +263,18 @@ const EventForm = ({
       );
     }
   }, [invitees, organizers, blockedUsersEvent, fetchPotentialInviteesQuery.data]);
+
+  const getTBarebonesUser = (user: TUser): TBarebonesUser => {
+    return {
+      _id: user._id,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      emailAddress: user.emailAddress,
+      profileImage: user.profileImage,
+      index: user.index,
+    };
+  };
 
   // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
   const handleLoadMorePotentialCOsOnScroll = (
@@ -291,6 +304,41 @@ const EventForm = ({
         }
       }
     }
+  };
+
+  const initializePotentialCoOrganizersSearch = (input: string): void => {
+    setFetchIsLoading(true);
+    setFetchPotentialCOsStart(0);
+    const eventType = usedFor === "add-event" ? "new" : "edit";
+    Requests.getPotentialCoOrganizers(eventType, currentUser, 0, Infinity)
+      .then((batchOfPotentialCOs) => {
+        if (batchOfPotentialCOs) {
+          setAllPotentialCOs(batchOfPotentialCOs.map((co) => getTBarebonesUser(co)));
+          let matchingPotentialCOs = [];
+          for (const co of batchOfPotentialCOs) {
+            if (
+              co.username?.includes(input.toLowerCase()) ||
+              co.firstName?.includes(input.toLowerCase()) ||
+              co.lastName?.includes(input.toLowerCase())
+            ) {
+              matchingPotentialCOs.push({
+                _id: co._id,
+                username: co.username,
+                emailAddress: co.emailAddress,
+                firstName: co.firstName,
+                lastName: co.lastName,
+                profileImage: co.profileImage,
+                index: co.index,
+              });
+            }
+          }
+          setPotentialCoOrganizers(matchingPotentialCOs);
+        } else {
+          setIsFetchError(true);
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setFetchIsLoading(false));
   };
 
   // INPUT HANDLERS
@@ -674,29 +722,31 @@ const EventForm = ({
     e.preventDefault();
     const inputCleaned = e.target.value.replace(/\s+/g, " ");
     if (field === "co-organizers") {
-      setCoOrganizersSearchQuery(inputCleaned);
+      setPotentialCOsSearchTerm(inputCleaned);
       setShowPotentialCoOrganizers(true);
       if (inputCleaned.replace(/\s+/g, "") !== "") {
-        // If input w/o spaces is not empty string
-        const matchingUsers: TBarebonesUser[] = [];
-        for (const user of potentialCoOrganizers) {
-          if (
-            user.firstName &&
-            user.lastName &&
-            user.username &&
-            (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-              user?.lastName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-              user?.username.includes(inputCleaned.toLowerCase()))
-          ) {
-            matchingUsers.push(user);
+        if (allPotentialCOs.length === 0) {
+          initializePotentialCoOrganizersSearch(inputCleaned);
+        } else {
+          // If input w/o spaces is not empty string
+          const matchingUsers: TBarebonesUser[] = [];
+          for (const user of allPotentialCOs) {
+            if (
+              user?.firstName
+                ?.toLowerCase()
+                .includes(inputCleaned.toLowerCase().trim()) ||
+              user?.lastName?.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+              user?.username?.includes(inputCleaned.toLowerCase())
+            ) {
+              matchingUsers.push(user);
+            }
           }
+          setPotentialCoOrganizers(matchingUsers);
         }
-        setPotentialCoOrganizers(matchingUsers);
       } else {
-        // set potentialCoOrganizers to original value
-        /* if (fetchPotentialCoOrganizersQuery.data) {
-          setPotentialCoOrganizers(fetchPotentialCoOrganizersQuery.data);
-        } */
+        setPotentialCOsSearchTerm("");
+        setAllPotentialCOs([]);
+        setFetchPotentialCOsStart(0);
       }
     }
     if (field === "invitees") {
@@ -1646,14 +1696,13 @@ const EventForm = ({
                   : undefined
               }
               isDisabled={isLoading}
-              query={coOrganizersSearchQuery}
+              query={potentialCOsSearchTerm}
               inputOnChange={(e) => handleDropdownListSearchQuery(e, "co-organizers")}
               placeholder="Search users by username, first/last names"
               clearQueryOnClick={() => {
-                setCoOrganizersSearchQuery("");
-                /* if (fetchPotentialCoOrganizersQuery.data) {
-              setPotentialCoOrganizers(fetchPotentialCoOrganizersQuery.data);
-            } */
+                setPotentialCOsSearchTerm("");
+                setAllPotentialCOs([]);
+                setFetchPotentialCOsStart(0);
               }}
               dropdownChecklist={
                 <DropdownChecklist
