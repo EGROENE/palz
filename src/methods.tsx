@@ -119,6 +119,18 @@ const formatHyphensAndSpacesInString = (name: string): string => {
 
 const removeDuplicatesFromArray = (arr: any[]): any[] => [...new Set(arr)];
 
+ const getTBarebonesUser = (user: TUser | null): TBarebonesUser => {
+    return {
+      _id: user?._id,
+      username: user?.username,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      emailAddress: user?.emailAddress,
+      profileImage: user?.profileImage,
+      index: user?.index,
+    };
+  };
+
 const getStringArraySortedAlphabetically = (array: string[]): string[] => {
   return array.sort(function (a, b) {
     if (a < b) {
@@ -223,6 +235,7 @@ const getDateMessageSent = (message: TMessage): string => {
 };
 
 const Methods = {
+  getTBarebonesUser,
   getDateMessageSent,
   isTOtherUser,
   sortChatsByMostRecentMessage,
