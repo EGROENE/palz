@@ -6,6 +6,7 @@ import {
   TChatValuesToUpdate,
   TMessage,
   TOtherUser,
+  TBarebonesUser,
 } from "../types";
 import { useUserContext } from "../Hooks/useUserContext";
 import Requests from "../requests";
@@ -472,7 +473,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleAddRemoveUserFromChat = (
-    user: TOtherUser,
+    user: TBarebonesUser,
     usersToAddToChat: string[],
     setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>
   ): void => {
