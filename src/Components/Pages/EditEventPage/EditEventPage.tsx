@@ -75,7 +75,7 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
     }
 
     window.scrollTo(0, 0);
-  }, [event, navigation]);
+  }, [navigation]);
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
     if (fetchAllVisibleOtherUsersQuery.isError) {
