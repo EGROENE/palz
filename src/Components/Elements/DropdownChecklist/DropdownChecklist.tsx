@@ -1,12 +1,15 @@
 import React from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import { TEvent, TOtherUser } from "../../../types";
+import { TBarebonesUser, TEvent, TOtherUser } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import { useChatContext } from "../../../Hooks/useChatContext";
 
 const DropdownChecklist = ({
+  fetchIsLoading,
+  scrollHandler,
+  scrollHandlerParams,
   usedFor,
   action,
   actionParams,
@@ -14,24 +17,21 @@ const DropdownChecklist = ({
   displayedItemsArray,
   storageArray,
   setStorageArray,
-  displayedItemsCount,
-  setDisplayedItemsCount,
-  displayedItemsCountInterval,
   event,
 }: {
+  fetchIsLoading: boolean;
+  scrollHandler: Function;
+  scrollHandlerParams: any[];
   usedFor: string;
   action: Function;
   actionParams?: any[];
   actionEventParamNeeded: boolean;
-  displayedItemsArray: TOtherUser[]; // type can be changed later if used for non-user lists
+  displayedItemsArray: TBarebonesUser[]; // type can be changed later if used for non-user lists
   storageArray: any[];
   setStorageArray: React.Dispatch<React.SetStateAction<any[]>>;
-  displayedItemsCount: number | undefined;
-  setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>;
-  displayedItemsCountInterval?: number;
   event?: TEvent;
 }) => {
-  const { isLoading, handleLoadMoreOnScroll } = useMainContext();
+  const { isLoading } = useMainContext();
 
   const {
     handleAddRemoveUserAsOrganizer,
@@ -49,15 +49,6 @@ const DropdownChecklist = ({
     currentChat,
     handleAddRemoveUserFromChat,
   } = useChatContext();
-
-  let displayedItemsArrayFiltered: TOtherUser[] = [];
-  if (displayedItemsCount && displayedItemsCount <= displayedItemsArray.length) {
-    for (let i = 0; i < displayedItemsCount; i++) {
-      displayedItemsArrayFiltered.push(displayedItemsArray[i]);
-    }
-  } else {
-    displayedItemsArrayFiltered = displayedItemsArray;
-  }
 
   const getActionParams = (user: TOtherUser): any[] => {
     if (!actionParams) {
@@ -115,19 +106,10 @@ const DropdownChecklist = ({
 
   return (
     <ul
-      onScroll={(e) =>
-        handleLoadMoreOnScroll(
-          displayedItemsCount,
-          setDisplayedItemsCount,
-          displayedItemsArray,
-          displayedItemsArrayFiltered,
-          displayedItemsCountInterval,
-          e
-        )
-      }
+      onScroll={(e) => scrollHandler(...scrollHandlerParams, e)}
       className={styles.dropdownChecklist}
     >
-      {displayedItemsArrayFiltered.map((user) => (
+      {displayedItemsArray.map((user) => (
         <li
           tabIndex={0}
           aria-hidden="false"
@@ -166,6 +148,7 @@ const DropdownChecklist = ({
           </div>
         </li>
       ))}
+      {fetchIsLoading && <li className={styles.dropdownChecklistLoading}>Loading...</li>}
     </ul>
   );
 };
