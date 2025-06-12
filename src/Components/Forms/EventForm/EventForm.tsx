@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import { useState, useEffect, useRef } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TEvent, TThemeColor, TOtherUser } from "../../../types";
+import { TEvent, TThemeColor, TOtherUser, TBarebonesUser } from "../../../types";
 import Methods from "../../../methods";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
@@ -102,7 +102,6 @@ const EventForm = ({
     displayedPotentialCoOrganizerCount,
     setDisplayedPotentialCoOrganizerCount,
     fetchAllEventsQuery,
-    fetchPotentialCoOrganizersQuery,
     fetchPotentialInviteesQuery,
   } = useEventContext();
 
@@ -147,7 +146,9 @@ const EventForm = ({
   const blockeesRef = useRef<HTMLInputElement | null>(null);
   ///////
 
-  const [potentialCoOrganizers, setPotentialCoOrganizers] = useState<TOtherUser[]>([]);
+  const [potentialCoOrganizers, setPotentialCoOrganizers] = useState<TBarebonesUser[]>(
+    []
+  );
   const [potentialInvitees, setPotentialInvitees] = useState<TOtherUser[]>([]);
   const [potentialBlockees, setPotentialBlockees] = useState<TOtherUser[]>([]);
   const [coOrganizersSearchQuery, setCoOrganizersSearchQuery] = useState<string>("");
@@ -164,6 +165,8 @@ const EventForm = ({
     usedFor === "edit-event" ? true : false
   );
 
+  const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
+
   const [showAreYouSureDeleteEvent, setShowAreYouSureDeleteEvent] =
     useState<boolean>(false);
   const [
@@ -171,20 +174,17 @@ const EventForm = ({
     setShowAreYouSureRemoveCurrentUserAsOrganizer,
   ] = useState<boolean>(false);
 
+  const [fetchPotentialCOsStart, setFetchPotentialCOsStart] = useState<number>(0);
+  const [potentialCOsSearchTerm, setPotentialCOsSearchTerm] = useState<
+    string | undefined
+  >(undefined);
+
+  const fetchLimit = 10;
+
   useEffect(() => {
     // Hide Sidebar if showing:
     if (showSidebar) {
       setShowSidebar(false);
-    }
-
-    if (allEvents && usedFor === "edit-event") {
-      if (event) {
-        setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
-        setEventImages(event.images);
-      } else if (!event && currentEvent) {
-        setEventImages(currentEvent.images);
-      }
-      handleRevert();
     }
 
     if (usedFor === "add-event") {
@@ -197,16 +197,54 @@ const EventForm = ({
     }
   }, [usedFor]);
 
+  // useEffect to fetch more users when fetch starts change
   useEffect(() => {
-    if (fetchPotentialCoOrganizersQuery.data) {
-      setPotentialCoOrganizers(
-        fetchPotentialCoOrganizersQuery.data.filter(
-          (user) =>
-            user._id &&
-            !blockedUsersEvent.map((bu) => bu._id).includes(user._id.toString())
-        )
-      );
+    if (allEvents && usedFor === "edit-event") {
+      setFetchIsLoading(true);
+      Requests.getPotentialCoOrganizers(
+        "edit",
+        currentUser,
+        fetchPotentialCOsStart,
+        fetchLimit
+      )
+        .then((potentialCOs) => {
+          if (potentialCOs) {
+            let potentialCOsSecure: TBarebonesUser[] = [];
+            for (const p of potentialCOs) {
+              potentialCOsSecure.push({
+                _id: p._id,
+                username: p.username,
+                firstName: p.firstName,
+                lastName: p.lastName,
+                emailAddress: p.emailAddress,
+                profileImage: p.profileImage,
+                index: p.index,
+              });
+            }
+            if (fetchPotentialCOsStart === 0) {
+              setPotentialCoOrganizers(potentialCOsSecure);
+            } else {
+              setPotentialCoOrganizers(potentialCoOrganizers.concat(potentialCOsSecure));
+            }
+          } else {
+            // DISPLAY ERROR MESSAGE IF FETCH FAILS
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+
+      if (event) {
+        setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
+        setEventImages(event.images);
+      } else if (!event && currentEvent) {
+        setEventImages(currentEvent.images);
+      }
+      handleRevert();
     }
+  }, [fetchPotentialCOsStart]);
+
+  useEffect(() => {
+    // Set updated potentialCoOrganizers, after user makes changes to 3 lists (seen in dep array):
 
     if (fetchPotentialInviteesQuery.data) {
       setPotentialInvitees(
@@ -228,13 +266,38 @@ const EventForm = ({
         )
       );
     }
-  }, [
-    invitees,
-    organizers,
-    blockedUsersEvent,
-    fetchPotentialInviteesQuery.data,
-    fetchPotentialCoOrganizersQuery.data,
-  ]);
+  }, [invitees, organizers, blockedUsersEvent, fetchPotentialInviteesQuery.data]);
+
+  // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
+  const handleLoadMorePotentialCOsOnScroll = (
+    items: (TOtherUser | TEvent | TBarebonesUser)[],
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
+  ): void => {
+    const eHTMLElement = e?.target as HTMLElement;
+    const scrollTop = e ? eHTMLElement.scrollTop : null;
+    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
+    const clientHeight = e ? eHTMLElement.clientHeight : null;
+
+    const bottomReached =
+      e && scrollTop && clientHeight
+        ? scrollTop + clientHeight === scrollHeight
+        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
+
+    if (bottomReached) {
+      console.log("fck");
+      const lastItem: TOtherUser | TEvent | TBarebonesUser = items[items.length - 1];
+
+      if (usedFor === "edit-event") {
+        if (
+          lastItem &&
+          lastItem.index &&
+          (potentialCOsSearchTerm === "" || potentialCOsSearchTerm === undefined)
+        ) {
+          setFetchPotentialCOsStart(lastItem.index + 1);
+        }
+      }
+    }
+  };
 
   // INPUT HANDLERS
   const handleEventTitleInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -621,7 +684,7 @@ const EventForm = ({
       setShowPotentialCoOrganizers(true);
       if (inputCleaned.replace(/\s+/g, "") !== "") {
         // If input w/o spaces is not empty string
-        const matchingUsers: TOtherUser[] = [];
+        const matchingUsers: TBarebonesUser[] = [];
         for (const user of potentialCoOrganizers) {
           if (
             user.firstName &&
@@ -637,9 +700,9 @@ const EventForm = ({
         setPotentialCoOrganizers(matchingUsers);
       } else {
         // set potentialCoOrganizers to original value
-        if (fetchPotentialCoOrganizersQuery.data) {
+        /* if (fetchPotentialCoOrganizersQuery.data) {
           setPotentialCoOrganizers(fetchPotentialCoOrganizersQuery.data);
-        }
+        } */
       }
     }
     if (field === "invitees") {
@@ -762,6 +825,7 @@ const EventForm = ({
           lastName: currentUser?.lastName,
           profileImage: currentUser?.profileImage,
           emailAddress: currentUser?.emailAddress,
+          index: currentUser?.index,
         },
       ]);
       setInvitees([]);
@@ -1511,6 +1575,7 @@ const EventForm = ({
                           lastName: currentUser.lastName,
                           profileImage: currentUser.profileImage,
                           emailAddress: currentUser.emailAddress,
+                          index: currentUser.index,
                         },
                       ])
                     }
@@ -1572,12 +1637,15 @@ const EventForm = ({
           placeholder="Search users by username, first/last names"
           clearQueryOnClick={() => {
             setCoOrganizersSearchQuery("");
-            if (fetchPotentialCoOrganizersQuery.data) {
+            /* if (fetchPotentialCoOrganizersQuery.data) {
               setPotentialCoOrganizers(fetchPotentialCoOrganizersQuery.data);
-            }
+            } */
           }}
           dropdownChecklist={
             <DropdownChecklist
+              fetchIsLoading={fetchIsLoading}
+              scrollHandler={handleLoadMorePotentialCOsOnScroll}
+              scrollHandlerParams={[potentialCoOrganizers]}
               usedFor="potential-co-organizers"
               displayedItemsArray={potentialCoOrganizers}
               storageArray={organizers}
