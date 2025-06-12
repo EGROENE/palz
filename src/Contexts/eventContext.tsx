@@ -686,43 +686,35 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     user: TBarebonesUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
-    if (user && user._id && currentUser && currentUser._id) {
-      if (organizers.map((o) => o._id).includes(user._id.toString())) {
-        if (user._id === currentUser._id) {
-          e?.preventDefault();
-          // Remove self as organizer:
-          // DB is updated immediately, redirect to homepage
-          setIsLoading(true);
-          if (currentEvent && currentUser) {
-            const event = currentEvent;
-            const user = currentUser;
-            removeSelfAsEventOrganizerMutation.mutate({ event, user });
-          }
-        } else {
-          // Remove other user as organizer:
-          // Only state values are updated for now; DB updated when form is saved
-          setOrganizers(
-            organizers.filter((o) => {
-              if (o._id !== user._id) {
-                return o;
-              }
-            })
-          );
+    if (organizers.map((o) => o._id).includes(user?._id?.toString())) {
+      if (user._id === currentUser?._id) {
+        e?.preventDefault();
+        // Remove self as organizer:
+        // DB is updated immediately, redirect to homepage
+        setIsLoading(true);
+        if (currentEvent && currentUser) {
+          const event = currentEvent;
+          const user = currentUser;
+          removeSelfAsEventOrganizerMutation.mutate({ event, user });
         }
       } else {
-        // Add non-current user as organizer
-        setOrganizers(
-          organizers.concat({
-            _id: user._id,
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            profileImage: user.profileImage,
-            emailAddress: user.emailAddress,
-            index: user.index,
-          })
-        );
+        // Remove other user as organizer:
+        // Only state values are updated for now; DB updated when form is saved
+        setOrganizers(organizers.filter((o) => o._id !== user._id));
       }
+    } else {
+      // Add non-current user as organizer
+      setOrganizers(
+        organizers.concat({
+          _id: user._id,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          profileImage: user.profileImage,
+          emailAddress: user.emailAddress,
+          index: user.index,
+        })
+      );
     }
   };
 
