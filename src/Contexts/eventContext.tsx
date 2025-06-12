@@ -672,6 +672,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             lastName: user.lastName,
             profileImage: user.profileImage,
             emailAddress: user.emailAddress,
+            index: user.index,
           })
         );
       }
@@ -682,7 +683,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAddRemoveUserAsOrganizer = (
     organizers: TBarebonesUser[],
     setOrganizers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>,
-    user: TOtherUser,
+    user: TBarebonesUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     if (user && user._id && currentUser && currentUser._id) {
@@ -718,6 +719,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             lastName: user.lastName,
             profileImage: user.profileImage,
             emailAddress: user.emailAddress,
+            index: user.index,
           })
         );
       }
@@ -748,6 +750,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             lastName: user.lastName,
             profileImage: user.profileImage,
             emailAddress: user.emailAddress,
+            index: user.index,
           })
         );
       }
