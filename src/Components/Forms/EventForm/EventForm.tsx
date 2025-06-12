@@ -203,7 +203,7 @@ const EventForm = ({
         .then((potentialCOs) => {
           if (potentialCOs) {
             let potentialCOsSecure: TBarebonesUser[] = potentialCOs.map((pco) =>
-              getTBarebonesUser(pco)
+              Methods.getTBarebonesUser(pco)
             );
             if (fetchPotentialCOsStart === 0) {
               setPotentialCoOrganizers(potentialCOsSecure);
@@ -252,18 +252,6 @@ const EventForm = ({
     }
   }, [invitees, organizers, blockedUsersEvent, fetchPotentialInviteesQuery.data]);
 
-  const getTBarebonesUser = (user: TUser | null): TBarebonesUser => {
-    return {
-      _id: user?._id,
-      username: user?.username,
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      emailAddress: user?.emailAddress,
-      profileImage: user?.profileImage,
-      index: user?.index,
-    };
-  };
-
   // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
   const handleLoadMorePotentialCOsOnScroll = (
     items: (TOtherUser | TEvent | TBarebonesUser)[],
@@ -301,7 +289,7 @@ const EventForm = ({
     Requests.getPotentialCoOrganizers(eventType, currentUser, 0, Infinity)
       .then((batchOfPotentialCOs) => {
         if (batchOfPotentialCOs) {
-          setAllPotentialCOs(batchOfPotentialCOs.map((co) => getTBarebonesUser(co)));
+          setAllPotentialCOs(batchOfPotentialCOs.map((co) => Methods.getTBarebonesUser(co)));
           let matchingPotentialCOs = [];
           for (const co of batchOfPotentialCOs) {
             if (
@@ -309,7 +297,7 @@ const EventForm = ({
               co.firstName?.includes(input.toLowerCase()) ||
               co.lastName?.includes(input.toLowerCase())
             ) {
-              matchingPotentialCOs.push(getTBarebonesUser(co));
+              matchingPotentialCOs.push(Methods.getTBarebonesUser(co));
             }
           }
           setPotentialCoOrganizers(matchingPotentialCOs);
@@ -841,7 +829,7 @@ const EventForm = ({
       setEventAddressError("Please enter an address");
       setMaxParticipants(null);
       setPublicity("public");
-      setOrganizers([getTBarebonesUser(currentUser)]);
+      setOrganizers([Methods.getTBarebonesUser(currentUser)]);
       setInvitees([]);
       setBlockedUsersEvent([]);
       setRelatedInterests([]);
@@ -1600,7 +1588,7 @@ const EventForm = ({
                     {currentEvent?.creator === currentUser?._id && currentUser && (
                       <span
                         style={{ color: randomColor }}
-                        onClick={() => setOrganizers([getTBarebonesUser(currentUser)])}
+                        onClick={() => setOrganizers([Methods.getTBarebonesUser(currentUser)])}
                       >
                         Remove All Others
                       </span>
@@ -1765,15 +1753,9 @@ const EventForm = ({
                     id="blocked-users-event-checkbox"
                     type="checkbox"
                     style={{ accentColor: randomColor }}
-                    onChange={() => {
-                      let newBlockees = [];
-                      for (const bu of currentUser.blockedUsers) {
-                        newBlockees.push(bu);
-                      }
-                      setBlockedUsersEvent(
-                        Methods.removeDuplicatesFromArray(newBlockees)
-                      );
-                    }}
+                    onChange={() => setBlockedUsersEvent(
+                        Methods.removeDuplicatesFromArray(currentUser.blockedUsers)
+                      )}
                     checked={currentUser.blockedUsers.every((bu) => {
                       if (event && event.blockedUsersEvent) {
                         return blockedUsersEvent.indexOf(bu) !== -1;
