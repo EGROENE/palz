@@ -167,7 +167,7 @@ const CreateNewChatModal = () => {
               action={handleAddRemoveUserFromChat}
               actionEventParamNeeded={false}
               displayedItemsArray={potentialChatMembers}
-              storageArray={usersToAdd.map((user) => user._id)}
+              storageArray={usersToAdd}
               setStorageArray={setUsersToAddToChat}
               displayedItemsCount={numberOfPotentialChatMembersDisplayed}
               setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
