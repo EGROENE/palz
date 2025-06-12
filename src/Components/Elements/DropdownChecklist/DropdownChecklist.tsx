@@ -50,7 +50,7 @@ const DropdownChecklist = ({
     handleAddRemoveUserFromChat,
   } = useChatContext();
 
-  const getActionParams = (user: TOtherUser): any[] => {
+  const getActionParams = (user: TBarebonesUser): any[] => {
     if (!actionParams) {
       // for handleAddRemoveUserAsOrganizer:
       if (usedFor === "potential-co-organizers" && user && event) {
@@ -81,7 +81,7 @@ const DropdownChecklist = ({
     return actionParams;
   };
 
-  const getOnChangeHandler = (user: TOtherUser) => {
+  const getOnChangeHandler = (user: TBarebonesUser) => {
     if (usedFor === "potential-co-organizers") {
       return () => handleAddRemoveUserAsOrganizer(storageArray, setStorageArray, user);
     }
