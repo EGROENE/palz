@@ -611,7 +611,7 @@ const DisplayedCardsPage = ({
         if (!isLoading) {
           setIsLoading(true);
         }
-        if (fetchLimit) {
+        if (fetchLimit && currentUser) {
           Requests.getPotentialFriends(currentUser, fetchStart, fetchLimit)
             .then((batchOfPotentialFriends) => {
               if (batchOfPotentialFriends) {
