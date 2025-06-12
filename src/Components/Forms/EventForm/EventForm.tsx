@@ -33,8 +33,6 @@ const EventForm = ({
   const {
     handleAddRemoveBlockedUserOnEvent,
     handleAddRemoveUserAsInvitee,
-    displayedPotentialBlockeeCount,
-    setDisplayedPotentialBlockeeCount,
     setBlockedUsersEvent,
     blockedUsersEvent,
     currentEvent,
@@ -97,10 +95,6 @@ const EventForm = ({
     updateEventMutation,
     createEventMutation,
     deleteEventMutation,
-    displayedPotentialInviteeCount,
-    setDisplayedPotentialInviteeCount,
-    displayedPotentialCoOrganizerCount,
-    setDisplayedPotentialCoOrganizerCount,
     fetchAllEventsQuery,
     fetchPotentialInviteesQuery,
   } = useEventContext();
@@ -1650,9 +1644,6 @@ const EventForm = ({
               displayedItemsArray={potentialCoOrganizers}
               storageArray={organizers}
               setStorageArray={setOrganizers}
-              displayedItemsCount={displayedPotentialCoOrganizerCount}
-              setDisplayedItemsCount={setDisplayedPotentialCoOrganizerCount}
-              displayedItemsCountInterval={10}
               event={currentEvent}
               action={handleAddRemoveUserAsOrganizer}
               actionEventParamNeeded={true}
@@ -1715,9 +1706,6 @@ const EventForm = ({
             <DropdownChecklist
               usedFor="potential-invitees"
               displayedItemsArray={potentialInvitees}
-              displayedItemsCount={displayedPotentialInviteeCount}
-              setDisplayedItemsCount={setDisplayedPotentialInviteeCount}
-              displayedItemsCountInterval={10}
               storageArray={invitees}
               setStorageArray={setInvitees}
               event={currentEvent}
@@ -1808,9 +1796,6 @@ const EventForm = ({
             <DropdownChecklist
               usedFor="potential-blockees"
               displayedItemsArray={potentialBlockees}
-              displayedItemsCount={displayedPotentialBlockeeCount}
-              setDisplayedItemsCount={setDisplayedPotentialBlockeeCount}
-              displayedItemsCountInterval={10}
               storageArray={blockedUsersEvent}
               setStorageArray={setBlockedUsersEvent}
               event={currentEvent}
