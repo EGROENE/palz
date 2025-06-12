@@ -1,7 +1,7 @@
 import React from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import { TBarebonesUser, TEvent, TOtherUser } from "../../../types";
+import { TBarebonesUser, TEvent } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import { useChatContext } from "../../../Hooks/useChatContext";
