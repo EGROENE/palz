@@ -49,14 +49,13 @@ app.get("/palz/find-palz", async (req, res) => {
     // friends doesn't contain currentUser:
     friends: { $nin: currentUser._id.toString() },
     // blockedUsers doesn't contain currentUser:
-    blockedUsers: { $nin: currentUser._id.toString() },
+    "blockedUsers._id": { $ne: currentUser._id.toString() },
     // blockedBy doesn't contain currentUser:
-    blockedBy: { $nin: currentUser._id.toString() },
+    "blockedBy._id": { $ne: currentUser._id.toString() },
     // profileVisibleTo isn't set to 'nobody':
     profileVisibleTo: { $ne: "nobody" },
   }).limit(Number(limit));
 
-  // return array of other users w/ certain fields excluded (each should match TOtherUser)
   res.status(200).json(potentialFriends);
 });
 
