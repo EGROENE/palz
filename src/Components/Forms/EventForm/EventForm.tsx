@@ -192,10 +192,7 @@ const EventForm = ({
 
   // useEffect to fetch more users when fetch starts change
   useEffect(() => {
-    if (
-      usedFor === "edit-event" &&
-      (potentialCOsSearchTerm === "" || potentialCOsSearchTerm === undefined)
-    ) {
+    if (usedFor === "edit-event" && potentialCOsSearchTerm === "") {
       setFetchIsLoading(true);
       Requests.getPotentialCoOrganizers(
         "edit",
