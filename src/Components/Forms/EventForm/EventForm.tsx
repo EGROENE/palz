@@ -185,14 +185,16 @@ const EventForm = ({
       setShowSidebar(false);
     }
 
+    setCurrentEvent(event);
+
     if (usedFor === "add-event") {
       if (eventImages && eventImages.length > 0) {
         // Remove any previously added event images (like if user added some on new event, but didn't submit form)
         setEventImages([]);
       }
       setCurrentEvent(undefined);
-      handleRevert();
     }
+    handleRevert();
   }, [usedFor]);
 
   // useEffect to fetch more users when fetch starts change
