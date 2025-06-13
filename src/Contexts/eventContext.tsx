@@ -681,8 +681,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Used in dropdown list of potential organizers; changes are only made to organizers variable in state
   const handleAddRemoveUserAsOrganizer = (
-    organizers: TBarebonesUser[],
-    setOrganizers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>,
+    organizers: (TBarebonesUser | TOtherUser)[],
+    setOrganizers: React.Dispatch<React.SetStateAction<(TBarebonesUser | TOtherUser)[]>>,
     user: TBarebonesUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {

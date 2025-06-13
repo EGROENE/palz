@@ -749,8 +749,8 @@ export type TEventContext = {
   setBlockedUsersEvent: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
-    organizers: TBarebonesUser[],
-    setOrganizers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>,
+    organizers: (TBarebonesUser | TOtherUser)[],
+    setOrganizers: React.Dispatch<React.SetStateAction<(TBarebonesUser | TOtherUser)[]>>,
     user: TBarebonesUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
