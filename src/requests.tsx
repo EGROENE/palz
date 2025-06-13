@@ -520,16 +520,15 @@ const addToBlockedBy = (blockee: TUser, blocker: TBarebonesUser): Promise<Respon
   });
 };
 
-const removeFromBlockedUsers = (
-  blocker: TUser,
-  blockee: TBarebonesUser
-): Promise<Response> => {
+const removeFromBlockedUsers = (blocker: TUser, blockee: string): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedBlockedUsersArray = blocker.blockedUsers.filter(
-    (userID) => userID !== blockee
-  );
+  const updatedBlockedUsersArray = blocker.blockedUsers.filter((bu) => {
+    if (bu._id && bu._id.toString() !== blockee) {
+      return bu;
+    }
+  });
 
   const getRaw = () => {
     return JSON.stringify({
@@ -546,16 +545,11 @@ const removeFromBlockedUsers = (
   });
 };
 
-const removeFromBlockedBy = (
-  blockee: TUser,
-  blocker: TBarebonesUser
-): Promise<Response> => {
+const removeFromBlockedBy = (blockee: TUser, blocker: string): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedBlockedByArray = blockee.blockedBy
-    .map((bb) => bb._id)
-    .filter((_id) => _id !== blocker._id);
+  const updatedBlockedByArray = blockee.blockedBy.filter((b) => b._id !== blocker);
 
   const getRaw = () => {
     return JSON.stringify({
