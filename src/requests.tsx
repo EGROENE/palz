@@ -364,151 +364,50 @@ const getPotentialCoOrganizers = (
 };
 
 const getPotentialInvitees = (
+  eventID: string,
   eventType: "new" | "edit",
-  currentUserID: string | undefined
-): Promise<TOtherUser[]> => {
-  const url: string = eventType === "new" ? "add-event" : "edit-event";
+  currentUser: TUser | null,
+  start: number,
+  limit: number
+): Promise<TUser[] | undefined> => {
+  const url: string =
+    eventType === "new"
+      ? "add-event"
+      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}`;
 
-  return fetch(`http://localhost:4000/palz/users/${url}`, {
+  return fetch(url, {
     method: "GET",
     redirect: "follow",
   }).then((response) => {
-    return response.json().then((allUsers: TUser[]) => {
-      if (currentUserID) {
-        const otherUsers: TUser[] = allUsers.filter((user) => user._id !== currentUserID);
-
-        const potentialCoOrganizers: TUser[] = otherUsers.filter((otherUser) => {
-          if (currentUserID) {
-            const currentUserIsFriend: boolean = currentUserID
-              ? otherUser.friends.includes(currentUserID)
-              : false;
-
-            const currentUserIsFriendOfFriend: boolean = otherUsers.some(
-              (user) =>
-                user &&
-                user._id &&
-                currentUserID &&
-                otherUser.friends.includes(user._id.toString()) &&
-                user.friends.includes(currentUserID)
-            );
-
-            const currentUserIsBlocked: boolean = otherUser.blockedUsers
-              .map((bu) => bu._id)
-              .includes(currentUserID);
-
-            if (
-              !currentUserIsBlocked &&
-              (otherUser.whoCanInviteUser === "anyone" ||
-                (otherUser.whoCanInviteUser === "friends" && currentUserIsFriend) ||
-                (otherUser.whoCanInviteUser === "friends of friends" &&
-                  currentUserIsFriendOfFriend))
-            ) {
-              return otherUser;
-            }
-          }
-        });
-
-        // Convert each TUser in potentialCoOrganizers array to TOtherUser, and return this array:
-        return potentialCoOrganizers.map((otherUser) => {
-          const currentUserIsFriend: boolean = currentUserID
-            ? otherUser.friends.includes(currentUserID)
-            : false;
-
-          const currentUserIsFriendOfFriend: boolean = otherUsers.some(
+    return response.json().then((potentialInvitees: TUser[]) => {
+      if (currentUser && currentUser._id) {
+        return potentialInvitees.filter((user) => {
+          const currentUserIsFriendOfFriend: boolean = potentialInvitees.some(
             (user) =>
               user &&
               user._id &&
-              currentUserID &&
-              otherUser.friends.includes(user._id.toString()) &&
-              user.friends.includes(currentUserID)
+              currentUser &&
+              currentUser._id &&
+              user.friends.includes(user._id.toString()) &&
+              user.friends.includes(currentUser._id.toString())
           );
 
-          const showLocation: boolean =
-            otherUser.whoCanSeeLocation === "anyone" ||
-            (otherUser.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeLocation === "friends of friends" &&
-              currentUserIsFriendOfFriend);
+          const currentUserIsFriend =
+            currentUser && currentUser._id
+              ? user.friends.includes(currentUser._id.toString())
+              : false;
 
-          const showPhoneNumber: boolean =
-            otherUser.whoCanSeePhoneNumber === "anyone" ||
-            (otherUser.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeePhoneNumber === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          const showEmailAddress: boolean =
-            otherUser.whoCanSeeEmailAddress === "anyone" ||
-            (otherUser.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeEmailAddress === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          const showInstagram: boolean =
-            otherUser.whoCanSeeInstagram === "anyone" ||
-            (otherUser.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeInstagram === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          const showFacebook: boolean =
-            otherUser.whoCanSeeFacebook === "anyone" ||
-            (otherUser.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeFacebook === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          const showX: boolean =
-            otherUser.whoCanSeeX === "anyone" ||
-            (otherUser.whoCanSeeX === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeX === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          const showFriends: boolean =
-            otherUser.whoCanSeeFriendsList === "anyone" ||
-            (otherUser.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeFriendsList === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          return {
-            "_id": otherUser._id,
-            "firstName": otherUser.firstName,
-            "lastName": otherUser.lastName,
-            "username": otherUser.username,
-            "profileImage": otherUser.profileImage,
-            "interests": otherUser.interests,
-            ...(showLocation && {
-              city: otherUser.city,
-            }),
-            ...(showLocation && {
-              stateProvince: otherUser.stateProvince,
-            }),
-            ...(showLocation && {
-              country: otherUser.country,
-            }),
-            ...(showPhoneNumber && {
-              phoneCountry: otherUser.phoneCountry,
-            }),
-            ...(showPhoneNumber && {
-              phoneCountryCode: otherUser.phoneCountryCode,
-            }),
-            ...(showPhoneNumber && {
-              phoneNumberWithoutCountryCode: otherUser.phoneNumberWithoutCountryCode,
-            }),
-            ...(showEmailAddress && {
-              emailAddress: otherUser.emailAddress,
-            }),
-            ...(showInstagram && {
-              instagram: otherUser.instagram,
-            }),
-            ...(showFacebook && {
-              facebook: otherUser.facebook,
-            }),
-            ...(showX && {
-              x: otherUser.x,
-            }),
-            ...(showFriends && {
-              friends: otherUser.friends,
-            }),
-          };
+          if (
+            user.whoCanInviteUser === "anyone" ||
+            (user.whoCanInviteUser === "friends of friends" &&
+              currentUserIsFriendOfFriend) ||
+            (user.whoCanInviteUser === "friends" && currentUserIsFriend)
+          ) {
+            return user;
+          }
         });
       }
-    }) as Promise<TOtherUser[]>;
+    });
   });
 };
 
