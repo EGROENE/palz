@@ -124,6 +124,7 @@ const getPotentialEventCOsController = async (req, res) => {
     _id: { $ne: currentUser._id.toString() },
     "blockedUsers._id": { $ne: currentUser._id.toString() },
     "blockedBy._id": { $ne: currentUser._id.toString() },
+    profileVisibleTo: { $ne: "nobody" },
   }).limit(Number(limit));
 
   res.status(200).json(potentialCOs);
