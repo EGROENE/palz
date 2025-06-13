@@ -281,7 +281,7 @@ const EventForm = ({
   }, [invitees, organizers, blockedUsersEvent]);
 
   // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
-  const handleLoadMorePotentialCOsOnScroll = (
+  const handleLoadMoreItemsOnScroll = (
     list: "potential-co-organizers" | "potential-invitees" | "potential-blockees",
     items: (TOtherUser | TEvent | TBarebonesUser)[],
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
@@ -1676,7 +1676,7 @@ const EventForm = ({
               dropdownChecklist={
                 <DropdownChecklist
                   fetchIsLoading={fetchIsLoading}
-                  scrollHandler={handleLoadMorePotentialCOsOnScroll}
+                  scrollHandler={handleLoadMoreItemsOnScroll}
                   scrollHandlerParams={["potential-co-organizers", potentialCoOrganizers]}
                   usedFor="potential-co-organizers"
                   displayedItemsArray={potentialCoOrganizers}
@@ -1736,7 +1736,7 @@ const EventForm = ({
               dropdownChecklist={
                 <DropdownChecklist
                   fetchIsLoading={fetchIsLoading}
-                  scrollHandler={handleLoadMorePotentialCOsOnScroll}
+                  scrollHandler={handleLoadMoreItemsOnScroll}
                   scrollHandlerParams={["potential-invitees", potentialInvitees]}
                   usedFor="potential-invitees"
                   displayedItemsArray={potentialInvitees}
