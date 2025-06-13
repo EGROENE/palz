@@ -955,10 +955,6 @@ const EventForm = ({
   };
   const resortedCountries = getResortedCountries();
 
-  const usersWhoAreOrganizers = event?.organizers;
-
-  const usersWhoAreInvitees = event?.invitees;
-
   const getChangesMade = (): boolean => {
     if (currentEvent && usedFor === "edit-event") {
       return (
@@ -1602,10 +1598,9 @@ const EventForm = ({
               Co-organizers: (optional){" "}
               {currentUser &&
                 !isLoading &&
-                usersWhoAreOrganizers &&
-                usersWhoAreOrganizers.filter(
-                  (user) => user.username !== currentUser.username
-                ).length > 0 && (
+                event &&
+                event.organizers.filter((user) => user.username !== currentUser.username)
+                  .length > 0 && (
                   <>
                     <span
                       style={{ color: randomColor }}
@@ -1697,7 +1692,7 @@ const EventForm = ({
           <div className={styles.addOtherUsersArea}>
             <header className="input-label">
               Invitees: (recommended if event is private){" "}
-              {currentUser && usersWhoAreInvitees && usersWhoAreInvitees.length > 0 && (
+              {currentUser && event && event.invitees.length > 0 && (
                 <span style={{ color: randomColor }} onClick={() => setInvitees([])}>
                   Remove All
                 </span>
