@@ -924,7 +924,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           lastName: blockee.lastName,
           emailAddress: blockee.emailAddress,
           profileImage: blockee.profileImage,
-          index: blockee.index
+          index: blockee.index,
         });
       }
       return Requests.addToBlockedUsers(blocker, {
@@ -934,7 +934,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         lastName: blockee.lastName,
         emailAddress: blockee.emailAddress,
         profileImage: blockee.profileImage,
-        index: blockee.index
+        index: blockee.index,
       });
     },
     onSuccess: (data, variables) => {
@@ -954,7 +954,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         lastName: variables.blocker.lastName,
                         emailAddress: variables.blocker.emailAddress,
                         profileImage: variables.blocker.profileImage,
-                        index: variables.blocker.index
+                        index: variables.blocker.index,
                       })
                         .then((res) => {
                           if (res.ok) {
@@ -1664,7 +1664,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           lastName: blockee.lastName,
           emailAddress: blockee.emailAddress,
           profileImage: blockee.profileImage,
-          index: blockee.index
+          index: blockee.index,
         })
       );
     }
@@ -1736,19 +1736,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setBlockedUsers(blockedUsers.filter((bu) => bu._id !== blockee._id));
     }
 
-    // Run removeFromBlockedUsers to del blockee from currentUser's blockedUsers array
-    // If that succeeds, remove currentUser from blockee's blockedBy array. blockee: TUser needs to be fetched first
-    // If that succeeds, set currentUser to updated (refetched) user from DB that matches currentUser._id
     if (blockee._id) {
-      Requests.removeFromBlockedUsers(blocker, {
-        _id: blockee._id,
-        username: blockee.username,
-        firstName: blockee.firstName,
-        lastName: blockee.lastName,
-        emailAddress: blockee.emailAddress,
-        profileImage: blockee.profileImage,
-        index: blockee.index
-      })
+      Requests.removeFromBlockedUsers(blocker, blockee._id.toString())
         .then((res) => {
           if (currentUser && currentUser._id && res.ok && blockee._id) {
             Requests.getUserByID(blockee._id.toString())
@@ -1757,16 +1746,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   res
                     .json()
                     .then((blockee: TUser) => {
-                      if (currentUser._id) {
-                        Requests.removeFromBlockedBy(blockee, {
-                          _id: currentUser._id,
-                          username: currentUser.username,
-                          firstName: currentUser.firstName,
-                          lastName: currentUser.lastName,
-                          emailAddress: currentUser.emailAddress,
-                          profileImage: currentUser.profileImage,
-                          index: currentUser.index
-                        })
+                      if (currentUser._id && blocker._id) {
+                        Requests.removeFromBlockedBy(blockee, blocker._id.toString())
                           .then((res) => {
                             if (res.ok) {
                               if (currentUser._id) {
