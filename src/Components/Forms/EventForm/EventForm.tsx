@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import { useState, useEffect, useRef } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TEvent, TThemeColor, TOtherUser, TBarebonesUser, TUser } from "../../../types";
+import { TEvent, TThemeColor, TOtherUser, TBarebonesUser } from "../../../types";
 import Methods from "../../../methods";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
@@ -289,7 +289,9 @@ const EventForm = ({
     Requests.getPotentialCoOrganizers(eventType, currentUser, 0, Infinity)
       .then((batchOfPotentialCOs) => {
         if (batchOfPotentialCOs) {
-          setAllPotentialCOs(batchOfPotentialCOs.map((co) => Methods.getTBarebonesUser(co)));
+          setAllPotentialCOs(
+            batchOfPotentialCOs.map((co) => Methods.getTBarebonesUser(co))
+          );
           let matchingPotentialCOs = [];
           for (const co of batchOfPotentialCOs) {
             if (
@@ -1588,7 +1590,9 @@ const EventForm = ({
                     {currentEvent?.creator === currentUser?._id && currentUser && (
                       <span
                         style={{ color: randomColor }}
-                        onClick={() => setOrganizers([Methods.getTBarebonesUser(currentUser)])}
+                        onClick={() =>
+                          setOrganizers([Methods.getTBarebonesUser(currentUser)])
+                        }
                       >
                         Remove All Others
                       </span>
@@ -1753,9 +1757,11 @@ const EventForm = ({
                     id="blocked-users-event-checkbox"
                     type="checkbox"
                     style={{ accentColor: randomColor }}
-                    onChange={() => setBlockedUsersEvent(
+                    onChange={() =>
+                      setBlockedUsersEvent(
                         Methods.removeDuplicatesFromArray(currentUser.blockedUsers)
-                      )}
+                      )
+                    }
                     checked={currentUser.blockedUsers.every((bu) => {
                       if (event && event.blockedUsersEvent) {
                         return blockedUsersEvent.indexOf(bu) !== -1;
