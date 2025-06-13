@@ -113,7 +113,7 @@ app.get("/palz/find-events", async (req, res) => {
   res.status(200).json(events);
 });
 
-app.get("/palz/edit-event/:id", async (req, res) => {
+const getPotentialEventCOsController = async (req, res) => {
   const { user, start, limit } = req.query;
 
   const username = user;
@@ -146,7 +146,9 @@ app.get("/palz/edit-event/:id", async (req, res) => {
   }).limit(Number(limit));
 
   res.status(200).json(potentialCOs);
-});
+};
+
+app.get("/palz/edit-event/:id", getPotentialEventCOsController);
 
 // Connect to Mongoose:
 mongoose
