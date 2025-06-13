@@ -192,9 +192,10 @@ const EventForm = ({
 
   // useEffect to fetch more users when fetch starts change
   useEffect(() => {
-    if (usedFor === "edit-event" && potentialCOsSearchTerm === "") {
+    if (usedFor === "edit-event" && potentialCOsSearchTerm === "" && event && event._id) {
       setFetchIsLoading(true);
       Requests.getPotentialCoOrganizers(
+        event._id.toString(),
         "edit",
         currentUser,
         fetchPotentialCOsStart,
@@ -229,7 +230,6 @@ const EventForm = ({
 
   useEffect(() => {
     // Set updated potentialCoOrganizers, after user makes changes to 3 lists (seen in dep array):
-
     if (fetchPotentialInviteesQuery.data) {
       setPotentialInvitees(
         fetchPotentialInviteesQuery.data.filter(
@@ -286,29 +286,37 @@ const EventForm = ({
     setFetchIsLoading(true);
     setFetchPotentialCOsStart(0);
     const eventType = usedFor === "add-event" ? "new" : "edit";
-    Requests.getPotentialCoOrganizers(eventType, currentUser, 0, Infinity)
-      .then((batchOfPotentialCOs) => {
-        if (batchOfPotentialCOs) {
-          setAllPotentialCOs(
-            batchOfPotentialCOs.map((co) => Methods.getTBarebonesUser(co))
-          );
-          let matchingPotentialCOs = [];
-          for (const co of batchOfPotentialCOs) {
-            if (
-              co.username?.includes(input.toLowerCase()) ||
-              co.firstName?.includes(input.toLowerCase()) ||
-              co.lastName?.includes(input.toLowerCase())
-            ) {
-              matchingPotentialCOs.push(Methods.getTBarebonesUser(co));
+    if (event && event._id) {
+      Requests.getPotentialCoOrganizers(
+        event._id.toString(),
+        eventType,
+        currentUser,
+        0,
+        Infinity
+      )
+        .then((batchOfPotentialCOs) => {
+          if (batchOfPotentialCOs) {
+            setAllPotentialCOs(
+              batchOfPotentialCOs.map((co) => Methods.getTBarebonesUser(co))
+            );
+            let matchingPotentialCOs = [];
+            for (const co of batchOfPotentialCOs) {
+              if (
+                co.username?.includes(input.toLowerCase()) ||
+                co.firstName?.includes(input.toLowerCase()) ||
+                co.lastName?.includes(input.toLowerCase())
+              ) {
+                matchingPotentialCOs.push(Methods.getTBarebonesUser(co));
+              }
             }
+            setPotentialCoOrganizers(matchingPotentialCOs);
+          } else {
+            setIsFetchError(true);
           }
-          setPotentialCoOrganizers(matchingPotentialCOs);
-        } else {
-          setIsFetchError(true);
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setFetchIsLoading(false));
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    }
   };
 
   // INPUT HANDLERS
