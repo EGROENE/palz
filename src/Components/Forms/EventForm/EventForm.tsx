@@ -199,7 +199,9 @@ const EventForm = ({
   useEffect(() => {
     if (usedFor === "edit-event") {
       if (potentialCOsSearchTerm === "" && event && event._id) {
-        setFetchIsLoading(true);
+        if (!fetchIsLoading) {
+          setFetchIsLoading(true);
+        }
         Requests.getPotentialCoOrganizers(
           event._id.toString(),
           "edit",
