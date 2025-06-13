@@ -316,6 +316,7 @@ const getUserByUsernameOrEmailAddress = (
 };
 
 const getPotentialCoOrganizers = (
+  eventID: string,
   eventType: "new" | "edit",
   currentUser: TUser | null,
   start: number,
@@ -324,7 +325,7 @@ const getPotentialCoOrganizers = (
   const url: string =
     eventType === "new"
       ? "add-event"
-      : `http://localhost:4000/palz/edit-event/683fa618ea17c80bd6cfd737?start=${start}&limit=${limit}&user=${currentUser?.username}`;
+      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}`;
 
   return fetch(url, {
     method: "GET",
