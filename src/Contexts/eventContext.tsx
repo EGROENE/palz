@@ -664,6 +664,14 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           blockedUsersEvent.filter((blockee) => blockee._id !== user._id)
         );
       } else {
+        if (invitees.map((u) => u._id).includes(user._id)) {
+          setInvitees(invitees.filter((u) => u._id !== user._id));
+        }
+
+        if (organizers.map((u) => u._id).includes(user._id)) {
+          setOrganizers(organizers.filter((u) => u._id !== user._id));
+        }
+
         setBlockedUsersEvent(
           blockedUsersEvent.concat({
             _id: user._id,
@@ -704,17 +712,15 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       // Add non-current user as organizer
-      setOrganizers(
-        organizers.concat({
-          _id: user._id,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          profileImage: user.profileImage,
-          emailAddress: user.emailAddress,
-          index: user.index,
-        })
-      );
+      if (invitees.map((u) => u._id).includes(user._id)) {
+        setInvitees(invitees.filter((u) => u._id !== user._id));
+      }
+
+      if (blockedUsersEvent.map((u) => u._id).includes(user._id)) {
+        setBlockedUsersEvent(blockedUsersEvent.filter((u) => u._id !== user._id));
+      }
+
+      setOrganizers(organizers.concat(user));
     }
   };
 
@@ -734,6 +740,14 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           })
         );
       } else {
+        if (organizers.map((u) => u._id).includes(user._id)) {
+          setOrganizers(organizers.filter((u) => u._id !== user._id));
+        }
+
+        if (blockedUsersEvent.map((u) => u._id).includes(user._id)) {
+          setBlockedUsersEvent(blockedUsersEvent.filter((u) => u._id !== user._id));
+        }
+
         setInvitees(
           invitees.concat({
             _id: user._id.toString(),
