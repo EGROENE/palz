@@ -119,7 +119,10 @@ const formatHyphensAndSpacesInString = (name: string): string => {
 
 const removeDuplicatesFromArray = (arr: any[]): any[] => [...new Set(arr)];
 
-const getTBarebonesUser = (user: TUser | TOtherUser | null): TBarebonesUser => {
+// TBarebonesUser is only included as param, since a value of type, say TOtherUser | TBarebonesUser could be passed
+const getTBarebonesUser = (
+  user: TUser | TOtherUser | TBarebonesUser | null
+): TBarebonesUser => {
   return {
     _id: user?._id,
     username: user?.username,
