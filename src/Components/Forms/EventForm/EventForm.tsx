@@ -1628,11 +1628,7 @@ const EventForm = ({
             </header>
             <div className="added-user-tab-container">
               {currentUser &&
-                usersWhoAreOrganizers &&
-                usersWhoAreOrganizers.filter(
-                  (user) => user.username !== currentUser?.username
-                ).length > 0 &&
-                usersWhoAreOrganizers
+                organizers
                   .filter((user) => user.username !== currentUser?.username)
                   .map((user) => (
                     <Tab
@@ -1709,9 +1705,7 @@ const EventForm = ({
             </header>
             <div className="added-user-tab-container">
               {currentUser &&
-                usersWhoAreInvitees &&
-                usersWhoAreInvitees.length > 0 &&
-                usersWhoAreInvitees.map((user) => (
+                invitees.map((user) => (
                   <Tab
                     key={user._id?.toString()}
                     info={user}
