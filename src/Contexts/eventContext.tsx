@@ -13,7 +13,7 @@ import Requests from "../requests";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useUserContext } from "../Hooks/useUserContext";
 import toast from "react-hot-toast";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   useQuery,
   UseQueryResult,
@@ -35,34 +35,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   let allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
-
-  const currentURL = useLocation().pathname;
-
-  /* const fetchPotentialCoOrganizersQuery: UseQueryResult<TOtherUser[], Error> = useQuery({
-    queryKey: ["potentialCoOrganizers"],
-    queryFn: () =>
-      Requests.getPotentialCoOrganizers(
-        currentURL === "/add-event" ? "new" : "edit",
-        currentUser && currentUser._id && currentUser._id.toString()
-          ? currentUser._id.toString()
-          : undefined
-      ),
-    enabled:
-      userHasLoggedIn && (currentURL === "/add-event" || currentURL === "/edit-event"),
-  }); */
-
-  const fetchPotentialInviteesQuery: UseQueryResult<TOtherUser[], Error> = useQuery({
-    queryKey: ["potentialCoOrganizers"],
-    queryFn: () =>
-      Requests.getPotentialInvitees(
-        currentURL === "/add-event" ? "new" : "edit",
-        currentUser && currentUser._id && currentUser._id.toString()
-          ? currentUser._id.toString()
-          : undefined
-      ),
-    enabled:
-      userHasLoggedIn && (currentURL === "/add-event" || currentURL === "/edit-event"),
-  });
 
   const [currentEvent, setCurrentEvent] = useLocalStorage<TEvent | undefined>(
     "currentEvent",
@@ -828,7 +800,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
-    fetchPotentialInviteesQuery,
     handleRemoveOrganizer,
     showRSVPs,
     setShowRSVPs,

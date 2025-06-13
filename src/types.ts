@@ -631,7 +631,6 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
-  fetchPotentialInviteesQuery: UseQueryResult<TOtherUser[], Error>;
   handleRemoveOrganizer: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
