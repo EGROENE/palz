@@ -96,7 +96,6 @@ const EventForm = ({
     createEventMutation,
     deleteEventMutation,
     fetchAllEventsQuery,
-    fetchPotentialInviteesQuery,
   } = useEventContext();
 
   const allEvents = fetchAllEventsQuery.data;
@@ -143,7 +142,7 @@ const EventForm = ({
   const [potentialCoOrganizers, setPotentialCoOrganizers] = useState<TBarebonesUser[]>(
     []
   );
-  const [potentialInvitees, setPotentialInvitees] = useState<TOtherUser[]>([]);
+  const [potentialInvitees, setPotentialInvitees] = useState<TBarebonesUser[]>([]);
   const [potentialBlockees, setPotentialBlockees] = useState<TOtherUser[]>([]);
   const [inviteesSearchQuery, setInviteesSearchQuery] = useState<string>("");
   const [blockeesSearchQuery, setBlockeesSearchQuery] = useState<string>("");
@@ -172,6 +171,12 @@ const EventForm = ({
   const [fetchPotentialCOsStart, setFetchPotentialCOsStart] = useState<number>(0);
   const [potentialCOsSearchTerm, setPotentialCOsSearchTerm] = useState<string>("");
 
+  const [allPotentialInvitees, setAllPotentialInvitees] = useState<TBarebonesUser[]>([]);
+  const [fetchPotentialInviteesStart, setFetchPotentialInviteesStart] =
+    useState<number>(0);
+  const [potentialInviteesSearchTerm, setPotentialInviteesSearchTerm] =
+    useState<string>("");
+
   const fetchLimit = 10;
 
   useEffect(() => {
@@ -192,54 +197,73 @@ const EventForm = ({
 
   // useEffect to fetch more users when fetch starts change
   useEffect(() => {
-    if (usedFor === "edit-event" && potentialCOsSearchTerm === "" && event && event._id) {
-      setFetchIsLoading(true);
-      Requests.getPotentialCoOrganizers(
-        event._id.toString(),
-        "edit",
-        currentUser,
-        fetchPotentialCOsStart,
-        fetchLimit
-      )
-        .then((potentialCOs) => {
-          if (potentialCOs) {
-            let potentialCOsSecure: TBarebonesUser[] = potentialCOs.map((pco) =>
-              Methods.getTBarebonesUser(pco)
-            );
-            if (fetchPotentialCOsStart === 0) {
-              setPotentialCoOrganizers(potentialCOsSecure);
+    if (usedFor === "edit-event") {
+      if (potentialCOsSearchTerm === "" && event && event._id) {
+        setFetchIsLoading(true);
+        Requests.getPotentialCoOrganizers(
+          event._id.toString(),
+          "edit",
+          currentUser,
+          fetchPotentialCOsStart,
+          fetchLimit
+        )
+          .then((potentialCOs) => {
+            if (potentialCOs) {
+              let potentialCOsSecure: TBarebonesUser[] = potentialCOs.map((pco) =>
+                Methods.getTBarebonesUser(pco)
+              );
+              if (fetchPotentialCOsStart === 0) {
+                setPotentialCoOrganizers(potentialCOsSecure);
+              } else {
+                setPotentialCoOrganizers(
+                  potentialCoOrganizers.concat(potentialCOsSecure)
+                );
+              }
             } else {
-              setPotentialCoOrganizers(potentialCoOrganizers.concat(potentialCOsSecure));
+              setIsFetchError(true);
             }
-          } else {
-            setIsFetchError(true);
-          }
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setFetchIsLoading(false));
-
-      /* if (event) {
-        setCurrentEvent(allEvents.filter((ev) => ev._id === event._id)[0]);
-        setEventImages(event.images);
-      } else if (!event && currentEvent) {
-        setEventImages(currentEvent.images);
+          })
+          .catch((error) => console.log(error))
+          .finally(() => setFetchIsLoading(false));
       }
-      handleRevert(); */
+
+      if (potentialInviteesSearchTerm === "" && event && event._id) {
+        if (!fetchIsLoading) {
+          setFetchIsLoading(true);
+        }
+        Requests.getPotentialInvitees(
+          event._id.toString(),
+          "edit",
+          currentUser,
+          fetchPotentialInviteesStart,
+          fetchLimit
+        )
+          .then((potentialInv) => {
+            if (potentialInv) {
+              let potentialInviteesSecure: TBarebonesUser[] = potentialInv.map((pi) =>
+                Methods.getTBarebonesUser(pi)
+              );
+              if (fetchPotentialInviteesStart === 0) {
+                setPotentialInvitees(potentialInviteesSecure);
+              } else {
+                setPotentialInvitees(potentialInvitees.concat(potentialInviteesSecure));
+              }
+            } else {
+              setIsFetchError(true);
+            }
+          })
+          .catch((error) => console.log(error))
+          .finally(() => setFetchIsLoading(false));
+      }
     }
-  }, [fetchPotentialCOsStart, potentialCOsSearchTerm]);
+  }, [
+    fetchPotentialCOsStart,
+    potentialCOsSearchTerm,
+    fetchPotentialInviteesStart,
+    potentialInviteesSearchTerm,
+  ]);
 
   useEffect(() => {
-    // Set updated potentialCoOrganizers, after user makes changes to 3 lists (seen in dep array):
-    if (fetchPotentialInviteesQuery.data) {
-      setPotentialInvitees(
-        fetchPotentialInviteesQuery.data.filter(
-          (user) =>
-            user._id &&
-            !blockedUsersEvent.map((bu) => bu._id).includes(user._id.toString())
-        )
-      );
-    }
-
     if (visibleOtherUsers) {
       setPotentialBlockees(
         visibleOtherUsers.filter(
@@ -250,10 +274,11 @@ const EventForm = ({
         )
       );
     }
-  }, [invitees, organizers, blockedUsersEvent, fetchPotentialInviteesQuery.data]);
+  }, [invitees, organizers, blockedUsersEvent]);
 
   // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
   const handleLoadMorePotentialCOsOnScroll = (
+    list: "potential-co-organizers" | "potential-invitees" | "potential-blockees",
     items: (TOtherUser | TEvent | TBarebonesUser)[],
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ): void => {
@@ -270,14 +295,22 @@ const EventForm = ({
     if (bottomReached) {
       const lastItem: TOtherUser | TEvent | TBarebonesUser = items[items.length - 1];
 
-      if (usedFor === "edit-event") {
-        if (
-          lastItem &&
-          lastItem.index &&
-          (potentialCOsSearchTerm === "" || potentialCOsSearchTerm === undefined)
-        ) {
-          setFetchPotentialCOsStart(lastItem.index + 1);
-        }
+      if (
+        lastItem &&
+        lastItem.index &&
+        list === "potential-co-organizers" &&
+        potentialCOsSearchTerm === ""
+      ) {
+        setFetchPotentialCOsStart(lastItem.index + 1);
+      }
+
+      if (
+        lastItem &&
+        lastItem.index &&
+        list === "potential-invitees" &&
+        potentialInviteesSearchTerm === ""
+      ) {
+        setFetchPotentialInviteesStart(lastItem.index + 1);
       }
     }
   };
@@ -731,24 +764,7 @@ const EventForm = ({
       setInviteesSearchQuery(inputCleaned);
       setShowPotentialInvitees(true);
       if (inputCleaned.replace(/\s+/g, "") !== "") {
-        const matchingUsers: TOtherUser[] = [];
-        for (const user of potentialInvitees) {
-          if (
-            user.firstName &&
-            user.lastName &&
-            user.username &&
-            (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-              user?.lastName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-              user?.username.includes(inputCleaned.toLowerCase()))
-          ) {
-            matchingUsers.push(user);
-          }
-        }
-        setPotentialInvitees(matchingUsers);
       } else {
-        if (fetchPotentialInviteesQuery.data) {
-          setPotentialInvitees(fetchPotentialInviteesQuery.data);
-        }
       }
     }
     if (field === "blockees" && visibleOtherUsers) {
@@ -1666,7 +1682,7 @@ const EventForm = ({
                 <DropdownChecklist
                   fetchIsLoading={fetchIsLoading}
                   scrollHandler={handleLoadMorePotentialCOsOnScroll}
-                  scrollHandlerParams={[potentialCoOrganizers]}
+                  scrollHandlerParams={["potential-co-organizers", potentialCoOrganizers]}
                   usedFor="potential-co-organizers"
                   displayedItemsArray={potentialCoOrganizers}
                   storageArray={organizers}
@@ -1721,16 +1737,14 @@ const EventForm = ({
               query={inviteesSearchQuery}
               inputOnChange={(e) => handleDropdownListSearchQuery(e, "invitees")}
               placeholder="Search users by username, first/last names"
-              clearQueryOnClick={() => {
-                setInviteesSearchQuery("");
-                if (fetchPotentialInviteesQuery.data) {
-                  setPotentialInvitees(fetchPotentialInviteesQuery.data);
-                }
-              }}
+              clearQueryOnClick={() => {}}
               showList={showPotentialInvitees}
               setShowList={setShowPotentialInvitees}
               dropdownChecklist={
                 <DropdownChecklist
+                  fetchIsLoading={fetchIsLoading}
+                  scrollHandler={handleLoadMorePotentialCOsOnScroll}
+                  scrollHandlerParams={["potential-invitees", potentialInvitees]}
                   usedFor="potential-invitees"
                   displayedItemsArray={potentialInvitees}
                   storageArray={invitees}
