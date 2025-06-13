@@ -503,7 +503,7 @@ const addToBlockedBy = (blockee: TUser, blocker: TBarebonesUser): Promise<Respon
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedBlockedByArray = blocker ? blockee.blockedUsers.concat(blocker) : "";
+  let updatedBlockedByArray = blocker ? blockee.blockedBy.concat(blocker) : "";
 
   const getRaw = () => {
     return JSON.stringify({
