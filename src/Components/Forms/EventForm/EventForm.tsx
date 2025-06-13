@@ -144,7 +144,6 @@ const EventForm = ({
   );
   const [potentialInvitees, setPotentialInvitees] = useState<TBarebonesUser[]>([]);
   const [potentialBlockees, setPotentialBlockees] = useState<TOtherUser[]>([]);
-  const [inviteesSearchQuery, setInviteesSearchQuery] = useState<string>("");
   const [blockeesSearchQuery, setBlockeesSearchQuery] = useState<string>("");
   const [showPotentialCoOrganizers, setShowPotentialCoOrganizers] =
     useState<boolean>(false);
@@ -347,6 +346,43 @@ const EventForm = ({
               }
             }
             setPotentialCoOrganizers(matchingPotentialCOs);
+          } else {
+            setIsFetchError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    }
+  };
+
+  const initializePotentialInviteesSearch = (input: string): void => {
+    setFetchIsLoading(true);
+    setFetchPotentialInviteesStart(0);
+    const eventType = usedFor === "add-event" ? "new" : "edit";
+    if (event && event._id) {
+      Requests.getPotentialInvitees(
+        event._id.toString(),
+        eventType,
+        currentUser,
+        0,
+        Infinity
+      )
+        .then((batchOfPotentialInvitees) => {
+          if (batchOfPotentialInvitees) {
+            setAllPotentialInvitees(
+              batchOfPotentialInvitees.map((pi) => Methods.getTBarebonesUser(pi))
+            );
+            let matchingPotentialInvitees = [];
+            for (const pi of batchOfPotentialInvitees) {
+              if (
+                pi.username?.includes(input.toLowerCase()) ||
+                pi.firstName?.includes(input.toLowerCase()) ||
+                pi.lastName?.includes(input.toLowerCase())
+              ) {
+                matchingPotentialInvitees.push(Methods.getTBarebonesUser(pi));
+              }
+            }
+            setPotentialInvitees(matchingPotentialInvitees);
           } else {
             setIsFetchError(true);
           }
@@ -743,7 +779,6 @@ const EventForm = ({
         if (allPotentialCOs.length === 0) {
           initializePotentialCoOrganizersSearch(inputCleaned);
         } else {
-          // If input w/o spaces is not empty string
           const matchingUsers: TBarebonesUser[] = [];
           for (const user of allPotentialCOs) {
             if (
@@ -765,10 +800,30 @@ const EventForm = ({
       }
     }
     if (field === "invitees") {
-      setInviteesSearchQuery(inputCleaned);
+      setPotentialInviteesSearchTerm(inputCleaned);
       setShowPotentialInvitees(true);
       if (inputCleaned.replace(/\s+/g, "") !== "") {
+        if (allPotentialInvitees.length === 0) {
+          initializePotentialInviteesSearch(inputCleaned);
+        } else {
+          const matchingUsers: TBarebonesUser[] = [];
+          for (const user of allPotentialInvitees) {
+            if (
+              user?.firstName
+                ?.toLowerCase()
+                .includes(inputCleaned.toLowerCase().trim()) ||
+              user?.lastName?.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+              user?.username?.includes(inputCleaned.toLowerCase())
+            ) {
+              matchingUsers.push(user);
+            }
+          }
+          setPotentialInvitees(matchingUsers);
+        }
       } else {
+        setPotentialInviteesSearchTerm("");
+        setAllPotentialInvitees([]);
+        setFetchPotentialInviteesStart(0);
       }
     }
     if (field === "blockees" && visibleOtherUsers) {
@@ -1727,10 +1782,14 @@ const EventForm = ({
                   : undefined
               }
               isDisabled={isLoading}
-              query={inviteesSearchQuery}
+              query={potentialInviteesSearchTerm}
               inputOnChange={(e) => handleDropdownListSearchQuery(e, "invitees")}
               placeholder="Search users by username, first/last names"
-              clearQueryOnClick={() => {}}
+              clearQueryOnClick={() => {
+                setPotentialInviteesSearchTerm("");
+                setAllPotentialInvitees([]);
+                setFetchPotentialInviteesStart(0);
+              }}
               showList={showPotentialInvitees}
               setShowList={setShowPotentialInvitees}
               dropdownChecklist={
