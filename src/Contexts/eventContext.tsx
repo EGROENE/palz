@@ -672,17 +672,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           setOrganizers(organizers.filter((u) => u._id !== user._id));
         }
 
-        setBlockedUsersEvent(
-          blockedUsersEvent.concat({
-            _id: user._id,
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            profileImage: user.profileImage,
-            emailAddress: user.emailAddress,
-            index: user.index,
-          })
-        );
+        setBlockedUsersEvent(blockedUsersEvent.concat(Methods.getTBarebonesUser(user)));
       }
     }
   };
@@ -748,17 +738,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           setBlockedUsersEvent(blockedUsersEvent.filter((u) => u._id !== user._id));
         }
 
-        setInvitees(
-          invitees.concat({
-            _id: user._id.toString(),
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            profileImage: user.profileImage,
-            emailAddress: user.emailAddress,
-            index: user.index,
-          })
-        );
+        setInvitees(invitees.concat(Methods.getTBarebonesUser(user)));
       }
     }
   };
