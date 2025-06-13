@@ -122,27 +122,8 @@ const getPotentialEventCOsController = async (req, res) => {
   const potentialCOs = await User.find({
     index: { $gte: Number(start) },
     _id: { $ne: currentUser._id.toString() },
-    // For blockedUsers & blockedBy, it may be necessary to check if currentUser._id is equal to any _ids in these arrays
-    blockedUsers: {
-      $nin: {
-        _id: currentUser._id.toString(),
-        username: currentUser.username,
-        firstName: currentUser.firstName,
-        lastName: currentUser.lastName,
-        emailAddress: currentUser.emailAddress,
-        profileImage: currentUser.profileImage,
-      },
-    },
-    blockedBy: {
-      $nin: {
-        _id: currentUser._id.toString(),
-        username: currentUser.username,
-        firstName: currentUser.firstName,
-        lastName: currentUser.lastName,
-        emailAddress: currentUser.emailAddress,
-        profileImage: currentUser.profileImage,
-      },
-    },
+    "blockedUsers._id": { $ne: currentUser._id.toString() },
+    "blockedBy._id": { $ne: currentUser._id.toString() },
   }).limit(Number(limit));
 
   res.status(200).json(potentialCOs);
