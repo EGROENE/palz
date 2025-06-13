@@ -70,9 +70,10 @@ app.get("/palz/my-palz", async (req, res) => {
     index: { $gte: Number(start) },
     _id: { $ne: currentUser._id.toString() },
     friends: { $in: currentUser._id.toString() },
-    // Just to be safe, ensure there's no blocking relationship:
-    blockedUsers: { $nin: currentUser._id.toString() },
-    blockedBy: { $nin: currentUser._id.toString() },
+    // blockedUsers doesn't contain currentUser:
+    "blockedUsers._id": { $ne: currentUser._id.toString() },
+    // blockedBy doesn't contain currentUser:
+    "blockedBy._id": { $ne: currentUser._id.toString() },
   }).limit(Number(limit));
 
   res.status(200).json(friends);
