@@ -148,7 +148,28 @@ const getPotentialEventCOsController = async (req, res) => {
   res.status(200).json(potentialCOs);
 };
 
-app.get("/palz/edit-event/:id", getPotentialEventCOsController);
+const getPotentialInviteesController = async (req, res) => {
+  const { user, start, limit } = req.query;
+
+  const username = user;
+  const currentUser = await User.findOne({ username });
+
+  const potentialInvitees = await User.find({
+    index: { $gte: Number(start) },
+    _id: { $ne: currentUser._id.toString() },
+    "blockedUsers._id": { $ne: currentUser._id.toString() },
+    "blockedBy._id": { $ne: currentUser._id.toString() },
+    profileVisibleTo: { $ne: "nobody" },
+  }).limit(Number(limit));
+
+  res.status(200).json(potentialInvitees);
+};
+
+app.get(
+  "/palz/edit-event/:id",
+  getPotentialEventCOsController,
+  getPotentialInviteesController
+);
 
 // Connect to Mongoose:
 mongoose
