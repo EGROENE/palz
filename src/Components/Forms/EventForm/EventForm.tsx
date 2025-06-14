@@ -198,105 +198,98 @@ const EventForm = ({
 
   // useEffect to fetch more users when fetch starts change
   useEffect(() => {
-    if (usedFor === "edit-event") {
-      if (potentialCOsSearchTerm === "" && event && event._id) {
-        if (!fetchIsLoading) {
-          setFetchIsLoading(true);
-        }
-        Requests.getPotentialCoOrganizers(
-          event._id.toString(),
-          "edit",
-          currentUser,
-          fetchPotentialCOsStart,
-          fetchLimit
-        )
-          .then((potentialCOs) => {
-            if (potentialCOs) {
-              let potentialCOsSecure: TBarebonesUser[] = potentialCOs.map((pco) =>
-                Methods.getTBarebonesUser(pco)
-              );
-              if (fetchPotentialCOsStart === 0) {
-                setPotentialCoOrganizers(potentialCOsSecure);
-              } else {
-                setPotentialCoOrganizers(
-                  potentialCoOrganizers.concat(potentialCOsSecure)
-                );
-              }
-            } else {
-              setIsFetchError(true);
-            }
-          })
-          .catch((error) => console.log(error))
-          .finally(() => setFetchIsLoading(false));
+    if (potentialCOsSearchTerm === "" && event && event._id) {
+      if (!fetchIsLoading) {
+        setFetchIsLoading(true);
       }
-
-      if (potentialInviteesSearchTerm === "" && event && event._id) {
-        if (!fetchIsLoading) {
-          setFetchIsLoading(true);
-        }
-        Requests.getPotentialInvitees(
-          event._id.toString(),
-          "edit",
-          currentUser,
-          fetchPotentialInviteesStart,
-          fetchLimit
-        )
-          .then((potentialInv) => {
-            if (potentialInv) {
-              let potentialInviteesSecure: TBarebonesUser[] = potentialInv.map((pi) =>
-                Methods.getTBarebonesUser(pi)
-              );
-
-              if (fetchPotentialInviteesStart === 0) {
-                setPotentialInvitees(potentialInviteesSecure);
-              } else {
-                setPotentialInvitees(potentialInvitees.concat(potentialInviteesSecure));
-              }
+      Requests.getPotentialCoOrganizers(
+        event._id.toString(),
+        "edit",
+        currentUser,
+        fetchPotentialCOsStart,
+        fetchLimit
+      )
+        .then((potentialCOs) => {
+          if (potentialCOs) {
+            let potentialCOsSecure: TBarebonesUser[] = potentialCOs.map((pco) =>
+              Methods.getTBarebonesUser(pco)
+            );
+            if (fetchPotentialCOsStart === 0) {
+              setPotentialCoOrganizers(potentialCOsSecure);
             } else {
-              setIsFetchError(true);
+              setPotentialCoOrganizers(potentialCoOrganizers.concat(potentialCOsSecure));
             }
-          })
-          .catch((error) => console.log(error))
-          .finally(() => setFetchIsLoading(false));
-      }
+          } else {
+            setIsFetchError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    }
+  }, [fetchPotentialCOsStart, potentialCOsSearchTerm]);
 
-      if (potentialBlockeesSearchTerm === "" && event && event._id) {
-        if (!fetchIsLoading) {
-          setFetchIsLoading(true);
-        }
-        Requests.getPotentialEventBlockees(
-          event._id.toString(),
-          "edit",
-          currentUser,
-          fetchPotentialBlockeesStart,
-          fetchLimit
-        )
-          .then((PBs) => {
-            const potentialBlockeesSecure: TBarebonesUser[] = PBs.map((pb) =>
-              Methods.getTBarebonesUser(pb)
+  useEffect(() => {
+    if (potentialInviteesSearchTerm === "" && event && event._id) {
+      if (!fetchIsLoading) {
+        setFetchIsLoading(true);
+      }
+      Requests.getPotentialInvitees(
+        event._id.toString(),
+        "edit",
+        currentUser,
+        fetchPotentialInviteesStart,
+        fetchLimit
+      )
+        .then((potentialInv) => {
+          if (potentialInv) {
+            let potentialInviteesSecure: TBarebonesUser[] = potentialInv.map((pi) =>
+              Methods.getTBarebonesUser(pi)
             );
 
-            if (fetchPotentialBlockeesStart === 0) {
-              setPotentialBlockees(potentialBlockeesSecure);
+            if (fetchPotentialInviteesStart === 0) {
+              setPotentialInvitees(potentialInviteesSecure);
             } else {
-              setPotentialBlockees(potentialBlockees.concat(potentialBlockeesSecure));
+              setPotentialInvitees(potentialInvitees.concat(potentialInviteesSecure));
             }
-          })
-          .catch((error) => {
-            console.log(error);
+          } else {
             setIsFetchError(true);
-          })
-          .finally(() => setFetchIsLoading(false));
-      }
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
     }
-  }, [
-    fetchPotentialCOsStart,
-    potentialCOsSearchTerm,
-    fetchPotentialInviteesStart,
-    potentialInviteesSearchTerm,
-    fetchPotentialBlockeesStart,
-    potentialBlockeesSearchTerm,
-  ]);
+  }, [fetchPotentialInviteesStart, potentialInviteesSearchTerm]);
+
+  useEffect(() => {
+    if (potentialBlockeesSearchTerm === "" && event && event._id) {
+      if (!fetchIsLoading) {
+        setFetchIsLoading(true);
+      }
+      Requests.getPotentialEventBlockees(
+        event._id.toString(),
+        "edit",
+        currentUser,
+        fetchPotentialBlockeesStart,
+        fetchLimit
+      )
+        .then((PBs) => {
+          const potentialBlockeesSecure: TBarebonesUser[] = PBs.map((pb) =>
+            Methods.getTBarebonesUser(pb)
+          );
+
+          if (fetchPotentialBlockeesStart === 0) {
+            setPotentialBlockees(potentialBlockeesSecure);
+          } else {
+            setPotentialBlockees(potentialBlockees.concat(potentialBlockeesSecure));
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          setIsFetchError(true);
+        })
+        .finally(() => setFetchIsLoading(false));
+    }
+  }, [fetchPotentialBlockeesStart, potentialBlockeesSearchTerm]);
 
   // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
   const handleLoadMoreItemsOnScroll = (
