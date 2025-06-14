@@ -2017,7 +2017,9 @@ const EventForm = ({
                     style={{ accentColor: randomColor }}
                     onChange={() =>
                       setBlockedUsersEvent(
-                        Methods.removeDuplicatesFromArray(currentUser.blockedUsers)
+                        blockedUsersEvent.concat(
+                          Methods.removeDuplicatesFromArray(currentUser.blockedUsers)
+                        )
                       )
                     }
                     checked={currentUser.blockedUsers.every((bu) => {
