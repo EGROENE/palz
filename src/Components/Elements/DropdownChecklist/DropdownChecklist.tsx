@@ -53,7 +53,7 @@ const DropdownChecklist = ({
   const getActionParams = (user: TBarebonesUser): any[] => {
     if (!actionParams) {
       // for handleAddRemoveUserAsOrganizer:
-      if (usedFor === "potential-co-organizers" && user && event) {
+      if (usedFor === "potential-co-organizers") {
         return [organizers, setOrganizers, user];
       }
 
