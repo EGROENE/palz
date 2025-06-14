@@ -316,7 +316,7 @@ const getUserByUsernameOrEmailAddress = (
 };
 
 const getPotentialCoOrganizers = (
-  eventID: string,
+  eventID: string | undefined,
   eventType: "new" | "edit",
   currentUser: TUser | null,
   start: number,
@@ -324,7 +324,7 @@ const getPotentialCoOrganizers = (
 ) => {
   const url: string =
     eventType === "new"
-      ? "add-event"
+      ? `http://localhost:4000/palz/add-event?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialCoOrganizers`
       : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialCoOrganizers`;
 
   return fetch(url, {
@@ -364,7 +364,7 @@ const getPotentialCoOrganizers = (
 };
 
 const getPotentialInvitees = (
-  eventID: string,
+  eventID: string | undefined,
   eventType: "new" | "edit",
   currentUser: TUser | null,
   start: number,
@@ -372,7 +372,7 @@ const getPotentialInvitees = (
 ): Promise<TUser[] | undefined> => {
   const url: string =
     eventType === "new"
-      ? "add-event"
+      ? `http://localhost:4000/palz/add-event?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialInvitees`
       : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialInvitees`;
 
   return fetch(url, {
@@ -412,7 +412,7 @@ const getPotentialInvitees = (
 };
 
 const getPotentialEventBlockees = (
-  eventID: string,
+  eventID: string | undefined,
   eventType: "new" | "edit",
   currentUser: TUser | null,
   start: number,
@@ -420,7 +420,7 @@ const getPotentialEventBlockees = (
 ): Promise<TUser[]> => {
   const url: string =
     eventType === "new"
-      ? "add-event"
+      ? `http://localhost:4000/palz/add-event?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialEventBlockees`
       : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialEventBlockees`;
 
   return fetch(url, {
