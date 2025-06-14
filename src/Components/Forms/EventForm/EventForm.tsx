@@ -1920,7 +1920,6 @@ const EventForm = ({
                     displayedItemsArray={potentialCoOrganizers}
                     storageArray={organizers}
                     setStorageArray={setOrganizers}
-                    event={currentEvent}
                     action={handleAddRemoveUserAsOrganizer}
                     actionEventParamNeeded={true}
                   />
@@ -1986,7 +1985,6 @@ const EventForm = ({
                     displayedItemsArray={potentialInvitees}
                     storageArray={invitees}
                     setStorageArray={setInvitees}
-                    event={currentEvent}
                     action={handleAddRemoveUserAsInvitee}
                     actionEventParamNeeded={true}
                   />
@@ -2080,7 +2078,6 @@ const EventForm = ({
                     displayedItemsArray={potentialBlockees}
                     storageArray={blockedUsersEvent}
                     setStorageArray={setBlockedUsersEvent}
-                    event={currentEvent}
                     action={handleAddRemoveBlockedUserOnEvent}
                     actionEventParamNeeded={false}
                   />
