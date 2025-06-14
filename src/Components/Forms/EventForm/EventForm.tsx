@@ -2026,7 +2026,6 @@ const EventForm = ({
               )}
             <div className="added-user-tab-container">
               {currentUser &&
-                event &&
                 blockedUsersEvent &&
                 blockedUsersEvent.length > 0 &&
                 blockedUsersEvent.map((user) => (
