@@ -325,7 +325,7 @@ const getPotentialCoOrganizers = (
   const url: string =
     eventType === "new"
       ? "add-event"
-      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}`;
+      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialCoOrganizers`;
 
   return fetch(url, {
     method: "GET",
@@ -373,7 +373,7 @@ const getPotentialInvitees = (
   const url: string =
     eventType === "new"
       ? "add-event"
-      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}`;
+      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialInvitees`;
 
   return fetch(url, {
     method: "GET",
@@ -421,7 +421,7 @@ const getPotentialEventBlockees = (
   const url: string =
     eventType === "new"
       ? "add-event"
-      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}`;
+      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialEventBlockees`;
 
   return fetch(url, {
     method: "GET",
