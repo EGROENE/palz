@@ -1886,44 +1886,49 @@ const EventForm = ({
                     />
                   ))}
             </div>
-            <SearchAndDropdownList
-              randomColor={randomColor}
-              name="event-co-organizers-search"
-              id="event-co-organizers-search"
-              inputRef={coOrganizersRef}
-              onFocus={() => setFocusedElement("coOrganizers")}
-              onBlur={() => setFocusedElement(undefined)}
-              style={
-                focusedElement === "coOrganizers"
-                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                  : undefined
-              }
-              isDisabled={isLoading}
-              query={potentialCOsSearchTerm}
-              inputOnChange={(e) => handleDropdownListSearchQuery(e, "co-organizers")}
-              placeholder="Search users by username, first/last names"
-              clearQueryOnClick={() => {
-                setPotentialCOsSearchTerm("");
-                setAllPotentialCOs([]);
-                setFetchPotentialCOsStart(0);
-              }}
-              dropdownChecklist={
-                <DropdownChecklist
-                  fetchIsLoading={fetchIsLoading}
-                  scrollHandler={handleLoadMoreItemsOnScroll}
-                  scrollHandlerParams={["potential-co-organizers", potentialCoOrganizers]}
-                  usedFor="potential-co-organizers"
-                  displayedItemsArray={potentialCoOrganizers}
-                  storageArray={organizers}
-                  setStorageArray={setOrganizers}
-                  event={currentEvent}
-                  action={handleAddRemoveUserAsOrganizer}
-                  actionEventParamNeeded={true}
-                />
-              }
-              showList={showPotentialCoOrganizers}
-              setShowList={setShowPotentialCoOrganizers}
-            />
+            {potentialCoOrganizers && (
+              <SearchAndDropdownList
+                randomColor={randomColor}
+                name="event-co-organizers-search"
+                id="event-co-organizers-search"
+                inputRef={coOrganizersRef}
+                onFocus={() => setFocusedElement("coOrganizers")}
+                onBlur={() => setFocusedElement(undefined)}
+                style={
+                  focusedElement === "coOrganizers"
+                    ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                    : undefined
+                }
+                isDisabled={isLoading}
+                query={potentialCOsSearchTerm}
+                inputOnChange={(e) => handleDropdownListSearchQuery(e, "co-organizers")}
+                placeholder="Search users by username, first/last names"
+                clearQueryOnClick={() => {
+                  setPotentialCOsSearchTerm("");
+                  setAllPotentialCOs([]);
+                  setFetchPotentialCOsStart(0);
+                }}
+                dropdownChecklist={
+                  <DropdownChecklist
+                    fetchIsLoading={fetchIsLoading}
+                    scrollHandler={handleLoadMoreItemsOnScroll}
+                    scrollHandlerParams={[
+                      "potential-co-organizers",
+                      potentialCoOrganizers,
+                    ]}
+                    usedFor="potential-co-organizers"
+                    displayedItemsArray={potentialCoOrganizers}
+                    storageArray={organizers}
+                    setStorageArray={setOrganizers}
+                    event={currentEvent}
+                    action={handleAddRemoveUserAsOrganizer}
+                    actionEventParamNeeded={true}
+                  />
+                }
+                showList={showPotentialCoOrganizers}
+                setShowList={setShowPotentialCoOrganizers}
+              />
+            )}
           </div>
           <div className={styles.addOtherUsersArea}>
             <header className="input-label">
@@ -1948,44 +1953,46 @@ const EventForm = ({
                   />
                 ))}
             </div>
-            <SearchAndDropdownList
-              randomColor={randomColor}
-              name="potential-invitees-search"
-              id="potential-invitees-search"
-              inputRef={inviteesRef}
-              onFocus={() => setFocusedElement("invitees")}
-              onBlur={() => setFocusedElement(undefined)}
-              style={
-                focusedElement === "invitees"
-                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                  : undefined
-              }
-              isDisabled={isLoading}
-              query={potentialInviteesSearchTerm}
-              inputOnChange={(e) => handleDropdownListSearchQuery(e, "invitees")}
-              placeholder="Search users by username, first/last names"
-              clearQueryOnClick={() => {
-                setPotentialInviteesSearchTerm("");
-                setAllPotentialInvitees([]);
-                setFetchPotentialInviteesStart(0);
-              }}
-              showList={showPotentialInvitees}
-              setShowList={setShowPotentialInvitees}
-              dropdownChecklist={
-                <DropdownChecklist
-                  fetchIsLoading={fetchIsLoading}
-                  scrollHandler={handleLoadMoreItemsOnScroll}
-                  scrollHandlerParams={["potential-invitees", potentialInvitees]}
-                  usedFor="potential-invitees"
-                  displayedItemsArray={potentialInvitees}
-                  storageArray={invitees}
-                  setStorageArray={setInvitees}
-                  event={currentEvent}
-                  action={handleAddRemoveUserAsInvitee}
-                  actionEventParamNeeded={true}
-                />
-              }
-            />
+            {potentialInvitees && (
+              <SearchAndDropdownList
+                randomColor={randomColor}
+                name="potential-invitees-search"
+                id="potential-invitees-search"
+                inputRef={inviteesRef}
+                onFocus={() => setFocusedElement("invitees")}
+                onBlur={() => setFocusedElement(undefined)}
+                style={
+                  focusedElement === "invitees"
+                    ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                    : undefined
+                }
+                isDisabled={isLoading}
+                query={potentialInviteesSearchTerm}
+                inputOnChange={(e) => handleDropdownListSearchQuery(e, "invitees")}
+                placeholder="Search users by username, first/last names"
+                clearQueryOnClick={() => {
+                  setPotentialInviteesSearchTerm("");
+                  setAllPotentialInvitees([]);
+                  setFetchPotentialInviteesStart(0);
+                }}
+                showList={showPotentialInvitees}
+                setShowList={setShowPotentialInvitees}
+                dropdownChecklist={
+                  <DropdownChecklist
+                    fetchIsLoading={fetchIsLoading}
+                    scrollHandler={handleLoadMoreItemsOnScroll}
+                    scrollHandlerParams={["potential-invitees", potentialInvitees]}
+                    usedFor="potential-invitees"
+                    displayedItemsArray={potentialInvitees}
+                    storageArray={invitees}
+                    setStorageArray={setInvitees}
+                    event={currentEvent}
+                    action={handleAddRemoveUserAsInvitee}
+                    actionEventParamNeeded={true}
+                  />
+                }
+              />
+            )}
           </div>
           <div className={styles.addOtherUsersArea}>
             <header className="input-label">
@@ -2040,44 +2047,46 @@ const EventForm = ({
                   />
                 ))}
             </div>
-            <SearchAndDropdownList
-              randomColor={randomColor}
-              name="potential-blockees-search"
-              id="potential-blockees-search"
-              inputRef={blockeesRef}
-              onFocus={() => setFocusedElement("blockees")}
-              onBlur={() => setFocusedElement(undefined)}
-              style={
-                focusedElement === "blockees"
-                  ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                  : undefined
-              }
-              isDisabled={isLoading}
-              query={potentialBlockeesSearchTerm}
-              inputOnChange={(e) => handleDropdownListSearchQuery(e, "blockees")}
-              placeholder="Search users by username, first/last names"
-              clearQueryOnClick={() => {
-                setPotentialBlockeesSearchTerm("");
-                setAllPotentialBlockees([]);
-                setFetchPotentialBlockeesStart(0);
-              }}
-              showList={showPotentialBlockees}
-              setShowList={setShowPotentialBlockees}
-              dropdownChecklist={
-                <DropdownChecklist
-                  fetchIsLoading={fetchIsLoading}
-                  scrollHandler={handleLoadMoreItemsOnScroll}
-                  scrollHandlerParams={["potential-blockees", potentialBlockees]}
-                  usedFor="potential-blockees"
-                  displayedItemsArray={potentialBlockees}
-                  storageArray={blockedUsersEvent}
-                  setStorageArray={setBlockedUsersEvent}
-                  event={currentEvent}
-                  action={handleAddRemoveBlockedUserOnEvent}
-                  actionEventParamNeeded={false}
-                />
-              }
-            />
+            {potentialBlockees && (
+              <SearchAndDropdownList
+                randomColor={randomColor}
+                name="potential-blockees-search"
+                id="potential-blockees-search"
+                inputRef={blockeesRef}
+                onFocus={() => setFocusedElement("blockees")}
+                onBlur={() => setFocusedElement(undefined)}
+                style={
+                  focusedElement === "blockees"
+                    ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
+                    : undefined
+                }
+                isDisabled={isLoading}
+                query={potentialBlockeesSearchTerm}
+                inputOnChange={(e) => handleDropdownListSearchQuery(e, "blockees")}
+                placeholder="Search users by username, first/last names"
+                clearQueryOnClick={() => {
+                  setPotentialBlockeesSearchTerm("");
+                  setAllPotentialBlockees([]);
+                  setFetchPotentialBlockeesStart(0);
+                }}
+                showList={showPotentialBlockees}
+                setShowList={setShowPotentialBlockees}
+                dropdownChecklist={
+                  <DropdownChecklist
+                    fetchIsLoading={fetchIsLoading}
+                    scrollHandler={handleLoadMoreItemsOnScroll}
+                    scrollHandlerParams={["potential-blockees", potentialBlockees]}
+                    usedFor="potential-blockees"
+                    displayedItemsArray={potentialBlockees}
+                    storageArray={blockedUsersEvent}
+                    setStorageArray={setBlockedUsersEvent}
+                    event={currentEvent}
+                    action={handleAddRemoveBlockedUserOnEvent}
+                    actionEventParamNeeded={false}
+                  />
+                }
+              />
+            )}
           </div>
           <InterestsSection
             randomColor={randomColor}
