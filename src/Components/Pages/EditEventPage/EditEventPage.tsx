@@ -11,9 +11,8 @@ import { useEventContext } from "../../../Hooks/useEventContext";
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
 const EditEventPage = ({ event }: { event?: TEvent }) => {
   const { isLoading, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, logout, fetchAllVisibleOtherUsersQuery } =
-    useUserContext();
-  const { currentEvent, fetchAllEventsQuery } = useEventContext();
+  const { currentUser, userCreatedAccount, logout } = useUserContext();
+  const { currentEvent } = useEventContext();
 
   const navigation = useNavigate();
 
@@ -76,42 +75,11 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
     window.scrollTo(0, 0);
   }, [navigation]);
 
-  const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllVisibleOtherUsersQuery.isError) {
-      return fetchAllVisibleOtherUsersQuery;
-    } else if (fetchAllEventsQuery.isError) {
-      return fetchAllEventsQuery;
-    }
-    return undefined;
-  };
-  const queryWithError = getQueryForQueryLoadingOrErrorComponent();
-
-  const aQueryIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
-
-  const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
-
   return (
     <>
-      {isLoading && <LoadingModal message="Saving changes..." />}
       <h1>Edit Event</h1>
-      {aQueryIsLoading && (
-        <header style={{ marginTop: "3rem" }} className="query-status-text">
-          Loading...
-        </header>
-      )}
-      {queryWithError && (
-        <div className="query-error-container">
-          <header className="query-status-text">Error fetching data.</header>
-          <div className="theme-element-container">
-            <button onClick={() => window.location.reload()}>Retry</button>
-          </div>
-        </div>
-      )}
-      {isNoFetchError && !aQueryIsLoading && (
-        <EventForm randomColor={randomColor} usedFor="edit-event" event={event} />
-      )}
+      {isLoading && <LoadingModal message="Saving changes..." />}
+      <EventForm randomColor={randomColor} usedFor="edit-event" event={event} />
     </>
   );
 };

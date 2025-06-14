@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
-import { useEventContext } from "../../../Hooks/useEventContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import EventForm from "../../Forms/EventForm/EventForm";
@@ -12,7 +11,6 @@ const AddEventPage = () => {
   const navigation = useNavigate();
   const { isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
-  const { fetchAllEventsQuery } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -43,38 +41,11 @@ const AddEventPage = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
-  const isNoFetchError: boolean = !fetchAllEventsQuery.isError;
-
-  const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllEventsQuery.isError) {
-      return fetchAllEventsQuery;
-    }
-    return undefined;
-  };
-  const queryWithError = getQueryForQueryLoadingOrErrorComponent();
-
-  const aQueryIsLoading: boolean = fetchAllEventsQuery.isLoading;
-
   return (
     <>
-      {isLoading && <LoadingModal message="Adding event..." />}
       <h1>Add New Event</h1>
-      {aQueryIsLoading && (
-        <header style={{ marginTop: "3rem" }} className="query-status-text">
-          Loading...
-        </header>
-      )}
-      {queryWithError && (
-        <div className="query-error-container">
-          <header className="query-status-text">Error fetching data.</header>
-          <div className="theme-element-container">
-            <button onClick={() => window.location.reload()}>Retry</button>
-          </div>
-        </div>
-      )}
-      {!aQueryIsLoading && isNoFetchError && (
-        <EventForm randomColor={randomColor} usedFor="add-event" />
-      )}
+      {isLoading && <LoadingModal message="Adding event..." />}
+      <EventForm randomColor={randomColor} usedFor="add-event" />
     </>
   );
 };
