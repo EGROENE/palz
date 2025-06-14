@@ -139,10 +139,26 @@ const getPotentialInviteesController = async (req, res) => {
   res.status(200).json(potentialInvitees);
 };
 
+const getPotentialEventBlockeesController = async (req, res) => {
+  const { user, start, limit } = req.query;
+
+  const username = user;
+  const currentUser = await User.findOne({ username });
+
+  // Should be able to block anyone from event who isn't currentUser
+  const potentialBlockees = await User.find({
+    index: { $gte: Number(start) },
+    _id: { $ne: currentUser._id.toString() },
+  }).limit(Number(limit));
+
+  res.status(200).json(potentialBlockees);
+};
+
 app.get(
   "/palz/edit-event/:id",
   getPotentialEventCOsController,
-  getPotentialInviteesController
+  getPotentialInviteesController,
+  getPotentialEventBlockeesController
 );
 
 // Connect to Mongoose:
