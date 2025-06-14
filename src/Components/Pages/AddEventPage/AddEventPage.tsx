@@ -11,13 +11,8 @@ import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 const AddEventPage = () => {
   const navigation = useNavigate();
   const { isLoading, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, logout, fetchAllVisibleOtherUsersQuery } =
-    useUserContext();
-  const {
-    fetchAllEventsQuery,
-    fetchPotentialCoOrganizersQuery,
-    fetchPotentialInviteesQuery,
-  } = useEventContext();
+  const { currentUser, userCreatedAccount, logout } = useUserContext();
+  const { fetchAllEventsQuery } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -48,31 +43,17 @@ const AddEventPage = () => {
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
-  const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError &&
-    !fetchAllVisibleOtherUsersQuery.isError &&
-    !fetchPotentialCoOrganizersQuery.isError &&
-    !fetchPotentialInviteesQuery.isError;
+  const isNoFetchError: boolean = !fetchAllEventsQuery.isError;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllVisibleOtherUsersQuery.isError) {
-      return fetchAllVisibleOtherUsersQuery;
-    } else if (fetchPotentialCoOrganizersQuery.isError) {
-      return fetchPotentialCoOrganizersQuery;
-    } else if (fetchPotentialInviteesQuery.isError) {
-      return fetchPotentialInviteesQuery;
-    } else if (fetchAllEventsQuery.isError) {
+    if (fetchAllEventsQuery.isError) {
       return fetchAllEventsQuery;
     }
     return undefined;
   };
   const queryWithError = getQueryForQueryLoadingOrErrorComponent();
 
-  const aQueryIsLoading: boolean =
-    fetchAllEventsQuery.isLoading ||
-    fetchAllVisibleOtherUsersQuery.isLoading ||
-    fetchPotentialCoOrganizersQuery.isLoading ||
-    fetchPotentialInviteesQuery.isLoading;
+  const aQueryIsLoading: boolean = fetchAllEventsQuery.isLoading;
 
   return (
     <>
