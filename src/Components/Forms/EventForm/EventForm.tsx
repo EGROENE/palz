@@ -222,9 +222,11 @@ const EventForm = ({
               if (fetchPotentialCOsStart === 0) {
                 setPotentialCoOrganizers(potentialCOsSecure);
               } else {
-                setPotentialCoOrganizers(
-                  potentialCoOrganizers.concat(potentialCOsSecure)
-                );
+                if (potentialCoOrganizers) {
+                  setPotentialCoOrganizers(
+                    potentialCoOrganizers.concat(potentialCOsSecure)
+                  );
+                }
               }
             } else {
               setIsFetchError(true);
@@ -250,9 +252,11 @@ const EventForm = ({
               if (fetchPotentialCOsStart === 0) {
                 setPotentialCoOrganizers(potentialCOsSecure);
               } else {
-                setPotentialCoOrganizers(
-                  potentialCoOrganizers.concat(potentialCOsSecure)
-                );
+                if (potentialCoOrganizers) {
+                  setPotentialCoOrganizers(
+                    potentialCoOrganizers.concat(potentialCOsSecure)
+                  );
+                }
               }
             } else {
               setIsFetchError(true);
@@ -287,7 +291,9 @@ const EventForm = ({
               if (fetchPotentialInviteesStart === 0) {
                 setPotentialInvitees(potentialInviteesSecure);
               } else {
-                setPotentialInvitees(potentialInvitees.concat(potentialInviteesSecure));
+                if (potentialInvitees) {
+                  setPotentialInvitees(potentialInvitees.concat(potentialInviteesSecure));
+                }
               }
             } else {
               setIsFetchError(true);
@@ -314,7 +320,9 @@ const EventForm = ({
               if (fetchPotentialInviteesStart === 0) {
                 setPotentialInvitees(potentialInviteesSecure);
               } else {
-                setPotentialInvitees(potentialInvitees.concat(potentialInviteesSecure));
+                if (potentialInvitees) {
+                  setPotentialInvitees(potentialInvitees.concat(potentialInviteesSecure));
+                }
               }
             } else {
               setIsFetchError(true);
@@ -348,7 +356,9 @@ const EventForm = ({
             if (fetchPotentialBlockeesStart === 0) {
               setPotentialBlockees(potentialBlockeesSecure);
             } else {
-              setPotentialBlockees(potentialBlockees.concat(potentialBlockeesSecure));
+              if (potentialBlockees) {
+                setPotentialBlockees(potentialBlockees.concat(potentialBlockeesSecure));
+              }
             }
           })
           .catch((error) => {
@@ -374,7 +384,9 @@ const EventForm = ({
             if (fetchPotentialBlockeesStart === 0) {
               setPotentialBlockees(potentialBlockeesSecure);
             } else {
-              setPotentialBlockees(potentialBlockees.concat(potentialBlockeesSecure));
+              if (potentialBlockees) {
+                setPotentialBlockees(potentialBlockees.concat(potentialBlockeesSecure));
+              }
             }
           })
           .catch((error) => {
