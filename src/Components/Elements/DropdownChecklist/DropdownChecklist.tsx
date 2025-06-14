@@ -83,24 +83,28 @@ const DropdownChecklist = ({
 
   const getOnChangeHandler = (user: TBarebonesUser) => {
     if (usedFor === "potential-co-organizers") {
-      return () => handleAddRemoveUserAsOrganizer(storageArray, setStorageArray, user);
+      return handleAddRemoveUserAsOrganizer(storageArray, setStorageArray, user);
     }
 
     if (usedFor === "potential-invitees") {
-      return () => handleAddRemoveUserAsInvitee(storageArray, setStorageArray, user);
+      return handleAddRemoveUserAsInvitee(storageArray, setStorageArray, user);
     }
 
     if (usedFor === "potential-additional-chat-members" && currentChat) {
-      return () =>
-        handleAddRemoveUserFromChat(user, storageArray, setStorageArray, currentChat);
+      return handleAddRemoveUserFromChat(
+        user,
+        storageArray,
+        setStorageArray,
+        currentChat
+      );
     }
 
     if (usedFor === "potential-chat-members") {
-      return () => handleAddRemoveUserFromChat(user, storageArray, setStorageArray);
+      return handleAddRemoveUserFromChat(user, storageArray, setStorageArray);
     }
 
     if (usedFor === "potential-blockees") {
-      return () => handleAddRemoveBlockedUserOnEvent(user);
+      return handleAddRemoveBlockedUserOnEvent(user);
     }
   };
 
@@ -134,7 +138,7 @@ const DropdownChecklist = ({
             name={`${usedFor}-${user._id?.toString()}`}
             id={`${usedFor}-${user._id?.toString()}`}
             disabled={isLoading}
-            onChange={getOnChangeHandler(user)}
+            onChange={() => getOnChangeHandler(user)}
             checked={storageArray.map((elem) => elem._id).includes(user._id)}
             type="checkbox"
           />
