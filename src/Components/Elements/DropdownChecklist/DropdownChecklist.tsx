@@ -17,7 +17,6 @@ const DropdownChecklist = ({
   displayedItemsArray,
   storageArray,
   setStorageArray,
-  event,
 }: {
   fetchIsLoading: boolean;
   scrollHandler: Function;
@@ -29,7 +28,6 @@ const DropdownChecklist = ({
   displayedItemsArray: TBarebonesUser[]; // type can be changed later if used for non-user lists
   storageArray: TBarebonesUser[] | TOtherUser[];
   setStorageArray: React.Dispatch<React.SetStateAction<any[]>>;
-  event?: TEvent;
 }) => {
   const { isLoading } = useMainContext();
 
@@ -91,12 +89,7 @@ const DropdownChecklist = ({
     }
 
     if (usedFor === "potential-additional-chat-members" && currentChat) {
-      return handleAddRemoveUserFromChat(
-        user,
-        storageArray,
-        setStorageArray,
-        currentChat
-      );
+      return handleAddRemoveUserFromChat(user, storageArray, setStorageArray);
     }
 
     if (usedFor === "potential-chat-members") {
