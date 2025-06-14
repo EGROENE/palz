@@ -25,10 +25,7 @@ const EventForm = ({
 }) => {
   const { showSidebar, setShowSidebar, isLoading, setIsLoading, theme } =
     useMainContext();
-  const { handleCityStateCountryInput, fetchAllVisibleOtherUsersQuery, currentUser } =
-    useUserContext();
-
-  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+  const { handleCityStateCountryInput, currentUser } = useUserContext();
 
   const {
     handleAddRemoveBlockedUserOnEvent,
@@ -95,10 +92,7 @@ const EventForm = ({
     updateEventMutation,
     createEventMutation,
     deleteEventMutation,
-    fetchAllEventsQuery,
   } = useEventContext();
-
-  const allEvents = fetchAllEventsQuery.data;
 
   const [focusedElement, setFocusedElement] = useState<
     | "title"
@@ -143,8 +137,8 @@ const EventForm = ({
     []
   );
   const [potentialInvitees, setPotentialInvitees] = useState<TBarebonesUser[]>([]);
-  const [potentialBlockees, setPotentialBlockees] = useState<TOtherUser[]>([]);
-  const [blockeesSearchQuery, setBlockeesSearchQuery] = useState<string>("");
+  const [potentialBlockees, setPotentialBlockees] = useState<TBarebonesUser[]>([]);
+
   const [showPotentialCoOrganizers, setShowPotentialCoOrganizers] =
     useState<boolean>(false);
   const [showPotentialInvitees, setShowPotentialInvitees] = useState<boolean>(false);
@@ -174,6 +168,12 @@ const EventForm = ({
   const [fetchPotentialInviteesStart, setFetchPotentialInviteesStart] =
     useState<number>(0);
   const [potentialInviteesSearchTerm, setPotentialInviteesSearchTerm] =
+    useState<string>("");
+
+  const [allPotentialBlockees, setAllPotentialBlockees] = useState<TBarebonesUser[]>([]);
+  const [fetchPotentialBlockeesStart, setFetchPotentialBlockeesStart] =
+    useState<number>(0);
+  const [potentialBlockeesSearchTerm, setPotentialBlockeesSearchTerm] =
     useState<string>("");
 
   const fetchLimit = 10;
@@ -246,6 +246,7 @@ const EventForm = ({
               let potentialInviteesSecure: TBarebonesUser[] = potentialInv.map((pi) =>
                 Methods.getTBarebonesUser(pi)
               );
+
               if (fetchPotentialInviteesStart === 0) {
                 setPotentialInvitees(potentialInviteesSecure);
               } else {
@@ -258,26 +259,44 @@ const EventForm = ({
           .catch((error) => console.log(error))
           .finally(() => setFetchIsLoading(false));
       }
+
+      if (potentialBlockeesSearchTerm === "" && event && event._id) {
+        if (!fetchIsLoading) {
+          setFetchIsLoading(true);
+        }
+        Requests.getPotentialEventBlockees(
+          event._id.toString(),
+          "edit",
+          currentUser,
+          fetchPotentialBlockeesStart,
+          fetchLimit
+        )
+          .then((PBs) => {
+            const potentialBlockeesSecure: TBarebonesUser[] = PBs.map((pb) =>
+              Methods.getTBarebonesUser(pb)
+            );
+
+            if (fetchPotentialBlockeesStart === 0) {
+              setPotentialBlockees(potentialBlockeesSecure);
+            } else {
+              setPotentialBlockees(potentialBlockees.concat(potentialBlockeesSecure));
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            setIsFetchError(true);
+          })
+          .finally(() => setFetchIsLoading(false));
+      }
     }
   }, [
     fetchPotentialCOsStart,
     potentialCOsSearchTerm,
     fetchPotentialInviteesStart,
     potentialInviteesSearchTerm,
+    fetchPotentialBlockeesStart,
+    potentialBlockeesSearchTerm,
   ]);
-
-  useEffect(() => {
-    if (visibleOtherUsers) {
-      setPotentialBlockees(
-        visibleOtherUsers.filter(
-          (otherUser) =>
-            otherUser._id &&
-            !invitees.map((i) => i._id).includes(otherUser._id.toString()) &&
-            !organizers.map((o) => o._id).includes(otherUser._id.toString())
-        )
-      );
-    }
-  }, [invitees, organizers, blockedUsersEvent]);
 
   // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
   const handleLoadMoreItemsOnScroll = (
@@ -314,6 +333,15 @@ const EventForm = ({
         potentialInviteesSearchTerm === ""
       ) {
         setFetchPotentialInviteesStart(lastItem.index + 1);
+      }
+
+      if (
+        lastItem &&
+        lastItem.index &&
+        list === "potential-blockees" &&
+        potentialBlockeesSearchTerm === ""
+      ) {
+        setFetchPotentialBlockeesStart(lastItem.index + 1);
       }
     }
   };
@@ -388,6 +416,42 @@ const EventForm = ({
           }
         })
         .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    }
+  };
+
+  const initializePotentialBlockeesSearch = (input: string): void => {
+    setFetchIsLoading(true);
+    setFetchPotentialBlockeesStart(0);
+    const eventType = usedFor === "add-event" ? "new" : "edit";
+    if (event && event._id) {
+      Requests.getPotentialEventBlockees(
+        event._id.toString(),
+        eventType,
+        currentUser,
+        0,
+        Infinity
+      )
+        .then((batchOfPotentialBlockees) => {
+          setAllPotentialBlockees(
+            batchOfPotentialBlockees.map((pb) => Methods.getTBarebonesUser(pb))
+          );
+          let matchingPotentialBlockees = [];
+          for (const pb of batchOfPotentialBlockees) {
+            if (
+              pb.username?.includes(input.toLowerCase()) ||
+              pb.firstName?.includes(input.toLowerCase()) ||
+              pb.lastName?.includes(input.toLowerCase())
+            ) {
+              matchingPotentialBlockees.push(Methods.getTBarebonesUser(pb));
+            }
+          }
+          setPotentialBlockees(matchingPotentialBlockees);
+        })
+        .catch((error) => {
+          console.log(error);
+          setIsFetchError(true);
+        })
         .finally(() => setFetchIsLoading(false));
     }
   };
@@ -826,28 +890,31 @@ const EventForm = ({
         setFetchPotentialInviteesStart(0);
       }
     }
-    if (field === "blockees" && visibleOtherUsers) {
-      setBlockeesSearchQuery(inputCleaned);
+    if (field === "blockees") {
+      setPotentialBlockeesSearchTerm(inputCleaned);
       setShowPotentialBlockees(true);
       if (inputCleaned.replace(/\s+/g, "") !== "") {
-        const matchingUsers: TOtherUser[] = [];
-        for (const user of visibleOtherUsers) {
-          if (
-            user.firstName &&
-            user.lastName &&
-            user.username &&
-            (user.firstName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-              user?.lastName.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-              user?.username.includes(inputCleaned.toLowerCase()))
-          ) {
-            matchingUsers.push(user);
+        if (allPotentialInvitees.length === 0) {
+          initializePotentialBlockeesSearch(inputCleaned);
+        } else {
+          const matchingUsers: TBarebonesUser[] = [];
+          for (const user of allPotentialBlockees) {
+            if (
+              user?.firstName
+                ?.toLowerCase()
+                .includes(inputCleaned.toLowerCase().trim()) ||
+              user?.lastName?.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+              user?.username?.includes(inputCleaned.toLowerCase())
+            ) {
+              matchingUsers.push(user);
+            }
           }
+          setPotentialBlockees(matchingUsers);
         }
-        setPotentialBlockees(matchingUsers);
       } else {
-        if (visibleOtherUsers) {
-          setPotentialBlockees(visibleOtherUsers);
-        }
+        setPotentialBlockeesSearchTerm("");
+        setAllPotentialBlockees([]);
+        setFetchPotentialBlockeesStart(0);
       }
     }
   };
@@ -1875,19 +1942,21 @@ const EventForm = ({
                   : undefined
               }
               isDisabled={isLoading}
-              query={blockeesSearchQuery}
+              query={potentialBlockeesSearchTerm}
               inputOnChange={(e) => handleDropdownListSearchQuery(e, "blockees")}
               placeholder="Search users by username, first/last names"
               clearQueryOnClick={() => {
-                setBlockeesSearchQuery("");
-                if (visibleOtherUsers) {
-                  setPotentialBlockees(visibleOtherUsers);
-                }
+                setPotentialBlockeesSearchTerm("");
+                setAllPotentialBlockees([]);
+                setFetchPotentialBlockeesStart(0);
               }}
               showList={showPotentialBlockees}
               setShowList={setShowPotentialBlockees}
               dropdownChecklist={
                 <DropdownChecklist
+                  fetchIsLoading={fetchIsLoading}
+                  scrollHandler={handleLoadMoreItemsOnScroll}
+                  scrollHandlerParams={["potential-blockees", potentialBlockees]}
                   usedFor="potential-blockees"
                   displayedItemsArray={potentialBlockees}
                   storageArray={blockedUsersEvent}
