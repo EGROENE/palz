@@ -411,6 +411,26 @@ const getPotentialInvitees = (
   });
 };
 
+const getPotentialEventBlockees = (
+  eventID: string,
+  eventType: "new" | "edit",
+  currentUser: TUser | null,
+  start: number,
+  limit: number
+): Promise<TUser[]> => {
+  const url: string =
+    eventType === "new"
+      ? "add-event"
+      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}`;
+
+  return fetch(url, {
+    method: "GET",
+    redirect: "follow",
+  }).then((response) => {
+    return response.json().then((potentialBlockees: TUser[]) => potentialBlockees);
+  });
+};
+
 const getAllEvents = (): Promise<TEvent[]> => {
   return fetch("http://localhost:4000/palz/events", {
     method: "GET",
@@ -1230,6 +1250,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getPotentialEventBlockees,
   getExplorableEvents,
   getFriends,
   removeFromBlockedBy,
