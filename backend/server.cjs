@@ -145,7 +145,7 @@ const getPotentialEventBlockeesController = async (req, res) => {
   const username = user;
   const currentUser = await User.findOne({ username });
 
-  // Should be able to block anyone from event who isn't currentUser
+  // Should be able to block anyone from event who isn't currentUser and who hasn't blocked currentUser
   const potentialBlockees = await User.find({
     index: { $gte: Number(start) },
     _id: { $ne: currentUser._id.toString() },
@@ -154,12 +154,16 @@ const getPotentialEventBlockeesController = async (req, res) => {
   res.status(200).json(potentialBlockees);
 };
 
-app.get(
-  "/palz/edit-event/:id",
-  getPotentialEventCOsController,
-  getPotentialInviteesController,
-  getPotentialEventBlockeesController
-);
+app.get("/palz/edit-event/:id", (req, res) => {
+  const { list } = req.query;
+
+  if (list === "potentialEventBlockees") {
+    return getPotentialEventBlockeesController(req, res);
+  } else if (list === "potentialInvitees") {
+    return getPotentialInviteesController(req, res);
+  }
+  return getPotentialEventCOsController(req, res);
+});
 
 // Connect to Mongoose:
 mongoose
