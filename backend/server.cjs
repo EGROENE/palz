@@ -165,6 +165,17 @@ app.get("/palz/edit-event/:id", (req, res) => {
   return getPotentialEventCOsController(req, res);
 });
 
+app.get("/palz/add-event/", (req, res) => {
+  const { list } = req.query;
+
+  if (list === "potentialEventBlockees") {
+    return getPotentialEventBlockeesController(req, res);
+  } else if (list === "potentialInvitees") {
+    return getPotentialInviteesController(req, res);
+  }
+  return getPotentialEventCOsController(req, res);
+});
+
 // Connect to Mongoose:
 mongoose
   .connect(process.env.MONGODB_URI)
