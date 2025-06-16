@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const Chat = require("../models/chatModel");
+const User = require("../models/userModel");
 
 // get all chats in which user is member:
 const getCurrentUserChats = async (req, res) => {
@@ -9,6 +10,21 @@ const getCurrentUserChats = async (req, res) => {
   const chats = await Chat.find({ "members._id": { $eq: currentUserID } });
 
   res.status(200).json(chats);
+};
+
+// return all users that have an index greater than or equal to passed-in index & who are not currentUser. Filtering based on whether users are already in a chat or based on privacy settings will be done in request.
+const getPotentialChatMembers = async (req, res) => {
+  const { user, start, limit } = req.query;
+
+  const username = user;
+  const currentUser = await User.findOne({ username });
+
+  const potentialCMs = await User.find({
+    index: { $gte: Number(start) },
+    _id: { $ne: currentUser._id.toString() },
+  }).limit(Number(limit));
+
+  res.status(200).json(potentialCMs);
 };
 
 // create new chat:
@@ -70,6 +86,7 @@ const updateChat = async (req, res) => {
 };
 
 module.exports = {
+  getPotentialChatMembers,
   getCurrentUserChats,
   createChat,
   deleteChat,
