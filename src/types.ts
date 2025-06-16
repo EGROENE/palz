@@ -161,17 +161,17 @@ export type TEvent = {
 
 export type TChat = {
   _id: string | mongoose.Types.ObjectId;
-  members: string[];
+  members: TBarebonesUser[];
   messages: TMessage[];
   dateCreated: number;
   chatName: string | undefined;
   chatType: "two-member" | "group";
-  admins?: string[];
+  admins?: TBarebonesUser[];
 };
 
 export type TMessage = {
   _id: string | mongoose.Types.ObjectId;
-  sender: string;
+  sender: TBarebonesUser;
   content: string;
   timeSent: number;
   image: string;
@@ -180,11 +180,11 @@ export type TMessage = {
 };
 
 export type TChatValuesToUpdate = {
-  members?: string[];
+  members?: TBarebonesUser[];
   messages?: TMessage[];
   dateCreated?: number;
   chatName?: string;
-  admins?: string[];
+  admins?: TBarebonesUser[];
 };
 
 export type TUserValuesToUpdate = {
