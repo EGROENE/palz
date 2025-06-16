@@ -69,17 +69,17 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showEditChatNameModal, setShowEditChatNameModal] = useState<boolean>(false);
 
-  const [usersToAddToChat, setUsersToAddToChat] = useState<string[]>([]);
+  const [usersToAddToChat, setUsersToAddToChat] = useState<TBarebonesUser[]>([]);
 
   const [chatName, setChatName] = useState<string | undefined>(undefined);
   const [chatNameError, setChatNameError] = useState<string>("");
 
-  const [admins, setAdmins] = useState<string[]>([]);
+  const [admins, setAdmins] = useState<TBarebonesUser[]>([]);
 
   const [showPotentialChatMembers, setShowPotentialChatMembers] =
     useState<boolean>(false);
 
-  const [potentialChatMembers, setPotentialChatMembers] = useState<TOtherUser[]>([]);
+  const [potentialChatMembers, setPotentialChatMembers] = useState<TBarebonesUser[]>([]);
 
   const [chatMembersSearchQuery, setChatMembersSearchQuery] = useState<string>("");
 
@@ -379,11 +379,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     onError: (error) => console.log(error),
   });
 
-  const getChatMembers = (members: string[]): TOtherUser[] => {
+  const getChatMembers = (members: TBarebonesUser[]): TOtherUser[] => {
     let chatMembers: TOtherUser[] = [];
     if (visibleOtherUsers) {
       for (const user of visibleOtherUsers) {
-        if (user._id && members.includes(user._id.toString())) {
+        if (user._id && members.map((m) => m._id).includes(user._id.toString())) {
           chatMembers.push(user);
         }
       }
@@ -429,11 +429,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleRemoveUserFromChat = (user: TOtherUser, chat?: TChat): void => {
     if (chat && chat.admins && user._id && user) {
-      let updatedAdmins: string[] = [];
-      const updatedMembers: string[] = chat.members.filter(
-        (member) => member !== user._id
+      let updatedAdmins: TBarebonesUser[] = [];
+      const updatedMembers: TBarebonesUser[] = chat.members.filter(
+        (member) => member._id?.toString() !== user._id
       );
-      if (chat.admins.includes(user._id.toString())) {
+      if (chat.admins.map((a) => a._id).includes(user._id.toString())) {
         // if user is only admin left, inform by toast that they can't leave until another admin is assigned:
         if (chat.admins.length - 1 === 0) {
           toast.error("Please assign another admin before leaving the chat.", {
@@ -445,7 +445,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           });
         } else {
           // If user isn't only admin left, remove them from chat:
-          updatedAdmins = chat.admins.filter((admin) => admin !== user._id);
+          updatedAdmins = chat.admins.filter(
+            (admin) => admin._id?.toString() !== user._id
+          );
           const chatValuesToUpdate: TChatValuesToUpdate = {
             admins: updatedAdmins,
             members: updatedMembers,
@@ -468,27 +470,29 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (!chat) {
-      setUsersToAddToChat(usersToAddToChat.filter((userToAdd) => userToAdd !== user._id));
+      setUsersToAddToChat(
+        usersToAddToChat.filter((userToAdd) => userToAdd._id !== user._id)
+      );
     }
   };
 
   const handleAddRemoveUserFromChat = (
     user: TBarebonesUser,
-    usersToAddToChat: string[],
-    setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>
+    usersToAddToChat: TBarebonesUser[],
+    setUsersToAddToChat: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>
   ): void => {
     if (user._id) {
-      if (usersToAddToChat.includes(user._id.toString())) {
+      if (usersToAddToChat.map((u) => u._id).includes(user._id.toString())) {
         setUsersToAddToChat(
-          usersToAddToChat.filter((userToAdd) => userToAdd !== user._id)
+          usersToAddToChat.filter((userToAdd) => userToAdd._id !== user._id)
         );
       } else {
-        setUsersToAddToChat(usersToAddToChat.concat(user._id.toString()));
+        setUsersToAddToChat(usersToAddToChat.concat(user));
       }
     }
   };
 
-  const handleAddMultipleUsersToChat = (users: string[], chat: TChat): void => {
+  const handleAddMultipleUsersToChat = (users: TBarebonesUser[], chat: TChat): void => {
     const updatedChatMembers = chat.members.concat(users);
 
     const chatValuesToUpdate: TChatValuesToUpdate = {
@@ -502,7 +506,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAddAdminToChat = (user: TOtherUser, chat: TChat): void => {
     setCurrentOtherUser(user);
     const updatedAdmins =
-      chat.admins && user._id ? chat.admins.concat(user._id.toString()) : [];
+      chat.admins && user._id ? chat.admins.concat(Methods.getTBarebonesUser(user)) : [];
     const chatValuesToUpdate = { admins: updatedAdmins };
     const purpose = "add-admin";
     updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
@@ -520,7 +524,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     } else {
       const purpose = "remove-admin";
       const updatedAdmins =
-        chat.admins && chat.admins.filter((admin) => admin !== user._id);
+        chat.admins && chat.admins.filter((admin) => admin._id !== user._id);
       const chatValuesToUpdate = { admins: updatedAdmins };
       updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
     }
@@ -532,7 +536,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
     const newMessage: TMessage = {
       _id: messageId,
-      sender: currentUser && currentUser._id ? currentUser._id.toString() : "",
+      sender:
+        currentUser && currentUser._id ? Methods.getTBarebonesUser(currentUser) : "",
       content: content.trim(),
       image: "",
       timeSent: now,
@@ -602,7 +607,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.ChangeEvent<HTMLInputElement>,
     showList: boolean,
     setShowList: React.Dispatch<React.SetStateAction<boolean>>,
-    searchArray: TOtherUser[],
+    searchArray: TBarebonesUser[],
     resetFunction: Function
   ): void => {
     e.preventDefault();
@@ -612,7 +617,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     const input = e.target.value.toLowerCase().replace(/s\+/g, " ");
     setChatMembersSearchQuery(input);
 
-    let matchingUsers: TOtherUser[] = [];
+    let matchingUsers: TBarebonesUser[] = [];
     if (input.replace(/\s+/g, "") !== "") {
       for (const user of searchArray) {
         if (user.username && user.firstName && user.lastName) {
@@ -649,7 +654,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       if (
         currentUser &&
         currentUser._id &&
-        message.sender !== currentUser._id &&
+        message.sender._id !== currentUser._id &&
         !usersWhoSawMessage.includes(currentUser._id.toString())
       ) {
         message.seenBy.push({ user: currentUser._id.toString(), time: now });
@@ -693,18 +698,18 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           chat.members.length === 2 &&
           currentUser &&
           currentUser._id &&
-          chat.members.includes(currentUser._id.toString()) &&
+          chat.members.map((m) => m._id).includes(currentUser._id.toString()) &&
           otherUser._id &&
-          chat.members.includes(otherUser._id.toString())
+          chat.members.map((m) => m._id).includes(otherUser._id.toString())
       )[0];
 
       if (existingChatWithListedChatMember) {
         return handleOpenChat(existingChatWithListedChatMember);
       }
 
-      const newChatMembers: string[] =
+      const newChatMembers: TBarebonesUser[] =
         otherUser._id && currentUser && currentUser._id
-          ? [otherUser._id.toString(), currentUser._id.toString()]
+          ? [Methods.getTBarebonesUser(otherUser), Methods.getTBarebonesUser(currentUser)]
           : [];
 
       return handleCreateChat({
@@ -725,7 +730,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         const usersWhoSawMessage: string[] = message.seenBy.map((obj) => obj.user);
         if (
           !usersWhoSawMessage.includes(currentUser._id.toString()) &&
-          message.sender !== currentUser._id
+          message.sender._id !== currentUser._id
         ) {
           unreadMessages.push(message);
         }
@@ -773,17 +778,17 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         chat.members.length === 2 &&
         currentUser &&
         currentUser._id &&
-        chat.members.includes(currentUser._id.toString()) &&
+        chat.members.map((m) => m._id).includes(currentUser._id.toString()) &&
         otherUser._id &&
-        chat.members.includes(otherUser._id.toString())
+        chat.members.map((m) => m._id).includes(otherUser._id.toString())
     )[0];
 
     if (existingChatWithListedChatMember) {
       return handleOpenChat(existingChatWithListedChatMember);
     } else {
-      const newChatMembers: string[] =
+      const newChatMembers: TBarebonesUser[] =
         otherUser._id && currentUser && currentUser._id
-          ? [otherUser._id.toString(), currentUser._id.toString()]
+          ? [Methods.getTBarebonesUser(otherUser), Methods.getTBarebonesUser(currentUser)]
           : [];
       return handleCreateChat({
         _id: new mongoose.Types.ObjectId().toString(),
@@ -794,64 +799,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         dateCreated: Date.now(),
         ...(usersToAddToChat.length >= 2 &&
           currentUser &&
-          currentUser._id && { admins: [currentUser._id.toString()] }),
+          currentUser._id && { admins: [Methods.getTBarebonesUser(currentUser)] }),
       });
     }
   };
 
-  const initiatePotentialChatMembers = (): void => {
-    if (visibleOtherUsers) {
-      setPotentialChatMembers(
-        visibleOtherUsers.filter((otherUser) => {
-          const userIsNotAlreadyInCurrentChat: boolean =
-            otherUser._id &&
-            currentChat &&
-            currentChat.members.includes(otherUser._id.toString())
-              ? false
-              : true;
-
-          const currentUserIsFriendOfFriend: boolean =
-            currentUser && currentUser._id && otherUser._id
-              ? getOtherUserFriends(otherUser._id.toString()).some(
-                  (otherUserFriend) =>
-                    currentUser._id &&
-                    otherUserFriend.friends.includes(currentUser._id.toString())
-                )
-              : false;
-
-          const currentUserIsFriend: boolean =
-            currentUser && currentUser._id && otherUser._id
-              ? currentUser.friends.includes(otherUser._id.toString())
-              : false;
-
-          if (otherUser._id) {
-            Requests.getUserByID(otherUser._id.toString())
-              .then((response) => {
-                if (response.ok) {
-                  response.json().then((otherUser) => {
-                    if (
-                      userIsNotAlreadyInCurrentChat &&
-                      (otherUser.whoCanMessage === "anyone" ||
-                        (otherUser.whoCanMessage === "friends" && currentUserIsFriend) ||
-                        (otherUser.whoCanMessage === "friends of friends" &&
-                          currentUserIsFriendOfFriend))
-                    ) {
-                      return otherUser;
-                    }
-                  });
-                } else {
-                  setError("Error initiating potential chat members");
-                }
-              })
-              .catch((error) => console.log(error));
-          }
-        })
-      );
-    }
-  };
-
   const chatContextValues: TChatContext = {
-    initiatePotentialChatMembers,
     handleUpdateChatName,
     showEditChatNameModal,
     setShowEditChatNameModal,

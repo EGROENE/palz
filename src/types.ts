@@ -812,11 +812,11 @@ export type TChatContext = {
   setShowMembers: React.Dispatch<React.SetStateAction<boolean>>;
   showAreYouSureYouWantToLeaveChat: boolean;
   setShowAreYouSureYouWantToLeaveChat: React.Dispatch<React.SetStateAction<boolean>>;
-  admins: string[];
-  setAdmins: React.Dispatch<React.SetStateAction<string[]>>;
+  admins: TBarebonesUser[];
+  setAdmins: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   showAddMemberModal: boolean;
   setShowAddMemberModal: React.Dispatch<React.SetStateAction<boolean>>;
-  handleAddMultipleUsersToChat: (users: string[], chat: TChat) => void;
+  handleAddMultipleUsersToChat: (users: TBarebonesUser[], chat: TChat) => void;
   createChatMutation: UseMutationResult<
     Response,
     Error,
@@ -842,14 +842,13 @@ export type TChatContext = {
     e: React.ChangeEvent<HTMLInputElement>,
     showList: boolean,
     setShowList: React.Dispatch<React.SetStateAction<boolean>>,
-    searchArray: TOtherUser[],
+    searchArray: TBarebonesUser[],
     resetFunction: Function
   ) => void;
   showPotentialChatMembers: boolean;
   setShowPotentialChatMembers: React.Dispatch<React.SetStateAction<boolean>>;
-  potentialChatMembers: TOtherUser[];
-  setPotentialChatMembers: React.Dispatch<React.SetStateAction<TOtherUser[]>>;
-  initiatePotentialChatMembers: () => void;
+  potentialChatMembers: TBarebonesUser[];
+  setPotentialChatMembers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   chatMembersSearchQuery: string;
   setChatMembersSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   chatName: string | undefined;
@@ -859,12 +858,12 @@ export type TChatContext = {
   handleRemoveUserFromChat: (user: TOtherUser, chat: TChat) => void;
   handleAddRemoveUserFromChat: (
     user: TBarebonesUser,
-    usersToAddToChat: string[],
-    setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>,
+    usersToAddToChat: TBarebonesUser[],
+    setUsersToAddToChat: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>,
     chat?: TChat
   ) => void;
-  usersToAddToChat: string[];
-  setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>;
+  usersToAddToChat: TBarebonesUser[];
+  setUsersToAddToChat: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   numberOfPotentialChatMembersDisplayed: number | undefined;
   setNumberOfPotentialChatMembersDisplayed: React.Dispatch<
     React.SetStateAction<number | undefined>
@@ -873,7 +872,7 @@ export type TChatContext = {
   setCurrentChat: React.Dispatch<React.SetStateAction<TChat | null>>;
   showChatModal: boolean;
   setShowChatModal: React.Dispatch<React.SetStateAction<boolean>>;
-  getChatMembers: (members: string[]) => TOtherUser[];
+  getChatMembers: (members: TBarebonesUser[]) => TOtherUser[];
   fetchChatsQuery: UseQueryResult<TChat[], Error>;
   showCreateNewChatModal: boolean;
   setShowCreateNewChatModal: React.Dispatch<React.SetStateAction<boolean>>;
