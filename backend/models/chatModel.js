@@ -29,13 +29,23 @@ const Schema = mongoose.Schema;
   },
 }); */
 
+const barebonesUser = new Schema({
+  _id: String | mongoose.Types.ObjectId,
+  username: String,
+  firstName: String,
+  lastName: String,
+  profileImage: String,
+  emailAddress: String,
+  index: Number,
+});
+
 const chatSchema = new Schema({
   _id: {
     type: mongoose.Schema.ObjectId,
     required: true,
   },
   members: {
-    type: [String],
+    type: [barebonesUser],
     required: true,
   },
   messages: {
@@ -55,7 +65,7 @@ const chatSchema = new Schema({
     required: true,
   },
   admins: {
-    type: [String],
+    type: [barebonesUser],
     required: false,
   },
 });
