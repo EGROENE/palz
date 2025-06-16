@@ -22,8 +22,6 @@ const CreateNewChatModal = () => {
     admins,
     handleCreateChat,
     setShowCreateNewChatModal,
-    numberOfPotentialChatMembersDisplayed,
-    setNumberOfPotentialChatMembersDisplayed,
     handleAddRemoveUserFromChat,
     usersToAddToChat,
     setUsersToAddToChat,
@@ -150,9 +148,6 @@ const CreateNewChatModal = () => {
               displayedItemsArray={potentialChatMembers}
               storageArray={usersToAddToChat}
               setStorageArray={setUsersToAddToChat}
-              displayedItemsCount={numberOfPotentialChatMembersDisplayed}
-              setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
-              displayedItemsCountInterval={10}
             />
           }
         />
