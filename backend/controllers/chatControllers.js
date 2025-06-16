@@ -6,7 +6,7 @@ const Chat = require("../models/chatModel");
 const getCurrentUserChats = async (req, res) => {
   const { currentUserID } = req.params;
 
-  const chats = await Chat.find({ members: currentUserID });
+  const chats = await Chat.find({ "members._id": { $eq: currentUserID } });
 
   res.status(200).json(chats);
 };
