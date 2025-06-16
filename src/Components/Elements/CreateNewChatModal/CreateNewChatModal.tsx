@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TOtherUser, TThemeColor } from "../../../types";
+import { TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -83,17 +83,6 @@ const CreateNewChatModal = () => {
 
   const chatCanBeCreated = chatNameError === "" && usersToAddToChat.length > 0;
 
-  let usersToAdd: TOtherUser[] = [];
-  if (visibleOtherUsers) {
-    for (const userID of usersToAddToChat) {
-      for (const otherUser of visibleOtherUsers) {
-        if (otherUser._id === userID) {
-          usersToAdd.push(otherUser);
-        }
-      }
-    }
-  }
-
   return (
     <div tabIndex={0} aria-hidden="false" className="modal-background">
       <i
@@ -120,7 +109,7 @@ const CreateNewChatModal = () => {
         <header>Add people to chat:</header>
         {usersToAddToChat.length > 0 && (
           <div className="added-user-tab-container">
-            {usersToAdd.map((user) => (
+            {usersToAddToChat.map((user) => (
               <Tab
                 key={user._id?.toString()}
                 info={user}
@@ -159,7 +148,7 @@ const CreateNewChatModal = () => {
               action={handleAddRemoveUserFromChat}
               actionEventParamNeeded={false}
               displayedItemsArray={potentialChatMembers}
-              storageArray={usersToAdd}
+              storageArray={usersToAddToChat}
               setStorageArray={setUsersToAddToChat}
               displayedItemsCount={numberOfPotentialChatMembersDisplayed}
               setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
