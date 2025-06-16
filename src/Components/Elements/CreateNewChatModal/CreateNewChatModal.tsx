@@ -6,6 +6,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import mongoose from "mongoose";
+import Methods from "../../../methods";
 
 // add members
 // name chat (if over 1 other member)
@@ -185,20 +186,17 @@ const CreateNewChatModal = () => {
           </button>
           <button
             onClick={() => {
-              const userIDsToAddToChat = usersToAddToChat.concat(
-                currentUser && currentUser._id ? currentUser._id.toString() : ""
-              );
               handleCreateChat({
                 _id: new mongoose.Types.ObjectId().toString(),
-                members: userIDsToAddToChat,
+                members: usersToAddToChat,
                 messages: [],
                 chatName: chatName,
-                chatType: userIDsToAddToChat.length > 2 ? "group" : "two-member",
+                chatType: usersToAddToChat.length > 2 ? "group" : "two-member",
                 dateCreated: Date.now(),
                 ...(usersToAddToChat.length >= 2 &&
                   currentUser &&
                   currentUser._id && {
-                    admins: [currentUser._id.toString()].concat(admins),
+                    admins: [Methods.getTBarebonesUser(currentUser)].concat(admins),
                   }),
               });
             }}
