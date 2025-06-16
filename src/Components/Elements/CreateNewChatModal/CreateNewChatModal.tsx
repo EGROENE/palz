@@ -38,7 +38,6 @@ const CreateNewChatModal = () => {
     setChatMembersSearchQuery,
     handleChatNameInput,
     handleSearchChatMembersInput,
-    initiatePotentialChatMembers,
   } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -56,10 +55,6 @@ const CreateNewChatModal = () => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
-  useEffect(() => {
-    initiatePotentialChatMembers();
-  }, [usersToAddToChat]);
-
   const handleCancelNewChatCreation = (
     e:
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -67,7 +62,6 @@ const CreateNewChatModal = () => {
       | React.KeyboardEvent<HTMLElement>
   ): void => {
     e.preventDefault();
-    initiatePotentialChatMembers();
     if (usersToAddToChat.length > 0) {
       setUsersToAddToChat([]);
     }
@@ -155,10 +149,7 @@ const CreateNewChatModal = () => {
           }}
           placeholder="Search users by username, first/last names"
           query={chatMembersSearchQuery}
-          clearQueryOnClick={() => {
-            setChatMembersSearchQuery("");
-            initiatePotentialChatMembers();
-          }}
+          clearQueryOnClick={() => setChatMembersSearchQuery("")}
           showList={showPotentialChatMembers}
           setShowList={setShowPotentialChatMembers}
           dropdownChecklist={
