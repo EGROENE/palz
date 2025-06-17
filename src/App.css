@@ -913,10 +913,17 @@ form textarea {
   margin-bottom: 5rem;
 }
 
-.create-new-chat .search-and-dropdown i {
+#dropdown-list-button-icon {
   position: absolute;
   top: 9px;
   left: 72%;
+  font-size: 1.25rem;
+}
+
+#clear-searchbox-icon {
+  position: absolute;
+  top: 9px;
+  left: 38%;
   font-size: 1.25rem;
 }
 
@@ -1528,7 +1535,7 @@ form textarea {
 }
 
 .dropdown-search {
-  width: 100%;
+  /* width: 100%; */
   /* height: calc(28px - 0.45rem); */
   /* max-height: calc(28px - 0.45rem); */
   margin-right: 1rem;
