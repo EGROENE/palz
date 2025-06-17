@@ -788,6 +788,16 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  isFetchError: boolean;
+  setIsFetchError: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchIsLoading: boolean;
+  setFetchIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchStart: number;
+  setFetchStart: React.Dispatch<React.SetStateAction<number>>;
+  displayedPotentialChatMembers: TBarebonesUser[] | null;
+  setDisplayedPotentialChatMembers: React.Dispatch<
+    React.SetStateAction<TBarebonesUser[] | null>
+  >;
   handleUpdateChatName: (chat: TChat) => void;
   showEditChatNameModal: boolean;
   setShowEditChatNameModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -847,8 +857,6 @@ export type TChatContext = {
   ) => void;
   showPotentialChatMembers: boolean;
   setShowPotentialChatMembers: React.Dispatch<React.SetStateAction<boolean>>;
-  potentialChatMembers: TBarebonesUser[];
-  setPotentialChatMembers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   chatMembersSearchQuery: string;
   setChatMembersSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   chatName: string | undefined;

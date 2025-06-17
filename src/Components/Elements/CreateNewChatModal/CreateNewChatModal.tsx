@@ -7,6 +7,7 @@ import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import mongoose from "mongoose";
 import Methods from "../../../methods";
+import Requests from "../../../requests";
 
 // add members
 // name chat (if over 1 other member)
@@ -14,9 +15,7 @@ import Methods from "../../../methods";
 // in chat preview, if no messages, show NO MESSAGES YET if no messages exist in chat
 
 const CreateNewChatModal = () => {
-  const { currentUser, fetchAllVisibleOtherUsersQuery } = useUserContext();
-
-  const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
+  const { currentUser } = useUserContext();
 
   const {
     admins,
@@ -32,14 +31,25 @@ const CreateNewChatModal = () => {
     setChatNameError,
     showPotentialChatMembers,
     setShowPotentialChatMembers,
-    potentialChatMembers,
     chatMembersSearchQuery,
     setChatMembersSearchQuery,
     handleChatNameInput,
-    handleSearchChatMembersInput,
+    displayedPotentialChatMembers,
+    setDisplayedPotentialChatMembers,
+    fetchStart,
+    fetchIsLoading,
+    setFetchIsLoading,
+    isFetchError,
+    setIsFetchError,
   } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  const fetchLimit = 10;
+
+  if (isFetchError) {
+    throw new Error("Couldn't fetch potential chat members.");
+  }
 
   useEffect(() => {
     // Set color of event card's border randomly:
@@ -53,6 +63,34 @@ const CreateNewChatModal = () => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
   }, []);
+
+  useEffect(() => {
+    setFetchIsLoading(true);
+    if (chatMembersSearchQuery === "") {
+      Requests.getPotentialChatMembers(currentUser, fetchStart, fetchLimit)
+        .then((batchOfPotentialCMs) => {
+          if (batchOfPotentialCMs) {
+            if (fetchStart === 0) {
+              setDisplayedPotentialChatMembers(
+                batchOfPotentialCMs.map((pf) => Methods.getTBarebonesUser(pf))
+              );
+            } else {
+              if (displayedPotentialChatMembers) {
+                setDisplayedPotentialChatMembers(
+                  displayedPotentialChatMembers.concat(
+                    batchOfPotentialCMs.map((pf) => Methods.getTBarebonesUser(pf))
+                  )
+                );
+              }
+            }
+          } else {
+            setIsFetchError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    }
+  }, [fetchStart]);
 
   const handleCancelNewChatCreation = (
     e:
@@ -124,17 +162,7 @@ const CreateNewChatModal = () => {
           name="chat-members-search"
           id="chat-members-search"
           randomColor={randomColor}
-          inputOnChange={(e) => {
-            if (visibleOtherUsers) {
-              return handleSearchChatMembersInput(
-                e,
-                showPotentialChatMembers,
-                setShowPotentialChatMembers,
-                visibleOtherUsers,
-                initiatePotentialChatMembers
-              );
-            }
-          }}
+          inputOnChange={() => console.log("Fck")}
           placeholder="Search users by username, first/last names"
           query={chatMembersSearchQuery}
           clearQueryOnClick={() => setChatMembersSearchQuery("")}
@@ -145,9 +173,10 @@ const CreateNewChatModal = () => {
               usedFor="potential-chat-members"
               action={handleAddRemoveUserFromChat}
               actionEventParamNeeded={false}
-              displayedItemsArray={potentialChatMembers}
+              displayedItemsArray={displayedPotentialChatMembers}
               storageArray={usersToAddToChat}
               setStorageArray={setUsersToAddToChat}
+              fetchIsLoading={fetchIsLoading}
             />
           }
         />

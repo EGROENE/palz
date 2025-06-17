@@ -26,7 +26,7 @@ import { useEventContext } from "../Hooks/useEventContext";
 export const ChatContext = createContext<TChatContext | null>(null);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
-  const { theme, setError, error } = useMainContext();
+  const { theme, error } = useMainContext();
 
   if (error) {
     throw new Error(error);
@@ -38,7 +38,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setCurrentOtherUser,
     currentOtherUser,
     fetchAllVisibleOtherUsersQuery,
-    getOtherUserFriends,
   } = useUserContext();
 
   const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
@@ -79,9 +78,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [showPotentialChatMembers, setShowPotentialChatMembers] =
     useState<boolean>(false);
 
-  const [potentialChatMembers, setPotentialChatMembers] = useState<TBarebonesUser[]>([]);
-
   const [chatMembersSearchQuery, setChatMembersSearchQuery] = useState<string>("");
+
+  const [displayedPotentialChatMembers, setDisplayedPotentialChatMembers] = useState<
+    TBarebonesUser[] | null
+  >(null);
+  const [fetchStart, setFetchStart] = useState<number>(0);
+  const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
+  const [isFetchError, setIsFetchError] = useState<boolean>(false);
 
   const [inputMessage, setInputMessage] = useState<string>("");
 
@@ -630,7 +634,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           }
         }
       }
-      setPotentialChatMembers(matchingUsers);
+      setDisplayedPotentialChatMembers(matchingUsers);
     } else {
       resetFunction();
     }
@@ -805,6 +809,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    displayedPotentialChatMembers,
+    setDisplayedPotentialChatMembers,
+    fetchStart,
+    setFetchStart,
+    fetchIsLoading,
+    setFetchIsLoading,
+    isFetchError,
+    setIsFetchError,
     handleUpdateChatName,
     showEditChatNameModal,
     setShowEditChatNameModal,
@@ -849,8 +861,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     handleSearchChatMembersInput,
     showPotentialChatMembers,
     setShowPotentialChatMembers,
-    potentialChatMembers,
-    setPotentialChatMembers,
     chatMembersSearchQuery,
     setChatMembersSearchQuery,
     chatName,
