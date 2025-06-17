@@ -15,6 +15,7 @@ const ChatModal = () => {
   const { currentUser, setCurrentOtherUser } = useUserContext();
 
   const {
+    handleLoadMoreItemsOnScroll,
     setAllPotentialChatMembers,
     allPotentialChatMembers,
     fetchIsLoading,
@@ -145,29 +146,6 @@ const ChatModal = () => {
         .finally(() => setFetchIsLoading(false));
     }
   }, [fetchStart, chatMembersSearchQuery]);
-
-  const handleLoadMoreItemsOnScroll = (
-    items: TBarebonesUser[],
-    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
-  ): void => {
-    const eHTMLElement = e?.target as HTMLElement;
-    const scrollTop = e ? eHTMLElement.scrollTop : null;
-    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
-    const clientHeight = e ? eHTMLElement.clientHeight : null;
-
-    const bottomReached =
-      e && scrollTop && clientHeight
-        ? scrollTop + clientHeight === scrollHeight
-        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
-
-    if (bottomReached) {
-      const lastItem: TBarebonesUser = items[items.length - 1];
-
-      if (lastItem && lastItem.index && chatMembersSearchQuery === "") {
-        setFetchStart(lastItem.index + 1);
-      }
-    }
-  };
 
   const initializePotentialChatMembersSearch = (input: string): void => {
     if (!fetchIsLoading) {

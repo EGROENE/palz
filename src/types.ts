@@ -789,6 +789,10 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  handleLoadMoreItemsOnScroll: (
+    items: TBarebonesUser[],
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
+  ) => void;
   allPotentialChatMembers: TBarebonesUser[];
   setAllPotentialChatMembers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   isFetchError: boolean;

@@ -386,6 +386,29 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     onError: (error) => console.log(error),
   });
 
+  const handleLoadMoreItemsOnScroll = (
+    items: TBarebonesUser[],
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
+  ): void => {
+    const eHTMLElement = e?.target as HTMLElement;
+    const scrollTop = e ? eHTMLElement.scrollTop : null;
+    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
+    const clientHeight = e ? eHTMLElement.clientHeight : null;
+
+    const bottomReached =
+      e && scrollTop && clientHeight
+        ? scrollTop + clientHeight === scrollHeight
+        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
+
+    if (bottomReached) {
+      const lastItem: TBarebonesUser = items[items.length - 1];
+
+      if (lastItem && lastItem.index && chatMembersSearchQuery === "") {
+        setFetchStart(lastItem.index + 1);
+      }
+    }
+  };
+
   const getChatMembers = (members: TBarebonesUser[]): TOtherUser[] => {
     let chatMembers: TOtherUser[] = [];
     if (visibleOtherUsers) {
@@ -812,6 +835,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    handleLoadMoreItemsOnScroll,
     allPotentialChatMembers,
     setAllPotentialChatMembers,
     displayedPotentialChatMembers,
