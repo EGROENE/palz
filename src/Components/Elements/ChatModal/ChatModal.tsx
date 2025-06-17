@@ -7,16 +7,15 @@ import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownLis
 import { useUserContext } from "../../../Hooks/useUserContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import Methods from "../../../methods";
+import Requests from "../../../requests";
 import ListedUser from "../ListedUser/ListedUser";
 import ChatModalTwoOptions from "../ChatModalTwoOptions/ChatModalTwoOptions";
 
 const ChatModal = () => {
-  const { currentUser, setCurrentOtherUser, fetchAllVisibleOtherUsersQuery } =
-    useUserContext();
-
-  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
+  const { currentUser, setCurrentOtherUser } = useUserContext();
 
   const {
+    displayedPotentialChatMembers,
     startConversation,
     setMessageBeingEdited,
     setShowAreYouSureYouWantToLeaveChat,
@@ -38,11 +37,7 @@ const ChatModal = () => {
     usersToAddToChat,
     handleRemoveUserFromChat,
     handleAddRemoveUserFromChat,
-    potentialChatMembers,
     setUsersToAddToChat,
-    numberOfPotentialChatMembersDisplayed,
-    setNumberOfPotentialChatMembersDisplayed,
-    handleSearchChatMembersInput,
     handleChatNameInput,
     chatName,
     chatNameError,
@@ -67,8 +62,13 @@ const ChatModal = () => {
     showAreYouSureYouWantToDeleteChat,
     showAreYouSureYouWantToLeaveChat,
     setShowEditChatNameModal,
-    initiatePotentialChatMembers,
+    setDisplayedPotentialChatMembers,
+    setIsFetchError,
+    setFetchIsLoading,
+    fetchStart,
   } = useChatContext();
+
+  const fetchLimit = 10;
 
   /* 
   Update currentChat whenever fetchChatsQuery.data changes & when chat in userChats w/ matching _id to currentChat is not identical to currentChat:
@@ -115,8 +115,32 @@ const ChatModal = () => {
   }, []);
 
   useEffect(() => {
-    initiatePotentialChatMembers();
-  }, [usersToAddToChat]);
+    if (chatMembersSearchQuery === "") {
+      setFetchIsLoading(true);
+      Requests.getPotentialChatMembers(currentUser, fetchStart, fetchLimit)
+        .then((batchOfPotentialCMs) => {
+          if (batchOfPotentialCMs) {
+            if (fetchStart === 0) {
+              setDisplayedPotentialChatMembers(
+                batchOfPotentialCMs.map((pf) => Methods.getTBarebonesUser(pf))
+              );
+            } else {
+              if (displayedPotentialChatMembers) {
+                setDisplayedPotentialChatMembers(
+                  displayedPotentialChatMembers.concat(
+                    batchOfPotentialCMs.map((pf) => Methods.getTBarebonesUser(pf))
+                  )
+                );
+              }
+            }
+          } else {
+            setIsFetchError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    }
+  }, [fetchStart, chatMembersSearchQuery]);
 
   const handleCancelAddingChatMembers = (
     e:
@@ -137,7 +161,6 @@ const ChatModal = () => {
     if (chatNameError !== "") {
       setChatNameError("");
     }
-    initiatePotentialChatMembers();
     setShowAddMemberModal(false);
     setShowPotentialChatMembers(false);
   };
@@ -183,7 +206,7 @@ const ChatModal = () => {
       currentUser._id &&
       currentChat &&
       currentChat.messages.length > 0 &&
-      currentChat.messages[currentChat.messages.length - 1].sender === currentUser._id
+      currentChat.messages[currentChat.messages.length - 1].sender._id === currentUser._id
     ) {
       scrollToLatestMessage();
     }
@@ -242,7 +265,7 @@ const ChatModal = () => {
       currentChat &&
       currentChat.admins &&
       listedChatMember._id &&
-      currentChat.admins.includes(listedChatMember._id.toString())
+      currentChat.admins.map((a) => a._id).includes(listedChatMember._id.toString())
         ? true
         : false;
 
@@ -251,7 +274,7 @@ const ChatModal = () => {
       currentChat.admins &&
       currentUser &&
       currentUser._id &&
-      currentChat.admins.includes(currentUser._id.toString())
+      currentChat.admins.map((a) => a._id).includes(currentUser._id.toString())
         ? true
         : false;
 
@@ -277,7 +300,7 @@ const ChatModal = () => {
       currentChat &&
       currentChat.admins &&
       listedChatMember._id &&
-      currentChat.admins.includes(listedChatMember._id.toString())
+      currentChat.admins.map((a) => a._id).includes(listedChatMember._id.toString())
         ? true
         : false;
 
@@ -286,7 +309,7 @@ const ChatModal = () => {
       currentChat.admins &&
       currentUser &&
       currentUser._id &&
-      currentChat.admins.includes(currentUser._id.toString())
+      currentChat.admins.map((a) => a._id).includes(currentUser._id.toString())
         ? true
         : false;
 
@@ -305,24 +328,13 @@ const ChatModal = () => {
     return "Add Admin";
   };
 
-  let usersToAdd: TOtherUser[] = [];
-  if (visibleOtherUsers) {
-    for (const userID of usersToAddToChat) {
-      for (const otherUser of visibleOtherUsers) {
-        if (otherUser._id === userID) {
-          usersToAdd.push(otherUser);
-        }
-      }
-    }
-  }
-
   const userMayDeleteChat: boolean =
     currentChat &&
     currentChat.admins &&
     currentUser &&
     currentUser._id &&
-    (currentChat.admins.includes(currentUser._id.toString()) ||
-      (currentChat.members.includes(currentUser._id.toString()) &&
+    (currentChat.admins.map((elem) => elem._id).includes(currentUser._id.toString()) ||
+      (currentChat.members.map((elem) => elem._id).includes(currentUser._id.toString()) &&
         currentChat.members.length === 2))
       ? true
       : false;
@@ -424,7 +436,9 @@ const ChatModal = () => {
                       {currentChat.admins &&
                         currentUser &&
                         currentUser._id &&
-                        currentChat.admins.includes(currentUser._id.toString()) && (
+                        currentChat.admins
+                          .map((elem) => elem._id)
+                          .includes(currentUser._id.toString()) && (
                           <button
                             style={{ color: randomColor }}
                             onClick={() =>
@@ -463,7 +477,9 @@ const ChatModal = () => {
                         currentChat &&
                         currentChat.admins &&
                         member._id &&
-                        currentChat.admins.includes(member._id.toString())
+                        currentChat.admins
+                          .map((elem) => elem._id)
+                          .includes(member._id.toString())
                           ? "Admin"
                           : undefined
                       }
@@ -476,8 +492,12 @@ const ChatModal = () => {
                         currentChat &&
                         currentChat.admins &&
                         member._id &&
-                        !currentChat.admins.includes(member._id.toString()) &&
-                        currentChat.admins.includes(currentUser._id.toString())
+                        !currentChat.admins
+                          .map((elem) => elem._id)
+                          .includes(member._id.toString()) &&
+                        currentChat.admins
+                          .map((elem) => elem._id)
+                          .includes(currentUser._id.toString())
                           ? true
                           : false
                       }
@@ -487,8 +507,12 @@ const ChatModal = () => {
                         currentChat &&
                         currentChat.admins &&
                         member._id &&
-                        !currentChat.admins.includes(member._id.toString()) &&
-                        currentChat.admins.includes(currentUser._id.toString())
+                        !currentChat.admins
+                          .map((elem) => elem._id)
+                          .includes(member._id.toString()) &&
+                        currentChat.admins
+                          .map((elem) => elem._id)
+                          .includes(currentUser._id.toString())
                           ? () => {
                               setCurrentOtherUser(member);
                               handleRemoveUserFromChat(member, currentChat);
@@ -545,7 +569,9 @@ const ChatModal = () => {
                 </header>
                 {currentUser &&
                   currentUser._id &&
-                  currentChat.admins?.includes(currentUser._id.toString()) &&
+                  currentChat.admins
+                    ?.map((a) => a._id)
+                    .includes(currentUser._id.toString()) &&
                   (currentChat.chatName ? (
                     <header
                       onKeyDown={(e) => {
@@ -766,7 +792,7 @@ const ChatModal = () => {
             <header>Add people to chat:</header>
             {usersToAddToChat.length > 0 && (
               <div className="added-user-tab-container">
-                {usersToAdd.map((user) => (
+                {usersToAddToChat.map((user) => (
                   <Tab
                     key={`${user._id}-dropdown-item`}
                     info={user}
@@ -784,43 +810,31 @@ const ChatModal = () => {
                 ))}
               </div>
             )}
-            <SearchAndDropdownList
-              name="add-member-to-chat"
-              id="add-member-to-chat"
-              placeholder="Search users by username, first/last names"
-              query={chatMembersSearchQuery}
-              clearQueryOnClick={() => {
-                setChatMembersSearchQuery("");
-                initiatePotentialChatMembers();
-              }}
-              randomColor={randomColor}
-              showList={showPotentialChatMembers}
-              setShowList={setShowPotentialChatMembers}
-              inputOnChange={(e) => {
-                if (visibleOtherUsers) {
-                  return handleSearchChatMembersInput(
-                    e,
-                    showPotentialChatMembers,
-                    setShowPotentialChatMembers,
-                    visibleOtherUsers,
-                    initiatePotentialChatMembers
-                  );
+            {displayedPotentialChatMembers && (
+              <SearchAndDropdownList
+                name="add-member-to-chat"
+                id="add-member-to-chat"
+                placeholder="Search users by username, first/last names"
+                query={chatMembersSearchQuery}
+                clearQueryOnClick={() => {
+                  setChatMembersSearchQuery("");
+                }}
+                randomColor={randomColor}
+                showList={showPotentialChatMembers}
+                setShowList={setShowPotentialChatMembers}
+                inputOnChange={() => console.log("test")}
+                dropdownChecklist={
+                  <DropdownChecklist
+                    usedFor="potential-additional-chat-members"
+                    action={handleAddRemoveUserFromChat}
+                    actionEventParamNeeded={false}
+                    displayedItemsArray={displayedPotentialChatMembers}
+                    storageArray={usersToAddToChat}
+                    setStorageArray={setUsersToAddToChat}
+                  />
                 }
-              }}
-              dropdownChecklist={
-                <DropdownChecklist
-                  usedFor="potential-additional-chat-members"
-                  action={handleAddRemoveUserFromChat}
-                  actionEventParamNeeded={false}
-                  displayedItemsArray={potentialChatMembers}
-                  storageArray={usersToAddToChat}
-                  setStorageArray={setUsersToAddToChat}
-                  displayedItemsCount={numberOfPotentialChatMembersDisplayed}
-                  setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
-                  displayedItemsCountInterval={10}
-                />
-              }
-            />
+              />
+            )}
             {usersToAddToChat.length > 0 && (
               <>
                 <header>Choose group name (optional)</header>
@@ -852,12 +866,7 @@ const ChatModal = () => {
                 }
                 onClick={() => {
                   if (currentChat) {
-                    handleAddMultipleUsersToChat(
-                      usersToAdd.map((user) =>
-                        user && user._id && user._id.toString() ? user._id.toString() : ""
-                      ),
-                      currentChat
-                    );
+                    handleAddMultipleUsersToChat(usersToAddToChat, currentChat);
                   }
                 }}
               >
