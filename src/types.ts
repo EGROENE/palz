@@ -793,6 +793,7 @@ export type TChatContext = {
     items: TBarebonesUser[],
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ) => void;
+  initializePotentialChatMembersSearch: (input: string) => void;
   allPotentialChatMembers: TBarebonesUser[];
   setAllPotentialChatMembers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   isFetchError: boolean;

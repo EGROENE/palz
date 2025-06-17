@@ -15,6 +15,7 @@ const ChatModal = () => {
   const { currentUser, setCurrentOtherUser } = useUserContext();
 
   const {
+    initializePotentialChatMembersSearch,
     handleLoadMoreItemsOnScroll,
     setAllPotentialChatMembers,
     allPotentialChatMembers,
@@ -146,36 +147,6 @@ const ChatModal = () => {
         .finally(() => setFetchIsLoading(false));
     }
   }, [fetchStart, chatMembersSearchQuery]);
-
-  const initializePotentialChatMembersSearch = (input: string): void => {
-    if (!fetchIsLoading) {
-      setFetchIsLoading(true);
-    }
-    setFetchStart(0);
-    Requests.getPotentialChatMembers(currentUser, 0, Infinity)
-      .then((batchOfPotentialCMs) => {
-        if (batchOfPotentialCMs) {
-          setAllPotentialChatMembers(
-            batchOfPotentialCMs.map((cm) => Methods.getTBarebonesUser(cm))
-          );
-          let matchingPotentialCOs = [];
-          for (const co of batchOfPotentialCMs) {
-            if (
-              co.username?.includes(input.toLowerCase()) ||
-              co.firstName?.includes(input.toLowerCase()) ||
-              co.lastName?.includes(input.toLowerCase())
-            ) {
-              matchingPotentialCOs.push(Methods.getTBarebonesUser(co));
-            }
-          }
-          setDisplayedPotentialChatMembers(matchingPotentialCOs);
-        } else {
-          setIsFetchError(true);
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setFetchIsLoading(false));
-  };
 
   const handleSearchPotentialChatMembers = (
     e: React.ChangeEvent<HTMLInputElement>
