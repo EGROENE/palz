@@ -71,7 +71,7 @@ const ChatModal = () => {
     handleCancelAddOrEditChat,
   } = useChatContext();
 
-  const fetchLimit = 10;
+  const fetchLimit = 15;
 
   /* 
   Update currentChat whenever fetchChatsQuery.data changes & when chat in userChats w/ matching _id to currentChat is not identical to currentChat:
