@@ -1199,6 +1199,54 @@ const getCurrentUserChats = (user: TUser | null): Promise<TChat[]> | undefined =
   }
 };
 
+const getPotentialChatMembers = async (
+  currentUser: TUser | null,
+  start: number,
+  limit: number,
+  chat?: TChat | undefined
+): Promise<TUser[]> => {
+  return fetch(
+    `http://localhost:4000/palz/chats?start=${start}&limit=${limit}&user=${currentUser?.username}`,
+    {
+      method: "GET",
+      redirect: "follow",
+    }
+  ).then((response) => {
+    return response.json().then((potentialCMs: TUser[]) => {
+      return potentialCMs.filter((pcm: TUser) => {
+        const userIsNotAlreadyInCurrentChat: boolean =
+          pcm._id && chat && chat.members.map((m) => m._id).includes(pcm._id.toString())
+            ? false
+            : true;
+
+        const currentUserIsFriendOfFriend: boolean = potentialCMs.some(
+          (user) =>
+            user &&
+            user._id &&
+            currentUser &&
+            currentUser._id &&
+            currentUser.friends.includes(user._id.toString()) &&
+            user.friends.includes(currentUser._id.toString())
+        );
+
+        const currentUserIsFriend: boolean =
+          currentUser && currentUser._id
+            ? pcm.friends.includes(currentUser._id?.toString())
+            : false;
+
+        if (
+          userIsNotAlreadyInCurrentChat &&
+          ((pcm.whoCanMessage === "friends" && currentUserIsFriend) ||
+            (pcm.whoCanMessage === "friends of friends" && currentUserIsFriendOfFriend) ||
+            pcm.whoCanMessage === "anyone")
+        ) {
+          return pcm;
+        }
+      });
+    });
+  });
+};
+
 const createNewChat = (newChat: TChat): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -1250,6 +1298,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getPotentialChatMembers,
   getPotentialEventBlockees,
   getExplorableEvents,
   getFriends,
