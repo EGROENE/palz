@@ -52,6 +52,7 @@
   color: var(--header-three-color);
   font-size: 2rem;
   font-weight: 700;
+  font-family: var(--header-font);
 }
 
 .palz-logo header,
@@ -928,7 +929,6 @@ form textarea {
 }
 
 .create-new-chat header {
-  font-family: var(--text-font);
   margin: 1rem 0;
 }
 
