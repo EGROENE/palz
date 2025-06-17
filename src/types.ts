@@ -795,6 +795,12 @@ export type TChatContext = {
   ) => void;
   initializePotentialChatMembersSearch: (input: string) => void;
   handleSearchPotentialChatMembers: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCancelAddOrEditChat: (
+    e:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.KeyboardEvent<HTMLElement>
+  ) => void;
   allPotentialChatMembers: TBarebonesUser[];
   setAllPotentialChatMembers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   isFetchError: boolean;

@@ -73,6 +73,7 @@ const ChatModal = () => {
     setIsFetchError,
     setFetchIsLoading,
     fetchStart,
+    handleCancelAddOrEditChat,
   } = useChatContext();
 
   const fetchLimit = 10;
@@ -148,29 +149,6 @@ const ChatModal = () => {
         .finally(() => setFetchIsLoading(false));
     }
   }, [fetchStart, chatMembersSearchQuery]);
-
-  const handleCancelAddingChatMembers = (
-    e:
-      | React.MouseEvent<HTMLButtonElement, MouseEvent>
-      | React.MouseEvent<HTMLElement, MouseEvent>
-      | React.KeyboardEvent<HTMLElement>
-  ): void => {
-    e.preventDefault();
-    if (usersToAddToChat.length > 0) {
-      setUsersToAddToChat([]);
-    }
-    if (chatMembersSearchQuery !== "") {
-      setChatMembersSearchQuery("");
-    }
-    if (chatName !== "") {
-      setChatName("");
-    }
-    if (chatNameError !== "") {
-      setChatNameError("");
-    }
-    setShowAddMemberModal(false);
-    setShowPotentialChatMembers(false);
-  };
 
   const [otherChatMember, setOtherChatMember] = useState<TOtherUser | undefined>(
     undefined
@@ -382,7 +360,7 @@ const ChatModal = () => {
               setInputMessage("");
             }
             if (showAddMemberModal) {
-              handleCancelAddingChatMembers(e);
+              handleCancelAddOrEditChat(e);
             }
           }
         }}
@@ -398,7 +376,7 @@ const ChatModal = () => {
             setInputMessage("");
           }
           if (showAddMemberModal) {
-            handleCancelAddingChatMembers(e);
+            handleCancelAddOrEditChat(e);
           }
         }}
         className="fas fa-times close-module-icon"
@@ -861,7 +839,7 @@ const ChatModal = () => {
             <div className="create-new-chat-modal-buttons">
               <button
                 onClick={(e) => {
-                  handleCancelAddingChatMembers(e);
+                  handleCancelAddOrEditChat(e);
                 }}
                 id="cancel"
               >

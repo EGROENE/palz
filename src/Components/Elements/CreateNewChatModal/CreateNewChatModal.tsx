@@ -47,6 +47,7 @@ const CreateNewChatModal = () => {
     setFetchIsLoading,
     isFetchError,
     setIsFetchError,
+    handleCancelAddOrEditChat,
   } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -98,31 +99,6 @@ const CreateNewChatModal = () => {
     }
   }, [fetchStart, chatMembersSearchQuery]);
 
-  const handleCancelNewChatCreation = (
-    e:
-      | React.MouseEvent<HTMLButtonElement, MouseEvent>
-      | React.MouseEvent<HTMLElement, MouseEvent>
-      | React.KeyboardEvent<HTMLElement>
-  ): void => {
-    e.preventDefault();
-    if (usersToAddToChat.length > 0) {
-      setUsersToAddToChat([]);
-    }
-    if (chatMembersSearchQuery !== "") {
-      setChatMembersSearchQuery("");
-    }
-    if (chatName !== "") {
-      setChatName("");
-    }
-    if (chatNameError !== "") {
-      setChatNameError("");
-    }
-    if (showPotentialChatMembers) {
-      setShowPotentialChatMembers(false);
-    }
-    setShowCreateNewChatModal(false);
-  };
-
   const chatCanBeCreated = chatNameError === "" && usersToAddToChat.length > 0;
 
   return (
@@ -133,10 +109,10 @@ const CreateNewChatModal = () => {
         title="Close"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            handleCancelNewChatCreation(e);
+            handleCancelAddOrEditChat(e);
           }
         }}
-        onClick={(e) => handleCancelNewChatCreation(e)}
+        onClick={(e) => handleCancelAddOrEditChat(e)}
         className="fas fa-times close-module-icon"
       ></i>
       <div
@@ -204,7 +180,7 @@ const CreateNewChatModal = () => {
           </>
         )}
         <div className="create-new-chat-modal-buttons">
-          <button onClick={(e) => handleCancelNewChatCreation(e)} id="cancel">
+          <button onClick={(e) => handleCancelAddOrEditChat(e)} id="cancel">
             Cancel
           </button>
           <button

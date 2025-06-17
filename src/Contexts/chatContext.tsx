@@ -469,6 +469,36 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleCancelAddOrEditChat = (
+    e:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.KeyboardEvent<HTMLElement>
+  ): void => {
+    e.preventDefault();
+    if (usersToAddToChat.length > 0) {
+      setUsersToAddToChat([]);
+    }
+    if (chatMembersSearchQuery !== "") {
+      setChatMembersSearchQuery("");
+    }
+    if (chatName !== "") {
+      setChatName("");
+    }
+    if (chatNameError !== "") {
+      setChatNameError("");
+    }
+    if (showPotentialChatMembers) {
+      setShowPotentialChatMembers(false);
+    }
+    if (showAddMemberModal) {
+      setShowAddMemberModal(false);
+    }
+    if (showCreateNewChatModal) {
+      setShowCreateNewChatModal(false);
+    }
+  };
+
   const getChatMembers = (members: TBarebonesUser[]): TOtherUser[] => {
     let chatMembers: TOtherUser[] = [];
     if (visibleOtherUsers) {
@@ -895,6 +925,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    handleCancelAddOrEditChat,
     handleSearchPotentialChatMembers,
     initializePotentialChatMembersSearch,
     handleLoadMoreItemsOnScroll,
