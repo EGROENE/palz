@@ -22,6 +22,10 @@ const getPotentialChatMembers = async (req, res) => {
   const potentialCMs = await User.find({
     index: { $gte: Number(start) },
     _id: { $ne: currentUser._id.toString() },
+    "blockedUsers._id": { $ne: currentUser._id.toString() },
+    "blockedBy._id": { $ne: currentUser._id.toString() },
+    profileVisibleTo: { $ne: "nobody" },
+    whoCanMessage: { $ne: "nobody" },
   }).limit(Number(limit));
 
   res.status(200).json(potentialCMs);
