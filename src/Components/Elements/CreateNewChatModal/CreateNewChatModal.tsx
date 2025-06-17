@@ -18,6 +18,7 @@ const CreateNewChatModal = () => {
   const { currentUser } = useUserContext();
 
   const {
+    handleSearchPotentialChatMembers,
     initializePotentialChatMembersSearch,
     handleLoadMoreItemsOnScroll,
     allPotentialChatMembers,
@@ -96,36 +97,6 @@ const CreateNewChatModal = () => {
         .finally(() => setFetchIsLoading(false));
     }
   }, [fetchStart, chatMembersSearchQuery]);
-
-  const handleSearchPotentialChatMembers = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    e.preventDefault();
-    const inputCleaned = e.target.value.replace(/\s+/g, " ");
-    setChatMembersSearchQuery(inputCleaned);
-    setShowPotentialChatMembers(true);
-    if (inputCleaned.replace(/\s+/g, "") !== "") {
-      if (allPotentialChatMembers.length === 0) {
-        initializePotentialChatMembersSearch(inputCleaned);
-      } else {
-        const matchingUsers: TBarebonesUser[] = [];
-        for (const user of allPotentialChatMembers) {
-          if (
-            user?.firstName?.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-            user?.lastName?.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
-            user?.username?.includes(inputCleaned.toLowerCase())
-          ) {
-            matchingUsers.push(user);
-          }
-        }
-        setDisplayedPotentialChatMembers(matchingUsers);
-      }
-    } else {
-      setChatMembersSearchQuery("");
-      setAllPotentialChatMembers([]);
-      setFetchStart(0);
-    }
-  };
 
   const handleCancelNewChatCreation = (
     e:
