@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TThemeColor } from "../../../types";
+import { TBarebonesUser, TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -18,6 +18,7 @@ const CreateNewChatModal = () => {
   const { currentUser } = useUserContext();
 
   const {
+    setFetchStart,
     admins,
     handleCreateChat,
     setShowCreateNewChatModal,
@@ -92,6 +93,29 @@ const CreateNewChatModal = () => {
     }
   }, [fetchStart]);
 
+  const handleLoadMoreItemsOnScroll = (
+    items: TBarebonesUser[],
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
+  ): void => {
+    const eHTMLElement = e?.target as HTMLElement;
+    const scrollTop = e ? eHTMLElement.scrollTop : null;
+    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
+    const clientHeight = e ? eHTMLElement.clientHeight : null;
+
+    const bottomReached =
+      e && scrollTop && clientHeight
+        ? scrollTop + clientHeight === scrollHeight
+        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
+
+    if (bottomReached) {
+      const lastItem: TBarebonesUser = items[items.length - 1];
+
+      if (lastItem && lastItem.index && chatMembersSearchQuery === "") {
+        setFetchStart(lastItem.index + 1);
+      }
+    }
+  };
+
   const handleCancelNewChatCreation = (
     e:
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -158,28 +182,32 @@ const CreateNewChatModal = () => {
             ))}
           </div>
         )}
-        <SearchAndDropdownList
-          name="chat-members-search"
-          id="chat-members-search"
-          randomColor={randomColor}
-          inputOnChange={() => console.log("Fck")}
-          placeholder="Search users by username, first/last names"
-          query={chatMembersSearchQuery}
-          clearQueryOnClick={() => setChatMembersSearchQuery("")}
-          showList={showPotentialChatMembers}
-          setShowList={setShowPotentialChatMembers}
-          dropdownChecklist={
-            <DropdownChecklist
-              usedFor="potential-chat-members"
-              action={handleAddRemoveUserFromChat}
-              actionEventParamNeeded={false}
-              displayedItemsArray={displayedPotentialChatMembers}
-              storageArray={usersToAddToChat}
-              setStorageArray={setUsersToAddToChat}
-              fetchIsLoading={fetchIsLoading}
-            />
-          }
-        />
+        {displayedPotentialChatMembers && (
+          <SearchAndDropdownList
+            name="chat-members-search"
+            id="chat-members-search"
+            randomColor={randomColor}
+            inputOnChange={() => console.log("test")}
+            placeholder="Search users by username, first/last names"
+            query={chatMembersSearchQuery}
+            clearQueryOnClick={() => setChatMembersSearchQuery("")}
+            showList={showPotentialChatMembers}
+            setShowList={setShowPotentialChatMembers}
+            dropdownChecklist={
+              <DropdownChecklist
+                usedFor="potential-chat-members"
+                action={handleAddRemoveUserFromChat}
+                actionEventParamNeeded={false}
+                displayedItemsArray={displayedPotentialChatMembers}
+                storageArray={usersToAddToChat}
+                setStorageArray={setUsersToAddToChat}
+                fetchIsLoading={fetchIsLoading}
+                scrollHandler={handleLoadMoreItemsOnScroll}
+                scrollHandlerParams={[displayedPotentialChatMembers]}
+              />
+            }
+          />
+        )}
         {usersToAddToChat.length > 1 && (
           <>
             <header>Choose group name (optional)</header>
