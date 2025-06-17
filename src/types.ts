@@ -771,6 +771,7 @@ export type TEventContext = {
   setEventDeletionIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   addEventIsInProgress: boolean;
   setAddEventIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
+
   currentEvent: TEvent | undefined;
   setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
   eventEditIsInProgress: boolean;
@@ -788,6 +789,8 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  allPotentialChatMembers: TBarebonesUser[];
+  setAllPotentialChatMembers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   isFetchError: boolean;
   setIsFetchError: React.Dispatch<React.SetStateAction<boolean>>;
   fetchIsLoading: boolean;

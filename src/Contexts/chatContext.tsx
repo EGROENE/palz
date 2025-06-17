@@ -83,6 +83,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [displayedPotentialChatMembers, setDisplayedPotentialChatMembers] = useState<
     TBarebonesUser[] | null
   >(null);
+  const [allPotentialChatMembers, setAllPotentialChatMembers] = useState<
+    TBarebonesUser[]
+  >([]);
   const [fetchStart, setFetchStart] = useState<number>(0);
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
   const [isFetchError, setIsFetchError] = useState<boolean>(false);
@@ -809,6 +812,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    allPotentialChatMembers,
+    setAllPotentialChatMembers,
     displayedPotentialChatMembers,
     setDisplayedPotentialChatMembers,
     fetchStart,

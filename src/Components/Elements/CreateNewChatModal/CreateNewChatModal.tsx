@@ -18,6 +18,8 @@ const CreateNewChatModal = () => {
   const { currentUser } = useUserContext();
 
   const {
+    allPotentialChatMembers,
+    setAllPotentialChatMembers,
     setFetchStart,
     admins,
     handleCreateChat,
@@ -66,8 +68,8 @@ const CreateNewChatModal = () => {
   }, []);
 
   useEffect(() => {
-    setFetchIsLoading(true);
     if (chatMembersSearchQuery === "") {
+      setFetchIsLoading(true);
       Requests.getPotentialChatMembers(currentUser, fetchStart, fetchLimit)
         .then((batchOfPotentialCMs) => {
           if (batchOfPotentialCMs) {
@@ -91,7 +93,7 @@ const CreateNewChatModal = () => {
         .catch((error) => console.log(error))
         .finally(() => setFetchIsLoading(false));
     }
-  }, [fetchStart]);
+  }, [fetchStart, chatMembersSearchQuery]);
 
   const handleLoadMoreItemsOnScroll = (
     items: TBarebonesUser[],
@@ -113,6 +115,66 @@ const CreateNewChatModal = () => {
       if (lastItem && lastItem.index && chatMembersSearchQuery === "") {
         setFetchStart(lastItem.index + 1);
       }
+    }
+  };
+
+  const initializePotentialChatMembersSearch = (input: string): void => {
+    if (!fetchIsLoading) {
+      setFetchIsLoading(true);
+    }
+    setFetchStart(0);
+    Requests.getPotentialChatMembers(currentUser, 0, Infinity)
+      .then((batchOfPotentialCMs) => {
+        if (batchOfPotentialCMs) {
+          setAllPotentialChatMembers(
+            batchOfPotentialCMs.map((cm) => Methods.getTBarebonesUser(cm))
+          );
+          let matchingPotentialCOs = [];
+          for (const co of batchOfPotentialCMs) {
+            if (
+              co.username?.includes(input.toLowerCase()) ||
+              co.firstName?.includes(input.toLowerCase()) ||
+              co.lastName?.includes(input.toLowerCase())
+            ) {
+              matchingPotentialCOs.push(Methods.getTBarebonesUser(co));
+            }
+          }
+          setDisplayedPotentialChatMembers(matchingPotentialCOs);
+        } else {
+          setIsFetchError(true);
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setFetchIsLoading(false));
+  };
+
+  const handleSearchPotentialChatMembers = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    e.preventDefault();
+    const inputCleaned = e.target.value.replace(/\s+/g, " ");
+    setChatMembersSearchQuery(inputCleaned);
+    setShowPotentialChatMembers(true);
+    if (inputCleaned.replace(/\s+/g, "") !== "") {
+      if (allPotentialChatMembers.length === 0) {
+        initializePotentialChatMembersSearch(inputCleaned);
+      } else {
+        const matchingUsers: TBarebonesUser[] = [];
+        for (const user of allPotentialChatMembers) {
+          if (
+            user?.firstName?.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+            user?.lastName?.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+            user?.username?.includes(inputCleaned.toLowerCase())
+          ) {
+            matchingUsers.push(user);
+          }
+        }
+        setDisplayedPotentialChatMembers(matchingUsers);
+      }
+    } else {
+      setChatMembersSearchQuery("");
+      setAllPotentialChatMembers([]);
+      setFetchStart(0);
     }
   };
 
@@ -187,7 +249,7 @@ const CreateNewChatModal = () => {
             name="chat-members-search"
             id="chat-members-search"
             randomColor={randomColor}
-            inputOnChange={() => console.log("test")}
+            inputOnChange={(e) => handleSearchPotentialChatMembers(e)}
             placeholder="Search users by username, first/last names"
             query={chatMembersSearchQuery}
             clearQueryOnClick={() => setChatMembersSearchQuery("")}
