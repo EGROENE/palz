@@ -388,7 +388,7 @@ const getPotentialInvitees = (
               user._id &&
               currentUser &&
               currentUser._id &&
-              user.friends.includes(user._id.toString()) &&
+              currentUser.friends.includes(user._id.toString()) &&
               user.friends.includes(currentUser._id.toString())
           );
 
