@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TBarebonesUser, TThemeColor } from "../../../types";
+import {  TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -19,22 +19,15 @@ const CreateNewChatModal = () => {
 
   const {
     handleSearchPotentialChatMembers,
-    initializePotentialChatMembersSearch,
     handleLoadMoreItemsOnScroll,
-    allPotentialChatMembers,
-    setAllPotentialChatMembers,
-    setFetchStart,
     admins,
     handleCreateChat,
-    setShowCreateNewChatModal,
     handleAddRemoveUserFromChat,
     usersToAddToChat,
     setUsersToAddToChat,
     handleRemoveUserFromChat,
     chatName,
-    setChatName,
     chatNameError,
-    setChatNameError,
     showPotentialChatMembers,
     setShowPotentialChatMembers,
     chatMembersSearchQuery,

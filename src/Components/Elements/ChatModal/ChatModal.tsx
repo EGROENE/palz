@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Message from "../Message/Message";
-import { TOtherUser, TThemeColor, TBarebonesUser } from "../../../types";
+import { TOtherUser, TThemeColor } from "../../../types";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -16,12 +16,8 @@ const ChatModal = () => {
 
   const {
     handleSearchPotentialChatMembers,
-    initializePotentialChatMembersSearch,
     handleLoadMoreItemsOnScroll,
-    setAllPotentialChatMembers,
-    allPotentialChatMembers,
     fetchIsLoading,
-    setFetchStart,
     displayedPotentialChatMembers,
     startConversation,
     setMessageBeingEdited,
@@ -48,9 +44,7 @@ const ChatModal = () => {
     handleChatNameInput,
     chatName,
     chatNameError,
-    setChatName,
     handleSendMessage,
-    setChatNameError,
     inputMessage,
     setInputMessage,
     markMessagesAsRead,
