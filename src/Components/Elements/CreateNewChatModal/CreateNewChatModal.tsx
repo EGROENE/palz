@@ -89,6 +89,8 @@ const CreateNewChatModal = () => {
 
   const chatCanBeCreated = chatNameError === "" && usersToAddToChat.length > 0;
 
+  const initialFetchIsLoading: boolean = displayedPotentialChatMembers === null;
+
   return (
     <div tabIndex={0} aria-hidden="false" className="modal-background">
       <i
@@ -112,15 +114,15 @@ const CreateNewChatModal = () => {
         className="create-new-chat"
       >
         <h1>New Chat</h1>
-        {!fetchIsLoading && isFetchError && (
+        {!initialFetchIsLoading && isFetchError && (
           <p>Error retrieving data; please reload the page.</p>
         )}
-        {fetchIsLoading && (
+        {initialFetchIsLoading && (
           <header style={{ marginTop: "3rem" }} className="query-status-text">
             Loading...
           </header>
         )}
-        {!fetchIsLoading && !isFetchError && (
+        {!initialFetchIsLoading && !isFetchError && (
           <>
             <header style={{ fontFamily: "var(--text-font" }}>Add people to chat:</header>
             {usersToAddToChat.length > 0 && (
