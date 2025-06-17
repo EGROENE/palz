@@ -15,6 +15,7 @@ const ChatModal = () => {
   const { currentUser, setCurrentOtherUser } = useUserContext();
 
   const {
+    isFetchError,
     handleSearchPotentialChatMembers,
     handleLoadMoreItemsOnScroll,
     fetchIsLoading,
@@ -334,6 +335,8 @@ const ChatModal = () => {
   const addOrEditChatNameHeaderRef = useRef<HTMLElement | null>(null);
 
   const deleteChatHeaderRef = useRef<HTMLElement | null>(null);
+
+  const initialFetchIsLoading: boolean = displayedPotentialChatMembers === null;
 
   return (
     <div tabIndex={0} aria-hidden="false" className="modal-background">
@@ -767,95 +770,105 @@ const ChatModal = () => {
           style={{ border: `3px solid ${randomColor}` }}
           className="add-members-modal-container"
         >
-          <div className="add-members-modal">
-            <header style={{ fontFamily: "var(--text-font" }}>Add people to chat:</header>
-            {usersToAddToChat.length > 0 && (
-              <div className="added-user-tab-container">
-                {usersToAddToChat.map((user) => (
-                  <Tab
-                    key={`${user._id}-dropdown-item`}
-                    info={user}
-                    removeHandler={handleAddRemoveUserFromChat}
-                    removeHandlerNeedsEventParam={false}
-                    removeHandlerParams={[
-                      user,
-                      usersToAddToChat,
-                      setUsersToAddToChat,
-                      currentChat,
-                    ]}
-                    randomColor={randomColor}
-                    userMayNotDelete={false}
-                  />
-                ))}
-              </div>
-            )}
-            {displayedPotentialChatMembers && (
-              <SearchAndDropdownList
-                name="add-member-to-chat"
-                id="add-member-to-chat"
-                placeholder="Search users by username, first/last names"
-                query={chatMembersSearchQuery}
-                clearQueryOnClick={() => {
-                  setChatMembersSearchQuery("");
-                }}
-                randomColor={randomColor}
-                showList={showPotentialChatMembers}
-                setShowList={setShowPotentialChatMembers}
-                inputOnChange={(e) => handleSearchPotentialChatMembers(e)}
-                dropdownChecklist={
-                  <DropdownChecklist
-                    usedFor="potential-additional-chat-members"
-                    action={handleAddRemoveUserFromChat}
-                    actionEventParamNeeded={false}
-                    displayedItemsArray={displayedPotentialChatMembers}
-                    storageArray={usersToAddToChat}
-                    setStorageArray={setUsersToAddToChat}
-                    scrollHandler={handleLoadMoreItemsOnScroll}
-                    scrollHandlerParams={[displayedPotentialChatMembers]}
-                    fetchIsLoading={fetchIsLoading}
-                  />
-                }
-              />
-            )}
-            {usersToAddToChat.length > 0 && (
-              <>
-                <header>Choose group name (optional)</header>
-                <input
-                  value={chatName}
-                  onChange={(e) => handleChatNameInput(e)}
-                  type="text"
-                  placeholder="Enter group chat name"
-                  inputMode="text"
-                ></input>
-                {chatNameError !== "" && <p>{chatNameError}</p>}
-              </>
-            )}
-            <div className="create-new-chat-modal-buttons">
-              <button
-                onClick={(e) => {
-                  handleCancelAddOrEditChat(e);
-                }}
-                id="cancel"
-              >
-                Cancel
-              </button>
-              <button
-                disabled={usersToAddToChat.length === 0}
-                style={
-                  randomColor === "var(--primary-color)"
-                    ? { backgroundColor: `${randomColor}`, color: "black" }
-                    : { backgroundColor: `${randomColor}`, color: "white" }
-                }
-                onClick={() => {
-                  if (currentChat) {
-                    handleAddMultipleUsersToChat(usersToAddToChat, currentChat);
+          <h1>Add chat members</h1>
+          {initialFetchIsLoading && (
+            <header style={{ marginTop: "3rem" }} className="query-status-text">
+              Loading...
+            </header>
+          )}
+          {!initialFetchIsLoading && isFetchError && (
+            <p>Error retrieving data; please reload the page.</p>
+          )}
+          {!initialFetchIsLoading && !isFetchError && (
+            <div className="add-members-modal">
+              {usersToAddToChat.length > 0 && (
+                <div className="added-user-tab-container">
+                  {usersToAddToChat.map((user) => (
+                    <Tab
+                      key={`${user._id}-dropdown-item`}
+                      info={user}
+                      removeHandler={handleAddRemoveUserFromChat}
+                      removeHandlerNeedsEventParam={false}
+                      removeHandlerParams={[
+                        user,
+                        usersToAddToChat,
+                        setUsersToAddToChat,
+                        currentChat,
+                      ]}
+                      randomColor={randomColor}
+                      userMayNotDelete={false}
+                    />
+                  ))}
+                </div>
+              )}
+              {displayedPotentialChatMembers && (
+                <SearchAndDropdownList
+                  name="add-member-to-chat"
+                  id="add-member-to-chat"
+                  placeholder="Search users by username, first/last names"
+                  query={chatMembersSearchQuery}
+                  clearQueryOnClick={() => {
+                    setChatMembersSearchQuery("");
+                  }}
+                  randomColor={randomColor}
+                  showList={showPotentialChatMembers}
+                  setShowList={setShowPotentialChatMembers}
+                  inputOnChange={(e) => handleSearchPotentialChatMembers(e)}
+                  dropdownChecklist={
+                    <DropdownChecklist
+                      usedFor="potential-additional-chat-members"
+                      action={handleAddRemoveUserFromChat}
+                      actionEventParamNeeded={false}
+                      displayedItemsArray={displayedPotentialChatMembers}
+                      storageArray={usersToAddToChat}
+                      setStorageArray={setUsersToAddToChat}
+                      scrollHandler={handleLoadMoreItemsOnScroll}
+                      scrollHandlerParams={[displayedPotentialChatMembers]}
+                      fetchIsLoading={fetchIsLoading}
+                    />
                   }
-                }}
-              >
-                Add
-              </button>
+                />
+              )}
+              {usersToAddToChat.length > 0 && (
+                <>
+                  <header>Choose group name (optional)</header>
+                  <input
+                    value={chatName}
+                    onChange={(e) => handleChatNameInput(e)}
+                    type="text"
+                    placeholder="Enter group chat name"
+                    inputMode="text"
+                  ></input>
+                  {chatNameError !== "" && <p>{chatNameError}</p>}
+                </>
+              )}
+              <div className="create-new-chat-modal-buttons">
+                <button
+                  onClick={(e) => {
+                    handleCancelAddOrEditChat(e);
+                  }}
+                  id="cancel"
+                >
+                  Cancel
+                </button>
+                <button
+                  disabled={usersToAddToChat.length === 0}
+                  style={
+                    randomColor === "var(--primary-color)"
+                      ? { backgroundColor: `${randomColor}`, color: "black" }
+                      : { backgroundColor: `${randomColor}`, color: "white" }
+                  }
+                  onClick={() => {
+                    if (currentChat) {
+                      handleAddMultipleUsersToChat(usersToAddToChat, currentChat);
+                    }
+                  }}
+                >
+                  Add
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>
