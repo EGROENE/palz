@@ -796,7 +796,7 @@ export type TChatContext = {
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ) => void;
   initializePotentialChatMembersSearch: (input: string) => void;
-  handleSearchPotentialChatMembers: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSearchPotentialChatMembers: (e: React.ChangeEvent<HTMLInputElement>, chat?: TChat | undefined) => void;
   handleCancelAddOrEditChat: (
     e:
       | React.MouseEvent<HTMLButtonElement, MouseEvent>

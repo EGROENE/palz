@@ -409,38 +409,69 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const initializePotentialChatMembersSearch = (input: string): void => {
+  const initializePotentialChatMembersSearch = (
+    input: string,
+    chat?: TChat | undefined
+  ): void => {
     if (!fetchIsLoading) {
       setFetchIsLoading(true);
     }
     setFetchStart(0);
-    Requests.getPotentialChatMembers(currentUser, 0, Infinity)
-      .then((batchOfPotentialCMs) => {
-        if (batchOfPotentialCMs) {
-          setAllPotentialChatMembers(
-            batchOfPotentialCMs.map((cm) => Methods.getTBarebonesUser(cm))
-          );
-          let matchingPotentialCOs = [];
-          for (const co of batchOfPotentialCMs) {
-            if (
-              co.username?.includes(input.toLowerCase()) ||
-              co.firstName?.includes(input.toLowerCase()) ||
-              co.lastName?.includes(input.toLowerCase())
-            ) {
-              matchingPotentialCOs.push(Methods.getTBarebonesUser(co));
+    // If a chat is provided, pass to getPotentialChatMembers; if not, don't
+    if (chat) {
+      Requests.getPotentialChatMembers(currentUser, 0, Infinity, chat)
+        .then((batchOfPotentialCMs) => {
+          if (batchOfPotentialCMs) {
+            setAllPotentialChatMembers(
+              batchOfPotentialCMs.map((cm) => Methods.getTBarebonesUser(cm))
+            );
+            let matchingPotentialCOs = [];
+            for (const co of batchOfPotentialCMs) {
+              if (
+                co.username?.includes(input.toLowerCase()) ||
+                co.firstName?.includes(input.toLowerCase()) ||
+                co.lastName?.includes(input.toLowerCase())
+              ) {
+                matchingPotentialCOs.push(Methods.getTBarebonesUser(co));
+              }
             }
+            setDisplayedPotentialChatMembers(matchingPotentialCOs);
+          } else {
+            setIsFetchError(true);
           }
-          setDisplayedPotentialChatMembers(matchingPotentialCOs);
-        } else {
-          setIsFetchError(true);
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setFetchIsLoading(false));
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    } else {
+      Requests.getPotentialChatMembers(currentUser, 0, Infinity)
+        .then((batchOfPotentialCMs) => {
+          if (batchOfPotentialCMs) {
+            setAllPotentialChatMembers(
+              batchOfPotentialCMs.map((cm) => Methods.getTBarebonesUser(cm))
+            );
+            let matchingPotentialCOs = [];
+            for (const co of batchOfPotentialCMs) {
+              if (
+                co.username?.includes(input.toLowerCase()) ||
+                co.firstName?.includes(input.toLowerCase()) ||
+                co.lastName?.includes(input.toLowerCase())
+              ) {
+                matchingPotentialCOs.push(Methods.getTBarebonesUser(co));
+              }
+            }
+            setDisplayedPotentialChatMembers(matchingPotentialCOs);
+          } else {
+            setIsFetchError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    }
   };
 
   const handleSearchPotentialChatMembers = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
+    chat?: TChat | undefined
   ): void => {
     e.preventDefault();
     const inputCleaned = e.target.value.replace(/\s+/g, " ");
@@ -448,7 +479,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setShowPotentialChatMembers(true);
     if (inputCleaned.replace(/\s+/g, "") !== "") {
       if (allPotentialChatMembers.length === 0) {
-        initializePotentialChatMembersSearch(inputCleaned);
+        if (chat) {
+          initializePotentialChatMembersSearch(inputCleaned, chat);
+        } else {
+          initializePotentialChatMembersSearch(inputCleaned);
+        }
       } else {
         const matchingUsers: TBarebonesUser[] = [];
         for (const user of allPotentialChatMembers) {

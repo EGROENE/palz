@@ -118,9 +118,9 @@ const ChatModal = () => {
   }, []);
 
   useEffect(() => {
-    if (chatMembersSearchQuery === "") {
+    if (chatMembersSearchQuery === "" && currentChat) {
       setFetchIsLoading(true);
-      Requests.getPotentialChatMembers(currentUser, fetchStart, fetchLimit)
+      Requests.getPotentialChatMembers(currentUser, fetchStart, fetchLimit, currentChat)
         .then((batchOfPotentialCMs) => {
           if (batchOfPotentialCMs) {
             if (fetchStart === 0) {
@@ -801,7 +801,7 @@ const ChatModal = () => {
                   ))}
                 </div>
               )}
-              {displayedPotentialChatMembers && (
+              {displayedPotentialChatMembers && currentChat && (
                 <SearchAndDropdownList
                   name="add-member-to-chat"
                   id="add-member-to-chat"
@@ -813,7 +813,7 @@ const ChatModal = () => {
                   randomColor={randomColor}
                   showList={showPotentialChatMembers}
                   setShowList={setShowPotentialChatMembers}
-                  inputOnChange={(e) => handleSearchPotentialChatMembers(e)}
+                  inputOnChange={(e) => handleSearchPotentialChatMembers(e, currentChat)}
                   dropdownChecklist={
                     <DropdownChecklist
                       usedFor="potential-additional-chat-members"
