@@ -1,5 +1,5 @@
 import { useState, createContext, ReactNode, useEffect } from "react";
-import { TMainContext, TOtherUser, TEvent } from "../types";
+import { TMainContext, TOtherUser, TEvent, TBarebonesUser } from "../types";
 import useLocalStorage from "use-local-storage";
 import { useLocation } from "react-router-dom";
 
@@ -31,7 +31,9 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [displayedItemsCountInterval, setDisplayedItemsCountInterval] = useState<
     number | undefined
   >();
-  const [displayedItems, setDisplayedItems] = useState<(TEvent | TOtherUser)[]>([]);
+  const [displayedItems, setDisplayedItems] = useState<
+    (TEvent | TOtherUser | TBarebonesUser)[]
+  >([]);
   const [displayedItemsFiltered, setDisplayedItemsFiltered] = useState<
     (TEvent | TOtherUser)[]
   >(displayedItems.slice(0, displayedItemsCount));

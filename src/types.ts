@@ -305,8 +305,10 @@ export type TMainContext = {
     displayedItemsCountInterval: number | undefined,
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ) => void;
-  displayedItems: (TOtherUser | TEvent)[];
-  setDisplayedItems: React.Dispatch<React.SetStateAction<(TEvent | TOtherUser)[]>>;
+  displayedItems: (TOtherUser | TEvent | TBarebonesUser)[];
+  setDisplayedItems: React.Dispatch<
+    React.SetStateAction<(TEvent | TOtherUser | TBarebonesUser)[]>
+  >;
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   theme: "dark" | "light";

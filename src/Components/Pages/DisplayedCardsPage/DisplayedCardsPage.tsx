@@ -11,6 +11,7 @@ import {
   TUser,
   TOtherUser,
   TDisplayedCardsFilter,
+  TBarebonesUser,
 } from "../../../types";
 import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
@@ -63,8 +64,8 @@ const DisplayedCardsPage = ({
     throw new Error(error);
   }
 
-  const [allPotentialFriends, setAllPotentialFriends] = useState<TOtherUser[]>([]);
-  const [allFriends, setAllFriends] = useState<TOtherUser[]>([]);
+  const [allPotentialFriends, setAllPotentialFriends] = useState<TBarebonesUser[]>([]);
+  const [allFriends, setAllFriends] = useState<TBarebonesUser[]>([]);
   const [allExplorableEvents, setAllExplorableEvents] = useState<TEvent[]>([]);
 
   const getTOtherUserFromTUser = (user: TUser): TOtherUser => {
@@ -167,7 +168,9 @@ const DisplayedCardsPage = ({
     Requests.getPotentialFriends(currentUser, 0, Infinity)
       .then((batchOfPotentialFriends) => {
         if (batchOfPotentialFriends) {
-          setAllPotentialFriends(batchOfPotentialFriends);
+          setAllPotentialFriends(
+            batchOfPotentialFriends.map((pf) => Methods.getTBarebonesUser(pf))
+          );
           setDisplayedItems(
             batchOfPotentialFriends.filter((pf) => {
               // loop thru all items in pf.interests; if one includes input, return pf
@@ -209,7 +212,9 @@ const DisplayedCardsPage = ({
     Requests.getPotentialFriends(currentUser, 0, Infinity)
       .then((batchOfPotentialFriends) => {
         if (batchOfPotentialFriends) {
-          setAllPotentialFriends(batchOfPotentialFriends);
+          setAllPotentialFriends(
+            batchOfPotentialFriends.map((pf) => Methods.getTBarebonesUser(pf))
+          );
           let matches: TOtherUser[] = [];
           for (const pf of batchOfPotentialFriends) {
             if (pf._id) {
@@ -302,7 +307,7 @@ const DisplayedCardsPage = ({
     Requests.getFriends(currentUser, 0, Infinity)
       .then((batchOfFriends) => {
         if (batchOfFriends) {
-          setAllFriends(batchOfFriends);
+          setAllFriends(batchOfFriends.map((f) => Methods.getTBarebonesUser(f)));
           setDisplayedItems(
             batchOfFriends.filter((f) => {
               const getAnInterestIncludesSearchTerm = (): boolean => {
@@ -338,7 +343,7 @@ const DisplayedCardsPage = ({
     Requests.getFriends(currentUser, 0, Infinity)
       .then((batchOfFriends: TUser[]) => {
         if (batchOfFriends) {
-          setAllFriends(batchOfFriends);
+          setAllFriends(batchOfFriends.map((f) => Methods.getTBarebonesUser(f)));
           let matches: TOtherUser[] = [];
           for (const f of batchOfFriends) {
             if (f._id) {
@@ -544,7 +549,7 @@ const DisplayedCardsPage = ({
   };
 
   const handleLoadMoreItemsOnScroll = (
-    items: (TOtherUser | TEvent)[],
+    items: (TOtherUser | TEvent | TBarebonesUser)[],
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ): void => {
     const eHTMLElement = e?.target as HTMLElement;
@@ -558,7 +563,7 @@ const DisplayedCardsPage = ({
         : window.innerHeight + window.scrollY >= document.body.offsetHeight;
 
     if (bottomReached) {
-      const lastItem: TOtherUser | TEvent = items[items.length - 1];
+      const lastItem: TOtherUser | TEvent | TBarebonesUser = items[items.length - 1];
 
       if (lastItem && lastItem.index && searchTerm === "") {
         setFetchStart(lastItem.index + 1);
