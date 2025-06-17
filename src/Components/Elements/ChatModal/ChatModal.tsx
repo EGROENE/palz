@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Message from "../Message/Message";
-import { TOtherUser, TThemeColor } from "../../../types";
+import { TOtherUser, TThemeColor, TBarebonesUser } from "../../../types";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -15,6 +15,8 @@ const ChatModal = () => {
   const { currentUser, setCurrentOtherUser } = useUserContext();
 
   const {
+    fetchIsLoading,
+    setFetchStart,
     displayedPotentialChatMembers,
     startConversation,
     setMessageBeingEdited,
@@ -141,6 +143,29 @@ const ChatModal = () => {
         .finally(() => setFetchIsLoading(false));
     }
   }, [fetchStart, chatMembersSearchQuery]);
+
+  const handleLoadMoreItemsOnScroll = (
+    items: TBarebonesUser[],
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
+  ): void => {
+    const eHTMLElement = e?.target as HTMLElement;
+    const scrollTop = e ? eHTMLElement.scrollTop : null;
+    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
+    const clientHeight = e ? eHTMLElement.clientHeight : null;
+
+    const bottomReached =
+      e && scrollTop && clientHeight
+        ? scrollTop + clientHeight === scrollHeight
+        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
+
+    if (bottomReached) {
+      const lastItem: TBarebonesUser = items[items.length - 1];
+
+      if (lastItem && lastItem.index && chatMembersSearchQuery === "") {
+        setFetchStart(lastItem.index + 1);
+      }
+    }
+  };
 
   const handleCancelAddingChatMembers = (
     e:
@@ -831,6 +856,9 @@ const ChatModal = () => {
                     displayedItemsArray={displayedPotentialChatMembers}
                     storageArray={usersToAddToChat}
                     setStorageArray={setUsersToAddToChat}
+                    scrollHandler={handleLoadMoreItemsOnScroll}
+                    scrollHandlerParams={[displayedPotentialChatMembers]}
+                    fetchIsLoading={fetchIsLoading}
                   />
                 }
               />
