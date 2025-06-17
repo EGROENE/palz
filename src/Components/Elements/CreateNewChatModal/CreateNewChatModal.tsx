@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {  TThemeColor } from "../../../types";
+import { TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -8,11 +8,6 @@ import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownLis
 import mongoose from "mongoose";
 import Methods from "../../../methods";
 import Requests from "../../../requests";
-
-// add members
-// name chat (if over 1 other member)
-// upon click of 'create', make this modal disappear, then render ChatModal (set currentChat to newly created chat)
-// in chat preview, if no messages, show NO MESSAGES YET if no messages exist in chat
 
 const CreateNewChatModal = () => {
   const { currentUser } = useUserContext();
