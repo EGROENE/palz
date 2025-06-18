@@ -32,7 +32,6 @@ const FriendRequests = () => {
     null
   );
 
-  // Upon page init render only, set displayedItemsCount/Interval:
   useEffect(() => {
     window.scrollTo(0, 0);
 
