@@ -1,3 +1,4 @@
+import Methods from "./methods";
 import {
   TUser,
   TEvent,
@@ -1063,9 +1064,9 @@ const addToFriendRequestsReceived = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendRequestsReceivedArray = [
+  const updatedFriendRequestsReceivedArray: TBarebonesUser[] = [
     ...recipient.friendRequestsReceived,
-    sender._id,
+    Methods.getTBarebonesUser(sender),
   ];
 
   const getRaw = () => {
@@ -1087,7 +1088,10 @@ const addToFriendRequestsSent = (sender: TUser, recipient: TUser): Promise<Respo
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedFriendRequestsSentArray = [...sender.friendRequestsSent, recipient._id];
+  let updatedFriendRequestsSentArray: TBarebonesUser[] = [
+    ...sender.friendRequestsSent,
+    Methods.getTBarebonesUser(recipient),
+  ];
 
   const getRaw = () => {
     return JSON.stringify({
@@ -1114,7 +1118,7 @@ const removeFromFriendRequestsReceived = (
   const getRaw = () => {
     return JSON.stringify({
       "friendRequestsReceived": recipient?.friendRequestsReceived.filter(
-        (id) => id !== sender._id
+        (elem) => elem._id !== sender._id
       ),
     });
   };
@@ -1135,8 +1139,8 @@ const removeFromFriendRequestsSent = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedFriendRequestsArray = sender.friendRequestsSent.filter(
-    (id) => id !== recipient._id
+  const updatedFriendRequestsArray: TBarebonesUser[] = sender.friendRequestsSent.filter(
+    (elem) => elem._id !== recipient._id
   );
 
   const getRaw = () => {
