@@ -1,4 +1,4 @@
-import { useState, createContext, ReactNode, useEffect } from "react";
+import { useState, createContext, ReactNode } from "react";
 import { TMainContext, TOtherUser, TEvent, TBarebonesUser } from "../types";
 import useLocalStorage from "use-local-storage";
 import { useLocation } from "react-router-dom";
@@ -39,44 +39,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setTimeout(() => setShowWelcomeMessage(false), welcomeMessageDisplayTime);
   };
 
-  const handleLoadMoreOnScroll = (
-    displayedItemsCount: number | undefined,
-    setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>,
-    displayedItemsArray: any[],
-    displayedItemsArrayFiltered: any[],
-    displayedItemsCountInterval: number | undefined,
-    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
-  ): void => {
-    const eHTMLElement = e?.target as HTMLElement;
-    const scrollTop = e ? eHTMLElement.scrollTop : null;
-    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
-    const clientHeight = e ? eHTMLElement.clientHeight : null;
-
-    const bottomReached =
-      e && scrollTop && clientHeight
-        ? scrollTop + clientHeight === scrollHeight
-        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
-
-    if (displayedItemsCount && displayedItemsCountInterval && setDisplayedItemsCount) {
-      if (bottomReached) {
-        if (
-          displayedItemsArray.length - displayedItemsArrayFiltered.length >=
-          displayedItemsCountInterval
-        ) {
-          const newDisplayCount = displayedItemsCount + displayedItemsCountInterval;
-          setDisplayedItemsCount(newDisplayCount);
-          setDisplayedItemsFiltered(displayedItems.slice(0, newDisplayCount));
-        } else {
-          const newDisplayCount =
-            displayedItemsCount +
-            (displayedItemsArray.length - displayedItemsArrayFiltered.length);
-          setDisplayedItemsCount(newDisplayCount);
-          setDisplayedItemsFiltered(displayedItems.slice(0, newDisplayCount));
-        }
-      }
-    }
-  };
-
   const mainContextValues: TMainContext = {
     fetchStart,
     setFetchStart,
@@ -85,7 +47,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     showMobileNavOptions,
     setShowMobileNavOptions,
     currentRoute,
-    handleLoadMoreOnScroll,
     displayedItems,
     setDisplayedItems,
     isLoading,

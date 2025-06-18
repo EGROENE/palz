@@ -287,14 +287,6 @@ export type TMainContext = {
   showMobileNavOptions: boolean;
   setShowMobileNavOptions: React.Dispatch<React.SetStateAction<boolean>>;
   currentRoute: string;
-  handleLoadMoreOnScroll: (
-    displayedItemsCount: number | undefined,
-    setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>,
-    displayedItemsArray: any[],
-    displayedItemsArrayFiltered: any[],
-    displayedItemsCountInterval: number | undefined,
-    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
-  ) => void;
   displayedItems: (TOtherUser | TEvent | TBarebonesUser)[];
   setDisplayedItems: React.Dispatch<
     React.SetStateAction<(TEvent | TOtherUser | TBarebonesUser)[]>
