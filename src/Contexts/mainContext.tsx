@@ -27,7 +27,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
     useState<number>(2500);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [displayedItemsCount, setDisplayedItemsCount] = useState<number | undefined>();
   const [displayedItems, setDisplayedItems] = useState<
     (TEvent | TOtherUser | TBarebonesUser)[]
   >([]);
@@ -86,10 +85,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     showMobileNavOptions,
     setShowMobileNavOptions,
     currentRoute,
-    displayedItemsCountInterval,
-    setDisplayedItemsCountInterval,
-    displayedItemsCount,
-    setDisplayedItemsCount,
     handleLoadMoreOnScroll,
     displayedItems,
     setDisplayedItems,
