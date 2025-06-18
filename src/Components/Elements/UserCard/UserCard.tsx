@@ -39,12 +39,12 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
   const currentUserReceivedFriendRequest =
     userSECURE._id &&
     friendRequestsReceived &&
-    friendRequestsReceived.includes(userSECURE._id.toString());
+    friendRequestsReceived.map((elem) => elem._id).includes(userSECURE._id.toString());
 
   const currentUserSentFriendRequest =
     userSECURE._id &&
     friendRequestsSent &&
-    friendRequestsSent.includes(userSECURE._id.toString());
+    friendRequestsSent.map((elem) => elem._id).includes(userSECURE._id.toString());
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
