@@ -40,8 +40,8 @@ export type TUser = {
     | undefined;
   whoCanInviteUser: "friends" | "friends of friends" | "anyone" | "nobody" | undefined;
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
-  friendRequestsReceived: string[];
-  friendRequestsSent: string[];
+  friendRequestsReceived: TBarebonesUser[];
+  friendRequestsSent: TBarebonesUser[];
   blockedUsers: TBarebonesUser[];
   blockedBy: TBarebonesUser[];
   whoCanMessage: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
@@ -327,10 +327,10 @@ export type TUserContext = {
   fetchAllVisibleOtherUsersQuery: UseQueryResult<TOtherUser[], Error>;
   friends: string[] | undefined;
   setFriends: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  friendRequestsSent: string[] | undefined;
-  setFriendRequestsSent: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  friendRequestsReceived: string[] | undefined;
-  setFriendRequestsReceived: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+  friendRequestsSent: TBarebonesUser[] | undefined;
+  setFriendRequestsSent: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>;
+  friendRequestsReceived: TBarebonesUser[] | undefined;
+  setFriendRequestsReceived: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>;
   blockedUsers: TBarebonesUser[] | undefined;
   setBlockedUsers: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>;
   addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists: (
