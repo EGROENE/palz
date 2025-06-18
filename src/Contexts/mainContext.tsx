@@ -28,22 +28,12 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     useState<number>(2500);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [displayedItemsCount, setDisplayedItemsCount] = useState<number | undefined>();
-  const [displayedItemsCountInterval, setDisplayedItemsCountInterval] = useState<
-    number | undefined
-  >();
   const [displayedItems, setDisplayedItems] = useState<
     (TEvent | TOtherUser | TBarebonesUser)[]
   >([]);
-  const [displayedItemsFiltered, setDisplayedItemsFiltered] = useState<
-    (TEvent | TOtherUser)[]
-  >(displayedItems.slice(0, displayedItemsCount));
   const [showMobileNavOptions, setShowMobileNavOptions] = useState<boolean>(false);
   // fetchStart is here so that it can be immediately set to 0 when clicking links to DisplayedCards pages
   const [fetchStart, setFetchStart] = useState<number>(0);
-
-  useEffect(() => {
-    setDisplayedItemsFiltered(displayedItems.slice(0, displayedItemsCount));
-  }, [displayedItems]);
 
   const handleWelcomeMessage = () => {
     setShowWelcomeMessage(true);
@@ -98,8 +88,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     currentRoute,
     displayedItemsCountInterval,
     setDisplayedItemsCountInterval,
-    displayedItemsFiltered,
-    setDisplayedItemsFiltered,
     displayedItemsCount,
     setDisplayedItemsCount,
     handleLoadMoreOnScroll,
