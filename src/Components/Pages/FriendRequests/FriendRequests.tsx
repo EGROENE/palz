@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TThemeColor, TOtherUser } from "../../../types";
+import { TThemeColor } from "../../../types";
 import ListedUser from "../../Elements/ListedUser/ListedUser";
 import styles from "./styles.module.css";
 import toast from "react-hot-toast";
@@ -13,12 +13,8 @@ const FriendRequests = () => {
     setShowSidebar,
     theme,
     isLoading,
-    setDisplayedItemsCount,
-    setDisplayedItemsCountInterval,
+    displayedItems,
     setDisplayedItems,
-    displayedItemsFiltered,
-    setDisplayedItemsFiltered,
-    displayedItemsCount,
   } = useMainContext();
   const {
     handleAcceptFriendRequest,
@@ -30,9 +26,7 @@ const FriendRequests = () => {
     userCreatedAccount,
     logout,
     currentUser,
-    fetchAllVisibleOtherUsersQuery,
   } = useUserContext();
-  const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
 
   const [requestsVisible, setRequestsVisible] = useState<"sent" | "received" | null>(
     null
@@ -40,8 +34,6 @@ const FriendRequests = () => {
 
   // Upon page init render only, set displayedItemsCount/Interval:
   useEffect(() => {
-    setDisplayedItemsCount(4);
-    setDisplayedItemsCountInterval(4);
     window.scrollTo(0, 0);
 
     if (userCreatedAccount === null || !currentUser) {
@@ -83,57 +75,26 @@ const FriendRequests = () => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
-  // Upon change of requestsVisible, set displayedItems & displayedItemsFiltered arrays:
-  /* Remember, these 2 arrays must both exist so the amount of items displayed can be compared to how many items there are in total. */
   useEffect(() => {
-    const friendRequestsReceivedUSERS: TOtherUser[] | undefined =
-      visibleOtherUsers?.filter(
-        (user) => user._id && friendRequestsReceived?.includes(user._id.toString())
-      );
-
-    const friendRequestsSentUSERS: TOtherUser[] | undefined = visibleOtherUsers?.filter(
-      (user) => user._id && friendRequestsSent?.includes(user._id.toString())
-    );
-
     if (currentUser) {
-      if (
-        requestsVisible === "received" &&
-        friendRequestsReceivedUSERS &&
-        friendRequestsSentUSERS
-      ) {
+      if (requestsVisible === "received") {
         if (currentUser.friendRequestsReceived.length === 0) {
           if (currentUser.friendRequestsSent.length > 0) {
             setRequestsVisible("sent");
-            setDisplayedItems(friendRequestsSentUSERS);
-            setDisplayedItemsFiltered(
-              friendRequestsSentUSERS.slice(0, displayedItemsCount)
-            );
+            setDisplayedItems(currentUser.friendRequestsSent);
           }
         } else {
-          setDisplayedItems(friendRequestsReceivedUSERS);
-          setDisplayedItemsFiltered(
-            friendRequestsReceivedUSERS.slice(0, displayedItemsCount)
-          );
+          setDisplayedItems(currentUser.friendRequestsReceived);
         }
       }
-      if (
-        requestsVisible === "sent" &&
-        friendRequestsReceivedUSERS &&
-        friendRequestsSentUSERS
-      ) {
+      if (requestsVisible === "sent") {
         if (currentUser.friendRequestsSent.length === 0) {
           if (currentUser.friendRequestsReceived.length > 0) {
             setRequestsVisible("received");
-            setDisplayedItems(friendRequestsReceivedUSERS);
-            setDisplayedItemsFiltered(
-              friendRequestsReceivedUSERS.slice(0, displayedItemsCount)
-            );
+            setDisplayedItems(currentUser.friendRequestsReceived);
           }
         } else {
-          setDisplayedItems(friendRequestsSentUSERS);
-          setDisplayedItemsFiltered(
-            friendRequestsSentUSERS.slice(0, displayedItemsCount)
-          );
+          setDisplayedItems(currentUser.friendRequestsSent);
         }
       }
     }
@@ -155,59 +116,42 @@ const FriendRequests = () => {
       ? true
       : false;
 
-  const friendRequestsSentFiltered: string[] = friendRequestsSent
-    ? Methods.removeDuplicatesFromArray(friendRequestsSent)
-    : [];
-  const friendRequestsReceivedFiltered: string[] = friendRequestsReceived
-    ? Methods.removeDuplicatesFromArray(friendRequestsReceived)
-    : [];
-
   return (
     <>
       <h1>Friend Requests</h1>
-      {fetchAllVisibleOtherUsersQuery.isLoading && (
-        <header style={{ marginTop: "3rem" }} className="query-status-text">
-          Loading...
-        </header>
-      )}
-      {fetchAllVisibleOtherUsersQuery.isError && (
-        <div className="query-error-container">
-          <header className="query-status-text">Error fetching data. </header>
-          <div className="theme-element-container">
-            <button onClick={() => window.location.reload()}>Retry</button>
-          </div>
-        </div>
-      )}
-      {!fetchAllVisibleOtherUsersQuery.isLoading &&
-        !fetchAllVisibleOtherUsersQuery.isError &&
-        (userHasPendingRequests === null ||
-        (currentUser?.friendRequestsSent.length === 0 &&
-          currentUser?.friendRequestsReceived.length === 0) ? (
-          <h2>No pending friend requests</h2>
-        ) : (
-          <>
-            <div className={styles.friendRequestFilterHeaders}>
-              {friendRequestsSent && friendRequestsSentFiltered.length > 0 && (
+      {userHasPendingRequests === null ||
+      (currentUser?.friendRequestsSent.length === 0 &&
+        currentUser?.friendRequestsReceived.length === 0) ? (
+        <h2>No pending friend requests</h2>
+      ) : (
+        <>
+          <div className={styles.friendRequestFilterHeaders}>
+            {friendRequestsSent &&
+              Methods.removeDuplicatesFromArray(friendRequestsSent).length > 0 && (
                 <div>
                   <header
                     style={
                       requestsVisible === "sent" &&
                       friendRequestsReceived &&
-                      friendRequestsReceivedFiltered.length > 0
+                      Methods.removeDuplicatesFromArray(friendRequestsReceived).length > 0
                         ? { color: randomColor }
                         : { color: "var(--text-color)" }
                     }
                     onClick={
-                      friendRequestsReceived && friendRequestsReceivedFiltered.length > 0
+                      friendRequestsReceived &&
+                      Methods.removeDuplicatesFromArray(friendRequestsReceived).length > 0
                         ? () => setRequestsVisible("sent")
                         : undefined
                     }
                   >
-                    {`Sent (${friendRequestsSentFiltered.length})`}
+                    {`Sent (${
+                      Methods.removeDuplicatesFromArray(friendRequestsSent).length
+                    })`}
                   </header>
                   {requestsVisible === "sent" &&
                     friendRequestsReceived &&
-                    friendRequestsReceivedFiltered.length > 0 && (
+                    Methods.removeDuplicatesFromArray(friendRequestsReceived).length >
+                      0 && (
                       <div
                         className={`${styles.requestTypeUnderline} animate__animated animate__slideInRight`}
                         style={{ backgroundColor: randomColor }}
@@ -215,7 +159,8 @@ const FriendRequests = () => {
                     )}
                 </div>
               )}
-              {friendRequestsReceived && friendRequestsReceivedFiltered.length > 0 && (
+            {friendRequestsReceived &&
+              Methods.removeDuplicatesFromArray(friendRequestsReceived).length > 0 && (
                 <div>
                   <header
                     style={
@@ -226,16 +171,19 @@ const FriendRequests = () => {
                         : { color: "var(--text-color)" }
                     }
                     onClick={
-                      friendRequestsSent && friendRequestsSentFiltered.length > 0
+                      friendRequestsSent &&
+                      Methods.removeDuplicatesFromArray(friendRequestsReceived).length > 0
                         ? () => setRequestsVisible("received")
                         : undefined
                     }
                   >
-                    {`Received (${friendRequestsReceivedFiltered.length})`}
+                    {`Received (${
+                      Methods.removeDuplicatesFromArray(friendRequestsReceived).length
+                    })`}
                   </header>
                   {requestsVisible === "received" &&
                     friendRequestsSent &&
-                    friendRequestsSentFiltered.length > 0 && (
+                    Methods.removeDuplicatesFromArray(friendRequestsSent).length > 0 && (
                       <div
                         className={`${styles.requestTypeUnderline} animate__animated animate__slideInLeft`}
                         style={{ backgroundColor: randomColor }}
@@ -243,61 +191,61 @@ const FriendRequests = () => {
                     )}
                 </div>
               )}
-            </div>
-            <div className="friendRequestUsersContainer">
-              {requestsVisible === "sent"
-                ? displayedItemsFiltered &&
-                  Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
-                    (user) =>
-                      Methods.isTUser(user) && (
-                        <ListedUser
-                          key={user._id?.toString()}
-                          renderButtonOne={true}
-                          user={user}
-                          buttonOneText="See Profile"
-                          buttonOneIsDisabled={isLoading}
-                          buttonOneLink={`/users/${user?.username}`}
-                          buttonOneHandler={() => setCurrentOtherUser(user)}
-                          buttonOneHandlerNeedsEventParam={false}
-                          renderButtonTwo={true}
-                          buttonTwoText="Retract"
-                          buttonTwoHandler={handleRemoveFriendRequest}
-                          buttonTwoHandlerNeedsEventParam={false}
-                          buttonTwoHandlerParams={[user]}
-                          buttonTwoIsDisabled={isLoading}
-                          buttonTwoLink={null}
-                          objectLink={`/users/${user?.username}`}
-                        />
-                      )
-                  )
-                : displayedItemsFiltered &&
-                  Methods.removeDuplicatesFromArray(displayedItemsFiltered).map(
-                    (user) =>
-                      Methods.isTUser(user) && (
-                        <ListedUser
-                          key={user._id?.toString()}
-                          renderButtonOne={true}
-                          user={user}
-                          buttonOneText="Accept"
-                          buttonOneLink={null}
-                          buttonOneHandler={handleAcceptFriendRequest}
-                          buttonOneHandlerParams={[user, currentUser]}
-                          buttonOneHandlerNeedsEventParam={true}
-                          buttonOneIsDisabled={isLoading}
-                          renderButtonTwo={true}
-                          buttonTwoText="Reject"
-                          buttonTwoHandler={handleRejectFriendRequest}
-                          buttonTwoHandlerParams={[user, currentUser]}
-                          buttonTwoHandlerNeedsEventParam={true}
-                          buttonTwoIsDisabled={isLoading}
-                          buttonTwoLink={null}
-                          objectLink={`/users/${user?.username}`}
-                        />
-                      )
-                  )}
-            </div>
-          </>
-        ))}
+          </div>
+          <div className="friendRequestUsersContainer">
+            {requestsVisible === "sent"
+              ? displayedItems &&
+                Methods.removeDuplicatesFromArray(displayedItems).map(
+                  (user) =>
+                    Methods.isTUser(user) && (
+                      <ListedUser
+                        key={user._id?.toString()}
+                        renderButtonOne={true}
+                        user={user}
+                        buttonOneText="See Profile"
+                        buttonOneIsDisabled={isLoading}
+                        buttonOneLink={`/users/${user?.username}`}
+                        buttonOneHandler={() => setCurrentOtherUser(user)}
+                        buttonOneHandlerNeedsEventParam={false}
+                        renderButtonTwo={true}
+                        buttonTwoText="Retract"
+                        buttonTwoHandler={handleRemoveFriendRequest}
+                        buttonTwoHandlerNeedsEventParam={false}
+                        buttonTwoHandlerParams={[user]}
+                        buttonTwoIsDisabled={isLoading}
+                        buttonTwoLink={null}
+                        objectLink={`/users/${user?.username}`}
+                      />
+                    )
+                )
+              : displayedItems &&
+                Methods.removeDuplicatesFromArray(displayedItems).map(
+                  (user) =>
+                    Methods.isTUser(user) && (
+                      <ListedUser
+                        key={user._id?.toString()}
+                        renderButtonOne={true}
+                        user={user}
+                        buttonOneText="Accept"
+                        buttonOneLink={null}
+                        buttonOneHandler={handleAcceptFriendRequest}
+                        buttonOneHandlerParams={[user, currentUser]}
+                        buttonOneHandlerNeedsEventParam={true}
+                        buttonOneIsDisabled={isLoading}
+                        renderButtonTwo={true}
+                        buttonTwoText="Reject"
+                        buttonTwoHandler={handleRejectFriendRequest}
+                        buttonTwoHandlerParams={[user, currentUser]}
+                        buttonTwoHandlerNeedsEventParam={true}
+                        buttonTwoIsDisabled={isLoading}
+                        buttonTwoLink={null}
+                        objectLink={`/users/${user?.username}`}
+                      />
+                    )
+                )}
+          </div>
+        </>
+      )}
     </>
   );
 };
