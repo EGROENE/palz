@@ -29,19 +29,9 @@ import TermsAndConditions from "./Components/Pages/TermsAndConditions/TermsAndCo
 import MobileNavOptions from "./Components/Elements/MobileNavOptions/MobileNavOptions";
 
 function App() {
-  const {
-    theme,
-    showWelcomeMessage,
-    showSidebar,
-    handleLoadMoreOnScroll,
-    displayedItemsCount,
-    setDisplayedItemsCount,
-    displayedItems,
-    displayedItemsFiltered,
-    displayedItemsCountInterval,
-    setShowSidebar,
-    showMobileNavOptions,
-  } = useMainContext();
+  const { theme, showWelcomeMessage, showSidebar, setShowSidebar, showMobileNavOptions } =
+    useMainContext();
+
   const {
     userCreatedAccount,
     currentUser,
@@ -52,6 +42,7 @@ function App() {
     updateProfileImageMutation,
     removeProfileImageMutation,
   } = useUserContext();
+
   const {
     currentEvent,
     eventEditIsInProgress,
@@ -64,39 +55,6 @@ function App() {
 
   const navigation = useNavigate();
   const currentURL = useLocation().pathname;
-
-  /* 
-  Add/remove event listeners to/from window, which call handleLoadMoreOnScroll, dependent on changes to state values related to items that should be displayed. Allows for controlling how many items display at once on pages like FindPalz, MyPalz, & Explore Events. As user scrolls to bottom of page, a certain amount of new items is loaded.
-  */
-  useEffect(() => {
-    window.addEventListener("scroll", () =>
-      handleLoadMoreOnScroll(
-        displayedItemsCount,
-        setDisplayedItemsCount,
-        displayedItems,
-        displayedItemsFiltered,
-        displayedItemsCountInterval
-      )
-    );
-
-    return () => {
-      window.removeEventListener("scroll", () =>
-        handleLoadMoreOnScroll(
-          displayedItemsCount,
-          setDisplayedItemsCount,
-          displayedItems,
-          displayedItemsFiltered,
-          displayedItemsCountInterval
-        )
-      );
-    };
-  }, [
-    displayedItemsCount,
-    setDisplayedItemsCount,
-    displayedItems,
-    displayedItemsFiltered,
-    displayedItemsCountInterval,
-  ]);
 
   theme === "dark"
     ? (document.body.style.backgroundColor = "#242424")

@@ -293,10 +293,6 @@ export type TMainContext = {
   setDisplayedItemsCountInterval: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  displayedItemsFiltered: (TOtherUser | TEvent)[];
-  setDisplayedItemsFiltered: React.Dispatch<
-    React.SetStateAction<(TOtherUser | TEvent)[]>
-  >;
   handleLoadMoreOnScroll: (
     displayedItemsCount: number | undefined,
     setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>,
@@ -328,9 +324,13 @@ export type TUserContext = {
   friends: string[] | undefined;
   setFriends: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   friendRequestsSent: TBarebonesUser[] | undefined;
-  setFriendRequestsSent: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>;
+  setFriendRequestsSent: React.Dispatch<
+    React.SetStateAction<TBarebonesUser[] | undefined>
+  >;
   friendRequestsReceived: TBarebonesUser[] | undefined;
-  setFriendRequestsReceived: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>;
+  setFriendRequestsReceived: React.Dispatch<
+    React.SetStateAction<TBarebonesUser[] | undefined>
+  >;
   blockedUsers: TBarebonesUser[] | undefined;
   setBlockedUsers: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>;
   addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists: (
@@ -796,7 +796,10 @@ export type TChatContext = {
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ) => void;
   initializePotentialChatMembersSearch: (input: string) => void;
-  handleSearchPotentialChatMembers: (e: React.ChangeEvent<HTMLInputElement>, chat?: TChat | undefined) => void;
+  handleSearchPotentialChatMembers: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    chat?: TChat | undefined
+  ) => void;
   handleCancelAddOrEditChat: (
     e:
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
