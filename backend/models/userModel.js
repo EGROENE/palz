@@ -74,11 +74,11 @@ const userSchema = new Schema({
     required: false,
   },
   friendRequestsReceived: {
-    type: Array,
+    type: [barebonesUser],
     required: true,
   },
   friendRequestsSent: {
-    type: Array,
+    type: [barebonesUser],
     required: true,
   },
   hostingCredits: {
