@@ -1,10 +1,11 @@
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TOtherUser, TUser } from "../../../types";
+import { TUser, TBarebonesUser } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Requests from "../../../requests";
+import Methods from "../../../methods";
 
 /* Component contains a modal w/ background, as well as a list of users. In every user box, there is user image, name, username, & button that will eventually make it possible to message user & a button that removes user from list. To be used on event pages to show list of RSVPs & list of invitees. */
 const UserListModal = ({
@@ -13,7 +14,7 @@ const UserListModal = ({
   renderButtonTwo,
   closeModalMethod,
   header,
-  userIDArray,
+  users,
   buttonOneText,
   buttonOneHandler,
   buttonOneHandlerNeedsEventParam,
@@ -37,7 +38,7 @@ const UserListModal = ({
   renderButtonTwo: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
   header: string;
-  userIDArray: (string | undefined)[] | undefined | null;
+  users: TBarebonesUser[];
   buttonOneText?: string;
   buttonOneHandler?: Function;
   buttonOneHandlerNeedsEventParam?: boolean;
@@ -59,27 +60,13 @@ const UserListModal = ({
     handleUnblockUser,
   } = useUserContext();
 
-  const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
-
   const { currentEvent, fetchAllEventsQuery, handleDeleteUserRSVP, handleRemoveInvitee } =
     useEventContext();
   const { startConversation } = useChatContext();
 
-  const getUserArray = (): TOtherUser[] => {
-    const userArray: TOtherUser[] = [];
-    if (userIDArray && visibleOtherUsers) {
-      for (const userID of userIDArray) {
-        const matchingUser = visibleOtherUsers.filter((user) => user._id === userID)[0];
-        userArray.push(matchingUser);
-      }
-    }
-    return userArray;
-  };
-  const userArray = getUserArray();
+  const displayedUserCount = Methods.removeDuplicatesFromArray(users).length;
 
-  const displayedUserCount = userArray.length;
-
-  const getButtonOneHandlerParams = (user: TOtherUser) => {
+  const getButtonOneHandlerParams = (user: TBarebonesUser) => {
     if (!buttonOneHandlerParams) {
       if (listType === "blocked-users" && buttonOneHandler === handleUnblockUser) {
         return [currentUser, user, blockedUsers, setBlockedUsers];
@@ -92,7 +79,7 @@ const UserListModal = ({
     }
   };
 
-  const getButtonTwoHandlerParams = (user: TOtherUser) => {
+  const getButtonTwoHandlerParams = (user: TBarebonesUser) => {
     if (user._id) {
       Requests.getUserByID(user._id.toString())
         .then((res) => {
@@ -121,7 +108,7 @@ const UserListModal = ({
     return undefined;
   };
 
-  const getButtonOneLink = (user: TOtherUser): string | null => {
+  const getButtonOneLink = (user: TBarebonesUser): string | null => {
     if (listType === "other-user-friends" || listType === "mutual-friends") {
       return `/users/${user.username}`;
     }
@@ -175,7 +162,7 @@ const UserListModal = ({
         {isNoFetchError &&
           !fetchIsLoading &&
           (displayedUserCount > 0 ? (
-            userArray.map((user) => (
+            users.map((user) => (
               <ListedUser
                 key={user._id?.toString()}
                 renderButtonOne={renderButtonOne}
