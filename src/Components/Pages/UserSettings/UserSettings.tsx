@@ -394,7 +394,7 @@ const UserSettings = () => {
             renderButtonTwo={false}
             closeModalMethod={setShowBlockedUsers}
             header="Blocked Users"
-            userIDArray={blockedUsersArray.map((bu) => bu._id?.toString())}
+            users={blockedUsersArray}
             buttonOneText="Unblock"
             buttonOneHandler={handleUnblockUser}
             buttonOneHandlerNeedsEventParam={false}

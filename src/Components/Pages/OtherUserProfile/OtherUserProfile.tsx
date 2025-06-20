@@ -1049,7 +1049,7 @@ const OtherUserProfile = () => {
                     renderButtonTwo={false}
                     closeModalMethod={setShowMutualFriends}
                     header="Mutual Friends"
-                    userIDArray={palzInCommon.map((pal) => pal._id?.toString())}
+                    users={palzInCommon.map((p) => Methods.getTBarebonesUser(p))}
                     randomColor={randomColor}
                   />
                 )}
@@ -1060,8 +1060,8 @@ const OtherUserProfile = () => {
                     renderButtonTwo={false}
                     closeModalMethod={setShowFriends}
                     header={`${currentOtherUserSECURE.username} 's palz`}
-                    userIDArray={currentOtherUserFriendsSECURE.map((friend) =>
-                      friend._id?.toString()
+                    users={currentOtherUserFriendsSECURE.map((friend) =>
+                      Methods.getTBarebonesUser(friend)
                     )}
                     buttonOneText="View Profile"
                     randomColor={randomColor}

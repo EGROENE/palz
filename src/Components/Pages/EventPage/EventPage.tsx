@@ -308,7 +308,7 @@ const EventPage = () => {
               renderButtonTwo={true}
               closeModalMethod={setShowInvitees}
               header="Invitees"
-              userIDArray={currentEvent.invitees.map((i) => i._id?.toString())}
+              users={currentEvent.invitees}
               buttonOneText="Message"
               buttonOneHandler={startConversation}
               buttonOneHandlerNeedsEventParam={false}
@@ -325,9 +325,7 @@ const EventPage = () => {
               renderButtonTwo={true}
               closeModalMethod={setShowRSVPs}
               header="RSVPs"
-              userIDArray={currentEvent.interestedUsers.map((user) =>
-                user._id?.toString()
-              )}
+              users={currentEvent.interestedUsers}
               buttonOneText="Message"
               buttonOneHandler={startConversation}
               buttonOneHandlerNeedsEventParam={false}
