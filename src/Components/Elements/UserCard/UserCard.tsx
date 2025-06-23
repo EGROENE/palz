@@ -11,7 +11,7 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 import Requests from "../../../requests";
 
 const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
-  const { isLoading, error, setError } = useMainContext();
+  const { isLoading, error } = useMainContext();
 
   if (error) {
     throw new Error(error);
@@ -104,36 +104,31 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
                 }
                 setFriendsInCommon(friendsInCommon);
 
-                // Set currentUserIsFriendOfFriend:
-                const getCurrentOtherUserFriends = async (): Promise<TUser[]> => {
-                  let currentOtherUserFriends: TUser[] = [];
-                  for (const friendID of user.friends) {
-                    await Requests.getUserByID(friendID)
-                      .then((res) => {
-                        if (res.ok) {
-                          res
-                            .json()
-                            .then((currentOtherUserFriend) =>
-                              currentOtherUserFriends.push(currentOtherUserFriend)
-                            );
-                        } else {
-                          setError("Error fetching user's friends (TUser[])");
-                        }
-                      })
-                      .catch((error) => console.log(error));
-                  }
-                  return currentOtherUserFriends;
+                const getCurrentOtherUserFriendsPromises = (): Promise<TUser>[] => {
+                  const promisesToAwait = user.friends.map((id) => {
+                    return Requests.getUserByID(id).then((res) => {
+                      return res.json().then((otherUserFriend: TUser) => otherUserFriend);
+                    });
+                  });
+                  return promisesToAwait;
                 };
 
-                getCurrentOtherUserFriends().then((currentOtherUserFriends) => {
-                  if (currentUser && currentUser._id) {
-                    for (const friend of currentOtherUserFriends) {
-                      if (friend.friends.includes(currentUser._id.toString())) {
-                        setCurrentUserIsFriendOfFriend(true);
+                Promise.all(getCurrentOtherUserFriendsPromises())
+                  .then((currentOtherUserFriends) => {
+                    if (currentUser && currentUser._id) {
+                      for (const friend of currentOtherUserFriends) {
+                        if (
+                          currentUser._id &&
+                          friend &&
+                          friend.friends &&
+                          friend.friends.includes(currentUser._id.toString())
+                        ) {
+                          setCurrentUserIsFriendOfFriend(true);
+                        }
                       }
                     }
-                  }
-                });
+                  })
+                  .catch((error) => console.log(error));
 
                 // Set userIsMessageable:
                 if (currentUser && currentUser._id) {
@@ -162,10 +157,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
               .catch((error) => console.log(error));
           }
         })
-        .catch((error) => {
-          console.log(error);
-          return undefined;
-        });
+        .catch((error) => console.log(error));
     }
 
     // Set color of event card's border randomly:
