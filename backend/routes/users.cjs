@@ -19,7 +19,7 @@ router.get("/", getAllUsers);
 
 router.get("/add-event", getAllUsers);
 
-router.get("/:username", getUserByUsername);
+router.get("/usernames/:username", getUserByUsername);
 
 // Used to check if username, email, phone number are unique when saving Settings form
 router.post("/settings", getUserByUsernamePhoneNumberOrEmailAddress);
@@ -29,7 +29,7 @@ router.post("/settings", getUserByUsernamePhoneNumberOrEmailAddress);
 router.post("/login", getUserByUsernameOrEmailAddress);
 
 // GET single user by ID:
-router.get("/:id", getUser);
+router.get("/_ids/:id", getUser);
 
 // POST new user:
 router.post("/signup", createNewUser);
