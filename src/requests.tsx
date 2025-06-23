@@ -173,12 +173,12 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
 
 // Create getPotentialFriends (limit, like in getAllVisibleOtherUsers, then revert that request to its original form, to be used until it's eventually not needed anymore). getPotentialFriends should be all visible users who have no blocking relationship to currentUser.
 const getPotentialFriends = async (
-  currentUser: TUser | null,
+  currentUser: TUser,
   start: number,
   limit: number
 ): Promise<TUser[] | undefined> => {
   return fetch(
-    `http://localhost:4000/palz/find-palz?start=${start}&limit=${limit}&user=${currentUser?.username}`,
+    `http://localhost:4000/palz/find-palz?start=${start}&limit=${limit}&user=${currentUser.username}`,
     {
       method: "GET",
       redirect: "follow",
@@ -248,14 +248,14 @@ const getExplorableEvents = (
 };
 
 const getUserByID = (id: string): Promise<Response> => {
-  return fetch(`http://localhost:4000/palz/users/${id}`, {
+  return fetch(`http://localhost:4000/palz/users/_ids/${id}`, {
     method: "GET",
     redirect: "follow",
   });
 };
 
 const getUserByUsername = (username: string) => {
-  return fetch(`http://localhost:4000/palz/users/${username}`, {
+  return fetch(`http://localhost:4000/palz/usernames/users/${username}`, {
     method: "GET",
     redirect: "follow",
   });
