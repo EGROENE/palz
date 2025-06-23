@@ -107,6 +107,22 @@ const getUser = async (req, res) => {
   res.status(200).json(user);
 };
 
+const getUserByUsername = async (req, res) => {
+  // Get id from request parameters:
+  const { username } = req.params;
+
+  // assign user to document in DB that has id that matches the id defined in this method:
+  const user = await User.findOne({ username });
+
+  // If no user document matches...
+  if (!user) {
+    return res.status(404).json({ error: "User doesn't exist" });
+  }
+
+  // If there is a match...
+  res.status(200).json(user);
+};
+
 // get single user by username or email address:
 const getUserByUsernameOrEmailAddress = async (req, res) => {
   try {
@@ -297,6 +313,7 @@ const updateUser = async (req, res) => {
 
 // export controllers:
 module.exports = {
+  getUserByUsername,
   getUserByUsernameOrEmailAddress,
   getUserByUsernamePhoneNumberOrEmailAddress,
   createNewUser,
