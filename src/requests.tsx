@@ -254,6 +254,13 @@ const getUserByID = (id: string): Promise<Response> => {
   });
 };
 
+const getUserByUsername = (username: string) => {
+  return fetch(`http://localhost:4000/palz/users/${username}`, {
+    method: "GET",
+    redirect: "follow",
+  });
+};
+
 const getUserByUsernamePhoneNumberOrEmailAddress = (
   _id: string,
   username: string,
@@ -1302,6 +1309,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getUserByUsername,
   getPotentialChatMembers,
   getPotentialEventBlockees,
   getExplorableEvents,
