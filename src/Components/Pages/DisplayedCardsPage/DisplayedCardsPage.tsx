@@ -165,125 +165,132 @@ const DisplayedCardsPage = ({
   const initializePotentialFriendsSearch = (input: string) => {
     setIsLoading(true);
     setFetchStart(0);
-    Requests.getPotentialFriends(currentUser, 0, Infinity)
-      .then((batchOfPotentialFriends) => {
-        if (batchOfPotentialFriends) {
-          setAllPotentialFriends(
-            batchOfPotentialFriends.map((pf) => Methods.getTBarebonesUser(pf))
-          );
-          setDisplayedItems(
-            batchOfPotentialFriends.filter((pf) => {
-              // loop thru all items in pf.interests; if one includes input, return pf
-              const getAnInterestIncludesSearchTerm = (): boolean => {
-                for (const interest of pf.interests) {
-                  if (interest.includes(input.toLowerCase())) {
-                    return true;
+    if (currentUser) {
+      Requests.getPotentialFriends(currentUser, 0, Infinity)
+        .then((batchOfPotentialFriends) => {
+          if (batchOfPotentialFriends) {
+            setAllPotentialFriends(
+              batchOfPotentialFriends.map((pf) => Methods.getTBarebonesUser(pf))
+            );
+            setDisplayedItems(
+              batchOfPotentialFriends.filter((pf) => {
+                // loop thru all items in pf.interests; if one includes input, return pf
+                const getAnInterestIncludesSearchTerm = (): boolean => {
+                  for (const interest of pf.interests) {
+                    if (interest.includes(input.toLowerCase())) {
+                      return true;
+                    }
                   }
-                }
-                return false;
-              };
-              const anInterestIncludesSearchTerm: boolean =
-                getAnInterestIncludesSearchTerm();
+                  return false;
+                };
+                const anInterestIncludesSearchTerm: boolean =
+                  getAnInterestIncludesSearchTerm();
 
-              if (
-                pf.firstName?.toLowerCase().includes(input.toLowerCase()) ||
-                pf.lastName?.toLowerCase().includes(input.toLowerCase()) ||
-                pf.username?.toLowerCase().includes(input.toLowerCase()) ||
-                anInterestIncludesSearchTerm
-              ) {
-                return getTOtherUserFromTUser(pf);
-              }
-            })
-          );
-        } else {
-          setFetchError("Could not load potential friends. Try reloading the page.");
-        }
-      })
-      .catch((error) => {
-        setFetchError("Could not fetch potential friends. Try reloading the page.");
-        console.log(error);
-      })
-      .finally(() => setIsLoading(false));
+                if (
+                  pf.firstName?.toLowerCase().includes(input.toLowerCase()) ||
+                  pf.lastName?.toLowerCase().includes(input.toLowerCase()) ||
+                  pf.username?.toLowerCase().includes(input.toLowerCase()) ||
+                  anInterestIncludesSearchTerm
+                ) {
+                  return getTOtherUserFromTUser(pf);
+                }
+              })
+            );
+          } else {
+            setFetchError("Could not load potential friends. Try reloading the page.");
+          }
+        })
+        .catch((error) => {
+          setFetchError("Could not fetch potential friends. Try reloading the page.");
+          console.log(error);
+        })
+        .finally(() => setIsLoading(false));
+    }
   };
 
   const initializePotentialFriendsFilter = (filters: TDisplayedCardsFilter[]) => {
     setIsLoading(true);
     setFetchStart(0);
-    Requests.getPotentialFriends(currentUser, 0, Infinity)
-      .then((batchOfPotentialFriends) => {
-        if (batchOfPotentialFriends) {
-          setAllPotentialFriends(
-            batchOfPotentialFriends.map((pf) => Methods.getTBarebonesUser(pf))
-          );
-          let matches: TOtherUser[] = [];
-          for (const pf of batchOfPotentialFriends) {
-            if (pf._id) {
-              for (const filter of filters) {
-                const currentUserIsFriend =
-                  currentUser && currentUser._id
-                    ? pf.friends.includes(currentUser._id.toString())
-                    : false;
+    if (currentUser) {
+      Requests.getPotentialFriends(currentUser, 0, Infinity)
+        .then((batchOfPotentialFriends) => {
+          if (batchOfPotentialFriends) {
+            setAllPotentialFriends(
+              batchOfPotentialFriends.map((pf) => Methods.getTBarebonesUser(pf))
+            );
+            let matches: TOtherUser[] = [];
+            for (const pf of batchOfPotentialFriends) {
+              if (pf._id) {
+                for (const filter of filters) {
+                  const currentUserIsFriend =
+                    currentUser && currentUser._id
+                      ? pf.friends.includes(currentUser._id.toString())
+                      : false;
 
-                const currentUserIsFriendOfFriend: boolean = pf.friends.some(
-                  (pfFriend) => {
-                    if (currentUser && currentUser.friends.includes(pfFriend)) {
-                      return true;
+                  const currentUserIsFriendOfFriend: boolean = pf.friends.some(
+                    (pfFriend) => {
+                      if (currentUser && currentUser.friends.includes(pfFriend)) {
+                        return true;
+                      }
+                      return false;
                     }
-                    return false;
+                  );
+
+                  const currentUserMaySeeLocation: boolean =
+                    pf.whoCanSeeLocation === "anyone" ||
+                    (pf.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
+                    (pf.whoCanSeeLocation === "friends of friends" &&
+                      currentUserIsFriendOfFriend);
+
+                  if (filter === "in my city") {
+                    if (
+                      currentUserMaySeeLocation &&
+                      pf.city === currentUser?.city &&
+                      pf.stateProvince === currentUser?.stateProvince &&
+                      pf.country === currentUser?.country
+                    ) {
+                      if (!matches.includes(getTOtherUserFromTUser(pf))) {
+                        matches.push(getTOtherUserFromTUser(pf));
+                      }
+                    }
                   }
-                );
 
-                const currentUserMaySeeLocation: boolean =
-                  pf.whoCanSeeLocation === "anyone" ||
-                  (pf.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
-                  (pf.whoCanSeeLocation === "friends of friends" &&
-                    currentUserIsFriendOfFriend);
+                  if (filter === "in my state") {
+                    if (
+                      currentUserMaySeeLocation &&
+                      pf.stateProvince === currentUser?.stateProvince &&
+                      pf.country === currentUser?.country
+                    ) {
+                      if (!matches.includes(getTOtherUserFromTUser(pf))) {
+                        matches.push(getTOtherUserFromTUser(pf));
+                      }
+                    }
+                  }
 
-                if (filter === "in my city") {
-                  if (
-                    currentUserMaySeeLocation &&
-                    pf.city === currentUser?.city &&
-                    pf.stateProvince === currentUser?.stateProvince &&
-                    pf.country === currentUser?.country
-                  ) {
+                  if (filter === "in my country") {
+                    if (
+                      currentUserMaySeeLocation &&
+                      pf.country === currentUser?.country
+                    ) {
+                      if (!matches.includes(getTOtherUserFromTUser(pf))) {
+                        matches.push(getTOtherUserFromTUser(pf));
+                      }
+                    }
+                  }
+
+                  if (filter === "friends of friends" && currentUserIsFriendOfFriend) {
                     if (!matches.includes(getTOtherUserFromTUser(pf))) {
                       matches.push(getTOtherUserFromTUser(pf));
                     }
                   }
-                }
 
-                if (filter === "in my state") {
-                  if (
-                    currentUserMaySeeLocation &&
-                    pf.stateProvince === currentUser?.stateProvince &&
-                    pf.country === currentUser?.country
-                  ) {
-                    if (!matches.includes(getTOtherUserFromTUser(pf))) {
-                      matches.push(getTOtherUserFromTUser(pf));
-                    }
-                  }
-                }
-
-                if (filter === "in my country") {
-                  if (currentUserMaySeeLocation && pf.country === currentUser?.country) {
-                    if (!matches.includes(getTOtherUserFromTUser(pf))) {
-                      matches.push(getTOtherUserFromTUser(pf));
-                    }
-                  }
-                }
-
-                if (filter === "friends of friends" && currentUserIsFriendOfFriend) {
-                  if (!matches.includes(getTOtherUserFromTUser(pf))) {
-                    matches.push(getTOtherUserFromTUser(pf));
-                  }
-                }
-
-                if (filter === "common interests") {
-                  if (currentUser && currentUser.interests) {
-                    for (const interest of currentUser?.interests) {
-                      if (pf.interests.includes(interest)) {
-                        if (!matches.includes(getTOtherUserFromTUser(pf))) {
-                          matches.push(getTOtherUserFromTUser(pf));
+                  if (filter === "common interests") {
+                    if (currentUser && currentUser.interests) {
+                      for (const interest of currentUser?.interests) {
+                        if (pf.interests.includes(interest)) {
+                          if (!matches.includes(getTOtherUserFromTUser(pf))) {
+                            matches.push(getTOtherUserFromTUser(pf));
+                          }
                         }
                       }
                     }
@@ -291,105 +298,109 @@ const DisplayedCardsPage = ({
                 }
               }
             }
+            setDisplayedItems(matches);
+          } else {
+            setFetchError("Could not load potential friends. Try reloading the page.");
           }
-          setDisplayedItems(matches);
-        } else {
-          setFetchError("Could not load potential friends. Try reloading the page.");
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
+    }
   };
 
   const initializeFriendsSearch = (input: string) => {
     setIsLoading(true);
     setFetchStart(0);
-    Requests.getFriends(currentUser, 0, Infinity)
-      .then((batchOfFriends) => {
-        if (batchOfFriends) {
-          setAllFriends(batchOfFriends.map((f) => Methods.getTBarebonesUser(f)));
-          setDisplayedItems(
-            batchOfFriends.filter((f) => {
-              const getAnInterestIncludesSearchTerm = (): boolean => {
-                for (const interest of f.interests) {
-                  if (interest.includes(input.toLowerCase())) {
-                    return true;
+    if (currentUser) {
+      Requests.getFriends(currentUser, 0, Infinity)
+        .then((batchOfFriends) => {
+          if (batchOfFriends) {
+            setAllFriends(batchOfFriends.map((f) => Methods.getTBarebonesUser(f)));
+            setDisplayedItems(
+              batchOfFriends.filter((f) => {
+                const getAnInterestIncludesSearchTerm = (): boolean => {
+                  for (const interest of f.interests) {
+                    if (interest.includes(input.toLowerCase())) {
+                      return true;
+                    }
                   }
-                }
-                return false;
-              };
-              const anInterestIncludesSearchTerm: boolean =
-                getAnInterestIncludesSearchTerm();
+                  return false;
+                };
+                const anInterestIncludesSearchTerm: boolean =
+                  getAnInterestIncludesSearchTerm();
 
-              if (
-                f.firstName?.toLowerCase().includes(input.toLowerCase()) ||
-                f.lastName?.toLowerCase().includes(input.toLowerCase()) ||
-                f.username?.toLowerCase().includes(input.toLowerCase()) ||
-                anInterestIncludesSearchTerm
-              ) {
-                return getTOtherUserFromTUser(f);
-              }
-            })
-          );
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
+                if (
+                  f.firstName?.toLowerCase().includes(input.toLowerCase()) ||
+                  f.lastName?.toLowerCase().includes(input.toLowerCase()) ||
+                  f.username?.toLowerCase().includes(input.toLowerCase()) ||
+                  anInterestIncludesSearchTerm
+                ) {
+                  return getTOtherUserFromTUser(f);
+                }
+              })
+            );
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
+    }
   };
 
   const initializeFriendsFilter = (filters: TDisplayedCardsFilter[]) => {
     setIsLoading(true);
     setFetchStart(0);
-    Requests.getFriends(currentUser, 0, Infinity)
-      .then((batchOfFriends: TUser[]) => {
-        if (batchOfFriends) {
-          setAllFriends(batchOfFriends.map((f) => Methods.getTBarebonesUser(f)));
-          let matches: TOtherUser[] = [];
-          for (const f of batchOfFriends) {
-            if (f._id) {
-              for (const filter of filters) {
-                const currentUserMaySeeLocation: boolean =
-                  f.whoCanSeeLocation !== "nobody";
+    if (currentUser) {
+      Requests.getFriends(currentUser, 0, Infinity)
+        .then((batchOfFriends: TUser[]) => {
+          if (batchOfFriends) {
+            setAllFriends(batchOfFriends.map((f) => Methods.getTBarebonesUser(f)));
+            let matches: TOtherUser[] = [];
+            for (const f of batchOfFriends) {
+              if (f._id) {
+                for (const filter of filters) {
+                  const currentUserMaySeeLocation: boolean =
+                    f.whoCanSeeLocation !== "nobody";
 
-                if (filter === "in my city") {
-                  if (
-                    currentUserMaySeeLocation &&
-                    f.city === currentUser?.city &&
-                    f.stateProvince === currentUser?.stateProvince &&
-                    f.country === currentUser?.country
-                  ) {
-                    if (!matches.includes(getTOtherUserFromTUser(f))) {
-                      matches.push(getTOtherUserFromTUser(f));
+                  if (filter === "in my city") {
+                    if (
+                      currentUserMaySeeLocation &&
+                      f.city === currentUser?.city &&
+                      f.stateProvince === currentUser?.stateProvince &&
+                      f.country === currentUser?.country
+                    ) {
+                      if (!matches.includes(getTOtherUserFromTUser(f))) {
+                        matches.push(getTOtherUserFromTUser(f));
+                      }
                     }
                   }
-                }
 
-                if (filter === "in my state") {
-                  if (
-                    currentUserMaySeeLocation &&
-                    f.stateProvince === currentUser?.stateProvince &&
-                    f.country === currentUser?.country
-                  ) {
-                    if (!matches.includes(getTOtherUserFromTUser(f))) {
-                      matches.push(getTOtherUserFromTUser(f));
+                  if (filter === "in my state") {
+                    if (
+                      currentUserMaySeeLocation &&
+                      f.stateProvince === currentUser?.stateProvince &&
+                      f.country === currentUser?.country
+                    ) {
+                      if (!matches.includes(getTOtherUserFromTUser(f))) {
+                        matches.push(getTOtherUserFromTUser(f));
+                      }
                     }
                   }
-                }
 
-                if (filter === "in my country") {
-                  if (currentUserMaySeeLocation && f.country === currentUser?.country) {
-                    if (!matches.includes(getTOtherUserFromTUser(f))) {
-                      matches.push(getTOtherUserFromTUser(f));
+                  if (filter === "in my country") {
+                    if (currentUserMaySeeLocation && f.country === currentUser?.country) {
+                      if (!matches.includes(getTOtherUserFromTUser(f))) {
+                        matches.push(getTOtherUserFromTUser(f));
+                      }
                     }
                   }
-                }
 
-                if (filter === "common interests") {
-                  if (currentUser && currentUser.interests) {
-                    for (const interest of currentUser?.interests) {
-                      if (f.interests.includes(interest)) {
-                        if (!matches.includes(getTOtherUserFromTUser(f))) {
-                          matches.push(getTOtherUserFromTUser(f));
+                  if (filter === "common interests") {
+                    if (currentUser && currentUser.interests) {
+                      for (const interest of currentUser?.interests) {
+                        if (f.interests.includes(interest)) {
+                          if (!matches.includes(getTOtherUserFromTUser(f))) {
+                            matches.push(getTOtherUserFromTUser(f));
+                          }
                         }
                       }
                     }
@@ -397,155 +408,159 @@ const DisplayedCardsPage = ({
                 }
               }
             }
+            setDisplayedItems(matches);
+          } else {
+            setFetchError("Could not load friends. Try reloading the page.");
           }
-          setDisplayedItems(matches);
-        } else {
-          setFetchError("Could not load friends. Try reloading the page.");
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
+    }
   };
 
   const initializeEventsSearch = (input: string) => {
     setIsLoading(true);
     setFetchStart(0);
-    Requests.getExplorableEvents(currentUser, 0, Infinity)
-      .then((batchOfEvents: TEvent[]) => {
-        if (batchOfEvents) {
-          setAllExplorableEvents(batchOfEvents);
-          setDisplayedItems(
-            batchOfEvents.filter((event) => {
-              const eventOrganizerNames = event.organizers.map(
-                (o) => `${o.firstName} ${o.lastName}`
-              );
+    if (currentUser) {
+      Requests.getExplorableEvents(currentUser, 0, Infinity)
+        .then((batchOfEvents: TEvent[]) => {
+          if (batchOfEvents) {
+            setAllExplorableEvents(batchOfEvents);
+            setDisplayedItems(
+              batchOfEvents.filter((event) => {
+                const eventOrganizerNames = event.organizers.map(
+                  (o) => `${o.firstName} ${o.lastName}`
+                );
 
-              const eventOrganizerUsernames = event.organizers.map((o) => o.username);
+                const eventOrganizerUsernames = event.organizers.map((o) => o.username);
 
-              let isOrganizerNameMatch: boolean = false;
-              for (const name of eventOrganizerNames) {
-                if (name.includes(input.toLowerCase())) {
-                  isOrganizerNameMatch = true;
+                let isOrganizerNameMatch: boolean = false;
+                for (const name of eventOrganizerNames) {
+                  if (name.includes(input.toLowerCase())) {
+                    isOrganizerNameMatch = true;
+                  }
                 }
-              }
 
-              let isUsernameMatch: boolean = false;
-              for (const username of eventOrganizerUsernames) {
-                if (username?.includes(input.toLowerCase())) {
-                  isUsernameMatch = true;
+                let isUsernameMatch: boolean = false;
+                for (const username of eventOrganizerUsernames) {
+                  if (username?.includes(input.toLowerCase())) {
+                    isUsernameMatch = true;
+                  }
                 }
-              }
 
-              let isInterestMatch: boolean = false;
-              for (const interest of event.relatedInterests) {
-                if (interest.includes(input.toLowerCase())) {
-                  isInterestMatch = true;
+                let isInterestMatch: boolean = false;
+                for (const interest of event.relatedInterests) {
+                  if (interest.includes(input.toLowerCase())) {
+                    isInterestMatch = true;
+                  }
                 }
-              }
 
-              if (
-                event.title.toLowerCase().includes(input.toLowerCase()) ||
-                event.additionalInfo.toLowerCase().includes(input.toLowerCase()) ||
-                event.address?.toLowerCase().includes(input.toLowerCase()) ||
-                event.city?.toLowerCase().includes(input.toLowerCase()) ||
-                event.country?.toLowerCase().includes(input.toLowerCase()) ||
-                event.description.toLowerCase().includes(input.toLowerCase()) ||
-                isOrganizerNameMatch ||
-                isUsernameMatch ||
-                isInterestMatch ||
-                event.stateProvince?.toLowerCase().includes(input.toLowerCase())
-              ) {
-                return event;
-              }
-            })
-          );
-        } else {
-          setFetchError("Could not load events. Try reloading the page.");
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
+                if (
+                  event.title.toLowerCase().includes(input.toLowerCase()) ||
+                  event.additionalInfo.toLowerCase().includes(input.toLowerCase()) ||
+                  event.address?.toLowerCase().includes(input.toLowerCase()) ||
+                  event.city?.toLowerCase().includes(input.toLowerCase()) ||
+                  event.country?.toLowerCase().includes(input.toLowerCase()) ||
+                  event.description.toLowerCase().includes(input.toLowerCase()) ||
+                  isOrganizerNameMatch ||
+                  isUsernameMatch ||
+                  isInterestMatch ||
+                  event.stateProvince?.toLowerCase().includes(input.toLowerCase())
+                ) {
+                  return event;
+                }
+              })
+            );
+          } else {
+            setFetchError("Could not load events. Try reloading the page.");
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
+    }
   };
 
   const initializeEventsFilter = (filters: TDisplayedCardsFilter[]) => {
     setIsLoading(true);
     setFetchStart(0);
-    Requests.getExplorableEvents(currentUser, 0, Infinity)
-      .then((batchOfEvents: TEvent[]) => {
-        if (batchOfEvents) {
-          setAllExplorableEvents(batchOfEvents);
-          let matches: TEvent[] = [];
-          for (const ev of batchOfEvents) {
-            for (const filter of filters) {
-              if (filter === "in my city") {
-                if (
-                  currentUser &&
-                  ev.city === currentUser.city &&
-                  matches.indexOf(ev) === -1
-                ) {
-                  matches.push(ev);
+    if (currentUser) {
+      Requests.getExplorableEvents(currentUser, 0, Infinity)
+        .then((batchOfEvents: TEvent[]) => {
+          if (batchOfEvents) {
+            setAllExplorableEvents(batchOfEvents);
+            let matches: TEvent[] = [];
+            for (const ev of batchOfEvents) {
+              for (const filter of filters) {
+                if (filter === "in my city") {
+                  if (
+                    currentUser &&
+                    ev.city === currentUser.city &&
+                    matches.indexOf(ev) === -1
+                  ) {
+                    matches.push(ev);
+                  }
                 }
-              }
 
-              if (filter === "in my state") {
-                if (
-                  currentUser &&
-                  ev.stateProvince === currentUser.stateProvince &&
-                  matches.indexOf(ev) === -1
-                ) {
-                  matches.push(ev);
+                if (filter === "in my state") {
+                  if (
+                    currentUser &&
+                    ev.stateProvince === currentUser.stateProvince &&
+                    matches.indexOf(ev) === -1
+                  ) {
+                    matches.push(ev);
+                  }
                 }
-              }
 
-              if (filter === "my interests") {
-                if (
-                  ev.relatedInterests.some((int) =>
-                    currentUser?.interests.includes(int)
-                  ) &&
-                  matches.indexOf(ev) === -1
-                ) {
-                  matches.push(ev);
+                if (filter === "my interests") {
+                  if (
+                    ev.relatedInterests.some((int) =>
+                      currentUser?.interests.includes(int)
+                    ) &&
+                    matches.indexOf(ev) === -1
+                  ) {
+                    matches.push(ev);
+                  }
                 }
-              }
 
-              if (filter === "organized by friends") {
-                if (
-                  ev.organizers
-                    .map((o) => o._id)
-                    .some((o) => {
-                      if (o) {
-                        return currentUser?.friends.includes(o.toString());
-                      }
-                    }) &&
-                  matches.indexOf(ev) === -1
-                ) {
-                  matches.push(ev);
+                if (filter === "organized by friends") {
+                  if (
+                    ev.organizers
+                      .map((o) => o._id)
+                      .some((o) => {
+                        if (o) {
+                          return currentUser?.friends.includes(o.toString());
+                        }
+                      }) &&
+                    matches.indexOf(ev) === -1
+                  ) {
+                    matches.push(ev);
+                  }
                 }
-              }
 
-              if (filter === "RSVP'd by friends") {
-                if (
-                  ev.interestedUsers
-                    .map((iu) => iu._id)
-                    .some((iu) => {
-                      if (iu) {
-                        return currentUser?.friends.includes(iu.toString());
-                      }
-                    }) &&
-                  matches.indexOf(ev) === -1
-                ) {
-                  matches.push(ev);
+                if (filter === "RSVP'd by friends") {
+                  if (
+                    ev.interestedUsers
+                      .map((iu) => iu._id)
+                      .some((iu) => {
+                        if (iu) {
+                          return currentUser?.friends.includes(iu.toString());
+                        }
+                      }) &&
+                    matches.indexOf(ev) === -1
+                  ) {
+                    matches.push(ev);
+                  }
                 }
               }
             }
+            setDisplayedItems(matches);
+          } else {
+            setFetchError("Could not load events. Try reloading the page.");
           }
-          setDisplayedItems(matches);
-        } else {
-          setFetchError("Could not load events. Try reloading the page.");
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
+    }
   };
 
   const handleLoadMoreItemsOnScroll = (
@@ -670,7 +685,7 @@ const DisplayedCardsPage = ({
         if (!isLoading) {
           setIsLoading(true);
         }
-        if (fetchLimit) {
+        if (fetchLimit && currentUser) {
           Requests.getFriends(currentUser, fetchStart, fetchLimit)
             .then((batchOfFriends: TUser[]) => {
               if (batchOfFriends) {
@@ -713,7 +728,7 @@ const DisplayedCardsPage = ({
         if (!isLoading) {
           setIsLoading(true);
         }
-        if (fetchLimit) {
+        if (fetchLimit && currentUser) {
           Requests.getExplorableEvents(currentUser, fetchStart, fetchLimit)
             .then((batchOfEvents: TEvent[]) => {
               if (batchOfEvents) {
