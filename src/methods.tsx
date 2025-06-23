@@ -119,6 +119,99 @@ const formatHyphensAndSpacesInString = (name: string): string => {
 
 const removeDuplicatesFromArray = (arr: any[]): any[] => [...new Set(arr)];
 
+const getTOtherUserFromTUser = (user: TUser): TOtherUser => {
+  const currentUserIsFriend: boolean =
+    currentUser && currentUser._id
+      ? user.friends.includes(currentUser._id.toString())
+      : false;
+
+  const currentUserIsFriendOfFriend: boolean = user.friends.some((pfFriend) => {
+    if (currentUser && currentUser.friends.includes(pfFriend)) {
+      return true;
+    }
+    return false;
+  });
+
+  const showLocation: boolean =
+    user.whoCanSeeLocation === "anyone" ||
+    (user.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
+    (user.whoCanSeeLocation === "friends of friends" && currentUserIsFriendOfFriend);
+
+  const showPhoneNumber: boolean =
+    user.whoCanSeePhoneNumber === "anyone" ||
+    (user.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
+    (user.whoCanSeePhoneNumber === "friends of friends" && currentUserIsFriendOfFriend);
+
+  const showEmailAddress: boolean =
+    user.whoCanSeeEmailAddress === "anyone" ||
+    (user.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
+    (user.whoCanSeeEmailAddress === "friends of friends" && currentUserIsFriendOfFriend);
+
+  const showInstagram: boolean =
+    user.whoCanSeeInstagram === "anyone" ||
+    (user.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
+    (user.whoCanSeeInstagram === "friends of friends" && currentUserIsFriendOfFriend);
+
+  const showFacebook: boolean =
+    user.whoCanSeeFacebook === "anyone" ||
+    (user.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
+    (user.whoCanSeeFacebook === "friends of friends" && currentUserIsFriendOfFriend);
+
+  const showX: boolean =
+    user.whoCanSeeX === "anyone" ||
+    (user.whoCanSeeX === "friends" && currentUserIsFriend) ||
+    (user.whoCanSeeX === "friends of friends" && currentUserIsFriendOfFriend);
+
+  const showFriends: boolean =
+    user.whoCanSeeFriendsList === "anyone" ||
+    (user.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
+    (user.whoCanSeeFriendsList === "friends of friends" && currentUserIsFriendOfFriend);
+
+  return {
+    "_id": user._id,
+    "index": user.index,
+    "firstName": user.firstName,
+    "lastName": user.lastName,
+    "username": user.username,
+    "profileImage": user.profileImage,
+    "interests": user.interests,
+    "about": user.about,
+    ...(showLocation && {
+      city: user.city,
+    }),
+    ...(showLocation && {
+      stateProvince: user.stateProvince,
+    }),
+    ...(showLocation && {
+      country: user.country,
+    }),
+    ...(showPhoneNumber && {
+      phoneCountry: user.phoneCountry,
+    }),
+    ...(showPhoneNumber && {
+      phoneCountryCode: user.phoneCountryCode,
+    }),
+    ...(showPhoneNumber && {
+      phoneNumberWithoutCountryCode: user.phoneNumberWithoutCountryCode,
+    }),
+    ...(showEmailAddress && {
+      emailAddress: user.emailAddress,
+    }),
+    ...(showInstagram && {
+      instagram: user.instagram,
+    }),
+    ...(showFacebook && {
+      facebook: user.facebook,
+    }),
+    ...(showX && {
+      x: user.x,
+    }),
+    ...(showFriends && {
+      friends: user.friends,
+    }),
+  };
+};
+
 // TBarebonesUser is only included as param, since a value of type, say TOtherUser | TBarebonesUser could be passed
 const getTBarebonesUser = (
   user: TUser | TOtherUser | TBarebonesUser | null
@@ -238,6 +331,7 @@ const getDateMessageSent = (message: TMessage): string => {
 };
 
 const Methods = {
+  getTOtherUserFromTUser,
   getTBarebonesUser,
   getDateMessageSent,
   isTOtherUser,
