@@ -255,7 +255,7 @@ const getUserByID = (id: string): Promise<Response> => {
 };
 
 const getUserByUsername = (username: string) => {
-  return fetch(`http://localhost:4000/palz/usernames/users/${username}`, {
+  return fetch(`http://localhost:4000/palz/users/usernames/${username}`, {
     method: "GET",
     redirect: "follow",
   });
