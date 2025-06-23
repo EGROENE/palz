@@ -95,7 +95,6 @@ const getUser = async (req, res) => {
     return res.status(400).json({ error: "Bad request (invalid id)" });
   }
 
-  // assign user to document in DB that has id that matches the id defined in this method:
   const user = await User.findById(id);
 
   // If no user document matches...
@@ -111,7 +110,6 @@ const getUserByUsername = async (req, res) => {
   // Get id from request parameters:
   const { username } = req.params;
 
-  // assign user to document in DB that has id that matches the id defined in this method:
   const user = await User.findOne({ username });
 
   // If no user document matches...
