@@ -9,6 +9,7 @@ const {
   updateUser,
   getUserByUsernameOrEmailAddress,
   getUserByUsernamePhoneNumberOrEmailAddress,
+  getUserByUsername,
 } = require("../controllers/userControllers.js");
 
 const router = express.Router();
@@ -17,6 +18,8 @@ const router = express.Router();
 router.get("/", getAllUsers);
 
 router.get("/add-event", getAllUsers);
+
+router.get("/:username", getUserByUsername);
 
 // Used to check if username, email, phone number are unique when saving Settings form
 router.post("/settings", getUserByUsernamePhoneNumberOrEmailAddress);
