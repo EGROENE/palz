@@ -68,100 +68,6 @@ const DisplayedCardsPage = ({
   const [allFriends, setAllFriends] = useState<TBarebonesUser[]>([]);
   const [allExplorableEvents, setAllExplorableEvents] = useState<TEvent[]>([]);
 
-  const getTOtherUserFromTUser = (user: TUser): TOtherUser => {
-    const currentUserIsFriend: boolean =
-      currentUser && currentUser._id
-        ? user.friends.includes(currentUser._id.toString())
-        : false;
-
-    const currentUserIsFriendOfFriend: boolean = user.friends.some((pfFriend) => {
-      if (currentUser && currentUser.friends.includes(pfFriend)) {
-        return true;
-      }
-      return false;
-    });
-
-    const showLocation: boolean =
-      user.whoCanSeeLocation === "anyone" ||
-      (user.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
-      (user.whoCanSeeLocation === "friends of friends" && currentUserIsFriendOfFriend);
-
-    const showPhoneNumber: boolean =
-      user.whoCanSeePhoneNumber === "anyone" ||
-      (user.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
-      (user.whoCanSeePhoneNumber === "friends of friends" && currentUserIsFriendOfFriend);
-
-    const showEmailAddress: boolean =
-      user.whoCanSeeEmailAddress === "anyone" ||
-      (user.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
-      (user.whoCanSeeEmailAddress === "friends of friends" &&
-        currentUserIsFriendOfFriend);
-
-    const showInstagram: boolean =
-      user.whoCanSeeInstagram === "anyone" ||
-      (user.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
-      (user.whoCanSeeInstagram === "friends of friends" && currentUserIsFriendOfFriend);
-
-    const showFacebook: boolean =
-      user.whoCanSeeFacebook === "anyone" ||
-      (user.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
-      (user.whoCanSeeFacebook === "friends of friends" && currentUserIsFriendOfFriend);
-
-    const showX: boolean =
-      user.whoCanSeeX === "anyone" ||
-      (user.whoCanSeeX === "friends" && currentUserIsFriend) ||
-      (user.whoCanSeeX === "friends of friends" && currentUserIsFriendOfFriend);
-
-    const showFriends: boolean =
-      user.whoCanSeeFriendsList === "anyone" ||
-      (user.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
-      (user.whoCanSeeFriendsList === "friends of friends" && currentUserIsFriendOfFriend);
-
-    return {
-      "_id": user._id,
-      "index": user.index,
-      "firstName": user.firstName,
-      "lastName": user.lastName,
-      "username": user.username,
-      "profileImage": user.profileImage,
-      "interests": user.interests,
-      "about": user.about,
-      ...(showLocation && {
-        city: user.city,
-      }),
-      ...(showLocation && {
-        stateProvince: user.stateProvince,
-      }),
-      ...(showLocation && {
-        country: user.country,
-      }),
-      ...(showPhoneNumber && {
-        phoneCountry: user.phoneCountry,
-      }),
-      ...(showPhoneNumber && {
-        phoneCountryCode: user.phoneCountryCode,
-      }),
-      ...(showPhoneNumber && {
-        phoneNumberWithoutCountryCode: user.phoneNumberWithoutCountryCode,
-      }),
-      ...(showEmailAddress && {
-        emailAddress: user.emailAddress,
-      }),
-      ...(showInstagram && {
-        instagram: user.instagram,
-      }),
-      ...(showFacebook && {
-        facebook: user.facebook,
-      }),
-      ...(showX && {
-        x: user.x,
-      }),
-      ...(showFriends && {
-        friends: user.friends,
-      }),
-    };
-  };
-
   const initializePotentialFriendsSearch = (input: string) => {
     setIsLoading(true);
     setFetchStart(0);
@@ -192,7 +98,7 @@ const DisplayedCardsPage = ({
                   pf.username?.toLowerCase().includes(input.toLowerCase()) ||
                   anInterestIncludesSearchTerm
                 ) {
-                  return getTOtherUserFromTUser(pf);
+                  return Methods.getTOtherUserFromTUser(pf, currentUser);
                 }
               })
             );
@@ -249,8 +155,8 @@ const DisplayedCardsPage = ({
                       pf.stateProvince === currentUser?.stateProvince &&
                       pf.country === currentUser?.country
                     ) {
-                      if (!matches.includes(getTOtherUserFromTUser(pf))) {
-                        matches.push(getTOtherUserFromTUser(pf));
+                      if (!matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))) {
+                        matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
                       }
                     }
                   }
@@ -261,8 +167,8 @@ const DisplayedCardsPage = ({
                       pf.stateProvince === currentUser?.stateProvince &&
                       pf.country === currentUser?.country
                     ) {
-                      if (!matches.includes(getTOtherUserFromTUser(pf))) {
-                        matches.push(getTOtherUserFromTUser(pf));
+                      if (!matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))) {
+                        matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
                       }
                     }
                   }
@@ -272,15 +178,15 @@ const DisplayedCardsPage = ({
                       currentUserMaySeeLocation &&
                       pf.country === currentUser?.country
                     ) {
-                      if (!matches.includes(getTOtherUserFromTUser(pf))) {
-                        matches.push(getTOtherUserFromTUser(pf));
+                      if (!matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))) {
+                        matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
                       }
                     }
                   }
 
                   if (filter === "friends of friends" && currentUserIsFriendOfFriend) {
-                    if (!matches.includes(getTOtherUserFromTUser(pf))) {
-                      matches.push(getTOtherUserFromTUser(pf));
+                    if (!matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))) {
+                      matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
                     }
                   }
 
@@ -288,8 +194,8 @@ const DisplayedCardsPage = ({
                     if (currentUser && currentUser.interests) {
                       for (const interest of currentUser?.interests) {
                         if (pf.interests.includes(interest)) {
-                          if (!matches.includes(getTOtherUserFromTUser(pf))) {
-                            matches.push(getTOtherUserFromTUser(pf));
+                          if (!matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))) {
+                            matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
                           }
                         }
                       }
@@ -335,7 +241,7 @@ const DisplayedCardsPage = ({
                   f.username?.toLowerCase().includes(input.toLowerCase()) ||
                   anInterestIncludesSearchTerm
                 ) {
-                  return getTOtherUserFromTUser(f);
+                  return Methods.getTOtherUserFromTUser(f, currentUser);
                 }
               })
             );
@@ -368,8 +274,8 @@ const DisplayedCardsPage = ({
                       f.stateProvince === currentUser?.stateProvince &&
                       f.country === currentUser?.country
                     ) {
-                      if (!matches.includes(getTOtherUserFromTUser(f))) {
-                        matches.push(getTOtherUserFromTUser(f));
+                      if (!matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))) {
+                        matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
                       }
                     }
                   }
@@ -380,16 +286,16 @@ const DisplayedCardsPage = ({
                       f.stateProvince === currentUser?.stateProvince &&
                       f.country === currentUser?.country
                     ) {
-                      if (!matches.includes(getTOtherUserFromTUser(f))) {
-                        matches.push(getTOtherUserFromTUser(f));
+                      if (!matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))) {
+                        matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
                       }
                     }
                   }
 
                   if (filter === "in my country") {
                     if (currentUserMaySeeLocation && f.country === currentUser?.country) {
-                      if (!matches.includes(getTOtherUserFromTUser(f))) {
-                        matches.push(getTOtherUserFromTUser(f));
+                      if (!matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))) {
+                        matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
                       }
                     }
                   }
@@ -398,8 +304,8 @@ const DisplayedCardsPage = ({
                     if (currentUser && currentUser.interests) {
                       for (const interest of currentUser?.interests) {
                         if (f.interests.includes(interest)) {
-                          if (!matches.includes(getTOtherUserFromTUser(f))) {
-                            matches.push(getTOtherUserFromTUser(f));
+                          if (!matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))) {
+                            matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
                           }
                         }
                       }
@@ -637,12 +543,12 @@ const DisplayedCardsPage = ({
               if (batchOfPotentialFriends) {
                 if (fetchStart === 0) {
                   setDisplayedItems(
-                    batchOfPotentialFriends.map((pf) => getTOtherUserFromTUser(pf))
+                    batchOfPotentialFriends.map((pf) => Methods.getTOtherUserFromTUser(pf, currentUser))
                   );
                 } else {
                   setDisplayedItems(
                     displayedItems.concat(
-                      batchOfPotentialFriends.map((pf) => getTOtherUserFromTUser(pf))
+                      batchOfPotentialFriends.map((pf) => Methods.getTOtherUserFromTUser(pf, currentUser))
                     )
                   );
                 }
@@ -690,11 +596,11 @@ const DisplayedCardsPage = ({
             .then((batchOfFriends: TUser[]) => {
               if (batchOfFriends) {
                 if (fetchStart === 0) {
-                  setDisplayedItems(batchOfFriends.map((f) => getTOtherUserFromTUser(f)));
+                  setDisplayedItems(batchOfFriends.map((f) => Methods.getTOtherUserFromTUser(f, currentUser)));
                 } else {
                   setDisplayedItems(
                     displayedItems.concat(
-                      batchOfFriends.map((f) => getTOtherUserFromTUser(f))
+                      batchOfFriends.map((f) => Methods.getTOtherUserFromTUser(f, currentUser))
                     )
                   );
                 }
