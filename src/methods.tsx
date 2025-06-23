@@ -119,13 +119,13 @@ const formatHyphensAndSpacesInString = (name: string): string => {
 
 const removeDuplicatesFromArray = (arr: any[]): any[] => [...new Set(arr)];
 
-const getTOtherUserFromTUser = (user: TUser): TOtherUser => {
+const getTOtherUserFromTUser = (userToConvert: TUser, currentUser: TUser): TOtherUser => {
   const currentUserIsFriend: boolean =
     currentUser && currentUser._id
-      ? user.friends.includes(currentUser._id.toString())
+      ? userToConvert.friends.includes(currentUser._id.toString())
       : false;
 
-  const currentUserIsFriendOfFriend: boolean = user.friends.some((pfFriend) => {
+  const currentUserIsFriendOfFriend: boolean = userToConvert.friends.some((pfFriend) => {
     if (currentUser && currentUser.friends.includes(pfFriend)) {
       return true;
     }
@@ -133,81 +133,87 @@ const getTOtherUserFromTUser = (user: TUser): TOtherUser => {
   });
 
   const showLocation: boolean =
-    user.whoCanSeeLocation === "anyone" ||
-    (user.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
-    (user.whoCanSeeLocation === "friends of friends" && currentUserIsFriendOfFriend);
+    userToConvert.whoCanSeeLocation === "anyone" ||
+    (userToConvert.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeLocation === "friends of friends" &&
+      currentUserIsFriendOfFriend);
 
   const showPhoneNumber: boolean =
-    user.whoCanSeePhoneNumber === "anyone" ||
-    (user.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
-    (user.whoCanSeePhoneNumber === "friends of friends" && currentUserIsFriendOfFriend);
+    userToConvert.whoCanSeePhoneNumber === "anyone" ||
+    (userToConvert.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeePhoneNumber === "friends of friends" &&
+      currentUserIsFriendOfFriend);
 
   const showEmailAddress: boolean =
-    user.whoCanSeeEmailAddress === "anyone" ||
-    (user.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
-    (user.whoCanSeeEmailAddress === "friends of friends" && currentUserIsFriendOfFriend);
+    userToConvert.whoCanSeeEmailAddress === "anyone" ||
+    (userToConvert.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeEmailAddress === "friends of friends" &&
+      currentUserIsFriendOfFriend);
 
   const showInstagram: boolean =
-    user.whoCanSeeInstagram === "anyone" ||
-    (user.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
-    (user.whoCanSeeInstagram === "friends of friends" && currentUserIsFriendOfFriend);
+    userToConvert.whoCanSeeInstagram === "anyone" ||
+    (userToConvert.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeInstagram === "friends of friends" &&
+      currentUserIsFriendOfFriend);
 
   const showFacebook: boolean =
-    user.whoCanSeeFacebook === "anyone" ||
-    (user.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
-    (user.whoCanSeeFacebook === "friends of friends" && currentUserIsFriendOfFriend);
+    userToConvert.whoCanSeeFacebook === "anyone" ||
+    (userToConvert.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeFacebook === "friends of friends" &&
+      currentUserIsFriendOfFriend);
 
   const showX: boolean =
-    user.whoCanSeeX === "anyone" ||
-    (user.whoCanSeeX === "friends" && currentUserIsFriend) ||
-    (user.whoCanSeeX === "friends of friends" && currentUserIsFriendOfFriend);
+    userToConvert.whoCanSeeX === "anyone" ||
+    (userToConvert.whoCanSeeX === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeX === "friends of friends" && currentUserIsFriendOfFriend);
 
   const showFriends: boolean =
-    user.whoCanSeeFriendsList === "anyone" ||
-    (user.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
-    (user.whoCanSeeFriendsList === "friends of friends" && currentUserIsFriendOfFriend);
+    userToConvert.whoCanSeeFriendsList === "anyone" ||
+    (userToConvert.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeFriendsList === "friends of friends" &&
+      currentUserIsFriendOfFriend);
 
   return {
-    "_id": user._id,
-    "index": user.index,
-    "firstName": user.firstName,
-    "lastName": user.lastName,
-    "username": user.username,
-    "profileImage": user.profileImage,
-    "interests": user.interests,
-    "about": user.about,
+    "_id": userToConvert._id,
+    "index": userToConvert.index,
+    "firstName": userToConvert.firstName,
+    "lastName": userToConvert.lastName,
+    "username": userToConvert.username,
+    "profileImage": userToConvert.profileImage,
+    "interests": userToConvert.interests,
+    "about": userToConvert.about,
     ...(showLocation && {
-      city: user.city,
-    }),
-    ...(showLocation && {
-      stateProvince: user.stateProvince,
+      city: userToConvert.city,
     }),
     ...(showLocation && {
-      country: user.country,
+      stateProvince: userToConvert.stateProvince,
+    }),
+    ...(showLocation && {
+      country: userToConvert.country,
     }),
     ...(showPhoneNumber && {
-      phoneCountry: user.phoneCountry,
+      phoneCountry: userToConvert.phoneCountry,
     }),
     ...(showPhoneNumber && {
-      phoneCountryCode: user.phoneCountryCode,
+      phoneCountryCode: userToConvert.phoneCountryCode,
     }),
     ...(showPhoneNumber && {
-      phoneNumberWithoutCountryCode: user.phoneNumberWithoutCountryCode,
+      phoneNumberWithoutCountryCode: userToConvert.phoneNumberWithoutCountryCode,
     }),
     ...(showEmailAddress && {
-      emailAddress: user.emailAddress,
+      emailAddress: userToConvert.emailAddress,
     }),
     ...(showInstagram && {
-      instagram: user.instagram,
+      instagram: userToConvert.instagram,
     }),
     ...(showFacebook && {
-      facebook: user.facebook,
+      facebook: userToConvert.facebook,
     }),
     ...(showX && {
-      x: user.x,
+      x: userToConvert.x,
     }),
     ...(showFriends && {
-      friends: user.friends,
+      friends: userToConvert.friends,
     }),
   };
 };
