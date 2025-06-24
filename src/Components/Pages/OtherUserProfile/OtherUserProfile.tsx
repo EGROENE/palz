@@ -81,6 +81,7 @@ const OtherUserProfile = () => {
   >(undefined);
   const [palzInCommon, setPalzInCommon] = useState<TBarebonesUser[] | null>(null);
   const [palzInCommonText, setPalzInCommonText] = useState<string | undefined>(undefined);
+  const [usersEvents, setUsersEvents] = useState<TDisplayedEvent[] | null>(null);
 
   useEffect(() => {
     if (currentOtherUserIsBlocked) {
@@ -132,6 +133,8 @@ const OtherUserProfile = () => {
         .then((res) => {
           if (res.ok) {
             res.json().then((currentOtherUser: TUser) => {
+              // Boot from pg if currentUserIsBlocked
+              // Else, get values for page
               if (
                 currentOtherUser &&
                 currentUser &&
@@ -312,6 +315,155 @@ const OtherUserProfile = () => {
                 };
 
                 setFriendRelatedStates();
+
+                const upcomingEventsUserRSVPdTo: TEvent[] | undefined = allEvents?.filter(
+                  (event) =>
+                    event.eventStartDateTimeInMS > now &&
+                    event.eventEndDateTimeInMS > now &&
+                    currentOtherUser &&
+                    currentOtherUser._id &&
+                    event.interestedUsers
+                      .map((i) => i._id)
+                      .includes(currentOtherUser._id.toString())
+                );
+
+                const ongoingEvents: TEvent[] | undefined = allEvents?.filter((event) => {
+                  event.eventStartDateTimeInMS < now &&
+                    event.eventEndDateTimeInMS > now &&
+                    currentOtherUser &&
+                    currentOtherUser._id &&
+                    (event.organizers
+                      .map((o) => o._id)
+                      .includes(currentOtherUser._id.toString()) ||
+                      event.interestedUsers
+                        .map((i) => i._id)
+                        .includes(currentOtherUser._id.toString()));
+                });
+
+                const upcomingEventsUserOrganizes: TEvent[] | undefined =
+                  allEvents?.filter(
+                    (event) =>
+                      event.eventStartDateTimeInMS > now &&
+                      event.eventEndDateTimeInMS > now &&
+                      currentOtherUser &&
+                      currentOtherUser._id &&
+                      event.organizers
+                        .map((o) => o._id)
+                        .includes(currentOtherUser._id.toString())
+                  );
+
+                const upcomingEventsUserInvitedTo: TEvent[] | undefined =
+                  allEvents?.filter(
+                    (event) =>
+                      event.eventStartDateTimeInMS > now &&
+                      event.eventEndDateTimeInMS > now &&
+                      currentOtherUser &&
+                      currentOtherUser._id &&
+                      event.invitees
+                        .map((i) => i._id)
+                        .includes(currentOtherUser._id.toString())
+                  );
+
+                const pastEventsUserRSVPd: TEvent[] | undefined = allEvents?.filter(
+                  (event) =>
+                    currentOtherUser &&
+                    currentOtherUser._id &&
+                    event.interestedUsers
+                      .map((i) => i._id)
+                      .includes(currentOtherUser._id.toString()) &&
+                    event.eventEndDateTimeInMS < now
+                );
+
+                const pastEventsUserOrganized: TEvent[] | undefined = allEvents?.filter(
+                  (event) =>
+                    currentOtherUser &&
+                    currentOtherUser._id &&
+                    event.creator !== currentUser?._id &&
+                    event.organizers
+                      .map((o) => o._id)
+                      .includes(currentOtherUser._id.toString()) &&
+                    event.eventEndDateTimeInMS < now
+                );
+
+                // Conditionally add upcomingEventsUserRSVPdTo, etc., depending on currentOtherUser's event-privacy settings:
+                const interestedEventsAreVisible =
+                  currentOtherUser.whoCanSeeEventsInterestedIn === "anyone" ||
+                  (currentOtherUser.whoCanSeeEventsInterestedIn === "friends" &&
+                    currentUserIsFriend) ||
+                  (currentOtherUser.whoCanSeeEventsInterestedIn ===
+                    "friends of friends" &&
+                    currentUserIsFriendOfFriend);
+
+                const organizedEventsAreVisible =
+                  currentOtherUser.whoCanSeeEventsOrganized === "anyone" ||
+                  (currentOtherUser.whoCanSeeEventsOrganized === "friends" &&
+                    currentUserIsFriend) ||
+                  (currentOtherUser.whoCanSeeEventsOrganized === "friends of friends" &&
+                    currentUserIsFriendOfFriend);
+
+                const invitedEventsAreVisible =
+                  currentOtherUser.whoCanSeeEventsInvitedTo === "anyone" ||
+                  (currentOtherUser.whoCanSeeEventsInvitedTo === "friends" &&
+                    currentUserIsFriend) ||
+                  (currentOtherUser.whoCanSeeEventsInvitedTo === "friends of friends" &&
+                    currentUserIsFriendOfFriend);
+
+                setUsersEvents([
+                  ...(interestedEventsAreVisible
+                    ? [
+                        {
+                          header: "Upcoming Events I've RSVP'd To",
+                          array: upcomingEventsUserRSVPdTo,
+                          type: "interested-event",
+                        },
+                      ]
+                    : []),
+                  ...(organizedEventsAreVisible
+                    ? [
+                        {
+                          header: "My Ongoing Events",
+                          array: ongoingEvents,
+                          type: "organized-event",
+                        },
+                      ]
+                    : []),
+                  ...(organizedEventsAreVisible
+                    ? [
+                        {
+                          header: "My Upcoming Events",
+                          array: upcomingEventsUserOrganizes,
+                          type: "organized-event",
+                        },
+                      ]
+                    : []),
+                  ...(invitedEventsAreVisible
+                    ? [
+                        {
+                          header: "Upcoming Events I've Been Invited To",
+                          array: upcomingEventsUserInvitedTo,
+                          type: "invited-event",
+                        },
+                      ]
+                    : []),
+                  ...(interestedEventsAreVisible
+                    ? [
+                        {
+                          header: "Past Events I RSVP'd To",
+                          array: pastEventsUserRSVPd,
+                          type: "interested-event",
+                        },
+                      ]
+                    : []),
+                  ...(organizedEventsAreVisible
+                    ? [
+                        {
+                          header: "Past Events I Organized",
+                          array: pastEventsUserOrganized,
+                          type: "organized-event",
+                        },
+                      ]
+                    : []),
+                ]);
 
                 // Set showFacebook:
                 if (getSocialMediumIsVisible("facebook")) {
@@ -573,153 +725,17 @@ const OtherUserProfile = () => {
 
   const now = Date.now();
 
-  const pastEventsUserOrganized: TEvent[] | undefined = allEvents?.filter(
-    (event) =>
-      currentOtherUser &&
-      currentOtherUser._id &&
-      event.creator !== currentUser?._id &&
-      event.organizers.map((o) => o._id).includes(currentOtherUser._id.toString()) &&
-      event.eventEndDateTimeInMS < now
-  );
-
-  const pastEventsUserRSVPd: TEvent[] | undefined = allEvents?.filter(
-    (event) =>
-      currentOtherUser &&
-      currentOtherUser._id &&
-      event.interestedUsers.map((i) => i._id).includes(currentOtherUser._id.toString()) &&
-      event.eventEndDateTimeInMS < now
-  );
-
-  const upcomingEventsUserOrganizes: TEvent[] | undefined = allEvents?.filter(
-    (event) =>
-      event.eventStartDateTimeInMS > now &&
-      event.eventEndDateTimeInMS > now &&
-      currentOtherUser &&
-      currentOtherUser._id &&
-      event.organizers.map((o) => o._id).includes(currentOtherUser._id.toString())
-  );
-
-  const upcomingEventsUserInvitedTo: TEvent[] | undefined = allEvents?.filter(
-    (event) =>
-      event.eventStartDateTimeInMS > now &&
-      event.eventEndDateTimeInMS > now &&
-      currentOtherUser &&
-      currentOtherUser._id &&
-      event.invitees.map((i) => i._id).includes(currentOtherUser._id.toString())
-  );
-
-  const upcomingEventsUserRSVPdTo: TEvent[] | undefined = allEvents?.filter(
-    (event) =>
-      event.eventStartDateTimeInMS > now &&
-      event.eventEndDateTimeInMS > now &&
-      currentOtherUser &&
-      currentOtherUser._id &&
-      event.interestedUsers.map((i) => i._id).includes(currentOtherUser._id.toString())
-  );
-
-  const ongoingEvents: TEvent[] | undefined = allEvents?.filter((event) => {
-    event.eventStartDateTimeInMS < now &&
-      event.eventEndDateTimeInMS > now &&
-      currentOtherUser &&
-      currentOtherUser._id &&
-      (event.organizers.map((o) => o._id).includes(currentOtherUser._id.toString()) ||
-        event.interestedUsers
-          .map((i) => i._id)
-          .includes(currentOtherUser._id.toString()));
-  });
-
   type TDisplayedEvent = {
     header: string;
     array: TEvent[] | undefined;
     type: string;
   };
 
-  const usersEvents: TDisplayedEvent[] = [
-    { header: "My Ongoing Events", array: ongoingEvents, type: "organized-event" },
-    {
-      header: "My Upcoming Events",
-      array: upcomingEventsUserOrganizes,
-      type: "organized-event",
-    },
-    {
-      header: "Upcoming Events I've RSVP'd To",
-      array: upcomingEventsUserRSVPdTo,
-      type: "interested-event",
-    },
-    {
-      header: "Upcoming Events I've Been Invited To",
-      array: upcomingEventsUserInvitedTo,
-      type: "invited-event",
-    },
-    {
-      header: "Past Events I RSVP'd To",
-      array: pastEventsUserRSVPd,
-      type: "interested-event",
-    },
-    {
-      header: "Past Events I Organized",
-      array: pastEventsUserOrganized,
-      type: "organized-event",
-    },
-  ];
-
-  const userEventsExist = usersEvents
-    .map((event) => event.array)
-    .some((eventArray) => eventArray && eventArray.length > 0);
-
-  const getCurrentUserMaySeeEvent = (event: TDisplayedEvent): boolean => {
-    if (currentOtherUser && currentOtherUser._id) {
-      Requests.getUserByID(currentOtherUser._id.toString())
-        .then((res) => {
-          if (res.ok) {
-            res.json().then((currentOtherUser: TUser) => {
-              if (currentUser && currentUser._id && currentOtherUser) {
-                if (event.type === "interested-event") {
-                  if (
-                    currentOtherUser.whoCanSeeEventsInterestedIn === "anyone" ||
-                    (currentOtherUser.whoCanSeeEventsInterestedIn === "friends" &&
-                      currentOtherUser.friends.includes(currentUser._id.toString())) ||
-                    (currentOtherUser.whoCanSeeEventsInterestedIn ===
-                      "friends of friends" &&
-                      currentUserIsFriendOfFriend)
-                  ) {
-                    return true;
-                  }
-                }
-
-                if (event.type === "organized-event") {
-                  if (
-                    currentOtherUser.whoCanSeeEventsOrganized === "anyone" ||
-                    (currentOtherUser.whoCanSeeEventsOrganized === "friends" &&
-                      currentOtherUser.friends.includes(currentUser._id.toString())) ||
-                    (currentOtherUser.whoCanSeeEventsOrganized === "friends of friends" &&
-                      currentUserIsFriendOfFriend)
-                  ) {
-                    return true;
-                  }
-                }
-
-                if (event.type === "invited-event") {
-                  if (
-                    currentOtherUser.whoCanSeeEventsInvitedTo === "anyone" ||
-                    (currentOtherUser.whoCanSeeEventsInvitedTo === "friends" &&
-                      currentOtherUser.friends.includes(currentUser._id.toString())) ||
-                    (currentOtherUser.whoCanSeeEventsInvitedTo === "friends of friends" &&
-                      currentUserIsFriendOfFriend)
-                  ) {
-                    return true;
-                  }
-                }
-              }
-            });
-          } else {
-            return false;
-          }
-        })
-        .catch((error) => console.log(error));
-    }
-    return false;
-  };
+  const userEventsExist: boolean = usersEvents
+    ? usersEvents
+        .map((event) => event.array)
+        .some((eventArray) => eventArray && eventArray.length > 0)
+    : false;
 
   const getSocialMediumIsVisible = (medium: "facebook" | "instagram" | "x"): boolean => {
     if (currentOtherUser && currentOtherUser._id) {
@@ -1038,10 +1054,10 @@ const OtherUserProfile = () => {
                 {!aQueryIsLoading &&
                   isNoFetchError &&
                   userEventsExist &&
+                  usersEvents &&
                   usersEvents.map(
                     (event) =>
                       event &&
-                      getCurrentUserMaySeeEvent(event) &&
                       event.array &&
                       event.array.length > 0 && (
                         <UserEventsSection
