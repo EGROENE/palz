@@ -118,11 +118,11 @@ const userSchema = new Schema({
     required: true,
   },
   blockedUsers: {
-    type: [barebonesUser],
+    type: [String],
     required: true,
   },
   blockedBy: {
-    type: [barebonesUser],
+    type: [String],
     required: true,
   },
   emailAddress: {
