@@ -155,7 +155,9 @@ const DisplayedCardsPage = ({
                       pf.stateProvince === currentUser?.stateProvince &&
                       pf.country === currentUser?.country
                     ) {
-                      if (!matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))) {
+                      if (
+                        !matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))
+                      ) {
                         matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
                       }
                     }
@@ -167,7 +169,9 @@ const DisplayedCardsPage = ({
                       pf.stateProvince === currentUser?.stateProvince &&
                       pf.country === currentUser?.country
                     ) {
-                      if (!matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))) {
+                      if (
+                        !matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))
+                      ) {
                         matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
                       }
                     }
@@ -178,14 +182,18 @@ const DisplayedCardsPage = ({
                       currentUserMaySeeLocation &&
                       pf.country === currentUser?.country
                     ) {
-                      if (!matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))) {
+                      if (
+                        !matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))
+                      ) {
                         matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
                       }
                     }
                   }
 
                   if (filter === "friends of friends" && currentUserIsFriendOfFriend) {
-                    if (!matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))) {
+                    if (
+                      !matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))
+                    ) {
                       matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
                     }
                   }
@@ -194,7 +202,11 @@ const DisplayedCardsPage = ({
                     if (currentUser && currentUser.interests) {
                       for (const interest of currentUser?.interests) {
                         if (pf.interests.includes(interest)) {
-                          if (!matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))) {
+                          if (
+                            !matches.includes(
+                              Methods.getTOtherUserFromTUser(pf, currentUser)
+                            )
+                          ) {
                             matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
                           }
                         }
@@ -247,7 +259,10 @@ const DisplayedCardsPage = ({
             );
           }
         })
-        .catch((error) => console.log(error))
+        .catch((error) => {
+          setFetchError("Could not fetch friends. Try reloading the page");
+          console.log(error);
+        })
         .finally(() => setIsLoading(false));
     }
   };
@@ -274,7 +289,9 @@ const DisplayedCardsPage = ({
                       f.stateProvince === currentUser?.stateProvince &&
                       f.country === currentUser?.country
                     ) {
-                      if (!matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))) {
+                      if (
+                        !matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))
+                      ) {
                         matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
                       }
                     }
@@ -286,7 +303,9 @@ const DisplayedCardsPage = ({
                       f.stateProvince === currentUser?.stateProvince &&
                       f.country === currentUser?.country
                     ) {
-                      if (!matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))) {
+                      if (
+                        !matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))
+                      ) {
                         matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
                       }
                     }
@@ -294,7 +313,9 @@ const DisplayedCardsPage = ({
 
                   if (filter === "in my country") {
                     if (currentUserMaySeeLocation && f.country === currentUser?.country) {
-                      if (!matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))) {
+                      if (
+                        !matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))
+                      ) {
                         matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
                       }
                     }
@@ -304,7 +325,11 @@ const DisplayedCardsPage = ({
                     if (currentUser && currentUser.interests) {
                       for (const interest of currentUser?.interests) {
                         if (f.interests.includes(interest)) {
-                          if (!matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))) {
+                          if (
+                            !matches.includes(
+                              Methods.getTOtherUserFromTUser(f, currentUser)
+                            )
+                          ) {
                             matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
                           }
                         }
@@ -319,7 +344,10 @@ const DisplayedCardsPage = ({
             setFetchError("Could not load friends. Try reloading the page.");
           }
         })
-        .catch((error) => console.log(error))
+        .catch((error) => {
+          setFetchError("Could not fetch friends. Try reloading the page");
+          console.log(error);
+        })
         .finally(() => setIsLoading(false));
     }
   };
@@ -543,12 +571,16 @@ const DisplayedCardsPage = ({
               if (batchOfPotentialFriends) {
                 if (fetchStart === 0) {
                   setDisplayedItems(
-                    batchOfPotentialFriends.map((pf) => Methods.getTOtherUserFromTUser(pf, currentUser))
+                    batchOfPotentialFriends.map((pf) =>
+                      Methods.getTOtherUserFromTUser(pf, currentUser)
+                    )
                   );
                 } else {
                   setDisplayedItems(
                     displayedItems.concat(
-                      batchOfPotentialFriends.map((pf) => Methods.getTOtherUserFromTUser(pf, currentUser))
+                      batchOfPotentialFriends.map((pf) =>
+                        Methods.getTOtherUserFromTUser(pf, currentUser)
+                      )
                     )
                   );
                 }
@@ -596,11 +628,17 @@ const DisplayedCardsPage = ({
             .then((batchOfFriends: TUser[]) => {
               if (batchOfFriends) {
                 if (fetchStart === 0) {
-                  setDisplayedItems(batchOfFriends.map((f) => Methods.getTOtherUserFromTUser(f, currentUser)));
+                  setDisplayedItems(
+                    batchOfFriends.map((f) =>
+                      Methods.getTOtherUserFromTUser(f, currentUser)
+                    )
+                  );
                 } else {
                   setDisplayedItems(
                     displayedItems.concat(
-                      batchOfFriends.map((f) => Methods.getTOtherUserFromTUser(f, currentUser))
+                      batchOfFriends.map((f) =>
+                        Methods.getTOtherUserFromTUser(f, currentUser)
+                      )
                     )
                   );
                 }
@@ -623,7 +661,10 @@ const DisplayedCardsPage = ({
                 setFetchError("Could not load friends. Try reloading the page.");
               }
             })
-            .catch((error) => console.log(error))
+            .catch((error) => {
+              setFetchError("Could not fetch friends. Try reloading the page");
+              console.log(error);
+            })
             .finally(() => setIsLoading(false));
         }
       }
@@ -914,7 +955,7 @@ const DisplayedCardsPage = ({
   };
   const pageHeading: string = getPageHeading();
 
-  const isNoFetchError: boolean = !fetchError && fetchError !== "";
+  const isNoFetchError: boolean = !fetchError || fetchError !== "";
 
   return (
     <>
