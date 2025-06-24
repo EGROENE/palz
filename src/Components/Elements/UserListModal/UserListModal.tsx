@@ -16,6 +16,7 @@ const UserListModal = ({
   closeModalMethod,
   header,
   users,
+  fetchUsers,
   buttonOneText,
   buttonOneHandler,
   buttonOneHandlerNeedsEventParam,
@@ -39,7 +40,8 @@ const UserListModal = ({
   renderButtonTwo: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
   header: string;
-  users: string[];
+  users: (string | TBarebonesUser)[];
+  fetchUsers: boolean;
   buttonOneText?: string;
   buttonOneHandler?: Function;
   buttonOneHandlerNeedsEventParam?: boolean;
@@ -71,37 +73,47 @@ const UserListModal = ({
   const [isFetchError, setIsFetchError] = useState<boolean>(false);
 
   useEffect(() => {
-    setFetchIsLoading(true);
-    const getPromisesForFullUserObjects = (): Promise<TUser>[] => {
-      const promisesToAwait = users.map((id) => {
-        return Requests.getUserByID(id).then((res) => {
-          return res.json().then((user: TUser) => user);
+    if (fetchUsers) {
+      setFetchIsLoading(true);
+      const getPromisesForFullUserObjects = (): Promise<TUser>[] => {
+        const promisesToAwait = users.map((id) => {
+          if (typeof id === "string") {
+            return Requests.getUserByID(id).then((res) => {
+              return res.json().then((user: TUser) => user);
+            });
+          }
         });
-      });
-      return promisesToAwait;
-    };
+        return promisesToAwait.filter((elem) => elem !== undefined);
+      };
 
-    Promise.all(getPromisesForFullUserObjects())
-      .then((users: TUser[]) =>
-        setIterableUsers(
-          users.map((u) => {
-            if (
-              currentUser &&
-              currentUser._id &&
-              u._id &&
-              !currentUser.blockedUsers.includes(u._id.toString()) &&
-              !u.blockedUsers.includes(currentUser._id.toString())
-            ) {
-              return Methods.getTBarebonesUser(u);
-            }
-          })
+      Promise.all(getPromisesForFullUserObjects())
+        .then((users: TUser[]) =>
+          setIterableUsers(
+            users
+              .map((u) => {
+                if (
+                  currentUser &&
+                  currentUser._id &&
+                  u._id &&
+                  !currentUser.blockedUsers.includes(u._id.toString()) &&
+                  !u.blockedUsers.includes(currentUser._id.toString())
+                ) {
+                  return Methods.getTBarebonesUser(u);
+                }
+              })
+              .filter((elem) => elem !== undefined)
+          )
         )
-      )
-      .catch((error) => {
-        console.log(error);
-        setIsFetchError(true);
-      })
-      .finally(() => setFetchIsLoading(false));
+        .catch((error) => {
+          console.log(error);
+          setIsFetchError(true);
+        })
+        .finally(() => setFetchIsLoading(false));
+    } else {
+      if (users.every((u) => Methods.isTBarebonesUser(u))) {
+        setIterableUsers(users);
+      }
+    }
   }, [listType]);
 
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
