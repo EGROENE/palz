@@ -65,7 +65,7 @@ const UserListModal = ({
 
   const { currentEvent, fetchAllEventsQuery, handleDeleteUserRSVP, handleRemoveInvitee } =
     useEventContext();
-  const { startConversation } = useChatContext();
+  const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
   const [iterableUsers, setIterableUsers] = useState<TBarebonesUser[] | null>(null);
 
@@ -122,7 +122,7 @@ const UserListModal = ({
         return [currentUser, user, blockedUsers, setBlockedUsers];
       } else if (
         (listType === "invitees" || listType === "rsvpd-users") &&
-        buttonOneHandler === startConversation
+        buttonOneHandler === getStartOrOpenChatWithUserHandler
       ) {
         return [user];
       }

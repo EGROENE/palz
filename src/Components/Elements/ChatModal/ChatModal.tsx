@@ -20,7 +20,7 @@ const ChatModal = () => {
     handleLoadMoreItemsOnScroll,
     fetchIsLoading,
     displayedPotentialChatMembers,
-    startConversation,
+    getStartOrOpenChatWithUserHandler,
     setMessageBeingEdited,
     setShowAreYouSureYouWantToLeaveChat,
     showMembers,
@@ -266,7 +266,7 @@ const ChatModal = () => {
       (listedChatMemberIsAdmin && !currentUserIsAdmin) ||
       (!listedChatMemberIsAdmin && !currentUserIsAdmin)
     ) {
-      return () => startConversation(listedChatMember);
+      return () => getStartOrOpenChatWithUserHandler(listedChatMember);
     }
 
     // if currentUser is admin, but LCM isn't, 'add as admin' btn:

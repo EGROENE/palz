@@ -38,7 +38,7 @@ const EventPage = () => {
     showInvitees,
     setShowInvitees,
   } = useEventContext();
-  const { startConversation } = useChatContext();
+  const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
   // Get most current version of event to which this page pertains:
   const { eventID } = useParams();
@@ -310,7 +310,7 @@ const EventPage = () => {
               header="Invitees"
               users={currentEvent.invitees}
               buttonOneText="Message"
-              buttonOneHandler={startConversation}
+              buttonOneHandler={getStartOrOpenChatWithUserHandler}
               buttonOneHandlerNeedsEventParam={false}
               buttonTwoText="Remove"
               buttonTwoHandler={handleRemoveInvitee}
@@ -327,7 +327,7 @@ const EventPage = () => {
               header="RSVPs"
               users={currentEvent.interestedUsers}
               buttonOneText="Message"
-              buttonOneHandler={startConversation}
+              buttonOneHandler={getStartOrOpenChatWithUserHandler}
               buttonOneHandlerNeedsEventParam={false}
               buttonTwoText="Remove"
               buttonTwoHandler={handleDeleteUserRSVP}
