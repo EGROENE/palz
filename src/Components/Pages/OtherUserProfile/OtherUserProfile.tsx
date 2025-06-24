@@ -480,26 +480,35 @@ const OtherUserProfile = () => {
                     : []),
                 ]);
 
-                // Set showFacebook:
-                if (getSocialMediumIsVisible("facebook")) {
+                // Set visibility of social links:
+                if (
+                  currentOtherUser.whoCanSeeFacebook === "anyone" ||
+                  (currentOtherUser?.whoCanSeeFacebook === "friends" &&
+                    currentUserIsFriend) ||
+                  (currentOtherUser?.whoCanSeeFacebook === "friends of friends" &&
+                    currentUserIsFriendOfFriend)
+                ) {
+                  setShowFacebook(true);
                 }
-                setShowFacebook(
-                  getSocialMediumIsVisible("facebook")
-                    ? currentOtherUser.facebook !== ""
-                    : false
-                );
 
-                // Set showInstagram:
-                setShowInstagram(
-                  getSocialMediumIsVisible("instagram")
-                    ? currentOtherUser.instagram !== ""
-                    : false
-                );
+                if (
+                  currentOtherUser?.whoCanSeeInstagram === "anyone" ||
+                  (currentOtherUser?.whoCanSeeInstagram === "friends" &&
+                    currentUserIsFriend) ||
+                  (currentOtherUser?.whoCanSeeInstagram === "friends of friends" &&
+                    currentUserIsFriendOfFriend)
+                ) {
+                  setShowInstagram(true);
+                }
 
-                // Set showX:
-                setShowX(
-                  getSocialMediumIsVisible("x") ? currentOtherUser.x !== "" : false
-                );
+                if (
+                  currentOtherUser?.whoCanSeeX === "anyone" ||
+                  (currentOtherUser?.whoCanSeeX === "friends" && currentUserIsFriend) ||
+                  (currentOtherUser?.whoCanSeeX === "friends of friends" &&
+                    currentUserIsFriendOfFriend)
+                ) {
+                  setShowX(true);
+                }
               }
             });
           } else {
@@ -677,8 +686,6 @@ const OtherUserProfile = () => {
             handleRemoveOrganizer(e, event, currentOtherUser);
           }
         }
-
-        // If event creator is currentOtherUser & currentUser is invitee or co-organizer, remove currentUser from those lists:
       }
     }
 
@@ -751,53 +758,6 @@ const OtherUserProfile = () => {
         .map((event) => event.array)
         .some((eventArray) => eventArray && eventArray.length > 0)
     : false;
-
-  const getSocialMediumIsVisible = (medium: "facebook" | "instagram" | "x"): boolean => {
-    if (currentOtherUser && currentOtherUser._id) {
-      Requests.getUserByID(currentOtherUser._id.toString())
-        .then((res) => {
-          if (res.ok) {
-            res.json().then((currentOtherUser: TUser) => {
-              if (currentUser && currentUser._id) {
-                if (
-                  (medium === "facebook" &&
-                    currentOtherUser?.whoCanSeeFacebook === "anyone") ||
-                  (currentOtherUser?.whoCanSeeFacebook === "friends" &&
-                    currentOtherUser.friends.includes(currentUser._id.toString())) ||
-                  (currentOtherUser?.whoCanSeeFacebook === "friends of friends" &&
-                    currentUserIsFriendOfFriend)
-                ) {
-                  return true;
-                }
-                if (
-                  (medium === "instagram" &&
-                    currentOtherUser?.whoCanSeeInstagram === "anyone") ||
-                  (currentOtherUser?.whoCanSeeInstagram === "friends" &&
-                    currentOtherUser.friends.includes(currentUser._id.toString())) ||
-                  (currentOtherUser?.whoCanSeeInstagram === "friends of friends" &&
-                    currentUserIsFriendOfFriend)
-                ) {
-                  return true;
-                }
-                if (
-                  (medium === "x" && currentOtherUser?.whoCanSeeX === "anyone") ||
-                  (currentOtherUser?.whoCanSeeX === "friends" &&
-                    currentOtherUser.friends.includes(currentUser._id.toString())) ||
-                  (currentOtherUser?.whoCanSeeX === "friends of friends" &&
-                    currentUserIsFriendOfFriend)
-                ) {
-                  return true;
-                }
-              }
-            });
-          } else {
-            return false;
-          }
-        })
-        .catch((error) => console.log(error));
-    }
-    return false;
-  };
 
   const getNumberOfGroupChatsInCommon = (): number => {
     const currentUserChats = fetchChatsQuery.data;
@@ -940,7 +900,7 @@ const OtherUserProfile = () => {
                   )}
                   {(showFacebook || showInstagram || showX) && (
                     <div className={styles.socialLinksContainer}>
-                      {getSocialMediumIsVisible("facebook") && (
+                      {showFacebook && (
                         <a
                           title={`${currentOtherUser.username}'s Facebook Profile`}
                           href={`${currentOtherUser.facebook}`}
@@ -949,17 +909,16 @@ const OtherUserProfile = () => {
                           <span className="fab fa-facebook"></span>
                         </a>
                       )}
-                      {getSocialMediumIsVisible("instagram") &&
-                        currentOtherUser.instagram !== "" && (
-                          <a
-                            title={`${currentOtherUser.username}'s Instagram Profile`}
-                            href={`${currentOtherUser.instagram}`}
-                            target="_blank"
-                          >
-                            <span className="fab fa-instagram"></span>
-                          </a>
-                        )}
-                      {getSocialMediumIsVisible("x") && currentOtherUser.x !== "" && (
+                      {showInstagram && currentOtherUser.instagram !== "" && (
+                        <a
+                          title={`${currentOtherUser.username}'s Instagram Profile`}
+                          href={`${currentOtherUser.instagram}`}
+                          target="_blank"
+                        >
+                          <span className="fab fa-instagram"></span>
+                        </a>
+                      )}
+                      {showX && currentOtherUser.x !== "" && (
                         <a
                           title={`${currentOtherUser.username}'s X Profile`}
                           href={`${currentOtherUser.x}`}
