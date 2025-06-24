@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { TUser, TBarebonesUser } from "../../../types";
 import ListedUser from "../ListedUser/ListedUser";
@@ -38,7 +39,7 @@ const UserListModal = ({
   renderButtonTwo: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
   header: string;
-  users: TBarebonesUser[];
+  users: string[];
   buttonOneText?: string;
   buttonOneHandler?: Function;
   buttonOneHandlerNeedsEventParam?: boolean;
@@ -63,6 +64,35 @@ const UserListModal = ({
   const { currentEvent, fetchAllEventsQuery, handleDeleteUserRSVP, handleRemoveInvitee } =
     useEventContext();
   const { startConversation } = useChatContext();
+
+  const [iterableUsers, setIterableUsers] = useState<TBarebonesUser[] | null>(null);
+
+  useEffect(() => {
+    const getPromisesForFullUserObjects = (): Promise<TUser>[] => {
+      const promisesToAwait = users.map((id) => {
+        return Requests.getUserByID(id).then((res) => {
+          return res.json().then((otherUserFriend: TUser) => otherUserFriend);
+        });
+      });
+      return promisesToAwait;
+    };
+
+    Promise.all(getPromisesForFullUserObjects()).then((users: TUser[]) =>
+      setIterableUsers(
+        users.map((u) => {
+          if (
+            currentUser &&
+            currentUser._id &&
+            u._id &&
+            !currentUser.blockedUsers.includes(u._id.toString()) &&
+            !u.blockedUsers.includes(currentUser._id.toString())
+          ) {
+            return Methods.getTBarebonesUser(u);
+          }
+        })
+      )
+    );
+  }, []);
 
   const displayedUserCount = Methods.removeDuplicatesFromArray(users).length;
 
@@ -124,7 +154,7 @@ const UserListModal = ({
 
   const fetchIsLoading: boolean =
     listType === "blocked-users" || listType === "other-user-friends"
-      ? fetchAllVisibleOtherUsersQuery.isLoading
+      ? iterableUsers === null
       : fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
@@ -143,6 +173,8 @@ const UserListModal = ({
   };
   const queryWithError = getQueryForQueryLoadingOrErrorComponent();
 
+  // As long as iterableUsers is null, display loading
+  // If error in setting iterableUsers, show error message
   return (
     <div tabIndex={0} aria-hidden="false" className="modal-background">
       <i
@@ -161,8 +193,10 @@ const UserListModal = ({
         <h2>{`${header} (${displayedUserCount})`}</h2>
         {isNoFetchError &&
           !fetchIsLoading &&
+          iterableUsers !== null &&
+          iterableUsers.length > 0 &&
           (displayedUserCount > 0 ? (
-            users.map((user) => (
+            iterableUsers.map((user) => (
               <ListedUser
                 key={user._id?.toString()}
                 renderButtonOne={renderButtonOne}
