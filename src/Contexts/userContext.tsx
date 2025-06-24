@@ -902,8 +902,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     mutationFn: ({
       blocker,
       blockee,
+      // @ts-ignore: param used in onSuccess handler
       areFriends,
+      // @ts-ignore: param used in onSuccess handler
       hasSentFriendRequest,
+      // @ts-ignore: param used in onSuccess handler
       hasReceivedFriendRequest,
     }: {
       blocker: TUser;
@@ -911,6 +914,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       areFriends: boolean;
       hasSentFriendRequest: boolean;
       hasReceivedFriendRequest: boolean;
+      // @ts-ignore
     }) => Requests.addToBlockedUsers(blocker, blockee._id?.toString()),
     onSuccess: (data, variables) => {
       if (data.ok) {
@@ -1702,13 +1706,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleUnblockUser = (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: TBarebonesUser[] | undefined,
-    setBlockedUsers?: React.Dispatch<SetStateAction<TBarebonesUser[] | undefined>>
+    blockedUsers?: string[] | undefined,
+    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
   ): void => {
     setIsLoading(true);
 
     if (blockedUsers && setBlockedUsers) {
-      setBlockedUsers(blockedUsers.filter((bu) => bu._id !== blockee._id));
+      setBlockedUsers(blockedUsers.filter((bu) => bu !== blockee._id?.toString()));
     }
 
     if (blockee._id) {
