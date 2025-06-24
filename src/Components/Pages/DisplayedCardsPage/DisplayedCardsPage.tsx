@@ -58,7 +58,7 @@ const DisplayedCardsPage = ({
   const searchBoxRef = useRef<HTMLInputElement | null>(null);
 
   // Maybe provide btn in case of fetch error that calls getPotentialFriends again.
-  const [fetchError, setFetchError] = useState<string | undefined>();
+  const [fetchError, setFetchError] = useState<string>("");
 
   if (error) {
     throw new Error(error);
@@ -955,7 +955,7 @@ const DisplayedCardsPage = ({
   };
   const pageHeading: string = getPageHeading();
 
-  const isNoFetchError: boolean = !fetchError || fetchError !== "";
+  const isNoFetchError: boolean = fetchError === "";
 
   return (
     <>
