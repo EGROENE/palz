@@ -938,9 +938,8 @@ const OtherUserProfile = () => {
                     renderButtonTwo={false}
                     closeModalMethod={setShowMutualFriends}
                     header="Mutual Friends"
-                    users={palzInCommon
-                      .map((p) => p._id.toString())
-                      .filter((elem) => elem !== undefined)}
+                    users={palzInCommon}
+                    fetchUsers={false}
                     randomColor={randomColor}
                   />
                 )}
@@ -952,6 +951,7 @@ const OtherUserProfile = () => {
                     closeModalMethod={setShowFriends}
                     header={`${currentOtherUser.username} 's palz`}
                     users={currentOtherUser.friends}
+                    fetchUsers={true}
                     buttonOneText="View Profile"
                     randomColor={randomColor}
                   />
