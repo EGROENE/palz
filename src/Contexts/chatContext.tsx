@@ -673,8 +673,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
     const newMessage: TMessage = {
       _id: messageId,
-      sender:
-        currentUser && currentUser._id ? Methods.getTBarebonesUser(currentUser) : "",
+      sender: Methods.getTBarebonesUser(currentUser),
       content: content.trim(),
       image: "",
       timeSent: now,
