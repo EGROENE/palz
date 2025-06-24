@@ -276,9 +276,26 @@ const OtherUserProfile = () => {
                             }
                           }
 
-                          const pic: TBarebonesUser[] = currentUserFriends
+                          const combinedFriends: TUser[] = currentUserFriends
                             .concat(currentOtherUserFriends)
-                            .map((f) => Methods.getTBarebonesUser(f));
+                            .map((f) => {
+                              if (f._id) {
+                                return f;
+                              }
+                            })
+                            .filter((elem) => elem !== undefined);
+
+                          const pic: TBarebonesUser[] = combinedFriends
+                            .map((f) => Methods.getTBarebonesUser(f))
+                            .filter((f) => {
+                              if (
+                                f._id &&
+                                currentUser.friends.includes(f._id.toString()) &&
+                                currentOtherUser.friends.includes(f._id.toString())
+                              ) {
+                                return f;
+                              }
+                            });
 
                           setPalzInCommon(pic);
 
@@ -1031,7 +1048,9 @@ const OtherUserProfile = () => {
                     renderButtonTwo={false}
                     closeModalMethod={setShowMutualFriends}
                     header="Mutual Friends"
-                    users={palzInCommon.map((p) => Methods.getTBarebonesUser(p))}
+                    users={palzInCommon
+                      .map((p) => p._id?.toString())
+                      .filter((elem) => elem !== undefined)}
                     randomColor={randomColor}
                   />
                 )}
