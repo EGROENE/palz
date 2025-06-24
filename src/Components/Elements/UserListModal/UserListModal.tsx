@@ -67,32 +67,42 @@ const UserListModal = ({
 
   const [iterableUsers, setIterableUsers] = useState<TBarebonesUser[] | null>(null);
 
+  const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
+  const [isFetchError, setIsFetchError] = useState<boolean>(false);
+
   useEffect(() => {
+    setFetchIsLoading(true);
     const getPromisesForFullUserObjects = (): Promise<TUser>[] => {
       const promisesToAwait = users.map((id) => {
         return Requests.getUserByID(id).then((res) => {
-          return res.json().then((otherUserFriend: TUser) => otherUserFriend);
+          return res.json().then((user: TUser) => user);
         });
       });
       return promisesToAwait;
     };
 
-    Promise.all(getPromisesForFullUserObjects()).then((users: TUser[]) =>
-      setIterableUsers(
-        users.map((u) => {
-          if (
-            currentUser &&
-            currentUser._id &&
-            u._id &&
-            !currentUser.blockedUsers.includes(u._id.toString()) &&
-            !u.blockedUsers.includes(currentUser._id.toString())
-          ) {
-            return Methods.getTBarebonesUser(u);
-          }
-        })
+    Promise.all(getPromisesForFullUserObjects())
+      .then((users: TUser[]) =>
+        setIterableUsers(
+          users.map((u) => {
+            if (
+              currentUser &&
+              currentUser._id &&
+              u._id &&
+              !currentUser.blockedUsers.includes(u._id.toString()) &&
+              !u.blockedUsers.includes(currentUser._id.toString())
+            ) {
+              return Methods.getTBarebonesUser(u);
+            }
+          })
+        )
       )
-    );
-  }, []);
+      .catch((error) => {
+        console.log(error);
+        setIsFetchError(true);
+      })
+      .finally(() => setFetchIsLoading(false));
+  }, [listType]);
 
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
     if (!buttonOneHandlerParams) {
@@ -150,9 +160,9 @@ const UserListModal = ({
       ? !fetchAllVisibleOtherUsersQuery.isError
       : !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
 
-  const fetchIsLoading: boolean =
+  const fetchIsLoading2: boolean =
     listType === "blocked-users" || listType === "other-user-friends"
-      ? iterableUsers === null
+      ? fetchIsLoading
       : fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
@@ -195,7 +205,7 @@ const UserListModal = ({
           )}
         </h2>
         {isNoFetchError &&
-          !fetchIsLoading &&
+          !fetchIsLoading2 &&
           iterableUsers !== null &&
           (iterableUsers.length > 0 ? (
             iterableUsers.map((user) => (
