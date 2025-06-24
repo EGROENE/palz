@@ -827,9 +827,21 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getStartOrOpenChatWithUserHandler = (
-    otherUser: TOtherUser | TUser | undefined
+    otherUser: TOtherUser | TUser | TBarebonesUser | undefined
   ): void => {
     if (otherUser) {
+      if (showInvitees) {
+        setShowInvitees(false);
+      }
+
+      if (showRSVPs) {
+        setShowRSVPs(false);
+      }
+
+      if (showChatModal) {
+        setShowChatModal(false);
+      }
+
       const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
         (chat) => {
           if (
@@ -899,52 +911,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     return unreadMessages > 9 ? "9+" : unreadMessages;
   };
 
-  const startConversation = (otherUser: TOtherUser): void => {
-    const userChats = fetchChatsQuery.data;
-
-    if (showInvitees) {
-      setShowInvitees(false);
-    }
-
-    if (showRSVPs) {
-      setShowRSVPs(false);
-    }
-
-    if (showChatModal) {
-      setShowChatModal(false);
-    }
-
-    const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
-      (chat) =>
-        chat.members.length === 2 &&
-        currentUser &&
-        currentUser._id &&
-        chat.members.map((m) => m._id).includes(currentUser._id.toString()) &&
-        otherUser._id &&
-        chat.members.map((m) => m._id).includes(otherUser._id.toString())
-    )[0];
-
-    if (existingChatWithListedChatMember) {
-      return handleOpenChat(existingChatWithListedChatMember);
-    } else {
-      const newChatMembers: TBarebonesUser[] =
-        otherUser._id && currentUser && currentUser._id
-          ? [Methods.getTBarebonesUser(otherUser), Methods.getTBarebonesUser(currentUser)]
-          : [];
-      return handleCreateChat({
-        _id: new mongoose.Types.ObjectId().toString(),
-        members: newChatMembers,
-        messages: [],
-        chatName: chatName,
-        chatType: "two-member",
-        dateCreated: Date.now(),
-        ...(usersToAddToChat.length >= 2 &&
-          currentUser &&
-          currentUser._id && { admins: [Methods.getTBarebonesUser(currentUser)] }),
-      });
-    }
-  };
-
   const chatContextValues: TChatContext = {
     handleCancelAddOrEditChat,
     handleSearchPotentialChatMembers,
@@ -963,7 +929,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     handleUpdateChatName,
     showEditChatNameModal,
     setShowEditChatNameModal,
-    startConversation,
     getStartOrOpenChatWithUserHandler,
     getTotalNumberOfUnreadMessages,
     handleSaveEditedMessage,
