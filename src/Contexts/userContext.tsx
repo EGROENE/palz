@@ -1,11 +1,5 @@
 import { createContext, ReactNode, useState, useEffect, SetStateAction } from "react";
-import {
-  TUserContext,
-  TUser,
-  TUserValuesToUpdate,
-  TOtherUser,
-  TBarebonesUser,
-} from "../types";
+import { TUserContext, TUser, TUserValuesToUpdate, TOtherUser } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -1625,27 +1619,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Defined here, since used in DropdownChecklist & EventForm
-
-  // maybe pass in a TUser[] & its setter in order to optimistically render UserCards on FindPalz/MyPalz, FriendRequests
   const addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists = (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: TBarebonesUser[] | undefined,
-    setBlockedUsers?: React.Dispatch<SetStateAction<TBarebonesUser[] | undefined>>
+    blockedUsers?: string[] | undefined,
+    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
   ): void => {
     if (blockedUsers && setBlockedUsers && blockee._id) {
-      setBlockedUsers(
-        blockedUsers.concat({
-          _id: blockee._id,
-          username: blockee.username,
-          firstName: blockee.firstName,
-          lastName: blockee.lastName,
-          emailAddress: blockee.emailAddress,
-          profileImage: blockee.profileImage,
-          index: blockee.index,
-        })
-      );
+      setBlockedUsers(blockedUsers.concat(blockee._id.toString()));
     }
     setIsLoading(true);
 
