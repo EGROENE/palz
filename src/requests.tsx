@@ -549,11 +549,7 @@ const removeFromBlockedUsers = (blocker: TUser, blockee: string): Promise<Respon
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedBlockedUsersArray = blocker.blockedUsers.filter((bu) => {
-    if (bu._id && bu._id.toString() !== blockee) {
-      return bu;
-    }
-  });
+  const updatedBlockedUsersArray = blocker.blockedUsers.filter((bu) => bu !== blockee);
 
   const getRaw = () => {
     return JSON.stringify({
