@@ -212,120 +212,45 @@ const OtherUserProfile = () => {
                   setCurrentUserCanSeeFriendsList(true);
                 }
 
-                const getCurrentUserFriends = async (): Promise<TUser[]> => {
-                  let currentUserFriends: TUser[] = [];
-                  if (username) {
-                    for (const friendID of currentUser.friends) {
-                      await Requests.getUserByID(friendID)
-                        .then((res) => {
-                          if (res.ok) {
-                            res
-                              .json()
-                              .then((currentUserFriend) =>
-                                currentUserFriends.push(currentUserFriend)
-                              );
-                          } else {
-                            setError("Error fetching currentOtherUserFriends (TUser[])");
-                          }
-                        })
-                        .catch((error) => console.log(error));
-                    }
-                  }
-                  return currentUserFriends;
-                };
-
-                // Set currentUserIsFriendOfFriend:
-                const getCurrentOtherUserFriends = async (): Promise<TUser[]> => {
-                  setFetchIsLoading(true);
-                  let currentOtherUserFriends: TUser[] = [];
-                  if (username) {
-                    for (const friendID of currentOtherUser.friends) {
-                      await Requests.getUserByID(friendID)
-                        .then((res) => {
-                          if (res.ok) {
-                            res
-                              .json()
-                              .then((currentOtherUserFriend) =>
-                                currentOtherUserFriends.push(currentOtherUserFriend)
-                              );
-                          } else {
-                            setError("Error fetching currentOtherUserFriends (TUser[])");
-                          }
-                        })
-                        .catch((error) => console.log(error));
-                    }
-                  }
-                  return currentOtherUserFriends;
-                };
-
-                // Set palzInCommon. After changing friends arrays to TBarebonesUser[] (and existing requests + friends arrays on users in DB), set palzInCommon to array of TBarebonesUsers _ids that are in both currentUser's & currentOtherUser's friends array mapped for _ids
-
                 const setFriendRelatedStates = (): void => {
                   setFetchIsLoading(true);
-                  // run getCurrentUserFriends, then getCurrentOtherUserFriends. if any one fails, setFetchError. if both succeed, set palzInCommon to concatenation of what both return & set currentUserIsFriendOfFriend to true if currentUser is friends w/ one of currentOtherUser's friends.
-                  getCurrentUserFriends()
-                    .then((currentUserFriends: TUser[]) => {
-                      getCurrentOtherUserFriends()
-                        .then((currentOtherUserFriends: TUser[]) => {
-                          if (currentUser && currentUser._id) {
-                            for (const friend of currentOtherUserFriends) {
-                              if (friend.friends.includes(currentUser._id.toString())) {
-                                setCurrentUserIsFriendOfFriend(true);
-                              }
-                            }
-                          }
 
-                          const combinedFriends: TUser[] = currentUserFriends
-                            .concat(currentOtherUserFriends)
-                            .map((f) => {
-                              if (f._id) {
-                                return f;
-                              }
-                            })
-                            .filter((elem) => elem !== undefined);
+                  const palzInCommonIDs = Methods.removeDuplicatesFromArray(
+                    currentUser.friends
+                      .concat(currentOtherUser.friends)
+                      .filter(
+                        (id) =>
+                          currentUser.friends.includes(id) &&
+                          currentOtherUser.friends.includes(id)
+                      )
+                  );
 
-                          const pic: TBarebonesUser[] = combinedFriends
-                            .map((f) => Methods.getTBarebonesUser(f))
-                            .filter((f) => {
-                              if (
-                                f._id &&
-                                currentUser.friends.includes(f._id.toString()) &&
-                                currentOtherUser.friends.includes(f._id.toString())
-                              ) {
-                                return f;
-                              }
-                            });
-
-                          setPalzInCommon(pic);
-
-                          if (pic.length > 2) {
-                            setPalzInCommonText(
-                              `You are both friends with ${pic
-                                .slice(0, 3)
-                                .map((pal) => `${pal.firstName} ${pal.lastName}`)
-                                .join(", ")} +${pic.length - 2} more`
-                            );
-                          } else if (pic.length > 0) {
-                            setPalzInCommonText(
-                              `You are both friends with ${pic
-                                .map((pal) => `${pal.firstName} ${pal.lastName}`)
-                                .join(" & ")}`
-                            );
-                          } else {
-                            setPalzInCommonText("No mutual friends");
-                          }
-                        })
-                        .catch((error) => {
-                          console.log(error);
-                          setIsFetchError(true);
-                        })
-                        .finally(() => setFetchIsLoading(false));
+                  const promisesToAwait = palzInCommonIDs.map((id) => {
+                    return Requests.getUserByID(id).then((res) => {
+                      return res.json().then((user: TUser) => user);
+                    });
+                  });
+                  Promise.all(promisesToAwait)
+                    .then((pic: TUser[]) => {
+                      setPalzInCommon(pic.map((p) => Methods.getTBarebonesUser(p)));
+                      if (pic.length > 2) {
+                        setPalzInCommonText(
+                          `You are both friends with ${pic
+                            .slice(0, 2)
+                            .map((pal) => `${pal.firstName} ${pal.lastName}`)
+                            .join(", ")} +${pic.length - 2} more`
+                        );
+                      } else if (pic.length > 0) {
+                        setPalzInCommonText(
+                          `You are both friends with ${pic
+                            .map((pal) => `${pal.firstName} ${pal.lastName}`)
+                            .join(" & ")}`
+                        );
+                      } else {
+                        setPalzInCommonText("No mutual friends");
+                      }
                     })
-                    .catch((error) => {
-                      console.log(error);
-                      setIsFetchError(true);
-                    })
-                    .finally(() => setFetchIsLoading(false));
+                    .catch((error) => console.log(error));
                 };
 
                 setFriendRelatedStates();
@@ -1002,7 +927,7 @@ const OtherUserProfile = () => {
                     closeModalMethod={setShowMutualFriends}
                     header="Mutual Friends"
                     users={palzInCommon
-                      .map((p) => p._id?.toString())
+                      .map((p) => p._id.toString())
                       .filter((elem) => elem !== undefined)}
                     randomColor={randomColor}
                   />
