@@ -38,7 +38,6 @@ const OtherUserProfile = () => {
     friendRequestsReceived,
     handleUnfriending,
     friends,
-    fetchAllVisibleOtherUsersQuery,
     setCurrentOtherUser,
   } = useUserContext();
   const {
@@ -198,7 +197,7 @@ const OtherUserProfile = () => {
 
                 // Determine if currentUser may see friends list:
                 const currentUserIsFriend: boolean =
-                  currentUser && currentUser._id && !aQueryIsLoading
+                  currentUser && currentUser._id
                     ? currentOtherUser.friends.includes(currentUser._id.toString())
                     : false;
 
@@ -777,21 +776,16 @@ const OtherUserProfile = () => {
   };
   const numberOfGroupChatsInCommon = getNumberOfGroupChatsInCommon();
 
-  const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
+  const isNoFetchError: boolean = !fetchAllEventsQuery.isError;
 
   const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllVisibleOtherUsersQuery.isError) {
-      return fetchAllVisibleOtherUsersQuery;
-    } else if (fetchAllEventsQuery.isError) {
+    if (fetchAllEventsQuery.isError) {
       return fetchAllEventsQuery;
     }
-    return undefined;
   };
   const queryWithError = getQueryForQueryLoadingOrErrorComponent();
 
-  const aQueryIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
+  const aQueryIsLoading: boolean = fetchAllEventsQuery.isLoading;
 
   return (
     <>
