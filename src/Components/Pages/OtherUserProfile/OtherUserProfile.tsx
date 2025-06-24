@@ -800,13 +800,13 @@ const OtherUserProfile = () => {
                           : undefined
                       }
                       onClick={
-                        palzInCommon.length > 2
+                        palzInCommon.length > 0
                           ? () => setShowMutualFriends(true)
                           : undefined
                       }
                     >
                       {palzInCommonText}
-                      {palzInCommon.length > 2 && (
+                      {palzInCommon.length > 0 && (
                         <i
                           style={{
                             transform: "rotate(22.5deg)",
