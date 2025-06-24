@@ -193,8 +193,6 @@ const UserListModal = ({
   };
   const queryWithError = getQueryForQueryLoadingOrErrorComponent();
 
-  // As long as iterableUsers is null, display loading
-  // If error in setting iterableUsers, show error message
   return (
     <div tabIndex={0} aria-hidden="false" className="modal-background">
       <i
