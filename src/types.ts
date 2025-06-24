@@ -42,8 +42,8 @@ export type TUser = {
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
   friendRequestsReceived: TBarebonesUser[];
   friendRequestsSent: TBarebonesUser[];
-  blockedUsers: TBarebonesUser[];
-  blockedBy: TBarebonesUser[];
+  blockedUsers: string[];
+  blockedBy: string[];
   whoCanMessage: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
   whoCanSeeLocation: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
   displayFriendCount: boolean;
@@ -317,19 +317,19 @@ export type TUserContext = {
   setFriendRequestsReceived: React.Dispatch<
     React.SetStateAction<TBarebonesUser[] | undefined>
   >;
-  blockedUsers: TBarebonesUser[] | undefined;
-  setBlockedUsers: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>;
+  blockedUsers: string[] | undefined;
+  setBlockedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists: (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: TBarebonesUser[] | undefined,
-    setBlockedUsers?: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>
+    blockedUsers?: string[] | undefined,
+    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   handleUnblockUser: (
     blocker: TUser,
     blockee: TOtherUser,
-    blockedUsers?: TBarebonesUser[] | undefined,
-    setBlockedUsers?: React.Dispatch<React.SetStateAction<TBarebonesUser[] | undefined>>
+    blockedUsers?: string[] | undefined,
+    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | undefined>>
   ) => void;
   currentOtherUser: TOtherUser | null;
   setCurrentOtherUser: React.Dispatch<React.SetStateAction<TOtherUser | null>>;
