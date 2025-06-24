@@ -83,6 +83,18 @@ const OtherUserProfile = () => {
   const [usersEvents, setUsersEvents] = useState<TDisplayedEvent[] | null>(null);
 
   useEffect(() => {
+    setPalzInCommonText(undefined);
+    setPalzInCommon(null);
+    setUsersEvents(null);
+    setCurrentUserMayMessage(false);
+    setShowFacebook(false);
+    setShowInstagram(false);
+    setShowX(false);
+    setCurrentUserCanSeeLocation(false);
+    setCurrentUserCanSeeFriendsList(false);
+    setCurrentUserIsFriendOfFriend(false);
+    setMatchingCountryObject(undefined);
+
     if (currentOtherUserIsBlocked) {
       toast("You have blocked this user", {
         style: {
@@ -112,7 +124,7 @@ const OtherUserProfile = () => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
     window.scrollTo(0, 0);
-  }, []);
+  }, [username]);
 
   useEffect(() => {
     if (!currentUser || userCreatedAccount === null) {
