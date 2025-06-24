@@ -409,7 +409,10 @@ const DisplayedCardsPage = ({
             setFetchError("Could not load events. Try reloading the page.");
           }
         })
-        .catch((error) => console.log(error))
+        .catch((error) => {
+          setFetchError("Could not fetch events. Try reloading the page.");
+          console.log(error);
+        })
         .finally(() => setIsLoading(false));
     }
   };
@@ -492,7 +495,10 @@ const DisplayedCardsPage = ({
             setFetchError("Could not load events. Try reloading the page.");
           }
         })
-        .catch((error) => console.log(error))
+        .catch((error) => {
+          setFetchError("Could not fetch events. Try reloading the page.");
+          console.log(error);
+        })
         .finally(() => setIsLoading(false));
     }
   };
@@ -698,7 +704,10 @@ const DisplayedCardsPage = ({
                 setFetchError("Could not load events. Try reloading the page.");
               }
             })
-            .catch((error) => console.log(error))
+            .catch((error) => {
+              setFetchError("Could not fetch events. Try reloading the page.");
+              console.log(error);
+            })
             .finally(() => setIsLoading(false));
         }
       }
