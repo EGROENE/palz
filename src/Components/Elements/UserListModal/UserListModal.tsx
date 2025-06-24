@@ -94,8 +94,6 @@ const UserListModal = ({
     );
   }, []);
 
-  const displayedUserCount = Methods.removeDuplicatesFromArray(users).length;
-
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
     if (!buttonOneHandlerParams) {
       if (listType === "blocked-users" && buttonOneHandler === handleUnblockUser) {
@@ -190,12 +188,16 @@ const UserListModal = ({
         className="fas fa-times close-module-icon"
       ></i>
       <div style={{ border: `2px solid ${randomColor}` }} className="userListContainer">
-        <h2>{`${header} (${displayedUserCount})`}</h2>
+        <h2>
+          {`${header}`}
+          {iterableUsers !== null && iterableUsers.length > 0 && (
+            <span>{` (${iterableUsers.length})`}</span>
+          )}
+        </h2>
         {isNoFetchError &&
           !fetchIsLoading &&
           iterableUsers !== null &&
-          iterableUsers.length > 0 &&
-          (displayedUserCount > 0 ? (
+          (iterableUsers.length > 0 ? (
             iterableUsers.map((user) => (
               <ListedUser
                 key={user._id?.toString()}
