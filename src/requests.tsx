@@ -570,7 +570,7 @@ const removeFromBlockedBy = (blockee: TUser, blocker: string): Promise<Response>
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedBlockedByArray = blockee.blockedBy.filter((b) => b._id !== blocker);
+  const updatedBlockedByArray = blockee.blockedBy.filter((b) => b !== blocker);
 
   const getRaw = () => {
     return JSON.stringify({
