@@ -920,15 +920,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   .json()
                   .then((cu) => {
                     if (variables.blocker._id) {
-                      Requests.addToBlockedBy(variables.blockee, {
-                        _id: variables.blocker._id,
-                        username: variables.blocker.username,
-                        firstName: variables.blocker.firstName,
-                        lastName: variables.blocker.lastName,
-                        emailAddress: variables.blocker.emailAddress,
-                        profileImage: variables.blocker.profileImage,
-                        index: variables.blocker.index,
-                      })
+                      Requests.addToBlockedBy(variables.blockee, variables.blocker._id.toString())
                         .then((res) => {
                           if (res.ok) {
                             if (cu) {

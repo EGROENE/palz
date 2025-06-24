@@ -48,9 +48,9 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
                 user.friends.includes(currentUser._id.toString())
             );
 
-            const currentUserIsBlocked: boolean = otherUser.blockedUsers
-              .map((bu) => bu._id)
-              .includes(currentUser._id.toString());
+            const currentUserIsBlocked: boolean = otherUser.blockedUsers.includes(
+              currentUser._id.toString()
+            );
 
             if (
               !currentUserIsBlocked &&
@@ -503,14 +503,11 @@ const createUser = (newUserData: TUser): Promise<Response> => {
   });
 };
 
-const addToBlockedUsers = (
-  blocker: TUser,
-  blockee: TBarebonesUser
-): Promise<Response> => {
+const addToBlockedUsers = (blocker: TUser, blockeeID: string): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedBlockedUsersArray = blockee ? blocker.blockedUsers.concat(blockee) : "";
+  let updatedBlockedUsersArray = blocker.blockedUsers.concat(blockeeID);
 
   const getRaw = () => {
     return JSON.stringify({
@@ -527,11 +524,11 @@ const addToBlockedUsers = (
   });
 };
 
-const addToBlockedBy = (blockee: TUser, blocker: TBarebonesUser): Promise<Response> => {
+const addToBlockedBy = (blockee: TUser, blockerID: string): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedBlockedByArray = blocker ? blockee.blockedBy.concat(blocker) : "";
+  let updatedBlockedByArray = blockee.blockedBy.concat(blockerID);
 
   const getRaw = () => {
     return JSON.stringify({
