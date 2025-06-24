@@ -139,9 +139,7 @@ const OtherUserProfile = () => {
                 currentOtherUser &&
                 currentUser &&
                 currentUser._id &&
-                currentOtherUser.blockedUsers
-                  .map((bu) => bu._id)
-                  .includes(currentUser._id.toString())
+                currentOtherUser.blockedUsers.includes(currentUser._id.toString())
               ) {
                 toast("You do not have access to this page", {
                   style: {
@@ -504,7 +502,7 @@ const OtherUserProfile = () => {
 
   const currentOtherUserIsBlocked: boolean =
     blockedUsers && currentOtherUser && currentOtherUser._id
-      ? blockedUsers.map((bu) => bu._id).includes(currentOtherUser._id.toString())
+      ? blockedUsers.includes(currentOtherUser._id.toString())
       : false;
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -1044,9 +1042,7 @@ const OtherUserProfile = () => {
                     renderButtonTwo={false}
                     closeModalMethod={setShowFriends}
                     header={`${currentOtherUser.username} 's palz`}
-                    users={currentOtherUser.friends.map((friend) =>
-                      Methods.getTBarebonesUser(friend)
-                    )}
+                    users={currentOtherUser.friends}
                     buttonOneText="View Profile"
                     randomColor={randomColor}
                   />
