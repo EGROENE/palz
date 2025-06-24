@@ -152,7 +152,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [whoCanSeeEventsInvitedTo, setWhoCanSeeEventsInvitedTo] = useSessionStorage<
     "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanSeeEventsInvitedTo", "nobody");
-  const [blockedUsers, setBlockedUsers] = useSessionStorage<TBarebonesUser[] | undefined>(
+  const [blockedUsers, setBlockedUsers] = useSessionStorage<string[] | undefined>(
     "blockedUsers",
     currentUser?.blockedUsers
   );
@@ -911,32 +911,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       areFriends: boolean;
       hasSentFriendRequest: boolean;
       hasReceivedFriendRequest: boolean;
-    }) => {
-      if (
-        areFriends !== undefined &&
-        hasSentFriendRequest !== undefined &&
-        hasReceivedFriendRequest !== undefined
-      ) {
-        return Requests.addToBlockedUsers(blocker, {
-          _id: blockee._id,
-          username: blockee.username,
-          firstName: blockee.firstName,
-          lastName: blockee.lastName,
-          emailAddress: blockee.emailAddress,
-          profileImage: blockee.profileImage,
-          index: blockee.index,
-        });
-      }
-      return Requests.addToBlockedUsers(blocker, {
-        _id: blockee._id,
-        username: blockee.username,
-        firstName: blockee.firstName,
-        lastName: blockee.lastName,
-        emailAddress: blockee.emailAddress,
-        profileImage: blockee.profileImage,
-        index: blockee.index,
-      });
-    },
+    }) => Requests.addToBlockedUsers(blocker, blockee._id?.toString()),
     onSuccess: (data, variables) => {
       if (data.ok) {
         if (currentUser && currentUser._id) {
