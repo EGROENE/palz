@@ -339,7 +339,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       if (data.ok) {
         // set currentChat to chat, open ChatModal w/ it. if no message sent, put 'DRAFT' in chat preview
         handleOpenChat(variables.chat);
+        setCurrentChat(variables.chat);
         setShowCreateNewChatModal(false);
+        setShowChatModal(true);
         setUsersToAddToChat([]);
         queryClient.invalidateQueries({ queryKey: ["userChats"] });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
@@ -551,31 +553,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleCreateChat = (chat: TChat): void => {
     setChatCreationInProgress(true);
 
-    const existingChat: TChat | undefined =
-      userChats &&
-      userChats.filter((userChat) =>
-        Methods.arraysAreIdentical(userChat.members, chat.members)
-      )[0];
-
-    if (existingChat) {
-      setCurrentChat(chat);
-      setShowChatModal(true);
-      handleOpenChat(existingChat);
-      setChatCreationInProgress(false);
-      setShowCreateNewChatModal(false);
-      toast.error("Chat already exists.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    } else {
-      if (chatName !== undefined) {
-        setChatName(undefined);
-      }
-      createChatMutation.mutate({ chat });
+    if (chatName !== undefined) {
+      setChatName(undefined);
     }
+
+    createChatMutation.mutate({ chat });
   };
 
   const handleDeleteChat = (chatID: string): void => {
@@ -849,16 +831,18 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     if (otherUser) {
       const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
-        (chat) =>
-          chat.members.length === 2 &&
-          currentUser &&
-          currentUser._id &&
-          chat.members.map((m) => m._id).includes(currentUser._id.toString()) &&
-          otherUser._id &&
-          chat.members.map((m) => m._id).includes(otherUser._id.toString())
+        (chat) => {
+          if (
+            chat.members.length === 2 &&
+            otherUser._id &&
+            chat.members.map((m) => m._id).indexOf(otherUser._id.toString()) !== -1
+          ) {
+            return chat;
+          }
+        }
       )[0];
 
-      if (existingChatWithListedChatMember) {
+      if (existingChatWithListedChatMember !== undefined) {
         return handleOpenChat(existingChatWithListedChatMember);
       }
 
@@ -867,14 +851,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           ? [Methods.getTBarebonesUser(otherUser), Methods.getTBarebonesUser(currentUser)]
           : [];
 
-      return handleCreateChat({
-        _id: new mongoose.Types.ObjectId().toString(),
-        members: newChatMembers,
-        messages: [],
-        chatName: "",
-        chatType: "two-member",
-        dateCreated: Date.now(),
-      });
+      if (!existingChatWithListedChatMember) {
+        return handleCreateChat({
+          _id: new mongoose.Types.ObjectId().toString(),
+          members: newChatMembers,
+          messages: [],
+          chatName: "",
+          chatType: "two-member",
+          dateCreated: Date.now(),
+        });
+      }
     }
   };
 
