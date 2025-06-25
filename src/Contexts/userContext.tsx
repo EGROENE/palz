@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState, useEffect, SetStateAction } from "react";
+import { createContext, ReactNode, useState, useEffect } from "react";
 import {
   TUserContext,
   TUser,
@@ -152,10 +152,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [whoCanSeeEventsInvitedTo, setWhoCanSeeEventsInvitedTo] = useSessionStorage<
     "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanSeeEventsInvitedTo", "nobody");
-  const [blockedUsers, setBlockedUsers] = useSessionStorage<string[] | undefined>(
-    "blockedUsers",
-    currentUser?.blockedUsers
-  );
+  const [blockedUsers, setBlockedUsers] = useState<TBarebonesUser[] | null>(null);
   const [friendRequestsSent, setFriendRequestsSent] = useState<TBarebonesUser[] | null>(
     null
   );
@@ -208,6 +205,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   // /posts/1 ---> ["posts", post.id]
   // /posts?authorId=1 ---> ["posts", {authorId: 1}]
   // /posts/2/comments ---> ["posts", post.id, "comments"]
+
+  useEffect(() => {
+    if (currentUser) {
+      const promisesToAwait = currentUser.blockedUsers.map((id) => {
+        return Requests.getUserByID(id).then((res) => {
+          return res.json().then((user: TUser) => user);
+        });
+      });
+
+      Promise.all(promisesToAwait)
+        .then((pic: TUser[]) => {
+          setBlockedUsers(pic.map((p) => Methods.getTBarebonesUser(p)));
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [currentUser?.blockedUsers]);
 
   const queryClient = useQueryClient();
 
@@ -881,9 +894,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     onSettled: () => setIsLoading(false),
   });
 
-  const handleBlockUserFail = (blockeeUsername: string | undefined): void => {
+  const handleBlockUserFail = (blockee: TUser): void => {
+    if (blockedUsers) {
+      setBlockedUsers(blockedUsers.concat(Methods.getTBarebonesUser(blockee)));
+    }
     toast.error(
-      `Unable to block ${blockeeUsername ? blockeeUsername : "user"}. Please try again.`,
+      `Unable to block ${blockee ? blockee.username : "user"}. Please try again.`,
       {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -954,10 +970,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                 },
                               });
                             } else {
-                              handleBlockUserFail(variables.blockee.username);
+                              handleBlockUserFail(variables.blockee);
                             }
                           } else {
-                            handleBlockUserFail(variables.blockee.username);
+                            handleBlockUserFail(variables.blockee);
                           }
                         })
                         .catch((error) => console.log(error));
@@ -965,24 +981,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   })
                   .catch((error) => console.log(error));
               } else {
-                handleBlockUserFail(variables.blockee.username);
+                handleBlockUserFail(variables.blockee);
               }
             })
             .catch((error) => console.log(error));
         }
       } else {
-        handleBlockUserFail(variables.blockee.username);
+        handleBlockUserFail(variables.blockee);
       }
     },
     onError: (error) => console.log(error),
     onSettled: () => setIsLoading(false),
   });
-
-  useEffect(() => {
-    if (currentUser) {
-      setBlockedUsers(currentUser.blockedUsers);
-    }
-  }, [currentUser]);
 
   // Called when user switches b/t login & signup forms & when user logs out
   // Only necessary to reset errors for fields on login and/or signup form
@@ -1615,16 +1625,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists = (
     blocker: TUser,
-    blockee: TOtherUser,
-    blockedUsers?: string[] | undefined,
-    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
+    blockee: TOtherUser
   ): void => {
-    if (blockedUsers && setBlockedUsers && blockee._id) {
-      setBlockedUsers(blockedUsers.concat(blockee._id.toString()));
-    }
-    setIsLoading(true);
+    if (blockedUsers && blockee._id) {
+      setBlockedUsers(blockedUsers.filter((u) => u._id !== blockee._id));
 
-    if (blockee._id) {
+      setIsLoading(true);
+
       Requests.getUserByID(blockee._id.toString())
         .then((res) => {
           if (res.ok) {
@@ -1651,6 +1658,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               });
             });
           } else {
+            setBlockedUsers(blockedUsers.concat(Methods.getTBarebonesUser(blockee)));
             toast.error("Could not block user. Please try again.", {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -1678,16 +1686,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // No mutation needed here, as operation is simpler than blocking
-  const handleUnblockUser = (
-    blocker: TUser,
-    blockee: TOtherUser,
-    blockedUsers?: string[] | undefined,
-    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
-  ): void => {
+  const handleUnblockUser = (blocker: TUser, blockee: TOtherUser): void => {
     setIsLoading(true);
 
     if (blockedUsers && setBlockedUsers) {
-      setBlockedUsers(blockedUsers.filter((bu) => bu !== blockee._id?.toString()));
+      setBlockedUsers(blockedUsers.filter((bu) => bu._id !== blockee._id?.toString()));
     }
 
     if (blockee._id) {
@@ -1867,7 +1870,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setUsername(currentUser?.username);
     setProfileImage(currentUser?.profileImage);
     setEmailAddress(currentUser?.emailAddress);
-    setBlockedUsers(currentUser?.blockedUsers);
     setPassword(currentUser?.password);
     setPhoneCountry(currentUser?.phoneCountry);
     setPhoneCountryCode(currentUser?.phoneCountryCode);
@@ -1912,7 +1914,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setFirstName(userData.firstName);
     setLastName(userData.lastName);
     setUsername(userData.username);
-    setBlockedUsers(userData.blockedUsers);
     setProfileImage(userData.profileImage);
     setEmailAddress(userData.emailAddress);
     setPassword(userData.password);
