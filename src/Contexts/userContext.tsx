@@ -1,5 +1,11 @@
 import { createContext, ReactNode, useState, useEffect, SetStateAction } from "react";
-import { TUserContext, TUser, TUserValuesToUpdate, TOtherUser } from "../types";
+import {
+  TUserContext,
+  TUser,
+  TUserValuesToUpdate,
+  TOtherUser,
+  TBarebonesUser,
+} from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -150,13 +156,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     "blockedUsers",
     currentUser?.blockedUsers
   );
-  const [friendRequestsSent, setFriendRequestsSent] = useSessionStorage<
-    string[] | undefined
-  >("friendRequestsSent", currentUser?.friendRequestsSent);
-  const [friendRequestsReceived, setFriendRequestsReceived] = useSessionStorage<
-    string[] | undefined
-  >("friendRequestsReceived", currentUser?.friendRequestsReceived);
-  const [friends, setFriends] = useSessionStorage<string[] | undefined>(
+  const [friendRequestsSent, setFriendRequestsSent] = useState<TBarebonesUser[] | null>(
+    null
+  );
+  const [friendRequestsReceived, setFriendRequestsReceived] = useState<
+    TBarebonesUser[] | null
+  >(null);
+  const [friends, setFriends] = useSessionStorage<TBarebonesUser[] | undefined>(
     "friends",
     currentUser?.friends
   );
@@ -920,7 +926,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   .json()
                   .then((cu) => {
                     if (variables.blocker._id) {
-                      Requests.addToBlockedBy(variables.blockee, variables.blocker._id.toString())
+                      Requests.addToBlockedBy(
+                        variables.blockee,
+                        variables.blocker._id.toString()
+                      )
                         .then((res) => {
                           if (res.ok) {
                             if (cu) {

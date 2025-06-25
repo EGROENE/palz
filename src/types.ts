@@ -309,10 +309,14 @@ export type TUserContext = {
   fetchAllVisibleOtherUsersQuery: UseQueryResult<TOtherUser[], Error>;
   friends: string[] | undefined;
   setFriends: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  friendRequestsSent: string[] | undefined;
-  setFriendRequestsSent: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  friendRequestsReceived: string[] | undefined;
-  setFriendRequestsReceived: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+  friendRequestsSent: TBarebonesUser[] | undefined;
+  setFriendRequestsSent: React.Dispatch<
+    React.SetStateAction<TBarebonesUser[] | undefined>
+  >;
+  friendRequestsReceived: TBarebonesUser[] | undefined;
+  setFriendRequestsReceived: React.Dispatch<
+    React.SetStateAction<TBarebonesUser[] | undefined>
+  >;
   blockedUsers: string[] | undefined;
   setBlockedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists: (
