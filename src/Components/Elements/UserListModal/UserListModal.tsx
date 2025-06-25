@@ -114,7 +114,7 @@ const UserListModal = ({
         setIterableUsers(users);
       }
     }
-  }, [listType]);
+  }, [listType, currentUser?.blockedUsers]);
 
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
     if (!buttonOneHandlerParams) {
