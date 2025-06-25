@@ -263,8 +263,6 @@ const FriendRequests = () => {
                         buttonOneText="See Profile"
                         buttonOneIsDisabled={isLoading}
                         buttonOneLink={`/users/${user?.username}`}
-                        /* buttonOneHandler={() => setCurrentOtherUser(user)}
-                        buttonOneHandlerNeedsEventParam={false} */
                         renderButtonTwo={true}
                         buttonTwoText="Retract"
                         buttonTwoHandler={handleRemoveFriendRequest}
