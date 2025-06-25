@@ -626,12 +626,10 @@ const OtherUserProfile = () => {
     }
 
     // Add to blockedUsers (representative value in state), remove from friend requests, friends lists:
-    if (currentUser && currentOtherUser) {
+    if (currentUser && currentOtherUser && blockedUsers) {
       addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists(
         currentUser,
-        currentOtherUser,
-        blockedUsers,
-        setBlockedUsers
+        currentOtherUser
       );
     }
   };
@@ -647,12 +645,7 @@ const OtherUserProfile = () => {
         ),
         handler: () => {
           if (currentOtherUser) {
-            return handleUnblockUser(
-              currentUser,
-              currentOtherUser,
-              blockedUsers,
-              setBlockedUsers
-            );
+            return handleUnblockUser(currentUser, currentOtherUser);
           }
         },
         paramsIncludeEvent: false,

@@ -118,8 +118,12 @@ const UserListModal = ({
 
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
     if (!buttonOneHandlerParams) {
-      if (listType === "blocked-users" && buttonOneHandler === handleUnblockUser) {
-        return [currentUser, user, blockedUsers, setBlockedUsers];
+      if (
+        listType === "blocked-users" &&
+        buttonOneHandler === handleUnblockUser &&
+        blockedUsers
+      ) {
+        return [currentUser, user];
       } else if (
         (listType === "invitees" || listType === "rsvpd-users") &&
         buttonOneHandler === getStartOrOpenChatWithUserHandler
