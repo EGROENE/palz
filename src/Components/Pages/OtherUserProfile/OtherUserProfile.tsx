@@ -37,7 +37,6 @@ const OtherUserProfile = () => {
     setBlockedUsers,
     friendRequestsReceived,
     handleUnfriending,
-    friends,
     setCurrentOtherUser,
   } = useUserContext();
   const {
@@ -472,7 +471,8 @@ const OtherUserProfile = () => {
   const usersAreFriends: boolean =
     currentOtherUser &&
     currentOtherUser._id &&
-    friends?.includes(currentOtherUser._id.toString())
+    currentUser &&
+    currentUser.friends.includes(currentOtherUser._id.toString())
       ? true
       : false;
 
