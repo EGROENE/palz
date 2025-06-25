@@ -40,8 +40,8 @@ export type TUser = {
     | undefined;
   whoCanInviteUser: "friends" | "friends of friends" | "anyone" | "nobody" | undefined;
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
-  friendRequestsReceived: TBarebonesUser[];
-  friendRequestsSent: TBarebonesUser[];
+  friendRequestsReceived: string[];
+  friendRequestsSent: string[];
   blockedUsers: string[];
   blockedBy: string[];
   whoCanMessage: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
