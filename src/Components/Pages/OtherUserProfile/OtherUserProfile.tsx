@@ -463,7 +463,7 @@ const OtherUserProfile = () => {
 
   const currentOtherUserIsBlocked: boolean =
     blockedUsers && currentOtherUser && currentOtherUser._id
-      ? blockedUsers.includes(currentOtherUser._id.toString())
+      ? blockedUsers.map((u) => u._id).includes(currentOtherUser._id.toString())
       : false;
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
