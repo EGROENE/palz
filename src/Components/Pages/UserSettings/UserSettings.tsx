@@ -378,24 +378,24 @@ const UserSettings = () => {
       {!fetchAllVisibleOtherUsersQuery.isError &&
         !fetchAllVisibleOtherUsersQuery.isLoading &&
         isLoading && <LoadingModal message="Saving changes..." />}
-      {!fetchAllVisibleOtherUsersQuery.isError &&
-        !fetchAllVisibleOtherUsersQuery.isLoading &&
-        showBlockedUsers &&
-        blockedUsers && (
-          <UserListModal
-            listType="blocked-users"
-            renderButtonOne={true}
-            renderButtonTwo={false}
-            closeModalMethod={setShowBlockedUsers}
-            header="Blocked Users"
-            users={blockedUsers}
-            fetchUsers={false}
-            buttonOneText="Unblock"
-            buttonOneHandler={handleUnblockUser}
-            buttonOneHandlerNeedsEventParam={false}
-            randomColor={randomColor}
-          />
-        )}
+      {showBlockedUsers && blockedUsers && (
+        <UserListModal
+          listType="blocked-users"
+          renderButtonOne={true}
+          renderButtonTwo={false}
+          closeModalMethod={setShowBlockedUsers}
+          header="Blocked Users"
+          users={blockedUsers}
+          fetchUsers={false}
+          buttonOneText="Unblock"
+          buttonOneHandler={handleUnblockUser}
+          buttonOneHandlerNeedsEventParam={false}
+          randomColor={randomColor}
+        />
+      )}
+      {blockedUsers === null && (
+        <p>Couldn't fetch blocked users; try reloading the page </p>
+      )}
       {!fetchAllVisibleOtherUsersQuery.isError &&
         !fetchAllVisibleOtherUsersQuery.isLoading && (
           <EditUserInfoForm
