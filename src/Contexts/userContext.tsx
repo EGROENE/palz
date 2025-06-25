@@ -980,9 +980,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (currentUser) {
-      setFriendRequestsSent(currentUser.friendRequestsSent);
-      setFriendRequestsReceived(currentUser.friendRequestsReceived);
-      setFriends(currentUser.friends);
       setBlockedUsers(currentUser.blockedUsers);
     }
   }, [currentUser]);
@@ -1870,7 +1867,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setUsername(currentUser?.username);
     setProfileImage(currentUser?.profileImage);
     setEmailAddress(currentUser?.emailAddress);
-    setFriends(currentUser?.friends);
     setBlockedUsers(currentUser?.blockedUsers);
     setPassword(currentUser?.password);
     setPhoneCountry(currentUser?.phoneCountry);
@@ -1916,7 +1912,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setFirstName(userData.firstName);
     setLastName(userData.lastName);
     setUsername(userData.username);
-    setFriends(userData.friends);
     setBlockedUsers(userData.blockedUsers);
     setProfileImage(userData.profileImage);
     setEmailAddress(userData.emailAddress);
