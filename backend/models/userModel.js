@@ -2,16 +2,6 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const barebonesUser = new Schema({
-  _id: String | mongoose.Types.ObjectId,
-  username: String,
-  firstName: String,
-  lastName: String,
-  profileImage: String,
-  emailAddress: String,
-  index: Number,
-});
-
 const userSchema = new Schema({
   index: {
     type: Number,
