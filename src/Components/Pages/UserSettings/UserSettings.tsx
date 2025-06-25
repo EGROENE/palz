@@ -5,7 +5,7 @@ import EditUserInfoForm from "../../Forms/EditUserInfoForm/EditUserInfoForm";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import Requests from "../../../requests";
 import toast from "react-hot-toast";
-import { TBarebonesUser, TOtherUser, TThemeColor } from "../../../types";
+import { TOtherUser, TThemeColor } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
@@ -74,6 +74,7 @@ const UserSettings = () => {
     fetchAllVisibleOtherUsersQuery,
     setCurrentUser,
     userCreatedAccount,
+    blockedUsers,
   } = useUserContext();
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
@@ -357,14 +358,6 @@ const UserSettings = () => {
       .finally(() => setAccountDeletionInProgress(false));
   };
 
-  const getBlockedUsersArray = (): TBarebonesUser[] => {
-    if (currentUser) {
-      return currentUser.blockedUsers;
-    }
-    return [];
-  };
-  const blockedUsersArray: TBarebonesUser[] = getBlockedUsersArray();
-
   return (
     <>
       {" "}
@@ -387,14 +380,16 @@ const UserSettings = () => {
         isLoading && <LoadingModal message="Saving changes..." />}
       {!fetchAllVisibleOtherUsersQuery.isError &&
         !fetchAllVisibleOtherUsersQuery.isLoading &&
-        showBlockedUsers && (
+        showBlockedUsers &&
+        blockedUsers && (
           <UserListModal
             listType="blocked-users"
             renderButtonOne={true}
             renderButtonTwo={false}
             closeModalMethod={setShowBlockedUsers}
             header="Blocked Users"
-            users={blockedUsersArray}
+            users={blockedUsers}
+            fetchUsers={false}
             buttonOneText="Unblock"
             buttonOneHandler={handleUnblockUser}
             buttonOneHandlerNeedsEventParam={false}
