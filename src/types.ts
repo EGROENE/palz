@@ -307,13 +307,11 @@ export type TMainContext = {
 export type TUserContext = {
   userHasLoggedIn: boolean;
   fetchAllVisibleOtherUsersQuery: UseQueryResult<TOtherUser[], Error>;
-  friendRequestsSent: TBarebonesUser[] | undefined;
-  setFriendRequestsSent: React.Dispatch<
-    React.SetStateAction<TBarebonesUser[] | undefined>
-  >;
-  friendRequestsReceived: TBarebonesUser[] | undefined;
+  friendRequestsSent: TBarebonesUser[] | null;
+  setFriendRequestsSent: React.Dispatch<React.SetStateAction<TBarebonesUser[] | null>>;
+  friendRequestsReceived: TBarebonesUser[] | null;
   setFriendRequestsReceived: React.Dispatch<
-    React.SetStateAction<TBarebonesUser[] | undefined>
+    React.SetStateAction<TBarebonesUser[] | null>
   >;
   blockedUsers: string[] | undefined;
   setBlockedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
