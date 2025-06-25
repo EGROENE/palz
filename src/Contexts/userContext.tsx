@@ -162,10 +162,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [friendRequestsReceived, setFriendRequestsReceived] = useState<
     TBarebonesUser[] | null
   >(null);
-  const [friends, setFriends] = useSessionStorage<TBarebonesUser[] | undefined>(
-    "friends",
-    currentUser?.friends
-  );
   /////////////////////////////////////////////////////////////////////////////////
 
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
@@ -2186,8 +2182,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setWhoCanSeeEventsInterestedIn,
     whoCanSeeEventsInvitedTo,
     setWhoCanSeeEventsInvitedTo,
-    friends,
-    setFriends,
     friendRequestsSent,
     setFriendRequestsSent,
     friendRequestsReceived,

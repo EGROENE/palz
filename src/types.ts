@@ -307,8 +307,6 @@ export type TMainContext = {
 export type TUserContext = {
   userHasLoggedIn: boolean;
   fetchAllVisibleOtherUsersQuery: UseQueryResult<TOtherUser[], Error>;
-  friends: string[] | undefined;
-  setFriends: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   friendRequestsSent: TBarebonesUser[] | undefined;
   setFriendRequestsSent: React.Dispatch<
     React.SetStateAction<TBarebonesUser[] | undefined>
