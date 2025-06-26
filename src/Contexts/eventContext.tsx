@@ -133,7 +133,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventImages, setEventImages] = useState<string[]>(
     currentEvent ? currentEvent.images : []
   );
-  const [blockedUsersEvent, setBlockedUsersEvent] = useState<TBarebonesUser[]>(
+  const [blockedUsersEvent, setBlockedUsersEvent] = useState<string[]>(
     currentEvent ? currentEvent.blockedUsersEvent : []
   );
   ///////////////////////
@@ -631,20 +631,18 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     //e?.preventDefault();
     if (user && user._id) {
-      if (blockedUsersEvent.map((bu) => bu._id).includes(user._id.toString())) {
-        setBlockedUsersEvent(
-          blockedUsersEvent.filter((blockee) => blockee._id !== user._id)
-        );
+      if (blockedUsersEvent.includes(user._id.toString())) {
+        setBlockedUsersEvent(blockedUsersEvent.filter((blockee) => blockee !== user._id));
       } else {
         if (invitees.map((u) => u._id).includes(user._id)) {
           setInvitees(invitees.filter((u) => u._id !== user._id));
         }
 
-        if (organizers.map((u) => u._id).includes(user._id)) {
+        if (organizers.map((u) => u._id).includes(user._id.toString())) {
           setOrganizers(organizers.filter((u) => u._id !== user._id));
         }
 
-        setBlockedUsersEvent(blockedUsersEvent.concat(Methods.getTBarebonesUser(user)));
+        setBlockedUsersEvent(blockedUsersEvent.concat(user._id.toString()));
       }
     }
   };
@@ -678,8 +676,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
         setInvitees(invitees.filter((u) => u._id !== user._id));
       }
 
-      if (blockedUsersEvent.map((u) => u._id).includes(user._id)) {
-        setBlockedUsersEvent(blockedUsersEvent.filter((u) => u._id !== user._id));
+      if (user._id && blockedUsersEvent.includes(user._id.toString())) {
+        setBlockedUsersEvent(blockedUsersEvent.filter((u) => u !== user._id));
       }
 
       setOrganizers(organizers.concat(user));
@@ -706,8 +704,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           setOrganizers(organizers.filter((u) => u._id !== user._id));
         }
 
-        if (blockedUsersEvent.map((u) => u._id).includes(user._id)) {
-          setBlockedUsersEvent(blockedUsersEvent.filter((u) => u._id !== user._id));
+        if (user._id && blockedUsersEvent.includes(user._id.toString())) {
+          setBlockedUsersEvent(blockedUsersEvent.filter((u) => u !== user._id));
         }
 
         setInvitees(invitees.concat(Methods.getTBarebonesUser(user)));
