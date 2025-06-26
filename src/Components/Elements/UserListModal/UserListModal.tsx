@@ -28,6 +28,8 @@ const UserListModal = ({
   buttonTwoHandlerParams,
   buttonTwoLink,
   randomColor,
+  outsideFetchIsError,
+  outsideFetchIsLoading,
 }: {
   listType:
     | "invitees"
@@ -40,7 +42,7 @@ const UserListModal = ({
   renderButtonTwo: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
   header: string;
-  users: (string | TBarebonesUser)[];
+  users: (string | TBarebonesUser)[] | null;
   fetchUsers: boolean;
   buttonOneText?: string;
   buttonOneHandler?: Function;
@@ -53,15 +55,12 @@ const UserListModal = ({
   buttonTwoHandlerParams?: any[];
   buttonTwoLink?: string;
   randomColor?: string;
+  outsideFetchIsError?: boolean;
+  outsideFetchIsLoading?: boolean;
 }) => {
   const { isLoading } = useMainContext();
-  const {
-    currentUser,
-    blockedUsers,
-    setBlockedUsers,
-    fetchAllVisibleOtherUsersQuery,
-    handleUnblockUser,
-  } = useUserContext();
+  const { currentUser, blockedUsers, fetchAllVisibleOtherUsersQuery, handleUnblockUser } =
+    useUserContext();
 
   const { currentEvent, fetchAllEventsQuery, handleDeleteUserRSVP, handleRemoveInvitee } =
     useEventContext();
@@ -73,7 +72,7 @@ const UserListModal = ({
   const [isFetchError, setIsFetchError] = useState<boolean>(false);
 
   useEffect(() => {
-    if (fetchUsers) {
+    if (fetchUsers && users) {
       setFetchIsLoading(true);
       const getPromisesForFullUserObjects = (): Promise<TUser>[] => {
         const promisesToAwait = users.map((id) => {
@@ -110,8 +109,10 @@ const UserListModal = ({
         })
         .finally(() => setFetchIsLoading(false));
     } else {
-      if (users.every((u) => Methods.isTBarebonesUser(u))) {
-        setIterableUsers(users);
+      if (users && !outsideFetchIsError) {
+        if (users.every((u) => Methods.isTBarebonesUser(u))) {
+          setIterableUsers(users);
+        }
       }
     }
   }, [listType, currentUser?.blockedUsers]);
@@ -220,6 +221,8 @@ const UserListModal = ({
         </h2>
         {isNoFetchError &&
           !fetchIsLoading2 &&
+          !outsideFetchIsError &&
+          !outsideFetchIsLoading &&
           iterableUsers !== null &&
           (iterableUsers.length > 0 ? (
             iterableUsers.map((user) => (
@@ -254,10 +257,13 @@ const UserListModal = ({
           ) : (
             <p>No users to show</p>
           ))}
-        {fetchIsLoading && (
+        {(fetchIsLoading || outsideFetchIsLoading) && (
           <header style={{ marginTop: "3rem" }} className="query-status-text">
             Loading...
           </header>
+        )}
+        {(isFetchError || outsideFetchIsError) && (
+          <p>Couldn't fetch data; try reloading the page.</p>
         )}
         {queryWithError && queryWithError.error && (
           <div className="query-error-container">
