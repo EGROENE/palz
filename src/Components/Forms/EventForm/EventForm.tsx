@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import { useState, useEffect, useRef } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TEvent, TThemeColor, TOtherUser, TBarebonesUser } from "../../../types";
+import { TEvent, TUser, TThemeColor, TOtherUser, TBarebonesUser } from "../../../types";
 import Methods from "../../../methods";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
@@ -28,6 +28,8 @@ const EventForm = ({
   const { handleCityStateCountryInput, currentUser } = useUserContext();
 
   const {
+    setBlockedUsersEventORIGINAL,
+    blockedUsersEventORIGINAL,
     handleAddRemoveBlockedUserOnEvent,
     handleAddRemoveUserAsInvitee,
     setBlockedUsersEvent,
@@ -142,6 +144,10 @@ const EventForm = ({
   const [potentialBlockees, setPotentialBlockees] = useState<TBarebonesUser[] | null>(
     null
   );
+
+  // Define these in Edit, or only set these if editing event
+  const [fetchBlockeesIsLoading, setFetchBlockeesIsLoading] = useState<boolean>(false);
+  const [fetchBlockeesIsError, setFetchBlockeesIsError] = useState<boolean>(false);
 
   const [showPotentialCoOrganizers, setShowPotentialCoOrganizers] =
     useState<boolean>(false);
@@ -397,6 +403,29 @@ const EventForm = ({
       }
     }
   }, [fetchPotentialBlockeesStart, potentialBlockeesSearchTerm, usedFor]);
+
+  useEffect(() => {
+    if (usedFor === "edit-event" && currentEvent) {
+      const promisesToAwaitBlockees = currentEvent.blockedUsersEvent.map((u) => {
+        return Requests.getUserByID(u).then((res) => {
+          return res.json().then((user: TUser) => user);
+        });
+      });
+
+      setFetchBlockeesIsLoading(true);
+
+      Promise.all(promisesToAwaitBlockees)
+        .then((blockees: TUser[]) => {
+          setBlockedUsersEvent(blockees.map((b) => Methods.getTBarebonesUser(b)));
+          setBlockedUsersEventORIGINAL(blockees.map((b) => Methods.getTBarebonesUser(b)));
+        })
+        .catch((error) => {
+          console.log(error);
+          setFetchBlockeesIsError(true);
+        })
+        .finally(() => setFetchBlockeesIsLoading(false));
+    }
+  }, [event?.blockedUsersEvent]);
 
   // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
   const handleLoadMoreItemsOnScroll = (
@@ -1058,7 +1087,7 @@ const EventForm = ({
       setPublicity("public");
       setOrganizers(currentEvent.organizers);
       setInvitees(currentEvent.invitees);
-      setBlockedUsersEvent(currentEvent.blockedUsersEvent);
+      setBlockedUsersEvent(blockedUsersEventORIGINAL);
       setRelatedInterests(currentEvent.relatedInterests);
     } else {
       setEventTitle("");
@@ -1199,7 +1228,7 @@ const EventForm = ({
         publicity !== currentEvent?.publicity ||
         !Methods.arraysAreIdentical(organizers, currentEvent?.organizers) ||
         !Methods.arraysAreIdentical(currentEvent?.invitees, invitees) ||
-        !Methods.arraysAreIdentical(currentEvent?.blockedUsersEvent, blockedUsersEvent) ||
+        !Methods.arraysAreIdentical(blockedUsersEventORIGINAL, blockedUsersEvent) ||
         !Methods.arraysAreIdentical(currentEvent?.relatedInterests, relatedInterests)
       );
     }
@@ -1263,7 +1292,9 @@ const EventForm = ({
     creator: currentUser?._id?.toString(),
     organizers: organizers,
     invitees: invitees,
-    blockedUsersEvent: blockedUsersEvent,
+    blockedUsersEvent: blockedUsersEvent
+      .map((u) => u._id?.toString())
+      .filter((elem) => elem !== undefined),
     description: eventDescription.trim(),
     additionalInfo: eventAdditionalInfo.trim(),
     city: Methods.formatHyphensAndSpacesInString(
@@ -2006,9 +2037,9 @@ const EventForm = ({
             </header>
             {/* Checkbox to add all blocked users to blockedUsersEvent. Only render if currentUser has blocked people. Only have it checked if all blocked users have been added to blockedUsersEvent (combination of state blockedUsersEvent & event.blockedUsersEvent). */}
             {currentUser?.blockedUsers.length &&
-              currentUser.blockedUsers
-                .map((bu) => bu._id)
-                .some((id) => !blockedUsersEvent.map((bu) => bu._id).includes(id)) && (
+              currentUser.blockedUsers.some(
+                (id) => !blockedUsersEvent.map((u) => u._id).includes(id)
+              ) && (
                 <label className="form-sub-checkbox">
                   <input
                     name="blocked-users-event-checkbox"
@@ -2024,7 +2055,7 @@ const EventForm = ({
                     }
                     checked={currentUser.blockedUsers.every((bu) => {
                       if (event && event.blockedUsersEvent) {
-                        return blockedUsersEvent.indexOf(bu) !== -1;
+                        return blockedUsersEvent.map((u) => u._id).indexOf(bu) !== -1;
                       }
                     })}
                   />
