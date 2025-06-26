@@ -309,6 +309,7 @@ const EventPage = () => {
               closeModalMethod={setShowInvitees}
               header="Invitees"
               users={currentEvent.invitees}
+              fetchUsers={true}
               buttonOneText="Message"
               buttonOneHandler={getStartOrOpenChatWithUserHandler}
               buttonOneHandlerNeedsEventParam={false}
@@ -326,6 +327,7 @@ const EventPage = () => {
               closeModalMethod={setShowRSVPs}
               header="RSVPs"
               users={currentEvent.interestedUsers}
+              fetchUsers={true}
               buttonOneText="Message"
               buttonOneHandler={getStartOrOpenChatWithUserHandler}
               buttonOneHandlerNeedsEventParam={false}
