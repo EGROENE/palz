@@ -59,8 +59,7 @@ const UserListModal = ({
   outsideFetchIsLoading?: boolean;
 }) => {
   const { isLoading } = useMainContext();
-  const { currentUser, blockedUsers, fetchAllVisibleOtherUsersQuery, handleUnblockUser } =
-    useUserContext();
+  const { currentUser, blockedUsers, handleUnblockUser } = useUserContext();
 
   const { currentEvent, fetchAllEventsQuery, handleDeleteUserRSVP, handleRemoveInvitee } =
     useEventContext();
@@ -170,22 +169,6 @@ const UserListModal = ({
     return null;
   };
 
-  const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (listType !== "blocked-users" && listType !== "other-user-friends") {
-      if (fetchAllVisibleOtherUsersQuery.isError) {
-        return fetchAllVisibleOtherUsersQuery;
-      } else if (fetchAllEventsQuery.isError) {
-        return fetchAllEventsQuery;
-      }
-    } else if (listType === "blocked-users" || listType === "other-user-friends") {
-      if (fetchAllVisibleOtherUsersQuery.isError) {
-        return fetchAllVisibleOtherUsersQuery;
-      }
-    }
-    return undefined;
-  };
-  const queryWithError = getQueryForQueryLoadingOrErrorComponent();
-
   const noFetchError: boolean =
     !fetchAllEventsQuery.isError && !isFetchError && !outsideFetchIsError;
 
@@ -255,14 +238,6 @@ const UserListModal = ({
           </header>
         )}
         {!noFetchError && <p>Couldn't fetch data; try reloading the page.</p>}
-        {queryWithError && queryWithError.error && (
-          <div className="query-error-container">
-            <header className="query-status-text">Error fetching data.</header>
-            <div className="theme-element-container">
-              <button onClick={() => window.location.reload()}>Retry</button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
