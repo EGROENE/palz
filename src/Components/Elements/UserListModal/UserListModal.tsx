@@ -170,18 +170,6 @@ const UserListModal = ({
     return null;
   };
 
-  // When used for events, both fetchAllVisibleOtherUsersQuery & fetchAllEventsQuery will have to be successful for users to be displayed
-  // If used for displaying users not related to an event, only fetchAllVisibleOtherUsersQuery will have to succeed for users to be shown
-  const isNoFetchError: boolean =
-    listType === "blocked-users" || listType === "other-user-friends"
-      ? !fetchAllVisibleOtherUsersQuery.isError
-      : !fetchAllEventsQuery.isError && !fetchAllVisibleOtherUsersQuery.isError;
-
-  const fetchIsLoading2: boolean =
-    listType === "blocked-users" || listType === "other-user-friends"
-      ? fetchIsLoading
-      : fetchAllEventsQuery.isLoading || fetchAllVisibleOtherUsersQuery.isLoading;
-
   const getQueryForQueryLoadingOrErrorComponent = () => {
     if (listType !== "blocked-users" && listType !== "other-user-friends") {
       if (fetchAllVisibleOtherUsersQuery.isError) {
@@ -197,6 +185,12 @@ const UserListModal = ({
     return undefined;
   };
   const queryWithError = getQueryForQueryLoadingOrErrorComponent();
+
+  const noFetchError: boolean =
+    !fetchAllEventsQuery.isError && !isFetchError && !outsideFetchIsError;
+
+  const noFetchIsLoading: boolean =
+    !fetchIsLoading && !outsideFetchIsLoading && !fetchAllEventsQuery.isLoading;
 
   return (
     <div tabIndex={0} aria-hidden="false" className="modal-background">
@@ -219,10 +213,8 @@ const UserListModal = ({
             <span>{` (${iterableUsers.length})`}</span>
           )}
         </h2>
-        {isNoFetchError &&
-          !fetchIsLoading2 &&
-          !outsideFetchIsError &&
-          !outsideFetchIsLoading &&
+        {noFetchError &&
+          noFetchIsLoading &&
           iterableUsers !== null &&
           (iterableUsers.length > 0 ? (
             iterableUsers.map((user) => (
@@ -257,14 +249,12 @@ const UserListModal = ({
           ) : (
             <p>No users to show</p>
           ))}
-        {(fetchIsLoading || outsideFetchIsLoading) && (
+        {!noFetchIsLoading && (
           <header style={{ marginTop: "3rem" }} className="query-status-text">
             Loading...
           </header>
         )}
-        {(isFetchError || outsideFetchIsError) && (
-          <p>Couldn't fetch data; try reloading the page.</p>
-        )}
+        {!noFetchError && <p>Couldn't fetch data; try reloading the page.</p>}
         {queryWithError && queryWithError.error && (
           <div className="query-error-container">
             <header className="query-status-text">Error fetching data.</header>
