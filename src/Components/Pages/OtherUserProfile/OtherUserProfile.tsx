@@ -18,7 +18,7 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
-  const { theme, isLoading, error, setError } = useMainContext();
+  const { theme, isLoading, error } = useMainContext();
   const {
     logout,
     currentUser,
@@ -34,7 +34,6 @@ const OtherUserProfile = () => {
     addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists,
     handleUnblockUser,
     blockedUsers,
-    setBlockedUsers,
     friendRequestsReceived,
     handleUnfriending,
     setCurrentOtherUser,
@@ -57,6 +56,8 @@ const OtherUserProfile = () => {
 
   const [showFriends, setShowFriends] = useState<boolean>(false);
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
+  const [fetchCommonPalzIsLoading, setFetchCommonPalzIsLoading] =
+    useState<boolean>(false);
   const [isFetchError, setIsFetchError] = useState<boolean>(false);
   const [showMutualFriends, setShowMutualFriends] = useState<boolean>(false);
   const [currentUserMayMessage, setCurrentUserMayMessage] = useState<boolean>(false);
@@ -139,6 +140,7 @@ const OtherUserProfile = () => {
     }
 
     if (username && currentUser) {
+      setFetchIsLoading(true);
       Requests.getUserByUsername(username)
         .then((res) => {
           if (res.ok) {
@@ -241,6 +243,9 @@ const OtherUserProfile = () => {
                       return res.json().then((user: TUser) => user);
                     });
                   });
+
+                  setFetchCommonPalzIsLoading(true);
+
                   Promise.all(promisesToAwait)
                     .then((pic: TUser[]) => {
                       setPalzInCommon(pic.map((p) => Methods.getTBarebonesUser(p)));
@@ -261,7 +266,11 @@ const OtherUserProfile = () => {
                         setPalzInCommonText("No mutual friends");
                       }
                     })
-                    .catch((error) => console.log(error));
+                    .catch((error) => {
+                      console.log(error);
+                      setIsFetchError(true);
+                    })
+                    .finally(() => setFetchCommonPalzIsLoading(false));
                 };
 
                 setFriendRelatedStates();
@@ -450,7 +459,8 @@ const OtherUserProfile = () => {
             setIsFetchError(true);
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
     }
   }, [
     username,
@@ -932,6 +942,8 @@ const OtherUserProfile = () => {
                     closeModalMethod={setShowMutualFriends}
                     header="Mutual Friends"
                     users={palzInCommon}
+                    outsideFetchIsError={isFetchError}
+                    outsideFetchIsLoading={fetchIsLoading || fetchCommonPalzIsLoading}
                     fetchUsers={false}
                     randomColor={randomColor}
                   />
