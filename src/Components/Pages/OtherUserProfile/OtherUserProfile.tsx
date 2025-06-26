@@ -232,65 +232,61 @@ const OtherUserProfile = () => {
                   setCurrentUserCanSeeFriendsList(true);
                 }
 
-                const setFriendRelatedStates = (): void => {
-                  setFetchIsLoading(true);
+                const palzInCommonIDs = Methods.removeDuplicatesFromArray(
+                  currentUser.friends
+                    .concat(currentOtherUser.friends)
+                    .filter(
+                      (id) =>
+                        currentUser.friends.includes(id) &&
+                        currentOtherUser.friends.includes(id)
+                    )
+                );
 
-                  const palzInCommonIDs = Methods.removeDuplicatesFromArray(
-                    currentUser.friends
-                      .concat(currentOtherUser.friends)
-                      .filter(
-                        (id) =>
-                          currentUser.friends.includes(id) &&
-                          currentOtherUser.friends.includes(id)
-                      )
-                  );
-
-                  const promisesToAwait = palzInCommonIDs.map((id) => {
-                    return Requests.getUserByID(id).then((res) => {
-                      return res.json().then((user: TUser) => user);
-                    });
-                  });
-
-                  setFetchCommonPalzIsLoading(true);
-
-                  Promise.all(promisesToAwait)
-                    .then((pic: TUser[]) => {
-                      setPalzInCommon(pic.map((p) => Methods.getTBarebonesUser(p)));
-                      if (pic.length > 2) {
-                        setPalzInCommonText(
-                          `You are both friends with ${pic
-                            .slice(0, 2)
-                            .map((pal) => `${pal.firstName} ${pal.lastName}`)
-                            .join(", ")} +${pic.length - 2} more`
-                        );
-                      } else if (pic.length > 0) {
-                        setPalzInCommonText(
-                          `You are both friends with ${pic
-                            .map((pal) => `${pal.firstName} ${pal.lastName}`)
-                            .join(" & ")}`
-                        );
-                      } else {
-                        setPalzInCommonText("No mutual friends");
-                      }
-                    })
-                    .catch((error) => {
-                      console.log(error);
-                      setIsFetchError(true);
-                    })
-                    .finally(() => setFetchCommonPalzIsLoading(false));
-                };
-
-                setFriendRelatedStates();
-
-                const promisesToAwait = currentOtherUser.friends.map((f) => {
-                  return Requests.getUserByID(f).then((res) => {
+                const palzInCommonPromisesToAwait = palzInCommonIDs.map((id) => {
+                  return Requests.getUserByID(id).then((res) => {
                     return res.json().then((user: TUser) => user);
                   });
                 });
 
+                setFetchCommonPalzIsLoading(true);
+
+                Promise.all(palzInCommonPromisesToAwait)
+                  .then((pic: TUser[]) => {
+                    setPalzInCommon(pic.map((p) => Methods.getTBarebonesUser(p)));
+                    if (pic.length > 2) {
+                      setPalzInCommonText(
+                        `You are both friends with ${pic
+                          .slice(0, 2)
+                          .map((pal) => `${pal.firstName} ${pal.lastName}`)
+                          .join(", ")} +${pic.length - 2} more`
+                      );
+                    } else if (pic.length > 0) {
+                      setPalzInCommonText(
+                        `You are both friends with ${pic
+                          .map((pal) => `${pal.firstName} ${pal.lastName}`)
+                          .join(" & ")}`
+                      );
+                    } else {
+                      setPalzInCommonText("No mutual friends");
+                    }
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                    setIsFetchError(true);
+                  })
+                  .finally(() => setFetchCommonPalzIsLoading(false));
+
+                const currentOtherUserPromisesToAwait = currentOtherUser.friends.map(
+                  (f) => {
+                    return Requests.getUserByID(f).then((res) => {
+                      return res.json().then((user: TUser) => user);
+                    });
+                  }
+                );
+
                 setFetchCurrentOtherUserFriendsIsLoading(true);
 
-                Promise.all(promisesToAwait)
+                Promise.all(currentOtherUserPromisesToAwait)
                   .then((friends: TUser[]) =>
                     setCurrentOtherUserFriends(
                       friends.map((f) => Methods.getTBarebonesUser(f))
