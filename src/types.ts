@@ -134,7 +134,7 @@ export type TBarebonesUser = {
 export type TEvent = {
   _id?: string;
   index: number | undefined;
-  blockedUsersEvent: TBarebonesUser[];
+  blockedUsersEvent: string[];
   creator: string | undefined;
   title: string;
   organizers: TBarebonesUser[];
@@ -258,7 +258,7 @@ export type TUserValuesToUpdate = {
 
 export type TEventValuesToUpdate = {
   relatedInterests?: string[] | undefined;
-  blockedUsersEvent?: TBarebonesUser[] | undefined;
+  blockedUsersEvent?: string[] | undefined;
   images?: string[] | undefined;
   address?: string | undefined;
   maxParticipants?: number | null;
@@ -725,8 +725,8 @@ export type TEventContext = {
   >;
   eventImages: string[];
   setEventImages: React.Dispatch<React.SetStateAction<string[]>>;
-  blockedUsersEvent: TBarebonesUser[];
-  setBlockedUsersEvent: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
+  blockedUsersEvent: string[];
+  setBlockedUsersEvent: React.Dispatch<React.SetStateAction<string[]>>;
   fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
     organizers: (TBarebonesUser | TOtherUser)[],
