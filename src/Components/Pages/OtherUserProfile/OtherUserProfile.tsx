@@ -58,6 +58,10 @@ const OtherUserProfile = () => {
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
   const [fetchCommonPalzIsLoading, setFetchCommonPalzIsLoading] =
     useState<boolean>(false);
+  const [
+    fetchCurrentOtherUserFriendsIsLoading,
+    setFetchCurrentOtherUserFriendsIsLoading,
+  ] = useState<boolean>(false);
   const [isFetchError, setIsFetchError] = useState<boolean>(false);
   const [showMutualFriends, setShowMutualFriends] = useState<boolean>(false);
   const [currentUserMayMessage, setCurrentUserMayMessage] = useState<boolean>(false);
@@ -78,6 +82,9 @@ const OtherUserProfile = () => {
       }
     | undefined
   >(undefined);
+  const [currentOtherUserFriends, setCurrentOtherUserFriends] = useState<
+    TBarebonesUser[] | null
+  >(null);
   const [palzInCommon, setPalzInCommon] = useState<TBarebonesUser[] | null>(null);
   const [palzInCommonText, setPalzInCommonText] = useState<string | undefined>(undefined);
   const [usersEvents, setUsersEvents] = useState<TDisplayedEvent[] | null>(null);
@@ -275,6 +282,26 @@ const OtherUserProfile = () => {
 
                 setFriendRelatedStates();
 
+                const promisesToAwait = currentOtherUser.friends.map((f) => {
+                  return Requests.getUserByID(f).then((res) => {
+                    return res.json().then((user: TUser) => user);
+                  });
+                });
+
+                setFetchCurrentOtherUserFriendsIsLoading(true);
+
+                Promise.all(promisesToAwait)
+                  .then((friends: TUser[]) =>
+                    setCurrentOtherUserFriends(
+                      friends.map((f) => Methods.getTBarebonesUser(f))
+                    )
+                  )
+                  .catch((error) => {
+                    console.log(error);
+                    setIsFetchError(true);
+                  })
+                  .finally(() => setFetchCurrentOtherUserFriendsIsLoading(false));
+
                 const upcomingEventsUserRSVPdTo: TEvent[] | undefined = allEvents?.filter(
                   (event) =>
                     event.eventStartDateTimeInMS > now &&
@@ -462,14 +489,7 @@ const OtherUserProfile = () => {
         .catch((error) => console.log(error))
         .finally(() => setFetchIsLoading(false));
     }
-  }, [
-    username,
-    fetchAllEventsQuery.data,
-    currentOtherUser,
-    currentUser,
-    navigation,
-    userCreatedAccount,
-  ]);
+  }, [username, fetchAllEventsQuery.data, currentUser, navigation, userCreatedAccount]);
 
   const currentOtherUserIsBlocked: boolean =
     blockedUsers && currentOtherUser && currentOtherUser._id
@@ -955,8 +975,12 @@ const OtherUserProfile = () => {
                     renderButtonTwo={false}
                     closeModalMethod={setShowFriends}
                     header={`${currentOtherUser.username} 's palz`}
-                    users={currentOtherUser.friends}
-                    fetchUsers={true}
+                    users={currentOtherUserFriends}
+                    outsideFetchIsError={isFetchError}
+                    outsideFetchIsLoading={
+                      fetchIsLoading || fetchCurrentOtherUserFriendsIsLoading
+                    }
+                    fetchUsers={false}
                     buttonOneText="View Profile"
                     randomColor={randomColor}
                   />
