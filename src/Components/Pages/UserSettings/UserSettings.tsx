@@ -75,6 +75,8 @@ const UserSettings = () => {
     setCurrentUser,
     userCreatedAccount,
     blockedUsers,
+    fetchBlockedUsersIsError,
+    fetchBlockedUsersIsLoading,
   } = useUserContext();
   const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
@@ -378,7 +380,7 @@ const UserSettings = () => {
       {!fetchAllVisibleOtherUsersQuery.isError &&
         !fetchAllVisibleOtherUsersQuery.isLoading &&
         isLoading && <LoadingModal message="Saving changes..." />}
-      {showBlockedUsers && blockedUsers && (
+      {showBlockedUsers && (
         <UserListModal
           listType="blocked-users"
           renderButtonOne={true}
@@ -391,10 +393,9 @@ const UserSettings = () => {
           buttonOneHandler={handleUnblockUser}
           buttonOneHandlerNeedsEventParam={false}
           randomColor={randomColor}
+          outsideFetchIsError={fetchBlockedUsersIsError}
+          outsideFetchIsLoading={fetchBlockedUsersIsLoading}
         />
-      )}
-      {blockedUsers === null && (
-        <p>Couldn't fetch blocked users; try reloading the page </p>
       )}
       {!fetchAllVisibleOtherUsersQuery.isError &&
         !fetchAllVisibleOtherUsersQuery.isLoading && (
