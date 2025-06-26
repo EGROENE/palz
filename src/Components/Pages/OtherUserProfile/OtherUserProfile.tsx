@@ -92,6 +92,7 @@ const OtherUserProfile = () => {
   useEffect(() => {
     setPalzInCommonText(undefined);
     setPalzInCommon(null);
+    setCurrentOtherUserFriends(null);
     setUsersEvents(null);
     setCurrentUserMayMessage(false);
     setShowFacebook(false);
