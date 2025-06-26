@@ -16,7 +16,7 @@ const Tab = ({
   userMayNotDelete,
   specialIcon,
 }: {
-  info: TOtherUser | TEventInviteeOrOrganizer | string;
+  info: TOtherUser | TBarebonesUser | string;
   addHandler?: Function;
   addHandlerParams?: any[];
   addHandlerNeedsEventParam?: boolean;
