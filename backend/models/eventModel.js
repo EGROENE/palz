@@ -30,7 +30,7 @@ const eventSchema = new Schema({
     required: true,
   },
   blockedUsersEvent: {
-    type: [inviteeOrganizerSchema],
+    type: [String],
     required: true,
   },
   description: {
