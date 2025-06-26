@@ -319,6 +319,10 @@ export type TUserContext = {
     blocker: TUser,
     blockee: TOtherUser
   ) => void;
+  fetchBlockedUsersIsLoading: boolean;
+  setFetchBlockedUsersIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchBlockedUsersIsError: boolean;
+  setFetchBlockedUsersIsError: React.Dispatch<React.SetStateAction<boolean>>;
   handleUnblockUser: (blocker: TUser, blockee: TOtherUser) => void;
   currentOtherUser: TOtherUser | null;
   setCurrentOtherUser: React.Dispatch<React.SetStateAction<TOtherUser | null>>;

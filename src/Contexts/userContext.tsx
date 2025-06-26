@@ -206,6 +206,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   // /posts?authorId=1 ---> ["posts", {authorId: 1}]
   // /posts/2/comments ---> ["posts", post.id, "comments"]
 
+  const [fetchBlockedUsersIsLoading, setFetchBlockedUsersIsLoading] =
+    useState<boolean>(false);
+  const [fetchBlockedUsersIsError, setFetchBlockedUsersIsError] =
+    useState<boolean>(false);
+
   useEffect(() => {
     if (currentUser) {
       const promisesToAwait = currentUser.blockedUsers.map((id) => {
@@ -214,11 +219,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         });
       });
 
+      setFetchBlockedUsersIsLoading(true);
       Promise.all(promisesToAwait)
         .then((pic: TUser[]) => {
           setBlockedUsers(pic.map((p) => Methods.getTBarebonesUser(p)));
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error);
+          setFetchBlockedUsersIsError(true);
+        })
+        .finally(() => setFetchBlockedUsersIsLoading(false));
     }
   }, [currentUser?.blockedUsers]);
 
@@ -2152,6 +2162,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    fetchBlockedUsersIsLoading,
+    setFetchBlockedUsersIsLoading,
+    fetchBlockedUsersIsError,
+    setFetchBlockedUsersIsError,
     userHasLoggedIn,
     removeProfileImageMutation,
     updateProfileImageMutation,
