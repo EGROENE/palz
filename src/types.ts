@@ -258,7 +258,7 @@ export type TUserValuesToUpdate = {
 
 export type TEventValuesToUpdate = {
   relatedInterests?: string[] | undefined;
-  blockedUsersEvent?: string[] | undefined;
+  blockedUsersEvent?: TBarebonesUser[] | undefined;
   images?: string[] | undefined;
   address?: string | undefined;
   maxParticipants?: number | null;
@@ -725,8 +725,10 @@ export type TEventContext = {
   >;
   eventImages: string[];
   setEventImages: React.Dispatch<React.SetStateAction<string[]>>;
-  blockedUsersEvent: string[];
-  setBlockedUsersEvent: React.Dispatch<React.SetStateAction<string[]>>;
+  blockedUsersEvent: TBarebonesUser[];
+  setBlockedUsersEvent: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
+  blockedUsersEventORIGINAL: TBarebonesUser[];
+  setBlockedUsersEventORIGINAL: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
   handleAddRemoveUserAsOrganizer: (
     organizers: (TBarebonesUser | TOtherUser)[],
@@ -757,7 +759,7 @@ export type TEventContext = {
   setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
   eventEditIsInProgress: boolean;
   setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
-  handleAddRemoveBlockedUserOnEvent: (user?: TOtherUser | TBarebonesUser) => void;
+  handleAddRemoveBlockedUserOnEvent: (user?: TBarebonesUser) => void;
   handleAddUserRSVP: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent

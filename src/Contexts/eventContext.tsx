@@ -133,9 +133,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [eventImages, setEventImages] = useState<string[]>(
     currentEvent ? currentEvent.images : []
   );
-  const [blockedUsersEvent, setBlockedUsersEvent] = useState<string[]>(
-    currentEvent ? currentEvent.blockedUsersEvent : []
-  );
+  const [blockedUsersEvent, setBlockedUsersEvent] = useState<TBarebonesUser[]>([]);
+  const [blockedUsersEventORIGINAL, setBlockedUsersEventORIGINAL] = useState<
+    TBarebonesUser[]
+  >([]);
   ///////////////////////
 
   // Update currentEvent, eventImages w/ most recent info after fetchAllEventsQuery.data changes
@@ -164,7 +165,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       setOrganizers(updatedEvent.organizers);
       setInvitees(updatedEvent.invitees);
       setRelatedInterests(updatedEvent.relatedInterests);
-      setBlockedUsersEvent(updatedEvent.blockedUsersEvent);
     }
   }, [fetchAllEventsQuery.data]);
 
@@ -626,13 +626,13 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const navigation = useNavigate();
 
-  const handleAddRemoveBlockedUserOnEvent = (
-    user?: TOtherUser | TBarebonesUser
-  ): void => {
-    //e?.preventDefault();
+  const handleAddRemoveBlockedUserOnEvent = (user?: TBarebonesUser): void => {
+    // find way to add TBarebonesUser to blockedUsersEvent when creating new event
     if (user && user._id) {
-      if (blockedUsersEvent.includes(user._id.toString())) {
-        setBlockedUsersEvent(blockedUsersEvent.filter((blockee) => blockee !== user._id));
+      if (blockedUsersEvent.map((b) => b._id).includes(user._id.toString())) {
+        setBlockedUsersEvent(
+          blockedUsersEvent.filter((blockee) => blockee._id !== user._id)
+        );
       } else {
         if (invitees.map((u) => u._id).includes(user._id)) {
           setInvitees(invitees.filter((u) => u._id !== user._id));
@@ -642,7 +642,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           setOrganizers(organizers.filter((u) => u._id !== user._id));
         }
 
-        setBlockedUsersEvent(blockedUsersEvent.concat(user._id.toString()));
+        setBlockedUsersEvent(blockedUsersEvent.concat(user));
       }
     }
   };
@@ -676,8 +676,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
         setInvitees(invitees.filter((u) => u._id !== user._id));
       }
 
-      if (user._id && blockedUsersEvent.includes(user._id.toString())) {
-        setBlockedUsersEvent(blockedUsersEvent.filter((u) => u !== user._id));
+      if (user._id && blockedUsersEvent.map((u) => u._id).includes(user._id.toString())) {
+        setBlockedUsersEvent(blockedUsersEvent.filter((u) => u._id !== user._id));
       }
 
       setOrganizers(organizers.concat(user));
@@ -704,8 +704,11 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           setOrganizers(organizers.filter((u) => u._id !== user._id));
         }
 
-        if (user._id && blockedUsersEvent.includes(user._id.toString())) {
-          setBlockedUsersEvent(blockedUsersEvent.filter((u) => u !== user._id));
+        if (
+          user._id &&
+          blockedUsersEvent.map((u) => u._id).includes(user._id.toString())
+        ) {
+          setBlockedUsersEvent(blockedUsersEvent.filter((u) => u._id !== user._id));
         }
 
         setInvitees(invitees.concat(Methods.getTBarebonesUser(user)));
@@ -753,7 +756,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           organizers: organizers,
         }),
         ...(invitees !== currentEvent.invitees && { invitees: invitees }),
-        ...(blockedUsersEvent !== currentEvent.blockedUsersEvent && {
+        ...(!Methods.arraysAreIdentical(
+          blockedUsersEvent.map((u) => u._id),
+          currentEvent.blockedUsersEvent
+        ) && {
           blockedUsersEvent: blockedUsersEvent,
         }),
         ...(eventDescription !== "" &&
@@ -809,6 +815,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     setDisplayedPotentialBlockeeCount,
     blockedUsersEvent,
     setBlockedUsersEvent,
+    blockedUsersEventORIGINAL,
+    setBlockedUsersEventORIGINAL,
     displayedPotentialInviteeCount,
     setDisplayedPotentialInviteeCount,
     displayedPotentialCoOrganizerCount,
