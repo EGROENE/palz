@@ -96,6 +96,8 @@ const EventForm = ({
     deleteEventMutation,
     organizersORIGINAL,
     setOrganizersORIGINAL,
+    inviteesORIGINAL,
+    setInviteesORIGINAL,
   } = useEventContext();
 
   const [focusedElement, setFocusedElement] = useState<
@@ -154,6 +156,9 @@ const EventForm = ({
   const [fetchOrganizersIsLoading, setFetchOrganizersIsLoading] =
     useState<boolean>(false);
   const [fetchOrganizersIsError, setFetchOrganizersIsError] = useState<boolean>(false);
+
+  const [fetchInviteesIsLoading, setFetchInviteesIsLoading] = useState<boolean>(false);
+  const [fetchInviteesIsError, setFetchInviteesIsError] = useState<boolean>(false);
 
   const [showPotentialCoOrganizers, setShowPotentialCoOrganizers] =
     useState<boolean>(false);
@@ -455,6 +460,29 @@ const EventForm = ({
         .finally(() => setFetchOrganizersIsLoading(false));
     }
   }, [event?.organizers]);
+
+  useEffect(() => {
+    if (usedFor === "edit-event" && currentEvent) {
+      const promisesToAwaitInvitees = currentEvent.invitees.map((u) => {
+        return Requests.getUserByID(u).then((res) => {
+          return res.json().then((user: TUser) => user);
+        });
+      });
+
+      setFetchInviteesIsLoading(true);
+
+      Promise.all(promisesToAwaitInvitees)
+        .then((invitees: TUser[]) => {
+          setInvitees(invitees.map((b) => Methods.getTBarebonesUser(b)));
+          setInviteesORIGINAL(invitees.map((b) => Methods.getTBarebonesUser(b)));
+        })
+        .catch((error) => {
+          console.log(error);
+          setFetchInviteesIsError(true);
+        })
+        .finally(() => setFetchInviteesIsLoading(false));
+    }
+  }, [event?.invitees]);
 
   // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
   const handleLoadMoreItemsOnScroll = (
@@ -1115,7 +1143,7 @@ const EventForm = ({
       setMaxParticipants(currentEvent.maxParticipants);
       setPublicity("public");
       setOrganizers(organizersORIGINAL);
-      setInvitees(currentEvent.invitees);
+      setInvitees(inviteesORIGINAL);
       setBlockedUsersEvent(blockedUsersEventORIGINAL);
       setRelatedInterests(currentEvent.relatedInterests);
     } else {
@@ -1256,7 +1284,7 @@ const EventForm = ({
         maxParticipants !== currentEvent?.maxParticipants ||
         publicity !== currentEvent?.publicity ||
         !Methods.arraysAreIdentical(organizersORIGINAL, organizers) ||
-        !Methods.arraysAreIdentical(currentEvent?.invitees, invitees) ||
+        !Methods.arraysAreIdentical(inviteesORIGINAL, invitees) ||
         !Methods.arraysAreIdentical(blockedUsersEventORIGINAL, blockedUsersEvent) ||
         !Methods.arraysAreIdentical(currentEvent?.relatedInterests, relatedInterests)
       );
@@ -1322,7 +1350,7 @@ const EventForm = ({
     organizers: organizers
       .map((o) => o._id?.toString())
       .filter((elem) => elem !== undefined),
-    invitees: invitees,
+    invitees: invitees.map((i) => i._id?.toString()).filter((elem) => elem !== undefined),
     blockedUsersEvent: blockedUsersEvent
       .map((u) => u._id?.toString())
       .filter((elem) => elem !== undefined),
