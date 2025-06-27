@@ -138,7 +138,7 @@ export type TEvent = {
   creator: string | undefined;
   title: string;
   organizers: string[];
-  invitees: TBarebonesUser[];
+  invitees: string[];
   description: string;
   eventStartDateMidnightUTCInMS: number;
   eventStartTimeAfterMidnightUTCInMS: number;
