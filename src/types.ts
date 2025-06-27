@@ -621,6 +621,8 @@ export type TEventContext = {
   setShowRSVPs: React.Dispatch<React.SetStateAction<boolean>>;
   showInvitees: boolean;
   setShowInvitees: React.Dispatch<React.SetStateAction<boolean>>;
+  inviteesORIGINAL: TBarebonesUser[];
+  setInviteesORIGINAL: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   displayedPotentialInviteeCount: number | undefined;
   setDisplayedPotentialInviteeCount: React.Dispatch<
     React.SetStateAction<number | undefined>
