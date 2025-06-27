@@ -44,7 +44,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
   }, []);
 
   const userIsInvitee: boolean = currentUser?._id
-    ? event.invitees.map((i) => i._id).includes(currentUser._id.toString())
+    ? event.invitees.includes(currentUser._id.toString())
     : false;
 
   const userDeclinedInvitation: boolean = currentUser?._id

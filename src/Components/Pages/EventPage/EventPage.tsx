@@ -1,4 +1,4 @@
-import { TThemeColor, TUser, TEvent, TBarebonesUser } from "../../../types";
+import { TThemeColor, TEvent, TBarebonesUser } from "../../../types";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -77,7 +77,7 @@ const EventPage = () => {
     currentUser &&
     currentUser._id &&
     currentEvent.publicity === "private" &&
-    (!currentEvent.invitees.map((i) => i._id).includes(currentUser._id.toString()) ||
+    (!currentEvent.invitees.includes(currentUser._id.toString()) ||
       !currentEvent.organizers.includes(currentUser._id.toString()))
       ? true
       : false;
