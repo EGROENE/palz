@@ -26,7 +26,7 @@ const eventSchema = new Schema({
     required: true,
   },
   invitees: {
-    type: [inviteeOrganizerSchema],
+    type: [String],
     required: true,
   },
   blockedUsersEvent: {
