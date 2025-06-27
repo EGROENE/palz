@@ -461,13 +461,11 @@ const DisplayedCardsPage = ({
 
                 if (filter === "organized by friends") {
                   if (
-                    ev.organizers
-                      .map((o) => o._id)
-                      .some((o) => {
-                        if (o) {
-                          return currentUser?.friends.includes(o.toString());
-                        }
-                      }) &&
+                    ev.organizers.some((o) => {
+                      if (o) {
+                        return currentUser?.friends.includes(o.toString());
+                      }
+                    }) &&
                     matches.indexOf(ev) === -1
                   ) {
                     matches.push(ev);
