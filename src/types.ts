@@ -137,7 +137,7 @@ export type TEvent = {
   blockedUsersEvent: string[];
   creator: string | undefined;
   title: string;
-  organizers: TBarebonesUser[];
+  organizers: string[];
   invitees: TBarebonesUser[];
   description: string;
   eventStartDateMidnightUTCInMS: number;
@@ -701,6 +701,8 @@ export type TEventContext = {
   setPublicity: React.Dispatch<React.SetStateAction<"public" | "private">>;
   organizers: TBarebonesUser[];
   setOrganizers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
+  organizersORIGINAL: TBarebonesUser[];
+  setOrganizersORIGINAL: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   invitees: TBarebonesUser[];
   setInvitees: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   relatedInterests: string[];
