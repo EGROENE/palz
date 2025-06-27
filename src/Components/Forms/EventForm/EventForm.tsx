@@ -25,7 +25,7 @@ const EventForm = ({
 }) => {
   const { showSidebar, setShowSidebar, isLoading, setIsLoading, theme } =
     useMainContext();
-  const { handleCityStateCountryInput, currentUser } = useUserContext();
+  const { handleCityStateCountryInput, currentUser, blockedUsers } = useUserContext();
 
   const {
     setBlockedUsersEventORIGINAL,
@@ -2105,13 +2105,15 @@ const EventForm = ({
                     id="blocked-users-event-checkbox"
                     type="checkbox"
                     style={{ accentColor: randomColor }}
-                    onChange={() =>
-                      setBlockedUsersEvent(
-                        blockedUsersEvent.concat(
-                          Methods.removeDuplicatesFromArray(currentUser.blockedUsers)
-                        )
-                      )
-                    }
+                    onChange={() => {
+                      if (blockedUsers) {
+                        setBlockedUsersEvent(
+                          blockedUsersEvent.concat(
+                            Methods.removeDuplicatesFromArray(blockedUsers)
+                          )
+                        );
+                      }
+                    }}
                     checked={currentUser.blockedUsers.every((bu) => {
                       if (event && event.blockedUsersEvent) {
                         return blockedUsersEvent.map((u) => u._id).indexOf(bu) !== -1;
