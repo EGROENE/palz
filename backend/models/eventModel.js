@@ -22,7 +22,7 @@ const eventSchema = new Schema({
     required: true,
   },
   organizers: {
-    type: [inviteeOrganizerSchema],
+    type: [String],
     required: true,
   },
   invitees: {
