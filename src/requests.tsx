@@ -1014,7 +1014,7 @@ const removeInvitee = (
   const getRaw = () => {
     return JSON.stringify({
       "invitees": event.invitees.filter((i) => {
-        if (i._id !== user?._id) {
+        if (i !== user?._id) {
           return i;
         }
       }),
