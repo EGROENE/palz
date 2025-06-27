@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import { TEvent, TThemeColor } from "../../../types";
+import { TBarebonesUser, TEvent, TThemeColor, TUser } from "../../../types";
 import { Link } from "react-router-dom";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
 import styles from "./styles.module.css";
 import { useMainContext } from "../../../Hooks/useMainContext";
+import Requests from "../../../requests";
+import Methods from "../../../methods";
 
 const EventCard = ({ event }: { event: TEvent }) => {
   const { isLoading, theme } = useMainContext();
@@ -49,7 +51,30 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ? event.disinterestedUsers.map((i) => i._id).includes(currentUser._id.toString())
     : false;
 
-  const organizerUsernames = event.organizers.map((o) => o.username);
+  // Define in state eventOrganizers of type TBarebonesUser[]. Set in useEffect by calling getUserByID on every _id in event.organizers, then set in Promise.all.then() statement.
+  const [eventOrganizers, setEventOrganizers] = useState<TBarebonesUser[] | null>(null);
+  const [fetchOrganizersIsLoading, setFetchOrganizersIsLoading] =
+    useState<boolean>(false);
+  const [fetchOrganizersIsError, setFetchOrganizersIsError] = useState<boolean>(false);
+
+  useEffect(() => {
+    const promisesToAwaitOrganizers = event.organizers.map((id) => {
+      return Requests.getUserByID(id).then((res) => {
+        return res.json().then((user: TUser) => user);
+      });
+    });
+
+    setFetchOrganizersIsLoading(true);
+    Promise.all(promisesToAwaitOrganizers)
+      .then((pic: TUser[]) => {
+        setEventOrganizers(pic.map((p) => Methods.getTBarebonesUser(p)));
+      })
+      .catch((error) => {
+        console.log(error);
+        setFetchOrganizersIsError(true);
+      })
+      .finally(() => setFetchOrganizersIsLoading(false));
+  }, [event]);
 
   const userIsOrganizer =
     currentUser &&
@@ -185,14 +210,18 @@ const EventCard = ({ event }: { event: TEvent }) => {
               {nextEventDateTime.toDateString()} at{" "}
               {nextEventDateTime.toLocaleTimeString()}
             </p>
-            <p className={styles.organizersEventCard}>
-              <i className="fas fa-user-alt"></i>
-              <span>
-                {organizerUsernames.length === 1
-                  ? organizerUsernames[0]
-                  : `${organizerUsernames[0]}  +${organizerUsernames.length - 1}`}
-              </span>
-            </p>
+            {!fetchOrganizersIsError && !fetchOrganizersIsLoading && eventOrganizers && (
+              <p className={styles.organizersEventCard}>
+                <i className="fas fa-user-alt"></i>
+                <span>
+                  {eventOrganizers.length === 1
+                    ? eventOrganizers.map((o) => o.username)[0]
+                    : `${eventOrganizers.map((o) => o.username)[0]}  +${
+                        eventOrganizers.length - 1
+                      }`}
+                </span>
+              </p>
+            )}
             <div aria-hidden="false" className={styles.eventButtonsContainer}>
               <Link
                 style={
