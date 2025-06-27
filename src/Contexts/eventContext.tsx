@@ -121,9 +121,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [publicity, setPublicity] = useState<"public" | "private">(
     currentEvent ? currentEvent.publicity : "public"
   );
-  const [organizers, setOrganizers] = useState<TBarebonesUser[]>(
-    currentEvent ? currentEvent.organizers : []
-  );
+  const [organizers, setOrganizers] = useState<TBarebonesUser[]>([]);
+  const [organizersORIGINAL, setOrganizersORIGINAL] = useState<TBarebonesUser[]>([]);
   const [invitees, setInvitees] = useState<TBarebonesUser[]>(
     currentEvent ? currentEvent.invitees : []
   );
@@ -162,7 +161,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       setEventAddress(updatedEvent.address);
       setMaxParticipants(updatedEvent.maxParticipants);
       setPublicity(updatedEvent.publicity);
-      setOrganizers(updatedEvent.organizers);
       setInvitees(updatedEvent.invitees);
       setRelatedInterests(updatedEvent.relatedInterests);
     }
@@ -752,7 +750,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           eventEndDateTimeInMS:
             eventEndDateMidnightUTCInMS + eventEndTimeAfterMidnightUTCInMS,
         }),
-        ...(organizers !== currentEvent.organizers && {
+        ...(!Methods.arraysAreIdentical(
+          organizers.map((u) => u._id),
+          currentEvent.organizers
+        ) && {
           organizers: organizers,
         }),
         ...(invitees !== currentEvent.invitees && { invitees: invitees }),
@@ -804,6 +805,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    organizersORIGINAL,
+    setOrganizersORIGINAL,
     handleRemoveOrganizer,
     showRSVPs,
     setShowRSVPs,
