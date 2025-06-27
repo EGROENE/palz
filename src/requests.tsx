@@ -1040,7 +1040,7 @@ const removeOrganizer = (
   const getRaw = () => {
     return JSON.stringify({
       "organizers": event.organizers.filter((o) => {
-        if (o._id !== user?._id) {
+        if (o !== user?._id) {
           return o;
         }
       }),
