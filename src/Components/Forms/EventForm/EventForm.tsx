@@ -1255,7 +1255,7 @@ const EventForm = ({
         eventAddress !== currentEvent?.address ||
         maxParticipants !== currentEvent?.maxParticipants ||
         publicity !== currentEvent?.publicity ||
-        !Methods.arraysAreIdentical(organizers, currentEvent?.organizers) ||
+        !Methods.arraysAreIdentical(organizersORIGINAL, organizers) ||
         !Methods.arraysAreIdentical(currentEvent?.invitees, invitees) ||
         !Methods.arraysAreIdentical(blockedUsersEventORIGINAL, blockedUsersEvent) ||
         !Methods.arraysAreIdentical(currentEvent?.relatedInterests, relatedInterests)
