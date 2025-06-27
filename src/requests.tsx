@@ -1004,6 +1004,17 @@ const deleteEvent = (event: TEvent | undefined): Promise<Response> => {
   });
 };
 
+const getEventByID = (eventID: string) => {
+  var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+return fetch(`http://localhost:4000/palz/events/${eventID}`, {
+  method: 'GET',
+  headers: myHeaders,
+  redirect: 'follow'
+})
+}
+
 const removeInvitee = (
   event: TEvent,
   user: TUser | TOtherUser | null
@@ -1299,6 +1310,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getEventByID,
   getUserByUsername,
   getPotentialChatMembers,
   getPotentialEventBlockees,
