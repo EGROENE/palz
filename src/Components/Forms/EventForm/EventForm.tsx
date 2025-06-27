@@ -94,6 +94,8 @@ const EventForm = ({
     updateEventMutation,
     createEventMutation,
     deleteEventMutation,
+    organizersORIGINAL,
+    setOrganizersORIGINAL,
   } = useEventContext();
 
   const [focusedElement, setFocusedElement] = useState<
@@ -148,6 +150,10 @@ const EventForm = ({
   // Define these in Edit, or only set these if editing event
   const [fetchBlockeesIsLoading, setFetchBlockeesIsLoading] = useState<boolean>(false);
   const [fetchBlockeesIsError, setFetchBlockeesIsError] = useState<boolean>(false);
+
+  const [fetchOrganizersIsLoading, setFetchOrganizersIsLoading] =
+    useState<boolean>(false);
+  const [fetchOrganizersIsError, setFetchOrganizersIsError] = useState<boolean>(false);
 
   const [showPotentialCoOrganizers, setShowPotentialCoOrganizers] =
     useState<boolean>(false);
@@ -426,6 +432,29 @@ const EventForm = ({
         .finally(() => setFetchBlockeesIsLoading(false));
     }
   }, [event?.blockedUsersEvent]);
+
+  useEffect(() => {
+    if (usedFor === "edit-event" && currentEvent) {
+      const promisesToAwaitOrganizers = currentEvent.organizers.map((u) => {
+        return Requests.getUserByID(u).then((res) => {
+          return res.json().then((user: TUser) => user);
+        });
+      });
+
+      setFetchOrganizersIsLoading(true);
+
+      Promise.all(promisesToAwaitOrganizers)
+        .then((organizers: TUser[]) => {
+          setOrganizers(organizers.map((b) => Methods.getTBarebonesUser(b)));
+          setOrganizersORIGINAL(organizers.map((b) => Methods.getTBarebonesUser(b)));
+        })
+        .catch((error) => {
+          console.log(error);
+          setFetchOrganizersIsError(true);
+        })
+        .finally(() => setFetchOrganizersIsLoading(false));
+    }
+  }, [event?.organizers]);
 
   // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
   const handleLoadMoreItemsOnScroll = (
@@ -1085,7 +1114,7 @@ const EventForm = ({
       setEventAddressError("");
       setMaxParticipants(currentEvent.maxParticipants);
       setPublicity("public");
-      setOrganizers(currentEvent.organizers);
+      setOrganizers(organizersORIGINAL);
       setInvitees(currentEvent.invitees);
       setBlockedUsersEvent(blockedUsersEventORIGINAL);
       setRelatedInterests(currentEvent.relatedInterests);
@@ -1290,7 +1319,9 @@ const EventForm = ({
     index: undefined,
     title: eventTitle.trim(),
     creator: currentUser?._id?.toString(),
-    organizers: organizers,
+    organizers: organizers
+      .map((o) => o._id?.toString())
+      .filter((elem) => elem !== undefined),
     invitees: invitees,
     blockedUsersEvent: blockedUsersEvent
       .map((u) => u._id?.toString())
@@ -1866,7 +1897,7 @@ const EventForm = ({
               {currentUser &&
                 !isLoading &&
                 event &&
-                event.organizers.filter((user) => user.username !== currentUser.username)
+                event.organizers.filter((user) => user !== currentUser._id?.toString())
                   .length > 0 && (
                   <>
                     <span
@@ -2167,9 +2198,7 @@ const EventForm = ({
           {currentEvent &&
             currentUser &&
             currentUser._id &&
-            currentEvent.organizers
-              .map((o) => o._id)
-              .includes(currentUser._id.toString()) && (
+            currentEvent.organizers.includes(currentUser._id.toString()) && (
               <button
                 type="button"
                 onClick={() => setShowAreYouSureDeleteEvent(true)}

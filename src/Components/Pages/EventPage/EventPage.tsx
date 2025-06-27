@@ -72,124 +72,13 @@ const EventPage = () => {
     TBarebonesUser[]
   >([]);
 
-  /* 
-  If event is private & currentUser isn't organizer or invitee, or if currentUser was blocked by one of the organizers, currentUser doesn't have access to event
-  */
-  const eventOrganizersIDs: (string | undefined)[] | undefined =
-    currentEvent?.organizers.map((org) => org._id && org._id.toString());
-
-  const getEventOrganizers = async (): Promise<TUser[]> => {
-    let eventOrganizers: TUser[] = [];
-
-    if (eventOrganizersIDs) {
-      for (const org of eventOrganizersIDs) {
-        if (org) {
-          await Requests.getUserByID(org)
-            .then((res) => {
-              if (res.ok) {
-                res.json().then((organizer: TUser) => eventOrganizers.push(organizer));
-              } else {
-                setError("Error fetching event organizers");
-              }
-            })
-            .catch((error) => console.log(error));
-        }
-      }
-    }
-
-    if (currentUser) {
-      setOrganizersWhoseProfileIsVisible(
-        eventOrganizers
-          .filter((organizer) => {
-            if (currentUser && currentUser._id) {
-              const currentUserIsFriend: boolean = organizer.friends.includes(
-                currentUser._id.toString()
-              );
-
-              const currentUserIsFriendOfFriend: boolean =
-                currentUser && currentUser._id && organizer._id
-                  ? getOtherUserFriends(organizer._id.toString()).some(
-                      (otherUserFriend) =>
-                        currentUser._id &&
-                        otherUserFriend.friends.includes(currentUser._id.toString())
-                    )
-                  : false;
-
-              // Return TOtherUser version of event organizer
-              if (
-                (organizer._id !== currentUser._id &&
-                  organizer.profileVisibleTo === "friends" &&
-                  currentUserIsFriend) ||
-                (organizer.profileVisibleTo === "friends of friends" &&
-                  currentUserIsFriendOfFriend) ||
-                organizer.profileVisibleTo === "anyone"
-              ) {
-                return organizer;
-              }
-            }
-          })
-          .map((organizer) => {
-            return {
-              _id: organizer._id,
-              username: organizer.username,
-              firstName: organizer.firstName,
-              lastName: organizer.lastName,
-              profileImage: organizer.profileImage,
-              emailAddress: organizer.emailAddress,
-            };
-          })
-      );
-
-      setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile(
-        eventOrganizers
-          .filter((organizer) => {
-            if (organizer._id && currentUser && currentUser._id) {
-              const currentUserIsFriend: boolean = organizer.friends.includes(
-                currentUser._id.toString()
-              );
-
-              const currentUserIsFriendOfFriend: boolean =
-                currentUser && currentUser._id && organizer._id
-                  ? getOtherUserFriends(organizer._id.toString()).some(
-                      (otherUserFriend) =>
-                        currentUser._id &&
-                        otherUserFriend.friends.includes(currentUser._id.toString())
-                    )
-                  : false;
-
-              // Return TOtherUser version of event organizer
-              if (
-                (organizer.profileVisibleTo === "friends" && !currentUserIsFriend) ||
-                (organizer.profileVisibleTo === "friends of friends" &&
-                  !currentUserIsFriendOfFriend)
-              ) {
-                return organizer;
-              }
-            }
-          })
-          .map((organizer) => {
-            return {
-              _id: organizer._id,
-              username: organizer.username,
-              firstName: organizer.firstName,
-              lastName: organizer.lastName,
-              profileImage: organizer.profileImage,
-              emailAddress: organizer.emailAddress,
-            };
-          })
-      );
-    }
-
-    return eventOrganizers;
-  };
-
   const eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee =
     currentEvent &&
     currentUser &&
     currentUser._id &&
     currentEvent.publicity === "private" &&
     (!currentEvent.invitees.map((i) => i._id).includes(currentUser._id.toString()) ||
-      !currentEvent.organizers.map((o) => o._id).includes(currentUser._id.toString()))
+      !currentEvent.organizers.includes(currentUser._id.toString()))
       ? true
       : false;
 
@@ -232,19 +121,6 @@ const EventPage = () => {
     window.scrollTo(0, 0);
   }, [currentUserHasBeenBlockedByAnOrganizer]);
 
-  /* Every time fetchAllVisibleOtherUsersQuery.data or allEvents change, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
-  useEffect(() => {
-    getEventOrganizers().then((userArray) => {
-      if (currentUser && currentUser._id) {
-        for (const organizer of userArray) {
-          if (organizer.blockedUsers.includes(currentUser._id.toString())) {
-            setCurrentUserHasBeenBlockedByAnOrganizer(true);
-          }
-        }
-      }
-    });
-  }, [allEvents]);
-
   const nextEventDateTime = currentEvent
     ? new Date(currentEvent.eventStartDateTimeInMS)
     : undefined;
@@ -253,7 +129,7 @@ const EventPage = () => {
   const userIsOrganizer: boolean =
     currentUser &&
     currentUser._id &&
-    currentEvent?.organizers.map((o) => o._id).includes(currentUser._id.toString())
+    currentEvent?.organizers.includes(currentUser._id.toString())
       ? true
       : false;
 
@@ -357,7 +233,7 @@ const EventPage = () => {
               <div className="organizer-tabs-container">
                 {currentUser &&
                   currentUser._id &&
-                  eventOrganizersIDs?.includes(currentUser._id.toString()) && (
+                  currentEvent.organizers?.includes(currentUser._id.toString()) && (
                     <Tab
                       info={currentUser}
                       randomColor={randomColor}
@@ -451,18 +327,14 @@ const EventPage = () => {
                       <span
                         onClick={() =>
                           currentUser?._id &&
-                          currentEvent.organizers
-                            .map((o) => o._id)
-                            .includes(currentUser._id.toString()) &&
+                          currentEvent.organizers.includes(currentUser._id.toString()) &&
                           currentEvent.invitees.length > 0
                             ? setShowInvitees(true)
                             : undefined
                         }
                         className={
                           currentUser?._id &&
-                          currentEvent.organizers
-                            .map((o) => o._id)
-                            .includes(currentUser._id.toString()) &&
+                          currentEvent.organizers.includes(currentUser._id.toString()) &&
                           currentEvent.invitees.length > 0
                             ? "show-listed-users-or-invitees"
                             : undefined
@@ -475,18 +347,14 @@ const EventPage = () => {
                     <span
                       onClick={() =>
                         currentUser?._id &&
-                        currentEvent.organizers
-                          .map((o) => o._id)
-                          .includes(currentUser._id.toString()) &&
+                        currentEvent.organizers.includes(currentUser._id.toString()) &&
                         currentEvent.interestedUsers.length > 0
                           ? setShowRSVPs(true)
                           : undefined
                       }
                       className={
                         currentUser?._id &&
-                        currentEvent.organizers
-                          .map((o) => o._id)
-                          .includes(currentUser._id.toString()) &&
+                        currentEvent.organizers.includes(currentUser._id.toString()) &&
                         currentEvent.interestedUsers.length > 0
                           ? "show-listed-users-or-invitees"
                           : undefined

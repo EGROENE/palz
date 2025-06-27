@@ -242,7 +242,7 @@ const UserSettings = () => {
         if (
           currentUser?._id &&
           event.organizers.length === 1 &&
-          event.organizers.map((o) => o._id).includes(currentUser._id.toString())
+          event.organizers.includes(currentUser._id.toString())
         ) {
           promisesToAwait.push(Requests.deleteEvent(event));
         } else {

@@ -54,7 +54,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const userIsOrganizer =
     currentUser &&
     currentUser._id &&
-    event.organizers.map((o) => o._id).includes(currentUser._id.toString())
+    event.organizers.includes(currentUser._id.toString())
       ? true
       : false;
 
