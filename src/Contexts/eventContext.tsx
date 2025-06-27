@@ -123,9 +123,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   );
   const [organizers, setOrganizers] = useState<TBarebonesUser[]>([]);
   const [organizersORIGINAL, setOrganizersORIGINAL] = useState<TBarebonesUser[]>([]);
-  const [invitees, setInvitees] = useState<TBarebonesUser[]>(
-    currentEvent ? currentEvent.invitees : []
-  );
+  const [invitees, setInvitees] = useState<TBarebonesUser[]>([]);
+  const [inviteesORIGINAL, setInviteesORIGINAL] = useState<TBarebonesUser[]>([]);
   const [relatedInterests, setRelatedInterests] = useState<string[]>(
     currentEvent ? currentEvent.relatedInterests : []
   );
@@ -161,7 +160,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       setEventAddress(updatedEvent.address);
       setMaxParticipants(updatedEvent.maxParticipants);
       setPublicity(updatedEvent.publicity);
-      setInvitees(updatedEvent.invitees);
       setRelatedInterests(updatedEvent.relatedInterests);
     }
   }, [fetchAllEventsQuery.data]);
@@ -756,7 +754,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
         ) && {
           organizers: organizers,
         }),
-        ...(invitees !== currentEvent.invitees && { invitees: invitees }),
+        ...(!Methods.arraysAreIdentical(
+          invitees.map((u) => u._id),
+          currentEvent.invitees
+        ) && { invitees: invitees }),
         ...(!Methods.arraysAreIdentical(
           blockedUsersEvent.map((u) => u._id),
           currentEvent.blockedUsersEvent
@@ -805,6 +806,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    inviteesORIGINAL,
+    setInviteesORIGINAL,
     organizersORIGINAL,
     setOrganizersORIGINAL,
     handleRemoveOrganizer,
