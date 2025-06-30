@@ -24,6 +24,8 @@ const EventPage = () => {
     useUserContext();
 
   const {
+    setDisinterestedUsers,
+    disinterestedUsers,
     handleAddUserRSVP,
     handleDeleteUserRSVP,
     setCurrentEvent,
@@ -117,6 +119,8 @@ const EventPage = () => {
       if (!fetchOrganizersIsLoading) {
         setFetchOrganizersIsLoading(true);
       }
+
+      setDisinterestedUsers(currentEvent.disinterestedUsers);
 
       Promise.all(promisesToAwaitOrganizers)
         .then((organizers: TUser[]) => {
@@ -509,6 +513,8 @@ const EventPage = () => {
               )}
               {currentEvent.eventEndDateTimeInMS > now &&
                 currentUser &&
+                currentUser._id &&
+                !disinterestedUsers?.includes(currentUser._id.toString()) &&
                 userCreatedAccount !== null &&
                 !userIsOrganizer && (
                   <div className="theme-element-container">
@@ -542,7 +548,7 @@ const EventPage = () => {
                 currentUser &&
                 currentUser._id &&
                 userCreatedAccount !== null &&
-                currentEvent.disinterestedUsers.includes(currentUser._id.toString()) &&
+                disinterestedUsers?.includes(currentUser._id.toString()) &&
                 currentEvent.invitees.includes(currentUser._id.toString()) && (
                   <>
                     <p>
