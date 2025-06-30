@@ -31,7 +31,9 @@ const EventPage = () => {
     showRSVPs,
     setShowRSVPs,
     showInvitees,
+    showDeclinedInvitations,
     setShowInvitees,
+    setShowDeclinedInvitations,
     currentEvent,
   } = useEventContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
@@ -319,6 +321,21 @@ const EventPage = () => {
                 randomColor={randomColor}
               />
             )}
+            {showDeclinedInvitations && (
+              <UserListModal
+                listType="declined-invitations"
+                renderButtonOne={true}
+                renderButtonTwo={false}
+                closeModalMethod={setShowDeclinedInvitations}
+                header="Declined Invitations"
+                users={currentEvent.disinterestedUsers}
+                fetchUsers={true}
+                buttonOneText="Message"
+                buttonOneHandler={getStartOrOpenChatWithUserHandler}
+                buttonOneHandlerNeedsEventParam={false}
+                randomColor={randomColor}
+              />
+            )}
             <div
               style={{
                 border: `2px solid ${randomColor}`,
@@ -422,31 +439,18 @@ const EventPage = () => {
                     <p>{`${currentEvent.city}, ${currentEvent.stateProvince}, ${currentEvent.country}`}</p>
                   </div>
                   <div>
-                    {currentEvent.invitees.length > 0 && (
-                      <p>
-                        Invitees:{" "}
-                        <span
-                          onClick={() =>
-                            currentUser?._id &&
-                            currentEvent.organizers.includes(
-                              currentUser._id.toString()
-                            ) &&
-                            currentEvent.invitees.length > 0
-                              ? setShowInvitees(true)
-                              : undefined
-                          }
-                          className={
-                            currentUser?._id &&
-                            currentEvent.organizers.includes(
-                              currentUser._id.toString()
-                            ) &&
-                            currentEvent.invitees.length > 0
-                              ? "show-listed-users-or-invitees"
-                              : undefined
-                          }
-                        >{`${currentEvent.invitees.length}`}</span>
-                      </p>
-                    )}
+                    {currentUser &&
+                      currentUser._id &&
+                      currentEvent.invitees.length > 0 &&
+                      currentEvent.organizers.includes(currentUser._id.toString()) && (
+                        <p>
+                          Invitees:{" "}
+                          <span
+                            onClick={() => setShowInvitees(true)}
+                            className="show-listed-users-or-invitees"
+                          >{`${currentEvent.invitees.length}`}</span>
+                        </p>
+                      )}
                     <p>
                       RSVPs:{" "}
                       <span
@@ -466,6 +470,18 @@ const EventPage = () => {
                         }
                       >{`${currentEvent.interestedUsers.length}`}</span>
                     </p>
+                    {currentUser &&
+                      currentUser._id &&
+                      currentEvent.disinterestedUsers.length > 0 &&
+                      currentEvent.organizers.includes(currentUser._id?.toString()) && (
+                        <p>
+                          Declined invitations:{" "}
+                          <span
+                            onClick={() => setShowDeclinedInvitations(true)}
+                            className="show-listed-users-or-invitees"
+                          >{`${currentEvent.disinterestedUsers.length}`}</span>
+                        </p>
+                      )}
                   </div>
                 </div>
                 {currentEvent.images && currentEvent.images.length > 0 && (
