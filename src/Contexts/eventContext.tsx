@@ -608,6 +608,38 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleRemoveDisinterestedUser = (
+    event: TEvent,
+    user: TBarebonesUser | null
+  ): void => {
+    setIsLoading(true);
+    Requests.deleteFromDisinterestedUsers(user, event)
+      .then((res) => {
+        if (res.ok) {
+          toast("User removed from declined invitations.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        } else {
+          toast.error(
+            "Could not remove user from declined invitations. Please try again.",
+            {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            }
+          );
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
+  };
+
   // Removes organizer from event.organizers. Request sent to DB.
   const handleRemoveOrganizer = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
@@ -807,6 +839,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    handleRemoveDisinterestedUser,
     showDeclinedInvitations,
     setShowDeclinedInvitations,
     inviteesORIGINAL,
