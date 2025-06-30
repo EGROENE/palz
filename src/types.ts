@@ -612,6 +612,8 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  showDeclinedInvitations: boolean;
+  setShowDeclinedInvitations: React.Dispatch<React.SetStateAction<boolean>>;
   handleRemoveOrganizer: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,

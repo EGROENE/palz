@@ -43,6 +43,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
   const [showInvitees, setShowInvitees] = useState<boolean>(false);
+  const [showDeclinedInvitations, setShowDeclinedInvitations] = useState<boolean>(false);
 
   const [addEventIsInProgress, setAddEventIsInProgress] = useState<boolean>(false);
   const [eventEditIsInProgress, setEventEditIsInProgress] = useState<boolean>(false);
@@ -806,6 +807,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    showDeclinedInvitations,
+    setShowDeclinedInvitations,
     inviteesORIGINAL,
     setInviteesORIGINAL,
     organizersORIGINAL,
