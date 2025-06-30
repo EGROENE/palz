@@ -19,6 +19,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
     handleDeleteUserRSVP,
     handleDeclineInvitation,
     setCurrentEvent,
+    handleRemoveDisinterestedUser,
   } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -148,7 +149,15 @@ const EventCard = ({ event }: { event: TEvent }) => {
                 : { backgroundColor: `${randomColor}`, color: "white" }
             }
             disabled={isLoading}
-            onClick={(e) => handleAddUserRSVP(e, event)}
+            onClick={(e) => {
+              handleAddUserRSVP(e, event);
+              if (event.disinterestedUsers) {
+                handleRemoveDisinterestedUser(
+                  event,
+                  Methods.getTBarebonesUser(currentUser)
+                );
+              }
+            }}
           >
             {rsvpButtonText}
           </button>
@@ -251,6 +260,12 @@ const EventCard = ({ event }: { event: TEvent }) => {
                         handleDeleteUserRSVP(event, currentUser, e);
                       } else if (!userRSVPd) {
                         handleAddUserRSVP(e, event);
+                        if (event.disinterestedUsers) {
+                          handleRemoveDisinterestedUser(
+                            event,
+                            Methods.getTBarebonesUser(currentUser)
+                          );
+                        }
                       }
                     }}
                   >

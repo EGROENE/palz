@@ -525,6 +525,12 @@ const EventPage = () => {
                           handleDeleteUserRSVP(currentEvent, currentUser, e);
                         } else if (!userRSVPd) {
                           handleAddUserRSVP(e, currentEvent);
+                          if (currentEvent.disinterestedUsers) {
+                            handleRemoveDisinterestedUser(
+                              currentEvent,
+                              Methods.getTBarebonesUser(currentUser)
+                            );
+                          }
                         }
                       }}
                     >
