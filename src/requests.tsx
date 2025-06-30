@@ -44,7 +44,9 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
                 currentUser &&
                 currentUser._id &&
                 otherUser.friends.includes(user._id.toString()) &&
-                user.friends.includes(currentUser._id.toString())
+                otherUser.friends.includes(currentUser._id.toString()) &&
+                !currentUser.friends.includes(user._id.toString()) &&
+                !user.friends.includes(currentUser._id.toString())
             );
 
             const currentUserIsBlocked: boolean = otherUser.blockedUsers.includes(
@@ -76,7 +78,9 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
               currentUser &&
               currentUser._id &&
               otherUser.friends.includes(user._id.toString()) &&
-              user.friends.includes(currentUser._id.toString())
+              otherUser.friends.includes(currentUser._id.toString()) &&
+              !currentUser.friends.includes(user._id.toString()) &&
+              !user.friends.includes(currentUser._id.toString())
           );
 
           const showLocation: boolean =
@@ -186,14 +190,8 @@ const getPotentialFriends = async (
     return response.json().then((potentialFriends: TUser[]) => {
       if (currentUser && currentUser._id) {
         return potentialFriends.filter((user: TUser) => {
-          const currentUserIsFriendOfFriend: boolean = potentialFriends.some(
-            (user) =>
-              user &&
-              user._id &&
-              currentUser &&
-              currentUser._id &&
-              user.friends.includes(user._id.toString()) &&
-              user.friends.includes(currentUser._id.toString())
+          const currentUserIsFriendOfFriend: boolean = user.friends.some((f) =>
+            currentUser.friends.includes(f)
           );
 
           // if currentUser is friend of friend, and user's profile is visible to friends of friends, return user
@@ -341,14 +339,8 @@ const getPotentialCoOrganizers = (
     return response.json().then((potentialCOs: TUser[]) => {
       if (currentUser && currentUser._id) {
         return potentialCOs.filter((user) => {
-          const currentUserIsFriendOfFriend: boolean = potentialCOs.some(
-            (user) =>
-              user &&
-              user._id &&
-              currentUser &&
-              currentUser._id &&
-              user.friends.includes(user._id.toString()) &&
-              user.friends.includes(currentUser._id.toString())
+          const currentUserIsFriendOfFriend: boolean = user.friends.some((f) =>
+            currentUser.friends.includes(f)
           );
 
           const currentUserIsFriend =
@@ -389,14 +381,8 @@ const getPotentialInvitees = (
     return response.json().then((potentialInvitees: TUser[]) => {
       if (currentUser && currentUser._id) {
         return potentialInvitees.filter((user) => {
-          const currentUserIsFriendOfFriend: boolean = potentialInvitees.some(
-            (user) =>
-              user &&
-              user._id &&
-              currentUser &&
-              currentUser._id &&
-              currentUser.friends.includes(user._id.toString()) &&
-              user.friends.includes(currentUser._id.toString())
+          const currentUserIsFriendOfFriend: boolean = user.friends.some((f) =>
+            currentUser.friends.includes(f)
           );
 
           const currentUserIsFriend =
@@ -1006,14 +992,14 @@ const deleteEvent = (event: TEvent | undefined): Promise<Response> => {
 
 const getEventByID = (eventID: string) => {
   var myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Content-Type", "application/json");
 
-return fetch(`http://localhost:4000/palz/events/${eventID}`, {
-  method: 'GET',
-  headers: myHeaders,
-  redirect: 'follow'
-})
-}
+  return fetch(`http://localhost:4000/palz/events/${eventID}`, {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  });
+};
 
 const removeInvitee = (
   event: TEvent,
@@ -1231,15 +1217,12 @@ const getPotentialChatMembers = async (
             ? false
             : true;
 
-        const currentUserIsFriendOfFriend: boolean = potentialCMs.some(
-          (user) =>
-            user &&
-            user._id &&
-            currentUser &&
-            currentUser._id &&
-            currentUser.friends.includes(user._id.toString()) &&
-            user.friends.includes(currentUser._id.toString())
-        );
+        const currentUserIsFriendOfFriend: boolean = potentialCMs.some((pcm) => {
+          if (currentUser && currentUser._id) {
+            return pcm.friends.some((f) => currentUser.friends.includes(f));
+          }
+          return false;
+        });
 
         const currentUserIsFriend: boolean =
           currentUser && currentUser._id
