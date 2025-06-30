@@ -41,6 +41,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     undefined
   ); // event user is editing or viewing
 
+  const [disinterestedUsers, setDisinterestedUsers] = useState<string[] | undefined>(
+    currentEvent?.disinterestedUsers
+  );
+
   const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
   const [showInvitees, setShowInvitees] = useState<boolean>(false);
   const [showDeclinedInvitations, setShowDeclinedInvitations] = useState<boolean>(false);
@@ -416,6 +420,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: (data) => {
       if (data.ok) {
         setCurrentEvent(undefined);
+        setDisinterestedUsers(undefined);
         queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
         toast("Event deleted", {
@@ -613,6 +618,15 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     user: TBarebonesUser | null
   ): void => {
     setIsLoading(true);
+    if (disinterestedUsers) {
+      setDisinterestedUsers(
+        disinterestedUsers.filter((u) => {
+          if (user && user._id) {
+            return u !== user._id.toString();
+          }
+        })
+      );
+    }
     Requests.deleteFromDisinterestedUsers(user, event)
       .then((res) => {
         if (res.ok) {
@@ -624,6 +638,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             },
           });
         } else {
+          if (user && user._id && disinterestedUsers) {
+            setDisinterestedUsers(disinterestedUsers.concat(user._id.toString()));
+          }
           toast.error(
             "Could not remove user from declined invitations. Please try again.",
             {
@@ -839,6 +856,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    disinterestedUsers,
+    setDisinterestedUsers,
     handleRemoveDisinterestedUser,
     showDeclinedInvitations,
     setShowDeclinedInvitations,

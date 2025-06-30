@@ -35,6 +35,7 @@ const EventPage = () => {
     setShowInvitees,
     setShowDeclinedInvitations,
     currentEvent,
+    handleRemoveDisinterestedUser,
   } = useEventContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
@@ -509,7 +510,7 @@ const EventPage = () => {
               {currentEvent.eventEndDateTimeInMS > now &&
                 currentUser &&
                 userCreatedAccount !== null &&
-                (!userIsOrganizer ? (
+                !userIsOrganizer && (
                   <div className="theme-element-container">
                     <button
                       disabled={maxInviteesReached || isLoading}
@@ -524,7 +525,11 @@ const EventPage = () => {
                       {rsvpButtonText}
                     </button>
                   </div>
-                ) : (
+                )}
+              {currentEvent.eventEndDateTimeInMS > now &&
+                currentUser &&
+                userCreatedAccount !== null &&
+                userIsOrganizer && (
                   <Link to={`/edit-event/${currentEvent._id}`}>
                     <div className="theme-element-container">
                       <button onClick={() => setCurrentEvent(currentEvent)}>
@@ -532,7 +537,33 @@ const EventPage = () => {
                       </button>
                     </div>
                   </Link>
-                ))}
+                )}
+              {currentEvent.eventEndDateTimeInMS > now &&
+                currentUser &&
+                currentUser._id &&
+                userCreatedAccount !== null &&
+                currentEvent.disinterestedUsers.includes(currentUser._id.toString()) &&
+                currentEvent.invitees.includes(currentUser._id.toString()) && (
+                  <>
+                    <p>
+                      You declined an invitation to this event. Would you like to undo
+                      that?
+                    </p>
+                    <div className="theme-element-container">
+                      <button
+                        disabled={maxInviteesReached || isLoading}
+                        onClick={() =>
+                          handleRemoveDisinterestedUser(
+                            currentEvent,
+                            Methods.getTBarebonesUser(currentUser)
+                          )
+                        }
+                      >
+                        Undo
+                      </button>
+                    </div>
+                  </>
+                )}
             </div>
           </>
         )}

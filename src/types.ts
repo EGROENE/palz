@@ -612,6 +612,8 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  disinterestedUsers: string[] | undefined;
+setDisinterestedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>
   handleRemoveDisinterestedUser: (event: TEvent, user: TBarebonesUser | null) => void;
   showDeclinedInvitations: boolean;
   setShowDeclinedInvitations: React.Dispatch<React.SetStateAction<boolean>>;
