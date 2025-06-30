@@ -134,31 +134,16 @@ const UserListModal = ({
     }
   };
 
+  // make every handler & related request accept TBarebonesUser
   const getButtonTwoHandlerParams = (user: TBarebonesUser) => {
-    if (user._id) {
-      Requests.getUserByID(user._id.toString())
-        .then((res) => {
-          if (res.ok) {
-            res
-              .json()
-              .then((user: TUser) => {
-                if (!buttonTwoHandlerParams) {
-                  if (
-                    listType === "rsvpd-users" ||
-                    (listType === "invitees" &&
-                      (buttonTwoHandler === handleRemoveInvitee ||
-                        buttonTwoHandler === handleDeleteUserRSVP))
-                  ) {
-                    return [currentEvent, user];
-                  }
-                }
-              })
-              .catch((error) => console.log(error));
-          } else {
-            getButtonTwoHandlerParams(user);
-          }
-        })
-        .catch((error) => console.log(error));
+    if (!buttonTwoHandlerParams) {
+      if (
+        (listType === "rsvpd-users" || listType === "invitees") &&
+        (buttonTwoHandler === handleRemoveInvitee ||
+          buttonTwoHandler === handleDeleteUserRSVP)
+      ) {
+        return [currentEvent, user];
+      }
     }
     return undefined;
   };
