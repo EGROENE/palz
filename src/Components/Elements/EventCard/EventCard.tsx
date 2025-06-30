@@ -24,11 +24,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
-  const userRSVPd: boolean =
-    currentUser && currentUser._id
-      ? event.interestedUsers.includes(currentUser._id.toString())
-      : false;
-
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
 
   useEffect(() => {
@@ -44,13 +39,41 @@ const EventCard = ({ event }: { event: TEvent }) => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
-  const userIsInvitee: boolean = currentUser?._id
-    ? event.invitees.includes(currentUser._id.toString())
-    : false;
+  const [fetchEventIsLoading, setFetchEventIsLoading] = useState<boolean>(false);
+  const [fetchEventIsError, setFetchEventIsError] = useState<boolean>(false);
 
-  const userDeclinedInvitation: boolean = currentUser?._id
-    ? event.disinterestedUsers.includes(currentUser._id.toString())
-    : false;
+  const [cardEvent, setCardEvent] = useState<TEvent>();
+
+  const userRSVPd: boolean =
+    currentUser && currentUser._id && cardEvent
+      ? cardEvent.interestedUsers.includes(currentUser._id.toString())
+      : false;
+
+  // Update event:
+  useEffect(() => {
+    if (event._id) {
+      Requests.getEventByID(event._id)
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((e) => setCardEvent(e));
+          } else {
+            setFetchEventIsError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchEventIsLoading(false));
+    }
+  });
+
+  const userIsInvitee: boolean =
+    currentUser?._id && cardEvent
+      ? cardEvent.invitees.includes(currentUser._id.toString())
+      : false;
+
+  const userDeclinedInvitation: boolean =
+    currentUser?._id && cardEvent
+      ? cardEvent.disinterestedUsers.includes(currentUser._id.toString())
+      : false;
 
   // Define in state eventOrganizers of type TBarebonesUser[]. Set in useEffect by calling getUserByID on every _id in event.organizers, then set in Promise.all.then() statement.
   const [eventOrganizers, setEventOrganizers] = useState<TBarebonesUser[] | null>(null);
@@ -59,34 +82,38 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const [fetchOrganizersIsError, setFetchOrganizersIsError] = useState<boolean>(false);
 
   useEffect(() => {
-    const promisesToAwaitOrganizers = event.organizers.map((id) => {
+    const promisesToAwaitOrganizers = cardEvent?.organizers.map((id) => {
       return Requests.getUserByID(id).then((res) => {
         return res.json().then((user: TUser) => user);
       });
     });
 
     setFetchOrganizersIsLoading(true);
-    Promise.all(promisesToAwaitOrganizers)
-      .then((pic: TUser[]) => {
-        setEventOrganizers(pic.map((p) => Methods.getTBarebonesUser(p)));
-      })
-      .catch((error) => {
-        console.log(error);
-        setFetchOrganizersIsError(true);
-      })
-      .finally(() => setFetchOrganizersIsLoading(false));
+    if (promisesToAwaitOrganizers) {
+      Promise.all(promisesToAwaitOrganizers)
+        .then((pic: TUser[]) => {
+          setEventOrganizers(pic.map((p) => Methods.getTBarebonesUser(p)));
+        })
+        .catch((error) => {
+          console.log(error);
+          setFetchOrganizersIsError(true);
+        })
+        .finally(() => setFetchOrganizersIsLoading(false));
+    }
   }, [event]);
 
   const userIsOrganizer =
     currentUser &&
     currentUser._id &&
-    event.organizers.includes(currentUser._id.toString())
+    cardEvent &&
+    cardEvent.organizers.includes(currentUser._id.toString())
       ? true
       : false;
 
   const maxInviteesReached: boolean =
-    event.maxParticipants && event
-      ? event.invitees.length === event.maxParticipants - event?.organizers.length
+    cardEvent && cardEvent.maxParticipants
+      ? cardEvent.invitees.length ===
+        cardEvent.maxParticipants - cardEvent.organizers.length
       : false;
 
   const getRSVPButtonText = (): string => {
@@ -151,7 +178,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
             disabled={isLoading}
             onClick={(e) => {
               handleAddUserRSVP(e, event);
-              if (event.disinterestedUsers) {
+              if (cardEvent && cardEvent.disinterestedUsers) {
                 handleRemoveDisinterestedUser(
                   event,
                   Methods.getTBarebonesUser(currentUser)
@@ -258,9 +285,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
                     onClick={(e) => {
                       if (userRSVPd && currentUser) {
                         handleDeleteUserRSVP(event, currentUser, e);
-                      } else if (!userRSVPd) {
+                      } else if (!userRSVPd && cardEvent) {
                         handleAddUserRSVP(e, event);
-                        if (event.disinterestedUsers) {
+                        if (cardEvent.disinterestedUsers) {
                           handleRemoveDisinterestedUser(
                             event,
                             Methods.getTBarebonesUser(currentUser)
