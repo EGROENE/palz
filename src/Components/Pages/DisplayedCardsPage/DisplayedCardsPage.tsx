@@ -362,26 +362,6 @@ const DisplayedCardsPage = ({
             setAllExplorableEvents(batchOfEvents);
             setDisplayedItems(
               batchOfEvents.filter((event) => {
-                const eventOrganizerNames = event.organizers.map(
-                  (o) => `${o.firstName} ${o.lastName}`
-                );
-
-                const eventOrganizerUsernames = event.organizers.map((o) => o.username);
-
-                let isOrganizerNameMatch: boolean = false;
-                for (const name of eventOrganizerNames) {
-                  if (name.includes(input.toLowerCase())) {
-                    isOrganizerNameMatch = true;
-                  }
-                }
-
-                let isUsernameMatch: boolean = false;
-                for (const username of eventOrganizerUsernames) {
-                  if (username?.includes(input.toLowerCase())) {
-                    isUsernameMatch = true;
-                  }
-                }
-
                 let isInterestMatch: boolean = false;
                 for (const interest of event.relatedInterests) {
                   if (interest.includes(input.toLowerCase())) {
@@ -396,8 +376,6 @@ const DisplayedCardsPage = ({
                   event.city?.toLowerCase().includes(input.toLowerCase()) ||
                   event.country?.toLowerCase().includes(input.toLowerCase()) ||
                   event.description.toLowerCase().includes(input.toLowerCase()) ||
-                  isOrganizerNameMatch ||
-                  isUsernameMatch ||
                   isInterestMatch ||
                   event.stateProvince?.toLowerCase().includes(input.toLowerCase())
                 ) {
@@ -833,27 +811,7 @@ const DisplayedCardsPage = ({
           initializeEventsSearch(inputCleaned.trim());
         } else {
           setDisplayedItems(
-            allExplorableEvents.filter((ee) => {
-              const eventOrganizerNames = ee.organizers.map(
-                (o) => `${o.firstName} ${o.lastName}`
-              );
-
-              const eventOrganizerUsernames = ee.organizers.map((o) => o.username);
-
-              let isOrganizerNameMatch: boolean = false;
-              for (const name of eventOrganizerNames) {
-                if (name.includes(inputCleaned.toLowerCase())) {
-                  isOrganizerNameMatch = true;
-                }
-              }
-
-              let isUsernameMatch: boolean = false;
-              for (const username of eventOrganizerUsernames) {
-                if (username?.includes(inputCleaned.toLowerCase())) {
-                  isUsernameMatch = true;
-                }
-              }
-
+            allExplorableEvents.filter((ee: TEvent) => {
               let isInterestMatch: boolean = false;
               for (const interest of ee.relatedInterests) {
                 if (interest.includes(inputCleaned.toLowerCase())) {
@@ -868,8 +826,6 @@ const DisplayedCardsPage = ({
                 ee.city?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
                 ee.country?.toLowerCase().includes(inputCleaned.toLowerCase()) ||
                 ee.description.toLowerCase().includes(inputCleaned.toLowerCase()) ||
-                isOrganizerNameMatch ||
-                isUsernameMatch ||
                 isInterestMatch ||
                 ee.stateProvince?.toLowerCase().includes(inputCleaned.toLowerCase())
               ) {
