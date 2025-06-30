@@ -86,7 +86,7 @@ const eventSchema = new Schema({
     required: true,
   },
   interestedUsers: {
-    type: [inviteeOrganizerSchema],
+    type: [String],
     required: true,
   },
   disinterestedUsers: {
