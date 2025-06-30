@@ -37,7 +37,8 @@ const UserListModal = ({
     | "other-user-friends"
     | "blocked-users"
     | "blocked-users-event"
-    | "mutual-friends";
+    | "mutual-friends"
+    | "declined-invitations";
   renderButtonOne: boolean;
   renderButtonTwo: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
