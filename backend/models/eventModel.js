@@ -2,16 +2,6 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const inviteeOrganizerSchema = new Schema({
-  _id: String | mongoose.Types.ObjectId,
-  username: String,
-  firstName: String,
-  lastName: String,
-  profileImage: String,
-  emailAddress: String,
-  index: Number,
-});
-
 const eventSchema = new Schema({
   index: {
     type: Number,
@@ -90,7 +80,7 @@ const eventSchema = new Schema({
     required: true,
   },
   disinterestedUsers: {
-    type: [inviteeOrganizerSchema],
+    type: [String],
     required: true,
   },
   images: {
