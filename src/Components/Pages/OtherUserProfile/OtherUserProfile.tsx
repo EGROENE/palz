@@ -305,9 +305,7 @@ const OtherUserProfile = () => {
                     event.eventEndDateTimeInMS > now &&
                     currentOtherUser &&
                     currentOtherUser._id &&
-                    event.interestedUsers
-                      .map((i) => i._id)
-                      .includes(currentOtherUser._id.toString())
+                    event.interestedUsers.includes(currentOtherUser._id.toString())
                 );
 
                 const ongoingEvents: TEvent[] | undefined = allEvents?.filter((event) => {
@@ -316,9 +314,7 @@ const OtherUserProfile = () => {
                     currentOtherUser &&
                     currentOtherUser._id &&
                     (event.organizers.includes(currentOtherUser._id.toString()) ||
-                      event.interestedUsers
-                        .map((i) => i._id)
-                        .includes(currentOtherUser._id.toString()));
+                      event.interestedUsers.includes(currentOtherUser._id.toString()));
                 });
 
                 const upcomingEventsUserOrganizes: TEvent[] | undefined =
@@ -345,9 +341,7 @@ const OtherUserProfile = () => {
                   (event) =>
                     currentOtherUser &&
                     currentOtherUser._id &&
-                    event.interestedUsers
-                      .map((i) => i._id)
-                      .includes(currentOtherUser._id.toString()) &&
+                    event.interestedUsers.includes(currentOtherUser._id.toString()) &&
                     event.eventEndDateTimeInMS < now
                 );
 
@@ -624,11 +618,7 @@ const OtherUserProfile = () => {
           }
 
           // Remove blockee's RSVP:
-          if (
-            event.interestedUsers
-              .map((i) => i._id)
-              .includes(currentOtherUser._id.toString())
-          ) {
+          if (event.interestedUsers.includes(currentOtherUser._id.toString())) {
             handleDeleteUserRSVP(event, currentOtherUser, e);
           }
 

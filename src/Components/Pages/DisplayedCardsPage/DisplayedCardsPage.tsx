@@ -452,13 +452,11 @@ const DisplayedCardsPage = ({
 
                 if (filter === "RSVP'd by friends") {
                   if (
-                    ev.interestedUsers
-                      .map((iu) => iu._id)
-                      .some((iu) => {
-                        if (iu) {
-                          return currentUser?.friends.includes(iu.toString());
-                        }
-                      }) &&
+                    ev.interestedUsers.some((iu) => {
+                      if (iu) {
+                        return currentUser?.friends.includes(iu.toString());
+                      }
+                    }) &&
                     matches.indexOf(ev) === -1
                   ) {
                     matches.push(ev);

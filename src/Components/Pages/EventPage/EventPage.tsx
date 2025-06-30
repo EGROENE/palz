@@ -41,9 +41,7 @@ const EventPage = () => {
 
   const userRSVPd: boolean =
     currentUser && currentUser._id && currentEvent
-      ? currentEvent.interestedUsers
-          .map((i) => i._id)
-          .includes(currentUser._id.toString())
+      ? currentEvent.interestedUsers.includes(currentUser._id.toString())
       : false;
 
   const navigation = useNavigate();

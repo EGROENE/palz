@@ -803,17 +803,13 @@ const addUserRSVP = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedInterestedUsersArray: Array<TBarebonesUser> = event.interestedUsers.concat(
-    {
-      _id: user?._id,
-      username: user?.username,
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      emailAddress: user?.emailAddress,
-      profileImage: user?.profileImage,
-      index: user?.index,
+  const getUpdatedInterestedUsersArray = (): string[] => {
+    if (user && user._id) {
+      return event.interestedUsers.concat(user?._id?.toString());
     }
-  );
+    return event.interestedUsers;
+  };
+  const updatedInterestedUsersArray: string[] = getUpdatedInterestedUsersArray();
 
   const getRaw = () => {
     return JSON.stringify({
@@ -870,7 +866,7 @@ const deleteUserRSVP = (user: TUser | TOtherUser | null, event: TEvent) => {
   const getRaw = () => {
     return JSON.stringify({
       "interestedUsers": event?.interestedUsers.filter((iu) => {
-        if (iu._id !== user?._id) {
+        if (iu !== user?._id) {
           return iu;
         }
       }),
