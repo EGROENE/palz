@@ -6,7 +6,6 @@ import {
   TUserValuesToUpdate,
   TChatValuesToUpdate,
   TOtherUser,
-  TBarebonesUser,
 } from "./types";
 
 const getAllUsers = () => {
@@ -833,16 +832,13 @@ const addToDisinterestedUsers = (
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const updatedDisinterestedUsersArray: TBarebonesUser[] =
-    event.disinterestedUsers.concat({
-      _id: user?._id,
-      username: user?.username,
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      emailAddress: user?.emailAddress,
-      profileImage: user?.profileImage,
-      index: user?.index,
-    });
+  const getUpdatedDisinterestedUsersArray = (): string[] => {
+    if (user && user._id) {
+      return event.disinterestedUsers.concat(user._id.toString());
+    }
+    return event.disinterestedUsers;
+  };
+  const updatedDisinterestedUsersArray: string[] = getUpdatedDisinterestedUsersArray();
 
   const getRaw = () => {
     return JSON.stringify({

@@ -69,7 +69,7 @@ const UserHomepage = () => {
         (ev) =>
           currentUser._id &&
           ev.invitees.includes(currentUser._id.toString()) &&
-          !ev.disinterestedUsers.map((i) => i._id).includes(currentUser._id.toString())
+          !ev.disinterestedUsers.includes(currentUser._id.toString())
       );
 
       setAllCurrentUserEvents(
