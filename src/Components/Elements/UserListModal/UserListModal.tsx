@@ -115,8 +115,14 @@ const UserListModal = ({
         }
       }
     }
-  }, [listType, currentUser?.blockedUsers]);
+  }, [
+    listType,
+    currentUser?.blockedUsers,
+    currentEvent?.invitees,
+    currentEvent?.interestedUsers,
+  ]);
 
+  // make every handler & related request accept TBarebonesUser
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
     if (!buttonOneHandlerParams) {
       if (
