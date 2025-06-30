@@ -154,7 +154,7 @@ export type TEvent = {
   country: string | undefined;
   address: string | undefined;
   additionalInfo: string;
-  interestedUsers: TBarebonesUser[];
+  interestedUsers: string[];
   disinterestedUsers: TBarebonesUser[];
   relatedInterests: string[];
 };
