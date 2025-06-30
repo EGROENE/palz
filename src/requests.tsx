@@ -1,5 +1,6 @@
 import {
   TUser,
+  TBarebonesUser,
   TEvent,
   TChat,
   TEventValuesToUpdate,
@@ -855,6 +856,30 @@ const addToDisinterestedUsers = (
   });
 };
 
+const deleteFromDisinterestedUsers = (
+  user: TBarebonesUser | null,
+  event: TEvent
+): Promise<Response> => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const getRaw = () => {
+    return JSON.stringify({
+      "disinterestedUsers": event.disinterestedUsers.filter(
+        (u) => user && u !== user?._id
+      ),
+    });
+  };
+  const raw = getRaw();
+
+  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  });
+};
+
 const deleteUserRSVP = (user: TUser | TOtherUser | null, event: TEvent) => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -1285,6 +1310,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  deleteFromDisinterestedUsers,
   getEventByID,
   getUserByUsername,
   getPotentialChatMembers,
