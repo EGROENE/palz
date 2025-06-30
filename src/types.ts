@@ -612,11 +612,7 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
-  handleRemoveDisinterestedUser: (
-    event: TEvent,
-    user: TBarebonesUser | null,
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ) => void;
+  handleRemoveDisinterestedUser: (event: TEvent, user: TBarebonesUser | null) => void;
   showDeclinedInvitations: boolean;
   setShowDeclinedInvitations: React.Dispatch<React.SetStateAction<boolean>>;
   handleRemoveOrganizer: (
