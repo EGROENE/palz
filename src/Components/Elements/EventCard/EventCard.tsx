@@ -25,7 +25,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   const userRSVPd: boolean =
     currentUser && currentUser._id
-      ? event.interestedUsers.map((u) => u._id).includes(currentUser._id.toString())
+      ? event.interestedUsers.includes(currentUser._id.toString())
       : false;
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
@@ -48,7 +48,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
     : false;
 
   const userDeclinedInvitation: boolean = currentUser?._id
-    ? event.disinterestedUsers.map((i) => i._id).includes(currentUser._id.toString())
+    ? event.disinterestedUsers.includes(currentUser._id.toString())
     : false;
 
   // Define in state eventOrganizers of type TBarebonesUser[]. Set in useEffect by calling getUserByID on every _id in event.organizers, then set in Promise.all.then() statement.
