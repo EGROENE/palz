@@ -324,7 +324,12 @@ const EventPage = () => {
               <UserListModal
                 listType="rsvpd-users"
                 renderButtonOne={true}
-                renderButtonTwo={true}
+                renderButtonTwo={
+                  currentUser?._id &&
+                  currentEvent.organizers.includes(currentUser._id.toString())
+                    ? true
+                    : false
+                }
                 closeModalMethod={setShowRSVPs}
                 header="RSVPs"
                 users={currentEvent.interestedUsers}
@@ -332,9 +337,24 @@ const EventPage = () => {
                 buttonOneText="Message"
                 buttonOneHandler={getStartOrOpenChatWithUserHandler}
                 buttonOneHandlerNeedsEventParam={false}
-                buttonTwoText="Remove"
-                buttonTwoHandler={handleDeleteUserRSVP}
-                buttonTwoHandlerNeedsEventParam={false}
+                buttonTwoText={
+                  currentUser?._id &&
+                  currentEvent.organizers.includes(currentUser._id.toString())
+                    ? "Remove"
+                    : undefined
+                }
+                buttonTwoHandler={
+                  currentUser?._id &&
+                  currentEvent.organizers.includes(currentUser._id.toString())
+                    ? handleDeleteUserRSVP
+                    : undefined
+                }
+                buttonTwoHandlerNeedsEventParam={
+                  currentUser?._id &&
+                  currentEvent.organizers.includes(currentUser._id.toString())
+                    ? false
+                    : undefined
+                }
                 randomColor={randomColor}
               />
             )}
