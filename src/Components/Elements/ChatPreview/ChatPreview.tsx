@@ -7,7 +7,7 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 const ChatPreview = ({ chat }: { chat: TChat }) => {
   const { currentUser } = useUserContext();
   const {
-    getChatMembers,
+    chatMembers,
     handleOpenChat,
     getNumberOfUnreadMessagesInChat,
     setShowAreYouSureYouWantToDeleteChat,
@@ -102,44 +102,43 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
         className="chat-preview"
       >
         <div className="profile-images-chat-preview-container">
-          {getChatMembers(chat.members).map(
-            (member) =>
-              getChatMembers(chat.members).indexOf(member) < 3 && (
-                <img
-                  key={member.profileImage}
-                  style={
-                    getChatMembers(chat.members).indexOf(member) > 0
-                      ? {
-                          border: `4px solid ${randomColor}`,
-                          zIndex: `${getChatMembers(chat.members).indexOf(member)}`,
-                        }
-                      : { border: `4px solid ${randomColor}` }
-                  }
-                  src={member.profileImage}
-                />
-              )
-          )}
-          {chat.members.length - 1 > 3 && (
-            <span className="more-images-text">{`+ ${
-              getChatMembers(chat.members).length - 3
-            }`}</span>
+          {chatMembers &&
+            chatMembers.map(
+              (member) =>
+                chatMembers.indexOf(member) < 3 && (
+                  <img
+                    key={member.profileImage}
+                    style={
+                      chatMembers.indexOf(member) > 0
+                        ? {
+                            border: `4px solid ${randomColor}`,
+                            zIndex: `${chatMembers.indexOf(member)}`,
+                          }
+                        : { border: `4px solid ${randomColor}` }
+                    }
+                    src={member.profileImage}
+                  />
+                )
+            )}
+          {chatMembers && chatMembers.length - 1 > 3 && (
+            <span className="more-images-text">{`+ ${chatMembers.length - 3}`}</span>
           )}
         </div>
         <div className="chat-preview-container-text-container">
-          <header style={{ color: randomColor }}>
-            {`${getChatMembers(chat.members)
-              .slice(0, 3)
-              .map((member) =>
-                getChatMembers(chat.members).indexOf(member) <= 2
-                  ? `${member.firstName} ${member.lastName}`
-                  : ""
-              )
-              .join(", ")} ${
-              getChatMembers(chat.members).length - 3 > 0
-                ? `+${getChatMembers(chat.members).length - 3} more`
-                : ""
-            }`}
-          </header>
+          {chatMembers && (
+            <header style={{ color: randomColor }}>
+              {`${chatMembers
+                .slice(0, 3)
+                .map((member) =>
+                  chatMembers.indexOf(member) <= 2
+                    ? `${member.firstName} ${member.lastName}`
+                    : ""
+                )
+                .join(", ")} ${
+                chatMembers.length - 3 > 0 ? `+${chatMembers.length - 3} more` : ""
+              }`}
+            </header>
+          )}
           <div className="last-message-preview-and-date">
             <span>{getPreviewOfLastMessage(chat)}</span>
             {chat.messages.length > 0 && (

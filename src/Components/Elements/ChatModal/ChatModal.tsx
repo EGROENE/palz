@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Message from "../Message/Message";
-import { TOtherUser, TBarebonesUser, TUser, TThemeColor } from "../../../types";
+import { TOtherUser, TUser, TThemeColor } from "../../../types";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -33,7 +33,7 @@ const ChatModal = () => {
     setShowChatModal,
     setCurrentChat,
     currentChat,
-    getChatMembers,
+    chatMembers,
     chatMembersSearchQuery,
     setChatMembersSearchQuery,
     showPotentialChatMembers,
@@ -467,60 +467,61 @@ const ChatModal = () => {
                       }}
                     />
                   )}
-                  {getChatMembers(currentChat.members).map((member) => (
-                    <ListedUser
-                      key={member._id?.toString()}
-                      objectLink={`/users/${member?.username}`}
-                      user={Methods.getTBarebonesUser(member)}
-                      title={
-                        currentChat &&
-                        currentChat.admins &&
-                        member._id &&
-                        currentChat.admins
-                          .map((elem) => elem._id)
-                          .includes(member._id.toString())
-                          ? "Admin"
-                          : undefined
-                      }
-                      renderButtonOne={true}
-                      buttonOneText={getButtonOneText(member)}
-                      buttonOneHandler={getButtonOneHandler(member)}
-                      renderButtonTwo={
-                        currentUser &&
-                        currentUser._id &&
-                        currentChat &&
-                        currentChat.admins &&
-                        member._id &&
-                        !currentChat.admins
-                          .map((elem) => elem._id)
-                          .includes(member._id.toString()) &&
-                        currentChat.admins
-                          .map((elem) => elem._id)
-                          .includes(currentUser._id.toString())
-                          ? true
-                          : false
-                      }
-                      buttonTwoHandler={
-                        currentUser &&
-                        currentUser._id &&
-                        currentChat &&
-                        currentChat.admins &&
-                        member._id &&
-                        !currentChat.admins
-                          .map((elem) => elem._id)
-                          .includes(member._id.toString()) &&
-                        currentChat.admins
-                          .map((elem) => elem._id)
-                          .includes(currentUser._id.toString())
-                          ? () => {
-                              setCurrentOtherUser(member);
-                              handleRemoveUserFromChat(member, currentChat);
-                            }
-                          : undefined
-                      }
-                      buttonTwoText="Remove"
-                    />
-                  ))}
+                  {chatMembers &&
+                    chatMembers.map((member) => (
+                      <ListedUser
+                        key={member._id?.toString()}
+                        objectLink={`/users/${member?.username}`}
+                        user={Methods.getTBarebonesUser(member)}
+                        title={
+                          currentChat &&
+                          currentChat.admins &&
+                          member._id &&
+                          currentChat.admins
+                            .map((elem) => elem._id)
+                            .includes(member._id.toString())
+                            ? "Admin"
+                            : undefined
+                        }
+                        renderButtonOne={true}
+                        buttonOneText={getButtonOneText(member)}
+                        buttonOneHandler={getButtonOneHandler(member)}
+                        renderButtonTwo={
+                          currentUser &&
+                          currentUser._id &&
+                          currentChat &&
+                          currentChat.admins &&
+                          member._id &&
+                          !currentChat.admins
+                            .map((elem) => elem._id)
+                            .includes(member._id.toString()) &&
+                          currentChat.admins
+                            .map((elem) => elem._id)
+                            .includes(currentUser._id.toString())
+                            ? true
+                            : false
+                        }
+                        buttonTwoHandler={
+                          currentUser &&
+                          currentUser._id &&
+                          currentChat &&
+                          currentChat.admins &&
+                          member._id &&
+                          !currentChat.admins
+                            .map((elem) => elem._id)
+                            .includes(member._id.toString()) &&
+                          currentChat.admins
+                            .map((elem) => elem._id)
+                            .includes(currentUser._id.toString())
+                            ? () => {
+                                setCurrentOtherUser(member);
+                                handleRemoveUserFromChat(member, currentChat);
+                              }
+                            : undefined
+                        }
+                        buttonTwoText="Remove"
+                      />
+                    ))}
                 </div>
               )}
             </div>
