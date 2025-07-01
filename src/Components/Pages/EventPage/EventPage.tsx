@@ -88,6 +88,18 @@ const EventPage = () => {
 
     window.scrollTo(0, 0);
 
+    if (showRSVPs) {
+      setShowRSVPs(false);
+    }
+
+    if (showInvitees) {
+      setShowInvitees(false);
+    }
+
+    if (showDeclinedInvitations) {
+      setShowDeclinedInvitations(false);
+    }
+
     // Set currentEvent based on param:
     if (eventID) {
       setFetchEventIsLoading(true);
