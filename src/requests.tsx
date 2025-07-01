@@ -880,7 +880,7 @@ const deleteFromDisinterestedUsers = (
   });
 };
 
-const deleteUserRSVP = (user: TUser | TOtherUser | null, event: TEvent) => {
+const deleteUserRSVP = (user: TBarebonesUser | null, event: TEvent) => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
