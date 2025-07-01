@@ -752,7 +752,7 @@ export type TEventContext = {
   ) => void;
   handleRemoveInvitee: (
     event: TEvent,
-    user: TUser | TOtherUser | null,
+    user: TBarebonesUser | null,
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
   handleDeclineInvitation: (

@@ -601,7 +601,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleRemoveInvitee = (
     event: TEvent,
-    user: TUser | TOtherUser | null,
+    user: TBarebonesUser | null,
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     e.preventDefault();
