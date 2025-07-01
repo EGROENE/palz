@@ -769,6 +769,8 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
+  fetchChatMembersIsError: boolean
+  setFetchChatMembersIsError: React.Dispatch<React.SetStateAction<boolean>>;
   fetchChatMembersIsLoading: boolean;
   setFetchChatMembersIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   handleLoadMoreItemsOnScroll: (

@@ -110,6 +110,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [fetchChatMembersIsLoading, setFetchChatMembersIsLoading] =
     useState<boolean>(false);
 
+  const [fetchChatMembersIsError, setFetchChatMembersIsError] = useState<boolean>(false);
+
   const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
     queryKey: ["userChats"],
     queryFn: () => Requests.getCurrentUserChats(currentUser),
@@ -959,6 +961,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    fetchChatMembersIsError,
+    setFetchChatMembersIsError,
     fetchChatMembersIsLoading,
     setFetchChatMembersIsLoading,
     handleCancelAddOrEditChat,
