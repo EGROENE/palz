@@ -465,7 +465,10 @@ const EventPage = () => {
                           <span
                             onClick={() => setShowInvitees(true)}
                             className="show-listed-users-or-invitees"
-                          >{`${currentEvent.invitees.length}`}</span>
+                          >{`${
+                            Methods.removeDuplicatesFromArray(currentEvent.invitees)
+                              .length
+                          }`}</span>
                         </p>
                       )}
                     <p>
@@ -485,7 +488,10 @@ const EventPage = () => {
                             ? "show-listed-users-or-invitees"
                             : undefined
                         }
-                      >{`${currentEvent.interestedUsers.length}`}</span>
+                      >{`${
+                        Methods.removeDuplicatesFromArray(currentEvent.interestedUsers)
+                          .length
+                      }`}</span>
                     </p>
                     {currentUser &&
                       currentUser._id &&
@@ -496,7 +502,11 @@ const EventPage = () => {
                           <span
                             onClick={() => setShowDeclinedInvitations(true)}
                             className="show-listed-users-or-invitees"
-                          >{`${currentEvent.disinterestedUsers.length}`}</span>
+                          >{`${
+                            Methods.removeDuplicatesFromArray(
+                              currentEvent.disinterestedUsers
+                            ).length
+                          }`}</span>
                         </p>
                       )}
                   </div>
