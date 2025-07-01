@@ -861,7 +861,12 @@ const ChatModal = () => {
                   }
                   onClick={() => {
                     if (currentChat) {
-                      handleAddMultipleUsersToChat(usersToAddToChat, currentChat);
+                      handleAddMultipleUsersToChat(
+                        usersToAddToChat
+                          .map((u) => u._id?.toString())
+                          .filter((elem) => elem !== undefined),
+                        currentChat
+                      );
                     }
                   }}
                 >
