@@ -477,7 +477,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const removeInviteeMutation = useMutation({
-    mutationFn: ({ event, user }: { event: TEvent; user: TUser | TOtherUser }) =>
+    mutationFn: ({ event, user }: { event: TEvent; user: TBarebonesUser }) =>
       Requests.removeInvitee(event, user),
     onSuccess: (data) => {
       if (data.ok) {
