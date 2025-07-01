@@ -475,15 +475,11 @@ const EventPage = () => {
                       RSVPs:{" "}
                       <span
                         onClick={() =>
-                          currentUser?._id &&
-                          currentEvent.organizers.includes(currentUser._id.toString()) &&
                           currentEvent.interestedUsers.length > 0
                             ? setShowRSVPs(true)
                             : undefined
                         }
                         className={
-                          currentUser?._id &&
-                          currentEvent.organizers.includes(currentUser._id.toString()) &&
                           currentEvent.interestedUsers.length > 0
                             ? "show-listed-users-or-invitees"
                             : undefined
