@@ -329,7 +329,7 @@ const ChatModal = () => {
     currentUser &&
     currentUser._id &&
     (currentChat.admins.map((elem) => elem._id).includes(currentUser._id.toString()) ||
-      (currentChat.members.map((elem) => elem._id).includes(currentUser._id.toString()) &&
+      (currentChat.members.includes(currentUser._id.toString()) &&
         currentChat.members.length === 2))
       ? true
       : false;
