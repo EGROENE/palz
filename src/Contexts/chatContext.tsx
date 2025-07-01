@@ -896,7 +896,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           if (
             chat.members.length === 2 &&
             otherUser._id &&
-            chat.members.map((m) => m._id).indexOf(otherUser._id.toString()) !== -1
+            chat.members.indexOf(otherUser._id.toString()) !== -1
           ) {
             return chat;
           }
