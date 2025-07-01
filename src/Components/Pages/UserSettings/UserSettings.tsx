@@ -13,6 +13,7 @@ import UserListModal from "../../Elements/UserListModal/UserListModal";
 import styles from "./styles.module.css";
 import { useQueryClient } from "@tanstack/react-query";
 import { useChatContext } from "../../../Hooks/useChatContext";
+import Methods from "../../../methods";
 
 const UserSettings = () => {
   const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
@@ -236,7 +237,9 @@ const UserSettings = () => {
         promisesToAwait.push(Requests.deleteUserRSVP(currentUser, event));
 
         // Delete user from events they've been invited to:
-        promisesToAwait.push(Requests.removeInvitee(event, currentUser));
+        promisesToAwait.push(
+          Requests.removeInvitee(event, Methods.getTBarebonesUser(currentUser))
+        );
 
         // Delete user from events they've organized or delete events of which user is sole organizer:
         if (
