@@ -907,9 +907,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         return handleOpenChat(existingChatWithListedChatMember);
       }
 
-      const newChatMembers: TBarebonesUser[] =
+      const newChatMembers: string[] =
         otherUser._id && currentUser && currentUser._id
-          ? [Methods.getTBarebonesUser(otherUser), Methods.getTBarebonesUser(currentUser)]
+          ? [otherUser._id.toString(), currentUser._id.toString()]
           : [];
 
       if (!existingChatWithListedChatMember) {
