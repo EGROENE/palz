@@ -71,7 +71,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [usersToAddToChat, setUsersToAddToChat] = useState<TBarebonesUser[]>([]);
 
   const [chatName, setChatName] = useState<string | undefined>(undefined);
+
   const [chatNameError, setChatNameError] = useState<string>("");
+
+  const [chatMembers, setChatMembers] = useState<TOtherUser[] | null>(null);
 
   const [admins, setAdmins] = useState<TBarebonesUser[]>([]);
 
@@ -961,6 +964,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
+    chatMembers,
+    setChatMembers,
     fetchChatMembersIsError,
     setFetchChatMembersIsError,
     fetchChatMembersIsLoading,
