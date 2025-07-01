@@ -71,7 +71,7 @@ const ListedUser = ({
       />
       <div className={styles.infoContainer}>
         {objectLink ? (
-          <Link to={objectLink} target="_blank">
+          <Link to={objectLink}>
             <div className={styles.listedUserTextsContainer}>
               {title && <p className={styles.userTitle}>{title}</p>}
               <p
