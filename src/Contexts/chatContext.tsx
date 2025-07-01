@@ -826,7 +826,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getStartOrOpenChatWithUserHandler = (
-    otherUser: TOtherUser | TUser | TBarebonesUser | undefined
+    otherUser: TBarebonesUser | undefined
   ): void => {
     if (otherUser) {
       if (showInvitees) {
