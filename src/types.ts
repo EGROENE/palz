@@ -628,18 +628,6 @@ export type TEventContext = {
   setShowInvitees: React.Dispatch<React.SetStateAction<boolean>>;
   inviteesORIGINAL: TBarebonesUser[];
   setInviteesORIGINAL: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
-  displayedPotentialInviteeCount: number | undefined;
-  setDisplayedPotentialInviteeCount: React.Dispatch<
-    React.SetStateAction<number | undefined>
-  >;
-  displayedPotentialBlockeeCount: number | undefined;
-  setDisplayedPotentialBlockeeCount: React.Dispatch<
-    React.SetStateAction<number | undefined>
-  >;
-  displayedPotentialCoOrganizerCount: number | undefined;
-  setDisplayedPotentialCoOrganizerCount: React.Dispatch<
-    React.SetStateAction<number | undefined>
-  >;
   updateEventMutation: UseMutationResult<
     Response,
     Error,
