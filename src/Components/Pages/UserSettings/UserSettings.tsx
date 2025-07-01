@@ -234,7 +234,9 @@ const UserSettings = () => {
     if (allEvents) {
       for (const event of allEvents) {
         // Delete any user RSVPs:
-        promisesToAwait.push(Requests.deleteUserRSVP(currentUser, event));
+        promisesToAwait.push(
+          Requests.deleteUserRSVP(Methods.getTBarebonesUser(currentUser), event)
+        );
 
         // Delete user from events they've been invited to:
         promisesToAwait.push(
