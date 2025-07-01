@@ -825,7 +825,7 @@ export type TChatContext = {
   setAdmins: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   showAddMemberModal: boolean;
   setShowAddMemberModal: React.Dispatch<React.SetStateAction<boolean>>;
-  handleAddMultipleUsersToChat: (users: TBarebonesUser[], chat: TChat) => void;
+  handleAddMultipleUsersToChat: (users: string[], chat: TChat) => void;
   createChatMutation: UseMutationResult<
     Response,
     Error,

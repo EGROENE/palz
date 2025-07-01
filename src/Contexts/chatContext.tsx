@@ -664,15 +664,28 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleAddMultipleUsersToChat = (users: TBarebonesUser[], chat: TChat): void => {
-    const updatedChatMembers = chat.members.concat(users);
+  const handleAddMultipleUsersToChat = (users: string[], chat: TChat): void => {
+    const updatedMembersIDs: string[] = chat.members.concat(users);
 
-    const chatValuesToUpdate: TChatValuesToUpdate = {
-      members: updatedChatMembers,
-    };
+    const promisesToAwaitChatMembers: Promise<TUser>[] = updatedMembersIDs.map((id) => {
+      return Requests.getUserByID(id).then((res) => {
+        return res.json().then((chatMember: TUser) => chatMember);
+      });
+    });
 
-    const purpose = "add-members";
-    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+    // For each _id in chat updatedMembersIDs, get TUser object, then pass array of these, converted to TBarebonesUser, to updateChatMutation
+    setFetchChatMembersIsLoading(true);
+    Promise.all(promisesToAwaitChatMembers)
+      .then((chatMembers: TUser[]) => {
+        const chatValuesToUpdate: TChatValuesToUpdate = {
+          members: chatMembers.map((m) => Methods.getTBarebonesUser(m)),
+        };
+
+        const purpose = "add-members";
+        updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setFetchChatMembersIsLoading(false));
   };
 
   const handleAddAdminToChat = (user: TOtherUser, chat: TChat): void => {
