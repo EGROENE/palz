@@ -544,18 +544,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const getChatMembers = (members: TBarebonesUser[]): TOtherUser[] => {
-    let chatMembers: TOtherUser[] = [];
-    if (visibleOtherUsers) {
-      for (const user of visibleOtherUsers) {
-        if (user._id && members.map((m) => m._id).includes(user._id.toString())) {
-          chatMembers.push(user);
-        }
-      }
-    }
-    return chatMembers;
-  };
-
   // If chat w/ members already exists, do not create new one; set currentChat to input chat, open ChatModal w/ it, and nofify user by toast that chat w/ these members already exists.
   // While chat is being created, display loadingmodal. hide onSettled of createChatMutation
   const handleCreateChat = (chat: TChat): void => {
@@ -1046,7 +1034,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     fetchChatsQuery,
     showChatModal,
     setShowChatModal,
-    getChatMembers,
   };
 
   return (
