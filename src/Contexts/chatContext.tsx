@@ -32,15 +32,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     throw new Error(error);
   }
 
-  const {
-    currentUser,
-    userHasLoggedIn,
-    setCurrentOtherUser,
-    currentOtherUser,
-    fetchAllVisibleOtherUsersQuery,
-  } = useUserContext();
-
-  const visibleOtherUsers = fetchAllVisibleOtherUsersQuery.data;
+  const { currentUser, userHasLoggedIn, setCurrentOtherUser, currentOtherUser } =
+    useUserContext();
 
   const { showInvitees, setShowInvitees, showRSVPs, setShowRSVPs } = useEventContext();
 
