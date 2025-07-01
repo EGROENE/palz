@@ -323,7 +323,7 @@ export type TUserContext = {
   setFetchBlockedUsersIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   fetchBlockedUsersIsError: boolean;
   setFetchBlockedUsersIsError: React.Dispatch<React.SetStateAction<boolean>>;
-  handleUnblockUser: (blocker: TUser, blockee: TOtherUser) => void;
+  handleUnblockUser: (blocker: TBarebonesUser, blockee: TBarebonesUser) => void;
   currentOtherUser: TOtherUser | null;
   setCurrentOtherUser: React.Dispatch<React.SetStateAction<TOtherUser | null>>;
   getOtherUserFriends: (otherUserID: string) => TUser[];
@@ -613,7 +613,7 @@ export type TUserContext = {
 
 export type TEventContext = {
   disinterestedUsers: string[] | undefined;
-setDisinterestedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>
+  setDisinterestedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   handleRemoveDisinterestedUser: (event: TEvent, user: TBarebonesUser | null) => void;
   showDeclinedInvitations: boolean;
   setShowDeclinedInvitations: React.Dispatch<React.SetStateAction<boolean>>;
