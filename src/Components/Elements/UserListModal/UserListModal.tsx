@@ -130,7 +130,7 @@ const UserListModal = ({
         buttonOneHandler === handleUnblockUser &&
         blockedUsers
       ) {
-        return [currentUser, user];
+        return [Methods.getTBarebonesUser(currentUser), user];
       } else if (
         (listType === "invitees" || listType === "rsvpd-users") &&
         buttonOneHandler === getStartOrOpenChatWithUserHandler

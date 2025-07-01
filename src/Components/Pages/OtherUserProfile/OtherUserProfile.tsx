@@ -650,7 +650,10 @@ const OtherUserProfile = () => {
         ),
         handler: () => {
           if (currentOtherUser) {
-            return handleUnblockUser(currentUser, currentOtherUser);
+            return handleUnblockUser(
+              Methods.getTBarebonesUser(currentUser),
+              Methods.getTBarebonesUser(currentOtherUser)
+            );
           }
         },
         paramsIncludeEvent: false,
