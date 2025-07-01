@@ -9,6 +9,7 @@ import TwoOptionsInterface from "../TwoOptionsInterface/TwoOptionsInterface";
 import { Link } from "react-router-dom";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Requests from "../../../requests";
+import Methods from "../../../methods";
 
 const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
   const { isLoading, error } = useMainContext();
@@ -252,7 +253,9 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
         {userIsMessageable && (
           <div className={styles.userCardMessageBtnContainer}>
             <i
-              onClick={() => getStartOrOpenChatWithUserHandler(userSECURE)}
+              onClick={() =>
+                getStartOrOpenChatWithUserHandler(Methods.getTBarebonesUser(userSECURE))
+              }
               className="fas fa-comments"
             ></i>
           </div>

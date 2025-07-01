@@ -266,7 +266,8 @@ const ChatModal = () => {
       (listedChatMemberIsAdmin && !currentUserIsAdmin) ||
       (!listedChatMemberIsAdmin && !currentUserIsAdmin)
     ) {
-      return () => getStartOrOpenChatWithUserHandler(listedChatMember);
+      return () =>
+        getStartOrOpenChatWithUserHandler(Methods.getTBarebonesUser(listedChatMember));
     }
 
     // if currentUser is admin, but LCM isn't, 'add as admin' btn:

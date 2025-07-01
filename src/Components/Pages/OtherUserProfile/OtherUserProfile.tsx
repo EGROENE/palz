@@ -557,7 +557,8 @@ const OtherUserProfile = () => {
       </>
     ),
     handler: currentOtherUser
-      ? () => getStartOrOpenChatWithUserHandler(currentOtherUser)
+      ? () =>
+          getStartOrOpenChatWithUserHandler(Methods.getTBarebonesUser(currentOtherUser))
       : undefined,
     paramsIncludeEvent: false,
   };
