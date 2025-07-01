@@ -1020,7 +1020,7 @@ const getEventByID = (eventID: string) => {
 
 const removeInvitee = (
   event: TEvent,
-  user: TUser | TOtherUser | null
+  user: TBarebonesUser | null
 ): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
