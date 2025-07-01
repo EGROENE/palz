@@ -775,7 +775,7 @@ export type TEventContext = {
   ) => void;
   handleDeleteUserRSVP: (
     event: TEvent,
-    user: TUser | TOtherUser,
+    user: TBarebonesUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent> | undefined
   ) => void;
 };
