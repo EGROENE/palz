@@ -522,7 +522,11 @@ const EventPage = () => {
                       disabled={maxInviteesReached || isLoading}
                       onClick={(e) => {
                         if (userRSVPd && currentUser) {
-                          handleDeleteUserRSVP(currentEvent, currentUser, e);
+                          handleDeleteUserRSVP(
+                            currentEvent,
+                            Methods.getTBarebonesUser(currentUser),
+                            e
+                          );
                         } else if (!userRSVPd) {
                           handleAddUserRSVP(e, currentEvent);
                           if (currentEvent.disinterestedUsers) {

@@ -284,7 +284,11 @@ const EventCard = ({ event }: { event: TEvent }) => {
                     className={`${styles.eventButtonsContainerButton}`}
                     onClick={(e) => {
                       if (userRSVPd && currentUser) {
-                        handleDeleteUserRSVP(event, currentUser, e);
+                        handleDeleteUserRSVP(
+                          event,
+                          Methods.getTBarebonesUser(currentUser),
+                          e
+                        );
                       } else if (!userRSVPd && cardEvent) {
                         handleAddUserRSVP(e, event);
                         if (cardEvent.disinterestedUsers) {
