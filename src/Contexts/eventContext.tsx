@@ -279,7 +279,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const removeUserRSVPMutation = useMutation({
-    mutationFn: ({ user, event }: { user: TUser | TOtherUser; event: TEvent }) =>
+    mutationFn: ({ user, event }: { user: TBarebonesUser; event: TEvent }) =>
       Requests.deleteUserRSVP(user, event),
     onSuccess: (data) => {
       if (data.ok) {
