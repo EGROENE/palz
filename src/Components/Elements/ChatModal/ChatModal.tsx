@@ -149,7 +149,7 @@ const ChatModal = () => {
     }
   }, [fetchStart, chatMembersSearchQuery]);
 
-  const [otherChatMember, setOtherChatMember] = useState<TBarebonesUser | undefined>(
+  const [otherChatMember, setOtherChatMember] = useState<TOtherUser | undefined>(
     undefined
   );
 
@@ -203,7 +203,9 @@ const ChatModal = () => {
             res
               .json()
               .then((chatMember: TUser) =>
-                setOtherChatMember(Methods.getTBarebonesUser(chatMember))
+                setOtherChatMember(
+                  Methods.getTOtherUserFromTUser(chatMember, currentUser)
+                )
               );
           } else {
             setFetchChatMembersIsError(true);
