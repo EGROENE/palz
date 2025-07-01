@@ -45,7 +45,7 @@ const chatSchema = new Schema({
     required: true,
   },
   members: {
-    type: [barebonesUser],
+    type: [String],
     required: true,
   },
   messages: {
