@@ -161,7 +161,7 @@ export type TEvent = {
 
 export type TChat = {
   _id: string | mongoose.Types.ObjectId;
-  members: TBarebonesUser[];
+  members: string[];
   messages: TMessage[];
   dateCreated: number;
   chatName: string | undefined;
