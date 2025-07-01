@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Message from "../Message/Message";
-import { TOtherUser, TThemeColor } from "../../../types";
+import { TOtherUser, TBarebonesUser, TUser, TThemeColor } from "../../../types";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -69,6 +69,10 @@ const ChatModal = () => {
     setFetchIsLoading,
     fetchStart,
     handleCancelAddOrEditChat,
+    fetchChatMembersIsLoading,
+    setFetchChatMembersIsLoading,
+    fetchChatMembersIsError,
+    setFetchChatMembersIsError,
   } = useChatContext();
 
   const fetchLimit = 15;
@@ -145,7 +149,7 @@ const ChatModal = () => {
     }
   }, [fetchStart, chatMembersSearchQuery]);
 
-  const [otherChatMember, setOtherChatMember] = useState<TOtherUser | undefined>(
+  const [otherChatMember, setOtherChatMember] = useState<TBarebonesUser | undefined>(
     undefined
   );
 
@@ -191,13 +195,23 @@ const ChatModal = () => {
       scrollToLatestMessage();
     }
 
-    setOtherChatMember(
-      currentChat && currentUser && currentChat.members.length === 2
-        ? getChatMembers(currentChat.members).filter(
-            (member) => member._id !== currentUser._id
-          )[0]
-        : undefined
-    );
+    if (currentChat && currentUser && currentChat.members.length === 2) {
+      setFetchChatMembersIsLoading(true);
+      Requests.getUserByID(currentChat.members.filter((m) => m !== currentUser._id)[0])
+        .then((res) => {
+          if (res.ok) {
+            res
+              .json()
+              .then((chatMember: TUser) =>
+                setOtherChatMember(Methods.getTBarebonesUser(chatMember))
+              );
+          } else {
+            setFetchChatMembersIsError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchChatMembersIsLoading(false));
+    }
   }, [currentChat, fetchChatsQuery.data]);
 
   let messagesContainerScrollHeight: number = messagesContainerRef.current
