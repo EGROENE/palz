@@ -129,12 +129,7 @@ const getTOtherUserFromTUser = (userToConvert: TUser, currentUser: TUser): TOthe
       ? userToConvert.friends.includes(currentUser._id.toString())
       : false;
 
-  const currentUserIsFriendOfFriend: boolean = userToConvert.friends.some((pfFriend) => {
-    if (currentUser && currentUser.friends.includes(pfFriend)) {
-      return true;
-    }
-    return false;
-  });
+  const currentUserIsFriendOfFriend: boolean = userToConvert.friends.some((pfFriend) => currentUser.friends.includes(pfFriend));
 
   const showLocation: boolean =
     userToConvert.whoCanSeeLocation === "anyone" ||
