@@ -85,6 +85,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [fetchStart, setFetchStart] = useState<number>(0);
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
   const [isFetchError, setIsFetchError] = useState<boolean>(false);
+  const [fetchAdminsIsError, setFetchAdminsIsError] = useState<boolean>(false);
+  const [fetchAdminsIsLoading, setFetchAdminsIsLoading] = useState<boolean>(false);
 
   const [inputMessage, setInputMessage] = useState<string>("");
 
@@ -673,10 +675,28 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAddAdminToChat = (user: TOtherUser, chat: TChat): void => {
     setCurrentOtherUser(user);
     const updatedAdmins =
-      chat.admins && user._id ? chat.admins.concat(Methods.getTBarebonesUser(user)) : [];
-    const chatValuesToUpdate = { admins: updatedAdmins };
-    const purpose = "add-admin";
-    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+      chat.admins && user._id ? chat.admins.concat(user._id.toString()) : [];
+
+    const promisesToAwaitAdmins = updatedAdmins.map((a) => {
+      return Requests.getUserByID(a).then((res) => {
+        return res.json().then((user: TUser) => user);
+      });
+    });
+
+    setFetchAdminsIsLoading(true);
+    Promise.all(promisesToAwaitAdmins)
+      .then((admins: TUser[]) => {
+        const chatValuesToUpdate = {
+          admins: admins.map((a) => Methods.getTBarebonesUser(a)),
+        };
+        const purpose = "add-admin";
+        updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+      })
+      .catch((error) => {
+        console.log(error);
+        setFetchAdminsIsError(true);
+      })
+      .finally(() => setFetchAdminsIsLoading(false));
   };
 
   const handleRemoveAdminFromChat = (user: TUser, chat: TChat): void => {
