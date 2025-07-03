@@ -47,7 +47,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
     chat.admins &&
     currentUser &&
     currentUser._id &&
-    (chat.admins.includes(currentUser._id) ||
+    (chat.admins.includes(currentUser._id.toString()) ||
       (chat.members.includes(currentUser._id.toString()) && chat.members.length === 2))
       ? true
       : false;

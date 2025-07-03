@@ -261,7 +261,7 @@ const ChatModal = () => {
       currentChat &&
       currentChat.admins &&
       listedChatMember._id &&
-      currentChat.admins.map((a) => a._id).includes(listedChatMember._id.toString())
+      currentChat.admins.includes(listedChatMember._id.toString())
         ? true
         : false;
 
@@ -270,7 +270,7 @@ const ChatModal = () => {
       currentChat.admins &&
       currentUser &&
       currentUser._id &&
-      currentChat.admins.map((a) => a._id).includes(currentUser._id.toString())
+      currentChat.admins.includes(currentUser._id.toString())
         ? true
         : false;
 
@@ -297,7 +297,7 @@ const ChatModal = () => {
       currentChat &&
       currentChat.admins &&
       listedChatMember._id &&
-      currentChat.admins.map((a) => a._id).includes(listedChatMember._id.toString())
+      currentChat.admins.includes(listedChatMember._id.toString())
         ? true
         : false;
 
@@ -306,7 +306,7 @@ const ChatModal = () => {
       currentChat.admins &&
       currentUser &&
       currentUser._id &&
-      currentChat.admins.map((a) => a._id).includes(currentUser._id.toString())
+      currentChat.admins.includes(currentUser._id.toString())
         ? true
         : false;
 
@@ -330,7 +330,7 @@ const ChatModal = () => {
     currentChat.admins &&
     currentUser &&
     currentUser._id &&
-    (currentChat.admins.map((elem) => elem._id).includes(currentUser._id.toString()) ||
+    (currentChat.admins.includes(currentUser._id.toString()) ||
       (currentChat.members.includes(currentUser._id.toString()) &&
         currentChat.members.length === 2))
       ? true
@@ -435,9 +435,7 @@ const ChatModal = () => {
                       {currentChat.admins &&
                         currentUser &&
                         currentUser._id &&
-                        currentChat.admins
-                          .map((elem) => elem._id)
-                          .includes(currentUser._id.toString()) && (
+                        currentChat.admins.includes(currentUser._id.toString()) && (
                           <button
                             style={{ color: randomColor }}
                             onClick={() =>
@@ -477,9 +475,7 @@ const ChatModal = () => {
                           currentChat &&
                           currentChat.admins &&
                           member._id &&
-                          currentChat.admins
-                            .map((elem) => elem._id)
-                            .includes(member._id.toString())
+                          currentChat.admins.includes(member._id.toString())
                             ? "Admin"
                             : undefined
                         }
@@ -492,12 +488,8 @@ const ChatModal = () => {
                           currentChat &&
                           currentChat.admins &&
                           member._id &&
-                          !currentChat.admins
-                            .map((elem) => elem._id)
-                            .includes(member._id.toString()) &&
-                          currentChat.admins
-                            .map((elem) => elem._id)
-                            .includes(currentUser._id.toString())
+                          !currentChat.admins.includes(member._id.toString()) &&
+                          currentChat.admins.includes(currentUser._id.toString())
                             ? true
                             : false
                         }
@@ -507,12 +499,8 @@ const ChatModal = () => {
                           currentChat &&
                           currentChat.admins &&
                           member._id &&
-                          !currentChat.admins
-                            .map((elem) => elem._id)
-                            .includes(member._id.toString()) &&
-                          currentChat.admins
-                            .map((elem) => elem._id)
-                            .includes(currentUser._id.toString())
+                          !currentChat.admins.includes(member._id.toString()) &&
+                          currentChat.admins.includes(currentUser._id.toString())
                             ? () => {
                                 setCurrentOtherUser(member);
                                 handleRemoveUserFromChat(member, currentChat);
@@ -569,9 +557,7 @@ const ChatModal = () => {
                 </header>
                 {currentUser &&
                   currentUser._id &&
-                  currentChat.admins
-                    ?.map((a) => a._id)
-                    .includes(currentUser._id.toString()) &&
+                  currentChat.admins?.includes(currentUser._id.toString()) &&
                   (currentChat.chatName ? (
                     <header
                       onKeyDown={(e) => {
