@@ -1230,7 +1230,7 @@ const getPotentialChatMembers = async (
     return response.json().then((potentialCMs: TUser[]) => {
       return potentialCMs.filter((pcm: TUser) => {
         const userIsNotAlreadyInCurrentChat: boolean =
-          pcm._id && chat && chat.members.map((m) => m._id).includes(pcm._id.toString())
+          pcm._id && chat && chat.members.includes(pcm._id.toString())
             ? false
             : true;
 
