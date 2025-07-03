@@ -718,9 +718,29 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     } else {
       const purpose = "remove-admin";
       const updatedAdmins =
-        chat.admins && chat.admins.filter((admin) => admin._id !== user._id);
-      const chatValuesToUpdate = { admins: updatedAdmins };
-      updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+        chat.admins && chat.admins.filter((admin) => admin !== user._id);
+
+      const promisesToAwaitAdmins = updatedAdmins?.map((a) => {
+        return Requests.getUserByID(a).then((res) =>
+          res.json().then((user: TUser) => user)
+        );
+      });
+
+      if (promisesToAwaitAdmins) {
+        setFetchAdminsIsLoading(true);
+        Promise.all(promisesToAwaitAdmins)
+          .then((admins: TUser[]) => {
+            const chatValuesToUpdate = {
+              admins: admins.map((a) => Methods.getTBarebonesUser(a)),
+            };
+            updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+          })
+          .catch((error) => {
+            console.log(error);
+            setFetchAdminsIsError(true);
+          })
+          .finally(() => setFetchAdminsIsLoading(false));
+      }
     }
   };
 
