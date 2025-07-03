@@ -166,7 +166,7 @@ export type TChat = {
   dateCreated: number;
   chatName: string | undefined;
   chatType: "two-member" | "group";
-  admins?: TBarebonesUser[];
+  admins?: string[];
 };
 
 export type TMessage = {
