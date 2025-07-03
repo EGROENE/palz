@@ -595,18 +595,25 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
                   });
                 });
 
-                Promise.all(promisesToAwaitAdmins).then((admins: TUser[]) => {
-                  const chatValuesToUpdate: TChatValuesToUpdate = {
-                    admins: admins.map((a) => Methods.getTBarebonesUser(a)),
-                    members: chatMembers.map((m) => Methods.getTBarebonesUser(m)),
-                  };
+                setFetchAdminsIsLoading(true);
+                Promise.all(promisesToAwaitAdmins)
+                  .then((admins: TUser[]) => {
+                    const chatValuesToUpdate: TChatValuesToUpdate = {
+                      admins: admins.map((a) => Methods.getTBarebonesUser(a)),
+                      members: chatMembers.map((m) => Methods.getTBarebonesUser(m)),
+                    };
 
-                  const purpose =
-                    currentUser && user._id === currentUser._id
-                      ? "remove-self-from-chat"
-                      : "remove-member";
-                  updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
-                });
+                    const purpose =
+                      currentUser && user._id === currentUser._id
+                        ? "remove-self-from-chat"
+                        : "remove-member";
+                    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                    setFetchAdminsIsError(true);
+                  })
+                  .finally(() => setFetchAdminsIsLoading(false));
               }
             } else {
               // Remove non-admin members:
