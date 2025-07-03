@@ -555,8 +555,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleRemoveUserFromChat = (user: TOtherUser, chat?: TChat): void => {
     if (chat && chat.admins && user._id && user) {
-      let updatedAdmins: TBarebonesUser[] = [];
-
       const updatedMembersIDs: string[] = chat.members.filter((member) => {
         if (user._id) {
           return member !== user._id.toString();
@@ -574,7 +572,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       Promise.all(promisesToAwaitChatMembers)
         .then((chatMembers: TUser[]) => {
           if (chat.admins && user._id) {
-            if (chat.admins.map((a) => a._id).includes(user._id.toString())) {
+            if (chat.admins.includes(user._id.toString())) {
               if (chat.admins.length - 1 === 0) {
                 toast.error("Please assign another admin before leaving the chat.", {
                   style: {
@@ -585,20 +583,28 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
                 });
               } else {
                 // If user isn't only admin left, remove them from chat:
-                updatedAdmins = chat.admins.filter(
-                  (admin) => admin._id?.toString() !== user._id
+                const updatedAdmins: string[] = chat.admins.filter(
+                  (admin) => admin !== user._id
                 );
 
-                const chatValuesToUpdate: TChatValuesToUpdate = {
-                  admins: updatedAdmins,
-                  members: chatMembers.map((m) => Methods.getTBarebonesUser(m)),
-                };
+                const promisesToAwaitAdmins = updatedAdmins.map((a) => {
+                  return Requests.getUserByID(a).then((res) => {
+                    return res.json().then((user: TUser) => user);
+                  });
+                });
 
-                const purpose =
-                  currentUser && user._id === currentUser._id
-                    ? "remove-self-from-chat"
-                    : "remove-member";
-                updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+                Promise.all(promisesToAwaitAdmins).then((admins: TUser[]) => {
+                  const chatValuesToUpdate: TChatValuesToUpdate = {
+                    admins: admins.map((a) => Methods.getTBarebonesUser(a)),
+                    members: chatMembers.map((m) => Methods.getTBarebonesUser(m)),
+                  };
+
+                  const purpose =
+                    currentUser && user._id === currentUser._id
+                      ? "remove-self-from-chat"
+                      : "remove-member";
+                  updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+                });
               }
             } else {
               // Remove non-admin members:
@@ -612,16 +618,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
               updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
             }
           }
-
-          const chatValuesToUpdate: TChatValuesToUpdate = {
-            admins: updatedAdmins,
-            members: chatMembers.map((m) => Methods.getTBarebonesUser(m)),
-          };
-          const purpose =
-            currentUser && user._id === currentUser._id
-              ? "remove-self-from-chat"
-              : "remove-member";
-          updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
         })
         .catch((error) => console.log(error))
         .finally(() => setFetchChatMembersIsLoading(false));
