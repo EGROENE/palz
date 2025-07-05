@@ -33,7 +33,6 @@ const ChatModal = () => {
     setShowChatModal,
     setCurrentChat,
     currentChat,
-    chatMembers,
     chatMembersSearchQuery,
     setChatMembersSearchQuery,
     showPotentialChatMembers,
@@ -69,13 +68,42 @@ const ChatModal = () => {
     setFetchIsLoading,
     fetchStart,
     handleCancelAddOrEditChat,
-    fetchChatMembersIsLoading,
-    setFetchChatMembersIsLoading,
-    fetchChatMembersIsError,
-    setFetchChatMembersIsError,
   } = useChatContext();
 
   const fetchLimit = 15;
+
+  const [chatMembers, setChatMembers] = useState<TOtherUser[] | null>(null);
+
+  const [fetchChatMembersIsLoading, setFetchChatMembersIsLoading] =
+    useState<boolean>(false);
+  const [fetchChatMembersIsError, setFetchChatMembersIsError] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (currentChat) {
+      const promisesToAwaitChatMembers: Promise<TUser>[] = currentChat.members.map((m) => {
+      return Requests.getUserByID(m).then((res) => {
+        return res.json().then((member: TUser) => member);
+      });
+    });
+
+    setFetchChatMembersIsLoading(true);
+    Promise.all(promisesToAwaitChatMembers)
+      .then((members: TUser[]) => {
+        if (currentUser) {
+          setChatMembers(
+            members.map((m) => Methods.getTOtherUserFromTUser(m, currentUser))
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setFetchChatMembersIsError(true);
+      })
+      .finally(() => setFetchChatMembersIsLoading(false));
+    } else {
+      setFetchChatMembersIsError(true)
+    }
+  }, []);
 
   /* 
   Update currentChat whenever fetchChatsQuery.data changes & when chat in userChats w/ matching _id to currentChat is not identical to currentChat:
@@ -99,6 +127,29 @@ const ChatModal = () => {
           ));
       if (chatWasUpdated) {
         setCurrentChat(updatedChat);
+
+        const promisesToAwaitChatMembers: Promise<TUser>[] = updatedChat.members.map(
+          (m) => {
+            return Requests.getUserByID(m).then((res) => {
+              return res.json().then((member: TUser) => member);
+            });
+          }
+        );
+
+        setFetchChatMembersIsLoading(true);
+        Promise.all(promisesToAwaitChatMembers)
+          .then((members: TUser[]) => {
+            if (currentUser) {
+              setChatMembers(
+                members.map((m) => Methods.getTOtherUserFromTUser(m, currentUser))
+              );
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            setFetchChatMembersIsError(true);
+          })
+          .finally(() => setFetchChatMembersIsLoading(false));
       }
     }
   }, [fetchChatsQuery.data]);
@@ -190,7 +241,8 @@ const ChatModal = () => {
       currentUser._id &&
       currentChat &&
       currentChat.messages.length > 0 &&
-      currentChat.messages[currentChat.messages.length - 1].sender._id === currentUser._id
+      currentChat.messages[currentChat.messages.length - 1].sender ===
+        currentUser._id.toString()
     ) {
       scrollToLatestMessage();
     }
