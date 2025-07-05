@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { TChat, TThemeColor } from "../../../types";
+import { TChat, TThemeColor, TOtherUser, TUser } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Methods from "../../../methods";
 import { useUserContext } from "../../../Hooks/useUserContext";
+import Requests from "../../../requests";
 
 const ChatPreview = ({ chat }: { chat: TChat }) => {
   const { currentUser } = useUserContext();
   const {
-    chatMembers,
     handleOpenChat,
     getNumberOfUnreadMessagesInChat,
     setShowAreYouSureYouWantToDeleteChat,
@@ -15,6 +15,13 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
   } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  const [chatMembers, setChatMembers] = useState<TOtherUser[] | null>(null);
+
+  const [fetchChatMembersIsLoading, setFetchChatMembersIsLoading] =
+    useState<boolean>(false);
+
+  const [fetchChatMembersIsError, setFetchChatMembersIsError] = useState<boolean>(false);
 
   useEffect(() => {
     // Set color of event card's border randomly:
@@ -27,6 +34,27 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+
+    const promisesToAwaitChatMembers: Promise<TUser>[] = chat.members.map((m) => {
+      return Requests.getUserByID(m).then((res) => {
+        return res.json().then((member: TUser) => member);
+      });
+    });
+
+    setFetchChatMembersIsLoading(true);
+    Promise.all(promisesToAwaitChatMembers)
+      .then((members: TUser[]) => {
+        if (currentUser) {
+          setChatMembers(
+            members.map((m) => Methods.getTOtherUserFromTUser(m, currentUser))
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setFetchChatMembersIsError(true);
+      })
+      .finally(() => setFetchChatMembersIsLoading(false));
   }, []);
 
   const getPreviewOfLastMessage = (chat: TChat): string | JSX.Element => {
