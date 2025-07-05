@@ -171,7 +171,7 @@ export type TChat = {
 
 export type TMessage = {
   _id: string | mongoose.Types.ObjectId;
-  sender: TBarebonesUser;
+  sender: string;
   content: string;
   timeSent: number;
   image: string;
