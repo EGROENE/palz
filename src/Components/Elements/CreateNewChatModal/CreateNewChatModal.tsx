@@ -187,7 +187,9 @@ const CreateNewChatModal = () => {
                 onClick={() => {
                   handleCreateChat({
                     _id: new mongoose.Types.ObjectId().toString(),
-                    members: usersToAddToChat,
+                    members: usersToAddToChat
+                      .map((u) => u._id?.toString())
+                      .filter((elem) => elem !== undefined),
                     messages: [],
                     chatName: chatName,
                     chatType: usersToAddToChat.length > 2 ? "group" : "two-member",
@@ -195,7 +197,12 @@ const CreateNewChatModal = () => {
                     ...(usersToAddToChat.length >= 2 &&
                       currentUser &&
                       currentUser._id && {
-                        admins: [Methods.getTBarebonesUser(currentUser)].concat(admins),
+                        admins: [
+                          currentUser._id.toString(),
+                          ...admins
+                            .map((a) => a._id?.toString())
+                            .filter((elem) => elem !== undefined),
+                        ],
                       }),
                   });
                 }}
