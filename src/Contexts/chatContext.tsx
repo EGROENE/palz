@@ -67,8 +67,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [chatNameError, setChatNameError] = useState<string>("");
 
-  const [chatMembers, setChatMembers] = useState<TOtherUser[] | null>(null);
-
   const [admins, setAdmins] = useState<TBarebonesUser[]>([]);
 
   const [showPotentialChatMembers, setShowPotentialChatMembers] =
@@ -748,21 +746,23 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     const now = Date.now();
     const messageId = new mongoose.Types.ObjectId();
 
-    const newMessage: TMessage = {
-      _id: messageId,
-      sender: Methods.getTBarebonesUser(currentUser),
-      content: content.trim(),
-      image: "",
-      timeSent: now,
-      seenBy: [],
-    };
+    if (currentUser && currentUser._id) {
+      const newMessage: TMessage = {
+        _id: messageId,
+        sender: currentUser._id.toString(),
+        content: content.trim(),
+        image: "",
+        timeSent: now,
+        seenBy: [],
+      };
 
-    const chatValuesToUpdate: TChatValuesToUpdate = {
-      messages: chat.messages.concat(newMessage),
-    };
+      const chatValuesToUpdate: TChatValuesToUpdate = {
+        messages: chat.messages.concat(newMessage),
+      };
 
-    const purpose = "send-message";
-    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+      const purpose = "send-message";
+      updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+    }
   };
 
   const startEditingMessage = (message: TMessage): void => {
@@ -867,7 +867,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       if (
         currentUser &&
         currentUser._id &&
-        message.sender._id !== currentUser._id &&
+        message.sender !== currentUser._id.toString() &&
         !usersWhoSawMessage.includes(currentUser._id.toString())
       ) {
         message.seenBy.push({ user: currentUser._id.toString(), time: now });
@@ -959,7 +959,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         const usersWhoSawMessage: string[] = message.seenBy.map((obj) => obj.user);
         if (
           !usersWhoSawMessage.includes(currentUser._id.toString()) &&
-          message.sender._id !== currentUser._id
+          message.sender !== currentUser._id.toString()
         ) {
           unreadMessages.push(message);
         }
@@ -988,8 +988,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chatContextValues: TChatContext = {
-    chatMembers,
-    setChatMembers,
     fetchChatMembersIsError,
     setFetchChatMembersIsError,
     fetchChatMembersIsLoading,

@@ -769,8 +769,6 @@ export type TEventContext = {
 };
 
 export type TChatContext = {
-  chatMembers: TOtherUser[] | null;
-  setChatMembers: React.Dispatch<React.SetStateAction<TOtherUser[] | null>>;
   fetchChatMembersIsError: boolean;
   setFetchChatMembersIsError: React.Dispatch<React.SetStateAction<boolean>>;
   fetchChatMembersIsLoading: boolean;
