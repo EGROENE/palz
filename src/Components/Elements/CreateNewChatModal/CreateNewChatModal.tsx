@@ -13,6 +13,9 @@ const CreateNewChatModal = () => {
   const { currentUser } = useUserContext();
 
   const {
+    setShowCreateNewChatModal,
+    handleOpenChat,
+    fetchChatsQuery,
     handleSearchPotentialChatMembers,
     handleLoadMoreItemsOnScroll,
     admins,
@@ -185,26 +188,47 @@ const CreateNewChatModal = () => {
               </button>
               <button
                 onClick={() => {
-                  handleCreateChat({
-                    _id: new mongoose.Types.ObjectId().toString(),
-                    members: usersToAddToChat
+                  if (currentUser?._id) {
+                    const otherUserToAdd: string = usersToAddToChat
                       .map((u) => u._id?.toString())
-                      .filter((elem) => elem !== undefined),
-                    messages: [],
-                    chatName: chatName,
-                    chatType: usersToAddToChat.length > 2 ? "group" : "two-member",
-                    dateCreated: Date.now(),
-                    ...(usersToAddToChat.length >= 2 &&
-                      currentUser &&
-                      currentUser._id && {
-                        admins: [
-                          currentUser._id.toString(),
-                          ...admins
-                            .map((a) => a._id?.toString())
-                            .filter((elem) => elem !== undefined),
-                        ],
-                      }),
-                  });
+                      .filter((elem) => elem !== undefined)
+                      .filter((u) => u !== currentUser._id)[0];
+
+                    const existingChatWithOtherUserToAdd = fetchChatsQuery.data?.filter(
+                      (chat) =>
+                        chat.members.length === 2 &&
+                        currentUser._id &&
+                        chat.members.includes(currentUser._id.toString()) &&
+                        chat.members.includes(otherUserToAdd)
+                    )[0];
+
+                    if (existingChatWithOtherUserToAdd) {
+                      handleOpenChat(existingChatWithOtherUserToAdd);
+                      setShowCreateNewChatModal(false);
+                    } else {
+                      handleCreateChat({
+                        _id: new mongoose.Types.ObjectId().toString(),
+                        members: usersToAddToChat
+                          .map((u) => u._id?.toString())
+                          .filter((elem) => elem !== undefined)
+                          .concat(currentUser?._id?.toString()),
+                        messages: [],
+                        chatName: chatName,
+                        chatType: usersToAddToChat.length > 2 ? "group" : "two-member",
+                        dateCreated: Date.now(),
+                        ...(usersToAddToChat.length >= 2 &&
+                          currentUser &&
+                          currentUser._id && {
+                            admins: [
+                              currentUser._id.toString(),
+                              ...admins
+                                .map((a) => a._id?.toString())
+                                .filter((elem) => elem !== undefined),
+                            ],
+                          }),
+                      });
+                    }
+                  }
                 }}
                 disabled={!chatCanBeCreated}
                 style={
