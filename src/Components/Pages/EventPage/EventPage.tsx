@@ -150,12 +150,11 @@ const EventPage = () => {
                 ? true
                 : false;
 
-            // Account for currentUser being in blockedUsersEvent
             const userDoesNotHaveAccess: boolean =
               eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee ||
               currentUserHasBeenBlockedByAnOrganizer ||
-              !currentUser ||
-              userCreatedAccount === null;
+              currentEvent.blockedUsersEvent.includes(currentUser._id.toString());
+            !currentUser || userCreatedAccount === null;
 
             setUserDoesNotHaveAccess(userDoesNotHaveAccess);
 
