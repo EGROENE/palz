@@ -80,28 +80,30 @@ const ChatModal = () => {
 
   useEffect(() => {
     if (currentChat) {
-      const promisesToAwaitChatMembers: Promise<TUser>[] = currentChat.members.map((m) => {
-      return Requests.getUserByID(m).then((res) => {
-        return res.json().then((member: TUser) => member);
-      });
-    });
-
-    setFetchChatMembersIsLoading(true);
-    Promise.all(promisesToAwaitChatMembers)
-      .then((members: TUser[]) => {
-        if (currentUser) {
-          setChatMembers(
-            members.map((m) => Methods.getTOtherUserFromTUser(m, currentUser))
-          );
+      const promisesToAwaitChatMembers: Promise<TUser>[] = currentChat.members.map(
+        (m) => {
+          return Requests.getUserByID(m).then((res) => {
+            return res.json().then((member: TUser) => member);
+          });
         }
-      })
-      .catch((error) => {
-        console.log(error);
-        setFetchChatMembersIsError(true);
-      })
-      .finally(() => setFetchChatMembersIsLoading(false));
+      );
+
+      setFetchChatMembersIsLoading(true);
+      Promise.all(promisesToAwaitChatMembers)
+        .then((members: TUser[]) => {
+          if (currentUser) {
+            setChatMembers(
+              members.map((m) => Methods.getTOtherUserFromTUser(m, currentUser))
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          setFetchChatMembersIsError(true);
+        })
+        .finally(() => setFetchChatMembersIsLoading(false));
     } else {
-      setFetchChatMembersIsError(true)
+      setFetchChatMembersIsError(true);
     }
   }, []);
 
@@ -240,9 +242,7 @@ const ChatModal = () => {
       currentUser &&
       currentUser._id &&
       currentChat &&
-      currentChat.messages.length > 0 &&
-      currentChat.messages[currentChat.messages.length - 1].sender ===
-        currentUser._id.toString()
+      currentChat.messages.length > 0
     ) {
       scrollToLatestMessage();
     }
