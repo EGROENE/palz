@@ -206,6 +206,10 @@ const ChatModal = () => {
     undefined
   );
 
+  useEffect(() => {
+    scrollToLatestMessage();
+  }, [otherChatMember]);
+
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToLatestMessage = () => {
