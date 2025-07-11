@@ -205,6 +205,7 @@ const CreateNewChatModal = () => {
                     if (existingChatWithOtherUserToAdd) {
                       handleOpenChat(existingChatWithOtherUserToAdd);
                       setShowCreateNewChatModal(false);
+                      setUsersToAddToChat([]);
                     } else {
                       handleCreateChat({
                         _id: new mongoose.Types.ObjectId().toString(),
