@@ -1,9 +1,11 @@
-import { TMessage, TThemeColor } from "../../../types";
+import { TBarebonesUser, TMessage, TThemeColor, TUser } from "../../../types";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useChatContext } from "../../../Hooks/useChatContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
+import Requests from "../../../requests";
+import Methods from "../../../methods";
 
 const Message = ({
   message,
@@ -28,7 +30,7 @@ const Message = ({
 
   const getComponentInlineStyling = () => {
     if (!showAreYouSureYouWantToDeleteMessage) {
-      if (message.sender && currentUser && message.sender._id === currentUser._id) {
+      if (message.sender && currentUser && message.sender === currentUser._id) {
         return {
           backgroundColor: "var(--background-color)",
         };
@@ -47,19 +49,29 @@ const Message = ({
   };
   const componentInlineStyling = getComponentInlineStyling();
 
+  const [sender, setSender] = useState<TBarebonesUser | null>(null);
+
+  useEffect(() => {
+    Requests.getUserByID(message.sender).then((res) => {
+      if (res.ok) {
+        res.json().then((s: TUser) => setSender(Methods.getTBarebonesUser(s)));
+      }
+    });
+  }, []);
+
   return (
     <div
       style={componentInlineStyling}
       className={
-        message.sender._id === currentUser?._id ? "message sent" : "message received"
+        message.sender === currentUser?._id ? "message sent" : "message received"
       }
     >
       {!showAreYouSureYouWantToDeleteMessage && (
         <>
           <img
             src={
-              message.sender && message.sender.profileImage !== ""
-                ? message.sender.profileImage
+              sender && sender.profileImage !== ""
+                ? sender.profileImage
                 : defaultProfileImage
             }
           />
@@ -68,10 +80,10 @@ const Message = ({
               style={
                 (randomColor === "var(--primary-color)" &&
                   currentUser &&
-                  message.sender._id !== currentUser._id) ||
+                  message.sender !== currentUser._id) ||
                 (message.sender &&
                   currentUser &&
-                  message.sender._id === currentUser._id &&
+                  message.sender === currentUser._id &&
                   theme === "light")
                   ? { color: "black" }
                   : { color: "white" }
@@ -83,10 +95,8 @@ const Message = ({
               style={
                 (randomColor === "var(--primary-color)" &&
                   currentUser &&
-                  message.sender._id !== currentUser._id) ||
-                (message.sender &&
-                  currentUser &&
-                  message.sender._id !== currentUser._id) ||
+                  message.sender !== currentUser._id) ||
+                (message.sender && currentUser && message.sender !== currentUser._id) ||
                 !message.sender
                   ? { color: "rgb(68, 67, 67)" }
                   : { color: "darkgray" }
@@ -104,10 +114,8 @@ const Message = ({
                 style={
                   (randomColor === "var(--primary-color)" &&
                     currentUser &&
-                    message.sender._id !== currentUser._id) ||
-                  (message.sender &&
-                    currentUser &&
-                    message.sender._id !== currentUser._id) ||
+                    message.sender !== currentUser._id) ||
+                  (message.sender && currentUser && message.sender !== currentUser._id) ||
                   !message.sender
                     ? { color: "rgb(68, 67, 67)" }
                     : { color: "darkgray" }
@@ -126,25 +134,18 @@ const Message = ({
               style={
                 (randomColor === "var(--primary-color)" &&
                   currentUser &&
-                  message.sender._id !== currentUser._id) ||
-                (message.sender &&
-                  currentUser &&
-                  message.sender._id !== currentUser._id) ||
+                  message.sender !== currentUser._id) ||
+                (message.sender && currentUser && message.sender !== currentUser._id) ||
                 !message.sender
                   ? { color: "rgb(68, 67, 67)" }
                   : { color: "darkgray" }
               }
             >
-              {message.sender &&
-              message.sender._id &&
-              currentChat &&
-              currentChat.members
-                .map((m) => m._id)
-                .includes(message.sender._id?.toString())
-                ? `${message.sender.firstName} ${message.sender.lastName}`
+              {sender && currentChat && currentChat.members.includes(message.sender)
+                ? `${sender.firstName} ${sender.lastName}`
                 : "Deleted User"}
             </p>
-            {currentUser && message.sender._id === currentUser._id && (
+            {currentUser && message.sender === currentUser._id && (
               <p className="message-sent-info">
                 <span
                   tabIndex={0}
