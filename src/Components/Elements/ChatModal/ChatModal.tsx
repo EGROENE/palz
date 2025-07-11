@@ -522,50 +522,53 @@ const ChatModal = () => {
                     />
                   )}
                   {chatMembers &&
-                    chatMembers.map((member) => (
-                      <ListedUser
-                        key={member._id?.toString()}
-                        objectLink={`/users/${member?.username}`}
-                        user={Methods.getTBarebonesUser(member)}
-                        title={
-                          currentChat &&
-                          currentChat.admins &&
-                          member._id &&
-                          currentChat.admins.includes(member._id.toString())
-                            ? "Admin"
-                            : undefined
-                        }
-                        renderButtonOne={true}
-                        buttonOneText={getButtonOneText(member)}
-                        buttonOneHandler={getButtonOneHandler(member)}
-                        renderButtonTwo={
-                          currentUser &&
-                          currentUser._id &&
-                          currentChat &&
-                          currentChat.admins &&
-                          member._id &&
-                          !currentChat.admins.includes(member._id.toString()) &&
-                          currentChat.admins.includes(currentUser._id.toString())
-                            ? true
-                            : false
-                        }
-                        buttonTwoHandler={
-                          currentUser &&
-                          currentUser._id &&
-                          currentChat &&
-                          currentChat.admins &&
-                          member._id &&
-                          !currentChat.admins.includes(member._id.toString()) &&
-                          currentChat.admins.includes(currentUser._id.toString())
-                            ? () => {
-                                setCurrentOtherUser(member);
-                                handleRemoveUserFromChat(member, currentChat);
-                              }
-                            : undefined
-                        }
-                        buttonTwoText="Remove"
-                      />
-                    ))}
+                    currentUser &&
+                    chatMembers
+                      .filter((m) => m._id !== currentUser._id)
+                      .map((member) => (
+                        <ListedUser
+                          key={member._id?.toString()}
+                          objectLink={`/users/${member?.username}`}
+                          user={Methods.getTBarebonesUser(member)}
+                          title={
+                            currentChat &&
+                            currentChat.admins &&
+                            member._id &&
+                            currentChat.admins.includes(member._id.toString())
+                              ? "Admin"
+                              : undefined
+                          }
+                          renderButtonOne={true}
+                          buttonOneText={getButtonOneText(member)}
+                          buttonOneHandler={getButtonOneHandler(member)}
+                          renderButtonTwo={
+                            currentUser &&
+                            currentUser._id &&
+                            currentChat &&
+                            currentChat.admins &&
+                            member._id &&
+                            !currentChat.admins.includes(member._id.toString()) &&
+                            currentChat.admins.includes(currentUser._id.toString())
+                              ? true
+                              : false
+                          }
+                          buttonTwoHandler={
+                            currentUser &&
+                            currentUser._id &&
+                            currentChat &&
+                            currentChat.admins &&
+                            member._id &&
+                            !currentChat.admins.includes(member._id.toString()) &&
+                            currentChat.admins.includes(currentUser._id.toString())
+                              ? () => {
+                                  setCurrentOtherUser(member);
+                                  handleRemoveUserFromChat(member, currentChat);
+                                }
+                              : undefined
+                          }
+                          buttonTwoText="Remove"
+                        />
+                      ))}
                 </div>
               )}
             </div>
