@@ -658,6 +658,9 @@ const ChatModal = () => {
               </div>
             </>
           )}
+          {currentChat?.chatType === "two-member" && !otherChatMember && (
+            <p>Loading...</p>
+          )}
           {otherChatMember && (
             <div className="chat-header-single-other-member">
               <div className="other-member-info-container">
@@ -684,141 +687,147 @@ const ChatModal = () => {
               ></i>
             </div>
           )}
-          {currentChat && (
-            <div
-              style={
-                showAreYouSureYouWantToDeleteChat || showAreYouSureYouWantToLeaveChat
-                  ? {
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "gray",
-                    }
-                  : { backgroundColor: "gray" }
-              }
-              ref={messagesContainerRef}
-              className="messages-container"
-              onScroll={() => handleMessageContainerScroll()}
-            >
-              {(messagesContainerScrollBottom > 0 || areNewMessages) && (
-                <div
-                  style={areNewMessages ? { top: "67%" } : undefined}
-                  className="message-indicators-container"
-                >
-                  {areNewMessages &&
-                    messagesContainerScrollHeight > messagesContainerClientHeight && (
-                      <span
-                        className="new-messages-indicator"
-                        style={
-                          randomColor === "var(--primary-color)"
-                            ? { backgroundColor: `${randomColor}`, color: "black" }
-                            : { backgroundColor: `${randomColor}`, color: "white" }
-                        }
-                      >
-                        New
-                      </span>
+          {currentChat &&
+            ((currentChat?.chatType === "two-member" && otherChatMember) ||
+              currentChat.chatType === "group") && (
+              <div
+                style={
+                  showAreYouSureYouWantToDeleteChat || showAreYouSureYouWantToLeaveChat
+                    ? {
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "gray",
+                      }
+                    : { backgroundColor: "gray" }
+                }
+                ref={messagesContainerRef}
+                className="messages-container"
+                onScroll={() => handleMessageContainerScroll()}
+              >
+                {(messagesContainerScrollBottom > 0 || areNewMessages) && (
+                  <div
+                    style={areNewMessages ? { top: "67%" } : undefined}
+                    className="message-indicators-container"
+                  >
+                    {areNewMessages &&
+                      messagesContainerScrollHeight > messagesContainerClientHeight && (
+                        <span
+                          className="new-messages-indicator"
+                          style={
+                            randomColor === "var(--primary-color)"
+                              ? { backgroundColor: `${randomColor}`, color: "black" }
+                              : { backgroundColor: `${randomColor}`, color: "white" }
+                          }
+                        >
+                          New
+                        </span>
+                      )}
+                    {messagesContainerScrollBottom > 0 && (
+                      <i
+                        aria-hidden="false"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            scrollToLatestMessage();
+                          }
+                        }}
+                        onClick={() => scrollToLatestMessage()}
+                        id="to-latest-message-button"
+                        className="fas fa-chevron-down"
+                      ></i>
                     )}
-                  {messagesContainerScrollBottom > 0 && (
-                    <i
-                      aria-hidden="false"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          scrollToLatestMessage();
-                        }
-                      }}
-                      onClick={() => scrollToLatestMessage()}
-                      id="to-latest-message-button"
-                      className="fas fa-chevron-down"
-                    ></i>
+                  </div>
+                )}
+                {!showAreYouSureYouWantToDeleteChat &&
+                  !showAreYouSureYouWantToLeaveChat &&
+                  currentChat.messages.map((message) => (
+                    <Message
+                      key={message._id.toString()}
+                      message={message}
+                      randomColor={randomColor ? randomColor : undefined}
+                    />
+                  ))}
+                {showAreYouSureYouWantToDeleteChat &&
+                  !showAreYouSureYouWantToLeaveChat && (
+                    <ChatModalTwoOptions
+                      randomColor={randomColor}
+                      header="Are you sure you want to delete this chat?"
+                      subheader="Please understand that all messages will be deleted. This is irreversible."
+                      buttonOneText="Cancel"
+                      buttonOneHandler={() => setShowAreYouSureYouWantToDeleteChat(false)}
+                      buttonTwoText="Delete"
+                      buttonTwoHandler={
+                        currentChat
+                          ? () => handleDeleteChat(currentChat._id.toString())
+                          : undefined
+                      }
+                    />
                   )}
-                </div>
-              )}
-              {!showAreYouSureYouWantToDeleteChat &&
-                !showAreYouSureYouWantToLeaveChat &&
-                currentChat.messages.map((message) => (
-                  <Message
-                    key={message._id.toString()}
-                    message={message}
-                    randomColor={randomColor ? randomColor : undefined}
-                  />
-                ))}
-              {showAreYouSureYouWantToDeleteChat && !showAreYouSureYouWantToLeaveChat && (
-                <ChatModalTwoOptions
-                  randomColor={randomColor}
-                  header="Are you sure you want to delete this chat?"
-                  subheader="Please understand that all messages will be deleted. This is irreversible."
-                  buttonOneText="Cancel"
-                  buttonOneHandler={() => setShowAreYouSureYouWantToDeleteChat(false)}
-                  buttonTwoText="Delete"
-                  buttonTwoHandler={
-                    currentChat
-                      ? () => handleDeleteChat(currentChat._id.toString())
-                      : undefined
-                  }
-                />
-              )}
-              {showAreYouSureYouWantToLeaveChat && !showAreYouSureYouWantToDeleteChat && (
-                <ChatModalTwoOptions
-                  randomColor={randomColor}
-                  header="Are you sure you want to leave this chat?"
-                  buttonOneText="Cancel"
-                  buttonOneHandler={() => setShowAreYouSureYouWantToLeaveChat(false)}
-                  buttonTwoText="Leave"
-                  buttonTwoHandler={
-                    currentUser && currentChat
-                      ? () => handleRemoveUserFromChat(currentUser, currentChat)
-                      : undefined
-                  }
-                />
-              )}
-            </div>
-          )}
-          {
-            <div className="message-input-container">
-              <textarea
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Type message"
-                maxLength={10000}
-              ></textarea>
-              {!messageBeingEdited ? (
-                <button
-                  id="send-message-button"
-                  disabled={inputMessage.replace(/\s+/g, "") === ""}
-                  onClick={() =>
-                    currentChat && handleSendMessage(currentChat, inputMessage)
-                  }
-                  style={
-                    randomColor === "var(--primary-color)"
-                      ? { backgroundColor: `${randomColor}`, color: "black" }
-                      : { backgroundColor: `${randomColor}`, color: "white" }
-                  }
-                >
-                  <i className="fas fa-paper-plane"></i>
-                </button>
-              ) : (
-                <div className="edit-message-buttons-container">
+                {showAreYouSureYouWantToLeaveChat &&
+                  !showAreYouSureYouWantToDeleteChat && (
+                    <ChatModalTwoOptions
+                      randomColor={randomColor}
+                      header="Are you sure you want to leave this chat?"
+                      buttonOneText="Cancel"
+                      buttonOneHandler={() => setShowAreYouSureYouWantToLeaveChat(false)}
+                      buttonTwoText="Leave"
+                      buttonTwoHandler={
+                        currentUser && currentChat
+                          ? () => handleRemoveUserFromChat(currentUser, currentChat)
+                          : undefined
+                      }
+                    />
+                  )}
+              </div>
+            )}
+          {currentChat &&
+            ((currentChat?.chatType === "two-member" && otherChatMember) ||
+              currentChat.chatType === "group") && (
+              <div className="message-input-container">
+                <textarea
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  placeholder="Type message"
+                  maxLength={10000}
+                ></textarea>
+                {!messageBeingEdited ? (
                   <button
-                    onClick={
-                      currentChat
-                        ? () => handleSaveEditedMessage(currentChat, messageBeingEdited)
-                        : undefined
+                    id="send-message-button"
+                    disabled={inputMessage.replace(/\s+/g, "") === ""}
+                    onClick={() =>
+                      currentChat && handleSendMessage(currentChat, inputMessage)
                     }
-                    disabled={inputMessage === messageBeingEdited.content}
                     style={
                       randomColor === "var(--primary-color)"
                         ? { backgroundColor: `${randomColor}`, color: "black" }
                         : { backgroundColor: `${randomColor}`, color: "white" }
                     }
                   >
-                    Update
+                    <i className="fas fa-paper-plane"></i>
                   </button>
-                  <button onClick={() => cancelEditingMessage()}>Cancel</button>
-                </div>
-              )}
-            </div>
-          }
+                ) : (
+                  <div className="edit-message-buttons-container">
+                    <button
+                      onClick={
+                        currentChat
+                          ? () => handleSaveEditedMessage(currentChat, messageBeingEdited)
+                          : undefined
+                      }
+                      disabled={inputMessage === messageBeingEdited.content}
+                      style={
+                        randomColor === "var(--primary-color)"
+                          ? { backgroundColor: `${randomColor}`, color: "black" }
+                          : { backgroundColor: `${randomColor}`, color: "white" }
+                      }
+                    >
+                      Update
+                    </button>
+                    <button onClick={() => cancelEditingMessage()}>Cancel</button>
+                  </div>
+                )}
+              </div>
+            )}
         </div>
       )}
       {showAddMemberModal && (
