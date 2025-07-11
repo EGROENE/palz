@@ -145,11 +145,12 @@ const EventPage = () => {
             const eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee =
               currentEvent &&
               currentEvent.publicity === "private" &&
-              (!currentEvent.invitees.includes(currentUser._id.toString()) ||
-                !currentEvent.organizers.includes(currentUser._id.toString()))
+              !currentEvent.invitees.includes(currentUser._id.toString()) &&
+              !currentEvent.organizers.includes(currentUser._id.toString())
                 ? true
                 : false;
 
+            // Account for currentUser being in blockedUsersEvent
             const userDoesNotHaveAccess: boolean =
               eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee ||
               currentUserHasBeenBlockedByAnOrganizer ||
