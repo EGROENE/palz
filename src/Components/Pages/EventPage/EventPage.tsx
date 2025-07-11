@@ -58,6 +58,7 @@ const EventPage = () => {
 
   const [fetchOrganizersIsLoading, setFetchOrganizersIsLoading] =
     useState<boolean>(false);
+
   const [fetchOrganizersIsError, setFetchOrganizersIsError] = useState<boolean>(false);
 
   const [currentUserIsFriendOfFriend, setCurrentUserIsFriendOfFriend] =
@@ -116,9 +117,7 @@ const EventPage = () => {
     } else {
       setFetchEventIsError(true);
     }
-  }, []);
 
-  useEffect(() => {
     // Set eventOrganizers, other vars:
     if (currentEvent) {
       // Redirect user to their homepage or to login page if event is private & they are not an invitee or organizer
@@ -243,7 +242,7 @@ const EventPage = () => {
         })
         .finally(() => setFetchOrganizersIsLoading(false));
     }
-  }, [currentEvent]);
+  }, []);
 
   const nextEventDateTime = currentEvent
     ? new Date(currentEvent.eventStartDateTimeInMS)
