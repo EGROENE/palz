@@ -131,31 +131,36 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       >
         <div className="profile-images-chat-preview-container">
           {chatMembers &&
-            chatMembers.map(
-              (member) =>
-                chatMembers.indexOf(member) < 3 && (
-                  <img
-                    key={member.profileImage}
-                    style={
-                      chatMembers.indexOf(member) > 0
-                        ? {
-                            border: `4px solid ${randomColor}`,
-                            zIndex: `${chatMembers.indexOf(member)}`,
-                          }
-                        : { border: `4px solid ${randomColor}` }
-                    }
-                    src={member.profileImage}
-                  />
-                )
-            )}
+            currentUser &&
+            chatMembers
+              .filter((m) => m._id !== currentUser._id)
+              .map(
+                (member) =>
+                  chatMembers.filter((m) => m._id !== currentUser._id).indexOf(member) <
+                    3 && (
+                    <img
+                      key={member.profileImage}
+                      style={
+                        chatMembers.indexOf(member) > 0
+                          ? {
+                              border: `4px solid ${randomColor}`,
+                              zIndex: `${chatMembers.indexOf(member)}`,
+                            }
+                          : { border: `4px solid ${randomColor}` }
+                      }
+                      src={member.profileImage}
+                    />
+                  )
+              )}
           {chatMembers && chatMembers.length - 1 > 3 && (
             <span className="more-images-text">{`+ ${chatMembers.length - 3}`}</span>
           )}
         </div>
         <div className="chat-preview-container-text-container">
-          {chatMembers && (
+          {chatMembers && currentUser && (
             <header style={{ color: randomColor }}>
               {`${chatMembers
+                .filter((m) => m._id !== currentUser._id)
                 .slice(0, 3)
                 .map((member) =>
                   chatMembers.indexOf(member) <= 2
