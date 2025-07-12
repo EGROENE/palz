@@ -998,8 +998,8 @@ form textarea {
 
 .chat-new {
   position: absolute;
-  top: -1rem;
-  right: -0.5rem;
+      top: -2rem;
+    right: -1.75rem;
   background-color: green;
   padding: 0.5rem;
   border-radius: 50%;
