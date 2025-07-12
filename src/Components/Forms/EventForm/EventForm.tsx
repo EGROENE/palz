@@ -149,7 +149,7 @@ const EventForm = ({
     null
   );
 
-  // Define these in Edit, or only set these if editing event
+  // Make derived var fetchPotentialUsersIsLoading, set to true if either fetch b, o, or i is loading. Should replace initialFetchIsLoading.
   const [fetchBlockeesIsLoading, setFetchBlockeesIsLoading] = useState<boolean>(false);
   const [fetchBlockeesIsError, setFetchBlockeesIsError] = useState<boolean>(false);
 
@@ -159,8 +159,6 @@ const EventForm = ({
 
   const [fetchInviteesIsLoading, setFetchInviteesIsLoading] = useState<boolean>(false);
   const [fetchInviteesIsError, setFetchInviteesIsError] = useState<boolean>(false);
-
-  // Define derived value isFetchError that is true if fetchI/O/BError is truthy:
 
   const [showPotentialCoOrganizers, setShowPotentialCoOrganizers] =
     useState<boolean>(false);
@@ -173,8 +171,18 @@ const EventForm = ({
     usedFor === "edit-event" ? true : false
   );
 
+  // Rename to fetchPotentialUsersIsLoading
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
-  const [isFetchPotentialUsersError, setIsFetchPotentialUsersError] = useState<boolean>(false);
+
+  const [isFetchPotentialUsersError, setIsFetchPotentialUsersError] =
+    useState<boolean>(false);
+
+  // Define derived value isFetchError that is true if fetchI/O/BError is truthy:
+  const isFetchError =
+    isFetchPotentialUsersError ||
+    fetchOrganizersIsError ||
+    fetchInviteesIsError ||
+    fetchBlockeesIsError;
 
   const [showAreYouSureDeleteEvent, setShowAreYouSureDeleteEvent] =
     useState<boolean>(false);
@@ -1389,15 +1397,15 @@ const EventForm = ({
 
   return (
     <>
-      {initialFetchIsLoading && (
+      {initialFetchIsLoading && !isFetchError && (
         <header style={{ marginTop: "3rem" }} className="query-status-text">
           Loading...
         </header>
       )}
-      {isFetchPotentialUsersError && !initialFetchIsLoading && (
+      {isFetchError && !initialFetchIsLoading && (
         <p>Error retrieving data; please reload the page.</p>
       )}
-      {!isFetchPotentialUsersError && !initialFetchIsLoading && (
+      {!isFetchError && !initialFetchIsLoading && (
         <form className="event-form">
           <label>
             <header className="input-label">Title:</header>
