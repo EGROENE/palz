@@ -959,7 +959,7 @@ form textarea {
   margin-bottom: 4rem;
 }
 
-.chat-preview-container {
+.chat-preview-body {
   position: relative;
   padding: 0.75rem 0;
   border-radius: 10px;
@@ -970,12 +970,12 @@ form textarea {
   margin: 0.75rem 0;
 }
 
-.chat-preview-container i:hover {
+.chat-preview-body i:hover {
   cursor: pointer;
   opacity: 0.8;
 }
 
-.chat-preview-container:hover {
+.chat-preview-body:hover {
   cursor: pointer;
 }
 
@@ -989,13 +989,13 @@ form textarea {
   font-family: var(--text-font);
 }
 
-.profile-images-chat-preview-container {
+.profile-images-chat-preview-body {
   position: relative;
   display: flex;
   align-items: flex-end;
 }
 
-.chat-preview-container img {
+.chat-preview-body img {
   width: 5rem;
   height: 5rem;
   border-radius: 50%;
@@ -1017,7 +1017,7 @@ form textarea {
   font-weight: 700;
 }
 
-.chat-preview-container-text-container {
+.chat-preview-body-text-container {
   text-align: left;
   width: 60%;
 }
@@ -1027,12 +1027,13 @@ form textarea {
   justify-content: space-between;
 }
 
-.chat-preview-container-text-container header {
+.chat-preview-body-text-container header {
   color: var(--text-color);
   font-size: 1.5rem;
+  font-family: var(--text-font);
 }
 
-.chat-preview-container-text-container span {
+.chat-preview-body-text-container span {
   font-family: var(--text-font);
   color: var(--text-color);
 }
@@ -1681,11 +1682,11 @@ form textarea {
   color: var(--text-color);
 }
 
-.chat-preview-container i {
+.chat-preview-body i {
   font-size: 1.25rem;
   margin: 0 2rem;
 }
 
-.profile-images-chat-preview-container img {
+.profile-images-chat-preview-body img {
   margin-left: -3rem;
 }
