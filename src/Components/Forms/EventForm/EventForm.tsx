@@ -177,10 +177,7 @@ const EventForm = ({
     useState<boolean>(false);
 
   const fetchIsLoading: boolean =
-    fetchPotentialUsersIsLoading ||
-    fetchOrganizersIsLoading ||
-    fetchInviteesIsLoading ||
-    fetchBlockeesIsLoading;
+    fetchOrganizersIsLoading || fetchInviteesIsLoading || fetchBlockeesIsLoading;
 
   const isFetchError: boolean =
     isFetchPotentialUsersError ||
