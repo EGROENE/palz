@@ -164,7 +164,7 @@ export type TChat = {
   members: string[];
   messages: TMessage[];
   dateCreated: number;
-  chatName: string | undefined;
+  chatName?: string | undefined;
   chatType: "two-member" | "group";
   admins?: string[];
 };
