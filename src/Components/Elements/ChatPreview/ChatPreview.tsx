@@ -173,7 +173,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
                         (member) =>
                           chatMembers
                             .filter((m) => m._id !== currentUser._id)
-                            .indexOf(member) < 3 && (
+                            .indexOf(member) < 2 && (
                             <img
                               key={member.profileImage}
                               style={
@@ -188,9 +188,9 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
                             />
                           )
                       )}
-                  {chatMembers && chatMembers.length - 1 > 3 && (
+                  {chatMembers && chatMembers.length - 1 > 2 && currentUser && (
                     <span className="more-images-text">{`+ ${
-                      chatMembers.length - 3
+                      chatMembers.filter((m) => m._id !== currentUser._id).length - 2
                     }`}</span>
                   )}
                 </div>
