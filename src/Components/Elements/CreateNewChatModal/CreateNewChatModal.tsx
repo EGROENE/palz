@@ -5,7 +5,6 @@ import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
-import mongoose from "mongoose";
 import Methods from "../../../methods";
 import Requests from "../../../requests";
 
@@ -208,7 +207,6 @@ const CreateNewChatModal = () => {
                       setUsersToAddToChat([]);
                     } else {
                       handleCreateChat({
-                        _id: new mongoose.Types.ObjectId().toString(),
                         members: usersToAddToChat
                           .map((u) => u._id?.toString())
                           .filter((elem) => elem !== undefined)
