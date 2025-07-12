@@ -523,6 +523,7 @@ const ChatModal = () => {
                   )}
                   {chatMembers &&
                     currentUser &&
+                    !fetchChatMembersIsLoading &&
                     chatMembers
                       .filter((m) => m._id !== currentUser._id)
                       .map((member) => (
@@ -569,6 +570,10 @@ const ChatModal = () => {
                           buttonTwoText="Remove"
                         />
                       ))}
+                  {fetchChatMembersIsLoading && <p>Loading...</p>}
+                  {fetchChatMembersIsError && !fetchChatMembersIsLoading && (
+                    <p>Couldn't fetch chat members. Try reloading the page.</p>
+                  )}
                 </div>
               )}
             </div>
