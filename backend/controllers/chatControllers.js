@@ -33,11 +33,10 @@ const getPotentialChatMembers = async (req, res) => {
 
 // create new chat:
 const createChat = async (req, res) => {
-  const { _id, members, messages, dateCreated, chatName, chatType, admins } = req.body;
+  const { members, messages, dateCreated, chatName, chatType, admins } = req.body;
 
   try {
     const chat = await Chat.create({
-      _id,
       members,
       messages,
       dateCreated,
