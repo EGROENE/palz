@@ -80,6 +80,30 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       ? true
       : false;
 
+  const getNamesOfOtherMembersInChat = (): string | undefined => {
+    const otherMembers = chatMembers?.filter((m) => m._id !== currentUser?._id);
+
+    const fullNamesToRender: number = 2;
+
+    if (otherMembers) {
+      if (otherMembers.length > 2) {
+        const firstTwo = otherMembers.slice(0, fullNamesToRender).map((m) => {
+          if (otherMembers.indexOf(m) <= 2) {
+            return `${m.firstName} ${m.lastName}`;
+          }
+        });
+        return `${firstTwo.join(", ")} +${otherMembers.length - fullNamesToRender} more`;
+      }
+
+      if (otherMembers.length === 2) {
+        return otherMembers.map((m) => `${m.firstName} ${m.lastName}`).join(" & ");
+      }
+    }
+    // if only one other member (two-member chat):
+    return otherMembers?.map((m) => `${m.firstName} ${m.lastName}`).join("");
+  };
+  const namesOfOtherMembersInChat = getNamesOfOtherMembersInChat();
+
   return (
     <div
       className="chat-preview-container"
@@ -173,19 +197,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
                 <div className="chat-preview-body-text-container">
                   {chatMembers && currentUser && (
                     <header style={{ color: randomColor }}>
-                      {`${chatMembers
-                        .filter((m) => m._id !== currentUser._id)
-                        .slice(0, 3)
-                        .map((member) =>
-                          chatMembers.indexOf(member) <= 2
-                            ? `${member.firstName} ${member.lastName}`
-                            : ""
-                        )
-                        .join(", ")} ${
-                        chatMembers.length - 3 > 0
-                          ? `+${chatMembers.length - 3} more`
-                          : ""
-                      }`}
+                      {namesOfOtherMembersInChat}
                     </header>
                   )}
                   <div className="last-message-preview-and-date">
