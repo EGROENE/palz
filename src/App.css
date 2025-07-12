@@ -930,6 +930,7 @@ form textarea {
 
 .create-new-chat header {
   margin: 1rem 0;
+  font-family: var(--text-font);
 }
 
 .create-new-chat-modal-buttons {
