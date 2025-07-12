@@ -44,7 +44,7 @@ const chatSchema = new Schema({
   },
   chatName: {
     type: String,
-    required: true,
+    required: false,
   },
   chatType: {
     type: String,
