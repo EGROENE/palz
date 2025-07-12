@@ -83,8 +83,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [fetchStart, setFetchStart] = useState<number>(0);
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
   const [isFetchError, setIsFetchError] = useState<boolean>(false);
-  const [fetchAdminsIsError, setFetchAdminsIsError] = useState<boolean>(false);
-  const [fetchAdminsIsLoading, setFetchAdminsIsLoading] = useState<boolean>(false);
 
   const [inputMessage, setInputMessage] = useState<string>("");
 
@@ -593,7 +591,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
                   });
                 });
 
-                setFetchAdminsIsLoading(true);
                 Promise.all(promisesToAwaitAdmins)
                   .then((admins: TUser[]) => {
                     const chatValuesToUpdate: TChatValuesToUpdate = {
@@ -609,9 +606,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
                   })
                   .catch((error) => {
                     console.log(error);
-                    setFetchAdminsIsError(true);
-                  })
-                  .finally(() => setFetchAdminsIsLoading(false));
+                    toast.error("Could not fetch chat members. Please try again.", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    });
+                  });
               }
             } else {
               // Remove non-admin members:
@@ -688,7 +690,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       });
     });
 
-    setFetchAdminsIsLoading(true);
     Promise.all(promisesToAwaitAdmins)
       .then((admins: TUser[]) => {
         const chatValuesToUpdate = {
@@ -699,9 +700,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       })
       .catch((error) => {
         console.log(error);
-        setFetchAdminsIsError(true);
-      })
-      .finally(() => setFetchAdminsIsLoading(false));
+        toast.error("Could not fetch chat members. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      });
   };
 
   const handleRemoveAdminFromChat = (user: TUser, chat: TChat): void => {
@@ -725,7 +731,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (promisesToAwaitAdmins) {
-        setFetchAdminsIsLoading(true);
         Promise.all(promisesToAwaitAdmins)
           .then((admins: TUser[]) => {
             const chatValuesToUpdate = {
@@ -735,9 +740,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           })
           .catch((error) => {
             console.log(error);
-            setFetchAdminsIsError(true);
-          })
-          .finally(() => setFetchAdminsIsLoading(false));
+            toast.error("Could not fetch chat members. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          });
       }
     }
   };
