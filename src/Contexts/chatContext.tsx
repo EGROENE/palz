@@ -342,6 +342,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         setShowCreateNewChatModal(false);
         setShowChatModal(true);
         setUsersToAddToChat([]);
+        setChatName(undefined);
         queryClient.invalidateQueries({ queryKey: ["userChats"] });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
       } else {
@@ -532,6 +533,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
     if (showCreateNewChatModal) {
       setShowCreateNewChatModal(false);
+    }
+    if (chatName) {
+      setChatName(undefined);
     }
   };
 
