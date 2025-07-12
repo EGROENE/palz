@@ -212,8 +212,9 @@ const CreateNewChatModal = () => {
                           .filter((elem) => elem !== undefined)
                           .concat(currentUser?._id?.toString()),
                         messages: [],
-                        chatName: chatName,
-                        chatType: usersToAddToChat.length > 2 ? "group" : "two-member",
+                        ...(chatName &&
+                          chatName.replace(/\s/g, "") !== "" && { chatName: chatName }),
+                        chatType: usersToAddToChat.length > 1 ? "group" : "two-member",
                         dateCreated: Date.now(),
                         ...(usersToAddToChat.length >= 2 &&
                           currentUser &&
