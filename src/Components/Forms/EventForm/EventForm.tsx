@@ -171,13 +171,14 @@ const EventForm = ({
     usedFor === "edit-event" ? true : false
   );
 
-  // Rename to fetchPotentialUsersIsLoading
-  const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
+  const [fetchPotentialUsersIsLoading, setFetchPotentialUsersIsLoading] =
+    useState<boolean>(false);
 
   const [isFetchPotentialUsersError, setIsFetchPotentialUsersError] =
     useState<boolean>(false);
 
-  // Define derived value isFetchError that is true if fetchI/O/BError is truthy:
+  // Maybe def fetchIsLoading derived var, set to true it either fetch i, o, or b is loading. See how isFetchError is used
+
   const isFetchError =
     isFetchPotentialUsersError ||
     fetchOrganizersIsError ||
@@ -231,8 +232,8 @@ const EventForm = ({
   // useEffect to fetch more users when fetch starts change
   useEffect(() => {
     if (potentialCOsSearchTerm === "") {
-      if (!fetchIsLoading) {
-        setFetchIsLoading(true);
+      if (!fetchPotentialUsersIsLoading) {
+        setFetchPotentialUsersIsLoading(true);
       }
       if (usedFor === "edit-event" && event && event._id) {
         Requests.getPotentialCoOrganizers(
@@ -261,7 +262,7 @@ const EventForm = ({
             }
           })
           .catch((error) => console.log(error))
-          .finally(() => setFetchIsLoading(false));
+          .finally(() => setFetchPotentialUsersIsLoading(false));
       }
 
       if (usedFor === "add-event") {
@@ -291,15 +292,15 @@ const EventForm = ({
             }
           })
           .catch((error) => console.log(error))
-          .finally(() => setFetchIsLoading(false));
+          .finally(() => setFetchPotentialUsersIsLoading(false));
       }
     }
   }, [fetchPotentialCOsStart, potentialCOsSearchTerm, usedFor]);
 
   useEffect(() => {
     if (potentialInviteesSearchTerm === "") {
-      if (!fetchIsLoading) {
-        setFetchIsLoading(true);
+      if (!fetchPotentialUsersIsLoading) {
+        setFetchPotentialUsersIsLoading(true);
       }
 
       if (usedFor === "edit-event" && event && event._id) {
@@ -328,7 +329,7 @@ const EventForm = ({
             }
           })
           .catch((error) => console.log(error))
-          .finally(() => setFetchIsLoading(false));
+          .finally(() => setFetchPotentialUsersIsLoading(false));
       }
 
       if (usedFor === "add-event") {
@@ -357,15 +358,15 @@ const EventForm = ({
             }
           })
           .catch((error) => console.log(error))
-          .finally(() => setFetchIsLoading(false));
+          .finally(() => setFetchPotentialUsersIsLoading(false));
       }
     }
   }, [fetchPotentialInviteesStart, potentialInviteesSearchTerm, usedFor]);
 
   useEffect(() => {
     if (potentialBlockeesSearchTerm === "") {
-      if (!fetchIsLoading) {
-        setFetchIsLoading(true);
+      if (!fetchPotentialUsersIsLoading) {
+        setFetchPotentialUsersIsLoading(true);
       }
 
       if (usedFor === "edit-event" && event && event._id) {
@@ -393,7 +394,7 @@ const EventForm = ({
             console.log(error);
             setIsFetchPotentialUsersError(true);
           })
-          .finally(() => setFetchIsLoading(false));
+          .finally(() => setFetchPotentialUsersIsLoading(false));
       }
 
       if (usedFor === "add-event") {
@@ -421,7 +422,7 @@ const EventForm = ({
             console.log(error);
             setIsFetchPotentialUsersError(true);
           })
-          .finally(() => setFetchIsLoading(false));
+          .finally(() => setFetchPotentialUsersIsLoading(false));
       }
     }
   }, [fetchPotentialBlockeesStart, potentialBlockeesSearchTerm, usedFor]);
@@ -544,7 +545,7 @@ const EventForm = ({
   };
 
   const initializePotentialCoOrganizersSearch = (input: string): void => {
-    setFetchIsLoading(true);
+    setFetchPotentialUsersIsLoading(true);
     setFetchPotentialCOsStart(0);
     const eventType = usedFor === "add-event" ? "new" : "edit";
     if (event && event._id) {
@@ -576,12 +577,12 @@ const EventForm = ({
           }
         })
         .catch((error) => console.log(error))
-        .finally(() => setFetchIsLoading(false));
+        .finally(() => setFetchPotentialUsersIsLoading(false));
     }
   };
 
   const initializePotentialInviteesSearch = (input: string): void => {
-    setFetchIsLoading(true);
+    setFetchPotentialUsersIsLoading(true);
     setFetchPotentialInviteesStart(0);
     const eventType = usedFor === "add-event" ? "new" : "edit";
     if (event && event._id) {
@@ -613,12 +614,12 @@ const EventForm = ({
           }
         })
         .catch((error) => console.log(error))
-        .finally(() => setFetchIsLoading(false));
+        .finally(() => setFetchPotentialUsersIsLoading(false));
     }
   };
 
   const initializePotentialBlockeesSearch = (input: string): void => {
-    setFetchIsLoading(true);
+    setFetchPotentialUsersIsLoading(true);
     setFetchPotentialBlockeesStart(0);
     const eventType = usedFor === "add-event" ? "new" : "edit";
     if (event && event._id) {
@@ -649,7 +650,7 @@ const EventForm = ({
           console.log(error);
           setIsFetchPotentialUsersError(true);
         })
-        .finally(() => setFetchIsLoading(false));
+        .finally(() => setFetchPotentialUsersIsLoading(false));
     }
   };
 
@@ -2011,7 +2012,7 @@ const EventForm = ({
                 }}
                 dropdownChecklist={
                   <DropdownChecklist
-                    fetchIsLoading={fetchIsLoading}
+                    fetchIsLoading={fetchPotentialUsersIsLoading}
                     scrollHandler={handleLoadMoreItemsOnScroll}
                     scrollHandlerParams={[
                       "potential-co-organizers",
@@ -2079,7 +2080,7 @@ const EventForm = ({
                 setShowList={setShowPotentialInvitees}
                 dropdownChecklist={
                   <DropdownChecklist
-                    fetchIsLoading={fetchIsLoading}
+                    fetchIsLoading={fetchPotentialUsersIsLoading}
                     scrollHandler={handleLoadMoreItemsOnScroll}
                     scrollHandlerParams={["potential-invitees", potentialInvitees]}
                     usedFor="potential-invitees"
@@ -2176,7 +2177,7 @@ const EventForm = ({
                 setShowList={setShowPotentialBlockees}
                 dropdownChecklist={
                   <DropdownChecklist
-                    fetchIsLoading={fetchIsLoading}
+                    fetchIsLoading={fetchPotentialUsersIsLoading}
                     scrollHandler={handleLoadMoreItemsOnScroll}
                     scrollHandlerParams={["potential-blockees", potentialBlockees]}
                     usedFor="potential-blockees"
