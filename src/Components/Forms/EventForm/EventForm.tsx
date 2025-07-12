@@ -149,7 +149,6 @@ const EventForm = ({
     null
   );
 
-  // Make derived var fetchPotentialUsersIsLoading, set to true if either fetch b, o, or i is loading. Should replace initialFetchIsLoading.
   const [fetchBlockeesIsLoading, setFetchBlockeesIsLoading] = useState<boolean>(false);
   const [fetchBlockeesIsError, setFetchBlockeesIsError] = useState<boolean>(false);
 
@@ -177,9 +176,13 @@ const EventForm = ({
   const [isFetchPotentialUsersError, setIsFetchPotentialUsersError] =
     useState<boolean>(false);
 
-  // Maybe def fetchIsLoading derived var, set to true it either fetch i, o, or b is loading. See how isFetchError is used
+  const fetchIsLoading: boolean =
+    fetchPotentialUsersIsLoading ||
+    fetchOrganizersIsLoading ||
+    fetchInviteesIsLoading ||
+    fetchBlockeesIsLoading;
 
-  const isFetchError =
+  const isFetchError: boolean =
     isFetchPotentialUsersError ||
     fetchOrganizersIsError ||
     fetchInviteesIsError ||
@@ -1391,22 +1394,17 @@ const EventForm = ({
     relatedInterests: relatedInterests,
   };
 
-  const initialFetchIsLoading: boolean =
-    potentialBlockees === null ||
-    potentialCoOrganizers === null ||
-    potentialInvitees === null;
-
   return (
     <>
-      {initialFetchIsLoading && !isFetchError && (
+      {fetchIsLoading && !isFetchError && (
         <header style={{ marginTop: "3rem" }} className="query-status-text">
           Loading...
         </header>
       )}
-      {isFetchError && !initialFetchIsLoading && (
+      {isFetchError && !fetchIsLoading && (
         <p>Error retrieving data; please reload the page.</p>
       )}
-      {!isFetchError && !initialFetchIsLoading && (
+      {!isFetchError && !fetchIsLoading && (
         <form className="event-form">
           <label>
             <header className="input-label">Title:</header>
