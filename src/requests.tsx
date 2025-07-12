@@ -1018,10 +1018,7 @@ const getEventByID = (eventID: string) => {
   });
 };
 
-const removeInvitee = (
-  event: TEvent,
-  user: TBarebonesUser | null
-): Promise<Response> => {
+const removeInvitee = (event: TEvent, user: TBarebonesUser | null): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -1230,9 +1227,7 @@ const getPotentialChatMembers = async (
     return response.json().then((potentialCMs: TUser[]) => {
       return potentialCMs.filter((pcm: TUser) => {
         const userIsNotAlreadyInCurrentChat: boolean =
-          pcm._id && chat && chat.members.includes(pcm._id.toString())
-            ? false
-            : true;
+          pcm._id && chat && chat.members.includes(pcm._id.toString()) ? false : true;
 
         const currentUserIsFriendOfFriend: boolean = potentialCMs.some((pcm) => {
           if (currentUser && currentUser._id) {
@@ -1264,14 +1259,12 @@ const createNewChat = (newChat: TChat): Promise<Response> => {
   myHeaders.append("Content-Type", "application/json");
 
   var raw = JSON.stringify({
-    "_id": newChat._id,
     "members": newChat.members,
     "messages": newChat.messages,
     "chatType": newChat.chatType,
     "dateCreated": newChat.dateCreated,
-    ...(newChat.chatName &&
-      newChat.chatName.replace(/\s/g, "") !== "" && { newChat: newChat.chatName }),
-    ...(newChat.admins && newChat.admins.length > 0 && { admins: newChat.admins }),
+    "chatName": newChat.chatName,
+    "admins": newChat.admins,
   });
 
   return fetch("http://localhost:4000/palz/chats/", {
