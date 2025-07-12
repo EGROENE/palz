@@ -72,6 +72,8 @@ const ChatModal = () => {
 
   const fetchLimit = 15;
 
+  const [hoveringOverSendIcon, setHoveringOverSendIcon] = useState<boolean>(false);
+
   const [chatMembers, setChatMembers] = useState<TOtherUser[] | null>(null);
 
   const [fetchChatMembersIsLoading, setFetchChatMembersIsLoading] =
@@ -820,7 +822,16 @@ const ChatModal = () => {
                         : { backgroundColor: `${randomColor}`, color: "white" }
                     }
                   >
-                    <i className="fas fa-paper-plane"></i>
+                    <i
+                      onMouseEnter={() => setHoveringOverSendIcon(true)}
+                      onMouseLeave={() => setHoveringOverSendIcon(false)}
+                      style={
+                        hoveringOverSendIcon && inputMessage.replace(/\s+/g, "") === ""
+                          ? { cursor: "not-allowed" }
+                          : undefined
+                      }
+                      className="fas fa-paper-plane"
+                    ></i>
                   </button>
                 ) : (
                   <div className="edit-message-buttons-container">
