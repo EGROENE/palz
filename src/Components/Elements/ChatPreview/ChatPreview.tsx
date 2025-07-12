@@ -80,19 +80,22 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       ? true
       : false;
 
+  const numberOfOtherChatMembersToPreview: number = 2;
   const getNamesOfOtherMembersInChat = (): string | undefined => {
     const otherMembers = chatMembers?.filter((m) => m._id !== currentUser?._id);
 
-    const fullNamesToRender: number = 2;
-
     if (otherMembers) {
       if (otherMembers.length > 2) {
-        const firstTwo = otherMembers.slice(0, fullNamesToRender).map((m) => {
-          if (otherMembers.indexOf(m) <= 2) {
-            return `${m.firstName} ${m.lastName}`;
-          }
-        });
-        return `${firstTwo.join(", ")} +${otherMembers.length - fullNamesToRender} more`;
+        const firstTwo = otherMembers
+          .slice(0, numberOfOtherChatMembersToPreview)
+          .map((m) => {
+            if (otherMembers.indexOf(m) <= 2) {
+              return `${m.firstName} ${m.lastName}`;
+            }
+          });
+        return `${firstTwo.join(", ")} +${
+          otherMembers.length - numberOfOtherChatMembersToPreview
+        } more`;
       }
 
       if (otherMembers.length === 2) {
@@ -173,7 +176,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
                         (member) =>
                           chatMembers
                             .filter((m) => m._id !== currentUser._id)
-                            .indexOf(member) < 2 && (
+                            .indexOf(member) < numberOfOtherChatMembersToPreview && (
                             <img
                               key={member.profileImage}
                               style={
@@ -188,11 +191,14 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
                             />
                           )
                       )}
-                  {chatMembers && chatMembers.length - 1 > 2 && currentUser && (
-                    <span className="more-images-text">{`+ ${
-                      chatMembers.filter((m) => m._id !== currentUser._id).length - 2
-                    }`}</span>
-                  )}
+                  {chatMembers &&
+                    chatMembers.length - 1 > numberOfOtherChatMembersToPreview &&
+                    currentUser && (
+                      <span className="more-images-text">{`+ ${
+                        chatMembers.filter((m) => m._id !== currentUser._id).length -
+                        numberOfOtherChatMembersToPreview
+                      }`}</span>
+                    )}
                 </div>
                 <div className="chat-preview-body-text-container">
                   {chatMembers && currentUser && (
