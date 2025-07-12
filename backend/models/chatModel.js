@@ -30,10 +30,6 @@ const Schema = mongoose.Schema;
 }); */
 
 const chatSchema = new Schema({
-  _id: {
-    type: mongoose.Schema.ObjectId,
-    required: true,
-  },
   members: {
     type: [String],
     required: true,
@@ -48,7 +44,7 @@ const chatSchema = new Schema({
   },
   chatName: {
     type: String,
-    required: false,
+    required: true,
   },
   chatType: {
     type: String,
@@ -56,7 +52,7 @@ const chatSchema = new Schema({
   },
   admins: {
     type: [String],
-    required: false,
+    required: true,
   },
 });
 
