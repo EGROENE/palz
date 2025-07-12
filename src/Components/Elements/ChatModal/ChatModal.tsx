@@ -771,7 +771,11 @@ const ChatModal = () => {
                       buttonTwoText="Delete"
                       buttonTwoHandler={
                         currentChat
-                          ? () => handleDeleteChat(currentChat._id.toString())
+                          ? () => {
+                              if (currentChat._id) {
+                                handleDeleteChat(currentChat._id.toString());
+                              }
+                            }
                           : undefined
                       }
                     />
