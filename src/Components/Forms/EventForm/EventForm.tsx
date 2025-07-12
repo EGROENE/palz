@@ -160,6 +160,8 @@ const EventForm = ({
   const [fetchInviteesIsLoading, setFetchInviteesIsLoading] = useState<boolean>(false);
   const [fetchInviteesIsError, setFetchInviteesIsError] = useState<boolean>(false);
 
+  // Define derived value isFetchError that is true if fetchI/O/BError is truthy:
+
   const [showPotentialCoOrganizers, setShowPotentialCoOrganizers] =
     useState<boolean>(false);
   const [showPotentialInvitees, setShowPotentialInvitees] = useState<boolean>(false);
@@ -172,7 +174,7 @@ const EventForm = ({
   );
 
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
-  const [isFetchError, setIsFetchError] = useState<boolean>(false);
+  const [isFetchPotentialUsersError, setIsFetchPotentialUsersError] = useState<boolean>(false);
 
   const [showAreYouSureDeleteEvent, setShowAreYouSureDeleteEvent] =
     useState<boolean>(false);
@@ -247,7 +249,7 @@ const EventForm = ({
                 }
               }
             } else {
-              setIsFetchError(true);
+              setIsFetchPotentialUsersError(true);
             }
           })
           .catch((error) => console.log(error))
@@ -277,7 +279,7 @@ const EventForm = ({
                 }
               }
             } else {
-              setIsFetchError(true);
+              setIsFetchPotentialUsersError(true);
             }
           })
           .catch((error) => console.log(error))
@@ -314,7 +316,7 @@ const EventForm = ({
                 }
               }
             } else {
-              setIsFetchError(true);
+              setIsFetchPotentialUsersError(true);
             }
           })
           .catch((error) => console.log(error))
@@ -343,7 +345,7 @@ const EventForm = ({
                 }
               }
             } else {
-              setIsFetchError(true);
+              setIsFetchPotentialUsersError(true);
             }
           })
           .catch((error) => console.log(error))
@@ -381,7 +383,7 @@ const EventForm = ({
           })
           .catch((error) => {
             console.log(error);
-            setIsFetchError(true);
+            setIsFetchPotentialUsersError(true);
           })
           .finally(() => setFetchIsLoading(false));
       }
@@ -409,7 +411,7 @@ const EventForm = ({
           })
           .catch((error) => {
             console.log(error);
-            setIsFetchError(true);
+            setIsFetchPotentialUsersError(true);
           })
           .finally(() => setFetchIsLoading(false));
       }
@@ -562,7 +564,7 @@ const EventForm = ({
             }
             setPotentialCoOrganizers(matchingPotentialCOs);
           } else {
-            setIsFetchError(true);
+            setIsFetchPotentialUsersError(true);
           }
         })
         .catch((error) => console.log(error))
@@ -599,7 +601,7 @@ const EventForm = ({
             }
             setPotentialInvitees(matchingPotentialInvitees);
           } else {
-            setIsFetchError(true);
+            setIsFetchPotentialUsersError(true);
           }
         })
         .catch((error) => console.log(error))
@@ -637,7 +639,7 @@ const EventForm = ({
         })
         .catch((error) => {
           console.log(error);
-          setIsFetchError(true);
+          setIsFetchPotentialUsersError(true);
         })
         .finally(() => setFetchIsLoading(false));
     }
@@ -1392,10 +1394,10 @@ const EventForm = ({
           Loading...
         </header>
       )}
-      {isFetchError && !initialFetchIsLoading && (
+      {isFetchPotentialUsersError && !initialFetchIsLoading && (
         <p>Error retrieving data; please reload the page.</p>
       )}
-      {!isFetchError && !initialFetchIsLoading && (
+      {!isFetchPotentialUsersError && !initialFetchIsLoading && (
         <form className="event-form">
           <label>
             <header className="input-label">Title:</header>
