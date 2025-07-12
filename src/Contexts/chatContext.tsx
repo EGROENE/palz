@@ -540,10 +540,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleCreateChat = (chat: TChat): void => {
     setChatCreationInProgress(true);
 
-    if (chatName !== undefined) {
-      setChatName(undefined);
-    }
-
     createChatMutation.mutate({ chat });
   };
 
