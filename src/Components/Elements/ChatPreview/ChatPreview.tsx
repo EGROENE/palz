@@ -81,12 +81,12 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       : false;
 
   return (
-    <div className="chat-preview">
-      <div
-        key={chat._id.toString()}
-        className="chat-preview-body"
-        style={{ border: `2px solid ${randomColor}` }}
-      >
+    <div
+      className="chat-preview-container"
+      style={{ border: `2px solid ${randomColor}` }}
+    >
+      {chat.chatName && <header className="chat-preview-header">{chat.chatName}</header>}
+      <div key={chat._id.toString()} className="chat-preview-body">
         {getNumberOfUnreadMessagesInChat(chat) !== 0 &&
           typeof getNumberOfUnreadMessagesInChat(chat) !== "string" && (
             <span
@@ -102,6 +102,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
           )}
         {userMayDeleteChat && (
           <i
+            id="delete-chat-btn"
             onClick={() => {
               setCurrentChat(chat);
               setShowAreYouSureYouWantToDeleteChat(true);
@@ -128,7 +129,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
               return handleOpenChat(chat);
             }
           }}
-          className="chat-preview"
+          className="chat-members-and-last-message"
         >
           <div className="profile-images-chat-preview-body">
             {chatMembers &&
