@@ -1263,8 +1263,9 @@ const createNewChat = (newChat: TChat): Promise<Response> => {
     "messages": newChat.messages,
     "chatType": newChat.chatType,
     "dateCreated": newChat.dateCreated,
-    "chatName": newChat.chatName,
-    "admins": newChat.admins,
+    ...(newChat.chatName &&
+      newChat.chatName.replace(/\s/g, "") !== "" && { chatName: newChat.chatName }),
+    ...(newChat.admins && newChat.admins.length > 0 && { admins: newChat.admins }),
   });
 
   return fetch("http://localhost:4000/palz/chats/", {
