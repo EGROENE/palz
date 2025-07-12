@@ -160,7 +160,7 @@ export type TEvent = {
 };
 
 export type TChat = {
-  _id: string | mongoose.Types.ObjectId;
+  _id?: string | mongoose.Types.ObjectId | undefined;
   members: string[];
   messages: TMessage[];
   dateCreated: number;
