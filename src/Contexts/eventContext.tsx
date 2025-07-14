@@ -131,8 +131,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [blockedUsersEventORIGINAL, setBlockedUsersEventORIGINAL] = useState<
     TBarebonesUser[]
   >([]);
-
-  const [addEventImagesIsLoading, setAddEventImagesIsLoading] = useState<boolean>(false);
   ///////////////////////
 
   // Update currentEvent, eventImages w/ most recent info after fetchAllEventsQuery.data changes
@@ -724,6 +722,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     // interestedUsers omitted from type b/c that is not controllable with this form, rather changes depending on other users RSVPing or de-RSVPing.
     if (currentEvent) {
       return {
+        ...(!Methods.arraysAreIdentical(currentEvent.images, eventImages) && {
+          images: eventImages,
+        }),
         ...(eventTitle?.trim() !== "" &&
           eventTitle.trim() !== currentEvent.title && {
             title: eventTitle,
@@ -811,8 +812,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
-    addEventImagesIsLoading,
-    setAddEventImagesIsLoading,
     disinterestedUsers,
     setDisinterestedUsers,
     handleRemoveDisinterestedUser,

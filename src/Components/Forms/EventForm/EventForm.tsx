@@ -28,7 +28,6 @@ const EventForm = ({
   const { handleCityStateCountryInput, currentUser, blockedUsers } = useUserContext();
 
   const {
-    setAddEventImagesIsLoading,
     setBlockedUsersEventORIGINAL,
     blockedUsersEventORIGINAL,
     handleAddRemoveBlockedUserOnEvent,
@@ -963,89 +962,25 @@ const EventForm = ({
     /* If !event (component is used to add new event), only add image to state value eventImages, which will be 
     passed into database when user submits form successfully */
     if (base64) {
-      if (usedFor === "edit-event") {
-        if (currentEvent) {
-          if (
-            currentEvent &&
-            usedFor === "edit-event" &&
-            currentEvent.images &&
-            !currentEvent.images.includes(base64) &&
-            !eventImages?.includes(base64)
-          ) {
-            setAddEventImagesIsLoading(true);
-            setEventImages(eventImages.concat(base64));
-            Requests.addEventImage(currentEvent, base64)
-              .then((res) => {
-                if (res.ok) {
-                  // Update currentEvent (set to result of getEventByID. If this fails, entire operation fails.)
-                  if (currentEvent && currentEvent._id) {
-                    Requests.getEventByID(currentEvent._id.toString())
-                      .then((res) => {
-                        if (res.ok) {
-                          res
-                            .json()
-                            .then((updatedEvent: TEvent) =>
-                              setCurrentEvent(updatedEvent)
-                            );
-                        } else {
-                          setEventImages(eventImages.filter((ei) => ei !== base64));
-                          toast.error(
-                            "Could not add event image. Please ensure image is size is 50MB or less & try again.",
-                            {
-                              style: {
-                                background:
-                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                                color: theme === "dark" ? "black" : "white",
-                                border: "2px solid red",
-                              },
-                            }
-                          );
-                        }
-                      })
-                      .catch((error) => console.log(error))
-                      .finally(() => setAddEventImagesIsLoading(false));
-                  }
-                } else {
-                  setEventImages(eventImages.filter((ei) => ei !== base64));
-                  toast.error(
-                    "Could not add event image. Please ensure image is size is 50MB or less & try again.",
-                    {
-                      style: {
-                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                        color: theme === "dark" ? "black" : "white",
-                        border: "2px solid red",
-                      },
-                    }
-                  );
-                }
-              })
-              .catch((error) => console.log(error));
-          }
-          if (eventImages.includes(base64) || currentEvent.images.includes(base64)) {
-            toast.error("Cannot upload same image more than once.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          }
-        }
+      if (eventImages.includes(base64)) {
+        toast.error("Cannot upload same image more than once.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      } else {
+        setEventImages(eventImages.concat(base64));
       }
-
-      if (usedFor === "add-event") {
-        if (eventImages.includes(base64)) {
-          toast.error("Cannot upload same image more than once.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        } else {
-          setEventImages(eventImages?.concat(base64));
-        }
-      }
+    } else {
+      toast.error("Could not add image; please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
   };
 
@@ -1181,6 +1116,7 @@ const EventForm = ({
 
   const handleRevert = (): void => {
     if (currentEvent && usedFor === "edit-event") {
+      setEventImages(currentEvent.images);
       setEventTitle(currentEvent.title);
       setEventTitleError("");
       setEventDescription(currentEvent.description);
@@ -1208,6 +1144,7 @@ const EventForm = ({
       setBlockedUsersEvent(blockedUsersEventORIGINAL);
       setRelatedInterests(currentEvent.relatedInterests);
     } else {
+      setEventImages([]);
       setEventTitle("");
       setEventTitleError("Please enter a title");
       setEventDescription("");
@@ -1329,6 +1266,7 @@ const EventForm = ({
   const getChangesMade = (): boolean => {
     if (currentEvent && usedFor === "edit-event") {
       return (
+        !Methods.arraysAreIdentical(currentEvent?.images, eventImages) ||
         eventTitle !== currentEvent?.title ||
         eventDescription !== currentEvent?.description ||
         eventAdditionalInfo !== currentEvent?.additionalInfo ||

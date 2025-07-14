@@ -612,8 +612,6 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
-  addEventImagesIsLoading: boolean;
-  setAddEventImagesIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   disinterestedUsers: string[] | undefined;
   setDisinterestedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   handleRemoveDisinterestedUser: (event: TEvent, user: TBarebonesUser | null) => void;
