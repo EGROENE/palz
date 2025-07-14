@@ -131,6 +131,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [blockedUsersEventORIGINAL, setBlockedUsersEventORIGINAL] = useState<
     TBarebonesUser[]
   >([]);
+
+  const [addEventImagesIsLoading, setAddEventImagesIsLoading] = useState<boolean>(false);
   ///////////////////////
 
   // Update currentEvent, eventImages w/ most recent info after fetchAllEventsQuery.data changes
@@ -161,44 +163,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   }, [fetchAllEventsQuery.data]);
 
   const queryClient = useQueryClient();
-
-  const addEventImageMutation = useMutation({
-    mutationFn: ({ event, base64 }: { event: TEvent; base64: string }) =>
-      Requests.addEventImage(event, base64),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-        queryClient.refetchQueries({ queryKey: ["allEvents"] });
-        if (currentEvent && fetchAllEventsQuery.data) {
-          allEvents = fetchAllEventsQuery.data;
-          const updatedEvent = allEvents.filter(
-            (event) => event._id === currentEvent._id
-          )[0];
-          setCurrentEvent(updatedEvent);
-        }
-        toast.success("Event image added", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid green",
-          },
-        });
-      } else {
-        setEventImages(eventImages?.filter((image) => image !== variables.base64));
-        toast.error(
-          "Could not add event image. Please ensure image is size is 50MB or less & try again.",
-          {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          }
-        );
-      }
-    },
-    onError: (error) => console.log(error),
-  });
 
   const removeEventImageMutation = useMutation({
     mutationFn: ({
@@ -847,6 +811,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    addEventImagesIsLoading,
+    setAddEventImagesIsLoading,
     disinterestedUsers,
     setDisinterestedUsers,
     handleRemoveDisinterestedUser,
@@ -917,7 +883,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     setInvitees,
     relatedInterests,
     setRelatedInterests,
-    addEventImageMutation,
     removeEventImageMutation,
     eventImages,
     setEventImages,

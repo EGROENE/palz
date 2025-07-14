@@ -28,6 +28,7 @@ const EventForm = ({
   const { handleCityStateCountryInput, currentUser, blockedUsers } = useUserContext();
 
   const {
+    setAddEventImagesIsLoading,
     setBlockedUsersEventORIGINAL,
     blockedUsersEventORIGINAL,
     handleAddRemoveBlockedUserOnEvent,
@@ -42,7 +43,6 @@ const EventForm = ({
     handleAddRemoveUserAsOrganizer,
     eventImages,
     setEventImages,
-    addEventImageMutation,
     removeEventImageMutation,
     eventTitle,
     setEventTitle,
@@ -176,6 +176,9 @@ const EventForm = ({
   const [isFetchPotentialUsersError, setIsFetchPotentialUsersError] =
     useState<boolean>(false);
 
+  console.log(fetchOrganizersIsLoading);
+  console.log(fetchInviteesIsLoading);
+  console.log(fetchBlockeesIsLoading);
   const fetchIsLoading: boolean =
     fetchOrganizersIsLoading || fetchInviteesIsLoading || fetchBlockeesIsLoading;
 
@@ -969,8 +972,54 @@ const EventForm = ({
             !currentEvent.images.includes(base64) &&
             !eventImages?.includes(base64)
           ) {
-            const event = currentEvent;
-            addEventImageMutation.mutate({ event, base64 });
+            setAddEventImagesIsLoading(true);
+            setEventImages(eventImages.concat(base64));
+            Requests.addEventImage(currentEvent, base64)
+              .then((res) => {
+                if (res.ok) {
+                  // Update currentEvent (set to result of getEventByID. If this fails, entire operation fails.)
+                  if (currentEvent && currentEvent._id) {
+                    Requests.getEventByID(currentEvent._id.toString())
+                      .then((res) => {
+                        if (res.ok) {
+                          res
+                            .json()
+                            .then((updatedEvent: TEvent) =>
+                              setCurrentEvent(updatedEvent)
+                            );
+                        } else {
+                          setEventImages(eventImages.filter((ei) => ei !== base64));
+                          toast.error(
+                            "Could not add event image. Please ensure image is size is 50MB or less & try again.",
+                            {
+                              style: {
+                                background:
+                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                                color: theme === "dark" ? "black" : "white",
+                                border: "2px solid red",
+                              },
+                            }
+                          );
+                        }
+                      })
+                      .catch((error) => console.log(error))
+                      .finally(() => setAddEventImagesIsLoading(false));
+                  }
+                } else {
+                  setEventImages(eventImages.filter((ei) => ei !== base64));
+                  toast.error(
+                    "Could not add event image. Please ensure image is size is 50MB or less & try again.",
+                    {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    }
+                  );
+                }
+              })
+              .catch((error) => console.log(error));
           }
           if (eventImages.includes(base64) || currentEvent.images.includes(base64)) {
             toast.error("Cannot upload same image more than once.", {

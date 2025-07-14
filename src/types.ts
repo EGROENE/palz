@@ -612,6 +612,8 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
+  addEventImagesIsLoading: boolean;
+  setAddEventImagesIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   disinterestedUsers: string[] | undefined;
   setDisinterestedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   handleRemoveDisinterestedUser: (event: TEvent, user: TBarebonesUser | null) => void;
@@ -702,15 +704,6 @@ export type TEventContext = {
   setInvitees: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   relatedInterests: string[];
   setRelatedInterests: React.Dispatch<React.SetStateAction<string[]>>;
-  addEventImageMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      event: TEvent;
-      base64: string;
-    },
-    unknown
-  >;
   removeEventImageMutation: UseMutationResult<
     Response,
     Error,
