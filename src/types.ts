@@ -748,7 +748,6 @@ export type TEventContext = {
   handleDeleteUserRSVP: (
     event: TEvent,
     user: TBarebonesUser,
-    optimisticRender: boolean,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     rsvpdUsers?: string[],
     setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>

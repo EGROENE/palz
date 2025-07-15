@@ -465,16 +465,15 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleDeleteUserRSVP = (
     event: TEvent,
     user: TBarebonesUser,
-    optimisticRender: boolean,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     rsvpdUsers?: string[],
     setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>
   ): void => {
     e?.preventDefault();
 
-    if (optimisticRender) {
-      setInterestedUsersCurrentEvent(
-        interestedUsersCurrentEvent.filter((u) => u !== user._id)
+    if (rsvpdUsers && setRsvpdUsers) {
+      setRsvpdUsers(
+        rsvpdUsers.filter((u) => u !== user._id)
       );
     }
 
