@@ -48,7 +48,6 @@ function App() {
     eventEditIsInProgress,
     addEventIsInProgress,
     eventDeletionIsInProgress,
-    removeEventImageMutation,
   } = useEventContext();
   const { chatCreationInProgress, showChatModal } = useChatContext();
 
@@ -146,10 +145,10 @@ function App() {
         {addEventIsInProgress && <LoadingModal message="Adding event..." />}
         {eventEditIsInProgress && <LoadingModal message="Updating event..." />}
         {eventDeletionIsInProgress && <LoadingModal message="Deleting event..." />}
-        {(updateProfileImageMutation.isPending) && (
+        {updateProfileImageMutation.isPending && (
           <LoadingModal message="Uploading image..." />
         )}
-        {(removeProfileImageMutation.isPending || removeEventImageMutation.isPending) && (
+        {removeProfileImageMutation.isPending && (
           <LoadingModal message="Removing image..." />
         )}
         {chatCreationInProgress && <LoadingModal message="Creating chat..." />}
