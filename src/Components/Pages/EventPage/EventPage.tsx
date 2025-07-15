@@ -366,7 +366,7 @@ const EventPage = () => {
                 renderButtonTwo={false}
                 closeModalMethod={setShowDeclinedInvitations}
                 header="Declined Invitations"
-                users={currentEvent.disinterestedUsers}
+                users={disinterestedUsers}
                 fetchUsers={true}
                 buttonOneText="Message"
                 buttonOneHandler={getStartOrOpenChatWithUserHandler}
@@ -511,7 +511,7 @@ const EventPage = () => {
                     </p>
                     {currentUser &&
                       currentUser._id &&
-                      currentEvent.disinterestedUsers.length > 0 &&
+                      disinterestedUsers.length > 0 &&
                       currentEvent.organizers.includes(currentUser._id?.toString()) && (
                         <p>
                           Declined invitations:{" "}
@@ -519,9 +519,7 @@ const EventPage = () => {
                             onClick={() => setShowDeclinedInvitations(true)}
                             className="show-listed-users-or-invitees"
                           >{`${
-                            Methods.removeDuplicatesFromArray(
-                              currentEvent.disinterestedUsers
-                            ).length
+                            Methods.removeDuplicatesFromArray(disinterestedUsers).length
                           }`}</span>
                         </p>
                       )}
@@ -574,12 +572,9 @@ const EventPage = () => {
                             setInterestedUsers
                           );
                           if (
-                            currentEvent.disinterestedUsers &&
                             currentUser &&
                             currentUser._id &&
-                            currentEvent.disinterestedUsers.includes(
-                              currentUser._id.toString()
-                            )
+                            disinterestedUsers.includes(currentUser._id.toString())
                           ) {
                             handleRemoveDisinterestedUser(
                               currentEvent,
