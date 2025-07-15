@@ -68,6 +68,7 @@ const UserListModal = ({
     fetchAllEventsQuery,
     handleRemoveInvitee,
     interestedUsersCurrentEvent,
+    setInterestedUsersCurrentEvent,
   } = useEventContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
@@ -154,7 +155,13 @@ const UserListModal = ({
       }
 
       if (listType === "rsvpd-users") {
-        return [currentEvent, user, true];
+        return [
+          currentEvent,
+          user,
+          undefined,
+          interestedUsersCurrentEvent,
+          setInterestedUsersCurrentEvent,
+        ];
       }
     }
     return undefined;

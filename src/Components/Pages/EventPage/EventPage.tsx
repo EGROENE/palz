@@ -565,8 +565,9 @@ const EventPage = () => {
                           handleDeleteUserRSVP(
                             currentEvent,
                             Methods.getTBarebonesUser(currentUser),
-                            true,
-                            e
+                            e,
+                            interestedUsersCurrentEvent,
+                            setInterestedUsersCurrentEvent
                           );
                         } else if (!userRSVPd) {
                           handleAddUserRSVP(
