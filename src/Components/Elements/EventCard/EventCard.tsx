@@ -21,7 +21,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
     setCurrentEvent,
     handleRemoveDisinterestedUser,
     interestedUsers,
-    setInterestedUsers,
   } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -57,10 +56,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
       Requests.getEventByID(event._id)
         .then((res) => {
           if (res.ok) {
-            res.json().then((e) => {
-              setCardEvent(e);
-              setInterestedUsers(e.interestedUsers);
-            });
+            res.json().then((e) => setCardEvent(e));
           } else {
             setFetchEventIsError(true);
           }
@@ -68,7 +64,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
         .catch((error) => console.log(error))
         .finally(() => setFetchEventIsLoading(false));
     }
-  }, [cardEvent?.interestedUsers]);
+  }, [interestedUsers]);
 
   const userIsInvitee: boolean =
     currentUser?._id && cardEvent
