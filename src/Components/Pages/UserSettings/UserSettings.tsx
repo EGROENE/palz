@@ -16,6 +16,7 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 import Methods from "../../../methods";
 
 const UserSettings = () => {
+  const { setCurrentEvent } = useEventContext();
   const [showAreYouSureInterface, setShowAreYouSureInterface] = useState<boolean>(false);
   const [showBlockedUsers, setShowBlockedUsers] = useState<boolean>(false);
   // Set random color:
@@ -30,6 +31,7 @@ const UserSettings = () => {
         },
       });
       logout();
+      setCurrentEvent(undefined);
     }
 
     const themeColors: TThemeColor[] = [
@@ -356,6 +358,7 @@ const UserSettings = () => {
                   },
                 });
                 logout();
+                setCurrentEvent(undefined);
               }
             })
             .catch((error) => console.log(error));

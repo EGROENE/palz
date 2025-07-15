@@ -7,6 +7,7 @@ import styles from "./styles.module.css";
 import toast from "react-hot-toast";
 import Methods from "../../../methods";
 import Requests from "../../../requests";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const FriendRequests = () => {
   const {
@@ -29,6 +30,7 @@ const FriendRequests = () => {
     logout,
     currentUser,
   } = useUserContext();
+  const { setCurrentEvent } = useEventContext();
 
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
   const [isFetchError, setIsFetchError] = useState<boolean>(false);
@@ -42,6 +44,7 @@ const FriendRequests = () => {
 
     if (userCreatedAccount === null || !currentUser) {
       logout();
+      setCurrentEvent(undefined);
       toast.error("Please log in before accessing this page.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",

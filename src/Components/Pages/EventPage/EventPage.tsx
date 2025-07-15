@@ -167,6 +167,7 @@ const EventPage = () => {
                 navigation(`/${currentUser.username}`);
               } else {
                 logout();
+                setCurrentEvent(undefined);
               }
             }
 

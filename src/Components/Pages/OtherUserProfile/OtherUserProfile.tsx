@@ -43,6 +43,7 @@ const OtherUserProfile = () => {
     handleRemoveInvitee,
     handleRemoveOrganizer,
     handleDeleteUserRSVP,
+    setCurrentEvent,
   } = useEventContext();
   const allEvents = fetchAllEventsQuery.data;
   const { getStartOrOpenChatWithUserHandler, fetchChatsQuery, handleDeleteChat } =
@@ -144,6 +145,7 @@ const OtherUserProfile = () => {
         },
       });
       logout();
+      setCurrentEvent(undefined);
       navigation("/");
     }
 

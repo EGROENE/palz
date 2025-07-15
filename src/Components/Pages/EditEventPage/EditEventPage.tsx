@@ -12,7 +12,7 @@ import { useEventContext } from "../../../Hooks/useEventContext";
 const EditEventPage = ({ event }: { event?: TEvent }) => {
   const { isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
-  const { currentEvent } = useEventContext();
+  const { currentEvent, setCurrentEvent } = useEventContext();
 
   const navigation = useNavigate();
 
@@ -70,6 +70,7 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
         },
       });
       logout();
+      setCurrentEvent(undefined);
     }
 
     window.scrollTo(0, 0);

@@ -5,10 +5,12 @@ import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import { TChat } from "../../../types";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const NavBar = () => {
   const { showSidebar, setShowSidebar, currentRoute, setShowMobileNavOptions } =
     useMainContext();
+  const { setCurrentEvent } = useEventContext();
   const { logout, profileImage, currentUser, userCreatedAccount } = useUserContext();
   const { getTotalNumberOfUnreadMessages, fetchChatsQuery } = useChatContext();
 
@@ -57,9 +59,13 @@ const NavBar = () => {
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 logout();
+                setCurrentEvent(undefined);
               }
             }}
-            onClick={() => logout()}
+            onClick={() => {
+              logout();
+              setCurrentEvent(undefined);
+            }}
           >
             Log Out<i className="fas fa-sign-out-alt"></i>
           </li>

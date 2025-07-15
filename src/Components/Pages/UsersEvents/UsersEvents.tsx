@@ -12,7 +12,7 @@ const UsersEvents = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, fetchAllVisibleOtherUsersQuery, logout } =
     useUserContext();
-  const { fetchAllEventsQuery } = useEventContext();
+  const { fetchAllEventsQuery, setCurrentEvent } = useEventContext();
 
   const allEvents = fetchAllEventsQuery.data;
 
@@ -20,6 +20,7 @@ const UsersEvents = () => {
   useEffect(() => {
     if (!currentUser || userCreatedAccount === null) {
       logout();
+      setCurrentEvent(undefined);
       toast.error("Please log in before accessing this page", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",

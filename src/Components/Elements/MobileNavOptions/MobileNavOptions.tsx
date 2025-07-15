@@ -3,12 +3,14 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import { TChat } from "../../../types";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const MobileNavOptions = () => {
   const { setShowMobileNavOptions, currentRoute, setFetchStart, setDisplayedItems } =
     useMainContext();
   const { currentUser, userCreatedAccount, logout, friendRequestsReceived } =
     useUserContext();
+  const { setCurrentEvent } = useEventContext();
   const { getTotalNumberOfUnreadMessages, fetchChatsQuery } = useChatContext();
 
   const userChats: TChat[] | undefined = fetchChatsQuery.data;
@@ -118,6 +120,7 @@ const MobileNavOptions = () => {
           <div
             onClick={() => {
               logout();
+              setCurrentEvent(undefined);
               setShowMobileNavOptions(false);
             }}
           >

@@ -17,6 +17,7 @@ import FilterDropdown from "../../Elements/FilterDropdown/FilterDropdown";
 import SearchBar from "../../Elements/SearchBar/SearchBar";
 import toast from "react-hot-toast";
 import Requests from "../../../requests";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const DisplayedCardsPage = ({
   usedFor,
@@ -36,6 +37,7 @@ const DisplayedCardsPage = ({
     setFetchStart,
   } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
+  const { setCurrentEvent } = useEventContext();
 
   const [showFilterOptions, setShowFilterOptions] = useState<boolean>(false);
 
@@ -729,6 +731,7 @@ const DisplayedCardsPage = ({
   useEffect(() => {
     if (!currentUser || userCreatedAccount === null) {
       logout();
+      setCurrentEvent(undefined);
       toast.error("Please log in before accessing this page", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",

@@ -6,11 +6,13 @@ import EventForm from "../../Forms/EventForm/EventForm";
 import { TThemeColor } from "../../../types";
 import toast from "react-hot-toast";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const AddEventPage = () => {
   const navigation = useNavigate();
   const { isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
+  const { setCurrentEvent } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -38,6 +40,7 @@ const AddEventPage = () => {
         },
       });
       logout();
+      setCurrentEvent(undefined);
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
