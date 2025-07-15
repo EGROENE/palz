@@ -279,6 +279,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       if (data.ok) {
         setCurrentEvent(undefined);
         setDisinterestedUsers([]);
+        setInterestedUsers([]);
         queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
         toast("Event deleted", {
