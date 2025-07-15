@@ -702,15 +702,6 @@ export type TEventContext = {
   setInvitees: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   relatedInterests: string[];
   setRelatedInterests: React.Dispatch<React.SetStateAction<string[]>>;
-  removeEventImageMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      event: TEvent;
-      imageToBeRemoved: string;
-    },
-    unknown
-  >;
   eventImages: string[];
   setEventImages: React.Dispatch<React.SetStateAction<string[]>>;
   blockedUsersEvent: TBarebonesUser[];

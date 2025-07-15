@@ -34,8 +34,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     enabled: userHasLoggedIn,
   });
 
-  let allEvents: TEvent[] | undefined = fetchAllEventsQuery.data;
-
   const [currentEvent, setCurrentEvent] = useLocalStorage<TEvent | undefined>(
     "currentEvent",
     undefined
@@ -161,47 +159,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   }, [fetchAllEventsQuery.data]);
 
   const queryClient = useQueryClient();
-
-  const removeEventImageMutation = useMutation({
-    mutationFn: ({
-      event,
-      imageToBeRemoved,
-    }: {
-      event: TEvent;
-      imageToBeRemoved: string;
-    }) => Requests.removeEventImage(event, imageToBeRemoved),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-        queryClient.refetchQueries({ queryKey: ["allEvents"] });
-        allEvents = fetchAllEventsQuery.data;
-        if (currentEvent && fetchAllEventsQuery.data) {
-          allEvents = fetchAllEventsQuery.data;
-          const updatedEvent = allEvents.filter(
-            (event) => event._id === currentEvent._id
-          )[0];
-          setCurrentEvent(updatedEvent);
-        }
-        toast("Event image removed", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      } else {
-        setEventImages(eventImages?.concat(variables.imageToBeRemoved));
-        toast.error("Could not remove event image. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-    },
-    onError: (error) => console.log(error),
-  });
 
   const addUserRSVPMutation = useMutation({
     mutationFn: ({ user, event }: { user: TOtherUser | TUser; event: TEvent }) =>
@@ -882,7 +839,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     setInvitees,
     relatedInterests,
     setRelatedInterests,
-    removeEventImageMutation,
     eventImages,
     setEventImages,
     fetchAllEventsQuery,
