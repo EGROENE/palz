@@ -45,6 +45,7 @@ const UserListModal = ({
   header: string;
   users: (string | TBarebonesUser)[] | null;
   fetchUsers: boolean;
+  setUsers?: React.Dispatch<React.SetStateAction<string[]>>;
   buttonOneText?: string;
   buttonOneHandler?: Function;
   buttonOneHandlerNeedsEventParam?: boolean;
@@ -62,7 +63,7 @@ const UserListModal = ({
   const { isLoading } = useMainContext();
   const { currentUser, blockedUsers, handleUnblockUser } = useUserContext();
 
-  const { currentEvent, fetchAllEventsQuery, handleDeleteUserRSVP, handleRemoveInvitee } =
+  const { currentEvent, fetchAllEventsQuery, handleRemoveInvitee, interestedUsers } =
     useEventContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
@@ -120,6 +121,7 @@ const UserListModal = ({
     currentUser?.blockedUsers,
     currentEvent?.invitees,
     currentEvent?.interestedUsers,
+    interestedUsers,
   ]);
 
   // make every handler & related request accept TBarebonesUser
@@ -143,12 +145,12 @@ const UserListModal = ({
   // make every handler & related request accept TBarebonesUser
   const getButtonTwoHandlerParams = (user: TBarebonesUser) => {
     if (!buttonTwoHandlerParams) {
-      if (
-        (listType === "rsvpd-users" || listType === "invitees") &&
-        (buttonTwoHandler === handleRemoveInvitee ||
-          buttonTwoHandler === handleDeleteUserRSVP)
-      ) {
+      if (listType === "invitees" && buttonTwoHandler === handleRemoveInvitee) {
         return [currentEvent, user];
+      }
+
+      if (listType === "rsvpd-users") {
+        return [currentEvent, user, true];
       }
     }
     return undefined;
