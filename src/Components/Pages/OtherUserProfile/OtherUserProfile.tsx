@@ -597,7 +597,7 @@ const OtherUserProfile = () => {
         )[0]
       : undefined;
 
-    if (chatToDelete) {
+    if (chatToDelete && chatToDelete._id) {
       handleDeleteChat(chatToDelete._id.toString());
     }
 
