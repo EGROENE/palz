@@ -884,18 +884,11 @@ const deleteUserRSVP = (user: TBarebonesUser | null, event: TEvent) => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const getRaw = () => {
-    return JSON.stringify({
-      "interestedUsers": event?.interestedUsers.filter((iu) => {
-        if (iu !== user?._id) {
-          return iu;
-        }
-      }),
-    });
-  };
-  const raw = getRaw();
+  const raw = JSON.stringify({
+    "interestedUsers": event.interestedUsers.filter((u) => u !== user?._id?.toString()),
+  });
 
-  return fetch(`http://localhost:4000/palz/events/${event?._id}`, {
+  return fetch(`http://localhost:4000/palz/events/${event._id?.toString()}`, {
     method: "PATCH",
     headers: myHeaders,
     body: raw,
