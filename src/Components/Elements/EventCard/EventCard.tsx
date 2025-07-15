@@ -20,6 +20,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
     handleDeclineInvitation,
     setCurrentEvent,
     handleRemoveDisinterestedUser,
+    interestedUsers,
+    setInterestedUsers,
   } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -43,8 +45,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const [fetchEventIsError, setFetchEventIsError] = useState<boolean>(false);
 
   const [cardEvent, setCardEvent] = useState<TEvent>();
-
-  const [interestedUsers, setInterestedUsers] = useState<string[]>([]);
 
   const userRSVPd: boolean =
     currentUser && currentUser._id && cardEvent
@@ -309,6 +309,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                             handleDeleteUserRSVP(
                               event,
                               Methods.getTBarebonesUser(currentUser),
+                              true,
                               e
                             );
                           } else if (!userRSVPd && cardEvent) {
