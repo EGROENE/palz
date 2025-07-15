@@ -39,9 +39,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     undefined
   ); // event user is editing or viewing
 
-  const [disinterestedUsers, setDisinterestedUsers] = useState<string[]>(
-    currentEvent ? currentEvent.disinterestedUsers : []
-  );
+  const [disinterestedUsersCurrentEvent, setDisinterestedUsersCurrentEvent] = useState<
+    string[]
+  >(currentEvent ? currentEvent.disinterestedUsers : []);
 
   const [interestedUsersCurrentEvent, setInterestedUsersCurrentEvent] = useState<
     string[]
@@ -278,7 +278,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: (data) => {
       if (data.ok) {
         setCurrentEvent(undefined);
-        setDisinterestedUsers([]);
+        setDisinterestedUsersCurrentEvent([]);
         setInterestedUsersCurrentEvent([]);
         queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
@@ -538,9 +538,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     user: TBarebonesUser | null
   ): void => {
     setIsLoading(true);
-    if (disinterestedUsers) {
-      setDisinterestedUsers(
-        disinterestedUsers.filter((u) => {
+    if (disinterestedUsersCurrentEvent) {
+      setDisinterestedUsersCurrentEvent(
+        disinterestedUsersCurrentEvent.filter((u) => {
           if (user && user._id) {
             return u !== user._id.toString();
           }
@@ -558,8 +558,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             },
           });
         } else {
-          if (user && user._id && disinterestedUsers) {
-            setDisinterestedUsers(disinterestedUsers.concat(user._id.toString()));
+          if (user && user._id && disinterestedUsersCurrentEvent) {
+            setDisinterestedUsersCurrentEvent(
+              disinterestedUsersCurrentEvent.concat(user._id.toString())
+            );
           }
           toast.error(
             "Could not remove user from declined invitations. Please try again.",
@@ -781,8 +783,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventContextValues: TEventContext = {
     interestedUsersCurrentEvent,
     setInterestedUsersCurrentEvent,
-    disinterestedUsers,
-    setDisinterestedUsers,
+    disinterestedUsersCurrentEvent,
+    setDisinterestedUsersCurrentEvent,
     handleRemoveDisinterestedUser,
     showDeclinedInvitations,
     setShowDeclinedInvitations,

@@ -24,8 +24,8 @@ const EventPage = () => {
     useUserContext();
 
   const {
-    setDisinterestedUsers,
-    disinterestedUsers,
+    setDisinterestedUsersCurrentEvent,
+    disinterestedUsersCurrentEvent,
     handleAddUserRSVP,
     handleDeleteUserRSVP,
     setCurrentEvent,
@@ -128,7 +128,7 @@ const EventPage = () => {
         setFetchOrganizersIsLoading(true);
       }
 
-      setDisinterestedUsers(currentEvent.disinterestedUsers);
+      setDisinterestedUsersCurrentEvent(currentEvent.disinterestedUsers);
 
       Promise.all(promisesToAwaitOrganizers)
         .then((organizers: TUser[]) => {
@@ -367,7 +367,7 @@ const EventPage = () => {
                 renderButtonTwo={false}
                 closeModalMethod={setShowDeclinedInvitations}
                 header="Declined Invitations"
-                users={disinterestedUsers}
+                users={disinterestedUsersCurrentEvent}
                 fetchUsers={true}
                 buttonOneText="Message"
                 buttonOneHandler={getStartOrOpenChatWithUserHandler}
@@ -513,7 +513,7 @@ const EventPage = () => {
                     </p>
                     {currentUser &&
                       currentUser._id &&
-                      disinterestedUsers.length > 0 &&
+                      disinterestedUsersCurrentEvent.length > 0 &&
                       currentEvent.organizers.includes(currentUser._id?.toString()) && (
                         <p>
                           Declined invitations:{" "}
@@ -521,7 +521,9 @@ const EventPage = () => {
                             onClick={() => setShowDeclinedInvitations(true)}
                             className="show-listed-users-or-invitees"
                           >{`${
-                            Methods.removeDuplicatesFromArray(disinterestedUsers).length
+                            Methods.removeDuplicatesFromArray(
+                              disinterestedUsersCurrentEvent
+                            ).length
                           }`}</span>
                         </p>
                       )}
@@ -552,7 +554,7 @@ const EventPage = () => {
               {currentEvent.eventEndDateTimeInMS > now &&
                 currentUser &&
                 currentUser._id &&
-                !disinterestedUsers?.includes(currentUser._id.toString()) &&
+                !disinterestedUsersCurrentEvent?.includes(currentUser._id.toString()) &&
                 userCreatedAccount !== null &&
                 !userIsOrganizer && (
                   <div className="theme-element-container">
@@ -576,7 +578,9 @@ const EventPage = () => {
                           if (
                             currentUser &&
                             currentUser._id &&
-                            disinterestedUsers.includes(currentUser._id.toString())
+                            disinterestedUsersCurrentEvent.includes(
+                              currentUser._id.toString()
+                            )
                           ) {
                             handleRemoveDisinterestedUser(
                               currentEvent,
@@ -606,7 +610,7 @@ const EventPage = () => {
                 currentUser &&
                 currentUser._id &&
                 userCreatedAccount !== null &&
-                disinterestedUsers?.includes(currentUser._id.toString()) &&
+                disinterestedUsersCurrentEvent?.includes(currentUser._id.toString()) &&
                 currentEvent.invitees.includes(currentUser._id.toString()) && (
                   <>
                     <p>
