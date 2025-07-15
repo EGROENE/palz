@@ -44,9 +44,11 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   const [cardEvent, setCardEvent] = useState<TEvent>();
 
+  const [interestedUsers, setInterestedUsers] = useState<string[]>([]);
+
   const userRSVPd: boolean =
     currentUser && currentUser._id && cardEvent
-      ? cardEvent.interestedUsers.includes(currentUser._id.toString())
+      ? interestedUsers.includes(currentUser._id.toString())
       : false;
 
   // Update event:
@@ -55,7 +57,10 @@ const EventCard = ({ event }: { event: TEvent }) => {
       Requests.getEventByID(event._id)
         .then((res) => {
           if (res.ok) {
-            res.json().then((e) => setCardEvent(e));
+            res.json().then((e) => {
+              setCardEvent(e);
+              setInterestedUsers(e.interestedUsers);
+            });
           } else {
             setFetchEventIsError(true);
           }
@@ -63,7 +68,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
         .catch((error) => console.log(error))
         .finally(() => setFetchEventIsLoading(false));
     }
-  });
+  }, [cardEvent?.interestedUsers]);
 
   const userIsInvitee: boolean =
     currentUser?._id && cardEvent
@@ -187,7 +192,13 @@ const EventCard = ({ event }: { event: TEvent }) => {
                   disabled={isLoading}
                   onClick={(e) => {
                     handleAddUserRSVP(e, event);
-                    if (cardEvent && cardEvent.disinterestedUsers) {
+                    if (
+                      cardEvent &&
+                      cardEvent.disinterestedUsers &&
+                      currentUser &&
+                      currentUser._id &&
+                      cardEvent.disinterestedUsers.includes(currentUser._id.toString())
+                    ) {
                       handleRemoveDisinterestedUser(
                         event,
                         Methods.getTBarebonesUser(currentUser)
@@ -302,7 +313,15 @@ const EventCard = ({ event }: { event: TEvent }) => {
                             );
                           } else if (!userRSVPd && cardEvent) {
                             handleAddUserRSVP(e, event);
-                            if (cardEvent.disinterestedUsers) {
+                            if (
+                              cardEvent &&
+                              cardEvent.disinterestedUsers &&
+                              currentUser &&
+                              currentUser._id &&
+                              cardEvent.disinterestedUsers.includes(
+                                currentUser._id.toString()
+                              )
+                            ) {
                               handleRemoveDisinterestedUser(
                                 event,
                                 Methods.getTBarebonesUser(currentUser)
