@@ -475,14 +475,42 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
+    event: TEvent,
+    rsvpdUsers?: string[],
+    setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>
   ): void => {
     e.preventDefault();
     setIsLoading(true);
-    if (currentUser) {
-      const user = currentUser;
-      addUserRSVPMutation.mutate({ user, event });
+    if (currentUser && currentUser._id && rsvpdUsers && setRsvpdUsers) {
+      setRsvpdUsers(rsvpdUsers.concat(currentUser._id.toString()));
     }
+    Requests.addUserRSVP(currentUser, event)
+      .then((res) => {
+        if (res.ok) {
+          toast.success("RSVP added!", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid green",
+            },
+          });
+        } else {
+          if (currentUser && currentUser._id && rsvpdUsers && setRsvpdUsers) {
+            setRsvpdUsers(
+              rsvpdUsers?.filter((userID) => userID !== currentUser._id?.toString())
+            );
+          }
+          toast.error("Could not RSVP to event. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   };
 
   const handleDeleteUserRSVP = (

@@ -741,7 +741,9 @@ export type TEventContext = {
   handleAddRemoveBlockedUserOnEvent: (user?: TBarebonesUser) => void;
   handleAddUserRSVP: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
+    event: TEvent,
+    array?: string[],
+    setArray?: React.Dispatch<React.SetStateAction<string[]>>
   ) => void;
   handleDeleteUserRSVP: (
     event: TEvent,
