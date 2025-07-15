@@ -748,8 +748,13 @@ export type TEventContext = {
   handleDeleteUserRSVP: (
     event: TEvent,
     user: TBarebonesUser,
-    e?: React.MouseEvent<HTMLSpanElement, MouseEvent> | undefined
+    optimisticRender: boolean,
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    rsvpdUsers?: string[],
+    setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>
   ) => void;
+  interestedUsers: string[];
+  setInterestedUsers: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export type TChatContext = {
