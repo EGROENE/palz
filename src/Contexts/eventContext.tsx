@@ -39,8 +39,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     undefined
   ); // event user is editing or viewing
 
-  const [disinterestedUsers, setDisinterestedUsers] = useState<string[] | undefined>(
-    currentEvent?.disinterestedUsers
+  const [disinterestedUsers, setDisinterestedUsers] = useState<string[]>(
+    currentEvent ? currentEvent.disinterestedUsers : []
   );
 
   const [interestedUsers, setInterestedUsers] = useState<string[]>(
@@ -278,7 +278,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: (data) => {
       if (data.ok) {
         setCurrentEvent(undefined);
-        setDisinterestedUsers(undefined);
+        setDisinterestedUsers([]);
         queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
         toast("Event deleted", {
