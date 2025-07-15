@@ -29,7 +29,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
   const [fetchEventIsLoading, setFetchEventIsLoading] = useState<boolean>(false);
   const [fetchEventIsError, setFetchEventIsError] = useState<boolean>(false);
 
-  const [interestedUsers, setInterestedUsers] = useState<string[]>(event.interestedUsers);
+  const [interestedUsers, setInterestedUsers] = useState<string[]>([]);
 
   const [cardEvent, setCardEvent] = useState<TEvent>();
 
@@ -44,6 +44,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+
+    setInterestedUsers(event.interestedUsers);
   }, []);
 
   // Update event:
