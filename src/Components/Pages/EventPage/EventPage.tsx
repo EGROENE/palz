@@ -107,6 +107,7 @@ const EventPage = () => {
             res.json().then((event: TEvent) => {
               setCurrentEvent(event);
               setInterestedUsersCurrentEvent(event.interestedUsers);
+              setDisinterestedUsersCurrentEvent(event.disinterestedUsers);
             });
           } else {
             setFetchEventIsError(true);
