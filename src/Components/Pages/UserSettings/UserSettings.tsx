@@ -290,7 +290,7 @@ const UserSettings = () => {
         let updatedChatAdmins;
         if (userChat.admins?.includes(currentUser._id.toString())) {
           // If user is sole admin of chat, delete chat; else, replace their _id w/ 'Deleted User':
-          if (userChat.admins.length - 1 === 0) {
+          if (userChat.admins.length - 1 === 0 && userChat._id) {
             promisesToAwait.push(Requests.deleteChat(userChat._id.toString()));
           } else {
             updatedChatAdmins = userChat.admins.filter(
