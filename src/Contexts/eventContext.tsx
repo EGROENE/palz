@@ -43,9 +43,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     currentEvent ? currentEvent.disinterestedUsers : []
   );
 
-  const [interestedUsers, setInterestedUsers] = useState<string[]>(
-    currentEvent ? currentEvent.interestedUsers : []
-  );
+  const [interestedUsersCurrentEvent, setInterestedUsersCurrentEvent] = useState<
+    string[]
+  >(currentEvent ? currentEvent.interestedUsers : []);
 
   const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
   const [showInvitees, setShowInvitees] = useState<boolean>(false);
@@ -279,7 +279,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       if (data.ok) {
         setCurrentEvent(undefined);
         setDisinterestedUsers([]);
-        setInterestedUsers([]);
+        setInterestedUsersCurrentEvent([]);
         queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         queryClient.refetchQueries({ queryKey: ["allEvents"] });
         toast("Event deleted", {
@@ -473,7 +473,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     e?.preventDefault();
 
     if (optimisticRender) {
-      setInterestedUsers(interestedUsers.filter((u) => u !== user._id));
+      setInterestedUsersCurrentEvent(
+        interestedUsersCurrentEvent.filter((u) => u !== user._id)
+      );
     }
 
     setIsLoading(true);
@@ -777,8 +779,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
-    interestedUsers,
-    setInterestedUsers,
+    interestedUsersCurrentEvent,
+    setInterestedUsersCurrentEvent,
     disinterestedUsers,
     setDisinterestedUsers,
     handleRemoveDisinterestedUser,

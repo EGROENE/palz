@@ -20,7 +20,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
     handleDeclineInvitation,
     setCurrentEvent,
     handleRemoveDisinterestedUser,
-    interestedUsers,
   } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -47,7 +46,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   const userRSVPd: boolean =
     currentUser && currentUser._id && cardEvent
-      ? interestedUsers.includes(currentUser._id.toString())
+      ? cardEvent.interestedUsers.includes(currentUser._id.toString())
       : false;
 
   // Update event:
@@ -64,7 +63,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
         .catch((error) => console.log(error))
         .finally(() => setFetchEventIsLoading(false));
     }
-  }, [interestedUsers]);
+  }, []);
 
   const userIsInvitee: boolean =
     currentUser?._id && cardEvent

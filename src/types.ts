@@ -753,8 +753,8 @@ export type TEventContext = {
     rsvpdUsers?: string[],
     setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>
   ) => void;
-  interestedUsers: string[];
-  setInterestedUsers: React.Dispatch<React.SetStateAction<string[]>>;
+  interestedUsersCurrentEvent: string[];
+  setInterestedUsersCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export type TChatContext = {

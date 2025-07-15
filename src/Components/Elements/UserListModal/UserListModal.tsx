@@ -63,8 +63,12 @@ const UserListModal = ({
   const { isLoading } = useMainContext();
   const { currentUser, blockedUsers, handleUnblockUser } = useUserContext();
 
-  const { currentEvent, fetchAllEventsQuery, handleRemoveInvitee, interestedUsers } =
-    useEventContext();
+  const {
+    currentEvent,
+    fetchAllEventsQuery,
+    handleRemoveInvitee,
+    interestedUsersCurrentEvent,
+  } = useEventContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
   const [iterableUsers, setIterableUsers] = useState<TBarebonesUser[] | null>(null);
@@ -121,7 +125,7 @@ const UserListModal = ({
     currentUser?.blockedUsers,
     currentEvent?.invitees,
     currentEvent?.interestedUsers,
-    interestedUsers,
+    interestedUsersCurrentEvent,
   ]);
 
   // make every handler & related request accept TBarebonesUser

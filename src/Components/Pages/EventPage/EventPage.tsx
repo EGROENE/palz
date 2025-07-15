@@ -38,8 +38,8 @@ const EventPage = () => {
     setShowDeclinedInvitations,
     currentEvent,
     handleRemoveDisinterestedUser,
-    interestedUsers,
-    setInterestedUsers,
+    interestedUsersCurrentEvent,
+    setInterestedUsersCurrentEvent,
   } = useEventContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
@@ -243,8 +243,8 @@ const EventPage = () => {
   }, []);
 
   const userRSVPd: boolean =
-    currentUser && currentUser._id && currentEvent && interestedUsers
-      ? interestedUsers.includes(currentUser._id.toString())
+    currentUser && currentUser._id && currentEvent && interestedUsersCurrentEvent
+      ? interestedUsersCurrentEvent.includes(currentUser._id.toString())
       : false;
 
   const nextEventDateTime = currentEvent
@@ -334,7 +334,7 @@ const EventPage = () => {
                 }
                 closeModalMethod={setShowRSVPs}
                 header="RSVPs"
-                users={interestedUsers}
+                users={interestedUsersCurrentEvent}
                 fetchUsers={true}
                 buttonOneText="Message"
                 buttonOneHandler={getStartOrOpenChatWithUserHandler}
@@ -497,15 +497,18 @@ const EventPage = () => {
                       RSVPs:{" "}
                       <span
                         onClick={() =>
-                          interestedUsers.length > 0 ? setShowRSVPs(true) : undefined
+                          interestedUsersCurrentEvent.length > 0
+                            ? setShowRSVPs(true)
+                            : undefined
                         }
                         className={
-                          interestedUsers.length > 0
+                          interestedUsersCurrentEvent.length > 0
                             ? "show-listed-users-or-invitees"
                             : undefined
                         }
                       >{`${
-                        Methods.removeDuplicatesFromArray(interestedUsers).length
+                        Methods.removeDuplicatesFromArray(interestedUsersCurrentEvent)
+                          .length
                       }`}</span>
                     </p>
                     {currentUser &&
@@ -556,7 +559,7 @@ const EventPage = () => {
                     <button
                       disabled={maxInviteesReached || isLoading}
                       onClick={(e) => {
-                        if (userRSVPd && currentUser && interestedUsers) {
+                        if (userRSVPd && currentUser && interestedUsersCurrentEvent) {
                           handleDeleteUserRSVP(
                             currentEvent,
                             Methods.getTBarebonesUser(currentUser),
@@ -567,8 +570,8 @@ const EventPage = () => {
                           handleAddUserRSVP(
                             e,
                             currentEvent,
-                            interestedUsers,
-                            setInterestedUsers
+                            interestedUsersCurrentEvent,
+                            setInterestedUsersCurrentEvent
                           );
                           if (
                             currentUser &&
