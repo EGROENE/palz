@@ -104,7 +104,10 @@ const EventPage = () => {
       Requests.getEventByID(eventID)
         .then((res) => {
           if (res.ok) {
-            res.json().then((event: TEvent) => setCurrentEvent(event));
+            res.json().then((event: TEvent) => {
+              setCurrentEvent(event);
+              setInterestedUsersCurrentEvent(event.interestedUsers);
+            });
           } else {
             setFetchEventIsError(true);
           }
