@@ -160,34 +160,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const queryClient = useQueryClient();
 
-  const addUserRSVPMutation = useMutation({
-    mutationFn: ({ user, event }: { user: TOtherUser | TUser; event: TEvent }) =>
-      Requests.addUserRSVP(user, event),
-    onSuccess: (data) => {
-      if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-        queryClient.refetchQueries({ queryKey: ["allEvents"] });
-        toast.success("RSVP added!", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid green",
-          },
-        });
-      } else {
-        toast.error("Could not RSVP to event. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
-
   const removeUserRSVPMutation = useMutation({
     mutationFn: ({ user, event }: { user: TBarebonesUser; event: TEvent }) =>
       Requests.deleteUserRSVP(user, event),
