@@ -592,8 +592,8 @@ const OtherUserProfile = () => {
             currentOtherUser &&
             currentOtherUser._id &&
             chat.members.length === 2 &&
-            chat.members.map((m) => m._id).includes(currentUser._id.toString()) &&
-            chat.members.map((m) => m._id).includes(currentOtherUser._id.toString())
+            chat.members.includes(currentUser._id.toString()) &&
+            chat.members.includes(currentOtherUser._id.toString())
         )[0]
       : undefined;
 
@@ -710,7 +710,7 @@ const OtherUserProfile = () => {
       for (const chat of currentUserChats) {
         if (
           chat.members.length > 2 &&
-          chat.members.map((m) => m._id).includes(currentOtherUser._id.toString())
+          chat.members.includes(currentOtherUser._id.toString())
         ) {
           chatsInCommon.push(chat);
         }
