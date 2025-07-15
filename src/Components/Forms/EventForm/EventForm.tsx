@@ -42,7 +42,6 @@ const EventForm = ({
     handleAddRemoveUserAsOrganizer,
     eventImages,
     setEventImages,
-    removeEventImageMutation,
     eventTitle,
     setEventTitle,
     eventTitleError,
@@ -990,23 +989,6 @@ const EventForm = ({
   ): Promise<void> => {
     e.preventDefault();
     setEventImages(eventImages?.filter((image) => image !== imageToBeRemoved));
-
-    if (usedFor === "edit-event") {
-      if (currentEvent) {
-        const event = currentEvent;
-        removeEventImageMutation.mutate({ event, imageToBeRemoved });
-      }
-    }
-
-    if (usedFor === "add-event") {
-      toast("Event image removed", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    }
   };
 
   const handlePublicPrivateBoxChecking = (option: "public" | "private"): void =>
