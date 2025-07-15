@@ -180,11 +180,11 @@ export type TMessage = {
 };
 
 export type TChatValuesToUpdate = {
-  members?: TBarebonesUser[];
+  members?: string[];
   messages?: TMessage[];
   dateCreated?: number;
   chatName?: string;
-  admins?: TBarebonesUser[];
+  admins?: string[];
 };
 
 export type TUserValuesToUpdate = {
