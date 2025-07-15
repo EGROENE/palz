@@ -44,11 +44,6 @@ const EventPage = () => {
   // Get most current version of event to which this page pertains:
   const { eventID } = useParams();
 
-  const userRSVPd: boolean =
-    currentUser && currentUser._id && currentEvent
-      ? currentEvent.interestedUsers.includes(currentUser._id.toString())
-      : false;
-
   const navigation = useNavigate();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -74,6 +69,8 @@ const EventPage = () => {
   >([]);
 
   const [userDoesNotHaveAccess, setUserDoesNotHaveAccess] = useState<boolean>(false);
+
+  const [interestedUsers, setInterestedUsers] = useState<string[]>([]);
 
   useEffect(() => {
     // Set randomColor:
@@ -107,7 +104,10 @@ const EventPage = () => {
       Requests.getEventByID(eventID)
         .then((res) => {
           if (res.ok) {
-            res.json().then((event: TEvent) => setCurrentEvent(event));
+            res.json().then((event: TEvent) => {
+              setCurrentEvent(event);
+              setInterestedUsers(event.interestedUsers);
+            });
           } else {
             setFetchEventIsError(true);
           }
@@ -243,6 +243,11 @@ const EventPage = () => {
         .finally(() => setFetchOrganizersIsLoading(false));
     }
   }, []);
+
+  const userRSVPd: boolean =
+    currentUser && currentUser._id && currentEvent
+      ? interestedUsers.includes(currentUser._id.toString())
+      : false;
 
   const nextEventDateTime = currentEvent
     ? new Date(currentEvent.eventStartDateTimeInMS)
@@ -565,8 +570,20 @@ const EventPage = () => {
                             e
                           );
                         } else if (!userRSVPd) {
-                          handleAddUserRSVP(e, currentEvent);
-                          if (currentEvent.disinterestedUsers) {
+                          handleAddUserRSVP(
+                            e,
+                            currentEvent,
+                            interestedUsers,
+                            setInterestedUsers
+                          );
+                          if (
+                            currentEvent.disinterestedUsers &&
+                            currentUser &&
+                            currentUser._id &&
+                            currentEvent.disinterestedUsers.includes(
+                              currentUser._id.toString()
+                            )
+                          ) {
                             handleRemoveDisinterestedUser(
                               currentEvent,
                               Methods.getTBarebonesUser(currentUser)
