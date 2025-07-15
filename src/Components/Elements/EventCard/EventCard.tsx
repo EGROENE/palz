@@ -26,6 +26,13 @@ const EventCard = ({ event }: { event: TEvent }) => {
 
   const nextEventDateTime: Date = new Date(event.eventStartDateTimeInMS);
 
+  const [fetchEventIsLoading, setFetchEventIsLoading] = useState<boolean>(false);
+  const [fetchEventIsError, setFetchEventIsError] = useState<boolean>(false);
+
+  const [interestedUsers, setInterestedUsers] = useState<string[]>(event.interestedUsers);
+
+  const [cardEvent, setCardEvent] = useState<TEvent>();
+
   useEffect(() => {
     // Set color of event card's border randomly:
     const themeColors: TThemeColor[] = [
@@ -38,16 +45,6 @@ const EventCard = ({ event }: { event: TEvent }) => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
   }, []);
-
-  const [fetchEventIsLoading, setFetchEventIsLoading] = useState<boolean>(false);
-  const [fetchEventIsError, setFetchEventIsError] = useState<boolean>(false);
-
-  const [cardEvent, setCardEvent] = useState<TEvent>();
-
-  const userRSVPd: boolean =
-    currentUser && currentUser._id && cardEvent
-      ? cardEvent.interestedUsers.includes(currentUser._id.toString())
-      : false;
 
   // Update event:
   useEffect(() => {
@@ -63,7 +60,12 @@ const EventCard = ({ event }: { event: TEvent }) => {
         .catch((error) => console.log(error))
         .finally(() => setFetchEventIsLoading(false));
     }
-  }, []);
+  }, [interestedUsers]);
+
+  const userRSVPd: boolean =
+    currentUser && currentUser._id && cardEvent
+      ? interestedUsers.includes(currentUser._id.toString())
+      : false;
 
   const userIsInvitee: boolean =
     currentUser?._id && cardEvent
@@ -186,7 +188,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                   }
                   disabled={isLoading}
                   onClick={(e) => {
-                    handleAddUserRSVP(e, event);
+                    handleAddUserRSVP(e, event, interestedUsers, setInterestedUsers);
                     if (
                       cardEvent &&
                       cardEvent.disinterestedUsers &&
@@ -304,11 +306,17 @@ const EventCard = ({ event }: { event: TEvent }) => {
                             handleDeleteUserRSVP(
                               event,
                               Methods.getTBarebonesUser(currentUser),
-                              true,
-                              e
+                              e,
+                              interestedUsers,
+                              setInterestedUsers
                             );
                           } else if (!userRSVPd && cardEvent) {
-                            handleAddUserRSVP(e, event);
+                            handleAddUserRSVP(
+                              e,
+                              event,
+                              interestedUsers,
+                              setInterestedUsers
+                            );
                             if (
                               cardEvent &&
                               cardEvent.disinterestedUsers &&
