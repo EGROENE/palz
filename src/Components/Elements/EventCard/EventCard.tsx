@@ -20,6 +20,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
     handleDeclineInvitation,
     setCurrentEvent,
     handleRemoveDisinterestedUser,
+    allCurrentUserEvents,
+    setAllCurrentUserEvents,
   } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -213,7 +215,14 @@ const EventCard = ({ event }: { event: TEvent }) => {
                     color: "var(--text-color-opposite)",
                   }}
                   disabled={isLoading}
-                  onClick={(e) => handleDeclineInvitation(e, event)}
+                  onClick={(e) =>
+                    handleDeclineInvitation(
+                      e,
+                      event,
+                      allCurrentUserEvents,
+                      setAllCurrentUserEvents
+                    )
+                  }
                 >
                   Decline
                 </button>
