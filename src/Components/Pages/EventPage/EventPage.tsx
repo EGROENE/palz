@@ -40,6 +40,8 @@ const EventPage = () => {
     handleRemoveDisinterestedUser,
     interestedUsersCurrentEvent,
     setInterestedUsersCurrentEvent,
+    inviteesCurrentEvent,
+    setInviteesCurrentEvent,
   } = useEventContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
@@ -108,6 +110,7 @@ const EventPage = () => {
               setCurrentEvent(event);
               setInterestedUsersCurrentEvent(event.interestedUsers);
               setDisinterestedUsersCurrentEvent(event.disinterestedUsers);
+              setInviteesCurrentEvent(event.invitees);
             });
           } else {
             setFetchEventIsError(true);
@@ -315,7 +318,7 @@ const EventPage = () => {
                 renderButtonTwo={true}
                 closeModalMethod={setShowInvitees}
                 header="Invitees"
-                users={currentEvent.invitees}
+                users={inviteesCurrentEvent}
                 fetchUsers={true}
                 buttonOneText="Message"
                 buttonOneHandler={getStartOrOpenChatWithUserHandler}
