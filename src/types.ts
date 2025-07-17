@@ -733,6 +733,8 @@ export type TEventContext = {
   ) => void;
   interestedUsersCurrentEvent: string[];
   setInterestedUsersCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;
+  inviteesCurrentEvent: string[];
+  setInviteesCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;
   allCurrentUserEvents: TEvent[];
   setAllCurrentUserEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
 };

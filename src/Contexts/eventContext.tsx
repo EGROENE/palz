@@ -49,6 +49,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     string[]
   >(currentEvent ? currentEvent.interestedUsers : []);
 
+  const [inviteesCurrentEvent, setInviteesCurrentEvent] = useState<string[]>(
+    currentEvent ? currentEvent.invitees : []
+  );
+
   const [showRSVPs, setShowRSVPs] = useState<boolean>(false);
   const [showInvitees, setShowInvitees] = useState<boolean>(false);
   const [showDeclinedInvitations, setShowDeclinedInvitations] = useState<boolean>(false);
