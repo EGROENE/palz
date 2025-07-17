@@ -164,40 +164,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const queryClient = useQueryClient();
 
-  const deleteEventMutation = useMutation({
-    mutationFn: ({ event }: { event: TEvent }) => Requests.deleteEvent(event),
-    onSuccess: (data) => {
-      if (data.ok) {
-        setCurrentEvent(undefined);
-        setDisinterestedUsersCurrentEvent([]);
-        setInterestedUsersCurrentEvent([]);
-        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-        queryClient.refetchQueries({ queryKey: ["allEvents"] });
-        toast("Event deleted", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-        navigation(`/${currentUser?.username}`);
-      } else {
-        toast.error("Could not delete event. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => {
-      setEventDeletionIsInProgress(false);
-      setIsLoading(false);
-    },
-  });
-
   const addToDisinterestedUsersMutation = useMutation({
     mutationFn: ({ user, event }: { user: TUser; event: TEvent }) =>
       Requests.addToDisinterestedUsers(user, event),
@@ -691,7 +657,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     setBlockedUsersEvent,
     blockedUsersEventORIGINAL,
     setBlockedUsersEventORIGINAL,
-    deleteEventMutation,
     eventValuesToUpdate,
     eventTitle,
     setEventTitle,

@@ -628,14 +628,6 @@ export type TEventContext = {
   setShowInvitees: React.Dispatch<React.SetStateAction<boolean>>;
   inviteesORIGINAL: TBarebonesUser[];
   setInviteesORIGINAL: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
-  deleteEventMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      event: TEvent;
-    },
-    unknown
-  >;
   eventValuesToUpdate: TEventValuesToUpdate | undefined;
   eventTitle: string;
   setEventTitle: React.Dispatch<React.SetStateAction<string>>;
