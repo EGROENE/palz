@@ -90,7 +90,6 @@ const EventForm = ({
     relatedInterests,
     setRelatedInterests,
     eventValuesToUpdate,
-    deleteEventMutation,
     organizersORIGINAL,
     setOrganizersORIGINAL,
     inviteesORIGINAL,
@@ -207,7 +206,7 @@ const EventForm = ({
 
   const fetchLimit = 10;
 
-  const navigation = useNavigate()
+  const navigation = useNavigate();
 
   useEffect(() => {
     // Hide Sidebar if showing:
@@ -1307,12 +1306,44 @@ const EventForm = ({
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
-    setIsLoading(true);
-    setEventDeletionIsInProgress(true);
     setShowAreYouSureDeleteEvent(false);
     if (currentEvent && usedFor === "edit-event") {
-      const event = currentEvent;
-      deleteEventMutation.mutate({ event });
+      setEventDeletionIsInProgress(true);
+      setIsLoading(true);
+      Requests.deleteEvent(currentEvent)
+        .then((res) => {
+          if (res.ok) {
+            toast("Event deleted", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+            navigation(`/${currentUser?.username}`);
+          } else {
+            toast.error("Could not delete event. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => {
+          setEventDeletionIsInProgress(false);
+          setIsLoading(false);
+        });
+    } else {
+      toast.error("Could not delete event. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
   };
 
