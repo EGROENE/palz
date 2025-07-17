@@ -164,37 +164,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const queryClient = useQueryClient();
 
-  const createEventMutation = useMutation({
-    mutationFn: ({ eventInfo }: { eventInfo: TEvent }) => Requests.createEvent(eventInfo),
-    onSuccess: (data) => {
-      if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-        queryClient.refetchQueries({ queryKey: ["allEvents"] });
-        toast.success("Event created!", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid green",
-          },
-        });
-        navigation(`/${currentUser?.username}/events`);
-      } else {
-        toast.error("Could not create event. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => {
-      setAddEventIsInProgress(false);
-      setIsLoading(false);
-    },
-  });
-
   const deleteEventMutation = useMutation({
     mutationFn: ({ event }: { event: TEvent }) => Requests.deleteEvent(event),
     onSuccess: (data) => {
@@ -723,7 +692,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsersEventORIGINAL,
     setBlockedUsersEventORIGINAL,
     deleteEventMutation,
-    createEventMutation,
     eventValuesToUpdate,
     eventTitle,
     setEventTitle,
