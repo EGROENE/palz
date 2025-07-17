@@ -13,7 +13,8 @@ const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount, username, fetchAllVisibleOtherUsersQuery } =
     useUserContext();
-  const { fetchAllEventsQuery } = useEventContext();
+  const { fetchAllEventsQuery, allCurrentUserEvents, setAllCurrentUserEvents } =
+    useEventContext();
   const allEvents = fetchAllEventsQuery.data;
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -52,8 +53,6 @@ const UserHomepage = () => {
       navigation(`/${username}`);
     }
   }, [currentUser, navigation, userCreatedAccount]);
-
-  const [allCurrentUserEvents, setAllCurrentUserEvents] = useState<TEvent[]>([]);
 
   useEffect(() => {
     if (allEvents && currentUser) {
