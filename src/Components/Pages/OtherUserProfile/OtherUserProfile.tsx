@@ -622,12 +622,7 @@ const OtherUserProfile = () => {
 
           // Remove blockee's RSVP:
           if (event.interestedUsers.includes(currentOtherUser._id.toString())) {
-            handleDeleteUserRSVP(
-              event,
-              Methods.getTBarebonesUser(currentOtherUser),
-              false,
-              e
-            );
+            handleDeleteUserRSVP(event, Methods.getTBarebonesUser(currentOtherUser), e);
           }
 
           // Remove blockee as organizer:
