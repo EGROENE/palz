@@ -13,6 +13,7 @@ import { useEventContext } from "../../../Hooks/useEventContext";
 import DropdownChecklist from "../../Elements/DropdownChecklist/DropdownChecklist";
 import SearchAndDropdownList from "../../Elements/SearchAndDropdownList/SearchAndDropdownList";
 import Requests from "../../../requests";
+import { useNavigate } from "react-router-dom";
 
 const EventForm = ({
   randomColor,
@@ -89,7 +90,6 @@ const EventForm = ({
     relatedInterests,
     setRelatedInterests,
     eventValuesToUpdate,
-    createEventMutation,
     deleteEventMutation,
     organizersORIGINAL,
     setOrganizersORIGINAL,
@@ -173,9 +173,6 @@ const EventForm = ({
   const [isFetchPotentialUsersError, setIsFetchPotentialUsersError] =
     useState<boolean>(false);
 
-  console.log(fetchOrganizersIsLoading);
-  console.log(fetchInviteesIsLoading);
-  console.log(fetchBlockeesIsLoading);
   const fetchIsLoading: boolean =
     fetchOrganizersIsLoading || fetchInviteesIsLoading || fetchBlockeesIsLoading;
 
@@ -209,6 +206,8 @@ const EventForm = ({
     useState<string>("");
 
   const fetchLimit = 10;
+
+  const navigation = useNavigate()
 
   useEffect(() => {
     // Hide Sidebar if showing:
@@ -1252,12 +1251,39 @@ const EventForm = ({
       } else {
         // When adding a newly created event:
         if (allRequiredFieldsFilled) {
+          setAddEventIsInProgress(false);
+          setIsLoading(false);
           Requests.getAllEvents().then((allEvents) => {
             if (allEvents) {
               setAddEventIsInProgress(true);
               eventInfos.index = allEvents.length;
-              const eventInfo = eventInfos;
-              createEventMutation.mutate({ eventInfo });
+
+              Requests.createEvent(eventInfos)
+                .then((res) => {
+                  if (res.ok) {
+                    toast.success("Event created!", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid green",
+                      },
+                    });
+                    navigation(`/${currentUser?.username}/events`);
+                  } else {
+                    toast.error("Could not create event. Please try again.", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    });
+                  }
+                })
+                .catch((error) => console.log(error))
+                .finally(() => {
+                  setAddEventIsInProgress(false);
+                  setIsLoading(false);
+                });
             } else {
               toast.error("Couldn't create event; please try again.", {
                 style: {
