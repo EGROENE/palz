@@ -166,35 +166,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const queryClient = useQueryClient();
 
-  const removeInviteeMutation = useMutation({
-    mutationFn: ({ event, user }: { event: TEvent; user: TBarebonesUser }) =>
-      Requests.removeInvitee(event, user),
-    onSuccess: (data) => {
-      if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-        queryClient.refetchQueries({ queryKey: ["allEvents"] });
-
-        toast("Invitee removed", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      } else {
-        toast.error("Could not remove invitee. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
-
   const removeOrganizerMutation = useMutation({
     mutationFn: ({ event, user }: { event: TEvent; user: TUser | TOtherUser }) =>
       Requests.removeOrganizer(event, user),
@@ -386,14 +357,50 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleRemoveInvitee = (
     event: TEvent,
     user: TBarebonesUser | null,
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
+    userArray?: string[],
+    setUserArray?: React.Dispatch<React.SetStateAction<string[]>>,
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
-    e.preventDefault();
-
-    setIsLoading(true);
+    e?.preventDefault();
 
     if (user) {
-      removeInviteeMutation.mutate({ event, user });
+      if (userArray && setUserArray) {
+        setUserArray(userArray.filter((u) => u !== user._id));
+      }
+      setIsLoading(true);
+      Requests.removeInvitee(event, user)
+        .then((res) => {
+          if (res.ok) {
+            toast("Invitee removed", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          } else {
+            if (userArray && setUserArray && user._id) {
+              setUserArray(userArray.concat(user._id.toString()));
+            }
+            toast.error("Could not remove invitee. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
+    } else {
+      toast.error("Could not remove invitee. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
   };
 
@@ -645,6 +652,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    inviteesCurrentEvent,
+    setInviteesCurrentEvent,
     allCurrentUserEvents,
     setAllCurrentUserEvents,
     interestedUsersCurrentEvent,
