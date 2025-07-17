@@ -702,7 +702,9 @@ export type TEventContext = {
   ) => void;
   handleDeclineInvitation: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
+    event: TEvent,
+    eventsArray?: TEvent[],
+    setEventsArray?: React.Dispatch<React.SetStateAction<TEvent[]>>
   ) => void;
   eventDeletionIsInProgress: boolean;
   setEventDeletionIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
@@ -729,6 +731,8 @@ export type TEventContext = {
   ) => void;
   interestedUsersCurrentEvent: string[];
   setInterestedUsersCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;
+  allCurrentUserEvents: TEvent[];
+  setAllCurrentUserEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
 };
 
 export type TChatContext = {

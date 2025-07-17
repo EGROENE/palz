@@ -27,6 +27,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const { setIsLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount } = useUserContext();
 
+  const [allCurrentUserEvents, setAllCurrentUserEvents] = useState<TEvent[]>([]);
+
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
   const fetchAllEventsQuery: UseQueryResult<TEvent[], Error> = useQuery({
     queryKey: ["allEvents"],
@@ -163,34 +165,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   }, [fetchAllEventsQuery.data]);
 
   const queryClient = useQueryClient();
-
-  const addToDisinterestedUsersMutation = useMutation({
-    mutationFn: ({ user, event }: { user: TUser; event: TEvent }) =>
-      Requests.addToDisinterestedUsers(user, event),
-    onSuccess: (data) => {
-      if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-        queryClient.refetchQueries({ queryKey: ["allEvents"] });
-        toast("Invitation declined.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      } else {
-        toast.error("Could not decline invitation. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
 
   const removeInviteeMutation = useMutation({
     mutationFn: ({ event, user }: { event: TEvent; user: TBarebonesUser }) =>
@@ -363,13 +337,49 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleDeclineInvitation = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
+    event: TEvent,
+    eventsArray?: TEvent[],
+    setEventsArray?: React.Dispatch<React.SetStateAction<TEvent[]>>
   ) => {
     e.preventDefault();
-    setIsLoading(true);
     if (currentUser) {
-      const user = currentUser;
-      addToDisinterestedUsersMutation.mutate({ user, event });
+      if (eventsArray && setEventsArray) {
+        setEventsArray(eventsArray.filter((e) => e !== event));
+      }
+      setIsLoading(true);
+      Requests.addToDisinterestedUsers(currentUser, event)
+        .then((res) => {
+          if (res.ok) {
+            toast("Invitation declined.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          } else {
+            if (eventsArray && setEventsArray) {
+              setEventsArray(eventsArray.concat(event));
+            }
+            toast.error("Could not decline invitation. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
+    } else {
+      toast.error("Could not decline invitation. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
   };
 
@@ -635,6 +645,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    allCurrentUserEvents,
+    setAllCurrentUserEvents,
     interestedUsersCurrentEvent,
     setInterestedUsersCurrentEvent,
     disinterestedUsersCurrentEvent,
