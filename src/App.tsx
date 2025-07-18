@@ -39,7 +39,8 @@ function App() {
     setShowUpdateProfileImageInterface,
     removeProfileImage,
     accountDeletionInProgress,
-    updateProfileImageMutation,
+    updateProfileImageIsLoading,
+
     removeProfileImageMutation,
   } = useUserContext();
 
@@ -145,9 +146,7 @@ function App() {
         {addEventIsInProgress && <LoadingModal message="Adding event..." />}
         {eventEditIsInProgress && <LoadingModal message="Updating event..." />}
         {eventDeletionIsInProgress && <LoadingModal message="Deleting event..." />}
-        {updateProfileImageMutation.isPending && (
-          <LoadingModal message="Uploading image..." />
-        )}
+        {updateProfileImageIsLoading && <LoadingModal message="Uploading image..." />}
         {removeProfileImageMutation.isPending && (
           <LoadingModal message="Removing image..." />
         )}
