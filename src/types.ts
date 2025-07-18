@@ -591,15 +591,8 @@ export type TUserContext = {
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
   currentUser: TUser | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser | null>>;
-  updateProfileImageMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      currentUser: TUser | null;
-      base64: unknown;
-    },
-    unknown
-  >;
+  updateProfileImageIsLoading: boolean;
+  setUpdateProfileImageIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   removeProfileImageMutation: UseMutationResult<
     Response,
     Error,

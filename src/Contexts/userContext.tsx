@@ -49,7 +49,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     useState<boolean>(false);
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
+
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
+
+  const [updateProfileImageIsLoading, setUpdateProfileImageIsLoading] =
+    useState<boolean>(false);
 
   /* Some values on currentUser are kept separately from currentUser. These are initialized to corresponding values from DB. These will be compared to values in DB when user changes these in Settings to render certain form UI. They can also be used for optimistic rendering, in that they update quicker than state values that depend on request to DB going thru, then state values being set after that. Corresponding values in DB are still updated in the background; if these requests fail, then these parallel state values below will reset to what they were before the change.*/
   const [index, setIndex] = useSessionStorage<number | undefined>("index", undefined);
@@ -339,52 +343,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     );
   };
-
-  const updateProfileImageMutation = useMutation({
-    mutationFn: ({
-      currentUser,
-      base64,
-    }: {
-      currentUser: TUser | null;
-      base64: unknown;
-    }) => Requests.updateUserProfileImage(currentUser, base64),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        if (currentUser && currentUser._id) {
-          Requests.getUserByID(currentUser._id.toString())
-            .then((res) => {
-              if (res.ok) {
-                res
-                  .json()
-                  .then((user) => {
-                    if (user) {
-                      setCurrentUser(user);
-                      setProfileImage(variables.base64);
-                      toast.success("Profile image updated", {
-                        style: {
-                          background:
-                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                          color: theme === "dark" ? "black" : "white",
-                          border: "2px solid green",
-                        },
-                      });
-                    } else {
-                      handleUpdateProfileImageFail();
-                    }
-                  })
-                  .catch((error) => console.log(error));
-              } else {
-                handleUpdateProfileImageFail();
-              }
-            })
-            .catch((error) => console.log(error));
-        }
-      } else {
-        handleUpdateProfileImageFail();
-      }
-    },
-    onError: (error) => console.log(error),
-  });
 
   const removeProfileImageMutation = useMutation({
     mutationFn: ({
@@ -1397,7 +1355,45 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setShowUpdateProfileImageInterface(false);
     const file = e.target.files && e.target.files[0];
     const base64 = file && (await Methods.convertToBase64(file));
-    updateProfileImageMutation.mutate({ currentUser, base64 });
+    setUpdateProfileImageIsLoading(true);
+    Requests.updateUserProfileImage(currentUser, base64)
+      .then((res) => {
+        if (res.ok) {
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id.toString())
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        setCurrentUser(user);
+                        setProfileImage(base64);
+                        toast.success("Profile image updated", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid green",
+                          },
+                        });
+                      } else {
+                        handleUpdateProfileImageFail();
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  handleUpdateProfileImageFail();
+                }
+              })
+              .catch((error) => console.log(error));
+          }
+        } else {
+          handleUpdateProfileImageFail();
+        }
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setUpdateProfileImageIsLoading(false));
   };
 
   const removeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -2191,13 +2187,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    updateProfileImageIsLoading,
+    setUpdateProfileImageIsLoading,
     fetchBlockedUsersIsLoading,
     setFetchBlockedUsersIsLoading,
     fetchBlockedUsersIsError,
     setFetchBlockedUsersIsError,
     userHasLoggedIn,
     removeProfileImageMutation,
-    updateProfileImageMutation,
     fetchAllVisibleOtherUsersQuery,
     displayFriendCount,
     setDisplayFriendCount,
