@@ -54,6 +54,8 @@ app.get("/palz/find-palz", async (req, res) => {
     blockedBy: { $nin: currentUser._id.toString() },
     // profileVisibleTo isn't set to 'nobody':
     profileVisibleTo: { $ne: "nobody" },
+    // user doesn't have FR from currentUser:
+    friendRequestsReceived: {$nin: currentUser._id.toString()}
   }).limit(Number(limit));
 
   res.status(200).json(potentialFriends);
