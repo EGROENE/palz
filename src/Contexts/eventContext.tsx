@@ -170,34 +170,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   const queryClient = useQueryClient();
 
-  const removeOrganizerMutation = useMutation({
-    mutationFn: ({ event, user }: { event: TEvent; user: TUser | TOtherUser }) =>
-      Requests.removeOrganizer(event, user),
-    onSuccess: (data) => {
-      if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-        queryClient.refetchQueries({ queryKey: ["allEvents"] });
-        toast("Event organizer removed", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      } else {
-        toast.error("Could not remove invitee. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
-
   const removeSelfAsEventOrganizerMutation = useMutation({
     mutationFn: ({ event, user }: { event: TEvent; user: TUser }) =>
       Requests.removeOrganizer(event, user),
@@ -461,9 +433,38 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     user: TUser | TOtherUser | null
   ) => {
     e.preventDefault();
-    setIsLoading(true);
     if (user) {
-      removeOrganizerMutation.mutate({ event, user });
+      setIsLoading(true);
+      Requests.removeOrganizer(event, user)
+        .then((res) => {
+          if (res.ok) {
+            toast("Event organizer removed", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          } else {
+            toast.error("Could not remove invitee. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
+    } else {
+      toast.error("Could not remove invitee. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
   };
 
