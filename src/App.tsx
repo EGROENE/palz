@@ -40,8 +40,7 @@ function App() {
     removeProfileImage,
     accountDeletionInProgress,
     updateProfileImageIsLoading,
-
-    removeProfileImageMutation,
+    removeProfileImageIsLoading,
   } = useUserContext();
 
   const {
@@ -147,9 +146,7 @@ function App() {
         {eventEditIsInProgress && <LoadingModal message="Updating event..." />}
         {eventDeletionIsInProgress && <LoadingModal message="Deleting event..." />}
         {updateProfileImageIsLoading && <LoadingModal message="Uploading image..." />}
-        {removeProfileImageMutation.isPending && (
-          <LoadingModal message="Removing image..." />
-        )}
+        {removeProfileImageIsLoading && <LoadingModal message="Removing image..." />}
         {chatCreationInProgress && <LoadingModal message="Creating chat..." />}
         {showChatModal && <ChatModal />}
         {showMobileNavOptions && <MobileNavOptions />}
