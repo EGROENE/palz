@@ -446,7 +446,7 @@ const EventForm = ({
         })
         .finally(() => setFetchBlockeesIsLoading(false));
     }
-  }, [event?.blockedUsersEvent]);
+  }, [currentEvent?.blockedUsersEvent]);
 
   useEffect(() => {
     if (usedFor === "edit-event" && currentEvent) {
@@ -469,7 +469,7 @@ const EventForm = ({
         })
         .finally(() => setFetchOrganizersIsLoading(false));
     }
-  }, [event?.organizers]);
+  }, [currentEvent?.organizers]);
 
   useEffect(() => {
     if (usedFor === "edit-event" && currentEvent) {
@@ -492,7 +492,7 @@ const EventForm = ({
         })
         .finally(() => setFetchInviteesIsLoading(false));
     }
-  }, [event?.invitees]);
+  }, [currentEvent?.invitees]);
 
   // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
   const handleLoadMoreItemsOnScroll = (
@@ -1183,55 +1183,79 @@ const EventForm = ({
           if (eventValuesToUpdate) {
             Requests.updateEvent(currentEvent, eventValuesToUpdate)
               .then((res) => {
-                if (res.ok) {
-                  toast.success("Event updated!", {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid green",
-                    },
-                  });
+                if (res.ok && currentEvent._id) {
+                  // Set currentEvent to updated version from DB:
+                  Requests.getEventByID(currentEvent._id)
+                    .then((res) => {
+                      if (res.ok) {
+                        res.json().then((updatedEvent: TEvent) => {
+                          setCurrentEvent(updatedEvent);
+                          toast.success("Event updated!", {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid green",
+                            },
+                          });
 
-                  /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
-                  if (eventValuesToUpdate?.title) {
-                    setEventTitle(eventValuesToUpdate.title);
-                  }
-                  if (eventValuesToUpdate?.organizers) {
-                    setOrganizers(eventValuesToUpdate.organizers);
-                  }
-                  if (eventValuesToUpdate?.invitees) {
-                    setInvitees(eventValuesToUpdate.invitees);
-                  }
-                  if (eventValuesToUpdate?.blockedUsersEvent) {
-                    setBlockedUsersEvent(eventValuesToUpdate.blockedUsersEvent);
-                  }
-                  if (eventValuesToUpdate?.description) {
-                    setEventDescription(eventValuesToUpdate.description);
-                  }
-                  if (eventValuesToUpdate?.additionalInfo) {
-                    setEventAdditionalInfo(eventValuesToUpdate.additionalInfo);
-                  }
-                  if (eventValuesToUpdate?.city) {
-                    setEventCity(eventValuesToUpdate.city);
-                  }
-                  if (eventValuesToUpdate?.stateProvince) {
-                    setEventState(eventValuesToUpdate.stateProvince);
-                  }
-                  if (eventValuesToUpdate?.country) {
-                    setEventCountry(eventValuesToUpdate.country);
-                  }
-                  if (eventValuesToUpdate?.publicity) {
-                    setPublicity(eventValuesToUpdate.publicity);
-                  }
-                  if (eventValuesToUpdate?.maxParticipants) {
-                    setMaxParticipants(eventValuesToUpdate.maxParticipants);
-                  }
-                  if (eventValuesToUpdate?.address) {
-                    setEventAddress(eventValuesToUpdate.address);
-                  }
-                  if (eventValuesToUpdate?.relatedInterests) {
-                    setRelatedInterests(eventValuesToUpdate.relatedInterests);
-                  }
+                          /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
+                          if (eventValuesToUpdate?.title) {
+                            setEventTitle(eventValuesToUpdate.title);
+                          }
+                          if (eventValuesToUpdate?.organizers) {
+                            setOrganizers(eventValuesToUpdate.organizers);
+                          }
+                          if (eventValuesToUpdate?.invitees) {
+                            setInvitees(eventValuesToUpdate.invitees);
+                          }
+                          if (eventValuesToUpdate?.blockedUsersEvent) {
+                            setBlockedUsersEvent(eventValuesToUpdate.blockedUsersEvent);
+                          }
+                          if (eventValuesToUpdate?.description) {
+                            setEventDescription(eventValuesToUpdate.description);
+                          }
+                          if (eventValuesToUpdate?.additionalInfo) {
+                            setEventAdditionalInfo(eventValuesToUpdate.additionalInfo);
+                          }
+                          if (eventValuesToUpdate?.city) {
+                            setEventCity(eventValuesToUpdate.city);
+                          }
+                          if (eventValuesToUpdate?.stateProvince) {
+                            setEventState(eventValuesToUpdate.stateProvince);
+                          }
+                          if (eventValuesToUpdate?.country) {
+                            setEventCountry(eventValuesToUpdate.country);
+                          }
+                          if (eventValuesToUpdate?.publicity) {
+                            setPublicity(eventValuesToUpdate.publicity);
+                          }
+                          if (eventValuesToUpdate?.maxParticipants) {
+                            setMaxParticipants(eventValuesToUpdate.maxParticipants);
+                          }
+                          if (eventValuesToUpdate?.address) {
+                            setEventAddress(eventValuesToUpdate.address);
+                          }
+                          if (eventValuesToUpdate?.relatedInterests) {
+                            setRelatedInterests(eventValuesToUpdate.relatedInterests);
+                          }
+                        });
+                      } else {
+                        toast.error("Could not update event. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    })
+                    .catch((error) => console.log(error))
+                    .finally(() => {
+                      setEventEditIsInProgress(false);
+                      setIsLoading(false);
+                    });
                 } else {
                   toast.error("Could not update event. Please try again.", {
                     style: {
@@ -1242,11 +1266,7 @@ const EventForm = ({
                   });
                 }
               })
-              .catch((error) => console.log(error))
-              .finally(() => {
-                setEventEditIsInProgress(false);
-                setIsLoading(false);
-              });
+              .catch((error) => console.log(error));
           }
         } else {
           // When adding a newly created event:
