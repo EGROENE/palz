@@ -14,12 +14,7 @@ import { useMainContext } from "../Hooks/useMainContext";
 import { useUserContext } from "../Hooks/useUserContext";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import {
-  useQuery,
-  UseQueryResult,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 export const EventContext = createContext<TEventContext | null>(null);
 
@@ -167,38 +162,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       setRelatedInterests(updatedEvent.relatedInterests);
     }
   }, [fetchAllEventsQuery.data]);
-
-  const queryClient = useQueryClient();
-
-  const removeSelfAsEventOrganizerMutation = useMutation({
-    mutationFn: ({ event, user }: { event: TEvent; user: TUser }) =>
-      Requests.removeOrganizer(event, user),
-    onSuccess: (data) => {
-      if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-        queryClient.refetchQueries({ queryKey: ["allEvents"] });
-        toast("You have removed yourself as an organizer of this event.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-        // Redirect to currentUser's homepage, as they've lost rights to edit event:
-        navigation(`/${currentUser?.username}`);
-      } else {
-        toast.error("Unable to remove you as organizer; please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
 
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
@@ -505,9 +468,30 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
         // DB is updated immediately, redirect to homepage
         setIsLoading(true);
         if (currentEvent && currentUser) {
-          const event = currentEvent;
-          const user = currentUser;
-          removeSelfAsEventOrganizerMutation.mutate({ event, user });
+          Requests.removeOrganizer(currentEvent, currentUser)
+            .then((res) => {
+              if (res.ok) {
+                toast("You have removed yourself as an organizer of this event.", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
+                // Redirect to currentUser's homepage, as they've lost rights to edit event:
+                navigation(`/${currentUser?.username}`);
+              } else {
+                toast.error("Unable to remove you as organizer; please try again.", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
+              }
+            })
+            .catch((error) => console.log(error))
+            .finally(() => setIsLoading(false));
         }
       } else {
         // Remove other user as organizer:
