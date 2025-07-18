@@ -55,6 +55,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [updateProfileImageIsLoading, setUpdateProfileImageIsLoading] =
     useState<boolean>(false);
 
+  const [removeProfileImageIsLoading, setRemoveProfileImageIsLoading] =
+    useState<boolean>(false);
+
   /* Some values on currentUser are kept separately from currentUser. These are initialized to corresponding values from DB. These will be compared to values in DB when user changes these in Settings to render certain form UI. They can also be used for optimistic rendering, in that they update quicker than state values that depend on request to DB going thru, then state values being set after that. Corresponding values in DB are still updated in the background; if these requests fail, then these parallel state values below will reset to what they were before the change.*/
   const [index, setIndex] = useSessionStorage<number | undefined>("index", undefined);
   const [firstName, setFirstName, removeFirstName] = useSessionStorage<
@@ -343,46 +346,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     );
   };
-
-  const removeProfileImageMutation = useMutation({
-    mutationFn: ({
-      currentUser,
-      placeholder,
-    }: {
-      currentUser: TUser | null;
-      placeholder: string;
-    }) => Requests.updateUserProfileImage(currentUser, placeholder),
-    onSuccess: () => {
-      if (currentUser && currentUser._id) {
-        Requests.getUserByID(currentUser._id.toString())
-          .then((res) => {
-            if (res.ok) {
-              res.json().then((user) => {
-                setCurrentUser(user);
-                setProfileImage("");
-                toast("Profile image removed", {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid red",
-                  },
-                });
-              });
-            } else {
-              toast.error("Could not remove profile image. Please try again.", {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid red",
-                },
-              });
-            }
-          })
-          .catch((error) => console.log(error));
-      }
-    },
-    onError: (error) => console.log(error),
-  });
 
   /* 
   Success of a sent friend request depends on if both of the mutations below are successful, so call second mutation in onSuccess of mutation that runs first. Display toast of send-friend-request success or failure in onSuccess/onError of second mutation that runs. setIsLoading(false) upon settling of second mutation that runs.
@@ -1399,8 +1362,50 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const removeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setShowUpdateProfileImageInterface(false);
-    const placeholder = "";
-    removeProfileImageMutation.mutate({ currentUser, placeholder });
+    setRemoveProfileImageIsLoading(true);
+    Requests.updateUserProfileImage(currentUser, "")
+      .then((res) => {
+        if (res.ok) {
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id.toString())
+              .then((res) => {
+                if (res.ok) {
+                  res.json().then((user) => {
+                    setCurrentUser(user);
+                    setProfileImage("");
+                    toast("Profile image removed", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    });
+                  });
+                } else {
+                  toast.error("Could not remove profile image. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                }
+              })
+              .catch((error) => console.log(error))
+              .finally(() => setRemoveProfileImageIsLoading(false));
+          }
+        } else {
+          setRemoveProfileImageIsLoading(false);
+          toast.error("Could not remove profile image. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   const handleSendFriendRequest = (recipient: TOtherUser | TUser | undefined): void => {
@@ -2187,6 +2192,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    removeProfileImageIsLoading,
+    setRemoveProfileImageIsLoading,
     updateProfileImageIsLoading,
     setUpdateProfileImageIsLoading,
     fetchBlockedUsersIsLoading,
@@ -2194,7 +2201,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     fetchBlockedUsersIsError,
     setFetchBlockedUsersIsError,
     userHasLoggedIn,
-    removeProfileImageMutation,
     fetchAllVisibleOtherUsersQuery,
     displayFriendCount,
     setDisplayFriendCount,

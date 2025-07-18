@@ -593,15 +593,8 @@ export type TUserContext = {
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser | null>>;
   updateProfileImageIsLoading: boolean;
   setUpdateProfileImageIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  removeProfileImageMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      currentUser: TUser | null;
-      placeholder: string;
-    },
-    unknown
-  >;
+  removeProfileImageIsLoading: boolean;
+  setRemoveProfileImageIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type TEventContext = {
