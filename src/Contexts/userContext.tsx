@@ -1344,19 +1344,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         handleUpdateProfileImageFail();
                       }
                     })
-                    .catch((error) => console.log(error));
+                    .catch((error) => console.log(error))
+                    .finally(() => setUpdateProfileImageIsLoading(false));
                 } else {
+                  setUpdateProfileImageIsLoading(false);
                   handleUpdateProfileImageFail();
                 }
               })
               .catch((error) => console.log(error));
           }
         } else {
+          setUpdateProfileImageIsLoading(false);
           handleUpdateProfileImageFail();
         }
       })
-      .catch((error) => console.log(error))
-      .finally(() => setUpdateProfileImageIsLoading(false));
+      .catch((error) => console.log(error));
   };
 
   const removeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1542,6 +1544,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
   const handleUnfriendingFail = (friend: TOtherUser): void => {
+    setIsLoading(false);
     toast.error(
       `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`,
       {
@@ -1684,6 +1687,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleUnblockUserFail = (blockee: TBarebonesUser): void => {
+    setIsLoading(false);
     if (blockedUsers && setBlockedUsers) {
       setBlockedUsers(blockedUsers);
     }
@@ -1787,8 +1791,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             handleUnblockUserFail(Methods.getTBarebonesUser(blockee));
           }
         })
-        .catch((error) => console.log(error))
-        .finally(() => setIsLoading(false));
+        .catch((error) => console.log(error));
     }
   };
 
