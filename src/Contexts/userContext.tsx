@@ -1636,7 +1636,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleRejectFriendRequest = (
-    sender: TOtherUser,
+    sender: TOtherUser | TBarebonesUser,
     e?: React.ChangeEvent<HTMLInputElement>
   ): void => {
     e?.preventDefault();

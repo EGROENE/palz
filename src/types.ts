@@ -344,7 +344,7 @@ export type TUserContext = {
     e?: React.ChangeEvent<HTMLInputElement>
   ) => void;
   handleRejectFriendRequest: (
-    sender: TOtherUser,
+    sender: TOtherUser | TBarebonesUser,
     e?: React.ChangeEvent<HTMLInputElement>
   ) => void;
   accountDeletionInProgress: boolean;
