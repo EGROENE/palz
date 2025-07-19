@@ -347,59 +347,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  /* 
-  Success of a sent friend request depends on if both of the mutations below are successful, so call second mutation in onSuccess of mutation that runs first. Display toast of send-friend-request success or failure in onSuccess/onError of second mutation that runs. setIsLoading(false) upon settling of second mutation that runs.
-  */
-  const sendFriendRequestMutation = useMutation({
-    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
-      Requests.addToFriendRequestsSent(sender, recipient),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        const sender = variables.sender;
-        const recipient = variables.recipient;
-
-        if (recipient._id) {
-          Requests.getUserByID(recipient._id.toString())
-            .then((res) => {
-              if (res.ok) {
-                res
-                  .json()
-                  .then((recipient) =>
-                    receiveFriendRequestMutation.mutate({ sender, recipient })
-                  );
-              } else {
-                toast.error("Couldn't send request. Please try again.", {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid red",
-                  },
-                });
-              }
-            })
-            .catch((error) => console.log(error));
-        }
-      } else {
-        toast.error("Couldn't send request. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
-
-  const handleReceiveFriendRequestFail = (variables: {
-    sender: TUser;
-    recipient: TOtherUser;
-  }) => {
-    if (variables.recipient._id && friendRequestsSent) {
+  const handleReceiveFriendRequestFail = (sender: TUser, recipient: TOtherUser) => {
+    if (recipient._id && friendRequestsSent) {
       // If FR was sent, but recipient didn't receive it (request failed), delete sent FR from sender:
-      Requests.removeFromFriendRequestsSent(variables.sender, variables.recipient)
+      Requests.removeFromFriendRequestsSent(sender, recipient)
         .then((res) => {
           if (!res.ok) {
             toast.error("Couldn't send request. Please try again.", {
@@ -414,48 +365,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         .catch((error) => console.log(error));
     }
   };
-
-  // Only if recipient receives FR from currentUser should currentUser's request go thru
-  const receiveFriendRequestMutation = useMutation({
-    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
-      Requests.addToFriendRequestsReceived(sender, recipient),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        if (currentUser && currentUser._id) {
-          Requests.getUserByID(currentUser._id.toString())
-            .then((res) => {
-              if (res.ok) {
-                res
-                  .json()
-                  .then((user) => {
-                    if (user) {
-                      setCurrentUser(user);
-                      toast.success("Friend request sent!", {
-                        style: {
-                          background:
-                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                          color: theme === "dark" ? "black" : "white",
-                          border: "2px solid green",
-                        },
-                      });
-                    } else {
-                      handleReceiveFriendRequestFail(variables);
-                    }
-                  })
-                  .catch((error) => console.log(error));
-              } else {
-                handleReceiveFriendRequestFail(variables);
-              }
-            })
-            .catch((error) => console.log(error));
-        }
-      } else {
-        handleReceiveFriendRequestFail(variables);
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
 
   const handleRemoveFriendRequestFail = (variables: {
     sender: TOtherUser;
@@ -727,7 +636,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     recipient: TUser
   ): void => {
     if (recipient._id && !sender.friendRequestsSent.includes(recipient._id.toString())) {
-      Requests.addToFriendRequestsSent(sender, recipient)
+      Requests.addToFriendRequestsSent(sender, recipient._id.toString())
         .then((res) => {
           if (!res.ok) {
             resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, recipient);
@@ -1411,31 +1320,77 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleSendFriendRequest = (recipient: TOtherUser | TUser | undefined): void => {
-    if (currentUser && recipient) {
+    if (currentUser && recipient && recipient._id) {
       setIsLoading(true);
-      const sender = currentUser;
-
-      if (recipient._id) {
-        Requests.getUserByID(recipient._id.toString())
-          .then((res) => {
-            if (res.ok) {
-              res
-                .json()
-                .then((recipient) =>
-                  sendFriendRequestMutation.mutate({ sender, recipient })
-                );
-            } else {
-              toast.error("Couldn't send request. Please try again.", {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid red",
-                },
-              });
-            }
-          })
-          .catch((error) => console.log(error));
-      }
+      Requests.addToFriendRequestsSent(currentUser, recipient._id.toString()).then(
+        (res) => {
+          if (res.ok && recipient._id) {
+            // Add currentUser to recipient's friendRequestsReceived (will need to get TUser of recipient)
+            Requests.getUserByID(recipient._id.toString()).then((res) => {
+              if (res.ok) {
+                res.json().then((rec: TUser) => {
+                  Requests.addToFriendRequestsReceived(currentUser, rec).then((res) => {
+                    if (res.ok && currentUser && currentUser._id) {
+                      // Fetch updated currentUser, set if successful:
+                      Requests.getUserByID(currentUser._id.toString()).then((res) => {
+                        if (res.ok) {
+                          res
+                            .json()
+                            .then((cu: TUser) => {
+                              setCurrentUser(cu);
+                              toast.success("Friend request sent!", {
+                                style: {
+                                  background:
+                                    theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                                  color: theme === "dark" ? "black" : "white",
+                                  border: "2px solid green",
+                                },
+                              });
+                            })
+                            .catch((error) => console.log(error))
+                            .finally(() => setIsLoading(false));
+                        } else {
+                          handleReceiveFriendRequestFail(currentUser, recipient);
+                        }
+                      });
+                    } else {
+                      setIsLoading(false);
+                      handleReceiveFriendRequestFail(currentUser, recipient);
+                    }
+                  });
+                });
+              } else {
+                setIsLoading(false);
+                toast.error("Couldn't send request. Please try again.", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
+              }
+            });
+          } else {
+            setIsLoading(false);
+            toast.error("Couldn't send request. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        }
+      );
+    } else {
+      setIsLoading(false);
+      toast.error("Couldn't send request. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
   };
 
