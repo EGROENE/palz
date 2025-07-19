@@ -29,6 +29,7 @@ const FriendRequests = () => {
     userCreatedAccount,
     logout,
     currentUser,
+    setCurrentUser,
   } = useUserContext();
   const { setCurrentEvent } = useEventContext();
 
@@ -82,6 +83,17 @@ const FriendRequests = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+
+    if (currentUser && currentUser._id) {
+      Requests.getUserByID(currentUser._id.toString())
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((cu: TUser) => setCurrentUser(cu));
+          } else {
+          }
+        })
+        .catch((error) => console.log(error));
+    }
   }, []);
 
   useEffect(() => {
