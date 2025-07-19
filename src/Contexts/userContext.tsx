@@ -1319,8 +1319,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       .catch((error) => console.log(error));
   };
 
-  const handleSendFriendRequest = (recipient: TOtherUser | TUser | undefined): void => {
+  const handleSendFriendRequest = (
+    recipient: TOtherUser | TUser | undefined,
+    shouldOptimisticRender?: boolean
+  ): void => {
     if (currentUser && recipient && recipient._id) {
+      if (shouldOptimisticRender && friendRequestsSent && recipient && recipient._id) {
+        setFriendRequestsSent(
+          friendRequestsSent.concat(Methods.getTBarebonesUser(recipient))
+        );
+      }
       setIsLoading(true);
       Requests.addToFriendRequestsSent(currentUser, recipient._id.toString()).then(
         (res) => {
@@ -1350,10 +1358,20 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                             .catch((error) => console.log(error))
                             .finally(() => setIsLoading(false));
                         } else {
+                          if (shouldOptimisticRender && friendRequestsSent) {
+                            friendRequestsSent.filter(
+                              (fr) => fr !== Methods.getTBarebonesUser(recipient)
+                            );
+                          }
                           handleReceiveFriendRequestFail(currentUser, recipient);
                         }
                       });
                     } else {
+                      if (shouldOptimisticRender && friendRequestsSent) {
+                        friendRequestsSent.filter(
+                          (fr) => fr !== Methods.getTBarebonesUser(recipient)
+                        );
+                      }
                       setIsLoading(false);
                       handleReceiveFriendRequestFail(currentUser, recipient);
                     }
@@ -1371,6 +1389,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               }
             });
           } else {
+            if (shouldOptimisticRender && friendRequestsSent) {
+              friendRequestsSent.filter(
+                (fr) => fr !== Methods.getTBarebonesUser(recipient)
+              );
+            }
             setIsLoading(false);
             toast.error("Couldn't send request. Please try again.", {
               style: {
