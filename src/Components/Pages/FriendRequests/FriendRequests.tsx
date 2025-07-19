@@ -326,7 +326,7 @@ const FriendRequests = () => {
                         renderButtonTwo={true}
                         buttonTwoText="Reject"
                         buttonTwoHandler={handleRejectFriendRequest}
-                        buttonTwoHandlerParams={[user, currentUser]}
+                        buttonTwoHandlerParams={[Methods.getTBarebonesUser(user)]}
                         buttonTwoHandlerNeedsEventParam={true}
                         buttonTwoIsDisabled={isLoading}
                         buttonTwoLink={null}

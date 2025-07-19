@@ -235,7 +235,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
             header={`Respond to friend request from ${currentOtherUser.firstName} ${currentOtherUser.lastName} (${currentOtherUser.username})`}
             buttonOneText="Decline"
             buttonOneHandler={handleRejectFriendRequest}
-            buttonOneHandlerParams={[currentOtherUser, currentUser]}
+            buttonOneHandlerParams={[currentOtherUser]}
             handlerOneNeedsEventParam={true}
             buttonTwoText="Accept"
             buttonTwoHandler={handleAcceptFriendRequest}
