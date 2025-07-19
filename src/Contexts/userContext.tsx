@@ -366,21 +366,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleRemoveFriendRequestFail = (variables: {
-    sender: TOtherUser;
-    recipientID: string | undefined;
-    event: "accept-request" | "retract-request" | "reject-request";
-  }) => {
-    if (variables.recipientID) {
-      Requests.getUserByID(variables.recipientID)
+  const handleRemoveFriendRequestFail = (
+    sender: TOtherUser,
+    recipientID: string | undefined,
+    event: "accept-request" | "retract-request" | "reject-request"
+  ) => {
+    if (recipientID) {
+      Requests.getUserByID(recipientID)
         .then((res) =>
           res.json().then((recipient) => {
-            if (variables.sender._id) {
-              Requests.getUserByID(variables.sender._id.toString())
+            if (sender._id) {
+              Requests.getUserByID(sender._id.toString())
                 .then((res) => {
                   if (res.ok) {
-                    res.json().then((sender) => {
-                      if (variables.event === "accept-request") {
+                    res.json().then((sender: TUser) => {
+                      if (event === "accept-request") {
                         // Remove sender & receiver from each other's 'friends' array, add sender back to receivers FR-received array:
                         Promise.all([
                           Requests.deleteFriendFromFriendsArray(sender, recipient),
@@ -390,7 +390,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         ])
                           .then((res) => {
                             if (res.some((promiseResult) => !promiseResult.ok)) {
-                              handleRemoveFriendRequestFail(variables);
+                              handleRemoveFriendRequestFail(
+                                sender,
+                                recipient._id.toString(),
+                                event
+                              );
                             }
                           })
                           .catch((error) => console.log(error));
@@ -408,14 +412,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         );
                       }
 
-                      if (variables.event === "retract-request") {
+                      if (event === "retract-request") {
                         Promise.all([
                           Requests.addToFriendRequestsSent(sender, recipient),
                           Requests.addToFriendRequestsReceived(sender, recipient),
                         ])
                           .then((res) => {
                             if (res.some((promiseResult) => !promiseResult.ok)) {
-                              handleRemoveFriendRequestFail(variables);
+                              handleRemoveFriendRequestFail(
+                                sender,
+                                recipient._id.toString(),
+                                event
+                              );
                             }
                           })
                           .catch((error) => console.log(error));
@@ -430,94 +438,42 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         });
                       }
 
-                      if (variables.event === "reject-request") {
+                      if (event === "reject-request") {
                         Promise.all([
                           Requests.addToFriendRequestsSent(sender, recipient),
                           Requests.addToFriendRequestsReceived(sender, recipient),
                         ])
                           .then((res) => {
                             if (res.some((promiseResult) => !promiseResult.ok)) {
-                              handleRemoveFriendRequestFail(variables);
+                              handleRemoveFriendRequestFail(
+                                sender,
+                                recipient._id.toString(),
+                                event
+                              );
                             }
                           })
                           .catch((error) => console.log(error));
-
-                        toast.error(
-                          "Could not reject friend request. Please try again.",
-                          {
-                            style: {
-                              background:
-                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                              color: theme === "dark" ? "black" : "white",
-                              border: "2px solid red",
-                            },
-                          }
-                        );
                       }
                     });
                   } else {
-                    handleRemoveFriendRequestFail(variables);
+                    handleRemoveFriendRequestFail(sender, recipientID, event);
                   }
                 })
                 .catch((error) => console.log(error));
+
+              toast.error("Could not reject friend request. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
             }
           })
         )
         .catch((error) => console.log(error));
     }
   };
-
-  // change both below to "retract...."
-  const retractSentFriendRequestMutation = useMutation({
-    mutationFn: ({
-      sender,
-      recipient,
-      // @ts-ignore: event is not needed in mutationFn, but is needed in onSuccess callback
-      event,
-    }: {
-      sender: TUser;
-      recipient: TOtherUser;
-      event: "accept-request" | "retract-request" | "reject-request";
-    }) => Requests.removeFromFriendRequestsSent(sender, recipient),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        const sender = variables.sender;
-        const recipient = variables.recipient;
-        const event = variables.event;
-
-        if (recipient._id) {
-          Requests.getUserByID(recipient._id.toString())
-            .then((res) => {
-              if (res.ok) {
-                res.json().then((recipient) => {
-                  if (recipient._id) {
-                    const recipientID = recipient._id;
-                    removeReceivedFriendRequestMutation.mutate({
-                      sender,
-                      recipientID,
-                      event,
-                    });
-                  }
-                });
-              } else {
-                const sender = variables.sender;
-                const recipientID = variables.recipient._id?.toString();
-                const event = variables.event;
-                handleRemoveFriendRequestFail({ sender, recipientID, event });
-              }
-            })
-            .catch((error) => console.log(error));
-        }
-      } else {
-        const sender = variables.sender;
-        const recipientID = variables.recipient._id?.toString();
-        const event = variables.event;
-        handleRemoveFriendRequestFail({ sender, recipientID, event });
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
 
   const removeReceivedFriendRequestMutation = useMutation({
     mutationFn: ({
@@ -701,11 +657,92 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         const recipient = variables.receiver;
         const sender = variables.sender;
         const event = "accept-request";
-        retractSentFriendRequestMutation.mutate({
-          sender,
-          recipient,
-          event,
-        });
+        Requests.removeFromFriendRequestsSent(sender, recipient)
+          .then((res) => {
+            if (res.ok) {
+              if (recipient._id) {
+                Requests.getUserByID(recipient._id.toString())
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((recipient) => {
+                        if (recipient._id) {
+                          Requests.getUserByID(recipient._id)
+                            .then((res) => {
+                              if (res.ok) {
+                                if (currentUser && currentUser._id) {
+                                  Requests.getUserByID(currentUser._id.toString())
+                                    .then((res) => {
+                                      if (res.ok) {
+                                        res
+                                          .json()
+                                          .then((user) => {
+                                            if (user) {
+                                              setCurrentUser(user);
+                                              toast.success(
+                                                `You are now friends with ${variables.sender.firstName} ${variables.sender.lastName}!`,
+                                                {
+                                                  style: {
+                                                    background:
+                                                      theme === "light"
+                                                        ? "#242424"
+                                                        : "rgb(233, 231, 228)",
+                                                    color:
+                                                      theme === "dark"
+                                                        ? "black"
+                                                        : "white",
+                                                    border: "2px solid green",
+                                                  },
+                                                }
+                                              );
+                                            } else {
+                                              handleRemoveFriendRequestFail(
+                                                sender,
+                                                recipient._id,
+                                                event
+                                              );
+                                            }
+                                          })
+                                          .catch((error) => console.log(error));
+                                      } else {
+                                        handleRemoveFriendRequestFail(
+                                          sender,
+                                          recipient._id,
+                                          event
+                                        );
+                                      }
+                                    })
+                                    .catch((error) => console.log(error));
+                                }
+                              } else {
+                                handleRemoveFriendRequestFail(
+                                  sender,
+                                  recipient._id,
+                                  event
+                                );
+                              }
+                            })
+                            .catch((error) => console.log(error));
+                        }
+                      });
+                    } else {
+                      const sender = variables.sender;
+                      const recipientID = variables.receiver._id?.toString();
+                      handleRemoveFriendRequestFail(sender, recipientID, event);
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              }
+            } else {
+              handleRemoveFriendRequestFail(
+                variables.sender,
+                variables.receiver._id?.toString(),
+                event
+              );
+            }
+          })
+          .catch((error) => console.log(error))
+          .finally(() => setIsLoading(false));
+
         if (currentUser && currentUser._id) {
           Requests.getUserByID(currentUser._id.toString())
             .then((res) => {
@@ -1430,8 +1467,40 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         removeReceivedFriendRequestMutation.mutate({ sender, recipientID, event });
       } else {
         const event = "retract-request";
-        const sender = currentUser;
-        retractSentFriendRequestMutation.mutate({ sender, recipient, event });
+
+        Requests.removeFromFriendRequestsSent(currentUser, recipient)
+          .then((res) => {
+            if (res.ok) {
+              if (recipient._id) {
+                Requests.getUserByID(recipient._id.toString())
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((rec: TUser) => {
+                        if (rec._id) {
+                          const recipientID = rec._id.toString();
+                          removeReceivedFriendRequestMutation.mutate({
+                            sender,
+                            recipientID,
+                            event,
+                          });
+                        }
+                      });
+                    } else {
+                      handleRemoveFriendRequestFail(
+                        sender,
+                        recipient._id?.toString(),
+                        event
+                      );
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              }
+            } else {
+              handleRemoveFriendRequestFail(sender, recipient._id?.toString(), event);
+            }
+          })
+          .catch((error) => console.log(error))
+          .finally(() => setIsLoading(false));
       }
     }
   };
@@ -1506,19 +1575,49 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         .then((res) => {
           if (res.ok) {
             res.json().then((sender: TUser) => {
-              retractSentFriendRequestMutation.mutate({ sender, recipient, event });
+              Requests.removeFromFriendRequestsSent(sender, receiver)
+                .then((res) => {
+                  if (res.ok) {
+                    if (recipient._id) {
+                      Requests.getUserByID(recipient._id.toString())
+                        .then((res) => {
+                          if (res.ok) {
+                            res.json().then((recipient) => {
+                              if (recipient._id) {
+                                const recipientID = recipient._id;
+                                removeReceivedFriendRequestMutation.mutate({
+                                  sender,
+                                  recipientID,
+                                  event,
+                                });
+                              }
+                            });
+                          } else {
+                            handleRemoveFriendRequestFail(
+                              sender,
+                              recipient._id?.toString(),
+                              event
+                            );
+                          }
+                        })
+                        .catch((error) => console.log(error));
+                    }
+                  } else {
+                    handleRemoveFriendRequestFail(
+                      sender,
+                      recipient._id?.toString(),
+                      event
+                    );
+                  }
+                })
+                .catch((error) => console.log(error));
             });
           } else {
-            toast.error("Could not remove friend request. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
+            handleRemoveFriendRequestFail(sender, receiver?._id?.toString(), event);
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
     }
   };
   const handleUnfriendingFail = (friend: TOtherUser): void => {
