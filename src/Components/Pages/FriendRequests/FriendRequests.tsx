@@ -39,6 +39,21 @@ const FriendRequests = () => {
     null
   );
 
+  const determineFRType = (): void => {
+    // Determine if sent/received requests should be shown:
+    if (
+      friendRequestsReceived &&
+      friendRequestsSent &&
+      (friendRequestsReceived.length > 0 || friendRequestsSent.length > 0)
+    ) {
+      if (friendRequestsSent.length > 0) {
+        setRequestsVisible("sent");
+      } else {
+        setRequestsVisible("received");
+      }
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
 
@@ -52,19 +67,6 @@ const FriendRequests = () => {
           border: "2px solid red",
         },
       });
-    }
-
-    // Determine if sent/received requests should be shown:
-    if (
-      friendRequestsReceived &&
-      friendRequestsSent &&
-      (friendRequestsReceived.length > 0 || friendRequestsSent.length > 0)
-    ) {
-      if (friendRequestsSent.length > 0) {
-        setRequestsVisible("sent");
-      } else {
-        setRequestsVisible("received");
-      }
     }
 
     if (showSidebar) {
@@ -81,6 +83,10 @@ const FriendRequests = () => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
   }, []);
+
+  useEffect(() => {
+    determineFRType();
+  }, [friendRequestsReceived, friendRequestsSent]);
 
   useEffect(() => {
     if (currentUser && friendRequestsReceived && friendRequestsSent) {
