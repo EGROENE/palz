@@ -657,80 +657,47 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         const recipient = variables.receiver;
         const sender = variables.sender;
         const event = "accept-request";
+        // Remove FR from sender's sent FRs:
         Requests.removeFromFriendRequestsSent(sender, recipient)
           .then((res) => {
             if (res.ok) {
               if (recipient._id) {
-                Requests.getUserByID(recipient._id.toString())
-                  .then((res) => {
-                    if (res.ok) {
-                      res.json().then((recipient) => {
-                        if (recipient._id) {
-                          Requests.getUserByID(recipient._id)
-                            .then((res) => {
-                              if (res.ok) {
-                                if (currentUser && currentUser._id) {
-                                  Requests.getUserByID(currentUser._id.toString())
-                                    .then((res) => {
-                                      if (res.ok) {
-                                        res
-                                          .json()
-                                          .then((user) => {
-                                            if (user) {
-                                              setCurrentUser(user);
-                                              toast.success(
-                                                `You are now friends with ${variables.sender.firstName} ${variables.sender.lastName}!`,
-                                                {
-                                                  style: {
-                                                    background:
-                                                      theme === "light"
-                                                        ? "#242424"
-                                                        : "rgb(233, 231, 228)",
-                                                    color:
-                                                      theme === "dark"
-                                                        ? "black"
-                                                        : "white",
-                                                    border: "2px solid green",
-                                                  },
-                                                }
-                                              );
-                                            } else {
-                                              handleRemoveFriendRequestFail(
-                                                sender,
-                                                recipient._id,
-                                                event
-                                              );
-                                            }
-                                          })
-                                          .catch((error) => console.log(error));
-                                      } else {
-                                        handleRemoveFriendRequestFail(
-                                          sender,
-                                          recipient._id,
-                                          event
-                                        );
-                                      }
-                                    })
-                                    .catch((error) => console.log(error));
+                if (currentUser && currentUser._id) {
+                  // Fetch updated version of currentUser, set if successful:
+                  Requests.getUserByID(currentUser._id.toString())
+                    .then((res) => {
+                      if (res.ok) {
+                        res
+                          .json()
+                          .then((user: TUser) => {
+                            if (user) {
+                              setCurrentUser(user);
+                              toast.success(
+                                `You are now friends with ${variables.sender.firstName} ${variables.sender.lastName}!`,
+                                {
+                                  style: {
+                                    background:
+                                      theme === "light"
+                                        ? "#242424"
+                                        : "rgb(233, 231, 228)",
+                                    color: theme === "dark" ? "black" : "white",
+                                    border: "2px solid green",
+                                  },
                                 }
-                              } else {
-                                handleRemoveFriendRequestFail(
-                                  sender,
-                                  recipient._id,
-                                  event
-                                );
-                              }
-                            })
-                            .catch((error) => console.log(error));
-                        }
-                      });
-                    } else {
-                      const sender = variables.sender;
-                      const recipientID = variables.receiver._id?.toString();
-                      handleRemoveFriendRequestFail(sender, recipientID, event);
-                    }
-                  })
-                  .catch((error) => console.log(error));
+                              );
+                            } else {
+                              const recipientID = recipient?._id?.toString();
+                              handleRemoveFriendRequestFail(sender, recipientID, event);
+                            }
+                          })
+                          .catch((error) => console.log(error));
+                      } else {
+                        const recipientID = recipient?._id?.toString();
+                        handleRemoveFriendRequestFail(sender, recipientID, event);
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                }
               }
             } else {
               handleRemoveFriendRequestFail(
@@ -1620,6 +1587,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         .finally(() => setIsLoading(false));
     }
   };
+
   const handleUnfriendingFail = (friend: TOtherUser): void => {
     setIsLoading(false);
     toast.error(
