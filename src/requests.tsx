@@ -1086,17 +1086,16 @@ const addToFriendRequestsReceived = (
   });
 };
 
-const addToFriendRequestsSent = (sender: TUser, recipient: TUser): Promise<Response> => {
+const addToFriendRequestsSent = (
+  sender: TUser,
+  recipientID: string
+): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  let updatedFriendRequestsSentArray: string[] = recipient._id
-    ? [...sender.friendRequestsSent, recipient._id.toString()]
-    : [...sender.friendRequestsSent];
-
   const getRaw = () => {
     return JSON.stringify({
-      "friendRequestsSent": updatedFriendRequestsSentArray,
+      "friendRequestsSent": sender.friendRequestsSent.concat(recipientID),
     });
   };
   const raw = getRaw();
