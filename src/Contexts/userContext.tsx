@@ -367,7 +367,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleRemoveFriendRequestFail = (
-    sender: TOtherUser,
+    sender: TOtherUser | TBarebonesUser,
     recipientID: string | undefined,
     event?: "accept-request" | "retract-request" | "reject-request"
   ) => {
