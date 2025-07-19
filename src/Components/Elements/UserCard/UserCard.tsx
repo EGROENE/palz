@@ -309,7 +309,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
                 setShowFriendRequestResponseOptions(true);
               }
               if (currentUser && noConnectionBetweenUserAndCurrentUser) {
-                handleSendFriendRequest(userSECURE);
+                handleSendFriendRequest(userSECURE, true);
               }
             }}
             disabled={isLoading}
