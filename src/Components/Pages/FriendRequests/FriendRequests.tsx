@@ -85,6 +85,7 @@ const FriendRequests = () => {
     setRandomColor(themeColors[randomNumber]);
 
     if (currentUser && currentUser._id) {
+      setFetchIsLoading(true);
       Requests.getUserByID(currentUser._id.toString())
         .then((res) => {
           if (res.ok) {
@@ -92,7 +93,12 @@ const FriendRequests = () => {
           } else {
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => {
+          if (friendRequestsReceived && friendRequestsSent) {
+            setFetchIsLoading(false);
+          }
+        });
     }
   }, []);
 
@@ -152,7 +158,11 @@ const FriendRequests = () => {
           console.log(error);
           setIsFetchError(true);
         })
-        .finally(() => setFetchIsLoading(false));
+        .finally(() => {
+          if (friendRequestsReceived && currentUser) {
+            setFetchIsLoading(false);
+          }
+        });
     }
   }, [currentUser?.friendRequestsSent]);
 
@@ -175,7 +185,11 @@ const FriendRequests = () => {
           console.log(error);
           setIsFetchError(true);
         })
-        .finally(() => setFetchIsLoading(false));
+        .finally(() => {
+          if (currentUser && friendRequestsSent) {
+            setFetchIsLoading(false);
+          }
+        });
     }
   }, [currentUser?.friendRequestsReceived]);
 
