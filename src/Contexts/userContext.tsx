@@ -525,10 +525,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleAddToFriendsFail = (variables: {
-    receiver: TUser;
-    sender: TUser;
-  }): void => {
+  const handleAddToFriendsFail = (receiver: TUser, sender: TUser): void => {
     toast.error("Could not accept friend request. Please try again.", {
       style: {
         background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -537,119 +534,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       },
     });
 
-    resetFriendsAfterFailedAcceptedFriendRequest(variables.sender, variables.receiver);
+    resetFriendsAfterFailedAcceptedFriendRequest(sender, receiver);
 
-    resetFriendRequestsAfterFailedAcceptedFriendRequest(
-      variables.sender,
-      variables.receiver
-    );
+    resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, receiver);
   };
-
-  const addToSenderFriendsMutation = useMutation({
-    mutationFn: ({ sender, receiver }: { sender: TUser; receiver: TUser }) =>
-      Requests.addFriendToFriendsArray(sender, receiver),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        const receiver = variables.receiver;
-        const sender = variables.sender;
-        addToReceiverFriendsMutation.mutate({ receiver, sender });
-      } else {
-        handleAddToFriendsFail(variables);
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
-
-  // On success of mutation to add friend to sender's list, run this; if this fails, reset everything
-  const addToReceiverFriendsMutation = useMutation({
-    mutationFn: ({ receiver, sender }: { receiver: TUser; sender: TUser }) =>
-      Requests.addFriendToFriendsArray(receiver, sender),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        const recipient = variables.receiver;
-        const sender = variables.sender;
-        const event = "accept-request";
-        // Remove FR from sender's sent FRs:
-        Requests.removeFromFriendRequestsSent(sender, recipient)
-          .then((res) => {
-            if (res.ok) {
-              if (recipient._id) {
-                if (currentUser && currentUser._id) {
-                  // Fetch updated version of currentUser, set if successful:
-                  Requests.getUserByID(currentUser._id.toString())
-                    .then((res) => {
-                      if (res.ok) {
-                        res
-                          .json()
-                          .then((user: TUser) => {
-                            if (user) {
-                              setCurrentUser(user);
-                              toast.success(
-                                `You are now friends with ${variables.sender.firstName} ${variables.sender.lastName}!`,
-                                {
-                                  style: {
-                                    background:
-                                      theme === "light"
-                                        ? "#242424"
-                                        : "rgb(233, 231, 228)",
-                                    color: theme === "dark" ? "black" : "white",
-                                    border: "2px solid green",
-                                  },
-                                }
-                              );
-                            } else {
-                              const recipientID = recipient?._id?.toString();
-                              handleRemoveFriendRequestFail(sender, recipientID, event);
-                            }
-                          })
-                          .catch((error) => console.log(error));
-                      } else {
-                        const recipientID = recipient?._id?.toString();
-                        handleRemoveFriendRequestFail(sender, recipientID, event);
-                      }
-                    })
-                    .catch((error) => console.log(error));
-                }
-              }
-            } else {
-              handleRemoveFriendRequestFail(
-                variables.sender,
-                variables.receiver._id?.toString(),
-                event
-              );
-            }
-          })
-          .catch((error) => console.log(error))
-          .finally(() => setIsLoading(false));
-
-        if (currentUser && currentUser._id) {
-          Requests.getUserByID(currentUser._id.toString())
-            .then((res) => {
-              if (res.ok) {
-                res
-                  .json()
-                  .then((user) => {
-                    if (user) {
-                      setCurrentUser(user);
-                    } else {
-                      handleAddToFriendsFail(variables);
-                    }
-                  })
-                  .catch((error) => console.log(error));
-              } else {
-                handleAddToFriendsFail(variables);
-              }
-            })
-            .catch((error) => console.log(error));
-        }
-      } else {
-        handleAddToFriendsFail(variables);
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
 
   const handleBlockUserFail = (blockee: TUser): void => {
     if (blockedUsers) {
@@ -1605,7 +1493,101 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   .then((res) => {
                     if (res.ok) {
                       res.json().then((receiver) => {
-                        addToSenderFriendsMutation.mutate({ sender, receiver });
+                        Requests.addFriendToFriendsArray(receiver, sender)
+                          .then((res) => {
+                            if (res.ok) {
+                              const event = "accept-request";
+                              // Remove FR from sender's sent FRs:
+                              Requests.removeFromFriendRequestsSent(sender, receiver)
+                                .then((res) => {
+                                  if (res.ok) {
+                                    if (receiver._id) {
+                                      if (currentUser && currentUser._id) {
+                                        // Fetch updated version of currentUser, set if successful:
+                                        Requests.getUserByID(currentUser._id.toString())
+                                          .then((res) => {
+                                            if (res.ok) {
+                                              res
+                                                .json()
+                                                .then((user: TUser) => {
+                                                  if (user) {
+                                                    setCurrentUser(user);
+                                                    toast.success(
+                                                      `You are now friends with ${sender.firstName} ${sender.lastName}!`,
+                                                      {
+                                                        style: {
+                                                          background:
+                                                            theme === "light"
+                                                              ? "#242424"
+                                                              : "rgb(233, 231, 228)",
+                                                          color:
+                                                            theme === "dark"
+                                                              ? "black"
+                                                              : "white",
+                                                          border: "2px solid green",
+                                                        },
+                                                      }
+                                                    );
+                                                  } else {
+                                                    const recipientID =
+                                                      receiver?._id?.toString();
+                                                    handleRemoveFriendRequestFail(
+                                                      sender,
+                                                      recipientID,
+                                                      event
+                                                    );
+                                                  }
+                                                })
+                                                .catch((error) => console.log(error));
+                                            } else {
+                                              const recipientID =
+                                                receiver?._id?.toString();
+                                              handleRemoveFriendRequestFail(
+                                                sender,
+                                                recipientID,
+                                                event
+                                              );
+                                            }
+                                          })
+                                          .catch((error) => console.log(error));
+                                      }
+                                    }
+                                  } else {
+                                    handleRemoveFriendRequestFail(
+                                      sender,
+                                      receiver._id?.toString(),
+                                      event
+                                    );
+                                  }
+                                })
+                                .catch((error) => console.log(error))
+                                .finally(() => setIsLoading(false));
+
+                              if (currentUser && currentUser._id) {
+                                Requests.getUserByID(currentUser._id.toString())
+                                  .then((res) => {
+                                    if (res.ok) {
+                                      res
+                                        .json()
+                                        .then((user) => {
+                                          if (user) {
+                                            setCurrentUser(user);
+                                          } else {
+                                            handleAddToFriendsFail(receiver, sender);
+                                          }
+                                        })
+                                        .catch((error) => console.log(error));
+                                    } else {
+                                      handleAddToFriendsFail(receiver, sender);
+                                    }
+                                  })
+                                  .catch((error) => console.log(error));
+                              }
+                            } else {
+                              handleAddToFriendsFail(receiver, sender);
+                            }
+                          })
+                          .catch((error) => console.log(error));
                       });
                     } else {
                       toast.error("Could not accept friend request. Please try again.", {
