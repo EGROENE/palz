@@ -218,6 +218,34 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [fetchBlockedUsersIsError, setFetchBlockedUsersIsError] =
     useState<boolean>(false);
 
+  const [fetchFriendRequestsSentIsLoading, setFetchFriendRequestsSentIsLoading] =
+    useState<boolean>(false);
+  const [fetchFriendRequestsSentIsError, setFetchFriendRequestsSentIsError] =
+    useState<boolean>(false);
+
+  // Initialize friendRequestsSent/Received
+  useEffect(() => {
+    if (currentUser) {
+      // Run getUserByID for each _id in currentUser.friendRequests.sent, then set friendRequestsSent to array of these converted to TBarebonesUser:
+      const promisesToAwait = currentUser.friendRequestsSent.map((id) => {
+        return Requests.getUserByID(id).then((res) => {
+          return res.json().then((user: TUser) => user);
+        });
+      });
+
+      setFetchFriendRequestsSentIsLoading(true);
+      Promise.all(promisesToAwait)
+        .then((pic: TUser[]) => {
+          setFriendRequestsSent(pic.map((p) => Methods.getTBarebonesUser(p)));
+        })
+        .catch((error) => {
+          console.log(error);
+          setFetchFriendRequestsSentIsError(true);
+        })
+        .finally(() => setFetchFriendRequestsSentIsLoading(false));
+    }
+  }, [currentUser?.friendRequestsSent]);
+
   useEffect(() => {
     if (currentUser) {
       const promisesToAwait = currentUser.blockedUsers.map((id) => {
@@ -1130,6 +1158,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     if (currentUser && recipient && recipient._id) {
       if (shouldOptimisticRender && friendRequestsSent && recipient && recipient._id) {
+        console.log(0);
         setFriendRequestsSent(
           friendRequestsSent.concat(Methods.getTBarebonesUser(recipient))
         );
