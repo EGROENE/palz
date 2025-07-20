@@ -302,7 +302,7 @@ const FriendRequests = () => {
                         buttonTwoText="Retract"
                         buttonTwoHandler={handleRemoveFriendRequest}
                         buttonTwoHandlerNeedsEventParam={false}
-                        buttonTwoHandlerParams={[user]}
+                        buttonTwoHandlerParams={[user, currentUser]}
                         buttonTwoIsDisabled={isLoading}
                         buttonTwoLink={null}
                         objectLink={`/users/${user?.username}`}
