@@ -23,18 +23,20 @@ const FriendRequests = () => {
     handleRejectFriendRequest,
     handleRemoveFriendRequest,
     friendRequestsSent,
-    setFriendRequestsSent,
     friendRequestsReceived,
-    setFriendRequestsReceived,
     userCreatedAccount,
     logout,
     currentUser,
     setCurrentUser,
+    fetchFriendRequestsIsLoading,
+    setFetchFriendRequestsIsLoading,
+    fetchFriendRequestsSentIsError,
+    fetchFriendRequestsReceivedIsError,
   } = useUserContext();
   const { setCurrentEvent } = useEventContext();
 
-  const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
-  const [isFetchError, setIsFetchError] = useState<boolean>(false);
+  const [fetchUpdatedCurrentUserIsError, setFetchUpdatedCurrentUserIsError] =
+    useState<boolean>(false);
 
   const [requestsVisible, setRequestsVisible] = useState<"sent" | "received" | null>(
     null
@@ -85,18 +87,18 @@ const FriendRequests = () => {
     setRandomColor(themeColors[randomNumber]);
 
     if (currentUser && currentUser._id) {
-      setFetchIsLoading(true);
       Requests.getUserByID(currentUser._id.toString())
         .then((res) => {
           if (res.ok) {
             res.json().then((cu: TUser) => setCurrentUser(cu));
           } else {
+            setFetchUpdatedCurrentUserIsError(true);
           }
         })
         .catch((error) => console.log(error))
         .finally(() => {
           if (friendRequestsReceived && friendRequestsSent) {
-            setFetchIsLoading(false);
+            setFetchFriendRequestsIsLoading(false);
           }
         });
     }
@@ -138,61 +140,6 @@ const FriendRequests = () => {
     currentUser?.friendRequestsSent,
   ]);
 
-  // For each id in FR sent/received, get full TUser, set friendRequestsReceived/Sent to TBarebonesUser of sender/receiver TUser object
-  useEffect(() => {
-    setFetchIsLoading(true);
-    if (currentUser) {
-      const promisesToAwaitFRSent = currentUser.friendRequestsSent.map((id) => {
-        return Requests.getUserByID(id).then((res) => {
-          return res.json().then((user: TUser) => user);
-        });
-      });
-
-      Promise.all(promisesToAwaitFRSent)
-        .then((usersToWhomSentFR: TUser[]) => {
-          setFriendRequestsSent(
-            usersToWhomSentFR.map((u) => Methods.getTBarebonesUser(u))
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-          setIsFetchError(true);
-        })
-        .finally(() => {
-          if (friendRequestsReceived && currentUser) {
-            setFetchIsLoading(false);
-          }
-        });
-    }
-  }, [currentUser?.friendRequestsSent]);
-
-  useEffect(() => {
-    setFetchIsLoading(true);
-    if (currentUser) {
-      const promisesToAwaitFRReceived = currentUser.friendRequestsReceived.map((id) => {
-        return Requests.getUserByID(id).then((res) => {
-          return res.json().then((user: TUser) => user);
-        });
-      });
-
-      Promise.all(promisesToAwaitFRReceived)
-        .then((usersFromWhomFRReceived: TUser[]) => {
-          setFriendRequestsReceived(
-            usersFromWhomFRReceived.map((u) => Methods.getTBarebonesUser(u))
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-          setIsFetchError(true);
-        })
-        .finally(() => {
-          if (currentUser && friendRequestsSent) {
-            setFetchIsLoading(false);
-          }
-        });
-    }
-  }, [currentUser?.friendRequestsReceived]);
-
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   const userHasPendingRequests: boolean =
@@ -202,21 +149,26 @@ const FriendRequests = () => {
       ? true
       : false;
 
+  const isFetchError: boolean =
+    fetchFriendRequestsReceivedIsError ||
+    fetchFriendRequestsSentIsError ||
+    fetchUpdatedCurrentUserIsError;
+
   return (
     <>
       <h1>Friend Requests</h1>
-      {fetchIsLoading && (
+      {fetchFriendRequestsIsLoading && (
         <header style={{ marginTop: "3rem" }} className="query-status-text">
           Loading...
         </header>
       )}
-      {isFetchError && !fetchIsLoading && (
+      {isFetchError && !fetchFriendRequestsIsLoading && (
         <p>Error retrieving data; please reload the page.</p>
       )}
-      {!isFetchError && !fetchIsLoading && !userHasPendingRequests && (
+      {!isFetchError && !fetchFriendRequestsIsLoading && !userHasPendingRequests && (
         <h2>No pending friend requests</h2>
       )}
-      {!isFetchError && !fetchIsLoading && userHasPendingRequests && (
+      {!isFetchError && !fetchFriendRequestsIsLoading && userHasPendingRequests && (
         <>
           <div className={styles.friendRequestFilterHeaders}>
             {friendRequestsSent &&
