@@ -50,9 +50,9 @@ const FriendRequests = () => {
       (friendRequestsReceived.length > 0 || friendRequestsSent.length > 0)
     ) {
       if (friendRequestsSent.length > 0) {
-        setRequestsVisible("sent");
-      } else {
         setRequestsVisible("received");
+      } else {
+        setRequestsVisible("sent");
       }
     }
   };
