@@ -230,76 +230,88 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (currentUser) {
-      const promisesToAwait = currentUser.blockedUsers.map((id) => {
-        return Requests.getUserByID(id).then((res) => {
-          return res.json().then((user: TUser) => user);
+      if (currentUser.blockedUsers.length > 0) {
+        const promisesToAwait = currentUser.blockedUsers.map((id) => {
+          return Requests.getUserByID(id).then((res) => {
+            return res.json().then((user: TUser) => user);
+          });
         });
-      });
 
-      setFetchBlockedUsersIsLoading(true);
-      Promise.all(promisesToAwait)
-        .then((pic: TUser[]) => {
-          setBlockedUsers(pic.map((p) => Methods.getTBarebonesUser(p)));
-        })
-        .catch((error) => {
-          console.log(error);
-          setFetchBlockedUsersIsError(true);
-        })
-        .finally(() => setFetchBlockedUsersIsLoading(false));
+        setFetchBlockedUsersIsLoading(true);
+        Promise.all(promisesToAwait)
+          .then((pic: TUser[]) => {
+            setBlockedUsers(pic.map((p) => Methods.getTBarebonesUser(p)));
+          })
+          .catch((error) => {
+            console.log(error);
+            setFetchBlockedUsersIsError(true);
+          })
+          .finally(() => setFetchBlockedUsersIsLoading(false));
+      } else {
+        setBlockedUsers([]);
+      }
     }
   }, [currentUser?.blockedUsers]);
 
   // For each id in FR sent, get full TUser, set friendRequestsSent to TBarebonesUser of sender TUser object
   useEffect(() => {
     if (currentUser) {
-      const promisesToAwaitFRSent = currentUser.friendRequestsSent.map((id) => {
-        return Requests.getUserByID(id).then((res) => {
-          return res.json().then((user: TUser) => user);
+      if (currentUser.friendRequestsSent.length > 0) {
+        const promisesToAwaitFRSent = currentUser.friendRequestsSent.map((id) => {
+          return Requests.getUserByID(id).then((res) => {
+            return res.json().then((user: TUser) => user);
+          });
         });
-      });
 
-      Promise.all(promisesToAwaitFRSent)
-        .then((usersToWhomSentFR: TUser[]) => {
-          setFriendRequestsSent(
-            usersToWhomSentFR.map((u) => Methods.getTBarebonesUser(u))
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-          setFetchFriendRequestsSentIsError(true);
-        })
-        .finally(() => {
-          if (friendRequestsReceived && currentUser) {
-            setFetchFriendRequestsIsLoading(false);
-          }
-        });
+        Promise.all(promisesToAwaitFRSent)
+          .then((usersToWhomSentFR: TUser[]) => {
+            setFriendRequestsSent(
+              usersToWhomSentFR.map((u) => Methods.getTBarebonesUser(u))
+            );
+          })
+          .catch((error) => {
+            console.log(error);
+            setFetchFriendRequestsSentIsError(true);
+          })
+          .finally(() => {
+            if (friendRequestsReceived && currentUser) {
+              setFetchFriendRequestsIsLoading(false);
+            }
+          });
+      } else {
+        setFriendRequestsSent([]);
+      }
     }
   }, [currentUser?.friendRequestsSent]);
 
   // For each id in FR receeived, get full TUser, set friendRequestsReceived to TBarebonesUser of receiver TUser object
   useEffect(() => {
     if (currentUser) {
-      const promisesToAwaitFRReceived = currentUser.friendRequestsReceived.map((id) => {
-        return Requests.getUserByID(id).then((res) => {
-          return res.json().then((user: TUser) => user);
+      if (currentUser.friendRequestsReceived.length > 0) {
+        const promisesToAwaitFRReceived = currentUser.friendRequestsReceived.map((id) => {
+          return Requests.getUserByID(id).then((res) => {
+            return res.json().then((user: TUser) => user);
+          });
         });
-      });
 
-      Promise.all(promisesToAwaitFRReceived)
-        .then((usersFromWhomFRReceived: TUser[]) => {
-          setFriendRequestsReceived(
-            usersFromWhomFRReceived.map((u) => Methods.getTBarebonesUser(u))
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-          setFetchFriendRequestsReceivedIsError(true);
-        })
-        .finally(() => {
-          if (friendRequestsSent && currentUser) {
-            setFetchFriendRequestsIsLoading(false);
-          }
-        });
+        Promise.all(promisesToAwaitFRReceived)
+          .then((usersFromWhomFRReceived: TUser[]) => {
+            setFriendRequestsReceived(
+              usersFromWhomFRReceived.map((u) => Methods.getTBarebonesUser(u))
+            );
+          })
+          .catch((error) => {
+            console.log(error);
+            setFetchFriendRequestsReceivedIsError(true);
+          })
+          .finally(() => {
+            if (friendRequestsSent && currentUser) {
+              setFetchFriendRequestsIsLoading(false);
+            }
+          });
+      } else {
+        setFriendRequestsReceived([]);
+      }
     }
   }, [currentUser?.friendRequestsReceived]);
 
