@@ -305,6 +305,12 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  fetchFriendRequestsIsLoading: boolean;
+  setFetchFriendRequestsIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchFriendRequestsSentIsError: boolean;
+  setFetchFriendRequestsSentIsError: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchFriendRequestsReceivedIsError: boolean;
+  setFetchFriendRequestsReceivedIsError: React.Dispatch<React.SetStateAction<boolean>>;
   userHasLoggedIn: boolean;
   fetchAllVisibleOtherUsersQuery: UseQueryResult<TOtherUser[], Error>;
   friendRequestsSent: TBarebonesUser[] | null;

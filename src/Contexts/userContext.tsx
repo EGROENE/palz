@@ -213,38 +213,20 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   // /posts?authorId=1 ---> ["posts", {authorId: 1}]
   // /posts/2/comments ---> ["posts", post.id, "comments"]
 
+  // Values pertaining to fetch of blockedUsers & friendRequestsSent/Received are defined here so they can be optimisically updated throughout the project
   const [fetchBlockedUsersIsLoading, setFetchBlockedUsersIsLoading] =
     useState<boolean>(false);
   const [fetchBlockedUsersIsError, setFetchBlockedUsersIsError] =
     useState<boolean>(false);
 
-  const [fetchFriendRequestsSentIsLoading, setFetchFriendRequestsSentIsLoading] =
-    useState<boolean>(false);
+  const [fetchFriendRequestsIsLoading, setFetchFriendRequestsIsLoading] =
+    useState<boolean>(true);
+
   const [fetchFriendRequestsSentIsError, setFetchFriendRequestsSentIsError] =
     useState<boolean>(false);
 
-  // Initialize friendRequestsSent/Received
-  useEffect(() => {
-    if (currentUser) {
-      // Run getUserByID for each _id in currentUser.friendRequests.sent, then set friendRequestsSent to array of these converted to TBarebonesUser:
-      const promisesToAwait = currentUser.friendRequestsSent.map((id) => {
-        return Requests.getUserByID(id).then((res) => {
-          return res.json().then((user: TUser) => user);
-        });
-      });
-
-      setFetchFriendRequestsSentIsLoading(true);
-      Promise.all(promisesToAwait)
-        .then((pic: TUser[]) => {
-          setFriendRequestsSent(pic.map((p) => Methods.getTBarebonesUser(p)));
-        })
-        .catch((error) => {
-          console.log(error);
-          setFetchFriendRequestsSentIsError(true);
-        })
-        .finally(() => setFetchFriendRequestsSentIsLoading(false));
-    }
-  }, [currentUser?.friendRequestsSent]);
+  const [fetchFriendRequestsReceivedIsError, setFetchFriendRequestsReceivedIsError] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (currentUser) {
@@ -266,6 +248,60 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         .finally(() => setFetchBlockedUsersIsLoading(false));
     }
   }, [currentUser?.blockedUsers]);
+
+  // For each id in FR sent, get full TUser, set friendRequestsSent to TBarebonesUser of sender TUser object
+  useEffect(() => {
+    if (currentUser) {
+      const promisesToAwaitFRSent = currentUser.friendRequestsSent.map((id) => {
+        return Requests.getUserByID(id).then((res) => {
+          return res.json().then((user: TUser) => user);
+        });
+      });
+
+      Promise.all(promisesToAwaitFRSent)
+        .then((usersToWhomSentFR: TUser[]) => {
+          setFriendRequestsSent(
+            usersToWhomSentFR.map((u) => Methods.getTBarebonesUser(u))
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+          setFetchFriendRequestsSentIsError(true);
+        })
+        .finally(() => {
+          if (friendRequestsReceived && currentUser) {
+            setFetchFriendRequestsIsLoading(false);
+          }
+        });
+    }
+  }, [currentUser?.friendRequestsSent]);
+
+  // For each id in FR receeived, get full TUser, set friendRequestsReceived to TBarebonesUser of receiver TUser object
+  useEffect(() => {
+    if (currentUser) {
+      const promisesToAwaitFRReceived = currentUser.friendRequestsReceived.map((id) => {
+        return Requests.getUserByID(id).then((res) => {
+          return res.json().then((user: TUser) => user);
+        });
+      });
+
+      Promise.all(promisesToAwaitFRReceived)
+        .then((usersFromWhomFRReceived: TUser[]) => {
+          setFriendRequestsReceived(
+            usersFromWhomFRReceived.map((u) => Methods.getTBarebonesUser(u))
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+          setFetchFriendRequestsReceivedIsError(true);
+        })
+        .finally(() => {
+          if (friendRequestsSent && currentUser) {
+            setFetchFriendRequestsIsLoading(false);
+          }
+        });
+    }
+  }, [currentUser?.friendRequestsReceived]);
 
   const queryClient = useQueryClient();
 
@@ -2383,6 +2419,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    fetchFriendRequestsIsLoading,
+    setFetchFriendRequestsIsLoading,
+    fetchFriendRequestsSentIsError,
+    setFetchFriendRequestsSentIsError,
+    fetchFriendRequestsReceivedIsError,
+    setFetchFriendRequestsReceivedIsError,
     removeProfileImageIsLoading,
     setRemoveProfileImageIsLoading,
     updateProfileImageIsLoading,
