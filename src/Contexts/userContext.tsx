@@ -1570,6 +1570,64 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   .then((res) => {
                     if (res.ok) {
                       res.json().then((receiver) => {
+                        // Put Promise.all, containing addFriendToFriendsArray for both sender & recipient, removeFromFriendRequestsSent for sender, & removeFromFRReceived for recipient:
+                        // If any one of promise.all fails, call handleAcceptFRFail
+                        Promise.all([
+                          Requests.addFriendToFriendsArray(receiver, sender),
+                          Requests.addFriendToFriendsArray(sender, receiver),
+                          Requests.removeFromFriendRequestsReceived(sender, receiver),
+                          Requests.removeFromFriendRequestsSent(sender, receiver),
+                        ])
+                          .then((resArray) => {
+                            if (resArray.some((res) => !res.ok)) {
+                              handleRemoveFriendRequestFail(
+                                sender,
+                                receiver._id.toString()
+                              );
+                            } else {
+                              if (currentUser && currentUser._id) {
+                                Requests.getUserByID(currentUser._id.toString())
+                                  .then((res) => {
+                                    if (res.ok) {
+                                      res
+                                        .json()
+                                        .then((user: TUser) => {
+                                          if (user) {
+                                            setCurrentUser(user);
+                                            toast.success(
+                                              `You are now friends with ${sender.firstName} ${sender.lastName}!`,
+                                              {
+                                                style: {
+                                                  background:
+                                                    theme === "light"
+                                                      ? "#242424"
+                                                      : "rgb(233, 231, 228)",
+                                                  color:
+                                                    theme === "dark" ? "black" : "white",
+                                                  border: "2px solid green",
+                                                },
+                                              }
+                                            );
+                                          } else {
+                                            handleRemoveFriendRequestFail(
+                                              sender,
+                                              receiver?._id?.toString()
+                                            );
+                                          }
+                                        })
+                                        .catch((error) => console.log(error));
+                                    } else {
+                                      handleRemoveFriendRequestFail(
+                                        sender,
+                                        receiver?._id?.toString()
+                                      );
+                                    }
+                                  })
+                                  .catch((error) => console.log(error));
+                              }
+                            }
+                          })
+                          .catch((error) => console.log(error));
                         Requests.addFriendToFriendsArray(receiver, sender)
                           .then((res) => {
                             if (res.ok) {
@@ -1581,52 +1639,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                     if (receiver._id) {
                                       if (currentUser && currentUser._id) {
                                         // Fetch updated version of currentUser, set if successful:
-                                        Requests.getUserByID(currentUser._id.toString())
-                                          .then((res) => {
-                                            if (res.ok) {
-                                              res
-                                                .json()
-                                                .then((user: TUser) => {
-                                                  if (user) {
-                                                    setCurrentUser(user);
-                                                    toast.success(
-                                                      `You are now friends with ${sender.firstName} ${sender.lastName}!`,
-                                                      {
-                                                        style: {
-                                                          background:
-                                                            theme === "light"
-                                                              ? "#242424"
-                                                              : "rgb(233, 231, 228)",
-                                                          color:
-                                                            theme === "dark"
-                                                              ? "black"
-                                                              : "white",
-                                                          border: "2px solid green",
-                                                        },
-                                                      }
-                                                    );
-                                                  } else {
-                                                    const recipientID =
-                                                      receiver?._id?.toString();
-                                                    handleRemoveFriendRequestFail(
-                                                      sender,
-                                                      recipientID,
-                                                      event
-                                                    );
-                                                  }
-                                                })
-                                                .catch((error) => console.log(error));
-                                            } else {
-                                              const recipientID =
-                                                receiver?._id?.toString();
-                                              handleRemoveFriendRequestFail(
-                                                sender,
-                                                recipientID,
-                                                event
-                                              );
-                                            }
-                                          })
-                                          .catch((error) => console.log(error));
                                       }
                                     }
                                   } else {
