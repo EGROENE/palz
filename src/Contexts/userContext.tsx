@@ -1711,6 +1711,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Could pass value to render FR received optimistically
   const handleRejectFriendRequest = (
     sender: TOtherUser | TBarebonesUser,
     e?: React.ChangeEvent<HTMLInputElement>
@@ -1719,82 +1720,65 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     setIsLoading(true);
 
-    const event = "reject-request";
-
     if (sender._id) {
       Requests.getUserByID(sender._id.toString())
         .then((res) => {
           if (res.ok) {
             res.json().then((sender: TUser) => {
               if (currentUser) {
-                Requests.removeFromFriendRequestsSent(sender, currentUser)
-                  .then((res) => {
-                    if (res.ok) {
-                      Requests.removeFromFriendRequestsReceived(sender, currentUser)
+                Promise.all([
+                  Requests.removeFromFriendRequestsSent(sender, currentUser),
+                  Requests.removeFromFriendRequestsReceived(sender, currentUser),
+                ])
+                  .then((resArray: Response[]) => {
+                    if (resArray.every((res) => res.ok) && currentUser._id) {
+                      Requests.getUserByID(currentUser._id.toString())
                         .then((res) => {
                           if (res.ok) {
-                            if (currentUser._id) {
-                              if (currentUser && currentUser._id) {
-                                Requests.getUserByID(currentUser._id.toString())
-                                  .then((res) => {
-                                    if (res.ok) {
-                                      res
-                                        .json()
-                                        .then((user) => {
-                                          if (user) {
-                                            setCurrentUser(user);
+                            res
+                              .json()
+                              .then((user) => {
+                                if (user) {
+                                  setCurrentUser(user);
 
-                                            toast(
-                                              `Rejected friend request from ${sender.firstName} ${sender.lastName}.`,
-                                              {
-                                                style: {
-                                                  background:
-                                                    theme === "light"
-                                                      ? "#242424"
-                                                      : "rgb(233, 231, 228)",
-                                                  color:
-                                                    theme === "dark" ? "black" : "white",
-                                                  border: "2px solid red",
-                                                },
-                                              }
-                                            );
-                                          } else {
-                                            handleRemoveFriendRequestFail(
-                                              sender,
-                                              currentUser._id?.toString(),
-                                              event
-                                            );
-                                          }
-                                        })
-                                        .catch((error) => console.log(error));
-                                    } else {
-                                      handleRemoveFriendRequestFail(
-                                        sender,
-                                        currentUser._id?.toString(),
-                                        event
-                                      );
+                                  toast(
+                                    `Rejected friend request from ${sender.firstName} ${sender.lastName}.`,
+                                    {
+                                      style: {
+                                        background:
+                                          theme === "light"
+                                            ? "#242424"
+                                            : "rgb(233, 231, 228)",
+                                        color: theme === "dark" ? "black" : "white",
+                                        border: "2px solid red",
+                                      },
                                     }
-                                  })
-                                  .catch((error) => console.log(error))
-                                  .finally(() => setIsLoading(false));
-                              }
-                            }
+                                  );
+                                } else {
+                                  handleRemoveFriendRequestFail(
+                                    sender,
+                                    currentUser._id?.toString(),
+                                    "reject-request"
+                                  );
+                                }
+                              })
+                              .catch((error) => console.log(error));
                           } else {
-                            setIsLoading(false);
                             handleRemoveFriendRequestFail(
                               sender,
                               currentUser._id?.toString(),
-                              event
+                              "reject-request"
                             );
                           }
                         })
-                        .catch((error) => console.log(error));
+                        .catch((error) => console.log(error))
+                        .finally(() => setIsLoading(false));
                     } else {
                       setIsLoading(false);
                       handleRemoveFriendRequestFail(
                         sender,
                         currentUser._id?.toString(),
-                        event
+                        "reject-request"
                       );
                     }
                   })
@@ -1803,7 +1787,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             });
           } else {
             setIsLoading(false);
-            handleRemoveFriendRequestFail(sender, currentUser?._id?.toString(), event);
+            handleRemoveFriendRequestFail(
+              sender,
+              currentUser?._id?.toString(),
+              "reject-request"
+            );
           }
         })
         .catch((error) => console.log(error));
