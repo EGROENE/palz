@@ -1851,12 +1851,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                           Requests.deleteFriendFromFriendsArray(user, friend),
                           Requests.deleteFriendFromFriendsArray(friend, user),
                         ])
-                          .then((res) => {
+                          .then((resArray: Response[]) => {
                             if (
                               currentUser &&
                               currentUser._id &&
-                              res[0].ok &&
-                              res[1].ok
+                              resArray.every((res) => res.ok)
                             ) {
                               Requests.getUserByID(currentUser._id.toString())
                                 .then((res) => {
