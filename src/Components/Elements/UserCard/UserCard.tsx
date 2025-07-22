@@ -302,7 +302,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
                 handleUnfriending(currentUser, userSECURE);
               }
               if (currentUserSentFriendRequest && currentUser) {
-                handleRemoveFriendRequest(userSECURE, currentUser);
+                handleRemoveFriendRequest(userSECURE, currentUser, "retract-request");
               }
               if (currentUserReceivedFriendRequest) {
                 setCurrentOtherUser(userSECURE);

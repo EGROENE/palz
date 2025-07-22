@@ -519,7 +519,12 @@ const OtherUserProfile = () => {
         ),
         handler:
           currentUser && currentOtherUser
-            ? () => handleRemoveFriendRequest(currentOtherUser, currentUser)
+            ? () =>
+                handleRemoveFriendRequest(
+                  currentOtherUser,
+                  currentUser,
+                  "retract-request"
+                )
             : undefined,
         paramsIncludeEvent: false,
       };
