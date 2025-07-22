@@ -339,7 +339,8 @@ export type TUserContext = {
   ) => void;
   handleRemoveFriendRequest: (
     recipient: TOtherUser | TUser,
-    sender: TOtherUser | TUser
+    sender: TOtherUser | TUser,
+    event?: "accept-request" | "retract-request" | "reject-request"
   ) => void;
   showFriendRequestResponseOptions: boolean;
   setShowFriendRequestResponseOptions: React.Dispatch<React.SetStateAction<boolean>>;
