@@ -543,13 +543,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   // While chat is being created, display loadingmodal. hide onSettled of createChatMutation
   const handleCreateChat = (chat: TChat): void => {
     setChatCreationInProgress(true);
-
     createChatMutation.mutate({ chat });
   };
 
-  const handleDeleteChat = (chatID: string): void => {
+  const handleDeleteChat = (chatID: string): void =>
     deleteChatMutation.mutate({ chatID });
-  };
 
   const handleRemoveUserFromChat = (user: TOtherUser, chat?: TChat): void => {
     if (chat && chat.admins && user._id && user) {
@@ -990,7 +988,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           _id: new mongoose.Types.ObjectId().toString(),
           members: newChatMembers,
           messages: [],
-          chatName: "",
           chatType: "two-member",
           dateCreated: Date.now(),
         });
