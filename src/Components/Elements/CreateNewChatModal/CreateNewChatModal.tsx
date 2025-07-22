@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import mongoose from "mongoose";
 import { TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
@@ -207,6 +208,7 @@ const CreateNewChatModal = () => {
                       setUsersToAddToChat([]);
                     } else {
                       handleCreateChat({
+                        _id: new mongoose.Types.ObjectId().toString(),
                         members: usersToAddToChat
                           .map((u) => u._id?.toString())
                           .filter((elem) => elem !== undefined)
