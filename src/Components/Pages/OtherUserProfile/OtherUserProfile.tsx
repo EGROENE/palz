@@ -6,7 +6,14 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import styles from "./styles.module.css";
-import { TThemeColor, TUser, TEvent, TChat, TBarebonesUser } from "../../../types";
+import {
+  TThemeColor,
+  TUser,
+  TEvent,
+  TChat,
+  TBarebonesUser,
+  TOtherUser,
+} from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { countries } from "../../../constants";
 import Methods from "../../../methods";
@@ -22,7 +29,6 @@ const OtherUserProfile = () => {
   const {
     logout,
     currentUser,
-    currentOtherUser,
     userCreatedAccount,
     handleSendFriendRequest,
     handleRemoveFriendRequest,
@@ -36,7 +42,6 @@ const OtherUserProfile = () => {
     blockedUsers,
     friendRequestsReceived,
     handleUnfriending,
-    setCurrentOtherUser,
   } = useUserContext();
   const {
     fetchAllEventsQuery,
@@ -55,6 +60,7 @@ const OtherUserProfile = () => {
     throw new Error(error);
   }
 
+  const [pageOwner, setPageOwner] = useState<TOtherUser | null>(null);
   const [showFriends, setShowFriends] = useState<boolean>(false);
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
   const [fetchCommonPalzIsLoading, setFetchCommonPalzIsLoading] =
@@ -172,7 +178,7 @@ const OtherUserProfile = () => {
                 });
                 navigation(`/${currentUser?.username}`);
               } else {
-                setCurrentOtherUser(
+                setPageOwner(
                   Methods.getTOtherUserFromTUser(currentOtherUser, currentUser)
                 );
 
@@ -474,36 +480,34 @@ const OtherUserProfile = () => {
         .catch((error) => console.log(error))
         .finally(() => setFetchIsLoading(false));
     }
-  }, [username, fetchAllEventsQuery.data, currentUser, navigation, userCreatedAccount]);
+  }, [username, currentUser, navigation, userCreatedAccount]);
 
   const currentOtherUserIsBlocked: boolean =
-    blockedUsers && currentOtherUser && currentOtherUser._id
-      ? blockedUsers.map((u) => u._id).includes(currentOtherUser._id.toString())
+    blockedUsers && pageOwner && pageOwner._id
+      ? blockedUsers.map((u) => u._id).includes(pageOwner._id.toString())
       : false;
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
   const usersAreFriends: boolean =
-    currentOtherUser &&
-    currentOtherUser._id &&
+    pageOwner &&
+    pageOwner._id &&
     currentUser &&
-    currentUser.friends.includes(currentOtherUser._id.toString())
+    currentUser.friends.includes(pageOwner._id.toString())
       ? true
       : false;
 
   const currentUserHasSentFriendRequest: boolean =
-    currentOtherUser &&
-    currentOtherUser._id &&
-    friendRequestsSent?.map((elem) => elem._id).includes(currentOtherUser._id.toString())
+    pageOwner &&
+    pageOwner._id &&
+    friendRequestsSent?.map((elem) => elem._id).includes(pageOwner._id.toString())
       ? true
       : false;
 
   const currentUserHasReceivedFriendRequest: boolean =
-    currentOtherUser &&
-    currentOtherUser._id &&
-    friendRequestsReceived
-      ?.map((elem) => elem._id)
-      .includes(currentOtherUser._id.toString())
+    pageOwner &&
+    pageOwner._id &&
+    friendRequestsReceived?.map((elem) => elem._id).includes(pageOwner._id.toString())
       ? true
       : false;
 
@@ -518,13 +522,8 @@ const OtherUserProfile = () => {
           </>
         ),
         handler:
-          currentUser && currentOtherUser
-            ? () =>
-                handleRemoveFriendRequest(
-                  currentOtherUser,
-                  currentUser,
-                  "retract-request"
-                )
+          currentUser && pageOwner
+            ? () => handleRemoveFriendRequest(pageOwner, currentUser, "retract-request")
             : undefined,
         paramsIncludeEvent: false,
       };
@@ -546,8 +545,8 @@ const OtherUserProfile = () => {
         </>
       ),
       handler:
-        currentUser && currentOtherUser
-          ? () => handleSendFriendRequest(currentOtherUser, true)
+        currentUser && pageOwner
+          ? () => handleSendFriendRequest(pageOwner, true)
           : undefined,
       paramsIncludeEvent: false,
     };
@@ -563,9 +562,8 @@ const OtherUserProfile = () => {
         {` Message`}
       </>
     ),
-    handler: currentOtherUser
-      ? () =>
-          getStartOrOpenChatWithUserHandler(Methods.getTBarebonesUser(currentOtherUser))
+    handler: pageOwner
+      ? () => getStartOrOpenChatWithUserHandler(Methods.getTBarebonesUser(pageOwner))
       : undefined,
     paramsIncludeEvent: false,
   };
@@ -578,10 +576,10 @@ const OtherUserProfile = () => {
       </>
     ),
     handler:
-      currentUser && currentOtherUser
+      currentUser && pageOwner
         ? () => {
-            if (currentOtherUser) {
-              return handleUnfriending(currentUser, currentOtherUser);
+            if (pageOwner) {
+              return handleUnfriending(currentUser, pageOwner);
             }
           }
         : undefined,
@@ -596,11 +594,11 @@ const OtherUserProfile = () => {
           (chat) =>
             currentUser &&
             currentUser._id &&
-            currentOtherUser &&
-            currentOtherUser._id &&
+            pageOwner &&
+            pageOwner._id &&
             chat.members.length === 2 &&
             chat.members.includes(currentUser._id.toString()) &&
-            chat.members.includes(currentOtherUser._id.toString())
+            chat.members.includes(pageOwner._id.toString())
         )[0]
       : undefined;
 
@@ -611,20 +609,14 @@ const OtherUserProfile = () => {
     // Remove from invitee lists, currentOtherUser from co-organizer lists (if currentUser is event creator), currentUser from co-organizer lists (if currentOtherUser is event creator)
     // Must be done here, as addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have access to events info
     const allEvents = fetchAllEventsQuery.data;
-    if (
-      allEvents &&
-      currentUser &&
-      currentUser._id &&
-      currentOtherUser &&
-      currentOtherUser._id
-    ) {
+    if (allEvents && currentUser && currentUser._id && pageOwner && pageOwner._id) {
       for (const event of allEvents) {
         // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
         if (event.creator === currentUser._id) {
-          if (event.invitees.includes(currentOtherUser._id.toString())) {
+          if (event.invitees.includes(pageOwner._id.toString())) {
             handleRemoveInvitee(
               event,
-              Methods.getTBarebonesUser(currentOtherUser),
+              Methods.getTBarebonesUser(pageOwner),
               undefined,
               undefined,
               e
@@ -632,29 +624,29 @@ const OtherUserProfile = () => {
           }
 
           // Remove blockee's RSVP:
-          if (event.interestedUsers.includes(currentOtherUser._id.toString())) {
-            handleDeleteUserRSVP(event, Methods.getTBarebonesUser(currentOtherUser), e);
+          if (event.interestedUsers.includes(pageOwner._id.toString())) {
+            handleDeleteUserRSVP(event, Methods.getTBarebonesUser(pageOwner), e);
           }
 
           // Remove blockee as organizer:
-          if (event.organizers.includes(currentOtherUser._id.toString())) {
-            handleRemoveOrganizer(e, event, currentOtherUser);
+          if (event.organizers.includes(pageOwner._id.toString())) {
+            handleRemoveOrganizer(e, event, pageOwner);
           }
         }
       }
     }
 
     // Add to blockedUsers (representative value in state), remove from friend requests, friends lists:
-    if (currentUser && currentOtherUser && blockedUsers) {
+    if (currentUser && pageOwner && blockedUsers) {
       addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists(
         currentUser,
-        currentOtherUser
+        pageOwner
       );
     }
   };
 
   const getBlockButton = () => {
-    if (currentOtherUserIsBlocked && currentUser && currentOtherUser) {
+    if (currentOtherUserIsBlocked && currentUser && pageOwner) {
       return {
         type: "unblock",
         buttonText: (
@@ -663,10 +655,10 @@ const OtherUserProfile = () => {
           </>
         ),
         handler: () => {
-          if (currentOtherUser) {
+          if (pageOwner) {
             return handleUnblockUser(
               Methods.getTBarebonesUser(currentUser),
-              Methods.getTBarebonesUser(currentOtherUser)
+              Methods.getTBarebonesUser(pageOwner)
             );
           }
         },
@@ -714,12 +706,9 @@ const OtherUserProfile = () => {
     const currentUserChats = fetchChatsQuery.data;
 
     let chatsInCommon = [];
-    if (currentUserChats && currentOtherUser && currentOtherUser._id) {
+    if (currentUserChats && pageOwner && pageOwner._id) {
       for (const chat of currentUserChats) {
-        if (
-          chat.members.length > 2 &&
-          chat.members.includes(currentOtherUser._id.toString())
-        ) {
+        if (chat.members.length > 2 && chat.members.includes(pageOwner._id.toString())) {
           chatsInCommon.push(chat);
         }
       }
@@ -754,23 +743,23 @@ const OtherUserProfile = () => {
           </div>
         </div>
       )}
-      {currentOtherUser && isNoFetchError && (
+      {pageOwner && isNoFetchError && (
         <>
           {showFriendRequestResponseOptions && (
             <TwoOptionsInterface
-              header={`Respond to friend request from ${currentOtherUser.firstName} ${currentOtherUser.lastName} (${currentOtherUser.username})`}
+              header={`Respond to friend request from ${pageOwner.firstName} ${pageOwner.lastName} (${pageOwner.username})`}
               buttonOneText="Decline"
               buttonOneHandler={handleRejectFriendRequest}
-              buttonOneHandlerParams={[currentOtherUser]}
+              buttonOneHandlerParams={[pageOwner]}
               handlerOneNeedsEventParam={true}
               buttonTwoText="Accept"
               buttonTwoHandler={handleAcceptFriendRequest}
-              buttonTwoHandlerParams={[currentOtherUser, currentUser, true]}
+              buttonTwoHandlerParams={[pageOwner, currentUser, true]}
               handlerTwoNeedsEventParam={true}
               closeHandler={setShowFriendRequestResponseOptions}
             />
           )}
-          {isNoFetchError && currentOtherUser && (
+          {isNoFetchError && pageOwner && (
             <>
               <div
                 className={styles.kopfzeile}
@@ -780,27 +769,27 @@ const OtherUserProfile = () => {
                   <img
                     className={styles.profileImage}
                     src={
-                      currentOtherUser.profileImage !== "" &&
-                      typeof currentOtherUser.profileImage === "string"
-                        ? currentOtherUser.profileImage
+                      pageOwner.profileImage !== "" &&
+                      typeof pageOwner.profileImage === "string"
+                        ? pageOwner.profileImage
                         : defaultProfileImage
                     }
                   />
                 </div>
                 <div className={styles.mainInfoContainer}>
                   <header style={{ color: `${randomColor}` }}>
-                    {currentOtherUser.firstName} {currentOtherUser.lastName}
+                    {pageOwner.firstName} {pageOwner.lastName}
                   </header>
-                  <p style={{ color: randomColor }}>{currentOtherUser.username}</p>
+                  <p style={{ color: randomColor }}>{pageOwner.username}</p>
                   {currentUserCanSeeLocation &&
-                    currentOtherUser &&
-                    currentOtherUser.city !== "" &&
-                    currentOtherUser.stateProvince !== "" &&
-                    currentOtherUser.country !== "" && (
+                    pageOwner &&
+                    pageOwner.city !== "" &&
+                    pageOwner.stateProvince !== "" &&
+                    pageOwner.country !== "" && (
                       <div className={styles.userLocationContainer}>
                         <p
                           style={{ color: randomColor }}
-                        >{`${currentOtherUser.city}, ${currentOtherUser.stateProvince}`}</p>
+                        >{`${pageOwner.city}, ${pageOwner.stateProvince}`}</p>
                         <img
                           src={`/flags/4x3/${matchingCountryObject?.abbreviation}.svg`}
                         />
@@ -848,26 +837,26 @@ const OtherUserProfile = () => {
                     <div className={styles.socialLinksContainer}>
                       {showFacebook && (
                         <a
-                          title={`${currentOtherUser.username}'s Facebook Profile`}
-                          href={`${currentOtherUser.facebook}`}
+                          title={`${pageOwner.username}'s Facebook Profile`}
+                          href={`${pageOwner.facebook}`}
                           target="_blank"
                         >
                           <span className="fab fa-facebook"></span>
                         </a>
                       )}
-                      {showInstagram && currentOtherUser.instagram !== "" && (
+                      {showInstagram && pageOwner.instagram !== "" && (
                         <a
-                          title={`${currentOtherUser.username}'s Instagram Profile`}
-                          href={`${currentOtherUser.instagram}`}
+                          title={`${pageOwner.username}'s Instagram Profile`}
+                          href={`${pageOwner.instagram}`}
                           target="_blank"
                         >
                           <span className="fab fa-instagram"></span>
                         </a>
                       )}
-                      {showX && currentOtherUser.x !== "" && (
+                      {showX && pageOwner.x !== "" && (
                         <a
-                          title={`${currentOtherUser.username}'s X Profile`}
-                          href={`${currentOtherUser.x}`}
+                          title={`${pageOwner.username}'s X Profile`}
+                          href={`${pageOwner.x}`}
                           target="_blank"
                         >
                           <span className="fab fa-twitter-square"></span>
@@ -894,17 +883,17 @@ const OtherUserProfile = () => {
                 </div>
               </div>
               <section className="furtherInfoSection">
-                {currentOtherUser.about !== "" && (
+                {pageOwner.about !== "" && (
                   <div className={styles.about}>
                     <header>About me :</header>
-                    <p>{currentOtherUser.about}</p>
+                    <p>{pageOwner.about}</p>
                   </div>
                 )}
-                {currentOtherUser.interests.length > 0 ? (
+                {pageOwner.interests.length > 0 ? (
                   <div className={styles.infoPoint}>
                     <header>I'm interested in : </header>
                     <span>
-                      {currentOtherUser.interests.map((int) => (
+                      {pageOwner.interests.map((int) => (
                         <Tab
                           key={int}
                           randomColor={randomColor}
@@ -960,13 +949,13 @@ const OtherUserProfile = () => {
                     randomColor={randomColor}
                   />
                 )}
-                {showFriends && currentOtherUser.friends && (
+                {showFriends && pageOwner.friends && (
                   <UserListModal
                     listType="other-user-friends"
                     renderButtonOne={true}
                     renderButtonTwo={false}
                     closeModalMethod={setShowFriends}
-                    header={`${currentOtherUser.username} 's palz`}
+                    header={`${pageOwner.username} 's palz`}
                     users={currentOtherUserFriends}
                     outsideFetchIsError={isFetchError}
                     outsideFetchIsLoading={
