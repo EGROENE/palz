@@ -5,7 +5,7 @@ import {
   TUserValuesToUpdate,
   TOtherUser,
   TBarebonesUser,
-  TEvent
+  TEvent,
 } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
@@ -1201,6 +1201,71 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         );
       }
       setIsLoading(true);
+
+      Requests.getUserByID(recipient._id.toString()).then((res) => {
+        if (res.ok) {
+          res.json().then((rec: TUser) => {
+            if (recipient._id) {
+              Promise.all([
+                Requests.addToFriendRequestsSent(currentUser, recipient._id.toString()),
+                Requests.addToFriendRequestsReceived(currentUser, rec),
+              ]).then((resArray: Response[]) => {
+                if (resArray.every((res) => res.ok) && currentUser._id) {
+                  Requests.getUserByID(currentUser._id.toString()).then((res) => {
+                    if (res.ok) {
+                      res
+                        .json()
+                        .then((cu: TUser) => {
+                          setCurrentUser(cu);
+                          toast.success("Friend request sent!", {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid green",
+                            },
+                          });
+                        })
+                        .catch((error) => console.log(error))
+                        .finally(() => setIsLoading(false));
+                    } else {
+                      if (shouldOptimisticRender && friendRequestsSent) {
+                        friendRequestsSent.filter(
+                          (fr) => fr !== Methods.getTBarebonesUser(recipient)
+                        );
+                      }
+                      handleReceiveFriendRequestFail(currentUser, recipient);
+                    }
+                  });
+                } else {
+                  if (shouldOptimisticRender && friendRequestsSent) {
+                    friendRequestsSent.filter(
+                      (fr) => fr !== Methods.getTBarebonesUser(recipient)
+                    );
+                  }
+                  setIsLoading(false);
+                  handleReceiveFriendRequestFail(currentUser, recipient);
+                }
+              });
+            }
+          });
+        } else {
+          if (shouldOptimisticRender && friendRequestsSent) {
+            friendRequestsSent.filter(
+              (fr) => fr !== Methods.getTBarebonesUser(recipient)
+            );
+          }
+          setIsLoading(false);
+          toast.error("Couldn't send request. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+      });
+
       Requests.addToFriendRequestsSent(currentUser, recipient._id.toString()).then(
         (res) => {
           if (res.ok && recipient._id) {
@@ -1211,32 +1276,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   Requests.addToFriendRequestsReceived(currentUser, rec).then((res) => {
                     if (res.ok && currentUser && currentUser._id) {
                       // Fetch updated currentUser, set if successful:
-                      Requests.getUserByID(currentUser._id.toString()).then((res) => {
-                        if (res.ok) {
-                          res
-                            .json()
-                            .then((cu: TUser) => {
-                              setCurrentUser(cu);
-                              toast.success("Friend request sent!", {
-                                style: {
-                                  background:
-                                    theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                                  color: theme === "dark" ? "black" : "white",
-                                  border: "2px solid green",
-                                },
-                              });
-                            })
-                            .catch((error) => console.log(error))
-                            .finally(() => setIsLoading(false));
-                        } else {
-                          if (shouldOptimisticRender && friendRequestsSent) {
-                            friendRequestsSent.filter(
-                              (fr) => fr !== Methods.getTBarebonesUser(recipient)
-                            );
-                          }
-                          handleReceiveFriendRequestFail(currentUser, recipient);
-                        }
-                      });
+                      // Put in Promise.all res.ok
                     } else {
                       if (shouldOptimisticRender && friendRequestsSent) {
                         friendRequestsSent.filter(
@@ -1249,14 +1289,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   });
                 });
               } else {
+                if (shouldOptimisticRender && friendRequestsSent) {
+                  friendRequestsSent.filter(
+                    (fr) => fr !== Methods.getTBarebonesUser(recipient)
+                  );
+                }
                 setIsLoading(false);
-                toast.error("Couldn't send request. Please try again.", {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid red",
-                  },
-                });
+                handleReceiveFriendRequestFail(currentUser, recipient);
               }
             });
           } else {
@@ -1277,7 +1316,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         }
       );
     } else {
-      setIsLoading(false);
       toast.error("Couldn't send request. Please try again.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -1840,7 +1878,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     user: TOtherUser | TUser,
     friend: TOtherUser | TUser,
     array?: (TOtherUser | TBarebonesUser | TEvent)[],
-    setArray?: React.Dispatch<React.SetStateAction<(TBarebonesUser | TOtherUser | TEvent)[]>>
+    setArray?: React.Dispatch<
+      React.SetStateAction<(TBarebonesUser | TOtherUser | TEvent)[]>
+    >
   ): void => {
     if (user._id) {
       if (
