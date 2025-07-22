@@ -1251,6 +1251,7 @@ const createNewChat = (newChat: TChat): Promise<Response> => {
   myHeaders.append("Content-Type", "application/json");
 
   var raw = JSON.stringify({
+  "_id": newChat._id,
     "members": newChat.members,
     "messages": newChat.messages,
     "chatType": newChat.chatType,
