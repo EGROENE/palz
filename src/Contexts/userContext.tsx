@@ -1265,56 +1265,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           });
         }
       });
-
-      Requests.addToFriendRequestsSent(currentUser, recipient._id.toString()).then(
-        (res) => {
-          if (res.ok && recipient._id) {
-            // Add currentUser to recipient's friendRequestsReceived (will need to get TUser of recipient)
-            Requests.getUserByID(recipient._id.toString()).then((res) => {
-              if (res.ok) {
-                res.json().then((rec: TUser) => {
-                  Requests.addToFriendRequestsReceived(currentUser, rec).then((res) => {
-                    if (res.ok && currentUser && currentUser._id) {
-                      // Fetch updated currentUser, set if successful:
-                      // Put in Promise.all res.ok
-                    } else {
-                      if (shouldOptimisticRender && friendRequestsSent) {
-                        friendRequestsSent.filter(
-                          (fr) => fr !== Methods.getTBarebonesUser(recipient)
-                        );
-                      }
-                      setIsLoading(false);
-                      handleReceiveFriendRequestFail(currentUser, recipient);
-                    }
-                  });
-                });
-              } else {
-                if (shouldOptimisticRender && friendRequestsSent) {
-                  friendRequestsSent.filter(
-                    (fr) => fr !== Methods.getTBarebonesUser(recipient)
-                  );
-                }
-                setIsLoading(false);
-                handleReceiveFriendRequestFail(currentUser, recipient);
-              }
-            });
-          } else {
-            if (shouldOptimisticRender && friendRequestsSent) {
-              friendRequestsSent.filter(
-                (fr) => fr !== Methods.getTBarebonesUser(recipient)
-              );
-            }
-            setIsLoading(false);
-            toast.error("Couldn't send request. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          }
-        }
-      );
     } else {
       toast.error("Couldn't send request. Please try again.", {
         style: {
