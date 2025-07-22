@@ -5,6 +5,7 @@ import {
   TUserValuesToUpdate,
   TOtherUser,
   TBarebonesUser,
+  TEvent
 } from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
@@ -1837,9 +1838,27 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleUnfriending = (
     user: TOtherUser | TUser,
-    friend: TOtherUser | TUser
+    friend: TOtherUser | TUser,
+    array?: (TOtherUser | TBarebonesUser | TEvent)[],
+    setArray?: React.Dispatch<React.SetStateAction<(TBarebonesUser | TOtherUser | TEvent)[]>>
   ): void => {
     if (user._id) {
+      if (
+        array &&
+        setArray &&
+        array.every(
+          (elem) => Methods.isTBarebonesUser(elem) || Methods.isTOtherUser(elem)
+        )
+      ) {
+        setArray(
+          array.filter((u) => {
+            if (u._id && friend._id) {
+              return u._id.toString() !== friend._id.toString();
+            }
+          })
+        );
+      }
+
       Requests.getUserByID(user._id.toString())
         .then((res) => {
           if (res.ok) {
@@ -1884,16 +1903,76 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                             }
                                           );
                                         } else {
+                                          if (
+                                            array &&
+                                            setArray &&
+                                            array.every(
+                                              (elem) =>
+                                                Methods.isTBarebonesUser(elem) ||
+                                                Methods.isTOtherUser(elem)
+                                            )
+                                          ) {
+                                            Methods.isTUser(friend) && currentUser
+                                              ? setArray(
+                                                  array.concat(
+                                                    Methods.getTOtherUserFromTUser(
+                                                      friend,
+                                                      currentUser
+                                                    )
+                                                  )
+                                                )
+                                              : setArray(array.concat(friend));
+                                          }
                                           handleUnfriendingFail(friend);
                                         }
                                       })
                                       .catch((error) => console.log(error));
                                   } else {
+                                    if (
+                                      array &&
+                                      setArray &&
+                                      array.every(
+                                        (elem) =>
+                                          Methods.isTBarebonesUser(elem) ||
+                                          Methods.isTOtherUser(elem)
+                                      )
+                                    ) {
+                                      Methods.isTUser(friend) && currentUser
+                                        ? setArray(
+                                            array.concat(
+                                              Methods.getTOtherUserFromTUser(
+                                                friend,
+                                                currentUser
+                                              )
+                                            )
+                                          )
+                                        : setArray(array.concat(friend));
+                                    }
                                     handleUnfriendingFail(friend);
                                   }
                                 })
                                 .catch((error) => console.log(error));
                             } else {
+                              if (
+                                array &&
+                                setArray &&
+                                array.every(
+                                  (elem) =>
+                                    Methods.isTBarebonesUser(elem) ||
+                                    Methods.isTOtherUser(elem)
+                                )
+                              ) {
+                                Methods.isTUser(friend) && currentUser
+                                  ? setArray(
+                                      array.concat(
+                                        Methods.getTOtherUserFromTUser(
+                                          friend,
+                                          currentUser
+                                        )
+                                      )
+                                    )
+                                  : setArray(array.concat(friend));
+                              }
                               handleUnfriendingFail(friend);
                             }
                           })
@@ -1901,6 +1980,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                           .finally(() => setIsLoading(false));
                       });
                     } else {
+                      if (
+                        array &&
+                        setArray &&
+                        array.every(
+                          (elem) =>
+                            Methods.isTBarebonesUser(elem) || Methods.isTOtherUser(elem)
+                        )
+                      ) {
+                        Methods.isTUser(friend) && currentUser
+                          ? setArray(
+                              array.concat(
+                                Methods.getTOtherUserFromTUser(friend, currentUser)
+                              )
+                            )
+                          : setArray(array.concat(friend));
+                      }
                       handleUnfriendingFail(friend);
                     }
                   })
@@ -1908,6 +2003,19 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               }
             });
           } else {
+            if (
+              array &&
+              setArray &&
+              array.every(
+                (elem) => Methods.isTBarebonesUser(elem) || Methods.isTOtherUser(elem)
+              )
+            ) {
+              Methods.isTUser(friend) && currentUser
+                ? setArray(
+                    array.concat(Methods.getTOtherUserFromTUser(friend, currentUser))
+                  )
+                : setArray(array.concat(friend));
+            }
             handleUnfriendingFail(friend);
           }
         })
