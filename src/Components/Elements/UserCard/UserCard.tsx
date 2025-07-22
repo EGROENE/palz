@@ -323,12 +323,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
           </button>
           <Link to={`/users/${userSECURE.username}`}>
             <div className="theme-element-container">
-              <button
-                onClick={() => setCurrentOtherUser(userSECURE)}
-                disabled={isLoading}
-              >
-                View Profile
-              </button>
+              <button disabled={isLoading}>View Profile</button>
             </div>
           </Link>
         </div>

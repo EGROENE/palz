@@ -14,14 +14,13 @@ import Requests from "../../../requests";
 import Methods from "../../../methods";
 
 const EventPage = () => {
-  const { isLoading, theme, error, setError } = useMainContext();
+  const { isLoading, theme, error } = useMainContext();
 
   if (error) {
     throw new Error(error);
   }
 
-  const { currentUser, userCreatedAccount, setCurrentOtherUser, logout } =
-    useUserContext();
+  const { currentUser, userCreatedAccount, logout } = useUserContext();
 
   const {
     setDisinterestedUsersCurrentEvent,
@@ -406,40 +405,6 @@ const EventPage = () => {
                     <Link
                       key={organizer._id?.toString()}
                       to={`/users/${organizer.username}`}
-                      onClick={() => {
-                        if (organizer._id) {
-                          Requests.getUserByID(organizer._id.toString()).then((res) => {
-                            if (res.ok) {
-                              res.json().then((organizer) =>
-                                setCurrentOtherUser({
-                                  _id: organizer._id,
-                                  index: undefined,
-                                  firstName: organizer.firstName,
-                                  lastName: organizer.lastName,
-                                  username: organizer.username,
-                                  city: organizer.city,
-                                  stateProvince: organizer.stateProvince,
-                                  country: organizer.country,
-                                  phoneCountry: organizer.phoneCountry,
-                                  phoneCountryCode: organizer.phoneCountryCode,
-                                  phoneNumberWithoutCountryCode:
-                                    organizer.phoneNumberWithoutCountryCode,
-                                  emailAddress: organizer.emailAddress,
-                                  instagram: organizer.instagram,
-                                  facebook: organizer.facebook,
-                                  x: organizer.x,
-                                  profileImage: organizer.profileImage,
-                                  about: organizer.about,
-                                  friends: organizer.friends,
-                                  interests: organizer.interests,
-                                })
-                              );
-                            } else {
-                              setError("Could not load other user's info.");
-                            }
-                          });
-                        }
-                      }}
                     >
                       <Tab
                         info={organizer}
