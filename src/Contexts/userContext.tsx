@@ -1195,7 +1195,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     if (currentUser && recipient && recipient._id) {
       if (shouldOptimisticRender && friendRequestsSent && recipient && recipient._id) {
-        console.log(0);
         setFriendRequestsSent(
           friendRequestsSent.concat(Methods.getTBarebonesUser(recipient))
         );
@@ -1539,10 +1538,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const handleAcceptFriendRequest = (
     sender: TOtherUser,
     receiver: TOtherUser,
+    optimisticRender: boolean,
     e?: React.ChangeEvent<HTMLInputElement>
   ): void => {
     e?.preventDefault();
     setIsLoading(true);
+
+    if (optimisticRender && friendRequestsReceived) {
+      setFriendRequestsReceived(
+        friendRequestsReceived.filter((r) => {
+          if (r._id && sender._id) {
+            return r._id.toString() !== sender._id.toString();
+          }
+        })
+      );
+    }
 
     // Also put in handleRejectFR
     if (showFriendRequestResponseOptions) {
@@ -1559,8 +1569,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   .then((res) => {
                     if (res.ok) {
                       res.json().then((receiver) => {
-                        // Put Promise.all, containing addFriendToFriendsArray for both sender & recipient, removeFromFriendRequestsSent for sender, & removeFromFRReceived for recipient:
-                        // If any one of promise.all fails, call handleAcceptFRFail
                         Promise.all([
                           Requests.addFriendToFriendsArray(receiver, sender),
                           Requests.addFriendToFriendsArray(sender, receiver),
@@ -1569,6 +1577,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         ])
                           .then((resArray) => {
                             if (resArray.some((res) => !res.ok)) {
+                              if (optimisticRender && friendRequestsReceived) {
+                                setFriendRequestsReceived(
+                                  friendRequestsReceived.concat(
+                                    Methods.getTBarebonesUser(sender)
+                                  )
+                                );
+                              }
                               handleRemoveFriendRequestFail(
                                 sender,
                                 receiver._id.toString(),
@@ -1670,6 +1685,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                           .catch((error) => console.log(error));
                       });
                     } else {
+                      if (optimisticRender && friendRequestsReceived) {
+                        setFriendRequestsReceived(
+                          friendRequestsReceived.concat(Methods.getTBarebonesUser(sender))
+                        );
+                      }
                       toast.error("Could not accept friend request. Please try again.", {
                         style: {
                           background:
@@ -1684,6 +1704,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               }
             });
           } else {
+            if (optimisticRender && friendRequestsReceived) {
+              setFriendRequestsReceived(
+                friendRequestsReceived.concat(Methods.getTBarebonesUser(sender))
+              );
+            }
             toast.error("Could not accept friend request. Please try again.", {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
