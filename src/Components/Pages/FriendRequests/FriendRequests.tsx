@@ -272,7 +272,7 @@ const FriendRequests = () => {
                         buttonOneText="Accept"
                         buttonOneLink={null}
                         buttonOneHandler={handleAcceptFriendRequest}
-                        buttonOneHandlerParams={[user, currentUser]}
+                        buttonOneHandlerParams={[user, currentUser, true]}
                         buttonOneHandlerNeedsEventParam={true}
                         buttonOneIsDisabled={isLoading}
                         renderButtonTwo={true}

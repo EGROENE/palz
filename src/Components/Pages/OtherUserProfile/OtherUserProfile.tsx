@@ -760,7 +760,7 @@ const OtherUserProfile = () => {
               handlerOneNeedsEventParam={true}
               buttonTwoText="Accept"
               buttonTwoHandler={handleAcceptFriendRequest}
-              buttonTwoHandlerParams={[currentOtherUser, currentUser]}
+              buttonTwoHandlerParams={[currentOtherUser, currentUser, true]}
               handlerTwoNeedsEventParam={true}
               closeHandler={setShowFriendRequestResponseOptions}
             />
