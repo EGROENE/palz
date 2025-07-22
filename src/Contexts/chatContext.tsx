@@ -594,8 +594,20 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
                 Promise.all(promisesToAwaitAdmins)
                   .then((admins: TUser[]) => {
                     const chatValuesToUpdate: TChatValuesToUpdate = {
-                      admins: admins.map((a) => Methods.getTBarebonesUser(a)),
-                      members: chatMembers.map((m) => Methods.getTBarebonesUser(m)),
+                      admins: admins
+                        .map((a) => {
+                          if (a._id) {
+                            return a._id.toString();
+                          }
+                        })
+                        .filter((elem) => elem !== undefined),
+                      members: chatMembers
+                        .map((m) => {
+                          if (m._id) {
+                            return m._id.toString();
+                          }
+                        })
+                        .filter((elem) => elem !== undefined),
                     };
 
                     const purpose =
@@ -618,7 +630,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
             } else {
               // Remove non-admin members:
               const chatValuesToUpdate: TChatValuesToUpdate = {
-                members: chatMembers.map((m) => Methods.getTBarebonesUser(m)),
+                members: chatMembers
+                  .map((m) => {
+                    if (m._id) {
+                      return m._id.toString();
+                    }
+                  })
+                  .filter((elem) => elem !== undefined),
               };
               const purpose =
                 currentUser && user._id === currentUser._id
@@ -669,7 +687,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     Promise.all(promisesToAwaitChatMembers)
       .then((chatMembers: TUser[]) => {
         const chatValuesToUpdate: TChatValuesToUpdate = {
-          members: chatMembers.map((m) => Methods.getTBarebonesUser(m)),
+          members: chatMembers
+            .map((m) => {
+              if (m._id) {
+                return m._id.toString();
+              }
+            })
+            .filter((elem) => elem !== undefined),
         };
 
         const purpose = "add-members";
@@ -693,7 +717,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     Promise.all(promisesToAwaitAdmins)
       .then((admins: TUser[]) => {
         const chatValuesToUpdate = {
-          admins: admins.map((a) => Methods.getTBarebonesUser(a)),
+          admins: admins
+            .map((a) => {
+              if (a._id) {
+                return a._id.toString();
+              }
+            })
+            .filter((elem) => elem !== undefined),
         };
         const purpose = "add-admin";
         updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
@@ -734,7 +764,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         Promise.all(promisesToAwaitAdmins)
           .then((admins: TUser[]) => {
             const chatValuesToUpdate = {
-              admins: admins.map((a) => Methods.getTBarebonesUser(a)),
+              admins: admins
+                .map((a) => {
+                  if (a._id) {
+                    return a._id.toString();
+                  }
+                })
+                .filter((elem) => elem !== undefined),
             };
             updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
           })
