@@ -12,7 +12,7 @@ import Requests from "../../../requests";
 import Methods from "../../../methods";
 
 const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
-  const { isLoading, error } = useMainContext();
+  const { isLoading, error, displayedItems, setDisplayedItems } = useMainContext();
 
   if (error) {
     throw new Error(error);
@@ -299,7 +299,12 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
             }
             onClick={() => {
               if (currentUserAndUserAreFriends && currentUser && userSECURE) {
-                handleUnfriending(currentUser, userSECURE);
+                handleUnfriending(
+                  currentUser,
+                  userSECURE,
+                  displayedItems,
+                  setDisplayedItems
+                );
               }
               if (currentUserSentFriendRequest && currentUser) {
                 handleRemoveFriendRequest(userSECURE, currentUser, "retract-request");
