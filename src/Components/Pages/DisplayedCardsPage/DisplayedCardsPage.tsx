@@ -688,7 +688,7 @@ const DisplayedCardsPage = ({
         }
       }
     }
-  }, [fetchStart, fetchLimit, searchTerm, usedFor, activeFilters, currentUser?.friends]);
+  }, [fetchStart, fetchLimit, searchTerm, usedFor, activeFilters]);
 
   // @ts-ignore: Must be of type TDisplayedCardsFilter[], but, the way elements are added conditionally to array results in it being type string[], since, if a condition isn't met, an iterable must be added
   const potentialFriendsFilterOptions: TDisplayedCardsFilter[] = [
