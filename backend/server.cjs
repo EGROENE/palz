@@ -247,6 +247,23 @@ const getUpcomingEventsUserInvitedTo = async (req, res) => {
   res.status(200).json(events);
 };
 
+const getRecentEventsUserRSVPdTo = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const thirtyDaysInMs = 1000 * 60 * 60 * 24 * 30;
+
+  const events = await Event.find({
+    eventEndDateTimeInMS: { $lte: now - thirtyDaysInMs },
+    interestedUsers: { $in: otherUser._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
 app.get("/palz/otherUsers/:username", (req, res) => {
   const { eventsType } = req.query;
 
@@ -264,6 +281,10 @@ app.get("/palz/otherUsers/:username", (req, res) => {
 
   if (eventType === "upcomingEventsUserInvitedTo") {
     return getUpcomingEventsUserInvitedTo(req, res);
+  }
+
+  if (eventType === "recentEventsUserRSVPdTo") {
+    return getRecentEventsUserRSVPdTo(req, res);
   }
 });
 
