@@ -264,6 +264,23 @@ const getRecentEventsUserRSVPdTo = async (req, res) => {
   res.status(200).json(events);
 };
 
+const getRecentEventsUserOrganized = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const thirtyDaysInMs = 1000 * 60 * 60 * 24 * 30;
+
+  const events = await Event.find({
+    eventEndDateTimeInMS: { $lte: now - thirtyDaysInMs },
+    organizers: { $in: otherUser._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
 app.get("/palz/otherUsers/:username", (req, res) => {
   const { eventsType } = req.query;
 
@@ -285,6 +302,10 @@ app.get("/palz/otherUsers/:username", (req, res) => {
 
   if (eventType === "recentEventsUserRSVPdTo") {
     return getRecentEventsUserRSVPdTo(req, res);
+  }
+
+  if (eventType === "recentEventsUserOrganized") {
+    return getRecentEventsUserOrganized(req, res);
   }
 });
 
