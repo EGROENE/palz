@@ -14,12 +14,7 @@ import Requests from "../requests";
 import toast from "react-hot-toast";
 import Methods from "../methods";
 import { useNavigate } from "react-router-dom";
-import {
-  useQueryClient,
-  useMutation,
-  useQuery,
-  UseQueryResult,
-} from "@tanstack/react-query";
+import { useQueryClient, useQuery, UseQueryResult } from "@tanstack/react-query";
 import mongoose from "mongoose";
 
 export const UserContext = createContext<TUserContext | null>(null);
@@ -620,90 +615,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     );
   };
-
-  const blockUserMutation = useMutation({
-    mutationFn: ({
-      blocker,
-      blockee,
-      // @ts-ignore: param used in onSuccess handler
-      areFriends,
-      // @ts-ignore: param used in onSuccess handler
-      hasSentFriendRequest,
-      // @ts-ignore: param used in onSuccess handler
-      hasReceivedFriendRequest,
-    }: {
-      blocker: TUser;
-      blockee: TUser;
-      areFriends: boolean;
-      hasSentFriendRequest: boolean;
-      hasReceivedFriendRequest: boolean;
-      // @ts-ignore
-    }) => Requests.addToBlockedUsers(blocker, blockee._id?.toString()),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        if (currentUser && currentUser._id) {
-          Requests.getUserByID(currentUser._id.toString())
-            .then((res) => {
-              if (res.ok) {
-                res
-                  .json()
-                  .then((cu) => {
-                    if (variables.blocker._id) {
-                      Requests.addToBlockedBy(
-                        variables.blockee,
-                        variables.blocker._id.toString()
-                      )
-                        .then((res) => {
-                          if (res.ok) {
-                            if (cu) {
-                              if (variables.areFriends) {
-                                handleUnfriending(variables.blocker, variables.blockee);
-                              }
-                              if (variables.hasSentFriendRequest) {
-                                handleRemoveFriendRequest(
-                                  variables.blockee,
-                                  variables.blocker
-                                );
-                              }
-                              if (variables.hasReceivedFriendRequest) {
-                                handleRemoveFriendRequest(
-                                  variables.blocker,
-                                  variables.blockee
-                                );
-                              }
-                              setCurrentUser(cu);
-                              toast(`You have blocked ${variables.blockee.username}.`, {
-                                style: {
-                                  background:
-                                    theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                                  color: theme === "dark" ? "black" : "white",
-                                  border: "2px solid red",
-                                },
-                              });
-                            } else {
-                              handleBlockUserFail(variables.blockee);
-                            }
-                          } else {
-                            handleBlockUserFail(variables.blockee);
-                          }
-                        })
-                        .catch((error) => console.log(error));
-                    }
-                  })
-                  .catch((error) => console.log(error));
-              } else {
-                handleBlockUserFail(variables.blockee);
-              }
-            })
-            .catch((error) => console.log(error));
-        }
-      } else {
-        handleBlockUserFail(variables.blockee);
-      }
-    },
-    onError: (error) => console.log(error),
-    onSettled: () => setIsLoading(false),
-  });
 
   // Called when user switches b/t login & signup forms & when user logs out
   // Only necessary to reset errors for fields on login and/or signup form
@@ -2026,13 +1937,65 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               const hasReceivedFriendRequest: boolean = blockee._id
                 ? blocker.friendRequestsReceived.includes(blockee._id)
                 : false;
-              blockUserMutation.mutate({
-                blocker,
-                blockee,
-                areFriends,
-                hasSentFriendRequest,
-                hasReceivedFriendRequest,
-              });
+
+              Requests.addToBlockedUsers(blocker, blockee._id.toString())
+                .then((res) => {
+                  if (res.ok) {
+                    if (currentUser && currentUser._id) {
+                      Requests.getUserByID(currentUser._id.toString())
+                        .then((res) => {
+                          if (res.ok) {
+                            res
+                              .json()
+                              .then((cu) => {
+                                if (blocker._id) {
+                                  Requests.addToBlockedBy(blockee, blocker._id.toString())
+                                    .then((res) => {
+                                      if (res.ok) {
+                                        if (cu) {
+                                          if (areFriends) {
+                                            handleUnfriending(blocker, blockee);
+                                          }
+                                          if (hasSentFriendRequest) {
+                                            handleRemoveFriendRequest(blockee, blocker);
+                                          }
+                                          if (hasReceivedFriendRequest) {
+                                            handleRemoveFriendRequest(blocker, blockee);
+                                          }
+                                          setCurrentUser(cu);
+                                          toast(`You have blocked ${blockee.username}.`, {
+                                            style: {
+                                              background:
+                                                theme === "light"
+                                                  ? "#242424"
+                                                  : "rgb(233, 231, 228)",
+                                              color: theme === "dark" ? "black" : "white",
+                                              border: "2px solid red",
+                                            },
+                                          });
+                                        } else {
+                                          handleBlockUserFail(blockee);
+                                        }
+                                      } else {
+                                        handleBlockUserFail(blockee);
+                                      }
+                                    })
+                                    .catch((error) => console.log(error));
+                                }
+                              })
+                              .catch((error) => console.log(error));
+                          } else {
+                            handleBlockUserFail(blockee);
+                          }
+                        })
+                        .catch((error) => console.log(error));
+                    }
+                  } else {
+                    handleBlockUserFail(blockee);
+                  }
+                })
+                .catch((error) => console.log(error))
+                .finally(() => setIsLoading(false));
             });
           } else {
             setBlockedUsers(blockedUsers.concat(Methods.getTBarebonesUser(blockee)));
