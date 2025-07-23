@@ -215,6 +215,22 @@ const getOngoingEvents = async (req, res) => {
   res.status(200).json(events);
 };
 
+const getUpcomingEventsUserOrganizes = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const events = await Event.find({
+    eventStartDateTimeInMS: { $gt: now },
+    eventEndDateTimeInMS: { $gt: now },
+    organizers: { $in: otherUser._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
 app.get("/palz/otherUsers/:username", (req, res) => {
   const { eventsType } = req.query;
 
@@ -224,6 +240,10 @@ app.get("/palz/otherUsers/:username", (req, res) => {
 
   if (eventsType === "ongoingEvents") {
     return getOngoingEvents(req, res);
+  }
+
+  if (eventType === "upcomingEventsUserOrganizes") {
+    return getUpcomingEventsUserOrganizes(req, res);
   }
 });
 
