@@ -224,6 +224,21 @@ const getFriends = async (
   });
 };
 
+const getUpcomingEventsUserRSVPdTo = (username: string) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Context-Type", "application/json");
+
+  return fetch(
+    `http://localhost:4000/palz/otherUsers/${username}?eventsType=upcomingEventsUserRSVPdTo`,
+    {
+      method: "GET",
+      headers: myHeaders,
+      body: "",
+      redirect: "follow",
+    }
+  );
+};
+
 const getExplorableEvents = (
   currentUser: TUser | null,
   start: number,
@@ -1251,7 +1266,7 @@ const createNewChat = (newChat: TChat): Promise<Response> => {
   myHeaders.append("Content-Type", "application/json");
 
   var raw = JSON.stringify({
-  "_id": newChat._id,
+    "_id": newChat._id,
     "members": newChat.members,
     "messages": newChat.messages,
     "chatType": newChat.chatType,
@@ -1297,6 +1312,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getUpcomingEventsUserRSVPdTo,
   deleteFromDisinterestedUsers,
   getEventByID,
   getUserByUsername,
