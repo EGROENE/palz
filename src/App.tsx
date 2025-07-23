@@ -166,7 +166,7 @@ function App() {
           <Route path="/:username/events" element={<UsersEvents />} />
           <Route path="/:username/friend-requests" element={<FriendRequests />} />
           <Route path="/:username" element={<UserHomepage />} />
-          <Route path="/users/:username" element={<OtherUserProfile />} />
+          <Route path="/otherUsers/:username" element={<OtherUserProfile />} />
           <Route
             path="/find-palz"
             element={<DisplayedCardsPage usedFor="potential-friends" />}

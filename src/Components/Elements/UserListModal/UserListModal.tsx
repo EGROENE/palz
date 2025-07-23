@@ -234,7 +234,7 @@ const UserListModal = ({
                     : getButtonTwoHandlerParams(user)
                 }
                 buttonTwoLink={buttonTwoLink ? buttonTwoLink : null}
-                objectLink={`/users/${user?.username}`}
+                objectLink={`/otherUsers/${user?.username}`}
               />
             ))
           ) : (

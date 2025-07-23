@@ -257,7 +257,7 @@ const FriendRequests = () => {
                         buttonTwoHandlerParams={[user, currentUser, "retract-request"]}
                         buttonTwoIsDisabled={isLoading}
                         buttonTwoLink={null}
-                        objectLink={`/users/${user?.username}`}
+                        objectLink={`/otherUsers/${user?.username}`}
                       />
                     )
                 )
@@ -282,7 +282,7 @@ const FriendRequests = () => {
                         buttonTwoHandlerNeedsEventParam={true}
                         buttonTwoIsDisabled={isLoading}
                         buttonTwoLink={null}
-                        objectLink={`/users/${user?.username}`}
+                        objectLink={`/otherUsers/${user?.username}`}
                       />
                     )
                 )}
