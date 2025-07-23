@@ -284,6 +284,21 @@ const getUpcomingEventsUserInvitedTo = (username: string) => {
   );
 };
 
+const getRecentEventsUserRSVPdTo = (username: string) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Context-Type", "application/json");
+
+  return fetch(
+    `http://localhost:4000/palz/otherUsers/${username}?eventsType=recentEventsUserRSVPdTo`,
+    {
+      method: "GET",
+      headers: myHeaders,
+      body: "",
+      redirect: "follow",
+    }
+  );
+};
+
 const getExplorableEvents = (
   currentUser: TUser | null,
   start: number,
@@ -1357,6 +1372,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getRecentEventsUserRSVPdTo,
   getUpcomingEventsUserInvitedTo,
   getUpcomingEventsUserOrganizes,
   ongoingEvents,
