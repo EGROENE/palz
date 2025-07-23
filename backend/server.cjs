@@ -55,7 +55,7 @@ app.get("/palz/find-palz", async (req, res) => {
     // profileVisibleTo isn't set to 'nobody':
     profileVisibleTo: { $ne: "nobody" },
     // user doesn't have FR from currentUser:
-    friendRequestsReceived: {$nin: currentUser._id.toString()}
+    friendRequestsReceived: { $nin: currentUser._id.toString() },
   }).limit(Number(limit));
 
   res.status(200).json(potentialFriends);
@@ -178,6 +178,30 @@ app.get("/palz/add-event/", (req, res) => {
     return getPotentialInviteesController(req, res);
   }
   return getPotentialEventCOsController(req, res);
+});
+
+const getUpcomingEventsUserRSVPdTo = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const events = await Event.find({
+    eventStartDateTimeInMS: { $gt: now },
+    eventEndDateTimeInMS: { $gt: now },
+    interestedUsers: { $in: otherUser._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
+app.get("/palz/otherUsers/:username", (req, res) => {
+  const { eventsType } = req.query;
+
+  if (eventsType === "upcomingEventsUserRSVPdTo") {
+    return getUpcomingEventsUserRSVPdTo(req, res);
+  }
 });
 
 // Connect to Mongoose:
