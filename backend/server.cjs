@@ -231,6 +231,22 @@ const getUpcomingEventsUserOrganizes = async (req, res) => {
   res.status(200).json(events);
 };
 
+const getUpcomingEventsUserInvitedTo = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const events = await Event.find({
+    eventStartDateTimeInMS: { $gt: now },
+    eventEndDateTimeInMS: { $gt: now },
+    invitees: { $in: otherUser._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
 app.get("/palz/otherUsers/:username", (req, res) => {
   const { eventsType } = req.query;
 
@@ -244,6 +260,10 @@ app.get("/palz/otherUsers/:username", (req, res) => {
 
   if (eventType === "upcomingEventsUserOrganizes") {
     return getUpcomingEventsUserOrganizes(req, res);
+  }
+
+  if (eventType === "upcomingEventsUserInvitedTo") {
+    return getUpcomingEventsUserInvitedTo(req, res);
   }
 });
 
