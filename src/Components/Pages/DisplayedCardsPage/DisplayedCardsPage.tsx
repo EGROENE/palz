@@ -974,8 +974,7 @@ const DisplayedCardsPage = ({
             or wait for others to do so.
           </h2>
         )}
-      {!isLoading &&
-        isNoFetchError &&
+      {isNoFetchError &&
         (displayedItems.length > 0 ||
           (displayedItems.length === 0 && searchTerm !== "") ||
           (displayedItems.length === 0 && activeFilters.length > 0)) && (
