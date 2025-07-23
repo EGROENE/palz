@@ -2089,7 +2089,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                                 );
                                               }
                                             })
-                                            .catch((error) => console.log(error));
+                                            .catch((error) => console.log(error))
+                                            .finally(() => setIsLoading(false));
                                         }
                                       } else {
                                         handleUnblockUserFail(
