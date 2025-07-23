@@ -196,11 +196,34 @@ const getUpcomingEventsUserRSVPdTo = async (req, res) => {
   res.status(200).json(events);
 };
 
+const getOngoingEvents = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const events = await Event.find({
+    eventStartDateTimeInMS: { $gte: now },
+    eventEndDateTimeInMS: { $lt: now },
+    $or: [
+      { organizers: { $in: otherUser._id.toString() } },
+      { invitees: { $in: otherUser._id.toString() } },
+    ],
+  });
+
+  res.status(200).json(events);
+};
+
 app.get("/palz/otherUsers/:username", (req, res) => {
   const { eventsType } = req.query;
 
   if (eventsType === "upcomingEventsUserRSVPdTo") {
     return getUpcomingEventsUserRSVPdTo(req, res);
+  }
+
+  if (eventsType === "ongoingEvents") {
+    return getOngoingEvents(req, res);
   }
 });
 
