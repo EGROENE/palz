@@ -208,7 +208,7 @@ const getOngoingEvents = async (req, res) => {
     eventEndDateTimeInMS: { $lt: now },
     $or: [
       { organizers: { $in: otherUser._id.toString() } },
-      { invitees: { $in: otherUser._id.toString() } },
+      { interestedUsers: { $in: otherUser._id.toString() } },
     ],
   });
 
