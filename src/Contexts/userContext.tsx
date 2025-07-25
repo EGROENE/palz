@@ -601,6 +601,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleBlockUserFail = (blockee: TUser): void => {
+    setIsLoading(false);
     if (blockedUsers) {
       setBlockedUsers(blockedUsers.concat(Methods.getTBarebonesUser(blockee)));
     }
@@ -1938,10 +1939,51 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 ? blocker.friendRequestsReceived.includes(blockee._id)
                 : false;
 
-              Requests.addToBlockedUsers(blocker, blockee._id.toString())
+              // put void requests in Promise.all. To remove blockee from invitees, organizers, and RSVPs, create controller to get all events of which a given user is the creator (run this request before Promise.all); then, for each event in what that request returns, call handleRemoveInvitee, handleDeleteUserRSVP, handleRemoveOrganizer, as done in handleBlockUser in OtherUserProfile. Then, rename this function to handleBlockUser & implement. Check if handleBlockUserFail works right.
+              if (blocker._id) {
+                Promise.all([
+                  Requests.addToBlockedUsers(blocker, blockee._id.toString()),
+                  Requests.addToBlockedBy(blockee, blocker._id.toString()),
+                ]).then((resArray: Response[]) => {
+                  if (resArray.every((res) => res.ok) && currentUser && currentUser._id) {
+                    Requests.getUserByID(currentUser._id.toString()).then((res) => {
+                      if (res.ok) {
+                        setIsLoading(false);
+                        res.json().then((cu: TUser) => {
+                          if (areFriends) {
+                            handleUnfriending(blocker, blockee);
+                          }
+                          if (hasSentFriendRequest) {
+                            handleRemoveFriendRequest(blockee, blocker);
+                          }
+                          if (hasReceivedFriendRequest) {
+                            handleRemoveFriendRequest(blocker, blockee);
+                          }
+                          setCurrentUser(cu);
+                          toast(`You have blocked ${blockee.username}.`, {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid red",
+                            },
+                          });
+                        });
+                      } else {
+                        handleBlockUserFail(blockee);
+                      }
+                    });
+                  } else {
+                    handleBlockUserFail(blockee);
+                  }
+                });
+              }
+
+              /* Requests.addToBlockedUsers(blocker, blockee._id.toString())
                 .then((res) => {
                   if (res.ok) {
                     if (currentUser && currentUser._id) {
+                      // Call getUserByID to update cu in res.ok of Promise.all
                       Requests.getUserByID(currentUser._id.toString())
                         .then((res) => {
                           if (res.ok) {
@@ -1994,10 +2036,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     handleBlockUserFail(blockee);
                   }
                 })
-                .catch((error) => console.log(error))
-                .finally(() => setIsLoading(false));
+                .catch((error) => console.log(error)) */
             });
           } else {
+            setIsLoading(false);
             setBlockedUsers(blockedUsers.concat(Methods.getTBarebonesUser(blockee)));
             toast.error("Could not block user. Please try again.", {
               style: {
