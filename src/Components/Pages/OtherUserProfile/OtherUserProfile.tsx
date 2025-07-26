@@ -37,20 +37,18 @@ const OtherUserProfile = () => {
     handleRejectFriendRequest,
     handleAcceptFriendRequest,
     friendRequestsSent,
-    addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists,
+    handleBlockUserExceptChats,
     handleUnblockUser,
     blockedUsers,
     friendRequestsReceived,
     handleUnfriending,
   } = useUserContext();
   const {
-    fetchAllEventsQuery,
     handleRemoveInvitee,
     handleRemoveOrganizer,
     handleDeleteUserRSVP,
     setCurrentEvent,
   } = useEventContext();
-  const allEvents = fetchAllEventsQuery.data;
   const { getStartOrOpenChatWithUserHandler, fetchChatsQuery, handleDeleteChat } =
     useChatContext();
   const userChats = fetchChatsQuery.data;
@@ -63,8 +61,7 @@ const OtherUserProfile = () => {
   const [pageOwner, setPageOwner] = useState<TOtherUser | null>(null);
   const [showFriends, setShowFriends] = useState<boolean>(false);
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
-  const [fetchCommonPalzIsLoading, setFetchCommonPalzIsLoading] =
-    useState<boolean>(false);
+  const [fetchCommonPalzIsLoading, setFetchCommonPalzIsLoading] = useState<boolean>(true);
   const [
     fetchCurrentOtherUserFriendsIsLoading,
     setFetchCurrentOtherUserFriendsIsLoading,
@@ -94,13 +91,46 @@ const OtherUserProfile = () => {
   >(null);
   const [palzInCommon, setPalzInCommon] = useState<TBarebonesUser[] | null>(null);
   const [palzInCommonText, setPalzInCommonText] = useState<string | undefined>(undefined);
-  const [usersEvents, setUsersEvents] = useState<TDisplayedEvent[] | null>(null);
+
+  const [upcomingEventsUserRSVPdTo, setUpcomingEventsUserRSVPdTo] = useState<
+    TEvent[] | null
+  >(null);
+
+  const [ongoingEvents, setOngoingEvents] = useState<TEvent[] | null>(null);
+
+  const [upcomingEventsUserOrganizes, setUpcomingEventsUserOrganizes] = useState<
+    TEvent[] | null
+  >(null);
+
+  const [recentEventsUserRSVPdTo, setRecentEventsUserRSVPdTo] = useState<TEvent[] | null>(
+    null
+  );
+
+  const [upcomingEventsUserInvitedTo, setUpcomingEventsUserInvitedTo] = useState<
+    TEvent[] | null
+  >(null);
+
+  const [recentEventsUserOrganized, setRecentEventsUserOrganized] = useState<
+    TEvent[] | null
+  >(null);
+
+  const [interestedEventsAreVisible, setInterestedEventsAreVisible] =
+    useState<boolean>(false);
+
+  const [organizedEventsAreVisible, setOrganizedEventsAreVisible] =
+    useState<boolean>(false);
+
+  const [invitedEventsAreVisible, setInvitedEventsAreVisible] = useState<boolean>(false);
 
   useEffect(() => {
     setPalzInCommonText(undefined);
     setPalzInCommon(null);
     setCurrentOtherUserFriends(null);
-    setUsersEvents(null);
+    setUpcomingEventsUserRSVPdTo(null);
+    setOngoingEvents(null);
+    setUpcomingEventsUserOrganizes(null);
+    setRecentEventsUserRSVPdTo(null);
+    setRecentEventsUserOrganized(null);
     setCurrentUserMayMessage(false);
     setShowFacebook(false);
     setShowInstagram(false);
@@ -156,7 +186,6 @@ const OtherUserProfile = () => {
     }
 
     if (username && currentUser) {
-      setFetchIsLoading(true);
       Requests.getUserByUsername(username)
         .then((res) => {
           if (res.ok) {
@@ -307,140 +336,175 @@ const OtherUserProfile = () => {
                   })
                   .finally(() => setFetchCurrentOtherUserFriendsIsLoading(false));
 
-                const upcomingEventsUserRSVPdTo: TEvent[] | undefined = allEvents?.filter(
-                  (event) =>
-                    event.eventStartDateTimeInMS > now &&
-                    event.eventEndDateTimeInMS > now &&
-                    currentOtherUser &&
-                    currentOtherUser._id &&
-                    event.interestedUsers.includes(currentOtherUser._id.toString())
-                );
+                Requests.getUpcomingEventsUserRSVPdTo(username)
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((events: TEvent[]) => {
+                        setUpcomingEventsUserRSVPdTo(events);
+                        if (
+                          pageOwner &&
+                          ongoingEvents &&
+                          upcomingEventsUserOrganizes &&
+                          recentEventsUserRSVPdTo &&
+                          recentEventsUserOrganized &&
+                          upcomingEventsUserInvitedTo
+                        ) {
+                          setFetchIsLoading(false);
+                        }
+                      });
+                    } else {
+                      setFetchIsLoading(false);
+                      setIsFetchError(true);
+                    }
+                  })
+                  .catch((error) => console.log(error));
 
-                const ongoingEvents: TEvent[] | undefined = allEvents?.filter((event) => {
-                  event.eventStartDateTimeInMS < now &&
-                    event.eventEndDateTimeInMS > now &&
-                    currentOtherUser &&
-                    currentOtherUser._id &&
-                    (event.organizers.includes(currentOtherUser._id.toString()) ||
-                      event.interestedUsers.includes(currentOtherUser._id.toString()));
-                });
+                Requests.getUpcomingEventsUserInvitedTo(username)
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((events: TEvent[]) => {
+                        setUpcomingEventsUserInvitedTo(events);
+                        if (
+                          pageOwner &&
+                          ongoingEvents &&
+                          upcomingEventsUserOrganizes &&
+                          recentEventsUserRSVPdTo &&
+                          recentEventsUserOrganized &&
+                          upcomingEventsUserRSVPdTo
+                        ) {
+                          setFetchIsLoading(false);
+                        }
+                      });
+                    } else {
+                      setFetchIsLoading(false);
+                      setIsFetchError(true);
+                    }
+                  })
+                  .catch((error) => console.log(error));
 
-                const upcomingEventsUserOrganizes: TEvent[] | undefined =
-                  allEvents?.filter(
-                    (event) =>
-                      event.eventStartDateTimeInMS > now &&
-                      event.eventEndDateTimeInMS > now &&
-                      currentOtherUser &&
-                      currentOtherUser._id &&
-                      event.organizers.includes(currentOtherUser._id.toString())
-                  );
+                Requests.getOngoingEvents(username)
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((events: TEvent[]) => {
+                        if (
+                          pageOwner &&
+                          upcomingEventsUserRSVPdTo &&
+                          upcomingEventsUserOrganizes &&
+                          recentEventsUserRSVPdTo &&
+                          recentEventsUserOrganized &&
+                          upcomingEventsUserInvitedTo
+                        ) {
+                          setFetchIsLoading(false);
+                        }
+                        setOngoingEvents(events);
+                      });
+                    } else {
+                      setFetchIsLoading(false);
+                      setIsFetchError(true);
+                    }
+                  })
+                  .catch((error) => console.log(error));
 
-                const upcomingEventsUserInvitedTo: TEvent[] | undefined =
-                  allEvents?.filter(
-                    (event) =>
-                      event.eventStartDateTimeInMS > now &&
-                      event.eventEndDateTimeInMS > now &&
-                      currentOtherUser &&
-                      currentOtherUser._id &&
-                      event.invitees.includes(currentOtherUser._id.toString())
-                  );
+                Requests.getUpcomingEventsUserOrganizes(username)
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((events: TEvent[]) => {
+                        setUpcomingEventsUserOrganizes(events);
 
-                const pastEventsUserRSVPd: TEvent[] | undefined = allEvents?.filter(
-                  (event) =>
-                    currentOtherUser &&
-                    currentOtherUser._id &&
-                    event.interestedUsers.includes(currentOtherUser._id.toString()) &&
-                    event.eventEndDateTimeInMS < now
-                );
+                        if (
+                          pageOwner &&
+                          upcomingEventsUserRSVPdTo &&
+                          ongoingEvents &&
+                          recentEventsUserOrganized &&
+                          recentEventsUserRSVPdTo &&
+                          upcomingEventsUserInvitedTo
+                        ) {
+                          setFetchIsLoading(false);
+                        }
+                      });
+                    } else {
+                      setFetchIsLoading(false);
+                      setIsFetchError(true);
+                    }
+                  })
+                  .catch((error) => console.log(error));
 
-                const pastEventsUserOrganized: TEvent[] | undefined = allEvents?.filter(
-                  (event) =>
-                    currentOtherUser &&
-                    currentOtherUser._id &&
-                    event.creator !== currentUser?._id &&
-                    event.organizers.includes(currentOtherUser._id.toString()) &&
-                    event.eventEndDateTimeInMS < now
-                );
+                Requests.getRecentEventsUserRSVPdTo(username)
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((events: TEvent[]) => {
+                        if (
+                          pageOwner &&
+                          upcomingEventsUserRSVPdTo &&
+                          ongoingEvents &&
+                          upcomingEventsUserOrganizes &&
+                          recentEventsUserOrganized &&
+                          upcomingEventsUserInvitedTo
+                        ) {
+                          setFetchIsLoading(false);
+                        }
+                        setRecentEventsUserRSVPdTo(events);
+                      });
+                    } else {
+                      setFetchIsLoading(false);
+                      setIsFetchError(true);
+                    }
+                  })
+                  .catch((error) => console.log(error));
 
-                // Conditionally add upcomingEventsUserRSVPdTo, etc., depending on currentOtherUser's event-privacy settings:
-                const interestedEventsAreVisible =
+                Requests.getRecentEventsUserOrganized(username)
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((events: TEvent[]) => {
+                        if (
+                          pageOwner &&
+                          upcomingEventsUserRSVPdTo &&
+                          ongoingEvents &&
+                          upcomingEventsUserOrganizes &&
+                          recentEventsUserRSVPdTo &&
+                          upcomingEventsUserInvitedTo
+                        ) {
+                          setFetchIsLoading(false);
+                        }
+                        setRecentEventsUserOrganized(events);
+                      });
+                    } else {
+                      setFetchIsLoading(false);
+                      setIsFetchError(true);
+                    }
+                  })
+                  .catch((error) => console.log(error));
+
+                if (
                   currentOtherUser.whoCanSeeEventsInterestedIn === "anyone" ||
                   (currentOtherUser.whoCanSeeEventsInterestedIn === "friends" &&
                     currentUserIsFriend) ||
                   (currentOtherUser.whoCanSeeEventsInterestedIn ===
                     "friends of friends" &&
-                    currentUserIsFriendOfFriend);
+                    currentUserIsFriendOfFriend)
+                ) {
+                  setInterestedEventsAreVisible(true);
+                }
 
-                const organizedEventsAreVisible =
+                if (
                   currentOtherUser.whoCanSeeEventsOrganized === "anyone" ||
                   (currentOtherUser.whoCanSeeEventsOrganized === "friends" &&
                     currentUserIsFriend) ||
                   (currentOtherUser.whoCanSeeEventsOrganized === "friends of friends" &&
-                    currentUserIsFriendOfFriend);
+                    currentUserIsFriendOfFriend)
+                ) {
+                  setOrganizedEventsAreVisible(true);
+                }
 
-                const invitedEventsAreVisible =
+                if (
                   currentOtherUser.whoCanSeeEventsInvitedTo === "anyone" ||
                   (currentOtherUser.whoCanSeeEventsInvitedTo === "friends" &&
                     currentUserIsFriend) ||
                   (currentOtherUser.whoCanSeeEventsInvitedTo === "friends of friends" &&
-                    currentUserIsFriendOfFriend);
-
-                setUsersEvents([
-                  ...(interestedEventsAreVisible
-                    ? [
-                        {
-                          header: "Upcoming Events I've RSVP'd To",
-                          array: upcomingEventsUserRSVPdTo,
-                          type: "interested-event",
-                        },
-                      ]
-                    : []),
-                  ...(organizedEventsAreVisible
-                    ? [
-                        {
-                          header: "My Ongoing Events",
-                          array: ongoingEvents,
-                          type: "organized-event",
-                        },
-                      ]
-                    : []),
-                  ...(organizedEventsAreVisible
-                    ? [
-                        {
-                          header: "My Upcoming Events",
-                          array: upcomingEventsUserOrganizes,
-                          type: "organized-event",
-                        },
-                      ]
-                    : []),
-                  ...(invitedEventsAreVisible
-                    ? [
-                        {
-                          header: "Upcoming Events I've Been Invited To",
-                          array: upcomingEventsUserInvitedTo,
-                          type: "invited-event",
-                        },
-                      ]
-                    : []),
-                  ...(interestedEventsAreVisible
-                    ? [
-                        {
-                          header: "Past Events I RSVP'd To",
-                          array: pastEventsUserRSVPd,
-                          type: "interested-event",
-                        },
-                      ]
-                    : []),
-                  ...(organizedEventsAreVisible
-                    ? [
-                        {
-                          header: "Past Events I Organized",
-                          array: pastEventsUserOrganized,
-                          type: "organized-event",
-                        },
-                      ]
-                    : []),
-                ]);
+                    currentUserIsFriendOfFriend)
+                ) {
+                  setInvitedEventsAreVisible(true);
+                }
 
                 // Set visibility of social links:
                 if (
@@ -477,8 +541,7 @@ const OtherUserProfile = () => {
             setIsFetchError(true);
           }
         })
-        .catch((error) => console.log(error))
-        .finally(() => setFetchIsLoading(false));
+        .catch((error) => console.log(error));
     }
   }, [username, currentUser, navigation, userCreatedAccount]);
 
@@ -588,7 +651,7 @@ const OtherUserProfile = () => {
 
   const handleBlockUser = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>): void => {
     // Delete chat w/ currentOtherUser, if it exists:
-    // Must be done here, since addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have access to chat info
+    // Must be done here, since handleBlockUserExceptChats, defined in userContext, doesn't have access to chat info
     let chatToDelete: TChat | undefined = userChats
       ? userChats.filter(
           (chat) =>
@@ -607,8 +670,7 @@ const OtherUserProfile = () => {
     }
 
     // Remove from invitee lists, currentOtherUser from co-organizer lists (if currentUser is event creator), currentUser from co-organizer lists (if currentOtherUser is event creator)
-    // Must be done here, as addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists, defined in userContext, doesn't have access to events info
-    const allEvents = fetchAllEventsQuery.data;
+    // Must be done here, as handleBlockUserExceptChats, defined in userContext, doesn't have access to events info
     if (allEvents && currentUser && currentUser._id && pageOwner && pageOwner._id) {
       for (const event of allEvents) {
         // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
@@ -638,10 +700,7 @@ const OtherUserProfile = () => {
 
     // Add to blockedUsers (representative value in state), remove from friend requests, friends lists:
     if (currentUser && pageOwner && blockedUsers) {
-      addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists(
-        currentUser,
-        pageOwner
-      );
+      handleBlockUserExceptChats(currentUser, pageOwner);
     }
   };
 
@@ -688,20 +747,6 @@ const OtherUserProfile = () => {
   };
   const displayedButtons = getDisplayedButtons();
 
-  const now = Date.now();
-
-  type TDisplayedEvent = {
-    header: string;
-    array: TEvent[] | undefined;
-    type: string;
-  };
-
-  const userEventsExist: boolean = usersEvents
-    ? usersEvents
-        .map((event) => event.array)
-        .some((eventArray) => eventArray && eventArray.length > 0)
-    : false;
-
   const getNumberOfGroupChatsInCommon = (): number => {
     const currentUserChats = fetchChatsQuery.data;
 
@@ -717,33 +762,17 @@ const OtherUserProfile = () => {
   };
   const numberOfGroupChatsInCommon = getNumberOfGroupChatsInCommon();
 
-  const isNoFetchError: boolean = !fetchAllEventsQuery.isError;
-
-  const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllEventsQuery.isError) {
-      return fetchAllEventsQuery;
-    }
-  };
-  const queryWithError = getQueryForQueryLoadingOrErrorComponent();
-
-  const aQueryIsLoading: boolean = fetchAllEventsQuery.isLoading;
-
   return (
     <>
-      {aQueryIsLoading && (
+      {fetchIsLoading && (
         <header style={{ marginTop: "3rem" }} className="query-status-text">
           Loading...
         </header>
       )}
-      {queryWithError && (
-        <div className="query-error-container">
-          <header className="query-status-text">Error fetching data. </header>
-          <div className="theme-element-container">
-            <button onClick={() => window.location.reload()}>Retry</button>
-          </div>
-        </div>
+      {isFetchError && !fetchIsLoading && (
+        <p>Could not fetch user info; try reloading the page.</p>
       )}
-      {pageOwner && isNoFetchError && (
+      {pageOwner && isFetchError && (
         <>
           {showFriendRequestResponseOptions && (
             <TwoOptionsInterface
@@ -759,7 +788,7 @@ const OtherUserProfile = () => {
               closeHandler={setShowFriendRequestResponseOptions}
             />
           )}
-          {isNoFetchError && pageOwner && (
+          {!isFetchError && pageOwner && (
             <>
               <div
                 className={styles.kopfzeile}
@@ -966,21 +995,60 @@ const OtherUserProfile = () => {
                     randomColor={randomColor}
                   />
                 )}
-                {!aQueryIsLoading &&
-                  isNoFetchError &&
-                  userEventsExist &&
-                  usersEvents &&
-                  usersEvents.map(
-                    (event) =>
-                      event &&
-                      event.array &&
-                      event.array.length > 0 && (
-                        <UserEventsSection
-                          key={event.header}
-                          eventsArray={event.array}
-                          header={event.header}
-                        />
-                      )
+                {ongoingEvents &&
+                  ongoingEvents.length > 0 &&
+                  interestedEventsAreVisible &&
+                  organizedEventsAreVisible && (
+                    <UserEventsSection
+                      key="ongoingEvents"
+                      eventsArray={ongoingEvents}
+                      header="Ongoing Events"
+                    />
+                  )}
+                {upcomingEventsUserOrganizes &&
+                  upcomingEventsUserOrganizes.length > 0 &&
+                  organizedEventsAreVisible && (
+                    <UserEventsSection
+                      key="upcomingEventsUserOrganizes"
+                      eventsArray={upcomingEventsUserOrganizes}
+                      header="Upcoming Events I'm Organizing"
+                    />
+                  )}
+                {upcomingEventsUserRSVPdTo &&
+                  upcomingEventsUserRSVPdTo.length > 0 &&
+                  interestedEventsAreVisible && (
+                    <UserEventsSection
+                      key="upcomingEventsUserRSVPdTo"
+                      eventsArray={upcomingEventsUserRSVPdTo}
+                      header="Upcoming Events I've RSVP'd To"
+                    />
+                  )}
+                {upcomingEventsUserInvitedTo &&
+                  upcomingEventsUserInvitedTo.length > 0 &&
+                  invitedEventsAreVisible && (
+                    <UserEventsSection
+                      key="upcomingEventsUserRSVPdTo"
+                      eventsArray={upcomingEventsUserInvitedTo}
+                      header="Upcoming Events I've been invited To"
+                    />
+                  )}
+                {recentEventsUserOrganized &&
+                  recentEventsUserOrganized.length > 0 &&
+                  organizedEventsAreVisible && (
+                    <UserEventsSection
+                      key="recentEventsUserOrganized"
+                      eventsArray={recentEventsUserOrganized}
+                      header="Recent Events I Organized"
+                    />
+                  )}
+                {recentEventsUserRSVPdTo &&
+                  recentEventsUserRSVPdTo.length > 0 &&
+                  interestedEventsAreVisible && (
+                    <UserEventsSection
+                      key="recentEventsUserRSVPdTo"
+                      eventsArray={recentEventsUserRSVPdTo}
+                      header="Recent Events I RSVP'd To"
+                    />
                   )}
               </section>
             </>
