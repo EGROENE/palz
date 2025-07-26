@@ -305,6 +305,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  blockUserInProgress: boolean;
+  setBlockUserInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   handleBlockUserFail: (
     blockee: TUser | TOtherUser | TBarebonesUser,
     setIsLoading: (value: React.SetStateAction<boolean>) => void

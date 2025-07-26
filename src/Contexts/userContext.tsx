@@ -46,6 +46,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
 
+  const [blockUserInProgress, setBlockUserInProgress] = useState<boolean>(false);
+
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
 
   const [updateProfileImageIsLoading, setUpdateProfileImageIsLoading] =
@@ -2669,6 +2671,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setCurrentUser,
     userCreatedAccount,
     setUserCreatedAccount,
+    blockUserInProgress,
+    setBlockUserInProgress,
   };
 
   return (
