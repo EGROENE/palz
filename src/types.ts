@@ -258,7 +258,7 @@ export type TUserValuesToUpdate = {
 
 export type TEventValuesToUpdate = {
   relatedInterests?: string[] | undefined;
-  blockedUsersEvent?: TBarebonesUser[] | undefined;
+  blockedUsersEvent?: string[] | undefined;
   images?: string[] | undefined;
   address?: string | undefined;
   maxParticipants?: number | null;
@@ -268,8 +268,8 @@ export type TEventValuesToUpdate = {
   eventEndDateMidnightUTCInMS?: number | undefined;
   eventEndTimeAfterMidnightUTCInMS?: number | undefined;
   eventEndDateTimeInMS?: number | undefined;
-  organizers?: TBarebonesUser[] | undefined;
-  invitees?: TBarebonesUser[] | undefined;
+  organizers?: string[] | undefined;
+  invitees?: string[] | undefined;
   description?: string | undefined;
   additionalInfo?: string | undefined;
   city?: string | undefined;
