@@ -249,7 +249,7 @@ const FriendRequests = () => {
                         user={Methods.getTBarebonesUser(user)}
                         buttonOneText="See Profile"
                         buttonOneIsDisabled={isLoading}
-                        buttonOneLink={`/users/${user?.username}`}
+                        buttonOneLink={`/otherUsers/${user?.username}`}
                         renderButtonTwo={true}
                         buttonTwoText="Retract"
                         buttonTwoHandler={handleRemoveFriendRequest}

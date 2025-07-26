@@ -531,7 +531,7 @@ const ChatModal = () => {
                       .map((member) => (
                         <ListedUser
                           key={member._id?.toString()}
-                          objectLink={`/users/${member?.username}`}
+                          objectLink={`/otherUsers/${member?.username}`}
                           user={Methods.getTBarebonesUser(member)}
                           title={
                             currentChat &&

@@ -404,7 +404,7 @@ const EventPage = () => {
                   {organizersWhoseProfileIsVisible.map((organizer) => (
                     <Link
                       key={organizer._id?.toString()}
-                      to={`/users/${organizer.username}`}
+                      to={`/otherUsers/${organizer.username}`}
                     >
                       <Tab
                         info={organizer}

@@ -172,7 +172,7 @@ const UserListModal = ({
 
   const getButtonOneLink = (user: TBarebonesUser): string | null => {
     if (listType === "other-user-friends" || listType === "mutual-friends") {
-      return `/users/${user.username}`;
+      return `/otherUsers/${user.username}`;
     }
     return null;
   };
