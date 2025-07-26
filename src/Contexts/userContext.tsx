@@ -602,26 +602,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, receiver);
   };
 
-  const handleBlockUserFail = (
-    blockee: TUser | TOtherUser | TBarebonesUser,
-    setIsLoading: (value: React.SetStateAction<boolean>) => void
-  ): void => {
-    setIsLoading(false);
-    if (blockedUsers) {
-      setBlockedUsers(blockedUsers.filter((u) => u._id !== blockee._id?.toString()));
-    }
-    toast.error(
-      `Unable to block ${blockee ? blockee.username : "user"}. Please try again.`,
-      {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      }
-    );
-  };
-
   // Called when user switches b/t login & signup forms & when user logs out
   // Only necessary to reset errors for fields on login and/or signup form
   const resetLoginOrSignupFormFieldsAndErrors = (): void => {
@@ -1917,89 +1897,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleMutuallyDeleteFromFriendsAndFRAndAddToBlockedUsersAndBlockedBy = (
-    blocker: TUser,
-    blockee: TOtherUser
-  ): void => {
-    if (blockedUsers && blockee._id) {
-      setBlockedUsers(blockedUsers.filter((u) => u._id !== blockee._id));
-
-      setIsLoading(true);
-
-      Requests.getUserByID(blockee._id.toString())
-        .then((res) => {
-          if (res.ok) {
-            res.json().then((blockee) => {
-              const areFriends: boolean =
-                blocker._id &&
-                blockee._id &&
-                (blocker.friends.includes(blockee._id) ||
-                  blockee.friends.includes(blocker._id))
-                  ? true
-                  : false;
-              const hasSentFriendRequest: boolean = blockee._id
-                ? blocker.friendRequestsSent.includes(blockee._id)
-                : false;
-              const hasReceivedFriendRequest: boolean = blockee._id
-                ? blocker.friendRequestsReceived.includes(blockee._id)
-                : false;
-
-              // put void requests in Promise.all. To remove blockee from invitees, organizers, and RSVPs, create controller to get all events of which a given user is the creator (run this request before Promise.all); then, for each event in what that request returns, call handleRemoveInvitee, handleDeleteUserRSVP, handleRemoveOrganizer, as done in handleBlockUser in OtherUserProfile. Then, rename this function to handleBlockUser & implement. Check if handleBlockUserFail works right.
-              if (blocker._id) {
-                Promise.all([
-                  Requests.addToBlockedUsers(blocker, blockee._id.toString()),
-                  Requests.addToBlockedBy(blockee, blocker._id.toString()),
-                ]).then((resArray: Response[]) => {
-                  if (resArray.every((res) => res.ok) && currentUser && currentUser._id) {
-                    Requests.getUserByID(currentUser._id.toString()).then((res) => {
-                      if (res.ok) {
-                        setIsLoading(false);
-                        res.json().then((cu: TUser) => {
-                          if (areFriends) {
-                            handleUnfriending(blocker, blockee);
-                          }
-                          if (hasSentFriendRequest) {
-                            handleRemoveFriendRequest(blockee, blocker);
-                          }
-                          if (hasReceivedFriendRequest) {
-                            handleRemoveFriendRequest(blocker, blockee);
-                          }
-                          setCurrentUser(cu);
-                          toast(`You have blocked ${blockee.username}.`, {
-                            style: {
-                              background:
-                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                              color: theme === "dark" ? "black" : "white",
-                              border: "2px solid red",
-                            },
-                          });
-                        });
-                      } else {
-                        handleBlockUserFail(blockee, setIsLoading);
-                      }
-                    });
-                  } else {
-                    handleBlockUserFail(blockee, setIsLoading);
-                  }
-                });
-              }
-            });
-          } else {
-            setIsLoading(false);
-            setBlockedUsers(blockedUsers.concat(Methods.getTBarebonesUser(blockee)));
-            toast.error("Could not block user. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
-          }
-        })
-        .catch((error) => console.log(error));
-    }
-  };
-
   const handleUnblockUserFail = (blockee: TBarebonesUser): void => {
     setIsLoading(false);
     if (blockedUsers && setBlockedUsers) {
@@ -2510,7 +2407,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
-    handleBlockUserFail,
     fetchFriendRequestsIsLoading,
     setFetchFriendRequestsIsLoading,
     fetchFriendRequestsSentIsError,
@@ -2556,7 +2452,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers,
     setBlockedUsers,
     handleUnblockUser,
-    handleMutuallyDeleteFromFriendsAndFRAndAddToBlockedUsersAndBlockedBy,
     getOtherUserFriends,
     whoCanMessage,
     setWhoCanMessage,

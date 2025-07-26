@@ -307,10 +307,6 @@ export type TMainContext = {
 export type TUserContext = {
   blockUserInProgress: boolean;
   setBlockUserInProgress: React.Dispatch<React.SetStateAction<boolean>>;
-  handleBlockUserFail: (
-    blockee: TUser | TOtherUser | TBarebonesUser,
-    setIsLoading: (value: React.SetStateAction<boolean>) => void
-  ) => void;
   fetchFriendRequestsIsLoading: boolean;
   setFetchFriendRequestsIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   fetchFriendRequestsSentIsError: boolean;
@@ -327,10 +323,6 @@ export type TUserContext = {
   >;
   blockedUsers: TBarebonesUser[] | null;
   setBlockedUsers: React.Dispatch<React.SetStateAction<TBarebonesUser[] | null>>;
-  handleMutuallyDeleteFromFriendsAndFRAndAddToBlockedUsersAndBlockedBy: (
-    blocker: TUser,
-    blockee: TOtherUser
-  ) => void;
   fetchBlockedUsersIsLoading: boolean;
   setFetchBlockedUsersIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   fetchBlockedUsersIsError: boolean;
