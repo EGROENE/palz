@@ -1912,10 +1912,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists = (
-    blocker: TUser,
-    blockee: TOtherUser
-  ): void => {
+  const handleBlockUserExceptChats = (blocker: TUser, blockee: TOtherUser): void => {
     if (blockedUsers && blockee._id) {
       setBlockedUsers(blockedUsers.filter((u) => u._id !== blockee._id));
 
@@ -2609,7 +2606,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers,
     setBlockedUsers,
     handleUnblockUser,
-    addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists,
+    handleBlockUserExceptChats,
     getOtherUserFriends,
     whoCanMessage,
     setWhoCanMessage,
