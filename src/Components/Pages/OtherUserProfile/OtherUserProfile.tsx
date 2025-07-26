@@ -13,6 +13,7 @@ import {
   TChat,
   TBarebonesUser,
   TOtherUser,
+  TEventValuesToUpdate,
 } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { countries } from "../../../constants";
@@ -22,10 +23,11 @@ import Tab from "../../Elements/Tab/Tab";
 import UserListModal from "../../Elements/UserListModal/UserListModal";
 import UserEventsSection from "../../Elements/UserEventsSection/UserEventsSection";
 import { useChatContext } from "../../../Hooks/useChatContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
-  const { theme, isLoading, error } = useMainContext();
+  const { theme, isLoading, error, setError } = useMainContext();
   const {
     logout,
     currentUser,
@@ -36,23 +38,20 @@ const OtherUserProfile = () => {
     setShowFriendRequestResponseOptions,
     handleRejectFriendRequest,
     handleAcceptFriendRequest,
+    setCurrentUser,
     friendRequestsSent,
-    handleBlockUserExceptChats,
+    handleBlockUserFail,
     handleUnblockUser,
     blockedUsers,
     friendRequestsReceived,
     handleUnfriending,
+    setBlockedUsers,
   } = useUserContext();
-  const {
-    handleRemoveInvitee,
-    handleRemoveOrganizer,
-    handleDeleteUserRSVP,
-    setCurrentEvent,
-  } = useEventContext();
-  const { getStartOrOpenChatWithUserHandler, fetchChatsQuery, handleDeleteChat } =
-    useChatContext();
+  const { setCurrentEvent } = useEventContext();
+  const { getStartOrOpenChatWithUserHandler, fetchChatsQuery } = useChatContext();
   const userChats = fetchChatsQuery.data;
   const { username } = useParams();
+  const queryClient = useQueryClient();
 
   if (error) {
     throw new Error(error);
@@ -650,57 +649,236 @@ const OtherUserProfile = () => {
   };
 
   const handleBlockUser = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>): void => {
-    // Delete chat w/ currentOtherUser, if it exists:
-    // Must be done here, since handleBlockUserExceptChats, defined in userContext, doesn't have access to chat info
-    let chatToDelete: TChat | undefined = userChats
-      ? userChats.filter(
-          (chat) =>
-            currentUser &&
-            currentUser._id &&
-            pageOwner &&
-            pageOwner._id &&
-            chat.members.length === 2 &&
-            chat.members.includes(currentUser._id.toString()) &&
-            chat.members.includes(pageOwner._id.toString())
-        )[0]
-      : undefined;
+    e.preventDefault();
 
-    if (chatToDelete && chatToDelete._id) {
-      handleDeleteChat(chatToDelete._id.toString());
+    setFetchIsLoading(true);
+
+    // Optimistically set blockedUsers:
+    if (blockedUsers) {
+      setBlockedUsers(blockedUsers.concat(Methods.getTBarebonesUser(pageOwner)));
     }
 
-    // Remove from invitee lists, currentOtherUser from co-organizer lists (if currentUser is event creator), currentUser from co-organizer lists (if currentOtherUser is event creator)
-    // Must be done here, as handleBlockUserExceptChats, defined in userContext, doesn't have access to events info
-    if (allEvents && currentUser && currentUser._id && pageOwner && pageOwner._id) {
-      for (const event of allEvents) {
-        // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
-        if (event.creator === currentUser._id) {
-          if (event.invitees.includes(pageOwner._id.toString())) {
-            handleRemoveInvitee(
-              event,
-              Methods.getTBarebonesUser(pageOwner),
-              undefined,
-              undefined,
-              e
-            );
-          }
+    let removedFromFriendsAndFriendRequests: boolean | null = null;
+    let deletedChat: boolean | null = null;
+    let removedFromEventsCreatedByCurrentUser: boolean | null = null;
 
-          // Remove blockee's RSVP:
-          if (event.interestedUsers.includes(pageOwner._id.toString())) {
-            handleDeleteUserRSVP(event, Methods.getTBarebonesUser(pageOwner), e);
-          }
+    if (
+      currentUser &&
+      pageOwner &&
+      pageOwner._id &&
+      blockedUsers &&
+      currentUser.username
+    ) {
+      // Add to blockedUsers & blockedBy; remove from friend requests & friends lists:
+      Requests.getUserByID(pageOwner._id.toString())
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((pageOwner) => {
+              const areFriends: boolean =
+                currentUser._id &&
+                pageOwner._id &&
+                (currentUser.friends.includes(pageOwner._id) ||
+                  pageOwner.friends.includes(currentUser._id))
+                  ? true
+                  : false;
+              const hasSentFriendRequest: boolean = pageOwner._id
+                ? currentUser.friendRequestsSent.includes(pageOwner._id)
+                : false;
+              const hasReceivedFriendRequest: boolean = pageOwner._id
+                ? currentUser.friendRequestsReceived.includes(pageOwner._id)
+                : false;
 
-          // Remove blockee as organizer:
-          if (event.organizers.includes(pageOwner._id.toString())) {
-            handleRemoveOrganizer(e, event, pageOwner);
+              if (currentUser._id && pageOwner && pageOwner._id) {
+                Promise.all([
+                  Requests.addToBlockedUsers(currentUser, pageOwner._id.toString()),
+                  Requests.addToBlockedBy(pageOwner, currentUser._id.toString()),
+                ]).then((resArray: Response[]) => {
+                  if (resArray.every((res) => res.ok) && currentUser && currentUser._id) {
+                    Requests.getUserByID(currentUser._id.toString()).then((res) => {
+                      if (res.ok) {
+                        res.json().then((cu: TUser) => {
+                          if (areFriends) {
+                            handleUnfriending(currentUser, pageOwner);
+                          }
+
+                          if (hasSentFriendRequest) {
+                            handleRemoveFriendRequest(pageOwner, currentUser);
+                          }
+
+                          if (hasReceivedFriendRequest) {
+                            handleRemoveFriendRequest(currentUser, pageOwner);
+                          }
+
+                          removedFromFriendsAndFriendRequests = true;
+
+                          setCurrentUser(cu);
+
+                          if (removedFromEventsCreatedByCurrentUser && deletedChat) {
+                            toast(`You have blocked ${pageOwner.username}.`, {
+                              style: {
+                                background:
+                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                                color: theme === "dark" ? "black" : "white",
+                                border: "2px solid red",
+                              },
+                            });
+                          }
+                        });
+                      } else {
+                        if (
+                          removedFromEventsCreatedByCurrentUser === false ||
+                          deletedChat === false
+                        ) {
+                          handleBlockUserFail(pageOwner, setFetchIsLoading);
+                        }
+                      }
+                    });
+                  } else {
+                    if (
+                      removedFromEventsCreatedByCurrentUser === false ||
+                      deletedChat === false
+                    ) {
+                      handleBlockUserFail(pageOwner, setFetchIsLoading);
+                    }
+                  }
+                });
+              }
+            });
+          } else {
+            if (
+              removedFromEventsCreatedByCurrentUser === false ||
+              deletedChat === false
+            ) {
+              setFetchIsLoading(false);
+              if (blockedUsers) {
+                setBlockedUsers(
+                  blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
+                );
+              }
+              toast.error("Could not block user. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            }
           }
-        }
+        })
+        .catch((error) => console.log(error));
+
+      // Chat between blocker & blockee be deleted here, since handleMutuallyDeleteFromFriendsAndFRAndAddToBlockedUsersAndBlockedBy, defined in userContext, doesn't have access to chat info:
+      let chatToDelete: TChat | undefined = userChats
+        ? userChats.filter(
+            (chat) =>
+              currentUser &&
+              currentUser._id &&
+              pageOwner &&
+              pageOwner._id &&
+              chat.members.length === 2 &&
+              chat.members.includes(currentUser._id.toString()) &&
+              chat.members.includes(pageOwner._id.toString())
+          )[0]
+        : undefined;
+
+      if (chatToDelete && chatToDelete._id) {
+        Requests.deleteChat(chatToDelete._id.toString()).then((res) => {
+          if (res.ok) {
+            deletedChat = true;
+            queryClient.invalidateQueries({ queryKey: ["userChats"] });
+            queryClient.refetchQueries({ queryKey: ["userChats"] });
+
+            if (
+              removedFromEventsCreatedByCurrentUser &&
+              removedFromFriendsAndFriendRequests
+            ) {
+              toast(`You have blocked ${pageOwner.username}.`, {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            }
+
+            if (
+              removedFromEventsCreatedByCurrentUser === false ||
+              removedFromFriendsAndFriendRequests === false
+            ) {
+              handleBlockUserFail(pageOwner, setFetchIsLoading);
+            }
+          } else {
+            if (
+              removedFromEventsCreatedByCurrentUser === false ||
+              removedFromFriendsAndFriendRequests === false
+            ) {
+              handleBlockUserFail(pageOwner, setFetchIsLoading);
+            }
+          }
+        });
+      } else {
+        deletedChat = true;
       }
-    }
 
-    // Add to blockedUsers (representative value in state), remove from friend requests, friends lists:
-    if (currentUser && pageOwner && blockedUsers) {
-      handleBlockUserExceptChats(currentUser, pageOwner);
+      // Delete pageOwner (blockee) from invitee, organizer, & RSVP lists of events currentUser created; add pageOwner to each event's blockedUsersEvent list:
+      Requests.getEventsUserCreated(currentUser.username)
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((eventsCreatedByCurrentUser: TEvent[]) => {
+              if (eventsCreatedByCurrentUser.length > 0) {
+                for (const event of eventsCreatedByCurrentUser) {
+                  // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
+                  if (event.creator === currentUser._id && pageOwner._id) {
+                    // Maybe call handler to update event, updating invitees, blockedUsersEvent, organizers, and interestedUsers. Call Requests.updateEvent w/ eventValuesToUpdate defined as these updated lists:
+                    const eventValuesToUpdate: TEventValuesToUpdate = {
+                      invitees: event.invitees.filter(
+                        (i) => i !== pageOwner._id?.toString()
+                      ),
+                      organizers: event.organizers.filter(
+                        (o) => o !== pageOwner._id?.toString()
+                      ),
+                      blockedUsersEvent: event.blockedUsersEvent.concat(
+                        pageOwner._id.toString()
+                      ),
+                    };
+
+                    Requests.updateEvent(event, eventValuesToUpdate)
+                      .then((res) => {
+                        if (!res.ok) {
+                          handleBlockUserFail(pageOwner, setFetchIsLoading);
+                        } else {
+                          if (removedFromFriendsAndFriendRequests && deletedChat) {
+                            toast(`You have blocked ${pageOwner.username}.`, {
+                              style: {
+                                background:
+                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                                color: theme === "dark" ? "black" : "white",
+                                border: "2px solid red",
+                              },
+                            });
+                          }
+                        }
+                      })
+                      .catch((error) => console.log(error));
+                  }
+                }
+              } else {
+                removedFromEventsCreatedByCurrentUser = true;
+              }
+            });
+          } else {
+            if (deletedChat === false || removedFromFriendsAndFriendRequests === false) {
+              handleBlockUserFail(pageOwner, setFetchIsLoading);
+            }
+          }
+        })
+        .catch((error) => console.log(error));
+    } else {
+      if (pageOwner) {
+        handleBlockUserFail(pageOwner, setFetchIsLoading);
+      } else {
+        setError("An error occurred; please reload the page.");
+      }
     }
   };
 
@@ -772,7 +950,7 @@ const OtherUserProfile = () => {
       {isFetchError && !fetchIsLoading && (
         <p>Could not fetch user info; try reloading the page.</p>
       )}
-      {pageOwner && isFetchError && (
+      {pageOwner && !isFetchError && !fetchIsLoading && (
         <>
           {showFriendRequestResponseOptions && (
             <TwoOptionsInterface
@@ -788,271 +966,267 @@ const OtherUserProfile = () => {
               closeHandler={setShowFriendRequestResponseOptions}
             />
           )}
-          {!isFetchError && pageOwner && (
-            <>
-              <div
-                className={styles.kopfzeile}
-                style={{ borderBottom: `3px solid ${randomColor}` }}
-              >
-                <div style={{ boxShadow: "unset" }} className="theme-element-container">
-                  <img
-                    className={styles.profileImage}
-                    src={
-                      pageOwner.profileImage !== "" &&
-                      typeof pageOwner.profileImage === "string"
-                        ? pageOwner.profileImage
-                        : defaultProfileImage
-                    }
-                  />
-                </div>
-                <div className={styles.mainInfoContainer}>
-                  <header style={{ color: `${randomColor}` }}>
-                    {pageOwner.firstName} {pageOwner.lastName}
-                  </header>
-                  <p style={{ color: randomColor }}>{pageOwner.username}</p>
-                  {currentUserCanSeeLocation &&
-                    pageOwner &&
-                    pageOwner.city !== "" &&
-                    pageOwner.stateProvince !== "" &&
-                    pageOwner.country !== "" && (
-                      <div className={styles.userLocationContainer}>
-                        <p
-                          style={{ color: randomColor }}
-                        >{`${pageOwner.city}, ${pageOwner.stateProvince}`}</p>
-                        <img
-                          src={`/flags/4x3/${matchingCountryObject?.abbreviation}.svg`}
-                        />
-                      </div>
-                    )}
-                  {palzInCommonText && palzInCommon && (
-                    <p
-                      style={{ color: randomColor }}
-                      className={
-                        palzInCommon.length > 2
-                          ? `${styles.mutualFriendsLink}`
-                          : undefined
-                      }
-                      onClick={
-                        palzInCommon.length > 0
-                          ? () => setShowMutualFriends(true)
-                          : undefined
-                      }
-                    >
-                      {palzInCommonText}
-                      {palzInCommon.length > 0 && (
-                        <i
-                          style={{
-                            transform: "rotate(22.5deg)",
-                            fontSize: "1.25rem",
-                            marginLeft: "0.25rem",
-                          }}
-                          className="fas fa-arrow-up"
-                        ></i>
-                      )}
-                    </p>
-                  )}
-
-                  {numberOfGroupChatsInCommon > 1 && (
-                    <p
-                      style={{ color: randomColor }}
-                    >{`You are in ${numberOfGroupChatsInCommon} group chats together`}</p>
-                  )}
-                  {numberOfGroupChatsInCommon === 1 && (
-                    <p
-                      style={{ color: randomColor }}
-                    >{`You are in ${numberOfGroupChatsInCommon} group chat together`}</p>
-                  )}
-                  {(showFacebook || showInstagram || showX) && (
-                    <div className={styles.socialLinksContainer}>
-                      {showFacebook && (
-                        <a
-                          title={`${pageOwner.username}'s Facebook Profile`}
-                          href={`${pageOwner.facebook}`}
-                          target="_blank"
-                        >
-                          <span className="fab fa-facebook"></span>
-                        </a>
-                      )}
-                      {showInstagram && pageOwner.instagram !== "" && (
-                        <a
-                          title={`${pageOwner.username}'s Instagram Profile`}
-                          href={`${pageOwner.instagram}`}
-                          target="_blank"
-                        >
-                          <span className="fab fa-instagram"></span>
-                        </a>
-                      )}
-                      {showX && pageOwner.x !== "" && (
-                        <a
-                          title={`${pageOwner.username}'s X Profile`}
-                          href={`${pageOwner.x}`}
-                          target="_blank"
-                        >
-                          <span className="fab fa-twitter-square"></span>
-                        </a>
-                      )}
+          <>
+            <div
+              className={styles.kopfzeile}
+              style={{ borderBottom: `3px solid ${randomColor}` }}
+            >
+              <div style={{ boxShadow: "unset" }} className="theme-element-container">
+                <img
+                  className={styles.profileImage}
+                  src={
+                    pageOwner.profileImage !== "" &&
+                    typeof pageOwner.profileImage === "string"
+                      ? pageOwner.profileImage
+                      : defaultProfileImage
+                  }
+                />
+              </div>
+              <div className={styles.mainInfoContainer}>
+                <header style={{ color: `${randomColor}` }}>
+                  {pageOwner.firstName} {pageOwner.lastName}
+                </header>
+                <p style={{ color: randomColor }}>{pageOwner.username}</p>
+                {currentUserCanSeeLocation &&
+                  pageOwner &&
+                  pageOwner.city !== "" &&
+                  pageOwner.stateProvince !== "" &&
+                  pageOwner.country !== "" && (
+                    <div className={styles.userLocationContainer}>
+                      <p
+                        style={{ color: randomColor }}
+                      >{`${pageOwner.city}, ${pageOwner.stateProvince}`}</p>
+                      <img
+                        src={`/flags/4x3/${matchingCountryObject?.abbreviation}.svg`}
+                      />
                     </div>
                   )}
-                  <div className={styles.actionButtonsContainer}>
-                    {displayedButtons.map(
-                      (button) =>
-                        button && (
-                          <div
-                            key={button.type}
-                            style={{ maxHeight: "3rem", display: "flex" }}
-                            className="theme-element-container"
-                          >
-                            <button disabled={isLoading} onClick={button.handler}>
-                              {button.buttonText}
-                            </button>
-                          </div>
-                        )
-                    )}
-                  </div>
-                </div>
-              </div>
-              <section className="furtherInfoSection">
-                {pageOwner.about !== "" && (
-                  <div className={styles.about}>
-                    <header>About me :</header>
-                    <p>{pageOwner.about}</p>
-                  </div>
-                )}
-                {pageOwner.interests.length > 0 ? (
-                  <div className={styles.infoPoint}>
-                    <header>I'm interested in : </header>
-                    <span>
-                      {pageOwner.interests.map((int) => (
-                        <Tab
-                          key={int}
-                          randomColor={randomColor}
-                          info={int}
-                          userMayNotDelete={true}
-                        />
-                      ))}
-                    </span>
-                  </div>
-                ) : (
-                  <p>No interests to show</p>
-                )}
-                {currentUserCanSeeFriendsList && (
-                  <div className={styles.infoPoint}>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <header
-                        tabIndex={0}
-                        aria-hidden="false"
-                        className={styles.clickableHeader}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            setShowFriends(true);
-                          }
-                        }}
-                        onClick={() => setShowFriends(true)}
-                      >
-                        See friends
-                      </header>
+                {palzInCommonText && palzInCommon && (
+                  <p
+                    style={{ color: randomColor }}
+                    className={
+                      palzInCommon.length > 2 ? `${styles.mutualFriendsLink}` : undefined
+                    }
+                    onClick={
+                      palzInCommon.length > 0
+                        ? () => setShowMutualFriends(true)
+                        : undefined
+                    }
+                  >
+                    {palzInCommonText}
+                    {palzInCommon.length > 0 && (
                       <i
                         style={{
                           transform: "rotate(22.5deg)",
                           fontSize: "1.25rem",
                           marginLeft: "0.25rem",
-                          color: randomColor,
                         }}
                         className="fas fa-arrow-up"
                       ></i>
-                    </div>
+                    )}
+                  </p>
+                )}
+
+                {numberOfGroupChatsInCommon > 1 && (
+                  <p
+                    style={{ color: randomColor }}
+                  >{`You are in ${numberOfGroupChatsInCommon} group chats together`}</p>
+                )}
+                {numberOfGroupChatsInCommon === 1 && (
+                  <p
+                    style={{ color: randomColor }}
+                  >{`You are in ${numberOfGroupChatsInCommon} group chat together`}</p>
+                )}
+                {(showFacebook || showInstagram || showX) && (
+                  <div className={styles.socialLinksContainer}>
+                    {showFacebook && (
+                      <a
+                        title={`${pageOwner.username}'s Facebook Profile`}
+                        href={`${pageOwner.facebook}`}
+                        target="_blank"
+                      >
+                        <span className="fab fa-facebook"></span>
+                      </a>
+                    )}
+                    {showInstagram && pageOwner.instagram !== "" && (
+                      <a
+                        title={`${pageOwner.username}'s Instagram Profile`}
+                        href={`${pageOwner.instagram}`}
+                        target="_blank"
+                      >
+                        <span className="fab fa-instagram"></span>
+                      </a>
+                    )}
+                    {showX && pageOwner.x !== "" && (
+                      <a
+                        title={`${pageOwner.username}'s X Profile`}
+                        href={`${pageOwner.x}`}
+                        target="_blank"
+                      >
+                        <span className="fab fa-twitter-square"></span>
+                      </a>
+                    )}
                   </div>
                 )}
-                {showMutualFriends && palzInCommon && (
-                  <UserListModal
-                    listType="mutual-friends"
-                    renderButtonOne={true}
-                    buttonOneText="View Profile"
-                    renderButtonTwo={false}
-                    closeModalMethod={setShowMutualFriends}
-                    header="Mutual Friends"
-                    users={palzInCommon}
-                    outsideFetchIsError={isFetchError}
-                    outsideFetchIsLoading={fetchIsLoading || fetchCommonPalzIsLoading}
-                    fetchUsers={false}
-                    randomColor={randomColor}
+                <div className={styles.actionButtonsContainer}>
+                  {displayedButtons.map(
+                    (button) =>
+                      button && (
+                        <div
+                          key={button.type}
+                          style={{ maxHeight: "3rem", display: "flex" }}
+                          className="theme-element-container"
+                        >
+                          <button disabled={isLoading} onClick={button.handler}>
+                            {button.buttonText}
+                          </button>
+                        </div>
+                      )
+                  )}
+                </div>
+              </div>
+            </div>
+            <section className="furtherInfoSection">
+              {pageOwner.about !== "" && (
+                <div className={styles.about}>
+                  <header>About me :</header>
+                  <p>{pageOwner.about}</p>
+                </div>
+              )}
+              {pageOwner.interests.length > 0 ? (
+                <div className={styles.infoPoint}>
+                  <header>I'm interested in : </header>
+                  <span>
+                    {pageOwner.interests.map((int) => (
+                      <Tab
+                        key={int}
+                        randomColor={randomColor}
+                        info={int}
+                        userMayNotDelete={true}
+                      />
+                    ))}
+                  </span>
+                </div>
+              ) : (
+                <p>No interests to show</p>
+              )}
+              {currentUserCanSeeFriendsList && (
+                <div className={styles.infoPoint}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <header
+                      tabIndex={0}
+                      aria-hidden="false"
+                      className={styles.clickableHeader}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          setShowFriends(true);
+                        }
+                      }}
+                      onClick={() => setShowFriends(true)}
+                    >
+                      See friends
+                    </header>
+                    <i
+                      style={{
+                        transform: "rotate(22.5deg)",
+                        fontSize: "1.25rem",
+                        marginLeft: "0.25rem",
+                        color: randomColor,
+                      }}
+                      className="fas fa-arrow-up"
+                    ></i>
+                  </div>
+                </div>
+              )}
+              {showMutualFriends && palzInCommon && (
+                <UserListModal
+                  listType="mutual-friends"
+                  renderButtonOne={true}
+                  buttonOneText="View Profile"
+                  renderButtonTwo={false}
+                  closeModalMethod={setShowMutualFriends}
+                  header="Mutual Friends"
+                  users={palzInCommon}
+                  outsideFetchIsError={isFetchError}
+                  outsideFetchIsLoading={fetchIsLoading || fetchCommonPalzIsLoading}
+                  fetchUsers={false}
+                  randomColor={randomColor}
+                />
+              )}
+              {showFriends && pageOwner.friends && (
+                <UserListModal
+                  listType="other-user-friends"
+                  renderButtonOne={true}
+                  renderButtonTwo={false}
+                  closeModalMethod={setShowFriends}
+                  header={`${pageOwner.username} 's palz`}
+                  users={currentOtherUserFriends}
+                  outsideFetchIsError={isFetchError}
+                  outsideFetchIsLoading={
+                    fetchIsLoading || fetchCurrentOtherUserFriendsIsLoading
+                  }
+                  fetchUsers={false}
+                  buttonOneText="View Profile"
+                  randomColor={randomColor}
+                />
+              )}
+              {ongoingEvents &&
+                ongoingEvents.length > 0 &&
+                interestedEventsAreVisible &&
+                organizedEventsAreVisible && (
+                  <UserEventsSection
+                    key="ongoingEvents"
+                    eventsArray={ongoingEvents}
+                    header="Ongoing Events"
                   />
                 )}
-                {showFriends && pageOwner.friends && (
-                  <UserListModal
-                    listType="other-user-friends"
-                    renderButtonOne={true}
-                    renderButtonTwo={false}
-                    closeModalMethod={setShowFriends}
-                    header={`${pageOwner.username} 's palz`}
-                    users={currentOtherUserFriends}
-                    outsideFetchIsError={isFetchError}
-                    outsideFetchIsLoading={
-                      fetchIsLoading || fetchCurrentOtherUserFriendsIsLoading
-                    }
-                    fetchUsers={false}
-                    buttonOneText="View Profile"
-                    randomColor={randomColor}
+              {upcomingEventsUserOrganizes &&
+                upcomingEventsUserOrganizes.length > 0 &&
+                organizedEventsAreVisible && (
+                  <UserEventsSection
+                    key="upcomingEventsUserOrganizes"
+                    eventsArray={upcomingEventsUserOrganizes}
+                    header="Upcoming Events I'm Organizing"
                   />
                 )}
-                {ongoingEvents &&
-                  ongoingEvents.length > 0 &&
-                  interestedEventsAreVisible &&
-                  organizedEventsAreVisible && (
-                    <UserEventsSection
-                      key="ongoingEvents"
-                      eventsArray={ongoingEvents}
-                      header="Ongoing Events"
-                    />
-                  )}
-                {upcomingEventsUserOrganizes &&
-                  upcomingEventsUserOrganizes.length > 0 &&
-                  organizedEventsAreVisible && (
-                    <UserEventsSection
-                      key="upcomingEventsUserOrganizes"
-                      eventsArray={upcomingEventsUserOrganizes}
-                      header="Upcoming Events I'm Organizing"
-                    />
-                  )}
-                {upcomingEventsUserRSVPdTo &&
-                  upcomingEventsUserRSVPdTo.length > 0 &&
-                  interestedEventsAreVisible && (
-                    <UserEventsSection
-                      key="upcomingEventsUserRSVPdTo"
-                      eventsArray={upcomingEventsUserRSVPdTo}
-                      header="Upcoming Events I've RSVP'd To"
-                    />
-                  )}
-                {upcomingEventsUserInvitedTo &&
-                  upcomingEventsUserInvitedTo.length > 0 &&
-                  invitedEventsAreVisible && (
-                    <UserEventsSection
-                      key="upcomingEventsUserRSVPdTo"
-                      eventsArray={upcomingEventsUserInvitedTo}
-                      header="Upcoming Events I've been invited To"
-                    />
-                  )}
-                {recentEventsUserOrganized &&
-                  recentEventsUserOrganized.length > 0 &&
-                  organizedEventsAreVisible && (
-                    <UserEventsSection
-                      key="recentEventsUserOrganized"
-                      eventsArray={recentEventsUserOrganized}
-                      header="Recent Events I Organized"
-                    />
-                  )}
-                {recentEventsUserRSVPdTo &&
-                  recentEventsUserRSVPdTo.length > 0 &&
-                  interestedEventsAreVisible && (
-                    <UserEventsSection
-                      key="recentEventsUserRSVPdTo"
-                      eventsArray={recentEventsUserRSVPdTo}
-                      header="Recent Events I RSVP'd To"
-                    />
-                  )}
-              </section>
-            </>
-          )}
+              {upcomingEventsUserRSVPdTo &&
+                upcomingEventsUserRSVPdTo.length > 0 &&
+                interestedEventsAreVisible && (
+                  <UserEventsSection
+                    key="upcomingEventsUserRSVPdTo"
+                    eventsArray={upcomingEventsUserRSVPdTo}
+                    header="Upcoming Events I've RSVP'd To"
+                  />
+                )}
+              {upcomingEventsUserInvitedTo &&
+                upcomingEventsUserInvitedTo.length > 0 &&
+                invitedEventsAreVisible && (
+                  <UserEventsSection
+                    key="upcomingEventsUserRSVPdTo"
+                    eventsArray={upcomingEventsUserInvitedTo}
+                    header="Upcoming Events I've been invited To"
+                  />
+                )}
+              {recentEventsUserOrganized &&
+                recentEventsUserOrganized.length > 0 &&
+                organizedEventsAreVisible && (
+                  <UserEventsSection
+                    key="recentEventsUserOrganized"
+                    eventsArray={recentEventsUserOrganized}
+                    header="Recent Events I Organized"
+                  />
+                )}
+              {recentEventsUserRSVPdTo &&
+                recentEventsUserRSVPdTo.length > 0 &&
+                interestedEventsAreVisible && (
+                  <UserEventsSection
+                    key="recentEventsUserRSVPdTo"
+                    eventsArray={recentEventsUserRSVPdTo}
+                    header="Recent Events I RSVP'd To"
+                  />
+                )}
+            </section>
+          </>
         </>
       )}
     </>
