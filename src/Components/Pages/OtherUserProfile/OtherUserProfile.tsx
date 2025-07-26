@@ -59,7 +59,7 @@ const OtherUserProfile = () => {
 
   const [pageOwner, setPageOwner] = useState<TOtherUser | null>(null);
   const [showFriends, setShowFriends] = useState<boolean>(false);
-  const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
+  const [fetchUserInfoIsLoading, setUserInfoFetchIsLoading] = useState<boolean>(false);
   const [fetchCommonPalzIsLoading, setFetchCommonPalzIsLoading] = useState<boolean>(true);
   const [
     fetchCurrentOtherUserFriendsIsLoading,
@@ -94,24 +94,46 @@ const OtherUserProfile = () => {
   const [upcomingEventsUserRSVPdTo, setUpcomingEventsUserRSVPdTo] = useState<
     TEvent[] | null
   >(null);
+  const [
+    fetchUpcomingEventsUserRSVPdToIsLoading,
+    setFetchUpcomingEventsUserRSVPdToIsLoading,
+  ] = useState<boolean>(true);
 
   const [ongoingEvents, setOngoingEvents] = useState<TEvent[] | null>(null);
+  const [fetchOngoingEventsIsLoading, setFetchOngoingEventsIsLoading] =
+    useState<boolean>(true);
 
   const [upcomingEventsUserOrganizes, setUpcomingEventsUserOrganizes] = useState<
     TEvent[] | null
   >(null);
+  const [
+    fetchUpcomingEventsUserOrganizesIsLoading,
+    setFetchUpcomingEventsUserOrganizesIsLoading,
+  ] = useState<boolean>(true);
 
   const [recentEventsUserRSVPdTo, setRecentEventsUserRSVPdTo] = useState<TEvent[] | null>(
     null
   );
+  const [
+    fetchRecentEventsUserRSVPdToIsLoading,
+    setFetchRecentEventsUserRSVPdToIsLoading,
+  ] = useState<boolean>(true);
 
   const [upcomingEventsUserInvitedTo, setUpcomingEventsUserInvitedTo] = useState<
     TEvent[] | null
   >(null);
+  const [
+    fetchUpcomingEventsUserInvitedToIsLoading,
+    setFetchUpcomingEventsUserInvitedToIsLoading,
+  ] = useState<boolean>(true);
 
   const [recentEventsUserOrganized, setRecentEventsUserOrganized] = useState<
     TEvent[] | null
   >(null);
+  const [
+    fetchRecentEventsUserOrganizedIsLoading,
+    setFetchRecentEventsUserOrganizedIsLoading,
+  ] = useState<boolean>(true);
 
   const [interestedEventsAreVisible, setInterestedEventsAreVisible] =
     useState<boolean>(false);
@@ -286,7 +308,6 @@ const OtherUserProfile = () => {
                 });
 
                 setFetchCommonPalzIsLoading(true);
-
                 Promise.all(palzInCommonPromisesToAwait)
                   .then((pic: TUser[]) => {
                     setPalzInCommon(pic.map((p) => Methods.getTBarebonesUser(p)));
@@ -335,144 +356,84 @@ const OtherUserProfile = () => {
                   })
                   .finally(() => setFetchCurrentOtherUserFriendsIsLoading(false));
 
+                // Only fetch type of events if that type is visible to currentUser (remove these conditionals in Render, only rendering those events if they exist)
                 Requests.getUpcomingEventsUserRSVPdTo(username)
                   .then((res) => {
                     if (res.ok) {
                       res.json().then((events: TEvent[]) => {
                         setUpcomingEventsUserRSVPdTo(events);
-                        if (
-                          pageOwner &&
-                          ongoingEvents &&
-                          upcomingEventsUserOrganizes &&
-                          recentEventsUserRSVPdTo &&
-                          recentEventsUserOrganized &&
-                          upcomingEventsUserInvitedTo
-                        ) {
-                          setFetchIsLoading(false);
-                        }
                       });
                     } else {
-                      setFetchIsLoading(false);
                       setIsFetchError(true);
                     }
                   })
-                  .catch((error) => console.log(error));
+                  .catch((error) => console.log(error))
+                  .finally(() => setFetchUpcomingEventsUserRSVPdToIsLoading(false));
 
                 Requests.getUpcomingEventsUserInvitedTo(username)
                   .then((res) => {
                     if (res.ok) {
                       res.json().then((events: TEvent[]) => {
                         setUpcomingEventsUserInvitedTo(events);
-                        if (
-                          pageOwner &&
-                          ongoingEvents &&
-                          upcomingEventsUserOrganizes &&
-                          recentEventsUserRSVPdTo &&
-                          recentEventsUserOrganized &&
-                          upcomingEventsUserRSVPdTo
-                        ) {
-                          setFetchIsLoading(false);
-                        }
                       });
                     } else {
-                      setFetchIsLoading(false);
                       setIsFetchError(true);
                     }
                   })
-                  .catch((error) => console.log(error));
+                  .catch((error) => console.log(error))
+                  .finally(() => setFetchUpcomingEventsUserInvitedToIsLoading(false));
 
                 Requests.getOngoingEvents(username)
                   .then((res) => {
                     if (res.ok) {
                       res.json().then((events: TEvent[]) => {
-                        if (
-                          pageOwner &&
-                          upcomingEventsUserRSVPdTo &&
-                          upcomingEventsUserOrganizes &&
-                          recentEventsUserRSVPdTo &&
-                          recentEventsUserOrganized &&
-                          upcomingEventsUserInvitedTo
-                        ) {
-                          setFetchIsLoading(false);
-                        }
                         setOngoingEvents(events);
                       });
                     } else {
-                      setFetchIsLoading(false);
                       setIsFetchError(true);
                     }
                   })
-                  .catch((error) => console.log(error));
+                  .catch((error) => console.log(error))
+                  .finally(() => setFetchOngoingEventsIsLoading(false));
 
                 Requests.getUpcomingEventsUserOrganizes(username)
                   .then((res) => {
                     if (res.ok) {
                       res.json().then((events: TEvent[]) => {
                         setUpcomingEventsUserOrganizes(events);
-
-                        if (
-                          pageOwner &&
-                          upcomingEventsUserRSVPdTo &&
-                          ongoingEvents &&
-                          recentEventsUserOrganized &&
-                          recentEventsUserRSVPdTo &&
-                          upcomingEventsUserInvitedTo
-                        ) {
-                          setFetchIsLoading(false);
-                        }
                       });
                     } else {
-                      setFetchIsLoading(false);
                       setIsFetchError(true);
                     }
                   })
-                  .catch((error) => console.log(error));
+                  .catch((error) => console.log(error))
+                  .finally(() => setFetchUpcomingEventsUserOrganizesIsLoading(false));
 
                 Requests.getRecentEventsUserRSVPdTo(username)
                   .then((res) => {
                     if (res.ok) {
                       res.json().then((events: TEvent[]) => {
-                        if (
-                          pageOwner &&
-                          upcomingEventsUserRSVPdTo &&
-                          ongoingEvents &&
-                          upcomingEventsUserOrganizes &&
-                          recentEventsUserOrganized &&
-                          upcomingEventsUserInvitedTo
-                        ) {
-                          setFetchIsLoading(false);
-                        }
                         setRecentEventsUserRSVPdTo(events);
                       });
                     } else {
-                      setFetchIsLoading(false);
                       setIsFetchError(true);
                     }
                   })
-                  .catch((error) => console.log(error));
+                  .catch((error) => console.log(error))
+                  .finally(() => setFetchRecentEventsUserRSVPdToIsLoading(false));
 
                 Requests.getRecentEventsUserOrganized(username)
                   .then((res) => {
                     if (res.ok) {
                       res.json().then((events: TEvent[]) => {
-                        if (
-                          pageOwner &&
-                          upcomingEventsUserRSVPdTo &&
-                          ongoingEvents &&
-                          upcomingEventsUserOrganizes &&
-                          recentEventsUserRSVPdTo &&
-                          upcomingEventsUserInvitedTo
-                        ) {
-                          setFetchIsLoading(false);
-                        }
                         setRecentEventsUserOrganized(events);
                       });
                     } else {
-                      setFetchIsLoading(false);
                       setIsFetchError(true);
                     }
                   })
-                  .catch((error) => console.log(error));
+                  .catch((error) => console.log(error))
+                  .finally(() => setFetchRecentEventsUserOrganizedIsLoading(false));
 
                 if (
                   currentOtherUser.whoCanSeeEventsInterestedIn === "anyone" ||
@@ -534,6 +495,8 @@ const OtherUserProfile = () => {
                 ) {
                   setShowX(true);
                 }
+
+                setUserInfoFetchIsLoading(false);
               }
             });
           } else {
@@ -1036,6 +999,16 @@ const OtherUserProfile = () => {
     return chatsInCommon.length;
   };
   const numberOfGroupChatsInCommon = getNumberOfGroupChatsInCommon();
+
+  const fetchIsLoading: boolean =
+    fetchUserInfoIsLoading ||
+    fetchCurrentOtherUserFriendsIsLoading ||
+    fetchOngoingEventsIsLoading ||
+    fetchUpcomingEventsUserRSVPdToIsLoading ||
+    fetchUpcomingEventsUserOrganizesIsLoading ||
+    fetchRecentEventsUserRSVPdToIsLoading ||
+    fetchUpcomingEventsUserInvitedToIsLoading ||
+    fetchRecentEventsUserOrganizedIsLoading;
 
   return (
     <>
