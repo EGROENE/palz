@@ -322,7 +322,10 @@ export type TUserContext = {
   >;
   blockedUsers: TBarebonesUser[] | null;
   setBlockedUsers: React.Dispatch<React.SetStateAction<TBarebonesUser[] | null>>;
-  handleBlockUserExceptChats: (blocker: TUser, blockee: TOtherUser) => void;
+  handleMutuallyDeleteFromFriendsAndFRAndAddToBlockedUsersAndBlockedBy: (
+    blocker: TUser,
+    blockee: TOtherUser
+  ) => void;
   fetchBlockedUsersIsLoading: boolean;
   setFetchBlockedUsersIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   fetchBlockedUsersIsError: boolean;
