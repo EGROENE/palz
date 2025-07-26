@@ -2561,6 +2561,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    handleBlockUserFail,
     fetchFriendRequestsIsLoading,
     setFetchFriendRequestsIsLoading,
     fetchFriendRequestsSentIsError,

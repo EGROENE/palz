@@ -305,6 +305,7 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  handleBlockUserFail: (blockee: TUser) => void;
   fetchFriendRequestsIsLoading: boolean;
   setFetchFriendRequestsIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   fetchFriendRequestsSentIsError: boolean;
