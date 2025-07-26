@@ -233,7 +233,6 @@ const getUpcomingEventsUserRSVPdTo = (username: string) => {
     {
       method: "GET",
       headers: myHeaders,
-      body: "",
       redirect: "follow",
     }
   );
@@ -248,7 +247,6 @@ const ongoingEvents = (username: string) => {
     {
       method: "GET",
       headers: myHeaders,
-      body: "",
       redirect: "follow",
     }
   );
@@ -263,7 +261,6 @@ const getUpcomingEventsUserOrganizes = (username: string) => {
     {
       method: "GET",
       headers: myHeaders,
-      body: "",
       redirect: "follow",
     }
   );
@@ -278,7 +275,6 @@ const getUpcomingEventsUserInvitedTo = (username: string) => {
     {
       method: "GET",
       headers: myHeaders,
-      body: "",
       redirect: "follow",
     }
   );
@@ -293,7 +289,6 @@ const getEventsUserCreated = (username: string) => {
     {
       method: "GET",
       headers: myHeaders,
-      body: "",
       redirect: "follow",
     }
   );
@@ -308,7 +303,6 @@ const getRecentEventsUserRSVPdTo = (username: string) => {
     {
       method: "GET",
       headers: myHeaders,
-      body: "",
       redirect: "follow",
     }
   );
@@ -323,7 +317,6 @@ const getRecentEventsUserOrganized = (username: string) => {
     {
       method: "GET",
       headers: myHeaders,
-      body: "",
       redirect: "follow",
     }
   );
@@ -338,7 +331,6 @@ const getOngoingEvents = (username: string) => {
     {
       method: "GET",
       headers: myHeaders,
-      body: "",
       redirect: "follow",
     }
   );
