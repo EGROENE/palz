@@ -105,6 +105,7 @@
 .standalone-element {
   position: relative;
   top: 44%;
+  flex-direction:column;
 }
 
 .page-hero {
