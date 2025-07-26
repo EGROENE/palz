@@ -606,7 +606,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     setIsLoading(false);
     if (blockedUsers) {
-      setBlockedUsers(blockedUsers.concat(Methods.getTBarebonesUser(blockee)));
+      setBlockedUsers(blockedUsers.filter((u) => u._id !== blockee._id?.toString()));
     }
     toast.error(
       `Unable to block ${blockee ? blockee.username : "user"}. Please try again.`,
