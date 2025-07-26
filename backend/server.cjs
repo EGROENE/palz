@@ -304,23 +304,23 @@ app.get("/palz/otherUsers/:username", (req, res) => {
     return getOngoingEvents(req, res);
   }
 
-  if (eventType === "upcomingEventsUserOrganizes") {
+  if (eventsType === "upcomingEventsUserOrganizes") {
     return getUpcomingEventsUserOrganizes(req, res);
   }
 
-  if (eventType === "upcomingEventsUserInvitedTo") {
+  if (eventsType === "upcomingEventsUserInvitedTo") {
     return getUpcomingEventsUserInvitedTo(req, res);
   }
 
-  if (eventType === "recentEventsUserRSVPdTo") {
+  if (eventsType === "recentEventsUserRSVPdTo") {
     return getRecentEventsUserRSVPdTo(req, res);
   }
 
-  if (eventType === "recentEventsUserOrganized") {
+  if (eventsType === "recentEventsUserOrganized") {
     return getRecentEventsUserOrganized(req, res);
   }
 
-  if (eventType === "eventsUserCreated") {
+  if (eventsType === "eventsUserCreated") {
     return getEventsUserCreated(req, res);
   }
 });
