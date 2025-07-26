@@ -600,7 +600,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, receiver);
   };
 
-  const handleBlockUserFail = (blockee: TUser): void => {
+  const handleBlockUserFail = (blockee: TUser | TOtherUser | TBarebonesUser): void => {
     setIsLoading(false);
     if (blockedUsers) {
       setBlockedUsers(blockedUsers.concat(Methods.getTBarebonesUser(blockee)));
