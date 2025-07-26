@@ -1975,65 +1975,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   }
                 });
               }
-
-              /* Requests.addToBlockedUsers(blocker, blockee._id.toString())
-                .then((res) => {
-                  if (res.ok) {
-                    if (currentUser && currentUser._id) {
-                      // Call getUserByID to update cu in res.ok of Promise.all
-                      Requests.getUserByID(currentUser._id.toString())
-                        .then((res) => {
-                          if (res.ok) {
-                            res
-                              .json()
-                              .then((cu) => {
-                                if (blocker._id) {
-                                  Requests.addToBlockedBy(blockee, blocker._id.toString())
-                                    .then((res) => {
-                                      if (res.ok) {
-                                        if (cu) {
-                                          if (areFriends) {
-                                            handleUnfriending(blocker, blockee);
-                                          }
-                                          if (hasSentFriendRequest) {
-                                            handleRemoveFriendRequest(blockee, blocker);
-                                          }
-                                          if (hasReceivedFriendRequest) {
-                                            handleRemoveFriendRequest(blocker, blockee);
-                                          }
-                                          setCurrentUser(cu);
-                                          toast(`You have blocked ${blockee.username}.`, {
-                                            style: {
-                                              background:
-                                                theme === "light"
-                                                  ? "#242424"
-                                                  : "rgb(233, 231, 228)",
-                                              color: theme === "dark" ? "black" : "white",
-                                              border: "2px solid red",
-                                            },
-                                          });
-                                        } else {
-                                          handleBlockUserFail(blockee);
-                                        }
-                                      } else {
-                                        handleBlockUserFail(blockee);
-                                      }
-                                    })
-                                    .catch((error) => console.log(error));
-                                }
-                              })
-                              .catch((error) => console.log(error));
-                          } else {
-                            handleBlockUserFail(blockee);
-                          }
-                        })
-                        .catch((error) => console.log(error));
-                    }
-                  } else {
-                    handleBlockUserFail(blockee);
-                  }
-                })
-                .catch((error) => console.log(error)) */
             });
           } else {
             setIsLoading(false);
