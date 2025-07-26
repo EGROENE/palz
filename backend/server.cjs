@@ -264,6 +264,18 @@ const getRecentEventsUserRSVPdTo = async (req, res) => {
   res.status(200).json(events);
 };
 
+const getEventsUserCreated = async (req, res) => {
+  const { username } = req.params;
+
+  const user = await User.findOne({ username });
+
+  const events = await Event.find({
+    organizers: { $in: user._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
 const getRecentEventsUserOrganized = async (req, res) => {
   const { username } = req.params;
 
@@ -306,6 +318,10 @@ app.get("/palz/otherUsers/:username", (req, res) => {
 
   if (eventType === "recentEventsUserOrganized") {
     return getRecentEventsUserOrganized(req, res);
+  }
+
+  if (eventType === "eventsUserCreated") {
+    return getEventsUserCreated(req, res);
   }
 });
 
