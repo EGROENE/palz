@@ -600,7 +600,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, receiver);
   };
 
-  const handleBlockUserFail = (blockee: TUser | TOtherUser | TBarebonesUser): void => {
+  const handleBlockUserFail = (
+    blockee: TUser | TOtherUser | TBarebonesUser,
+    setIsLoading: (value: React.SetStateAction<boolean>) => void
+  ): void => {
     setIsLoading(false);
     if (blockedUsers) {
       setBlockedUsers(blockedUsers.concat(Methods.getTBarebonesUser(blockee)));
@@ -1970,11 +1973,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                           });
                         });
                       } else {
-                        handleBlockUserFail(blockee);
+                        handleBlockUserFail(blockee, setIsLoading);
                       }
                     });
                   } else {
-                    handleBlockUserFail(blockee);
+                    handleBlockUserFail(blockee, setIsLoading);
                   }
                 });
               }
