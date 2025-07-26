@@ -40,12 +40,12 @@ const OtherUserProfile = () => {
     handleAcceptFriendRequest,
     setCurrentUser,
     friendRequestsSent,
-    handleBlockUserFail,
     handleUnblockUser,
     blockedUsers,
     friendRequestsReceived,
     handleUnfriending,
     setBlockedUsers,
+    setBlockUserInProgress,
   } = useUserContext();
   const { setCurrentEvent } = useEventContext();
   const { getStartOrOpenChatWithUserHandler, fetchChatsQuery } = useChatContext();
@@ -648,10 +648,11 @@ const OtherUserProfile = () => {
     paramsIncludeEvent: false,
   };
 
+  // All blocking functionality defined here & not in userContext b/c userContext doesn't have access to event or chat data (it's possible to put requests in some function there to retrieve necessary data, but not practical while query exists to get all of currentUser's chats). Plus, blocking is only possible, now, from this component, so defining handleBlockUser here avoids unneeded abstraction.
   const handleBlockUser = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>): void => {
     e.preventDefault();
 
-    setFetchIsLoading(true);
+    setBlockUserInProgress(true);
 
     // Optimistically set blockedUsers:
     if (blockedUsers) {
@@ -697,6 +698,8 @@ const OtherUserProfile = () => {
                     Requests.getUserByID(currentUser._id.toString()).then((res) => {
                       if (res.ok) {
                         res.json().then((cu: TUser) => {
+                          setBlockUserInProgress(false);
+
                           if (areFriends) {
                             handleUnfriending(currentUser, pageOwner);
                           }
@@ -729,7 +732,22 @@ const OtherUserProfile = () => {
                           removedFromEventsCreatedByCurrentUser === false ||
                           deletedChat === false
                         ) {
-                          handleBlockUserFail(pageOwner, setFetchIsLoading);
+                          setBlockUserInProgress(false);
+                          if (blockedUsers) {
+                            setBlockedUsers(
+                              blockedUsers.filter(
+                                (u) => u._id !== pageOwner._id?.toString()
+                              )
+                            );
+                          }
+                          toast.error("Could not block user. Please try again.", {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid red",
+                            },
+                          });
                         }
                       }
                     });
@@ -738,7 +756,20 @@ const OtherUserProfile = () => {
                       removedFromEventsCreatedByCurrentUser === false ||
                       deletedChat === false
                     ) {
-                      handleBlockUserFail(pageOwner, setFetchIsLoading);
+                      setBlockUserInProgress(false);
+                      if (blockedUsers) {
+                        setBlockedUsers(
+                          blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
+                        );
+                      }
+                      toast.error("Could not block user. Please try again.", {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid red",
+                        },
+                      });
                     }
                   }
                 });
@@ -749,7 +780,7 @@ const OtherUserProfile = () => {
               removedFromEventsCreatedByCurrentUser === false ||
               deletedChat === false
             ) {
-              setFetchIsLoading(false);
+              setBlockUserInProgress(false);
               if (blockedUsers) {
                 setBlockedUsers(
                   blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
@@ -767,7 +798,6 @@ const OtherUserProfile = () => {
         })
         .catch((error) => console.log(error));
 
-      // Chat between blocker & blockee be deleted here, since handleMutuallyDeleteFromFriendsAndFRAndAddToBlockedUsersAndBlockedBy, defined in userContext, doesn't have access to chat info:
       let chatToDelete: TChat | undefined = userChats
         ? userChats.filter(
             (chat) =>
@@ -805,14 +835,38 @@ const OtherUserProfile = () => {
               removedFromEventsCreatedByCurrentUser === false ||
               removedFromFriendsAndFriendRequests === false
             ) {
-              handleBlockUserFail(pageOwner, setFetchIsLoading);
+              setBlockUserInProgress(false);
+              if (blockedUsers) {
+                setBlockedUsers(
+                  blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
+                );
+              }
+              toast.error("Could not block user. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
             }
           } else {
             if (
               removedFromEventsCreatedByCurrentUser === false ||
               removedFromFriendsAndFriendRequests === false
             ) {
-              handleBlockUserFail(pageOwner, setFetchIsLoading);
+              setBlockUserInProgress(false);
+              if (blockedUsers) {
+                setBlockedUsers(
+                  blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
+                );
+              }
+              toast.error("Could not block user. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
             }
           }
         });
@@ -821,14 +875,16 @@ const OtherUserProfile = () => {
       }
 
       // Delete pageOwner (blockee) from invitee, organizer, & RSVP lists of events currentUser created; add pageOwner to each event's blockedUsersEvent list:
+      // For every event in eventsCreatedByCU, put Requests.updateEvent w/ right params in Promise.all. Handle errors/loading/toast from there.
       Requests.getEventsUserCreated(currentUser.username)
         .then((res) => {
           if (res.ok) {
             res.json().then((eventsCreatedByCurrentUser: TEvent[]) => {
               if (eventsCreatedByCurrentUser.length > 0) {
+                let requestsToUpdateEventsCreatedByCurrentUser = [];
                 for (const event of eventsCreatedByCurrentUser) {
                   // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
-                  if (event.creator === currentUser._id && pageOwner._id) {
+                  if (pageOwner._id) {
                     // Maybe call handler to update event, updating invitees, blockedUsersEvent, organizers, and interestedUsers. Call Requests.updateEvent w/ eventValuesToUpdate defined as these updated lists:
                     const eventValuesToUpdate: TEventValuesToUpdate = {
                       invitees: event.invitees.filter(
@@ -842,40 +898,81 @@ const OtherUserProfile = () => {
                       ),
                     };
 
-                    Requests.updateEvent(event, eventValuesToUpdate)
-                      .then((res) => {
-                        if (!res.ok) {
-                          handleBlockUserFail(pageOwner, setFetchIsLoading);
-                        } else {
-                          if (removedFromFriendsAndFriendRequests && deletedChat) {
-                            toast(`You have blocked ${pageOwner.username}.`, {
-                              style: {
-                                background:
-                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                                color: theme === "dark" ? "black" : "white",
-                                border: "2px solid red",
-                              },
-                            });
-                          }
-                        }
-                      })
-                      .catch((error) => console.log(error));
+                    requestsToUpdateEventsCreatedByCurrentUser.push(
+                      Requests.updateEvent(event, eventValuesToUpdate)
+                    );
                   }
                 }
+
+                Promise.all(requestsToUpdateEventsCreatedByCurrentUser)
+                  .then((resArray: Response[]) => {
+                    if (!resArray.every((res) => res.ok)) {
+                      setBlockUserInProgress(false);
+                      if (blockedUsers) {
+                        setBlockedUsers(
+                          blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
+                        );
+                      }
+                      toast.error("Could not block user. Please try again.", {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid red",
+                        },
+                      });
+                    } else {
+                      if (removedFromFriendsAndFriendRequests && deletedChat) {
+                        toast(`You have blocked ${pageOwner.username}.`, {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    }
+                  })
+                  .catch((error) => console.log(error));
               } else {
                 removedFromEventsCreatedByCurrentUser = true;
               }
             });
           } else {
             if (deletedChat === false || removedFromFriendsAndFriendRequests === false) {
-              handleBlockUserFail(pageOwner, setFetchIsLoading);
+              setBlockUserInProgress(false);
+              if (blockedUsers) {
+                setBlockedUsers(
+                  blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
+                );
+              }
+              toast.error("Could not block user. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
             }
           }
         })
         .catch((error) => console.log(error));
     } else {
       if (pageOwner) {
-        handleBlockUserFail(pageOwner, setFetchIsLoading);
+        setBlockUserInProgress(false);
+        if (blockedUsers) {
+          setBlockedUsers(
+            blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
+          );
+        }
+        toast.error("Could not block user. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       } else {
         setError("An error occurred; please reload the page.");
       }
