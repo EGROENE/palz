@@ -41,6 +41,7 @@ function App() {
     accountDeletionInProgress,
     updateProfileImageIsLoading,
     removeProfileImageIsLoading,
+    blockUserInProgress,
   } = useUserContext();
 
   const {
@@ -148,6 +149,7 @@ function App() {
         {updateProfileImageIsLoading && <LoadingModal message="Uploading image..." />}
         {removeProfileImageIsLoading && <LoadingModal message="Removing image..." />}
         {chatCreationInProgress && <LoadingModal message="Creating chat..." />}
+        {blockUserInProgress && <LoadingModal message="Blocking user..." />}
         {showChatModal && <ChatModal />}
         {showMobileNavOptions && <MobileNavOptions />}
 
