@@ -637,19 +637,19 @@ const OtherUserProfile = () => {
       Requests.getUserByID(pageOwner._id.toString())
         .then((res) => {
           if (res.ok) {
-            res.json().then((pageOwner) => {
+            res.json().then((pageOwner: TUser) => {
               const areFriends: boolean =
                 currentUser._id &&
                 pageOwner._id &&
-                (currentUser.friends.includes(pageOwner._id) ||
-                  pageOwner.friends.includes(currentUser._id))
+                (currentUser.friends.includes(pageOwner._id.toString()) ||
+                  pageOwner.friends.includes(currentUser._id.toString()))
                   ? true
                   : false;
               const hasSentFriendRequest: boolean = pageOwner._id
-                ? currentUser.friendRequestsSent.includes(pageOwner._id)
+                ? currentUser.friendRequestsSent.includes(pageOwner._id.toString())
                 : false;
               const hasReceivedFriendRequest: boolean = pageOwner._id
-                ? currentUser.friendRequestsReceived.includes(pageOwner._id)
+                ? currentUser.friendRequestsReceived.includes(pageOwner._id.toString())
                 : false;
 
               if (currentUser._id && pageOwner && pageOwner._id) {
@@ -661,234 +661,132 @@ const OtherUserProfile = () => {
                     Requests.getUserByID(currentUser._id.toString()).then((res) => {
                       if (res.ok) {
                         res.json().then((cu: TUser) => {
-                          setBlockUserInProgress(false);
+                          // Put fruitless requests from handleUnfriending, handleRemoveFriendRequest, & handleRemoveFriendRequest in Promise.all. Handle errors in blocking from there, as well as updating of currentUser by getUserByID.
+                          const getRequestsToDeleteFromFriendsListsAndFriendRequests = (): Promise<Response>[] => {
+                            let requestArray: Promise<Response>[] = [];
+                            if (areFriends) {
+                              requestArray.push(
+                                Requests.deleteFriendFromFriendsArray(cu, pageOwner),
+                                Requests.deleteFriendFromFriendsArray(pageOwner, cu)
+                              );
+                            }
 
-                          if (areFriends && currentUser && currentUser._id) {
-                            Requests.getUserByID(currentUser._id.toString())
-                              .then((res) => {
-                                if (res.ok) {
-                                  res.json().then((cu: TUser) => {
-                                    if (pageOwner._id) {
-                                      Requests.getUserByID(pageOwner._id.toString())
-                                        .then((res) => {
-                                          if (res.ok) {
-                                            res.json().then((pageOwner: TUser) => {
-                                              Promise.all([
-                                                Requests.deleteFriendFromFriendsArray(
-                                                  cu,
-                                                  pageOwner
-                                                ),
-                                                Requests.deleteFriendFromFriendsArray(
-                                                  pageOwner,
-                                                  cu
-                                                ),
-                                              ])
-                                                .then((resArray: Response[]) => {
-                                                  if (
-                                                    currentUser &&
-                                                    currentUser._id &&
-                                                    resArray.every((res) => res.ok)
-                                                  ) {
-                                                    Requests.getUserByID(
-                                                      currentUser._id.toString()
-                                                    )
-                                                      .then((res) => {
-                                                        if (res.ok) {
-                                                          res
-                                                            .json()
-                                                            .then((user) => {
-                                                              if (user) {
-                                                                setCurrentUser(user);
-                                                                toast(
-                                                                  `You have unfriended ${pageOwner.firstName} ${pageOwner.lastName}.`,
-                                                                  {
-                                                                    style: {
-                                                                      background:
-                                                                        theme === "light"
-                                                                          ? "#242424"
-                                                                          : "rgb(233, 231, 228)",
-                                                                      color:
-                                                                        theme === "dark"
-                                                                          ? "black"
-                                                                          : "white",
-                                                                      border:
-                                                                        "2px solid red",
-                                                                    },
-                                                                  }
-                                                                );
-                                                              } else {
-                                                                setBlockUserInProgress(
-                                                                  false
-                                                                );
-                                                                if (blockedUsers) {
-                                                                  setBlockedUsers(
-                                                                    blockedUsers.filter(
-                                                                      (u) =>
-                                                                        u._id !==
-                                                                        pageOwner._id?.toString()
-                                                                    )
-                                                                  );
-                                                                }
-                                                                toast.error(
-                                                                  "Could not block user. Please try again.",
-                                                                  {
-                                                                    style: {
-                                                                      background:
-                                                                        theme === "light"
-                                                                          ? "#242424"
-                                                                          : "rgb(233, 231, 228)",
-                                                                      color:
-                                                                        theme === "dark"
-                                                                          ? "black"
-                                                                          : "white",
-                                                                      border:
-                                                                        "2px solid red",
-                                                                    },
-                                                                  }
-                                                                );
-                                                              }
-                                                            })
-                                                            .catch((error) =>
-                                                              console.log(error)
-                                                            );
-                                                        } else {
-                                                          setBlockUserInProgress(false);
-                                                          if (blockedUsers) {
-                                                            setBlockedUsers(
-                                                              blockedUsers.filter(
-                                                                (u) =>
-                                                                  u._id !==
-                                                                  pageOwner._id?.toString()
-                                                              )
-                                                            );
-                                                          }
-                                                          toast.error(
-                                                            "Could not block user. Please try again.",
-                                                            {
-                                                              style: {
-                                                                background:
-                                                                  theme === "light"
-                                                                    ? "#242424"
-                                                                    : "rgb(233, 231, 228)",
-                                                                color:
-                                                                  theme === "dark"
-                                                                    ? "black"
-                                                                    : "white",
-                                                                border: "2px solid red",
-                                                              },
-                                                            }
-                                                          );
-                                                        }
-                                                      })
-                                                      .catch((error) =>
-                                                        console.log(error)
-                                                      );
-                                                  } else {
-                                                    setBlockUserInProgress(false);
-                                                    if (blockedUsers) {
-                                                      setBlockedUsers(
-                                                        blockedUsers.filter(
-                                                          (u) =>
-                                                            u._id !==
-                                                            pageOwner._id?.toString()
-                                                        )
-                                                      );
-                                                    }
-                                                    toast.error(
-                                                      "Could not block user. Please try again.",
-                                                      {
-                                                        style: {
-                                                          background:
-                                                            theme === "light"
-                                                              ? "#242424"
-                                                              : "rgb(233, 231, 228)",
-                                                          color:
-                                                            theme === "dark"
-                                                              ? "black"
-                                                              : "white",
-                                                          border: "2px solid red",
-                                                        },
-                                                      }
-                                                    );
-                                                  }
-                                                })
-                                                .catch((error) => console.log(error));
-                                            });
-                                          } else {
-                                            setBlockUserInProgress(false);
-                                            if (blockedUsers) {
-                                              setBlockedUsers(
-                                                blockedUsers.filter(
-                                                  (u) =>
-                                                    u._id !== pageOwner._id?.toString()
-                                                )
-                                              );
+                            if (hasSentFriendRequest) {
+                              requestArray.push(
+                                Requests.removeFromFriendRequestsSent(
+                                  currentUser,
+                                  pageOwner
+                                ),
+                                Requests.removeFromFriendRequestsReceived(
+                                  Methods.getTOtherUserFromTUser(
+                                    currentUser,
+                                    currentUser
+                                  ),
+                                  pageOwner
+                                )
+                              );
+                            }
+
+                            if (hasReceivedFriendRequest) {
+                              requestArray.push(
+                                Requests.removeFromFriendRequestsSent(
+                                  pageOwner,
+                                  currentUser
+                                ),
+                                Requests.removeFromFriendRequestsReceived(
+                                  Methods.getTOtherUserFromTUser(pageOwner, currentUser),
+                                  pageOwner
+                                )
+                              );
+                            }
+
+                            return requestArray;
+                          };
+
+                          const requestsToDeleteFromFriendsListsAndFriendRequests: Promise<Response>[] =
+                            getRequestsToDeleteFromFriendsListsAndFriendRequests();
+
+                          Promise.all(requestsToDeleteFromFriendsListsAndFriendRequests)
+                            .then((resArray: Response[]) => {
+                              if (
+                                resArray.every((res) => res.ok) &&
+                                currentUser &&
+                                currentUser._id
+                              ) {
+                                Requests.getUserByID(currentUser._id.toString()).then(
+                                  (res) => {
+                                    if (res.ok) {
+                                      res.json().then((cu: TUser) => {
+                                        removedFromFriendsAndFriendRequests = true;
+                                        if (
+                                          removedFromEventsCreatedByCurrentUser &&
+                                          deletedChat
+                                        ) {
+                                          setBlockUserInProgress(false);
+                                          toast(
+                                            `You have blocked ${pageOwner.username}.`,
+                                            {
+                                              style: {
+                                                background:
+                                                  theme === "light"
+                                                    ? "#242424"
+                                                    : "rgb(233, 231, 228)",
+                                                color:
+                                                  theme === "dark" ? "black" : "white",
+                                                border: "2px solid red",
+                                              },
                                             }
-                                            toast.error(
-                                              "Could not block user. Please try again.",
-                                              {
-                                                style: {
-                                                  background:
-                                                    theme === "light"
-                                                      ? "#242424"
-                                                      : "rgb(233, 231, 228)",
-                                                  color:
-                                                    theme === "dark" ? "black" : "white",
-                                                  border: "2px solid red",
-                                                },
-                                              }
-                                            );
-                                          }
-                                        })
-                                        .catch((error) => console.log(error));
+                                          );
+                                        }
+                                        setCurrentUser(cu);
+                                      });
+                                    } else {
+                                      if (blockedUsers) {
+                                        setBlockedUsers(
+                                          blockedUsers.filter(
+                                            (u) => u._id !== pageOwner._id?.toString()
+                                          )
+                                        );
+                                      }
+                                      setBlockUserInProgress(false);
+                                      toast.error(
+                                        "Could not block user. Please try again.",
+                                        {
+                                          style: {
+                                            background:
+                                              theme === "light"
+                                                ? "#242424"
+                                                : "rgb(233, 231, 228)",
+                                            color: theme === "dark" ? "black" : "white",
+                                            border: "2px solid red",
+                                          },
+                                        }
+                                      );
                                     }
-                                  });
-                                } else {
-                                  setBlockUserInProgress(false);
-                                  if (blockedUsers) {
-                                    setBlockedUsers(
-                                      blockedUsers.filter(
-                                        (u) => u._id !== pageOwner._id?.toString()
-                                      )
-                                    );
                                   }
-                                  toast.error("Could not block user. Please try again.", {
-                                    style: {
-                                      background:
-                                        theme === "light"
-                                          ? "#242424"
-                                          : "rgb(233, 231, 228)",
-                                      color: theme === "dark" ? "black" : "white",
-                                      border: "2px solid red",
-                                    },
-                                  });
+                                );
+                              } else {
+                                setBlockUserInProgress(false);
+                                if (blockedUsers) {
+                                  setBlockedUsers(
+                                    blockedUsers.filter(
+                                      (u) => u._id !== pageOwner._id?.toString()
+                                    )
+                                  );
                                 }
-                              })
-                              .catch((error) => console.log(error));
-                          }
-
-                          if (hasSentFriendRequest) {
-                            handleRemoveFriendRequest(pageOwner, currentUser);
-                          }
-
-                          if (hasReceivedFriendRequest) {
-                            handleRemoveFriendRequest(currentUser, pageOwner);
-                          }
-
-                          removedFromFriendsAndFriendRequests = true;
-
-                          setCurrentUser(cu);
-
-                          if (removedFromEventsCreatedByCurrentUser && deletedChat) {
-                            toast(`You have blocked ${pageOwner.username}.`, {
-                              style: {
-                                background:
-                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                                color: theme === "dark" ? "black" : "white",
-                                border: "2px solid red",
-                              },
-                            });
-                          }
+                                toast.error("Could not block user. Please try again.", {
+                                  style: {
+                                    background:
+                                      theme === "light"
+                                        ? "#242424"
+                                        : "rgb(233, 231, 228)",
+                                    color: theme === "dark" ? "black" : "white",
+                                    border: "2px solid red",
+                                  },
+                                });
+                              }
+                            })
+                            .catch((error) => console.log(error));
                         });
                       } else {
                         if (
@@ -985,6 +883,7 @@ const OtherUserProfile = () => {
               removedFromEventsCreatedByCurrentUser &&
               removedFromFriendsAndFriendRequests
             ) {
+              setBlockUserInProgress(false);
               toast(`You have blocked ${pageOwner.username}.`, {
                 style: {
                   background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -1035,6 +934,19 @@ const OtherUserProfile = () => {
         });
       } else {
         deletedChat = true;
+        if (
+          removedFromEventsCreatedByCurrentUser &&
+          removedFromFriendsAndFriendRequests
+        ) {
+          setBlockUserInProgress(false);
+          toast(`You have blocked ${pageOwner.username}.`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
       }
 
       // Delete pageOwner (blockee) from invitee, organizer, & RSVP lists of events currentUser created; add pageOwner to each event's blockedUsersEvent list:
@@ -1086,6 +998,7 @@ const OtherUserProfile = () => {
                       });
                     } else {
                       if (removedFromFriendsAndFriendRequests && deletedChat) {
+                        setBlockUserInProgress(false);
                         toast(`You have blocked ${pageOwner.username}.`, {
                           style: {
                             background:
@@ -1100,24 +1013,33 @@ const OtherUserProfile = () => {
                   .catch((error) => console.log(error));
               } else {
                 removedFromEventsCreatedByCurrentUser = true;
+                if (removedFromFriendsAndFriendRequests && deletedChat) {
+                  setBlockUserInProgress(false);
+                  toast(`You have blocked ${pageOwner.username}.`, {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                }
               }
             });
           } else {
-            if (deletedChat === false || removedFromFriendsAndFriendRequests === false) {
-              setBlockUserInProgress(false);
-              if (blockedUsers) {
-                setBlockedUsers(
-                  blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
-                );
-              }
-              toast.error("Could not block user. Please try again.", {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid red",
-                },
-              });
+            removedFromEventsCreatedByCurrentUser = false;
+            setBlockUserInProgress(false);
+            if (blockedUsers) {
+              setBlockedUsers(
+                blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
+              );
             }
+            toast.error("Could not block user. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
           }
         })
         .catch((error) => console.log(error));
