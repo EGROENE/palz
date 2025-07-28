@@ -254,10 +254,10 @@ const getRecentEventsUserRSVPdTo = async (req, res) => {
 
   const now = Date.now();
 
-  const thirtyDaysInMs = 1000 * 60 * 60 * 24 * 30;
+  const thirtyoneDaysInMs = 1000 * 60 * 60 * 24 * 31;
 
   const events = await Event.find({
-    eventEndDateTimeInMS: { $lte: now - thirtyDaysInMs },
+    eventEndDateTimeInMS: { $lte: now - thirtyoneDaysInMs },
     interestedUsers: { $in: otherUser._id.toString() },
   });
 
@@ -283,10 +283,10 @@ const getRecentEventsUserOrganized = async (req, res) => {
 
   const now = Date.now();
 
-  const thirtyDaysInMs = 1000 * 60 * 60 * 24 * 30;
+  const thirtyoneDaysInMs = 1000 * 60 * 60 * 24 * 31;
 
   const events = await Event.find({
-    eventEndDateTimeInMS: { $lte: now - thirtyDaysInMs },
+    eventEndDateTimeInMS: { $lte: now - thirtyoneDaysInMs },
     organizers: { $in: otherUser._id.toString() },
   });
 
