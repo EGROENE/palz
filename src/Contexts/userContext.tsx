@@ -1173,10 +1173,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // maybe remove reject-request param, func
+  // if only used to retract, rename
   const handleRemoveFriendRequest = (
     recipient: TOtherUser | TUser,
-    sender: TOtherUser | TUser,
-    event?: "accept-request" | "retract-request" | "reject-request"
+    sender: TOtherUser | TUser
   ): void => {
     setIsLoading(true);
 
@@ -1201,63 +1202,22 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                   if (user) {
                                     setCurrentUser(user);
 
-                                    if (event === "accept-request") {
-                                      toast.success(
-                                        `You are now friends with ${sender.firstName} ${sender.lastName}!`,
-                                        {
-                                          style: {
-                                            background:
-                                              theme === "light"
-                                                ? "#242424"
-                                                : "rgb(233, 231, 228)",
-                                            color: theme === "dark" ? "black" : "white",
-                                            border: "2px solid green",
-                                          },
-                                        }
-                                      );
-                                    }
-
-                                    if (event === "retract-request") {
-                                      toast("Friend request retracted", {
-                                        style: {
-                                          background:
-                                            theme === "light"
-                                              ? "#242424"
-                                              : "rgb(233, 231, 228)",
-                                          color: theme === "dark" ? "black" : "white",
-                                          border: "2px solid red",
-                                        },
-                                      });
-                                    }
-
-                                    if (event === "reject-request") {
-                                      toast(
-                                        `Rejected friend request from ${sender.firstName} ${sender.lastName}.`,
-                                        {
-                                          style: {
-                                            background:
-                                              theme === "light"
-                                                ? "#242424"
-                                                : "rgb(233, 231, 228)",
-                                            color: theme === "dark" ? "black" : "white",
-                                            border: "2px solid red",
-                                          },
-                                        }
-                                      );
-                                    }
+                                    toast("Friend request retracted", {
+                                      style: {
+                                        background:
+                                          theme === "light"
+                                            ? "#242424"
+                                            : "rgb(233, 231, 228)",
+                                        color: theme === "dark" ? "black" : "white",
+                                        border: "2px solid red",
+                                      },
+                                    });
                                   } else {
-                                    if (event) {
-                                      handleRemoveFriendRequestFail(
-                                        sender,
-                                        recipient._id?.toString(),
-                                        event
-                                      );
-                                    } else {
-                                      handleRemoveFriendRequestFail(
-                                        sender,
-                                        recipient._id?.toString()
-                                      );
-                                    }
+                                    handleRemoveFriendRequestFail(
+                                      sender,
+                                      recipient._id?.toString(),
+                                      "retract-request"
+                                    );
                                   }
                                 })
                                 .catch((error) => console.log(error))
@@ -1267,7 +1227,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                               handleRemoveFriendRequestFail(
                                 sender,
                                 recipient._id?.toString(),
-                                event
+                                "retract-request"
                               );
                             }
                           })
@@ -1278,7 +1238,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                       handleRemoveFriendRequestFail(
                         sender,
                         recipient._id?.toString(),
-                        event
+                        "retract-request"
                       );
                     }
                   })
@@ -1286,7 +1246,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               });
             } else {
               setIsLoading(false);
-              handleRemoveFriendRequestFail(sender, recipient._id?.toString(), event);
+              handleRemoveFriendRequestFail(
+                sender,
+                recipient._id?.toString(),
+                "retract-request"
+              );
             }
           })
           .catch((error) => console.log(error));
@@ -1311,77 +1275,31 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                         res.json().then((user) => {
                                           if (user) {
                                             setCurrentUser(user);
-                                            if (event === "accept-request") {
-                                              toast.success(
-                                                `You are now friends with ${sender.firstName} ${sender.lastName}!`,
-                                                {
-                                                  style: {
-                                                    background:
-                                                      theme === "light"
-                                                        ? "#242424"
-                                                        : "rgb(233, 231, 228)",
-                                                    color:
-                                                      theme === "dark"
-                                                        ? "black"
-                                                        : "white",
-                                                    border: "2px solid green",
-                                                  },
-                                                }
-                                              );
-                                            }
 
-                                            if (event === "retract-request") {
-                                              toast("Friend request retracted", {
-                                                style: {
-                                                  background:
-                                                    theme === "light"
-                                                      ? "#242424"
-                                                      : "rgb(233, 231, 228)",
-                                                  color:
-                                                    theme === "dark" ? "black" : "white",
-                                                  border: "2px solid red",
-                                                },
-                                              });
-                                            }
-
-                                            if (event === "reject-request") {
-                                              toast(
-                                                `Rejected friend request from ${sender.firstName} ${sender.lastName}.`,
-                                                {
-                                                  style: {
-                                                    background:
-                                                      theme === "light"
-                                                        ? "#242424"
-                                                        : "rgb(233, 231, 228)",
-                                                    color:
-                                                      theme === "dark"
-                                                        ? "black"
-                                                        : "white",
-                                                    border: "2px solid red",
-                                                  },
-                                                }
-                                              );
-                                            }
+                                            toast("Friend request retracted", {
+                                              style: {
+                                                background:
+                                                  theme === "light"
+                                                    ? "#242424"
+                                                    : "rgb(233, 231, 228)",
+                                                color:
+                                                  theme === "dark" ? "black" : "white",
+                                                border: "2px solid red",
+                                              },
+                                            });
                                           } else {
-                                            if (event) {
-                                              handleRemoveFriendRequestFail(
-                                                sender,
-                                                recipient._id?.toString(),
-                                                event
-                                              );
-                                            } else {
-                                              handleRemoveFriendRequestFail(
-                                                sender,
-                                                recipient._id?.toString()
-                                              );
-                                            }
+                                            handleRemoveFriendRequestFail(
+                                              sender,
+                                              recipient._id?.toString(),
+                                              "retract-request"
+                                            );
                                           }
                                         });
                                       } else {
                                         handleRemoveFriendRequestFail(
                                           sender,
                                           recipient._id?.toString(),
-                                          event
+                                          "retract-request"
                                         );
                                       }
                                     })
@@ -1393,7 +1311,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                 handleRemoveFriendRequestFail(
                                   sender,
                                   recipient._id?.toString(),
-                                  event
+                                  "retract-request"
                                 );
                               }
                             }
@@ -1405,7 +1323,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                       handleRemoveFriendRequestFail(
                         sender,
                         recipient._id?.toString(),
-                        event
+                        "retract-request"
                       );
                     }
                   })
@@ -1413,7 +1331,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               }
             } else {
               setIsLoading(false);
-              handleRemoveFriendRequestFail(sender, recipient._id?.toString(), event);
+              handleRemoveFriendRequestFail(
+                sender,
+                recipient._id?.toString(),
+                "retract-request"
+              );
             }
           })
           .catch((error) => console.log(error));
