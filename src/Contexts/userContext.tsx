@@ -1180,46 +1180,55 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
 
     if (currentUser && recipient) {
-      // When currentUser is recipient:
-      if (currentUser._id === recipient._id && sender && recipient._id) {
-        const recipientID = recipient._id.toString();
-        Requests.getUserByID(recipientID)
-          .then((res) => {
-            if (res.ok) {
-              res.json().then((rec: TUser) => {
-                Requests.removeFromFriendRequestsReceived(sender, rec)
-                  .then((res) => {
-                    if (res.ok) {
-                      if (currentUser && currentUser._id) {
-                        Requests.getUserByID(currentUser._id.toString())
-                          .then((res) => {
+      Requests.removeFromFriendRequestsSent(currentUser, recipient)
+        .then((res) => {
+          if (res.ok) {
+            if (recipient._id) {
+              Requests.getUserByID(recipient._id.toString())
+                .then((res) => {
+                  if (res.ok) {
+                    res.json().then((rec: TUser) => {
+                      if (rec._id) {
+                        Requests.removeFromFriendRequestsReceived(sender, rec).then(
+                          (res) => {
                             if (res.ok) {
-                              res
-                                .json()
-                                .then((user) => {
-                                  if (user) {
-                                    setCurrentUser(user);
+                              if (currentUser && currentUser._id) {
+                                Requests.getUserByID(currentUser._id.toString())
+                                  .then((res) => {
+                                    if (res.ok) {
+                                      res.json().then((user) => {
+                                        if (user) {
+                                          setCurrentUser(user);
 
-                                    toast("Friend request retracted", {
-                                      style: {
-                                        background:
-                                          theme === "light"
-                                            ? "#242424"
-                                            : "rgb(233, 231, 228)",
-                                        color: theme === "dark" ? "black" : "white",
-                                        border: "2px solid red",
-                                      },
-                                    });
-                                  } else {
-                                    handleRemoveFriendRequestFail(
-                                      sender,
-                                      recipient._id?.toString(),
-                                      "retract-request"
-                                    );
-                                  }
-                                })
-                                .catch((error) => console.log(error))
-                                .finally(() => setIsLoading(false));
+                                          toast("Friend request retracted", {
+                                            style: {
+                                              background:
+                                                theme === "light"
+                                                  ? "#242424"
+                                                  : "rgb(233, 231, 228)",
+                                              color: theme === "dark" ? "black" : "white",
+                                              border: "2px solid red",
+                                            },
+                                          });
+                                        } else {
+                                          handleRemoveFriendRequestFail(
+                                            sender,
+                                            recipient._id?.toString(),
+                                            "retract-request"
+                                          );
+                                        }
+                                      });
+                                    } else {
+                                      handleRemoveFriendRequestFail(
+                                        sender,
+                                        recipient._id?.toString(),
+                                        "retract-request"
+                                      );
+                                    }
+                                  })
+                                  .catch((error) => console.log(error))
+                                  .finally(() => setIsLoading(false));
+                              }
                             } else {
                               setIsLoading(false);
                               handleRemoveFriendRequestFail(
@@ -1228,116 +1237,31 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                 "retract-request"
                               );
                             }
-                          })
-                          .catch((error) => console.log(error));
+                          }
+                        );
                       }
-                    } else {
-                      setIsLoading(false);
-                      handleRemoveFriendRequestFail(
-                        sender,
-                        recipient._id?.toString(),
-                        "retract-request"
-                      );
-                    }
-                  })
-                  .catch((error) => console.log(error));
-              });
-            } else {
-              setIsLoading(false);
-              handleRemoveFriendRequestFail(
-                sender,
-                recipient._id?.toString(),
-                "retract-request"
-              );
+                    });
+                  } else {
+                    setIsLoading(false);
+                    handleRemoveFriendRequestFail(
+                      sender,
+                      recipient._id?.toString(),
+                      "retract-request"
+                    );
+                  }
+                })
+                .catch((error) => console.log(error));
             }
-          })
-          .catch((error) => console.log(error));
-      } else {
-        // When currentUser is sender:
-        Requests.removeFromFriendRequestsSent(currentUser, recipient)
-          .then((res) => {
-            if (res.ok) {
-              if (recipient._id) {
-                Requests.getUserByID(recipient._id.toString())
-                  .then((res) => {
-                    if (res.ok) {
-                      res.json().then((rec: TUser) => {
-                        if (rec._id) {
-                          Requests.removeFromFriendRequestsReceived(sender, rec).then(
-                            (res) => {
-                              if (res.ok) {
-                                if (currentUser && currentUser._id) {
-                                  Requests.getUserByID(currentUser._id.toString())
-                                    .then((res) => {
-                                      if (res.ok) {
-                                        res.json().then((user) => {
-                                          if (user) {
-                                            setCurrentUser(user);
-
-                                            toast("Friend request retracted", {
-                                              style: {
-                                                background:
-                                                  theme === "light"
-                                                    ? "#242424"
-                                                    : "rgb(233, 231, 228)",
-                                                color:
-                                                  theme === "dark" ? "black" : "white",
-                                                border: "2px solid red",
-                                              },
-                                            });
-                                          } else {
-                                            handleRemoveFriendRequestFail(
-                                              sender,
-                                              recipient._id?.toString(),
-                                              "retract-request"
-                                            );
-                                          }
-                                        });
-                                      } else {
-                                        handleRemoveFriendRequestFail(
-                                          sender,
-                                          recipient._id?.toString(),
-                                          "retract-request"
-                                        );
-                                      }
-                                    })
-                                    .catch((error) => console.log(error))
-                                    .finally(() => setIsLoading(false));
-                                }
-                              } else {
-                                setIsLoading(false);
-                                handleRemoveFriendRequestFail(
-                                  sender,
-                                  recipient._id?.toString(),
-                                  "retract-request"
-                                );
-                              }
-                            }
-                          );
-                        }
-                      });
-                    } else {
-                      setIsLoading(false);
-                      handleRemoveFriendRequestFail(
-                        sender,
-                        recipient._id?.toString(),
-                        "retract-request"
-                      );
-                    }
-                  })
-                  .catch((error) => console.log(error));
-              }
-            } else {
-              setIsLoading(false);
-              handleRemoveFriendRequestFail(
-                sender,
-                recipient._id?.toString(),
-                "retract-request"
-              );
-            }
-          })
-          .catch((error) => console.log(error));
-      }
+          } else {
+            setIsLoading(false);
+            handleRemoveFriendRequestFail(
+              sender,
+              recipient._id?.toString(),
+              "retract-request"
+            );
+          }
+        })
+        .catch((error) => console.log(error));
     }
   };
 
