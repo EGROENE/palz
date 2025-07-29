@@ -587,17 +587,25 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           organizers.map((u) => u._id),
           currentEvent.organizers
         ) && {
-          organizers: organizers,
+          organizers: organizers
+            .map((o) => o._id?.toString())
+            .filter((elem) => elem !== undefined),
         }),
         ...(!Methods.arraysAreIdentical(
           invitees.map((u) => u._id),
           currentEvent.invitees
-        ) && { invitees: invitees }),
+        ) && {
+          invitees: invitees
+            .map((i) => i._id?.toString())
+            .filter((elem) => elem !== undefined),
+        }),
         ...(!Methods.arraysAreIdentical(
           blockedUsersEvent.map((u) => u._id),
           currentEvent.blockedUsersEvent
         ) && {
-          blockedUsersEvent: blockedUsersEvent,
+          blockedUsersEvent: blockedUsersEvent
+            .map((bue) => bue._id?.toString())
+            .filter((elem) => elem !== undefined),
         }),
         ...(eventDescription !== "" &&
           eventDescription !== currentEvent.description && {
