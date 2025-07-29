@@ -1173,8 +1173,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // maybe remove reject-request param, func
-  // if only used to retract, rename
   const handleRetractFriendRequest = (
     recipient: TOtherUser | TUser,
     sender: TOtherUser | TUser
