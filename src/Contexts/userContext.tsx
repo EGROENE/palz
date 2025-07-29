@@ -1744,90 +1744,89 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (blocker._id) {
-      // get blocker TUser object, pass to removeFromBlockedUsers:
       Requests.getUserByID(blocker._id.toString())
         .then((res) => {
           if (res.ok) {
-            res.json().then((b: TUser) => {
-              if (blockee._id) {
-                Requests.removeFromBlockedUsers(b, blockee._id.toString())
-                  .then((res) => {
-                    if (currentUser && currentUser._id && res.ok && blockee._id) {
-                      // Get blockee TUser object:
-                      Requests.getUserByID(blockee._id.toString())
-                        .then((res) => {
-                          if (res.ok) {
-                            res
-                              .json()
-                              .then((blockee: TUser) => {
-                                if (currentUser._id && blocker._id) {
-                                  // Remove blocker from blockee's blockedBy array:
-                                  Requests.removeFromBlockedBy(
-                                    blockee,
-                                    blocker._id.toString()
-                                  )
-                                    .then((res) => {
-                                      if (res.ok) {
-                                        if (currentUser._id) {
-                                          // Fetch & set updated currentUser:
-                                          Requests.getUserByID(currentUser._id.toString())
-                                            .then((res) => {
-                                              if (res.ok) {
-                                                res.json().then((user) => {
-                                                  setCurrentUser(user);
-                                                  toast.success(
-                                                    `Unblocked ${blockee.username}.`,
-                                                    {
-                                                      style: {
-                                                        background:
-                                                          theme === "light"
-                                                            ? "#242424"
-                                                            : "rgb(233, 231, 228)",
-                                                        color:
-                                                          theme === "dark"
-                                                            ? "black"
-                                                            : "white",
-                                                        border: "2px solid green",
-                                                      },
-                                                    }
-                                                  );
-                                                });
-                                              } else {
-                                                handleUnblockUserFail(
-                                                  Methods.getTBarebonesUser(blockee)
-                                                );
+            res
+              .json()
+              .then((blocker: TUser) => {
+                if (blockee._id) {
+                  Requests.getUserByID(blockee._id.toString())
+                    .then((res) => {
+                      if (res.ok) {
+                        res
+                          .json()
+                          .then((blockee: TUser) => {
+                            if (blockee._id && blocker._id) {
+                              Promise.all([
+                                Requests.removeFromBlockedUsers(
+                                  blocker,
+                                  blockee._id.toString()
+                                ),
+                                Requests.removeFromBlockedBy(
+                                  blockee,
+                                  blocker._id.toString()
+                                ),
+                              ])
+                                .then((resArray: Response[]) => {
+                                  if (
+                                    resArray.every((res) => res.ok) &&
+                                    currentUser &&
+                                    currentUser._id
+                                  ) {
+                                    Requests.getUserByID(currentUser._id.toString())
+                                      .then((res) => {
+                                        if (res.ok) {
+                                          setIsLoading(false);
+                                          res.json().then((user: TUser) => {
+                                            setCurrentUser(user);
+                                            toast.success(
+                                              `Unblocked ${blockee.username}.`,
+                                              {
+                                                style: {
+                                                  background:
+                                                    theme === "light"
+                                                      ? "#242424"
+                                                      : "rgb(233, 231, 228)",
+                                                  color:
+                                                    theme === "dark" ? "black" : "white",
+                                                  border: "2px solid green",
+                                                },
                                               }
-                                            })
-                                            .catch((error) => console.log(error))
-                                            .finally(() => setIsLoading(false));
+                                            );
+                                          });
+                                        } else {
+                                          handleUnblockUserFail(
+                                            Methods.getTBarebonesUser(blockee)
+                                          );
                                         }
-                                      } else {
-                                        handleUnblockUserFail(
-                                          Methods.getTBarebonesUser(blockee)
-                                        );
-                                      }
-                                    })
-                                    .catch((error) => console.log(error));
-                                }
-                              })
-                              .catch((error) => console.log(error));
-                          } else {
-                            handleUnblockUserFail(blockee);
-                          }
-                        })
-                        .catch((error) => console.log(error));
-                    } else {
-                      handleUnblockUserFail(blockee);
-                    }
-                  })
-                  .catch((error) => console.log(error));
-              }
-            });
+                                      })
+                                      .catch((error) => console.log(error));
+                                  } else {
+                                    handleUnblockUserFail(
+                                      Methods.getTBarebonesUser(blockee)
+                                    );
+                                  }
+                                })
+                                .catch((error) => console.log(error));
+                            }
+                          })
+                          .catch((error) => console.log(error));
+                      } else {
+                        handleUnblockUserFail(Methods.getTBarebonesUser(blockee));
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                }
+              })
+              .catch((error) => console.log(error));
           } else {
-            handleUnblockUserFail(Methods.getTBarebonesUser(blockee));
+            handleUnblockUserFail(blockee);
           }
         })
         .catch((error) => console.log(error));
+    } else {
+      handleUnblockUserFail(Methods.getTBarebonesUser(blockee));
     }
   };
 
