@@ -793,49 +793,38 @@ const OtherUserProfile = () => {
                             .catch((error) => console.log(error));
                         });
                       } else {
-                        if (
-                          removedFromEventsCreatedByCurrentUser === false ||
-                          deletedChat === false
-                        ) {
-                          setBlockUserInProgress(false);
-                          if (blockedUsers) {
-                            setBlockedUsers(
-                              blockedUsers.filter(
-                                (u) => u._id !== pageOwner._id?.toString()
-                              )
-                            );
-                          }
-                          toast.error("Could not block user. Please try again.", {
-                            style: {
-                              background:
-                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                              color: theme === "dark" ? "black" : "white",
-                              border: "2px solid red",
-                            },
-                          });
+                        setBlockUserInProgress(false);
+                        if (blockedUsers) {
+                          setBlockedUsers(
+                            blockedUsers.filter(
+                              (u) => u._id !== pageOwner._id?.toString()
+                            )
+                          );
                         }
+                        toast.error("Could not block user. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
                       }
                     });
                   } else {
-                    if (
-                      removedFromEventsCreatedByCurrentUser === false ||
-                      deletedChat === false
-                    ) {
-                      setBlockUserInProgress(false);
-                      if (blockedUsers) {
-                        setBlockedUsers(
-                          blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
-                        );
-                      }
-                      toast.error("Could not block user. Please try again.", {
-                        style: {
-                          background:
-                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                          color: theme === "dark" ? "black" : "white",
-                          border: "2px solid red",
-                        },
-                      });
+                    setBlockUserInProgress(false);
+                    if (blockedUsers) {
+                      setBlockedUsers(
+                        blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
+                      );
                     }
+                    toast.error("Could not block user. Please try again.", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    });
                   }
                 });
               }
