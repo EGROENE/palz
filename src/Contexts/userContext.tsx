@@ -1179,79 +1179,59 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     setIsLoading(true);
 
-    if (currentUser && recipient) {
-      Requests.removeFromFriendRequestsSent(currentUser, recipient)
+    if (currentUser && recipient && recipient._id) {
+      Requests.getUserByID(recipient._id.toString())
         .then((res) => {
           if (res.ok) {
-            if (recipient._id) {
-              Requests.getUserByID(recipient._id.toString())
-                .then((res) => {
-                  if (res.ok) {
-                    res.json().then((rec: TUser) => {
-                      if (rec._id) {
-                        Requests.removeFromFriendRequestsReceived(sender, rec).then(
-                          (res) => {
-                            if (res.ok) {
-                              if (currentUser && currentUser._id) {
-                                Requests.getUserByID(currentUser._id.toString())
-                                  .then((res) => {
-                                    if (res.ok) {
-                                      res.json().then((user) => {
-                                        if (user) {
-                                          setCurrentUser(user);
+            res.json().then((rec: TUser) => {
+              Promise.all([
+                Requests.removeFromFriendRequestsSent(currentUser, recipient),
+                Requests.removeFromFriendRequestsReceived(sender, rec),
+              ]).then((resArray: Response[]) => {
+                if (resArray.every((res) => res.ok) && currentUser && currentUser._id) {
+                  Requests.getUserByID(currentUser._id.toString())
+                    .then((res) => {
+                      if (res.ok) {
+                        res.json().then((user) => {
+                          if (user) {
+                            setCurrentUser(user);
 
-                                          toast("Friend request retracted", {
-                                            style: {
-                                              background:
-                                                theme === "light"
-                                                  ? "#242424"
-                                                  : "rgb(233, 231, 228)",
-                                              color: theme === "dark" ? "black" : "white",
-                                              border: "2px solid red",
-                                            },
-                                          });
-                                        } else {
-                                          handleRemoveFriendRequestFail(
-                                            sender,
-                                            recipient._id?.toString(),
-                                            "retract-request"
-                                          );
-                                        }
-                                      });
-                                    } else {
-                                      handleRemoveFriendRequestFail(
-                                        sender,
-                                        recipient._id?.toString(),
-                                        "retract-request"
-                                      );
-                                    }
-                                  })
-                                  .catch((error) => console.log(error))
-                                  .finally(() => setIsLoading(false));
-                              }
-                            } else {
-                              setIsLoading(false);
-                              handleRemoveFriendRequestFail(
-                                sender,
-                                recipient._id?.toString(),
-                                "retract-request"
-                              );
-                            }
+                            toast("Friend request retracted", {
+                              style: {
+                                background:
+                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                                color: theme === "dark" ? "black" : "white",
+                                border: "2px solid red",
+                              },
+                            });
+                          } else {
+                            handleRemoveFriendRequestFail(
+                              sender,
+                              recipient._id?.toString(),
+                              "retract-request"
+                            );
                           }
+                        });
+                      } else {
+                        handleRemoveFriendRequestFail(
+                          sender,
+                          recipient._id?.toString(),
+                          "retract-request"
                         );
                       }
-                    });
-                  } else {
-                    setIsLoading(false);
-                    handleRemoveFriendRequestFail(
-                      sender,
-                      recipient._id?.toString(),
-                      "retract-request"
-                    );
-                  }
-                })
-                .catch((error) => console.log(error));
-            }
+                    })
+                    .catch((error) => console.log(error))
+                    .finally(() => setIsLoading(false));
+                } else {
+                  setIsLoading(false);
+                  handleRemoveFriendRequestFail(
+                    sender,
+                    recipient._id?.toString(),
+                    "retract-request"
+                  );
+                }
+              });
+            });
           } else {
             setIsLoading(false);
             handleRemoveFriendRequestFail(
