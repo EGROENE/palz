@@ -1175,7 +1175,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   // maybe remove reject-request param, func
   // if only used to retract, rename
-  const handleRemoveFriendRequest = (
+  const handleRetractFriendRequest = (
     recipient: TOtherUser | TUser,
     sender: TOtherUser | TUser
   ): void => {
@@ -2382,7 +2382,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     showFriendRequestResponseOptions,
     setShowFriendRequestResponseOptions,
     handleSendFriendRequest,
-    handleRemoveFriendRequest,
+    handleRetractFriendRequest,
     handleUnfriending,
     handleRejectFriendRequest,
     handleAcceptFriendRequest,

@@ -26,7 +26,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
     handleAcceptFriendRequest,
     showFriendRequestResponseOptions,
     setShowFriendRequestResponseOptions,
-    handleRemoveFriendRequest,
+    handleRetractFriendRequest,
     handleSendFriendRequest,
     currentOtherUser,
     setCurrentOtherUser,
@@ -307,7 +307,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
                 );
               }
               if (currentUserSentFriendRequest && currentUser) {
-                handleRemoveFriendRequest(userSECURE, currentUser, "retract-request");
+                handleRetractFriendRequest(userSECURE, currentUser, "retract-request");
               }
               if (currentUserReceivedFriendRequest) {
                 setCurrentOtherUser(userSECURE);

@@ -21,7 +21,7 @@ const FriendRequests = () => {
   const {
     handleAcceptFriendRequest,
     handleRejectFriendRequest,
-    handleRemoveFriendRequest,
+    handleRetractFriendRequest,
     friendRequestsSent,
     friendRequestsReceived,
     userCreatedAccount,
@@ -252,7 +252,7 @@ const FriendRequests = () => {
                         buttonOneLink={`/otherUsers/${user?.username}`}
                         renderButtonTwo={true}
                         buttonTwoText="Retract"
-                        buttonTwoHandler={handleRemoveFriendRequest}
+                        buttonTwoHandler={handleRetractFriendRequest}
                         buttonTwoHandlerNeedsEventParam={false}
                         buttonTwoHandlerParams={[user, currentUser, "retract-request"]}
                         buttonTwoIsDisabled={isLoading}

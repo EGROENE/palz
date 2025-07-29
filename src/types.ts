@@ -335,7 +335,7 @@ export type TUserContext = {
     recipient: TOtherUser | TUser | undefined,
     shouldOptimisticRender?: boolean
   ) => void;
-  handleRemoveFriendRequest: (
+  handleRetractFriendRequest: (
     recipient: TOtherUser | TUser,
     sender: TOtherUser | TUser,
     event?: "accept-request" | "retract-request" | "reject-request"

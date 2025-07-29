@@ -33,7 +33,7 @@ const OtherUserProfile = () => {
     currentUser,
     userCreatedAccount,
     handleSendFriendRequest,
-    handleRemoveFriendRequest,
+    handleRetractFriendRequest,
     showFriendRequestResponseOptions,
     setShowFriendRequestResponseOptions,
     handleRejectFriendRequest,
@@ -548,7 +548,7 @@ const OtherUserProfile = () => {
         ),
         handler:
           currentUser && pageOwner
-            ? () => handleRemoveFriendRequest(pageOwner, currentUser, "retract-request")
+            ? () => handleRetractFriendRequest(pageOwner, currentUser, "retract-request")
             : undefined,
         paramsIncludeEvent: false,
       };
@@ -661,47 +661,51 @@ const OtherUserProfile = () => {
                     Requests.getUserByID(currentUser._id.toString()).then((res) => {
                       if (res.ok) {
                         res.json().then((cu: TUser) => {
-                          // Put fruitless requests from handleUnfriending, handleRemoveFriendRequest, & handleRemoveFriendRequest in Promise.all. Handle errors in blocking from there, as well as updating of currentUser by getUserByID.
-                          const getRequestsToDeleteFromFriendsListsAndFriendRequests = (): Promise<Response>[] => {
-                            let requestArray: Promise<Response>[] = [];
-                            if (areFriends) {
-                              requestArray.push(
-                                Requests.deleteFriendFromFriendsArray(cu, pageOwner),
-                                Requests.deleteFriendFromFriendsArray(pageOwner, cu)
-                              );
-                            }
+                          // Put fruitless requests from handleUnfriending, handleRetractFriendRequest, & handleRetractFriendRequest in Promise.all. Handle errors in blocking from there, as well as updating of currentUser by getUserByID.
+                          const getRequestsToDeleteFromFriendsListsAndFriendRequests =
+                            (): Promise<Response>[] => {
+                              let requestArray: Promise<Response>[] = [];
+                              if (areFriends) {
+                                requestArray.push(
+                                  Requests.deleteFriendFromFriendsArray(cu, pageOwner),
+                                  Requests.deleteFriendFromFriendsArray(pageOwner, cu)
+                                );
+                              }
 
-                            if (hasSentFriendRequest) {
-                              requestArray.push(
-                                Requests.removeFromFriendRequestsSent(
-                                  currentUser,
-                                  pageOwner
-                                ),
-                                Requests.removeFromFriendRequestsReceived(
-                                  Methods.getTOtherUserFromTUser(
+                              if (hasSentFriendRequest) {
+                                requestArray.push(
+                                  Requests.removeFromFriendRequestsSent(
                                     currentUser,
+                                    pageOwner
+                                  ),
+                                  Requests.removeFromFriendRequestsReceived(
+                                    Methods.getTOtherUserFromTUser(
+                                      currentUser,
+                                      currentUser
+                                    ),
+                                    pageOwner
+                                  )
+                                );
+                              }
+
+                              if (hasReceivedFriendRequest) {
+                                requestArray.push(
+                                  Requests.removeFromFriendRequestsSent(
+                                    pageOwner,
                                     currentUser
                                   ),
-                                  pageOwner
-                                )
-                              );
-                            }
+                                  Requests.removeFromFriendRequestsReceived(
+                                    Methods.getTOtherUserFromTUser(
+                                      pageOwner,
+                                      currentUser
+                                    ),
+                                    pageOwner
+                                  )
+                                );
+                              }
 
-                            if (hasReceivedFriendRequest) {
-                              requestArray.push(
-                                Requests.removeFromFriendRequestsSent(
-                                  pageOwner,
-                                  currentUser
-                                ),
-                                Requests.removeFromFriendRequestsReceived(
-                                  Methods.getTOtherUserFromTUser(pageOwner, currentUser),
-                                  pageOwner
-                                )
-                              );
-                            }
-
-                            return requestArray;
-                          };
+                              return requestArray;
+                            };
 
                           const requestsToDeleteFromFriendsListsAndFriendRequests: Promise<Response>[] =
                             getRequestsToDeleteFromFriendsListsAndFriendRequests();
