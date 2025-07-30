@@ -257,6 +257,7 @@ export type TUserValuesToUpdate = {
 };
 
 export type TEventValuesToUpdate = {
+  interestedUsers?: string[] | undefined;
   relatedInterests?: string[] | undefined;
   blockedUsersEvent?: string[] | undefined;
   images?: string[] | undefined;
