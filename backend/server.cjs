@@ -328,7 +328,6 @@ app.get("/palz/otherUsers/:username", (req, res) => {
 // Controller to get users who have FR relation w/ CU, are friends w/ CU, or have a blocking relationship. Will be used to delete CU from these lists in other Users when CU deletes profile
 app.get("/palz/settings", async (req, res) => {
   const { username } = req.query;
-  console.log(req.query);
 
   const currentUser = await User.findOne({ username });
 
