@@ -536,6 +536,17 @@ const getPotentialEventBlockees = (
   });
 };
 
+const getUsersToUpdateWhenCurrentUserDeletesAccount = (currentUser: TUser) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  return fetch(`http://localhost:4000/palz/settings?username=${currentUser.username}`, {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  });
+};
+
 const getAllEvents = (): Promise<TEvent[]> => {
   return fetch("http://localhost:4000/palz/events", {
     method: "GET",
@@ -1409,6 +1420,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getUsersToUpdateWhenCurrentUserDeletesAccount,
   getEventsUserCreated,
   getOngoingEvents,
   getRecentEventsUserOrganized,
