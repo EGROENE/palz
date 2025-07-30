@@ -1198,47 +1198,6 @@ const EventForm = ({
                               border: "2px solid green",
                             },
                           });
-
-                          /* Update fields corresponding to updated props on currentEvent w/o waiting for request to be made & state(s) to be set: */
-                          if (eventValuesToUpdate?.title) {
-                            setEventTitle(eventValuesToUpdate.title);
-                          }
-                          if (eventValuesToUpdate?.organizers) {
-                            setOrganizers(eventValuesToUpdate.organizers);
-                          }
-                          if (eventValuesToUpdate?.invitees) {
-                            setInvitees(eventValuesToUpdate.invitees);
-                          }
-                          if (eventValuesToUpdate?.blockedUsersEvent) {
-                            setBlockedUsersEvent(eventValuesToUpdate.blockedUsersEvent);
-                          }
-                          if (eventValuesToUpdate?.description) {
-                            setEventDescription(eventValuesToUpdate.description);
-                          }
-                          if (eventValuesToUpdate?.additionalInfo) {
-                            setEventAdditionalInfo(eventValuesToUpdate.additionalInfo);
-                          }
-                          if (eventValuesToUpdate?.city) {
-                            setEventCity(eventValuesToUpdate.city);
-                          }
-                          if (eventValuesToUpdate?.stateProvince) {
-                            setEventState(eventValuesToUpdate.stateProvince);
-                          }
-                          if (eventValuesToUpdate?.country) {
-                            setEventCountry(eventValuesToUpdate.country);
-                          }
-                          if (eventValuesToUpdate?.publicity) {
-                            setPublicity(eventValuesToUpdate.publicity);
-                          }
-                          if (eventValuesToUpdate?.maxParticipants) {
-                            setMaxParticipants(eventValuesToUpdate.maxParticipants);
-                          }
-                          if (eventValuesToUpdate?.address) {
-                            setEventAddress(eventValuesToUpdate.address);
-                          }
-                          if (eventValuesToUpdate?.relatedInterests) {
-                            setRelatedInterests(eventValuesToUpdate.relatedInterests);
-                          }
                         });
                       } else {
                         toast.error("Could not update event. Please try again.", {
