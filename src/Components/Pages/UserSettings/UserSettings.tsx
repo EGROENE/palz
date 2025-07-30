@@ -5,7 +5,7 @@ import EditUserInfoForm from "../../Forms/EditUserInfoForm/EditUserInfoForm";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import Requests from "../../../requests";
 import toast from "react-hot-toast";
-import { TOtherUser, TThemeColor } from "../../../types";
+import { TOtherUser, TThemeColor, TUser } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
@@ -228,11 +228,10 @@ const UserSettings = () => {
 
     setAccountDeletionInProgress(true);
 
-    let requestToDeleteUserIDFromAllArraysIsOK: boolean = true; // if any request to del user from pertinent arrays in DB fails, this will be false
-
     const promisesToAwait: Promise<Response>[] = [];
 
     // Delete user from event invitees/organizers/RSVP arrays:
+    // Make request to get events that currentUser RSVPd to, was invited to, organizes (del event if only organizer)
     if (allEvents) {
       for (const event of allEvents) {
         // Delete any user RSVPs:
@@ -258,28 +257,71 @@ const UserSettings = () => {
       }
     }
 
-    // Delete user from friendRequestsReceived & friends arrays in other users' DB documents:
     if (currentUser && visibleOtherUsers) {
-      for (const user of visibleOtherUsers) {
-        if (user._id) {
-          Requests.getUserByID(user._id.toString())
-            .then((res) => {
-              if (res.ok) {
-                res.json().then((user) => {
-                  promisesToAwait.push(
-                    Requests.removeFromFriendRequestsReceived(currentUser, user),
-                    Requests.deleteFriendFromFriendsArray(user, currentUser)
-                  );
-                });
-              } else {
-                setError(
-                  "Error deleting account (error deleting users from friends & friend-requests arrays)"
+      Requests.getUsersToUpdateWhenCurrentUserDeletesAccount(currentUser).then((res) => {
+        if (res.ok) {
+          res.json().then((users: TUser[]) => {
+            for (const user of users) {
+              if (
+                currentUser &&
+                currentUser._id &&
+                user.friends.includes(currentUser._id.toString())
+              ) {
+                promisesToAwait.push(
+                  Requests.deleteFriendFromFriendsArray(user, currentUser)
                 );
               }
-            })
-            .catch((error) => console.log(error));
+
+              if (
+                currentUser &&
+                currentUser._id &&
+                user.friendRequestsReceived.includes(currentUser._id?.toString())
+              ) {
+                promisesToAwait.push(
+                  Requests.removeFromFriendRequestsReceived(
+                    Methods.getTOtherUserFromTUser(currentUser, currentUser),
+                    user
+                  )
+                );
+              }
+
+              if (
+                currentUser &&
+                currentUser._id &&
+                user.friendRequestsSent.includes(currentUser._id?.toString())
+              ) {
+                promisesToAwait.push(
+                  Requests.removeFromFriendRequestsSent(currentUser, user)
+                );
+              }
+
+              if (
+                currentUser &&
+                currentUser._id &&
+                user.blockedBy.includes(currentUser._id?.toString())
+              ) {
+                promisesToAwait.push(
+                  Requests.removeFromBlockedBy(user, currentUser._id.toString())
+                );
+              }
+
+              if (
+                currentUser &&
+                currentUser._id &&
+                user.blockedUsers.includes(currentUser._id?.toString())
+              ) {
+                promisesToAwait.push(
+                  Requests.removeFromBlockedUsers(user, currentUser._id?.toString())
+                );
+              }
+            }
+          });
+        } else {
+          setError(
+            "Error deleting account (error deleting users from friends & friend-requests arrays)"
+          );
         }
-      }
+      });
     }
 
     // In chats user is in, replace their _id w/ 'Deleted User':
@@ -311,19 +353,8 @@ const UserSettings = () => {
     // Wait for user to be removed from all invitee/organizer/RSVP arrays, then delete user object in DB. Eventually, also wait for user to be removed from palz & messages arrays.
     // in .finally(), hide deletionInProgress modal
     Promise.all(promisesToAwait)
-      .then(() => {
-        for (const promise of promisesToAwait) {
-          promise.then((response) => {
-            if (!response.ok) {
-              requestToDeleteUserIDFromAllArraysIsOK = false;
-            }
-          });
-        }
-      })
-      .then(() => {
-        // run after the others have finished
-        if (!requestToDeleteUserIDFromAllArraysIsOK) {
-          console.log(1);
+      .then((resArray: Response[]) => {
+        if (!resArray.every((res) => res.ok)) {
           toast.error("Account deletion incomplete; please try again.", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -335,8 +366,6 @@ const UserSettings = () => {
           Requests.deleteUser(currentUser?._id?.toString())
             .then((response) => {
               if (!response.ok) {
-                console.log(currentUser);
-                console.log(0);
                 toast.error("Account deletion incomplete; please try again.", {
                   style: {
                     background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -345,9 +374,6 @@ const UserSettings = () => {
                   },
                 });
               } else {
-                queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-                queryClient.invalidateQueries({ queryKey: ["allEvents"] });
-                queryClient.refetchQueries({ queryKey: ["allEvents"] });
                 queryClient.invalidateQueries({ queryKey: ["userChats"] });
                 queryClient.refetchQueries({ queryKey: ["userChats"] });
                 toast("You have deleted your account. We're sorry to see you go!", {
