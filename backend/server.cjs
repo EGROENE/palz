@@ -344,11 +344,32 @@ const getOtherUsersWithRelationToCurrentUser = async (req, res) => {
   res.status(200).json(users);
 };
 
+const getEventsRelatedToCurrentUser = async (req, res) => {
+  const { username } = req.query;
+
+  const currentUser = await User.findOne({ username });
+
+  const events = await Event.find({
+    $or: [
+      { organizers: { $in: currentUser._id.toString() } },
+      { invitees: { $in: currentUser._id.toString() } },
+      { blockedUsersEvent: { $in: currentUser._id.toString() } },
+      { interestedUsers: { $in: currentUser._id.toString() } },
+    ],
+  });
+
+  res.status(200).json(events);
+};
+
 app.get("/palz/settings", async (req, res) => {
   const { retrieve } = req.query;
 
   if (retrieve === "relatedUsers") {
     return getOtherUsersWithRelationToCurrentUser(req, res);
+  }
+
+  if (retrieve === "relatedEvents") {
+    return getEventsRelatedToCurrentUser(req, res);
   }
 });
 
