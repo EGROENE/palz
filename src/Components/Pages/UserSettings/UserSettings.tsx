@@ -5,7 +5,7 @@ import EditUserInfoForm from "../../Forms/EditUserInfoForm/EditUserInfoForm";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import Requests from "../../../requests";
 import toast from "react-hot-toast";
-import { TOtherUser, TThemeColor, TUser } from "../../../types";
+import { TEventValuesToUpdate, TEvent, TThemeColor, TUser } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
@@ -81,10 +81,6 @@ const UserSettings = () => {
     fetchBlockedUsersIsError,
     fetchBlockedUsersIsLoading,
   } = useUserContext();
-  const visibleOtherUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
-
-  const { fetchAllEventsQuery } = useEventContext();
-  const allEvents = fetchAllEventsQuery.data;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -231,33 +227,42 @@ const UserSettings = () => {
     const promisesToAwait: Promise<Response>[] = [];
 
     // Delete user from event invitees/organizers/RSVP arrays:
-    // Make request to get events that currentUser RSVPd to, was invited to, organizes (del event if only organizer)
-    if (allEvents) {
-      for (const event of allEvents) {
-        // Delete any user RSVPs:
-        promisesToAwait.push(
-          Requests.deleteUserRSVP(Methods.getTBarebonesUser(currentUser), event)
-        );
+    // Make request to get events that currentUser RSVPd to, was invited to, blocked from, & organizes (del event if only organizer). Then, add requests to promisesToAwait, as applicable.
+    if (currentUser) {
+      Requests.getEventsRelatedToUser(currentUser).then((res) => {
+        if (res.ok) {
+          res.json().then((events: TEvent[]) => {
+            for (const event of events) {
+              if (
+                currentUser._id &&
+                event.organizers.length === 1 &&
+                event.organizers.includes(currentUser._id.toString())
+              ) {
+                promisesToAwait.push(Requests.deleteEvent(event));
+              } else {
+                const eventValuesToUpdate: TEventValuesToUpdate = {
+                  blockedUsersEvent: event.blockedUsersEvent.filter(
+                    (u) => u !== currentUser?._id?.toString()
+                  ),
+                  invitees: event.invitees.filter(
+                    (u) => u !== currentUser?._id?.toString()
+                  ),
+                  interestedUsers: event.interestedUsers.filter(
+                    (u) => u !== currentUser?._id?.toString()
+                  ),
+                };
 
-        // Delete user from events they've been invited to:
-        promisesToAwait.push(
-          Requests.removeInvitee(event, Methods.getTBarebonesUser(currentUser))
-        );
-
-        // Delete user from events they've organized or delete events of which user is sole organizer:
-        if (
-          currentUser?._id &&
-          event.organizers.length === 1 &&
-          event.organizers.includes(currentUser._id.toString())
-        ) {
-          promisesToAwait.push(Requests.deleteEvent(event));
+                promisesToAwait.push(Requests.updateEvent(event, eventValuesToUpdate));
+              }
+            }
+          });
         } else {
-          promisesToAwait.push(Requests.removeOrganizer(event, currentUser));
+          setError(
+            "Error deleting account (error deleting users from friends & friend-requests arrays)"
+          );
         }
-      }
-    }
+      });
 
-    if (currentUser && visibleOtherUsers) {
       Requests.getUsersToUpdateWhenCurrentUserDeletesAccount(currentUser).then((res) => {
         if (res.ok) {
           res.json().then((users: TUser[]) => {
@@ -374,6 +379,7 @@ const UserSettings = () => {
                   },
                 });
               } else {
+                // No need to invalidate/refetch userChats, but verify
                 queryClient.invalidateQueries({ queryKey: ["userChats"] });
                 queryClient.refetchQueries({ queryKey: ["userChats"] });
                 toast("You have deleted your account. We're sorry to see you go!", {
