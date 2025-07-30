@@ -611,6 +611,20 @@ const OtherUserProfile = () => {
     paramsIncludeEvent: false,
   };
 
+  const handleBlockUserFail = (blockee: TUser | TOtherUser) => {
+    setBlockUserInProgress(false);
+    if (blockedUsers) {
+      setBlockedUsers(blockedUsers.filter((u) => u._id !== blockee._id?.toString()));
+    }
+    toast.error("Could not block user. Please try again.", {
+      style: {
+        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+        color: theme === "dark" ? "black" : "white",
+        border: "2px solid red",
+      },
+    });
+  };
+
   // All blocking functionality defined here & not in userContext b/c userContext doesn't have access to event or chat data (it's possible to put requests in some function there to retrieve necessary data, but not practical while query exists to get all of currentUser's chats). Plus, blocking is only possible, now, from this component, so defining handleBlockUser here avoids unneeded abstraction.
   const handleBlockUser = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>): void => {
     e.preventDefault();
@@ -913,62 +927,12 @@ const OtherUserProfile = () => {
                                                             }
                                                           );
                                                       } else {
-                                                        setBlockUserInProgress(false);
-                                                        if (blockedUsers) {
-                                                          setBlockedUsers(
-                                                            blockedUsers.filter(
-                                                              (u) =>
-                                                                u._id !==
-                                                                pageOwner._id?.toString()
-                                                            )
-                                                          );
-                                                        }
-                                                        toast.error(
-                                                          "Could not block user. Please try again.",
-                                                          {
-                                                            style: {
-                                                              background:
-                                                                theme === "light"
-                                                                  ? "#242424"
-                                                                  : "rgb(233, 231, 228)",
-                                                              color:
-                                                                theme === "dark"
-                                                                  ? "black"
-                                                                  : "white",
-                                                              border: "2px solid red",
-                                                            },
-                                                          }
-                                                        );
+                                                        handleBlockUserFail(pageOwner);
                                                       }
                                                     })
                                                     .catch((error) => console.log(error));
                                                 } else {
-                                                  setBlockUserInProgress(false);
-                                                  if (blockedUsers) {
-                                                    setBlockedUsers(
-                                                      blockedUsers.filter(
-                                                        (u) =>
-                                                          u._id !==
-                                                          pageOwner._id?.toString()
-                                                      )
-                                                    );
-                                                  }
-                                                  toast.error(
-                                                    "Could not block user. Please try again.",
-                                                    {
-                                                      style: {
-                                                        background:
-                                                          theme === "light"
-                                                            ? "#242424"
-                                                            : "rgb(233, 231, 228)",
-                                                        color:
-                                                          theme === "dark"
-                                                            ? "black"
-                                                            : "white",
-                                                        border: "2px solid red",
-                                                      },
-                                                    }
-                                                  );
+                                                  handleBlockUserFail(pageOwner);
                                                 }
                                               });
                                             } else {
@@ -1121,189 +1085,45 @@ const OtherUserProfile = () => {
                                                           }
                                                         );
                                                     } else {
-                                                      setBlockUserInProgress(false);
-                                                      if (blockedUsers) {
-                                                        setBlockedUsers(
-                                                          blockedUsers.filter(
-                                                            (u) =>
-                                                              u._id !==
-                                                              pageOwner._id?.toString()
-                                                          )
-                                                        );
-                                                      }
-                                                      toast.error(
-                                                        "Could not block user. Please try again.",
-                                                        {
-                                                          style: {
-                                                            background:
-                                                              theme === "light"
-                                                                ? "#242424"
-                                                                : "rgb(233, 231, 228)",
-                                                            color:
-                                                              theme === "dark"
-                                                                ? "black"
-                                                                : "white",
-                                                            border: "2px solid red",
-                                                          },
-                                                        }
-                                                      );
+                                                      handleBlockUserFail(pageOwner);
                                                     }
                                                   })
                                                   .catch((error) => console.log(error));
                                               } else {
-                                                if (blockedUsers) {
-                                                  setBlockedUsers(
-                                                    blockedUsers.filter(
-                                                      (u) =>
-                                                        u._id !==
-                                                        pageOwner._id?.toString()
-                                                    )
-                                                  );
-                                                }
-                                                setBlockUserInProgress(false);
-                                                toast.error(
-                                                  "Could not block user. Please try again.",
-                                                  {
-                                                    style: {
-                                                      background:
-                                                        theme === "light"
-                                                          ? "#242424"
-                                                          : "rgb(233, 231, 228)",
-                                                      color:
-                                                        theme === "dark"
-                                                          ? "black"
-                                                          : "white",
-                                                      border: "2px solid red",
-                                                    },
-                                                  }
-                                                );
+                                                handleBlockUserFail(pageOwner);
                                               }
                                             }
                                           });
                                         } else {
-                                          if (blockedUsers) {
-                                            setBlockedUsers(
-                                              blockedUsers.filter(
-                                                (u) => u._id !== pageOwner._id?.toString()
-                                              )
-                                            );
-                                          }
-                                          setBlockUserInProgress(false);
-                                          toast.error(
-                                            "Could not block user. Please try again.",
-                                            {
-                                              style: {
-                                                background:
-                                                  theme === "light"
-                                                    ? "#242424"
-                                                    : "rgb(233, 231, 228)",
-                                                color:
-                                                  theme === "dark" ? "black" : "white",
-                                                border: "2px solid red",
-                                              },
-                                            }
-                                          );
+                                          handleBlockUserFail(pageOwner);
                                         }
                                       })
                                       .catch((error) => console.log(error));
                                   } else {
-                                    setBlockUserInProgress(false);
-                                    if (blockedUsers) {
-                                      setBlockedUsers(
-                                        blockedUsers.filter(
-                                          (u) => u._id !== pageOwner._id?.toString()
-                                        )
-                                      );
-                                    }
-                                    toast.error(
-                                      "Could not block user. Please try again.",
-                                      {
-                                        style: {
-                                          background:
-                                            theme === "light"
-                                              ? "#242424"
-                                              : "rgb(233, 231, 228)",
-                                          color: theme === "dark" ? "black" : "white",
-                                          border: "2px solid red",
-                                        },
-                                      }
-                                    );
+                                    handleBlockUserFail(pageOwner);
                                   }
                                 })
                                 .catch((error) => console.log(error));
                             });
                           } else {
-                            setBlockUserInProgress(false);
-                            if (blockedUsers) {
-                              setBlockedUsers(
-                                blockedUsers.filter(
-                                  (u) => u._id !== pageOwner._id?.toString()
-                                )
-                              );
-                            }
-                            toast.error("Could not block user. Please try again.", {
-                              style: {
-                                background:
-                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                                color: theme === "dark" ? "black" : "white",
-                                border: "2px solid red",
-                              },
-                            });
+                            handleBlockUserFail(pageOwner);
                           }
                         })
                         .catch((error) => console.log(error));
                     } else {
-                      setBlockUserInProgress(false);
-                      if (blockedUsers) {
-                        setBlockedUsers(
-                          blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
-                        );
-                      }
-                      toast.error("Could not block user. Please try again.", {
-                        style: {
-                          background:
-                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                          color: theme === "dark" ? "black" : "white",
-                          border: "2px solid red",
-                        },
-                      });
+                      handleBlockUserFail(pageOwner);
                     }
                   })
                   .catch((error) => console.log(error));
               }
             });
           } else {
-            setBlockUserInProgress(false);
-            if (blockedUsers) {
-              setBlockedUsers(
-                blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
-              );
-            }
-            toast.error("Could not block user. Please try again.", {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
           }
         })
         .catch((error) => console.log(error));
     } else {
       if (pageOwner) {
-        setBlockUserInProgress(false);
-        if (blockedUsers) {
-          setBlockedUsers(
-            blockedUsers.filter((u) => u._id !== pageOwner._id?.toString())
-          );
-        }
-        toast.error("Could not block user. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
+        handleBlockUserFail(pageOwner);
       } else {
         setError("An error occurred; please reload the page.");
       }
