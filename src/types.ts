@@ -188,6 +188,11 @@ export type TChatValuesToUpdate = {
 };
 
 export type TUserValuesToUpdate = {
+  friends?: string[] | undefined;
+  blockedUsers?: string[] | undefined;
+  blockedBy?: string[] | undefined;
+  friendRequestsSent?: string[] | undefined;
+  friendRequestsReceived?: string[] | undefined;
   firstName?: string | undefined;
   lastName?: string | undefined;
   profileImage?: string | unknown;
