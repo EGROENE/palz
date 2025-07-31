@@ -5,7 +5,13 @@ import EditUserInfoForm from "../../Forms/EditUserInfoForm/EditUserInfoForm";
 import InterestsSection from "../../Elements/InterestsSection/InterestsSection";
 import Requests from "../../../requests";
 import toast from "react-hot-toast";
-import { TEventValuesToUpdate, TEvent, TThemeColor, TUser } from "../../../types";
+import {
+  TEventValuesToUpdate,
+  TEvent,
+  TThemeColor,
+  TUser,
+  TUserValuesToUpdate,
+} from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
 import { useEventContext } from "../../../Hooks/useEventContext";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
@@ -13,7 +19,6 @@ import UserListModal from "../../Elements/UserListModal/UserListModal";
 import styles from "./styles.module.css";
 import { useQueryClient } from "@tanstack/react-query";
 import { useChatContext } from "../../../Hooks/useChatContext";
-import Methods from "../../../methods";
 
 const UserSettings = () => {
   const { setCurrentEvent } = useEventContext();
@@ -267,58 +272,27 @@ const UserSettings = () => {
         if (res.ok) {
           res.json().then((users: TUser[]) => {
             for (const user of users) {
-              if (
-                currentUser &&
-                currentUser._id &&
-                user.friends.includes(currentUser._id.toString())
-              ) {
-                promisesToAwait.push(
-                  Requests.deleteFriendFromFriendsArray(user, currentUser)
-                );
-              }
+              const userValuesToUpdate: TUserValuesToUpdate = {
+                friends: user.friends.filter(
+                  (elem) => elem !== currentUser._id?.toString()
+                ),
+                friendRequestsReceived: user.friends.filter(
+                  (elem) => elem !== currentUser._id?.toString()
+                ),
+                friendRequestsSent: user.friends.filter(
+                  (elem) => elem !== currentUser._id?.toString()
+                ),
+                blockedUsers: user.friends.filter(
+                  (elem) => elem !== currentUser._id?.toString()
+                ),
+                blockedBy: user.friends.filter(
+                  (elem) => elem !== currentUser._id?.toString()
+                ),
+              };
 
-              if (
-                currentUser &&
-                currentUser._id &&
-                user.friendRequestsReceived.includes(currentUser._id?.toString())
-              ) {
-                promisesToAwait.push(
-                  Requests.removeFromFriendRequestsReceived(
-                    Methods.getTOtherUserFromTUser(currentUser, currentUser),
-                    user
-                  )
-                );
-              }
-
-              if (
-                currentUser &&
-                currentUser._id &&
-                user.friendRequestsSent.includes(currentUser._id?.toString())
-              ) {
-                promisesToAwait.push(
-                  Requests.removeFromFriendRequestsSent(currentUser, user)
-                );
-              }
-
-              if (
-                currentUser &&
-                currentUser._id &&
-                user.blockedBy.includes(currentUser._id?.toString())
-              ) {
-                promisesToAwait.push(
-                  Requests.removeFromBlockedBy(user, currentUser._id.toString())
-                );
-              }
-
-              if (
-                currentUser &&
-                currentUser._id &&
-                user.blockedUsers.includes(currentUser._id?.toString())
-              ) {
-                promisesToAwait.push(
-                  Requests.removeFromBlockedUsers(user, currentUser._id?.toString())
-                );
-              }
+              promisesToAwait.push(
+                Requests.patchUpdatedUserInfo(user, userValuesToUpdate)
+              );
             }
           });
         } else {
