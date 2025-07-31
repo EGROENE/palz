@@ -539,12 +539,16 @@ const getPotentialEventBlockees = (
 const getUsersToUpdateWhenCurrentUserDeletesAccount = (currentUser: TUser) => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
+  console.log(currentUser);
 
-  return fetch(`http://localhost:4000/palz/settings?username=${currentUser.username}`, {
-    method: "GET",
-    headers: myHeaders,
-    redirect: "follow",
-  });
+  return fetch(
+    `http://localhost:4000/palz/settings?username=${currentUser.username}&retrieve=relatedUsers`,
+    {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    }
+  );
 };
 
 const getEventsRelatedToUser = (currentUser: TUser) => {
