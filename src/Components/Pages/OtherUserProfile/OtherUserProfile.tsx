@@ -631,6 +631,8 @@ const OtherUserProfile = () => {
 
     setBlockUserInProgress(true);
 
+    let promisesToAwait: Promise<Response>[] = [];
+
     // Optimistically set blockedUsers:
     if (blockedUsers) {
       setBlockedUsers(blockedUsers.concat(Methods.getTBarebonesUser(pageOwner)));
@@ -643,481 +645,207 @@ const OtherUserProfile = () => {
       blockedUsers &&
       currentUser.username
     ) {
-      // Add to blockedUsers & blockedBy; remove from friend requests & friends lists. If successful, delete any chats b/t the two users. If there isn't a chat, or deletion is successful, delete blockee from user lists on any events the blocker created (and add blockee to blockedUsersEvent list)
       Requests.getUserByID(pageOwner._id.toString())
         .then((res) => {
           if (res.ok) {
-            res.json().then((pageOwner: TUser) => {
-              const areFriends: boolean =
-                currentUser._id &&
-                pageOwner._id &&
-                (currentUser.friends.includes(pageOwner._id.toString()) ||
-                  pageOwner.friends.includes(currentUser._id.toString()))
-                  ? true
+            res
+              .json()
+              .then((pageOwner: TUser) => {
+                const areFriends: boolean =
+                  currentUser._id &&
+                  pageOwner._id &&
+                  (currentUser.friends.includes(pageOwner._id.toString()) ||
+                    pageOwner.friends.includes(currentUser._id.toString()))
+                    ? true
+                    : false;
+                const hasSentFriendRequest: boolean = pageOwner._id
+                  ? currentUser.friendRequestsSent.includes(pageOwner._id.toString())
                   : false;
-              const hasSentFriendRequest: boolean = pageOwner._id
-                ? currentUser.friendRequestsSent.includes(pageOwner._id.toString())
-                : false;
-              const hasReceivedFriendRequest: boolean = pageOwner._id
-                ? currentUser.friendRequestsReceived.includes(pageOwner._id.toString())
-                : false;
+                const hasReceivedFriendRequest: boolean = pageOwner._id
+                  ? currentUser.friendRequestsReceived.includes(pageOwner._id.toString())
+                  : false;
 
-              if (currentUser._id && pageOwner && pageOwner._id) {
-                Promise.all([
-                  Requests.addToBlockedUsers(currentUser, pageOwner._id.toString()),
-                  Requests.addToBlockedBy(pageOwner, currentUser._id.toString()),
-                ])
-                  .then((resArray: Response[]) => {
-                    if (
-                      resArray.every((res) => res.ok) &&
-                      currentUser &&
-                      currentUser._id
-                    ) {
-                      Requests.getUserByID(currentUser._id.toString())
-                        .then((res) => {
-                          if (res.ok) {
-                            res.json().then((cu: TUser) => {
-                              // Put fruitless requests from handleUnfriending, handleRetractFriendRequest, & handleRetractFriendRequest in Promise.all. Handle errors in blocking from there, as well as updating of currentUser by getUserByID.
-                              const getRequestsToDeleteFromFriendsListsAndFriendRequests =
-                                (): Promise<Response>[] => {
-                                  let requestArray: Promise<Response>[] = [];
-                                  if (areFriends) {
-                                    requestArray.push(
-                                      Requests.deleteFriendFromFriendsArray(
-                                        cu,
-                                        pageOwner
-                                      ),
-                                      Requests.deleteFriendFromFriendsArray(pageOwner, cu)
-                                    );
-                                  }
+                //////////////////////////////////
+                // Add requests to add to blockedUsers/By:
+                if (currentUser._id && pageOwner && pageOwner._id) {
+                  promisesToAwait.push(
+                    Requests.addToBlockedUsers(currentUser, pageOwner._id.toString()),
+                    Requests.addToBlockedBy(pageOwner, currentUser._id.toString())
+                  );
 
-                                  if (hasSentFriendRequest) {
-                                    requestArray.push(
-                                      Requests.removeFromFriendRequestsSent(
-                                        currentUser,
-                                        pageOwner
-                                      ),
-                                      Requests.removeFromFriendRequestsReceived(
-                                        Methods.getTOtherUserFromTUser(
-                                          currentUser,
-                                          currentUser
-                                        ),
-                                        pageOwner
-                                      )
-                                    );
-                                  }
+                  // Add requests to delete from friend, friendRequestsReceived/Sent:
+                  if (areFriends) {
+                    promisesToAwait.push(
+                      Requests.deleteFriendFromFriendsArray(currentUser, pageOwner),
+                      Requests.deleteFriendFromFriendsArray(pageOwner, currentUser)
+                    );
+                  }
 
-                                  if (hasReceivedFriendRequest) {
-                                    requestArray.push(
-                                      Requests.removeFromFriendRequestsSent(
-                                        pageOwner,
-                                        currentUser
-                                      ),
-                                      Requests.removeFromFriendRequestsReceived(
-                                        Methods.getTOtherUserFromTUser(
-                                          pageOwner,
-                                          currentUser
-                                        ),
-                                        pageOwner
-                                      )
-                                    );
-                                  }
+                  if (hasSentFriendRequest) {
+                    promisesToAwait.push(
+                      Requests.removeFromFriendRequestsSent(currentUser, pageOwner),
+                      Requests.removeFromFriendRequestsReceived(
+                        Methods.getTOtherUserFromTUser(currentUser, currentUser),
+                        pageOwner
+                      )
+                    );
+                  }
 
-                                  return requestArray;
-                                };
+                  if (hasReceivedFriendRequest) {
+                    promisesToAwait.push(
+                      Requests.removeFromFriendRequestsSent(pageOwner, currentUser),
+                      Requests.removeFromFriendRequestsReceived(
+                        Methods.getTOtherUserFromTUser(pageOwner, currentUser),
+                        pageOwner
+                      )
+                    );
+                  }
 
-                              const requestsToDeleteFromFriendsListsAndFriendRequests: Promise<Response>[] =
-                                getRequestsToDeleteFromFriendsListsAndFriendRequests();
+                  // Delete any chat b/t blocker & blockee:
+                  let chatToDelete: TChat | undefined = userChats
+                    ? userChats.filter(
+                        (chat) =>
+                          currentUser &&
+                          currentUser._id &&
+                          pageOwner &&
+                          pageOwner._id &&
+                          chat.members.length === 2 &&
+                          chat.members.includes(currentUser._id.toString()) &&
+                          chat.members.includes(pageOwner._id.toString())
+                      )[0]
+                    : undefined;
 
-                              Promise.all(
-                                requestsToDeleteFromFriendsListsAndFriendRequests
-                              )
+                  if (chatToDelete && chatToDelete._id) {
+                    promisesToAwait.push(
+                      Requests.deleteChat(chatToDelete._id.toString())
+                    );
+                  }
+
+                  // Delete pageOwner (blockee) from invitee, organizer, & RSVP lists of events currentUser created; add pageOwner to each event's blockedUsersEvent list:
+                  if (currentUser.username) {
+                    Requests.getEventsUserCreated(currentUser.username)
+                      .then((res) => {
+                        if (res.ok) {
+                          res.json().then((eventsCreatedByCurrentUser: TEvent[]) => {
+                            if (eventsCreatedByCurrentUser.length > 0) {
+                              let requestsToUpdateEventsCreatedByCurrentUser = [];
+                              for (const event of eventsCreatedByCurrentUser) {
+                                // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
+                                if (pageOwner._id) {
+                                  // Maybe call handler to update event, updating invitees, blockedUsersEvent, organizers, and interestedUsers. Call Requests.updateEvent w/ eventValuesToUpdate defined as these updated lists:
+                                  const eventValuesToUpdate: TEventValuesToUpdate = {
+                                    invitees: event.invitees.filter(
+                                      (i) => i !== pageOwner._id?.toString()
+                                    ),
+                                    organizers: event.organizers.filter(
+                                      (o) => o !== pageOwner._id?.toString()
+                                    ),
+                                    interestedUsers: event.interestedUsers.filter(
+                                      (u) => u !== pageOwner._id?.toString()
+                                    ),
+                                    blockedUsersEvent: event.blockedUsersEvent.concat(
+                                      pageOwner._id.toString()
+                                    ),
+                                  };
+
+                                  requestsToUpdateEventsCreatedByCurrentUser.push(
+                                    Requests.updateEvent(event, eventValuesToUpdate)
+                                  );
+                                }
+                              }
+
+                              for (const request of requestsToUpdateEventsCreatedByCurrentUser) {
+                                promisesToAwait.push(request);
+                              }
+
+                              Promise.all(promisesToAwait)
                                 .then((resArray: Response[]) => {
-                                  if (
-                                    resArray.every((res) => res.ok) &&
-                                    currentUser &&
-                                    currentUser._id
-                                  ) {
-                                    Requests.getUserByID(currentUser._id.toString())
-                                      .then((res) => {
-                                        if (res.ok) {
-                                          res.json().then((cu: TUser) => {
-                                            // Delete any chat b/t blocker & blockee:
-                                            let chatToDelete: TChat | undefined =
-                                              userChats
-                                                ? userChats.filter(
-                                                    (chat) =>
-                                                      currentUser &&
-                                                      currentUser._id &&
-                                                      pageOwner &&
-                                                      pageOwner._id &&
-                                                      chat.members.length === 2 &&
-                                                      chat.members.includes(
-                                                        currentUser._id.toString()
-                                                      ) &&
-                                                      chat.members.includes(
-                                                        pageOwner._id.toString()
-                                                      )
-                                                  )[0]
-                                                : undefined;
-
-                                            if (chatToDelete && chatToDelete._id) {
-                                              Requests.deleteChat(
-                                                chatToDelete._id.toString()
-                                              ).then((res) => {
-                                                if (res.ok && cu.username) {
-                                                  queryClient.invalidateQueries({
-                                                    queryKey: ["userChats"],
-                                                  });
-                                                  queryClient.refetchQueries({
-                                                    queryKey: ["userChats"],
-                                                  });
-
-                                                  // Delete pageOwner (blockee) from invitee, organizer, & RSVP lists of events currentUser created; add pageOwner to each event's blockedUsersEvent list:
-                                                  // For every event in eventsCreatedByCU, put Requests.updateEvent w/ right params in Promise.all. Handle errors/loading/toast from there.
-                                                  Requests.getEventsUserCreated(
-                                                    cu.username
-                                                  )
-                                                    .then((res) => {
-                                                      if (res.ok) {
-                                                        res
-                                                          .json()
-                                                          .then(
-                                                            (
-                                                              eventsCreatedByCurrentUser: TEvent[]
-                                                            ) => {
-                                                              if (
-                                                                eventsCreatedByCurrentUser.length >
-                                                                0
-                                                              ) {
-                                                                let requestsToUpdateEventsCreatedByCurrentUser =
-                                                                  [];
-                                                                for (const event of eventsCreatedByCurrentUser) {
-                                                                  // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
-                                                                  if (pageOwner._id) {
-                                                                    // Maybe call handler to update event, updating invitees, blockedUsersEvent, organizers, and interestedUsers. Call Requests.updateEvent w/ eventValuesToUpdate defined as these updated lists:
-                                                                    const eventValuesToUpdate: TEventValuesToUpdate =
-                                                                      {
-                                                                        invitees:
-                                                                          event.invitees.filter(
-                                                                            (i) =>
-                                                                              i !==
-                                                                              pageOwner._id?.toString()
-                                                                          ),
-                                                                        organizers:
-                                                                          event.organizers.filter(
-                                                                            (o) =>
-                                                                              o !==
-                                                                              pageOwner._id?.toString()
-                                                                          ),
-                                                                        blockedUsersEvent:
-                                                                          event.blockedUsersEvent.concat(
-                                                                            pageOwner._id.toString()
-                                                                          ),
-                                                                      };
-
-                                                                    requestsToUpdateEventsCreatedByCurrentUser.push(
-                                                                      Requests.updateEvent(
-                                                                        event,
-                                                                        eventValuesToUpdate
-                                                                      )
-                                                                    );
-                                                                  }
-                                                                }
-
-                                                                Promise.all(
-                                                                  requestsToUpdateEventsCreatedByCurrentUser
-                                                                )
-                                                                  .then(
-                                                                    (
-                                                                      resArray: Response[]
-                                                                    ) => {
-                                                                      if (
-                                                                        !resArray.every(
-                                                                          (res) => res.ok
-                                                                        )
-                                                                      ) {
-                                                                        setCurrentUser(
-                                                                          cu
-                                                                        );
-                                                                        setBlockUserInProgress(
-                                                                          false
-                                                                        );
-                                                                        if (
-                                                                          blockedUsers
-                                                                        ) {
-                                                                          setBlockedUsers(
-                                                                            blockedUsers.filter(
-                                                                              (u) =>
-                                                                                u._id !==
-                                                                                pageOwner._id?.toString()
-                                                                            )
-                                                                          );
-                                                                        }
-                                                                        toast.error(
-                                                                          "Could not block user. Please try again.",
-                                                                          {
-                                                                            style: {
-                                                                              background:
-                                                                                theme ===
-                                                                                "light"
-                                                                                  ? "#242424"
-                                                                                  : "rgb(233, 231, 228)",
-                                                                              color:
-                                                                                theme ===
-                                                                                "dark"
-                                                                                  ? "black"
-                                                                                  : "white",
-                                                                              border:
-                                                                                "2px solid red",
-                                                                            },
-                                                                          }
-                                                                        );
-                                                                      } else {
-                                                                        setBlockUserInProgress(
-                                                                          false
-                                                                        );
-                                                                        toast(
-                                                                          `You have blocked ${pageOwner.username}.`,
-                                                                          {
-                                                                            style: {
-                                                                              background:
-                                                                                theme ===
-                                                                                "light"
-                                                                                  ? "#242424"
-                                                                                  : "rgb(233, 231, 228)",
-                                                                              color:
-                                                                                theme ===
-                                                                                "dark"
-                                                                                  ? "black"
-                                                                                  : "white",
-                                                                              border:
-                                                                                "2px solid red",
-                                                                            },
-                                                                          }
-                                                                        );
-                                                                      }
-                                                                    }
-                                                                  )
-                                                                  .catch((error) =>
-                                                                    console.log(error)
-                                                                  );
-                                                              } else {
-                                                                setBlockUserInProgress(
-                                                                  false
-                                                                );
-                                                                toast(
-                                                                  `You have blocked ${pageOwner.username}.`,
-                                                                  {
-                                                                    style: {
-                                                                      background:
-                                                                        theme === "light"
-                                                                          ? "#242424"
-                                                                          : "rgb(233, 231, 228)",
-                                                                      color:
-                                                                        theme === "dark"
-                                                                          ? "black"
-                                                                          : "white",
-                                                                      border:
-                                                                        "2px solid red",
-                                                                    },
-                                                                  }
-                                                                );
-                                                              }
-                                                            }
-                                                          );
-                                                      } else {
-                                                        handleBlockUserFail(pageOwner);
-                                                      }
-                                                    })
-                                                    .catch((error) => console.log(error));
-                                                } else {
-                                                  handleBlockUserFail(pageOwner);
-                                                }
-                                              });
-                                            } else {
-                                              // IF THERE IS NO CHAT TO DELETE
-                                              // Delete pageOwner (blockee) from invitee, organizer, & RSVP lists of events currentUser created; add pageOwner to each event's blockedUsersEvent list:
-                                              // For every event in eventsCreatedByCU, put Requests.updateEvent w/ right params in Promise.all. Handle errors/loading/toast from there.
-                                              if (cu.username) {
-                                                Requests.getEventsUserCreated(cu.username)
-                                                  .then((res) => {
-                                                    if (res.ok) {
-                                                      res
-                                                        .json()
-                                                        .then(
-                                                          (
-                                                            eventsCreatedByCurrentUser: TEvent[]
-                                                          ) => {
-                                                            if (
-                                                              eventsCreatedByCurrentUser.length >
-                                                              0
-                                                            ) {
-                                                              let requestsToUpdateEventsCreatedByCurrentUser =
-                                                                [];
-                                                              for (const event of eventsCreatedByCurrentUser) {
-                                                                // If currentUser is event creator & currentOtherUser is an invitee, remove currentOtherUser as invitee:
-                                                                if (pageOwner._id) {
-                                                                  // Maybe call handler to update event, updating invitees, blockedUsersEvent, organizers, and interestedUsers. Call Requests.updateEvent w/ eventValuesToUpdate defined as these updated lists:
-                                                                  const eventValuesToUpdate: TEventValuesToUpdate =
-                                                                    {
-                                                                      invitees:
-                                                                        event.invitees.filter(
-                                                                          (i) =>
-                                                                            i !==
-                                                                            pageOwner._id?.toString()
-                                                                        ),
-                                                                      organizers:
-                                                                        event.organizers.filter(
-                                                                          (o) =>
-                                                                            o !==
-                                                                            pageOwner._id?.toString()
-                                                                        ),
-                                                                      blockedUsersEvent:
-                                                                        event.blockedUsersEvent.concat(
-                                                                          pageOwner._id.toString()
-                                                                        ),
-                                                                    };
-
-                                                                  requestsToUpdateEventsCreatedByCurrentUser.push(
-                                                                    Requests.updateEvent(
-                                                                      event,
-                                                                      eventValuesToUpdate
-                                                                    )
-                                                                  );
-                                                                }
-                                                              }
-
-                                                              Promise.all(
-                                                                requestsToUpdateEventsCreatedByCurrentUser
-                                                              )
-                                                                .then(
-                                                                  (
-                                                                    resArray: Response[]
-                                                                  ) => {
-                                                                    if (
-                                                                      !resArray.every(
-                                                                        (res) => res.ok
-                                                                      )
-                                                                    ) {
-                                                                      setBlockUserInProgress(
-                                                                        false
-                                                                      );
-                                                                      if (blockedUsers) {
-                                                                        setBlockedUsers(
-                                                                          blockedUsers.filter(
-                                                                            (u) =>
-                                                                              u._id !==
-                                                                              pageOwner._id?.toString()
-                                                                          )
-                                                                        );
-                                                                      }
-                                                                      toast.error(
-                                                                        "Could not block user. Please try again.",
-                                                                        {
-                                                                          style: {
-                                                                            background:
-                                                                              theme ===
-                                                                              "light"
-                                                                                ? "#242424"
-                                                                                : "rgb(233, 231, 228)",
-                                                                            color:
-                                                                              theme ===
-                                                                              "dark"
-                                                                                ? "black"
-                                                                                : "white",
-                                                                            border:
-                                                                              "2px solid red",
-                                                                          },
-                                                                        }
-                                                                      );
-                                                                    } else {
-                                                                      setBlockUserInProgress(
-                                                                        false
-                                                                      );
-                                                                      toast(
-                                                                        `You have blocked ${pageOwner.username}.`,
-                                                                        {
-                                                                          style: {
-                                                                            background:
-                                                                              theme ===
-                                                                              "light"
-                                                                                ? "#242424"
-                                                                                : "rgb(233, 231, 228)",
-                                                                            color:
-                                                                              theme ===
-                                                                              "dark"
-                                                                                ? "black"
-                                                                                : "white",
-                                                                            border:
-                                                                              "2px solid red",
-                                                                          },
-                                                                        }
-                                                                      );
-                                                                    }
-                                                                  }
-                                                                )
-                                                                .catch((error) =>
-                                                                  console.log(error)
-                                                                );
-                                                            } else {
-                                                              setBlockUserInProgress(
-                                                                false
-                                                              );
-                                                              toast(
-                                                                `You have blocked ${pageOwner.username}.`,
-                                                                {
-                                                                  style: {
-                                                                    background:
-                                                                      theme === "light"
-                                                                        ? "#242424"
-                                                                        : "rgb(233, 231, 228)",
-                                                                    color:
-                                                                      theme === "dark"
-                                                                        ? "black"
-                                                                        : "white",
-                                                                    border:
-                                                                      "2px solid red",
-                                                                  },
-                                                                }
-                                                              );
-                                                            }
-                                                          }
-                                                        );
-                                                    } else {
-                                                      handleBlockUserFail(pageOwner);
-                                                    }
-                                                  })
-                                                  .catch((error) => console.log(error));
-                                              } else {
-                                                handleBlockUserFail(pageOwner);
-                                              }
-                                            }
-                                          });
-                                        } else {
-                                          handleBlockUserFail(pageOwner);
-                                        }
-                                      })
-                                      .catch((error) => console.log(error));
-                                  } else {
+                                  if (!resArray.every((res) => res.ok)) {
                                     handleBlockUserFail(pageOwner);
+                                  } else {
+                                    // Fetch updated currentUser:
+                                    if (currentUser._id) {
+                                      Requests.getUserByID(currentUser._id.toString())
+                                        .then((res) => {
+                                          if (res.ok) {
+                                            res.json().then((cu: TUser) => {
+                                              setCurrentUser(cu); // Fetch updated currentUser before doing this
+                                              setBlockUserInProgress(false);
+                                              toast(
+                                                `You have blocked ${pageOwner.username}.`,
+                                                {
+                                                  style: {
+                                                    background:
+                                                      theme === "light"
+                                                        ? "#242424"
+                                                        : "rgb(233, 231, 228)",
+                                                    color:
+                                                      theme === "dark"
+                                                        ? "black"
+                                                        : "white",
+                                                    border: "2px solid red",
+                                                  },
+                                                }
+                                              );
+                                            });
+                                          } else {
+                                            handleBlockUserFail(pageOwner);
+                                          }
+                                        })
+                                        .catch((error) => console.log(error));
+                                    }
                                   }
                                 })
                                 .catch((error) => console.log(error));
-                            });
-                          } else {
-                            handleBlockUserFail(pageOwner);
-                          }
-                        })
-                        .catch((error) => console.log(error));
-                    } else {
-                      handleBlockUserFail(pageOwner);
-                    }
-                  })
-                  .catch((error) => console.log(error));
-              }
-            });
+                            } else {
+                              if (currentUser._id) {
+                                Requests.getUserByID(currentUser._id.toString())
+                                  .then((res) => {
+                                    if (res.ok) {
+                                      res.json().then((cu: TUser) => {
+                                        setCurrentUser(cu); // Fetch updated currentUser before doing this
+                                        setBlockUserInProgress(false);
+                                        queryClient.invalidateQueries({
+                                          queryKey: ["userChats"],
+                                        });
+                                        queryClient.refetchQueries({
+                                          queryKey: ["userChats"],
+                                        });
+                                        toast(`You have blocked ${pageOwner.username}.`, {
+                                          style: {
+                                            background:
+                                              theme === "light"
+                                                ? "#242424"
+                                                : "rgb(233, 231, 228)",
+                                            color: theme === "dark" ? "black" : "white",
+                                            border: "2px solid red",
+                                          },
+                                        });
+                                      });
+                                    } else {
+                                      handleBlockUserFail(pageOwner);
+                                    }
+                                  })
+                                  .catch((error) => console.log(error));
+                              }
+                            }
+                          });
+                        } else {
+                          handleBlockUserFail(pageOwner);
+                        }
+                      })
+                      .catch((error) => console.log(error));
+                  }
+                  /////////////////////////////
+                }
+              })
+              .catch((error) => console.log(error));
           } else {
+            if (pageOwner) {
+              handleBlockUserFail(pageOwner);
+            } else {
+              setError("An error occurred; please reload the page.");
+            }
           }
         })
         .catch((error) => console.log(error));
