@@ -220,7 +220,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
                       e,
                       event,
                       allCurrentUserEvents,
-                      setAllCurrentUserEvents
+                      setAllCurrentUserEvents,
+                      true
                     )
                   }
                 >
