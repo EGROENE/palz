@@ -35,7 +35,7 @@ app.use("/palz/events", eventRoutes);
 app.use("/palz/chats", chatRoutes);
 
 const getCurrentUserUpcomingEvents = async (req, res) => {
-  const { username } = req.query;
+  const { username } = req.params;
 
   const currentUser = await User.findOne({ username });
 
@@ -49,7 +49,27 @@ const getCurrentUserUpcomingEvents = async (req, res) => {
 
   res.status(200).json(events);
 };
-app.get("/palz/:username", getCurrentUserUpcomingEvents);
+app.get("/palz/homepage/:username", getCurrentUserUpcomingEvents);
+
+// Controller to get friends:
+app.get("/palz/my-palz", async (req, res) => {
+  const { user, start, limit } = req.query;
+
+  const username = user;
+  const currentUser = await User.findOne({ username });
+
+  const friends = await User.find({
+    index: { $gte: Number(start) },
+    _id: { $ne: currentUser._id.toString() },
+    friends: { $in: currentUser._id.toString() },
+    // blockedUsers doesn't contain currentUser:
+    blockedUsers: { $nin: currentUser._id.toString() },
+    // blockedBy doesn't contain currentUser:
+    blockedBy: { $nin: currentUser._id.toString() },
+  }).limit(Number(limit));
+
+  res.status(200).json(friends);
+});
 
 // Controller to get potential friends:
 app.get("/palz/find-palz", async (req, res) => {
@@ -76,26 +96,6 @@ app.get("/palz/find-palz", async (req, res) => {
   }).limit(Number(limit));
 
   res.status(200).json(potentialFriends);
-});
-
-// Controller to get friends:
-app.get("/palz/my-palz", async (req, res) => {
-  const { user, start, limit } = req.query;
-
-  const username = user;
-  const currentUser = await User.findOne({ username });
-
-  const friends = await User.find({
-    index: { $gte: Number(start) },
-    _id: { $ne: currentUser._id.toString() },
-    friends: { $in: currentUser._id.toString() },
-    // blockedUsers doesn't contain currentUser:
-    blockedUsers: { $nin: currentUser._id.toString() },
-    // blockedBy doesn't contain currentUser:
-    blockedBy: { $nin: currentUser._id.toString() },
-  }).limit(Number(limit));
-
-  res.status(200).json(friends);
 });
 
 // Controller to get displayable events:
