@@ -116,7 +116,7 @@ const ChatsPage = () => {
               )}
               <div className="chats-container">
                 {userChatsSortedMostRecent.map((chat) => (
-                  <ChatPreview key={chat._id.toString()} chat={chat} />
+                  <ChatPreview key={chat._id?.toString()} chat={chat} />
                 ))}
               </div>
             </>
