@@ -257,12 +257,16 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     eventsArray?: TEvent[],
-    setEventsArray?: React.Dispatch<React.SetStateAction<TEvent[]>>
+    setEventsArray?: React.Dispatch<React.SetStateAction<TEvent[]>>,
+    optRenderCurrentUserEvents?: boolean
   ) => {
     e.preventDefault();
     if (currentUser) {
       if (eventsArray && setEventsArray) {
         setEventsArray(eventsArray.filter((e) => e !== event));
+      }
+      if (optRenderCurrentUserEvents) {
+        setAllCurrentUserEvents(allCurrentUserEvents.filter((ev) => ev !== event));
       }
       setIsLoading(true);
       Requests.addToDisinterestedUsers(currentUser, event)
@@ -278,6 +282,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           } else {
             if (eventsArray && setEventsArray) {
               setEventsArray(eventsArray.concat(event));
+            }
+            if (optRenderCurrentUserEvents) {
+              setAllCurrentUserEvents(allCurrentUserEvents.concat(event));
             }
             toast.error("Could not decline invitation. Please try again.", {
               style: {

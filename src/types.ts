@@ -712,7 +712,8 @@ export type TEventContext = {
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
     eventsArray?: TEvent[],
-    setEventsArray?: React.Dispatch<React.SetStateAction<TEvent[]>>
+    setEventsArray?: React.Dispatch<React.SetStateAction<TEvent[]>>,
+    optRenderCurrentUserEvents?: boolean
   ) => void;
   eventDeletionIsInProgress: boolean;
   setEventDeletionIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
