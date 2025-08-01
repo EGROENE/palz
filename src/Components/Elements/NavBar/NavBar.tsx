@@ -27,7 +27,7 @@ const NavBar = () => {
     <nav>
       <ul className={styles.navbar}>
         <li>
-          <Link className="palz-logo" to={`/${currentUser?.username}`}>
+          <Link className="palz-logo" to={`/homepage/${currentUser?.username}`}>
             <img src="../src/assets/palz.png" />
             <header>PALZ</header>
           </Link>
@@ -99,7 +99,7 @@ const NavBar = () => {
     </nav>
   ) : (
     <div className="hamburger-container">
-      <Link className="palz-logo" to={`/${currentUser?.username}`}>
+      <Link className="palz-logo" to={`/homepage/${currentUser?.username}`}>
         <img src="../src/assets/palz.png" />
         <header>PALZ</header>
       </Link>
