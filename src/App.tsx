@@ -110,13 +110,12 @@ function App() {
     currentURL,
   ]);
 
-  const getBaseURLElement = (): JSX.Element => {
+  const getBaseURLElement = (): JSX.Element | undefined => {
     if (userCreatedAccount !== null && showWelcomeMessage) {
       return <Welcome />;
-    } else if (userCreatedAccount !== null && !showWelcomeMessage) {
-      return <UserHomepage />;
+    } else if (userCreatedAccount === null) {
+      return <LoginPage type="login" />;
     }
-    return <LoginPage type="login" />;
   };
   const baseURLElement = getBaseURLElement();
 
@@ -126,10 +125,7 @@ function App() {
         className="page-hero"
         onClick={() => (showSidebar ? setShowSidebar(false) : undefined)}
       >
-        {baseURLElement.type.name !== "Welcome" &&
-          baseURLElement.type.name !== "LoginPage" &&
-          currentUser &&
-          userCreatedAccount !== null && <NavBar />}
+        {!baseURLElement && currentUser && userCreatedAccount !== null && <NavBar />}
         {showSidebar && <Sidebar />}
         {showUpdateProfileImageInterface && (
           <TwoOptionsInterface
@@ -167,7 +163,7 @@ function App() {
           <Route path="/events/:eventID" element={<EventPage />} />
           <Route path="/:username/events" element={<UsersEvents />} />
           <Route path="/:username/friend-requests" element={<FriendRequests />} />
-          <Route path="/:username" element={<UserHomepage />} />
+          <Route path="/homepage/:username" element={<UserHomepage />} />
           <Route path="/otherUsers/:username" element={<OtherUserProfile />} />
           <Route
             path="/find-palz"
@@ -178,10 +174,7 @@ function App() {
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
-        {baseURLElement.type.name !== "Welcome" &&
-          baseURLElement.type.name !== "LoginPage" &&
-          currentUser &&
-          userCreatedAccount !== null && <Footer />}
+        {!baseURLElement && currentUser && userCreatedAccount !== null && <Footer />}
       </div>
     </div>
   );
