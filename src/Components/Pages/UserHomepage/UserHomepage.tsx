@@ -69,7 +69,7 @@ const UserHomepage = () => {
       });
       navigation("/");
     } else {
-      navigation(`/${username}`);
+      navigation(`/homepage/${username}`);
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
