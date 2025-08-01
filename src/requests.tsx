@@ -174,6 +174,17 @@ const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[
   });
 };
 
+const getCurrentUserUpcomingEvents = (username: string) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  return fetch(`http://localhost:4000/palz/homepage/${username}`, {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  });
+};
+
 // Create getPotentialFriends (limit, like in getAllVisibleOtherUsers, then revert that request to its original form, to be used until it's eventually not needed anymore). getPotentialFriends should be all visible users who have no blocking relationship to currentUser.
 const getPotentialFriends = async (
   currentUser: TUser,
@@ -1438,6 +1449,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getCurrentUserUpcomingEvents,
   getEventsRelatedToUser,
   getUsersToUpdateWhenCurrentUserDeletesAccount,
   getEventsUserCreated,
