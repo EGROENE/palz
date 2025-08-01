@@ -319,7 +319,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
                               Methods.getTBarebonesUser(currentUser),
                               e,
                               interestedUsers,
-                              setInterestedUsers
+                              setInterestedUsers,
+                              true
                             );
                           } else if (!userRSVPd && cardEvent) {
                             handleAddUserRSVP(
