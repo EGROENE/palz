@@ -98,17 +98,12 @@ function App() {
     if (
       userCreatedAccount !== null &&
       !showWelcomeMessage &&
-      currentURL === `/users/${currentUser?.username}`
+      currentUser &&
+      currentURL === `/`
     ) {
-      navigation(`users/${currentUser?.username}`);
+      navigation(`/homepage/${currentUser?.username}`);
     }
-  }, [
-    navigation,
-    showWelcomeMessage,
-    userCreatedAccount,
-    currentUser?.username,
-    currentURL,
-  ]);
+  }, [showWelcomeMessage, userCreatedAccount, currentUser?.username]);
 
   const getBaseURLElement = (): JSX.Element | undefined => {
     if (userCreatedAccount !== null && showWelcomeMessage) {
