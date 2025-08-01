@@ -735,7 +735,8 @@ export type TEventContext = {
     user: TBarebonesUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     rsvpdUsers?: string[],
-    setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>
+    setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>,
+    optRenderCurrentUserEvents?: boolean
   ) => void;
   interestedUsersCurrentEvent: string[];
   setInterestedUsersCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;

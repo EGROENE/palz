@@ -208,12 +208,17 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     user: TBarebonesUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     rsvpdUsers?: string[],
-    setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>
+    setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>,
+    optRenderCurrentUserEvents?: boolean
   ): void => {
     e?.preventDefault();
 
     if (rsvpdUsers && setRsvpdUsers) {
       setRsvpdUsers(rsvpdUsers.filter((u) => u !== user._id));
+    }
+
+    if (optRenderCurrentUserEvents) {
+      setAllCurrentUserEvents(allCurrentUserEvents.filter((ev) => ev !== event));
     }
 
     setIsLoading(true);
@@ -231,6 +236,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
         } else {
           if (rsvpdUsers && setRsvpdUsers && currentUser && currentUser._id) {
             setRsvpdUsers(rsvpdUsers.concat(currentUser._id.toString()));
+          }
+          if (optRenderCurrentUserEvents) {
+            setAllCurrentUserEvents(allCurrentUserEvents.concat(event));
           }
           toast.error("Could not remove RSVP. Please try again.", {
             style: {
