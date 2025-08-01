@@ -6,6 +6,8 @@ import Tab from "../Tab/Tab";
 import styles from "./styles.module.css";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
+import Requests from "../../../requests";
+import { useLocation } from "react-router-dom";
 
 type InterestsSectionProps = {
   randomColor: TThemeColor | undefined;
@@ -61,6 +63,8 @@ const InterestsSection = ({
   const otherVisibleUsers: TOtherUser[] | undefined = fetchAllVisibleOtherUsersQuery.data;
 
   const { fetchAllEventsQuery } = useEventContext();
+
+  const [addableInterests, setAddableInterests] = useState<string[]>([]);
 
   const allEvents = fetchAllEventsQuery.data;
 
@@ -119,9 +123,9 @@ const InterestsSection = ({
         .filter((int) => !currentUser?.interests.includes(int))
     );
   };
-  const addableInterests: string[] | null = fetchAllVisibleOtherUsersQuery.isSuccess
+  /* const addableInterests: string[] | null = fetchAllVisibleOtherUsersQuery.isSuccess
     ? getAddableInterests()
-    : null;
+    : null; */
 
   // Get array of interests that exist on user/event object, whether event is being edited or added (interests on user obj are always edited)
   const getSavedInterests = () => {
@@ -178,11 +182,28 @@ const InterestsSection = ({
     setDisplayedAdditionalInterests(getAddableInterests());
   };
 
+  const currentURL = useLocation().pathname;
   useEffect(() => {
     if (addableInterests !== null) {
       setDisplayedAdditionalInterests(addableInterests);
     }
-  }, []);
+
+    // get all user interests, then event interests. handle potential request fails
+    // ADD LOADER
+    Requests.getAllUserInterests().then((res) => {
+      if (res.ok) {
+        type interestObject = { "_id": string; "interests": string[] };
+        res.json().then((interestObjects: interestObject[]) => {
+          let interests: string[] = [];
+          for (const interestObject of interestObjects) {
+            interestObject.interests.forEach((i) => interests.push(i));
+          }
+          setAddableInterests(Methods.removeDuplicatesFromArray(interests));
+        });
+      } else {
+      }
+    });
+  }, [currentURL]);
 
   useEffect(() => {
     /* Ensure that, whenever current-user/event interests or newEventInterests change, & inputInterest if empty string (which is always the case, whether b/c InterestModal isn't rendered, user hasn't input anything, or it was cleared after user input something & then added an interest), displayedAdditionalInterests is updated. */
