@@ -12,7 +12,7 @@ import Requests from "../../../requests";
 
 const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, username } = useUserContext();
+  const { currentUser, userCreatedAccount } = useUserContext();
   const { allCurrentUserEvents, setAllCurrentUserEvents } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -68,10 +68,8 @@ const UserHomepage = () => {
         },
       });
       navigation("/");
-    } else {
-      navigation(`/homepage/${username}`);
     }
-  }, [currentUser, navigation, userCreatedAccount]);
+  }, [currentUser, userCreatedAccount]);
 
   return (
     <>
