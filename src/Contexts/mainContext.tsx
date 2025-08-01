@@ -34,11 +34,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   // fetchStart is here so that it can be immediately set to 0 when clicking links to DisplayedCards pages
   const [fetchStart, setFetchStart] = useState<number>(0);
 
-  const handleWelcomeMessage = () => {
-    setShowWelcomeMessage(true);
-    setTimeout(() => setShowWelcomeMessage(false), welcomeMessageDisplayTime);
-  };
-
   const mainContextValues: TMainContext = {
     fetchStart,
     setFetchStart,
@@ -55,7 +50,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setShowSidebar,
     theme,
     toggleTheme,
-    handleWelcomeMessage,
     showWelcomeMessage,
     setShowWelcomeMessage,
     welcomeMessageDisplayTime,

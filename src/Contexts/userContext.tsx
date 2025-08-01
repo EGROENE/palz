@@ -22,7 +22,14 @@ export const UserContext = createContext<TUserContext | null>(null);
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const navigation = useNavigate();
 
-  const { handleWelcomeMessage, theme, setIsLoading, setError, error } = useMainContext();
+  const {
+    theme,
+    setIsLoading,
+    setError,
+    error,
+    setShowWelcomeMessage,
+    welcomeMessageDisplayTime,
+  } = useMainContext();
 
   if (error) {
     throw new Error(error);
@@ -2086,7 +2093,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             } else if (res.ok) {
               res.json().then((json) => {
                 setCurrentUser(json.user);
-                handleWelcomeMessage();
+                setShowWelcomeMessage(true);
+                setTimeout(() => {
+                  setShowWelcomeMessage(false);
+                  navigation(`/homepage/${json.user.username}`);
+                }, welcomeMessageDisplayTime);
                 setUserCreatedAccount(false);
                 navigation("/");
                 setUserCreatedAccount(false);
@@ -2127,7 +2138,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             } else if (res.ok) {
               res.json().then((json) => {
                 setCurrentUser(json.user);
-                handleWelcomeMessage();
+                setShowWelcomeMessage(true);
+                setTimeout(() => {
+                  setShowWelcomeMessage(false);
+                  navigation(`/homepage/${json.user.username}`);
+                }, welcomeMessageDisplayTime);
                 setUserCreatedAccount(false);
                 navigation("/");
                 setUserCreatedAccount(false);
@@ -2170,7 +2185,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                       setEmailError("E-mail address already in use");
                     }
                   } else if (res.ok) {
-                    handleWelcomeMessage();
+                    setShowWelcomeMessage(true);
+                setTimeout(() => {
+                  setShowWelcomeMessage(false);
+                  navigation(`/homepage/${userData.username}`);
+                }, welcomeMessageDisplayTime);
                     setCurrentUser(userData);
                     navigation("/");
                     queryClient.invalidateQueries({ queryKey: ["allVisibleOtherUsers"] });

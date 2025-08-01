@@ -305,7 +305,6 @@ export type TMainContext = {
   setShowWelcomeMessage: React.Dispatch<React.SetStateAction<boolean>>;
   welcomeMessageDisplayTime: number;
   setWelcomeMessageDisplayTime: React.Dispatch<React.SetStateAction<number>>;
-  handleWelcomeMessage: () => void;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
