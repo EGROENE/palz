@@ -38,9 +38,9 @@ const UserHomepage = () => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
 
-    if (currentUser) {
+    if (currentUser && currentUser.username) {
       setFetchIsLoading(true);
-      Requests.getEventsRelatedToUser(currentUser)
+      Requests.getCurrentUserUpcomingEvents(currentUser.username)
         .then((res) => {
           if (res.ok) {
             res.json().then((events: TEvent[]) => {
