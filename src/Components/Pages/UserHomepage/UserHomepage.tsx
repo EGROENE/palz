@@ -73,11 +73,13 @@ const UserHomepage = () => {
 
   return (
     <>
-      {fetchIsLoading && <h1>Upcoming Events</h1>}
       {fetchIsLoading && (
-        <header style={{ marginTop: "3rem" }} className="query-status-text">
-          Loading...
-        </header>
+        <>
+          <h1>Upcoming Events</h1>
+          <header style={{ marginTop: "3rem" }} className="query-status-text">
+            Loading...
+          </header>
+        </>
       )}
       {isFetchError && !fetchIsLoading && (
         <p>Could not fetch your upcoming events; try reloading the page.</p>
