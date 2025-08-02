@@ -95,70 +95,6 @@ const UserSettings = () => {
 
   const queryClient = useQueryClient();
 
-  const handleAddUserInterest = (
-    interest: string,
-    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ): void => {
-    e?.preventDefault();
-    setIsLoading(true);
-    Requests.addUserInterest(currentUser, interest.trim())
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Could not add interest. Please try again.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        } else {
-          if (currentUser && currentUser._id) {
-            Requests.getUserByID(currentUser._id.toString())
-              .then((res) => {
-                if (res.ok) {
-                  res
-                    .json()
-                    .then((user) => {
-                      if (user) {
-                        setCurrentUser(user);
-                        toast.success(`'${interest}' added to interests`, {
-                          style: {
-                            background:
-                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                            color: theme === "dark" ? "black" : "white",
-                            border: "2px solid green",
-                          },
-                        });
-                      } else {
-                        toast.error("Could not add interest. Please try again.", {
-                          style: {
-                            background:
-                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                            color: theme === "dark" ? "black" : "white",
-                            border: "2px solid red",
-                          },
-                        });
-                      }
-                    })
-                    .catch((error) => console.log(error));
-                } else {
-                  toast.error("Could not add interest. Please try again.", {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid red",
-                    },
-                  });
-                }
-              })
-              .catch((error) => console.log(error));
-          }
-        }
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
-  };
-
   const handleDeleteUserInterest = (
     interest: string,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
@@ -474,7 +410,6 @@ const UserSettings = () => {
             isDisabled={isLoading}
             randomColor={randomColor}
             interestsRelation="user"
-            handleAddInterest={handleAddUserInterest}
             handleRemoveInterest={handleDeleteUserInterest}
           />
         )}
