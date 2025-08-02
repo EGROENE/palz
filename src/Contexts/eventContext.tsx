@@ -559,6 +559,19 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleAddEventInterest = (
+    interest: string,
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ): void => {
+    e.preventDefault();
+    const updatedArray: string[] = relatedInterests;
+    updatedArray.push(interest);
+    setRelatedInterests(updatedArray);
+  };
+
+  const handleRemoveEventInterest = (interest: string): void =>
+    setRelatedInterests(relatedInterests.filter((int) => int !== interest));
+
   /* 
   eventValuesToUpdate is to be used on EventForm. It's an object that represents updated values on event, which are sent to the event in the DB in a PATCH request
    */
@@ -664,6 +677,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const eventValuesToUpdate: TEventValuesToUpdate | undefined = getValuesToUpdate();
 
   const eventContextValues: TEventContext = {
+    handleAddEventInterest,
+    handleRemoveEventInterest,
     inviteesCurrentEvent,
     setInviteesCurrentEvent,
     allCurrentUserEvents,
