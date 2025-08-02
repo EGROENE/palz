@@ -27,6 +27,17 @@ const getAllUserInterests = (): Promise<Response> => {
   });
 };
 
+const getAllEventInterests = (): Promise<Response> => {
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+return fetch("http://localhost:4000/palz/allEvents/relatedInterests", {
+  method: 'GET',
+  headers: myHeaders,
+  redirect: 'follow'
+})
+};
+
 // Get rid of this eventually, once requests for different types of user groups are made
 const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[]> => {
   return fetch("http://localhost:4000/palz/users", {
@@ -1460,6 +1471,7 @@ const deleteChat = (chatID: string) => {
 };
 
 const Requests = {
+  getAllEventInterests,
   getAllUserInterests,
   getCurrentUserUpcomingEvents,
   getEventsRelatedToUser,
