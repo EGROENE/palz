@@ -29,6 +29,7 @@ const EventForm = ({
   const { handleCityStateCountryInput, currentUser, blockedUsers } = useUserContext();
 
   const {
+    handleRemoveEventInterest,
     setBlockedUsersEventORIGINAL,
     blockedUsersEventORIGINAL,
     handleAddRemoveBlockedUserOnEvent,
@@ -1079,19 +1080,6 @@ const EventForm = ({
       }
     }
   };
-
-  const handleAddEventInterest = (
-    interest: string,
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ): void => {
-    e.preventDefault();
-    const updatedArray: string[] = relatedInterests;
-    updatedArray.push(interest);
-    setRelatedInterests(updatedArray);
-  };
-
-  const handleRemoveEventInterest = (interest: string): void =>
-    setRelatedInterests(relatedInterests.filter((int) => int !== interest));
 
   const handleRevert = (): void => {
     if (currentEvent && usedFor === "edit-event") {
@@ -2268,8 +2256,6 @@ const EventForm = ({
           <InterestsSection
             randomColor={randomColor}
             interestsRelation="event"
-            newEventInterests={relatedInterests}
-            handleAddInterest={handleAddEventInterest}
             handleRemoveInterest={handleRemoveEventInterest}
             isDisabled={isLoading}
           />
