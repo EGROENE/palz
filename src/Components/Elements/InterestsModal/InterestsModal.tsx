@@ -14,17 +14,13 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 const InterestsModal = ({
   setShowInterestsModal,
   interestsRelation,
-  savedInterests,
-  setSavedInterests,
   randomColor,
 }: {
   setShowInterestsModal: (value: React.SetStateAction<boolean>) => void;
   interestsRelation: "event" | "user";
-  savedInterests: string[];
-  setSavedInterests: React.Dispatch<React.SetStateAction<string[]>>;
   randomColor?: TThemeColor;
 }) => {
-  const { theme } = useMainContext();
+  const { theme, savedInterests, setSavedInterests } = useMainContext();
 
   const { currentUser, setCurrentUser } = useUserContext();
 
