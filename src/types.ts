@@ -286,6 +286,8 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  savedInterests: string[]
+  setSavedInterests: React.Dispatch<React.SetStateAction<string[]>>
   fetchStart: number;
   setFetchStart: React.Dispatch<React.SetStateAction<number>>;
   error: string | undefined;
