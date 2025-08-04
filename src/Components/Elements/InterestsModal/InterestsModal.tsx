@@ -287,8 +287,13 @@ const InterestsModal = ({
                     <p>Type in an interest relating to this event & add it!</p>
                   )}
 
-                {noAdditionalInterestsAndInputInterest && (
-                  <p>No matching interests exist, but you can add what you typed!</p>
+                {noAdditionalInterestsAndInputInterest &&
+                  !savedInterests.includes(inputInterest) && (
+                    <p>No matching interests exist, but you can add what you typed!</p>
+                  )}
+
+                {savedInterests.includes(inputInterest) && (
+                  <p>You have already added this interest</p>
                 )}
               </div>
             )}
