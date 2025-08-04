@@ -27,13 +27,11 @@ const InterestsSection = ({
 }: InterestsSectionProps) => {
   const [showInterestsModal, setShowInterestsModal] = useState<boolean>(false);
 
-  const { theme } = useMainContext();
+  const { theme, savedInterests, setSavedInterests } = useMainContext();
 
   const { currentUser, setCurrentUser } = useUserContext();
 
   const { currentEvent, handleRemoveEventInterest } = useEventContext();
-
-  const [savedInterests, setSavedInterests] = useState<string[]>([]);
 
   useEffect(() => {
     if (interestsRelation === "user" && currentUser) {
@@ -153,8 +151,6 @@ const InterestsSection = ({
           </div>
           {showInterestsModal && (
             <InterestsModal
-              savedInterests={savedInterests}
-              setSavedInterests={setSavedInterests}
               setShowInterestsModal={setShowInterestsModal}
               randomColor={randomColor}
               interestsRelation={interestsRelation}
