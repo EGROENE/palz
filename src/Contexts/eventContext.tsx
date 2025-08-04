@@ -556,13 +556,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleAddEventInterest = (
-    interest: string,
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ): void => {
-    e.preventDefault();
+  const handleAddEventInterest = (interest: string): void =>
     setSavedInterests(savedInterests.concat(interest));
-  };
 
   const handleRemoveEventInterest = (interest: string): void =>
     setSavedInterests(savedInterests.filter((int) => int !== interest));

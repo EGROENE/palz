@@ -620,8 +620,8 @@ export type TUserContext = {
 };
 
 export type TEventContext = {
-  handleRemoveEventInterest: (interest: string) => void
-  handleAddEventInterest: (interest: string, e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
+  handleRemoveEventInterest: (interest: string) => void;
+  handleAddEventInterest: (interest: string) => void;
   disinterestedUsersCurrentEvent: string[];
   setDisinterestedUsersCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;
   handleRemoveDisinterestedUser: (event: TEvent, user: TBarebonesUser | null) => void;
