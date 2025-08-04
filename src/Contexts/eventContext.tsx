@@ -19,7 +19,7 @@ import { useQuery, UseQueryResult } from "@tanstack/react-query";
 export const EventContext = createContext<TEventContext | null>(null);
 
 export const EventContextProvider = ({ children }: { children: ReactNode }) => {
-  const { setIsLoading, theme } = useMainContext();
+  const { setIsLoading, theme, setSavedInterests, savedInterests } = useMainContext();
   const { currentUser, userCreatedAccount } = useUserContext();
 
   const [allCurrentUserEvents, setAllCurrentUserEvents] = useState<TEvent[]>([]);
@@ -124,9 +124,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [organizersORIGINAL, setOrganizersORIGINAL] = useState<TBarebonesUser[]>([]);
   const [invitees, setInvitees] = useState<TBarebonesUser[]>([]);
   const [inviteesORIGINAL, setInviteesORIGINAL] = useState<TBarebonesUser[]>([]);
-  const [relatedInterests, setRelatedInterests] = useState<string[]>(
-    currentEvent ? currentEvent.relatedInterests : []
-  );
   const [eventImages, setEventImages] = useState<string[]>(
     currentEvent ? currentEvent.images : []
   );
@@ -159,7 +156,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       setEventAddress(updatedEvent.address);
       setMaxParticipants(updatedEvent.maxParticipants);
       setPublicity(updatedEvent.publicity);
-      setRelatedInterests(updatedEvent.relatedInterests);
+      setSavedInterests(updatedEvent.relatedInterests);
     }
   }, [fetchAllEventsQuery.data]);
 
@@ -564,13 +561,11 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     e.preventDefault();
-    const updatedArray: string[] = relatedInterests;
-    updatedArray.push(interest);
-    setRelatedInterests(updatedArray);
+    setSavedInterests(savedInterests.concat(interest));
   };
 
   const handleRemoveEventInterest = (interest: string): void =>
-    setRelatedInterests(relatedInterests.filter((int) => int !== interest));
+    setSavedInterests(savedInterests.filter((int) => int !== interest));
 
   /* 
   eventValuesToUpdate is to be used on EventForm. It's an object that represents updated values on event, which are sent to the event in the DB in a PATCH request
@@ -668,8 +663,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           eventAddress?.trim() !== currentEvent.address && {
             address: eventAddress?.trim(),
           }),
-        ...(relatedInterests !== currentEvent.relatedInterests && {
-          relatedInterests: relatedInterests,
+        ...(savedInterests !== currentEvent.relatedInterests && {
+          relatedInterests: savedInterests,
         }),
       };
     }
@@ -750,8 +745,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     setOrganizers,
     invitees,
     setInvitees,
-    relatedInterests,
-    setRelatedInterests,
     eventImages,
     setEventImages,
     fetchAllEventsQuery,

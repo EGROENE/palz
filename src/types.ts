@@ -263,7 +263,7 @@ export type TUserValuesToUpdate = {
 
 export type TEventValuesToUpdate = {
   interestedUsers?: string[] | undefined;
-  relatedInterests?: string[] | undefined;
+  savedInterests?: string[] | undefined;
   blockedUsersEvent?: string[] | undefined;
   images?: string[] | undefined;
   address?: string | undefined;
@@ -286,8 +286,8 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
-  savedInterests: string[]
-  setSavedInterests: React.Dispatch<React.SetStateAction<string[]>>
+  savedInterests: string[];
+  setSavedInterests: React.Dispatch<React.SetStateAction<string[]>>;
   fetchStart: number;
   setFetchStart: React.Dispatch<React.SetStateAction<number>>;
   error: string | undefined;
@@ -685,8 +685,6 @@ export type TEventContext = {
   setOrganizersORIGINAL: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   invitees: TBarebonesUser[];
   setInvitees: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
-  relatedInterests: string[];
-  setRelatedInterests: React.Dispatch<React.SetStateAction<string[]>>;
   eventImages: string[];
   setEventImages: React.Dispatch<React.SetStateAction<string[]>>;
   blockedUsersEvent: TBarebonesUser[];

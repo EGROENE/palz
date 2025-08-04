@@ -24,8 +24,15 @@ const EventForm = ({
   usedFor: "add-event" | "edit-event";
   event?: TEvent;
 }) => {
-  const { showSidebar, setShowSidebar, isLoading, setIsLoading, theme } =
-    useMainContext();
+  const {
+    showSidebar,
+    setShowSidebar,
+    isLoading,
+    setIsLoading,
+    theme,
+    setSavedInterests,
+    savedInterests,
+  } = useMainContext();
   const { handleCityStateCountryInput, currentUser, blockedUsers } = useUserContext();
 
   const {
@@ -88,8 +95,6 @@ const EventForm = ({
     setOrganizers,
     invitees,
     setInvitees,
-    relatedInterests,
-    setRelatedInterests,
     eventValuesToUpdate,
     organizersORIGINAL,
     setOrganizersORIGINAL,
@@ -1109,7 +1114,7 @@ const EventForm = ({
       setOrganizers(organizersORIGINAL);
       setInvitees(inviteesORIGINAL);
       setBlockedUsersEvent(blockedUsersEventORIGINAL);
-      setRelatedInterests(currentEvent.relatedInterests);
+      setSavedInterests(currentEvent.relatedInterests);
     } else {
       setEventImages([]);
       setEventTitle("");
@@ -1135,7 +1140,7 @@ const EventForm = ({
       setOrganizers([Methods.getTBarebonesUser(currentUser)]);
       setInvitees([]);
       setBlockedUsersEvent([]);
-      setRelatedInterests([]);
+      setSavedInterests([]);
     }
   };
 
@@ -1365,7 +1370,7 @@ const EventForm = ({
         !Methods.arraysAreIdentical(organizersORIGINAL, organizers) ||
         !Methods.arraysAreIdentical(inviteesORIGINAL, invitees) ||
         !Methods.arraysAreIdentical(blockedUsersEventORIGINAL, blockedUsersEvent) ||
-        !Methods.arraysAreIdentical(currentEvent?.relatedInterests, relatedInterests)
+        !Methods.arraysAreIdentical(currentEvent?.relatedInterests, savedInterests)
       );
     }
     return (
@@ -1385,7 +1390,7 @@ const EventForm = ({
       organizers.length > 1 ||
       invitees.length > 0 ||
       blockedUsersEvent.length > 0 ||
-      relatedInterests.length > 0
+      savedInterests.length > 0
     );
   };
   const changesMade: boolean = getChangesMade();
@@ -1455,7 +1460,7 @@ const EventForm = ({
     interestedUsers: [],
     disinterestedUsers: [],
     images: eventImages,
-    relatedInterests: relatedInterests,
+    relatedInterests: savedInterests,
   };
 
   return (
