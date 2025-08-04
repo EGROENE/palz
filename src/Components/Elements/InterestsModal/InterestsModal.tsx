@@ -272,7 +272,7 @@ const InterestsModal = ({
                     <Tab
                       info={interest}
                       key={interest}
-                      addHandler={addInterest}
+                      addHandler={() => addInterest(interest, interestsRelation)}
                       addHandlerNeedsEventParam={true}
                       addHandlerParams={[interest, interestsRelation]}
                       randomColor={randomColor}
