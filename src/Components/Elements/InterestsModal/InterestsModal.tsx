@@ -104,12 +104,7 @@ const InterestsModal = ({
   }, [currentUser?.interests, currentEvent?.relatedInterests]);
 
   // HANDLERS
-  const addInterest = (
-    interest: string,
-    type: "user" | "event",
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ) => {
-    //e.preventDefault();
+  const addInterest = (interest: string, type: "user" | "event") => {
     // Opt set displayedAddableInterests & saved interests (def in state of InterestsSection, pass value & setter here)
     setDisplayedAddableInterests(displayedAddableInterests.filter((i) => i !== interest));
 
@@ -138,6 +133,11 @@ const InterestsModal = ({
                           },
                         });
                       } else {
+                        setDisplayedAddableInterests(
+                          displayedAddableInterests.concat(interest)
+                        );
+
+                        setSavedInterests(savedInterests.filter((i) => i !== interest));
                         toast.error("Could not add interest. Please try again.", {
                           style: {
                             background:
@@ -184,7 +184,7 @@ const InterestsModal = ({
     }
 
     if (type == "event") {
-      handleAddEventInterest(interest, e);
+      handleAddEventInterest(interest);
     }
   };
 
