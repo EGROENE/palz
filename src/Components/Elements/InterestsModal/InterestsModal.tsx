@@ -249,7 +249,7 @@ const InterestsModal = ({
                 isSideButton={true}
                 sideButtonText="Add"
                 sideButtonIsDisabled={disableAddInterestsButton}
-                addMethod={addInterest}
+                addMethod={() => addInterest(inputInterest, interestsRelation)}
                 randomColor={randomColor}
                 numberOfResults={displayedAddableInterests.length}
               />
