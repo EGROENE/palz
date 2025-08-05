@@ -14,7 +14,7 @@ import Requests from "../requests";
 import toast from "react-hot-toast";
 import Methods from "../methods";
 import { useNavigate } from "react-router-dom";
-import { useQueryClient, useQuery, UseQueryResult } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import mongoose from "mongoose";
 
 export const UserContext = createContext<TUserContext | null>(null);
@@ -323,15 +323,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
 
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
-
-  const fetchAllVisibleOtherUsersQuery: UseQueryResult<TOtherUser[], Error> = useQuery({
-    queryKey: ["allVisibleOtherUsers"],
-    // queryFn can be a callback that takes an object that can be logged to the console, where queryKey can be seen (put console log in .then() of promise)
-    queryFn: () => Requests.getAllVisibleOtherUsers(currentUser),
-    enabled: userHasLoggedIn,
-    // staleTime: number,
-    // refetchInterval: number
-  });
 
   const userData: TUser = {
     _id: new mongoose.Types.ObjectId(),
@@ -2186,10 +2177,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     }
                   } else if (res.ok) {
                     setShowWelcomeMessage(true);
-                setTimeout(() => {
-                  setShowWelcomeMessage(false);
-                  navigation(`/homepage/${userData.username}`);
-                }, welcomeMessageDisplayTime);
+                    setTimeout(() => {
+                      setShowWelcomeMessage(false);
+                      navigation(`/homepage/${userData.username}`);
+                    }, welcomeMessageDisplayTime);
                     setCurrentUser(userData);
                     navigation("/");
                     queryClient.invalidateQueries({ queryKey: ["allVisibleOtherUsers"] });
@@ -2264,7 +2255,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     fetchBlockedUsersIsError,
     setFetchBlockedUsersIsError,
     userHasLoggedIn,
-    fetchAllVisibleOtherUsersQuery,
     displayFriendCount,
     setDisplayFriendCount,
     whoCanSeeLocation,

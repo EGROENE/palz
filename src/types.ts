@@ -321,7 +321,6 @@ export type TUserContext = {
   fetchFriendRequestsReceivedIsError: boolean;
   setFetchFriendRequestsReceivedIsError: React.Dispatch<React.SetStateAction<boolean>>;
   userHasLoggedIn: boolean;
-  fetchAllVisibleOtherUsersQuery: UseQueryResult<TOtherUser[], Error>;
   friendRequestsSent: TBarebonesUser[] | null;
   setFriendRequestsSent: React.Dispatch<React.SetStateAction<TBarebonesUser[] | null>>;
   friendRequestsReceived: TBarebonesUser[] | null;
