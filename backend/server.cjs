@@ -310,7 +310,7 @@ const getRecentEventsUserOrganized = async (req, res) => {
   res.status(200).json(events);
 };
 
-app.get("/palz/otherUsers/:username", (req, res) => {
+app.use("/palz/userEventInfo/:username", (req, res) => {
   const { eventsType } = req.query;
 
   if (eventsType === "upcomingEventsUserRSVPdTo") {
