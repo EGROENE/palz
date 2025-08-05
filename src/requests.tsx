@@ -9,6 +9,7 @@ import {
   TOtherUser,
 } from "./types";
 
+// Used to assign index for newly created users
 const getAllUsers = () => {
   return fetch("http://localhost:4000/palz/users", {
     method: "GET",
@@ -38,164 +39,6 @@ const getAllEventInterests = (): Promise<Response> => {
   });
 };
 
-// Get rid of this eventually, once requests for different types of user groups are made
-const getAllVisibleOtherUsers = (currentUser: TUser | null): Promise<TOtherUser[]> => {
-  return fetch("http://localhost:4000/palz/users", {
-    method: "GET",
-    redirect: "follow",
-  }).then((response) => {
-    return response.json().then((allUsers: TUser[]) => {
-      if (currentUser) {
-        const otherUsers: TUser[] = allUsers.filter(
-          (user) => user._id !== currentUser._id
-        );
-        /*
-        filter out users whose profile isn't visible to currentUser b/c of privacy settings (if currentUser is blocked, or if otherUser's profile isn't visible to currentUser due to otherUser's privacy settings):
-        */
-        const visibleOtherUsers: TUser[] = otherUsers.filter((otherUser) => {
-          if (currentUser._id) {
-            const currentUserIsFriend: boolean =
-              currentUser && currentUser._id
-                ? otherUser.friends.includes(currentUser._id.toString())
-                : false;
-
-            const currentUserIsFriendOfFriend: boolean = otherUsers.some(
-              (user) =>
-                user &&
-                user._id &&
-                currentUser &&
-                currentUser._id &&
-                otherUser.friends.includes(user._id.toString()) &&
-                otherUser.friends.includes(currentUser._id.toString()) &&
-                !currentUser.friends.includes(user._id.toString()) &&
-                !user.friends.includes(currentUser._id.toString())
-            );
-
-            const currentUserIsBlocked: boolean = otherUser.blockedUsers.includes(
-              currentUser._id.toString()
-            );
-
-            if (
-              !currentUserIsBlocked &&
-              (otherUser.profileVisibleTo === "anyone" ||
-                (otherUser.profileVisibleTo === "friends" && currentUserIsFriend) ||
-                (otherUser.profileVisibleTo === "friends of friends" &&
-                  currentUserIsFriendOfFriend))
-            ) {
-              return otherUser;
-            }
-          }
-        });
-
-        return visibleOtherUsers.map((otherUser) => {
-          const currentUserIsFriend: boolean =
-            currentUser && currentUser._id
-              ? otherUser.friends.includes(currentUser._id.toString())
-              : false;
-
-          const currentUserIsFriendOfFriend: boolean = otherUsers.some(
-            (user) =>
-              user &&
-              user._id &&
-              currentUser &&
-              currentUser._id &&
-              otherUser.friends.includes(user._id.toString()) &&
-              otherUser.friends.includes(currentUser._id.toString()) &&
-              !currentUser.friends.includes(user._id.toString()) &&
-              !user.friends.includes(currentUser._id.toString())
-          );
-
-          const showLocation: boolean =
-            otherUser.whoCanSeeLocation === "anyone" ||
-            (otherUser.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeLocation === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          const showPhoneNumber: boolean =
-            otherUser.whoCanSeePhoneNumber === "anyone" ||
-            (otherUser.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeePhoneNumber === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          const showEmailAddress: boolean =
-            otherUser.whoCanSeeEmailAddress === "anyone" ||
-            (otherUser.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeEmailAddress === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          const showInstagram: boolean =
-            otherUser.whoCanSeeInstagram === "anyone" ||
-            (otherUser.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeInstagram === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          const showFacebook: boolean =
-            otherUser.whoCanSeeFacebook === "anyone" ||
-            (otherUser.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeFacebook === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          const showX: boolean =
-            otherUser.whoCanSeeX === "anyone" ||
-            (otherUser.whoCanSeeX === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeX === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          const showFriends: boolean =
-            otherUser.whoCanSeeFriendsList === "anyone" ||
-            (otherUser.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanSeeFriendsList === "friends of friends" &&
-              currentUserIsFriendOfFriend);
-
-          return {
-            "_id": otherUser._id,
-            "index:": otherUser.index,
-            "firstName": otherUser.firstName,
-            "lastName": otherUser.lastName,
-            "username": otherUser.username,
-            "profileImage": otherUser.profileImage,
-            "interests": otherUser.interests,
-            "about": otherUser.about,
-            ...(showLocation && {
-              city: otherUser.city,
-            }),
-            ...(showLocation && {
-              stateProvince: otherUser.stateProvince,
-            }),
-            ...(showLocation && {
-              country: otherUser.country,
-            }),
-            ...(showPhoneNumber && {
-              phoneCountry: otherUser.phoneCountry,
-            }),
-            ...(showPhoneNumber && {
-              phoneCountryCode: otherUser.phoneCountryCode,
-            }),
-            ...(showPhoneNumber && {
-              phoneNumberWithoutCountryCode: otherUser.phoneNumberWithoutCountryCode,
-            }),
-            ...(showEmailAddress && {
-              emailAddress: otherUser.emailAddress,
-            }),
-            ...(showInstagram && {
-              instagram: otherUser.instagram,
-            }),
-            ...(showFacebook && {
-              facebook: otherUser.facebook,
-            }),
-            ...(showX && {
-              x: otherUser.x,
-            }),
-            ...(showFriends && {
-              friends: otherUser.friends,
-            }),
-          };
-        });
-      }
-    }) as Promise<TOtherUser[]>;
-  });
-};
-
 const getCurrentUserUpcomingEvents = (username: string) => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -207,7 +50,7 @@ const getCurrentUserUpcomingEvents = (username: string) => {
   });
 };
 
-// Create getPotentialFriends (limit, like in getAllVisibleOtherUsers, then revert that request to its original form, to be used until it's eventually not needed anymore). getPotentialFriends should be all visible users who have no blocking relationship to currentUser.
+// Create getPotentialFriends (limit, then revert that request to its original form, to be used until it's eventually not needed anymore). getPotentialFriends should be all visible users who have no blocking relationship to currentUser.
 const getPotentialFriends = async (
   currentUser: TUser,
   start: number,
@@ -1522,7 +1365,6 @@ const Requests = {
   deleteEvent,
   addUserRSVP,
   deleteUserRSVP,
-  getAllVisibleOtherUsers,
   getAllEvents,
   createUser,
   patchUpdatedUserInfo,
