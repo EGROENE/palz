@@ -72,10 +72,7 @@ const getUserByUsernamePhoneNumberOrEmailAddress = async (req, res) => {
   }
 };
 
-/* 
-get all users (who haven't blocked currentUser & whose 'profileVisibleTo' setting doesn't prevent currentUser from seeing it):
-*/
-// Change name to 'getAllOtherUsers'
+// Used to assign index to new users
 const getAllUsers = async (req, res) => {
   // .sort({createdAt: -1}) could be added to sort most recently added to earliest added, for example
 
