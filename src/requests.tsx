@@ -1310,7 +1310,20 @@ const deleteChat = (chatID: string) => {
   });
 };
 
+// Used when determining if limit for total chats has been reached when attempting to create new chat:
+const getAllChats = () => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  return fetch("http://localhost:4000/palz/chats/all", {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  });
+};
+
 const Requests = {
+  getAllChats,
   getAllEventInterests,
   getAllUserInterests,
   getCurrentUserUpcomingEvents,
