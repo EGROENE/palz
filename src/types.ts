@@ -616,6 +616,8 @@ export type TUserContext = {
   setUpdateProfileImageIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   removeProfileImageIsLoading: boolean;
   setRemoveProfileImageIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  processingLoginIsLoading: boolean;
+  setProcessingLoginIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type TEventContext = {

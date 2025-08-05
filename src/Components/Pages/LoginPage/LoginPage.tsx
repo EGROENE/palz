@@ -8,8 +8,12 @@ import { useNavigate } from "react-router-dom";
 
 const LoginPage = ({ type }: { type: "login" | "signup" }) => {
   const { theme, toggleTheme } = useMainContext();
-  const { signupIsSelected, toggleSignupLogin, resetLoginOrSignupFormFieldsAndErrors } =
-    useUserContext();
+  const {
+    signupIsSelected,
+    toggleSignupLogin,
+    resetLoginOrSignupFormFieldsAndErrors,
+    processingLoginIsLoading,
+  } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -57,35 +61,43 @@ const LoginPage = ({ type }: { type: "login" | "signup" }) => {
         </div>
       </div>
       <div className="login-form">
-        <div className="login-options-container">
-          <div>
-            <header onClick={!signupIsSelected ? () => toggleSignupLogin() : undefined}>
-              Sign Up
-            </header>
-            {signupIsSelected && (
-              <div className="form-type-underline animate__animated animate__slideInRight"></div>
-            )}
+        {!processingLoginIsLoading && (
+          <div className="login-options-container">
+            <div>
+              <header onClick={!signupIsSelected ? () => toggleSignupLogin() : undefined}>
+                Sign Up
+              </header>
+              {signupIsSelected && (
+                <div className="form-type-underline animate__animated animate__slideInRight"></div>
+              )}
+            </div>
+            <div>
+              <header onClick={signupIsSelected ? () => toggleSignupLogin() : undefined}>
+                Log In
+              </header>
+              {!signupIsSelected && (
+                <div className="form-type-underline animate__animated animate__slideInLeft"></div>
+              )}
+            </div>
           </div>
-          <div>
-            <header onClick={signupIsSelected ? () => toggleSignupLogin() : undefined}>
-              Log In
-            </header>
-            {!signupIsSelected && (
-              <div className="form-type-underline animate__animated animate__slideInLeft"></div>
-            )}
-          </div>
-        </div>
-        {signupIsSelected ? (
-          <SignupForm randomColor={randomColor} />
-        ) : (
+        )}
+        {signupIsSelected && <SignupForm randomColor={randomColor} />}
+        {!signupIsSelected && !processingLoginIsLoading && (
           <LoginForm randomColor={randomColor} />
         )}
-        <p>
-          {!signupIsSelected ? "Don't have an account?" : "Already have an account?"}
-          <span className="link-to-other-form" onClick={() => toggleSignupLogin()}>
-            {!signupIsSelected ? " Sign Up" : " Log In"}
-          </span>
-        </p>
+        {processingLoginIsLoading && !signupIsSelected && (
+          <header style={{ marginTop: "3rem" }} className="query-status-text">
+            Processing your info...
+          </header>
+        )}
+        {!processingLoginIsLoading && (
+          <p>
+            {!signupIsSelected ? "Don't have an account?" : "Already have an account?"}
+            <span className="link-to-other-form" onClick={() => toggleSignupLogin()}>
+              {!signupIsSelected ? " Sign Up" : " Log In"}
+            </span>
+          </p>
+        )}
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ import { TThemeColor } from "../../../../types";
 const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
   const { welcomeMessageDisplayTime } = useMainContext();
   const {
-    //fetchAllUsers,
+    processingLoginIsLoading,
     resetLoginOrSignupFormFieldsAndErrors,
     areNoSignupFormErrors,
     passwordIsHidden,
@@ -281,19 +281,28 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
           <p className="input-error-message">{confirmationPasswordError}</p>
         )}
       </label>
-      <div className="theme-element-container">
-        <button
-          className="login-button"
-          type={areNoSignupFormErrors ? "submit" : "button"}
-          onClick={(e) =>
-            areNoSignupFormErrors && allSignupFormFieldsFilled
-              ? handleSignupOrLoginFormSubmission(true, e)
-              : handleFormRejection(e)
-          }
+      {processingLoginIsLoading ? (
+        <header
+          style={{ marginTop: "3rem", textAlign: "center" }}
+          className="query-status-text"
         >
-          Sign Up
-        </button>
-      </div>
+          Processing your info...
+        </header>
+      ) : (
+        <div className="theme-element-container">
+          <button
+            className="login-button"
+            type={areNoSignupFormErrors ? "submit" : "button"}
+            onClick={(e) =>
+              areNoSignupFormErrors && allSignupFormFieldsFilled
+                ? handleSignupOrLoginFormSubmission(true, e)
+                : handleFormRejection(e)
+            }
+          >
+            Sign Up
+          </button>
+        </div>
+      )}
     </form>
   );
 };

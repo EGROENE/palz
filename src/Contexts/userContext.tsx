@@ -232,6 +232,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [fetchFriendRequestsReceivedIsError, setFetchFriendRequestsReceivedIsError] =
     useState<boolean>(false);
 
+  const [processingLoginIsLoading, setProcessingLoginIsLoading] =
+    useState<boolean>(false);
+
   useEffect(() => {
     if (currentUser) {
       if (currentUser.blockedUsers.length > 0) {
@@ -2051,9 +2054,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     // Handle submit of login form:
     if (!isOnSignup && password) {
       if (username && username !== "") {
+        setProcessingLoginIsLoading(true);
         Requests.getUserByUsernameOrEmailAddress(password, username)
           .then((res) => {
             if (res.status === 401) {
+              setProcessingLoginIsLoading(false);
               // Differentiate b/t error on username/email & error on pw
               if (res.statusText === "User not found") {
                 setUsernameError(res.statusText);
@@ -2062,6 +2067,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 setPasswordError(res.statusText);
               }
             } else if (res.status === 404) {
+              setProcessingLoginIsLoading(false);
               toast.error("User doesn't exist", {
                 style: {
                   background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -2070,6 +2076,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 },
               });
             } else if (res.status === 500) {
+              setProcessingLoginIsLoading(false);
               toast.error("Could not log you in. Please try again.", {
                 style: {
                   background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -2083,6 +2090,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 setShowWelcomeMessage(true);
                 setTimeout(() => {
                   setShowWelcomeMessage(false);
+                  setProcessingLoginIsLoading(false);
                   navigation(`/homepage/${json.user.username}`);
                 }, welcomeMessageDisplayTime);
                 setUserCreatedAccount(false);
@@ -2092,6 +2100,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 resetErrorMessagesAfterLogin();
               });
             } else {
+              setProcessingLoginIsLoading(false);
               toast.error("Could not log you in. Please try again.", {
                 style: {
                   background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -2105,9 +2114,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
 
       if (emailAddress && emailAddress !== "") {
+        setProcessingLoginIsLoading(true);
         Requests.getUserByUsernameOrEmailAddress(password, undefined, emailAddress)
           .then((res) => {
             if (res.status === 401) {
+              setProcessingLoginIsLoading(false);
               if (res.statusText === "User not found") {
                 setEmailError("User not found");
               }
@@ -2115,6 +2126,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 setPasswordError(res.statusText);
               }
             } else if (res.status === 500) {
+              setProcessingLoginIsLoading(false);
               toast.error("Could not log you in. Please try again.", {
                 style: {
                   background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -2129,6 +2141,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 setTimeout(() => {
                   setShowWelcomeMessage(false);
                   navigation(`/homepage/${json.user.username}`);
+                  setProcessingLoginIsLoading(false);
                 }, welcomeMessageDisplayTime);
                 setUserCreatedAccount(false);
                 navigation("/");
@@ -2137,6 +2150,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 resetErrorMessagesAfterLogin();
               });
             } else {
+              setProcessingLoginIsLoading(false);
               toast.error("Could not log you in. Please try again.", {
                 style: {
                   background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -2154,6 +2168,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (isOnSignup) {
       if ((username && username !== "") || (emailAddress && emailAddress !== "")) {
         // run newUserMutation. handle errors there
+        setProcessingLoginIsLoading(true);
         Requests.getAllUsers()
           .then((res) => {
             if (res.ok) {
@@ -2161,6 +2176,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 setIndex(allUsers.length);
 
                 if (allUsers.length >= 50) {
+                  setProcessingLoginIsLoading(false);
                   setUserCreatedAccount(false);
                   toast.error(
                     "Sorry, but due to potential spamming douchebags & this only being a portfolio project, only 50 user accounts in total can be created at this time.",
@@ -2176,6 +2192,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                   Requests.createUser(userData)
                     .then((res) => {
                       if (res.status === 409) {
+                        setProcessingLoginIsLoading(false);
                         if (res.statusText === "USERNAME & EMAIL TAKEN") {
                           setUsernameError("Username already in use");
                           setEmailError("E-mail address already in use");
@@ -2191,6 +2208,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         setTimeout(() => {
                           setShowWelcomeMessage(false);
                           navigation(`/homepage/${userData.username}`);
+                          setProcessingLoginIsLoading(false);
                         }, welcomeMessageDisplayTime);
                         setCurrentUser(userData);
                         navigation("/");
@@ -2213,6 +2231,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 }
               });
             } else {
+              setProcessingLoginIsLoading(false);
               setUserCreatedAccount(false);
               toast.error("Could not set up your account. Please try again.", {
                 style: {
@@ -2252,6 +2271,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    processingLoginIsLoading,
+    setProcessingLoginIsLoading,
     fetchFriendRequestsIsLoading,
     setFetchFriendRequestsIsLoading,
     fetchFriendRequestsSentIsError,
