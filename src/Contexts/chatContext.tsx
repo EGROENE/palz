@@ -543,7 +543,38 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   // While chat is being created, display loadingmodal. hide onSettled of createChatMutation
   const handleCreateChat = (chat: TChat): void => {
     setChatCreationInProgress(true);
-    createChatMutation.mutate({ chat });
+
+    // Make Request to get allChats. If length is 75+, don't create new one; show douchebag message
+    Requests.getAllChats().then((res) => {
+      if (res.ok) {
+        res.json().then((allChats: TChat[]) => {
+          if (allChats.length >= 75) {
+            setChatCreationInProgress(false);
+            toast.error(
+              "Sorry, but due to potential spamming douchebags & this only being a portfolio project, only 75 chats in total can be created at this time.",
+              {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              }
+            );
+          } else {
+            createChatMutation.mutate({ chat });
+          }
+        });
+      } else {
+        setChatCreationInProgress(false);
+        toast.error("Unable to create chat. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      }
+    });
   };
 
   const handleDeleteChat = (chatID: string): void =>
