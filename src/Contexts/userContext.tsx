@@ -2157,43 +2157,61 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         Requests.getAllUsers()
           .then((res) => {
             if (res.ok) {
-              res.json().then((allUsers) => setIndex(allUsers.length));
-              Requests.createUser(userData)
-                .then((res) => {
-                  if (res.status === 409) {
-                    if (res.statusText === "USERNAME & EMAIL TAKEN") {
-                      setUsernameError("Username already in use");
-                      setEmailError("E-mail address already in use");
-                    }
-                    if (res.statusText === "USERNAME TAKEN") {
-                      setUsernameError("Username already in use");
-                    }
-                    if (res.statusText === "EMAIL TAKEN") {
-                      setEmailError("E-mail address already in use");
-                    }
-                  } else if (res.ok) {
-                    setShowWelcomeMessage(true);
-                    setTimeout(() => {
-                      setShowWelcomeMessage(false);
-                      navigation(`/homepage/${userData.username}`);
-                    }, welcomeMessageDisplayTime);
-                    setCurrentUser(userData);
-                    navigation("/");
-                    setUserCreatedAccount(true);
-                    setParallelValuesAfterSignup();
-                    resetErrorMessagesAfterSignup();
-                  } else {
-                    setUserCreatedAccount(false);
-                    toast.error("Could not set up your account. Please try again.", {
+              res.json().then((allUsers) => {
+                setIndex(allUsers.length);
+
+                if (allUsers.length >= 50) {
+                  setUserCreatedAccount(false);
+                  toast.error(
+                    "Sorry, but due to potential spamming douchebags & this only being a portfolio project, only 50 user accounts in total can be created at this time.",
+                    {
                       style: {
                         background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
                         color: theme === "dark" ? "black" : "white",
                         border: "2px solid red",
                       },
-                    });
-                  }
-                })
-                .catch((error) => console.log(error));
+                    }
+                  );
+                } else {
+                  Requests.createUser(userData)
+                    .then((res) => {
+                      if (res.status === 409) {
+                        if (res.statusText === "USERNAME & EMAIL TAKEN") {
+                          setUsernameError("Username already in use");
+                          setEmailError("E-mail address already in use");
+                        }
+                        if (res.statusText === "USERNAME TAKEN") {
+                          setUsernameError("Username already in use");
+                        }
+                        if (res.statusText === "EMAIL TAKEN") {
+                          setEmailError("E-mail address already in use");
+                        }
+                      } else if (res.ok) {
+                        setShowWelcomeMessage(true);
+                        setTimeout(() => {
+                          setShowWelcomeMessage(false);
+                          navigation(`/homepage/${userData.username}`);
+                        }, welcomeMessageDisplayTime);
+                        setCurrentUser(userData);
+                        navigation("/");
+                        setUserCreatedAccount(true);
+                        setParallelValuesAfterSignup();
+                        resetErrorMessagesAfterSignup();
+                      } else {
+                        setUserCreatedAccount(false);
+                        toast.error("Could not set up your account. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                }
+              });
             } else {
               setUserCreatedAccount(false);
               toast.error("Could not set up your account. Please try again.", {
