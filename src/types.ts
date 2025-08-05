@@ -744,8 +744,8 @@ export type TEventContext = {
   setInterestedUsersCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;
   inviteesCurrentEvent: string[];
   setInviteesCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;
-  allCurrentUserEvents: TEvent[];
-  setAllCurrentUserEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
+  allCurrentUserUpcomingEvents: TEvent[];
+  setAllCurrentUserUpcomingEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
 };
 
 export type TChatContext = {

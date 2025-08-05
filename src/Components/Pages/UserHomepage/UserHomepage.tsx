@@ -13,7 +13,8 @@ import Requests from "../../../requests";
 const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
   const { currentUser, userCreatedAccount } = useUserContext();
-  const { allCurrentUserEvents, setAllCurrentUserEvents } = useEventContext();
+  const { allCurrentUserUpcomingEvents, setAllCurrentUserUpcomingEvents } =
+    useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -44,7 +45,7 @@ const UserHomepage = () => {
         .then((res) => {
           if (res.ok) {
             res.json().then((events: TEvent[]) => {
-              setAllCurrentUserEvents(events);
+              setAllCurrentUserUpcomingEvents(events);
             });
           } else {
             setIsFetchError(true);
@@ -84,22 +85,23 @@ const UserHomepage = () => {
       {isFetchError && !fetchIsLoading && (
         <p>Could not fetch your upcoming events; try reloading the page.</p>
       )}
-      {allCurrentUserEvents &&
-        allCurrentUserEvents.length > 0 &&
+      {allCurrentUserUpcomingEvents &&
+        allCurrentUserUpcomingEvents.length > 0 &&
         !fetchIsLoading &&
         !isFetchError && (
           <>
             <div aria-hidden="false" className="upcoming-events-hero">
-              <h1>Upcoming Events ({allCurrentUserEvents.length})</h1>
+              <h1>Upcoming Events ({allCurrentUserUpcomingEvents.length})</h1>
               <div
                 style={
-                  Methods.sortEventsSoonestToLatest(allCurrentUserEvents).length < 3
+                  Methods.sortEventsSoonestToLatest(allCurrentUserUpcomingEvents).length <
+                  3
                     ? { justifyContent: "center", overflowX: "unset" }
                     : undefined
                 }
                 className="rsvpd-events-container"
               >
-                {Methods.sortEventsSoonestToLatest(allCurrentUserEvents).map(
+                {Methods.sortEventsSoonestToLatest(allCurrentUserUpcomingEvents).map(
                   (event: TEvent) => (
                     <EventCard key={event._id} event={event} />
                   )
@@ -108,8 +110,8 @@ const UserHomepage = () => {
             </div>
           </>
         )}
-      {allCurrentUserEvents &&
-        allCurrentUserEvents.length === 0 &&
+      {allCurrentUserUpcomingEvents &&
+        allCurrentUserUpcomingEvents.length === 0 &&
         !fetchIsLoading &&
         !isFetchError && (
           <>

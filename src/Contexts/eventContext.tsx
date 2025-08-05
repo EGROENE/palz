@@ -22,7 +22,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const { setIsLoading, theme, setSavedInterests, savedInterests } = useMainContext();
   const { currentUser, userCreatedAccount } = useUserContext();
 
-  const [allCurrentUserEvents, setAllCurrentUserEvents] = useState<TEvent[]>([]);
+  const [allCurrentUserUpcomingEvents, setAllCurrentUserUpcomingEvents] = useState<
+    TEvent[]
+  >([]);
 
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
   const fetchAllEventsQuery: UseQueryResult<TEvent[], Error> = useQuery({
@@ -215,7 +217,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (optRenderCurrentUserEvents) {
-      setAllCurrentUserEvents(allCurrentUserEvents.filter((ev) => ev !== event));
+      setAllCurrentUserUpcomingEvents(
+        allCurrentUserUpcomingEvents.filter((ev) => ev !== event)
+      );
     }
 
     setIsLoading(true);
@@ -235,7 +239,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             setRsvpdUsers(rsvpdUsers.concat(currentUser._id.toString()));
           }
           if (optRenderCurrentUserEvents) {
-            setAllCurrentUserEvents(allCurrentUserEvents.concat(event));
+            setAllCurrentUserUpcomingEvents(allCurrentUserUpcomingEvents.concat(event));
           }
           toast.error("Could not remove RSVP. Please try again.", {
             style: {
@@ -263,7 +267,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
         setEventsArray(eventsArray.filter((e) => e !== event));
       }
       if (optRenderCurrentUserEvents) {
-        setAllCurrentUserEvents(allCurrentUserEvents.filter((ev) => ev !== event));
+        setAllCurrentUserUpcomingEvents(
+          allCurrentUserUpcomingEvents.filter((ev) => ev !== event)
+        );
       }
       setIsLoading(true);
       Requests.addToDisinterestedUsers(currentUser, event)
@@ -281,7 +287,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
               setEventsArray(eventsArray.concat(event));
             }
             if (optRenderCurrentUserEvents) {
-              setAllCurrentUserEvents(allCurrentUserEvents.concat(event));
+              setAllCurrentUserUpcomingEvents(allCurrentUserUpcomingEvents.concat(event));
             }
             toast.error("Could not decline invitation. Please try again.", {
               style: {
@@ -671,8 +677,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     handleRemoveEventInterest,
     inviteesCurrentEvent,
     setInviteesCurrentEvent,
-    allCurrentUserEvents,
-    setAllCurrentUserEvents,
+    allCurrentUserUpcomingEvents,
+    setAllCurrentUserUpcomingEvents,
     interestedUsersCurrentEvent,
     setInterestedUsersCurrentEvent,
     disinterestedUsersCurrentEvent,

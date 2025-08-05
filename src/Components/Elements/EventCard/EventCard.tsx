@@ -20,8 +20,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
     handleDeclineInvitation,
     setCurrentEvent,
     handleRemoveDisinterestedUser,
-    allCurrentUserEvents,
-    setAllCurrentUserEvents,
+    allCurrentUserUpcomingEvents,
+    setAllCurrentUserUpcomingEvents,
   } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -219,8 +219,8 @@ const EventCard = ({ event }: { event: TEvent }) => {
                     handleDeclineInvitation(
                       e,
                       event,
-                      allCurrentUserEvents,
-                      setAllCurrentUserEvents,
+                      allCurrentUserUpcomingEvents,
+                      setAllCurrentUserUpcomingEvents,
                       true
                     )
                   }
