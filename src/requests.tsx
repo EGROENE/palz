@@ -415,7 +415,6 @@ const getPotentialEventBlockees = (
 const getUsersToUpdateWhenCurrentUserDeletesAccount = (currentUser: TUser) => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
-  console.log(currentUser);
 
   return fetch(
     `http://localhost:4000/palz/settings?username=${currentUser.username}&retrieve=relatedUsers`,
@@ -803,8 +802,6 @@ const deleteEventInterest = (
 const deleteUser = (userID: string | undefined): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json");
-
-  console.log(userID);
 
   return fetch(`http://localhost:4000/palz/users/${userID}`, {
     method: "DELETE",
