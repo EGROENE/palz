@@ -203,6 +203,9 @@ const UsersEvents = () => {
           Loading...
         </header>
       )}
+      {isFetchError && !fetchIsLoading && (
+        <p>Error loading your events; please reload the page.</p>
+      )}
       {!isFetchError && !fetchIsLoading && userEventsExist && (
         <>
           {ongoingEvents && ongoingEvents.length > 0 && (
