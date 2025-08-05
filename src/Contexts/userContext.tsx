@@ -14,7 +14,6 @@ import Requests from "../requests";
 import toast from "react-hot-toast";
 import Methods from "../methods";
 import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
 import mongoose from "mongoose";
 
 export const UserContext = createContext<TUserContext | null>(null);
@@ -319,8 +318,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   }, [currentUser?.friendRequestsReceived]);
-
-  const queryClient = useQueryClient();
 
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
 
@@ -2052,7 +2049,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     */
 
     // Handle submit of login form:
-    // Maybe .invalidateQueries({ queryKey: "allVisibleOtherUsers" }) before running getUserByUsernameOrEmailAddress request
     if (!isOnSignup && password) {
       if (username && username !== "") {
         Requests.getUserByUsernameOrEmailAddress(password, username)
@@ -2183,8 +2179,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     }, welcomeMessageDisplayTime);
                     setCurrentUser(userData);
                     navigation("/");
-                    queryClient.invalidateQueries({ queryKey: ["allVisibleOtherUsers"] });
-                    queryClient.refetchQueries({ queryKey: ["allVisibleOtherUsers"] });
                     setUserCreatedAccount(true);
                     setParallelValuesAfterSignup();
                     resetErrorMessagesAfterSignup();
