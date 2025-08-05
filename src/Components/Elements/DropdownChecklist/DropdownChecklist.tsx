@@ -1,7 +1,7 @@
 import React from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import { TBarebonesUser, TOtherUser } from "../../../types";
+import { TBarebonesUser, TUserSecure } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import { useChatContext } from "../../../Hooks/useChatContext";
@@ -27,7 +27,7 @@ const DropdownChecklist = ({
   actionParams?: any[];
   actionEventParamNeeded: boolean;
   displayedItemsArray: TBarebonesUser[]; // type can be changed later if used for non-user lists
-  storageArray: TBarebonesUser[] | TOtherUser[];
+  storageArray: TBarebonesUser[] | TUserSecure[];
   setStorageArray: React.Dispatch<React.SetStateAction<any[]>>;
 }) => {
   const { isLoading } = useMainContext();

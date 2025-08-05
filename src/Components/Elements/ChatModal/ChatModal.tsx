@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Message from "../Message/Message";
-import { TOtherUser, TUser, TThemeColor } from "../../../types";
+import { TUserSecure, TUser, TThemeColor } from "../../../types";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -74,7 +74,7 @@ const ChatModal = () => {
 
   const [hoveringOverSendIcon, setHoveringOverSendIcon] = useState<boolean>(false);
 
-  const [chatMembers, setChatMembers] = useState<TOtherUser[] | null>(null);
+  const [chatMembers, setChatMembers] = useState<TUserSecure[] | null>(null);
 
   const [fetchChatMembersIsLoading, setFetchChatMembersIsLoading] =
     useState<boolean>(false);
@@ -95,7 +95,7 @@ const ChatModal = () => {
         .then((members: TUser[]) => {
           if (currentUser) {
             setChatMembers(
-              members.map((m) => Methods.getTOtherUserFromTUser(m, currentUser))
+              members.map((m) => Methods.getTUserSecureFromTUser(m, currentUser))
             );
           }
         })
@@ -145,7 +145,7 @@ const ChatModal = () => {
           .then((members: TUser[]) => {
             if (currentUser) {
               setChatMembers(
-                members.map((m) => Methods.getTOtherUserFromTUser(m, currentUser))
+                members.map((m) => Methods.getTUserSecureFromTUser(m, currentUser))
               );
             }
           })
@@ -204,7 +204,7 @@ const ChatModal = () => {
     }
   }, [fetchStart, chatMembersSearchQuery]);
 
-  const [otherChatMember, setOtherChatMember] = useState<TOtherUser | undefined>(
+  const [otherChatMember, setOtherChatMember] = useState<TUserSecure | undefined>(
     undefined
   );
 
@@ -262,7 +262,7 @@ const ChatModal = () => {
               .json()
               .then((chatMember: TUser) =>
                 setOtherChatMember(
-                  Methods.getTOtherUserFromTUser(chatMember, currentUser)
+                  Methods.getTUserSecureFromTUser(chatMember, currentUser)
                 )
               );
           } else {
@@ -314,7 +314,7 @@ const ChatModal = () => {
     setMessagesContainerScrollBottom(scrollBottom);
   };
 
-  const getButtonOneHandler = (listedChatMember: TOtherUser) => {
+  const getButtonOneHandler = (listedChatMember: TUserSecure) => {
     const listedChatMemberIsAdmin: boolean =
       currentChat &&
       currentChat.admins &&
@@ -350,7 +350,7 @@ const ChatModal = () => {
     }
   };
 
-  const getButtonOneText = (listedChatMember: TOtherUser): string => {
+  const getButtonOneText = (listedChatMember: TUserSecure): string => {
     const listedChatMemberIsAdmin: boolean =
       currentChat &&
       currentChat.admins &&

@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { TUser, TThemeColor, TOtherUser } from "../../../types";
+import { TUser, TThemeColor, TUserSecure } from "../../../types";
 import { countries } from "../../../constants";
 import { useState, useEffect } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
@@ -11,7 +11,7 @@ import { useChatContext } from "../../../Hooks/useChatContext";
 import Requests from "../../../requests";
 import Methods from "../../../methods";
 
-const UserCard = ({ userSECURE }: { userSECURE: TOtherUser }) => {
+const UserCard = ({ userSECURE }: { userSECURE: TUserSecure }) => {
   const { isLoading, error, displayedItems, setDisplayedItems } = useMainContext();
 
   if (error) {

@@ -12,7 +12,7 @@ import {
   TEvent,
   TChat,
   TBarebonesUser,
-  TOtherUser,
+  TUserSecure,
   TEventValuesToUpdate,
 } from "../../../types";
 import TwoOptionsInterface from "../../Elements/TwoOptionsInterface/TwoOptionsInterface";
@@ -57,7 +57,7 @@ const OtherUserProfile = () => {
     throw new Error(error);
   }
 
-  const [pageOwner, setPageOwner] = useState<TOtherUser | null>(null);
+  const [pageOwner, setPageOwner] = useState<TUserSecure | null>(null);
   const [showFriends, setShowFriends] = useState<boolean>(false);
   const [fetchUserInfoIsLoading, setUserInfoFetchIsLoading] = useState<boolean>(false);
   const [fetchCommonPalzIsLoading, setFetchCommonPalzIsLoading] = useState<boolean>(true);
@@ -229,7 +229,7 @@ const OtherUserProfile = () => {
                 navigation(`/${currentUser?.username}`);
               } else {
                 setPageOwner(
-                  Methods.getTOtherUserFromTUser(currentOtherUser, currentUser)
+                  Methods.getTUserSecureFromTUser(currentOtherUser, currentUser)
                 );
 
                 // Set currentUserMayMessage:
@@ -611,7 +611,7 @@ const OtherUserProfile = () => {
     paramsIncludeEvent: false,
   };
 
-  const handleBlockUserFail = (blockee: TUser | TOtherUser) => {
+  const handleBlockUserFail = (blockee: TUser | TUserSecure) => {
     setBlockUserInProgress(false);
     if (blockedUsers) {
       setBlockedUsers(blockedUsers.filter((u) => u._id !== blockee._id?.toString()));
@@ -685,7 +685,7 @@ const OtherUserProfile = () => {
                     promisesToAwait.push(
                       Requests.removeFromFriendRequestsSent(currentUser, pageOwner),
                       Requests.removeFromFriendRequestsReceived(
-                        Methods.getTOtherUserFromTUser(currentUser, currentUser),
+                        Methods.getTUserSecureFromTUser(currentUser, currentUser),
                         pageOwner
                       )
                     );
@@ -695,7 +695,7 @@ const OtherUserProfile = () => {
                     promisesToAwait.push(
                       Requests.removeFromFriendRequestsSent(pageOwner, currentUser),
                       Requests.removeFromFriendRequestsReceived(
-                        Methods.getTOtherUserFromTUser(pageOwner, currentUser),
+                        Methods.getTUserSecureFromTUser(pageOwner, currentUser),
                         pageOwner
                       )
                     );

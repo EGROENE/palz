@@ -5,7 +5,7 @@ import {
   TUser,
   TEvent,
   TEventValuesToUpdate,
-  TOtherUser,
+  TUserSecure,
   TBarebonesUser,
 } from "../types";
 import Methods from "../methods";
@@ -375,7 +375,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleRemoveOrganizer = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
-    user: TUser | TOtherUser | null
+    user: TUser | TUserSecure | null
   ) => {
     e.preventDefault();
     if (user) {
@@ -438,8 +438,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Used in dropdown list of potential organizers; changes are only made to organizers variable in state
   const handleAddRemoveUserAsOrganizer = (
-    organizers: (TBarebonesUser | TOtherUser)[],
-    setOrganizers: React.Dispatch<React.SetStateAction<(TBarebonesUser | TOtherUser)[]>>,
+    organizers: (TBarebonesUser | TUserSecure)[],
+    setOrganizers: React.Dispatch<React.SetStateAction<(TBarebonesUser | TUserSecure)[]>>,
     user: TBarebonesUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
@@ -495,8 +495,8 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleAddRemoveUserAsInvitee = (
-    invitees: (TBarebonesUser | TOtherUser)[],
-    setInvitees: React.Dispatch<React.SetStateAction<(TBarebonesUser | TOtherUser)[]>>,
+    invitees: (TBarebonesUser | TUserSecure)[],
+    setInvitees: React.Dispatch<React.SetStateAction<(TBarebonesUser | TUserSecure)[]>>,
     user?: TBarebonesUser
   ): void => {
     if (user?._id) {

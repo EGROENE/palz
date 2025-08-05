@@ -6,7 +6,7 @@ import {
   TEventValuesToUpdate,
   TUserValuesToUpdate,
   TChatValuesToUpdate,
-  TOtherUser,
+  TUserSecure,
 } from "./types";
 
 // Used to assign index for newly created users
@@ -814,7 +814,7 @@ const deleteUser = (userID: string | undefined): Promise<Response> => {
 };
 
 const addUserRSVP = (
-  user: TOtherUser | TUser | null,
+  user: TUserSecure | TUser | null,
   event: TEvent
 ): Promise<Response> => {
   var myHeaders = new Headers();
@@ -1053,7 +1053,7 @@ const removeInvitee = (event: TEvent, user: TBarebonesUser | null): Promise<Resp
 
 const removeOrganizer = (
   event: TEvent,
-  user: TUser | TOtherUser | null
+  user: TUser | TUserSecure | null
 ): Promise<Response> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -1126,7 +1126,7 @@ const addToFriendRequestsSent = (
 };
 
 const removeFromFriendRequestsReceived = (
-  sender: TOtherUser,
+  sender: TUserSecure,
   recipient: TUser
 ): Promise<Response> => {
   var myHeaders = new Headers();
@@ -1151,7 +1151,7 @@ const removeFromFriendRequestsReceived = (
 
 const removeFromFriendRequestsSent = (
   sender: TUser,
-  recipient: TUser | TOtherUser
+  recipient: TUser | TUserSecure
 ): Promise<Response> => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");

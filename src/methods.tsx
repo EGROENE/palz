@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { TEvent, TUser, TChat, TOtherUser, TBarebonesUser } from "./types";
+import { TEvent, TUser, TChat, TUserSecure, TBarebonesUser } from "./types";
 
 const isTEvent = (value: any): value is TEvent => {
   if (value.eventStartDateTimeInMS) {
@@ -15,7 +15,7 @@ const isTUser = (value: any): value is TUser => {
   return false;
 };
 
-const isTOtherUser = (value: any): value is TOtherUser => {
+const isTUserSecure = (value: any): value is TUserSecure => {
   return value.username ? true : false;
 };
 
@@ -123,13 +123,18 @@ const formatHyphensAndSpacesInString = (name: string): string => {
 
 const removeDuplicatesFromArray = (arr: any[]): any[] => [...new Set(arr)];
 
-const getTOtherUserFromTUser = (userToConvert: TUser, currentUser: TUser): TOtherUser => {
+const getTUserSecureFromTUser = (
+  userToConvert: TUser,
+  currentUser: TUser
+): TUserSecure => {
   const currentUserIsFriend: boolean =
     currentUser && currentUser._id
       ? userToConvert.friends.includes(currentUser._id.toString())
       : false;
 
-  const currentUserIsFriendOfFriend: boolean = userToConvert.friends.some((pfFriend) => currentUser.friends.includes(pfFriend));
+  const currentUserIsFriendOfFriend: boolean = userToConvert.friends.some((pfFriend) =>
+    currentUser.friends.includes(pfFriend)
+  );
 
   const showLocation: boolean =
     userToConvert.whoCanSeeLocation === "anyone" ||
@@ -217,9 +222,9 @@ const getTOtherUserFromTUser = (userToConvert: TUser, currentUser: TUser): TOthe
   };
 };
 
-// TBarebonesUser is only included as param, since a value of type, say TOtherUser | TBarebonesUser could be passed
+// TBarebonesUser is only included as param, since a value of type, say TUserSecure | TBarebonesUser could be passed
 const getTBarebonesUser = (
-  user: TUser | TOtherUser | TBarebonesUser | null
+  user: TUser | TUserSecure | TBarebonesUser | null
 ): TBarebonesUser => {
   return {
     _id: user?._id,
@@ -337,10 +342,10 @@ const getDateMessageSent = (message: TMessage): string => {
 
 const Methods = {
   isTBarebonesUser,
-  getTOtherUserFromTUser,
+  getTUserSecureFromTUser,
   getTBarebonesUser,
   getDateMessageSent,
-  isTOtherUser,
+  isTUserSecure,
   sortChatsByMostRecentMessage,
   isTEvent,
   isTUser,

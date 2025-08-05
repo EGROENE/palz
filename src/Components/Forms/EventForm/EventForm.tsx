@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import { useState, useEffect, useRef } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { TEvent, TUser, TThemeColor, TOtherUser, TBarebonesUser } from "../../../types";
+import { TEvent, TUser, TThemeColor, TUserSecure, TBarebonesUser } from "../../../types";
 import Methods from "../../../methods";
 import { countries } from "../../../constants";
 import toast from "react-hot-toast";
@@ -503,7 +503,7 @@ const EventForm = ({
   // add as event listener on dropdown-scroll. do this inside useEffect dependent on CO fetch starts, fetchLimit, search terms,
   const handleLoadMoreItemsOnScroll = (
     list: "potential-co-organizers" | "potential-invitees" | "potential-blockees",
-    items: (TOtherUser | TEvent | TBarebonesUser)[],
+    items: (TUserSecure | TEvent | TBarebonesUser)[],
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ): void => {
     const eHTMLElement = e?.target as HTMLElement;
@@ -517,7 +517,7 @@ const EventForm = ({
         : window.innerHeight + window.scrollY >= document.body.offsetHeight;
 
     if (bottomReached) {
-      const lastItem: TOtherUser | TEvent | TBarebonesUser = items[items.length - 1];
+      const lastItem: TUserSecure | TEvent | TBarebonesUser = items[items.length - 1];
 
       if (
         lastItem &&

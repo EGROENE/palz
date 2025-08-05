@@ -3,7 +3,7 @@ import {
   TUserContext,
   TUser,
   TUserValuesToUpdate,
-  TOtherUser,
+  TUserSecure,
   TBarebonesUser,
   TEvent,
 } from "../types";
@@ -202,7 +202,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
-  const [currentOtherUser, setCurrentOtherUser] = useLocalStorage<TOtherUser | null>(
+  const [currentOtherUser, setCurrentOtherUser] = useLocalStorage<TUserSecure | null>(
     "currentOtherUser",
     null
   );
@@ -416,7 +416,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const handleReceiveFriendRequestFail = (sender: TUser, recipient: TOtherUser) => {
+  const handleReceiveFriendRequestFail = (sender: TUser, recipient: TUserSecure) => {
     if (recipient._id && friendRequestsSent) {
       // If FR was sent, but recipient didn't receive it (request failed), delete sent FR from sender:
       Requests.removeFromFriendRequestsSent(sender, recipient)
@@ -436,7 +436,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleRemoveFriendRequestFail = (
-    sender: TOtherUser | TBarebonesUser,
+    sender: TUserSecure | TBarebonesUser,
     recipientID: string | undefined,
     event?: "accept-request" | "retract-request" | "reject-request"
   ) => {
@@ -1083,7 +1083,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleSendFriendRequest = (
-    recipient: TOtherUser | TUser | undefined,
+    recipient: TUserSecure | TUser | undefined,
     shouldOptimisticRender?: boolean
   ): void => {
     if (currentUser && recipient && recipient._id) {
@@ -1169,8 +1169,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleRetractFriendRequest = (
-    recipient: TOtherUser | TUser,
-    sender: TOtherUser | TUser
+    recipient: TUserSecure | TUser,
+    sender: TUserSecure | TUser
   ): void => {
     setIsLoading(true);
 
@@ -1241,8 +1241,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleAcceptFriendRequest = (
-    sender: TOtherUser,
-    receiver: TOtherUser,
+    sender: TUserSecure,
+    receiver: TUserSecure,
     optimisticRender: boolean,
     e?: React.ChangeEvent<HTMLInputElement>
   ): void => {
@@ -1429,7 +1429,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Could pass value to render FR received optimistically
   const handleRejectFriendRequest = (
-    sender: TOtherUser | TBarebonesUser,
+    sender: TUserSecure | TBarebonesUser,
     e?: React.ChangeEvent<HTMLInputElement>
   ): void => {
     e?.preventDefault();
@@ -1514,7 +1514,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleUnfriendingFail = (friend: TOtherUser): void => {
+  const handleUnfriendingFail = (friend: TUserSecure): void => {
     setIsLoading(false);
     toast.error(
       `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`,
@@ -1529,11 +1529,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleUnfriending = (
-    user: TOtherUser | TUser,
-    friend: TOtherUser | TUser,
-    array?: (TOtherUser | TBarebonesUser | TEvent)[],
+    user: TUserSecure | TUser,
+    friend: TUserSecure | TUser,
+    array?: (TUserSecure | TBarebonesUser | TEvent)[],
     setArray?: React.Dispatch<
-      React.SetStateAction<(TBarebonesUser | TOtherUser | TEvent)[]>
+      React.SetStateAction<(TBarebonesUser | TUserSecure | TEvent)[]>
     >
   ): void => {
     if (user._id) {
@@ -1541,7 +1541,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         array &&
         setArray &&
         array.every(
-          (elem) => Methods.isTBarebonesUser(elem) || Methods.isTOtherUser(elem)
+          (elem) => Methods.isTBarebonesUser(elem) || Methods.isTUserSecure(elem)
         )
       ) {
         setArray(
@@ -1602,13 +1602,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                             array.every(
                                               (elem) =>
                                                 Methods.isTBarebonesUser(elem) ||
-                                                Methods.isTOtherUser(elem)
+                                                Methods.isTUserSecure(elem)
                                             )
                                           ) {
                                             Methods.isTUser(friend) && currentUser
                                               ? setArray(
                                                   array.concat(
-                                                    Methods.getTOtherUserFromTUser(
+                                                    Methods.getTUserSecureFromTUser(
                                                       friend,
                                                       currentUser
                                                     )
@@ -1627,13 +1627,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                       array.every(
                                         (elem) =>
                                           Methods.isTBarebonesUser(elem) ||
-                                          Methods.isTOtherUser(elem)
+                                          Methods.isTUserSecure(elem)
                                       )
                                     ) {
                                       Methods.isTUser(friend) && currentUser
                                         ? setArray(
                                             array.concat(
-                                              Methods.getTOtherUserFromTUser(
+                                              Methods.getTUserSecureFromTUser(
                                                 friend,
                                                 currentUser
                                               )
@@ -1652,13 +1652,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                 array.every(
                                   (elem) =>
                                     Methods.isTBarebonesUser(elem) ||
-                                    Methods.isTOtherUser(elem)
+                                    Methods.isTUserSecure(elem)
                                 )
                               ) {
                                 Methods.isTUser(friend) && currentUser
                                   ? setArray(
                                       array.concat(
-                                        Methods.getTOtherUserFromTUser(
+                                        Methods.getTUserSecureFromTUser(
                                           friend,
                                           currentUser
                                         )
@@ -1678,13 +1678,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         setArray &&
                         array.every(
                           (elem) =>
-                            Methods.isTBarebonesUser(elem) || Methods.isTOtherUser(elem)
+                            Methods.isTBarebonesUser(elem) || Methods.isTUserSecure(elem)
                         )
                       ) {
                         Methods.isTUser(friend) && currentUser
                           ? setArray(
                               array.concat(
-                                Methods.getTOtherUserFromTUser(friend, currentUser)
+                                Methods.getTUserSecureFromTUser(friend, currentUser)
                               )
                             )
                           : setArray(array.concat(friend));
@@ -1700,12 +1700,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               array &&
               setArray &&
               array.every(
-                (elem) => Methods.isTBarebonesUser(elem) || Methods.isTOtherUser(elem)
+                (elem) => Methods.isTBarebonesUser(elem) || Methods.isTUserSecure(elem)
               )
             ) {
               Methods.isTUser(friend) && currentUser
                 ? setArray(
-                    array.concat(Methods.getTOtherUserFromTUser(friend, currentUser))
+                    array.concat(Methods.getTUserSecureFromTUser(friend, currentUser))
                   )
                 : setArray(array.concat(friend));
             }

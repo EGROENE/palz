@@ -5,7 +5,7 @@ import {
   TUser,
   TChatValuesToUpdate,
   TMessage,
-  TOtherUser,
+  TUserSecure,
   TBarebonesUser,
 } from "../types";
 import { useUserContext } from "../Hooks/useUserContext";
@@ -549,7 +549,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleDeleteChat = (chatID: string): void =>
     deleteChatMutation.mutate({ chatID });
 
-  const handleRemoveUserFromChat = (user: TOtherUser, chat?: TChat): void => {
+  const handleRemoveUserFromChat = (user: TUserSecure, chat?: TChat): void => {
     if (chat && chat.admins && user._id && user) {
       const updatedMembersIDs: string[] = chat.members.filter((member) => {
         if (user._id) {
@@ -701,7 +701,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       .finally(() => setFetchChatMembersIsLoading(false));
   };
 
-  const handleAddAdminToChat = (user: TOtherUser, chat: TChat): void => {
+  const handleAddAdminToChat = (user: TUserSecure, chat: TChat): void => {
     setCurrentOtherUser(user);
     const updatedAdmins =
       chat.admins && user._id ? chat.admins.concat(user._id.toString()) : [];

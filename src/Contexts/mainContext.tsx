@@ -1,5 +1,5 @@
 import { useState, createContext, ReactNode } from "react";
-import { TMainContext, TOtherUser, TEvent, TBarebonesUser } from "../types";
+import { TMainContext, TUserSecure, TEvent, TBarebonesUser } from "../types";
 import useLocalStorage from "use-local-storage";
 import { useLocation } from "react-router-dom";
 
@@ -28,7 +28,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     useState<number>(2500);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [displayedItems, setDisplayedItems] = useState<
-    (TEvent | TOtherUser | TBarebonesUser)[]
+    (TEvent | TUserSecure | TBarebonesUser)[]
   >([]);
   const [showMobileNavOptions, setShowMobileNavOptions] = useState<boolean>(false);
   // fetchStart is here so that it can be immediately set to 0 when clicking links to DisplayedCards pages

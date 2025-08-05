@@ -9,7 +9,7 @@ import {
   TEvent,
   TThemeColor,
   TUser,
-  TOtherUser,
+  TUserSecure,
   TDisplayedCardsFilter,
   TBarebonesUser,
 } from "../../../types";
@@ -100,7 +100,7 @@ const DisplayedCardsPage = ({
                   pf.username?.toLowerCase().includes(input.toLowerCase()) ||
                   anInterestIncludesSearchTerm
                 ) {
-                  return Methods.getTOtherUserFromTUser(pf, currentUser);
+                  return Methods.getTUserSecureFromTUser(pf, currentUser);
                 }
               })
             );
@@ -126,7 +126,7 @@ const DisplayedCardsPage = ({
             setAllPotentialFriends(
               batchOfPotentialFriends.map((pf) => Methods.getTBarebonesUser(pf))
             );
-            let matches: TOtherUser[] = [];
+            let matches: TUserSecure[] = [];
             for (const pf of batchOfPotentialFriends) {
               if (pf._id) {
                 for (const filter of filters) {
@@ -158,9 +158,11 @@ const DisplayedCardsPage = ({
                       pf.country === currentUser?.country
                     ) {
                       if (
-                        !matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))
+                        !matches.includes(
+                          Methods.getTUserSecureFromTUser(pf, currentUser)
+                        )
                       ) {
-                        matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
+                        matches.push(Methods.getTUserSecureFromTUser(pf, currentUser));
                       }
                     }
                   }
@@ -172,9 +174,11 @@ const DisplayedCardsPage = ({
                       pf.country === currentUser?.country
                     ) {
                       if (
-                        !matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))
+                        !matches.includes(
+                          Methods.getTUserSecureFromTUser(pf, currentUser)
+                        )
                       ) {
-                        matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
+                        matches.push(Methods.getTUserSecureFromTUser(pf, currentUser));
                       }
                     }
                   }
@@ -185,18 +189,20 @@ const DisplayedCardsPage = ({
                       pf.country === currentUser?.country
                     ) {
                       if (
-                        !matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))
+                        !matches.includes(
+                          Methods.getTUserSecureFromTUser(pf, currentUser)
+                        )
                       ) {
-                        matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
+                        matches.push(Methods.getTUserSecureFromTUser(pf, currentUser));
                       }
                     }
                   }
 
                   if (filter === "friends of friends" && currentUserIsFriendOfFriend) {
                     if (
-                      !matches.includes(Methods.getTOtherUserFromTUser(pf, currentUser))
+                      !matches.includes(Methods.getTUserSecureFromTUser(pf, currentUser))
                     ) {
-                      matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
+                      matches.push(Methods.getTUserSecureFromTUser(pf, currentUser));
                     }
                   }
 
@@ -206,10 +212,12 @@ const DisplayedCardsPage = ({
                         if (pf.interests.includes(interest)) {
                           if (
                             !matches.includes(
-                              Methods.getTOtherUserFromTUser(pf, currentUser)
+                              Methods.getTUserSecureFromTUser(pf, currentUser)
                             )
                           ) {
-                            matches.push(Methods.getTOtherUserFromTUser(pf, currentUser));
+                            matches.push(
+                              Methods.getTUserSecureFromTUser(pf, currentUser)
+                            );
                           }
                         }
                       }
@@ -255,7 +263,7 @@ const DisplayedCardsPage = ({
                   f.username?.toLowerCase().includes(input.toLowerCase()) ||
                   anInterestIncludesSearchTerm
                 ) {
-                  return Methods.getTOtherUserFromTUser(f, currentUser);
+                  return Methods.getTUserSecureFromTUser(f, currentUser);
                 }
               })
             );
@@ -277,7 +285,7 @@ const DisplayedCardsPage = ({
         .then((batchOfFriends: TUser[]) => {
           if (batchOfFriends) {
             setAllFriends(batchOfFriends.map((f) => Methods.getTBarebonesUser(f)));
-            let matches: TOtherUser[] = [];
+            let matches: TUserSecure[] = [];
             for (const f of batchOfFriends) {
               if (f._id) {
                 for (const filter of filters) {
@@ -292,9 +300,9 @@ const DisplayedCardsPage = ({
                       f.country === currentUser?.country
                     ) {
                       if (
-                        !matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))
+                        !matches.includes(Methods.getTUserSecureFromTUser(f, currentUser))
                       ) {
-                        matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
+                        matches.push(Methods.getTUserSecureFromTUser(f, currentUser));
                       }
                     }
                   }
@@ -306,9 +314,9 @@ const DisplayedCardsPage = ({
                       f.country === currentUser?.country
                     ) {
                       if (
-                        !matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))
+                        !matches.includes(Methods.getTUserSecureFromTUser(f, currentUser))
                       ) {
-                        matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
+                        matches.push(Methods.getTUserSecureFromTUser(f, currentUser));
                       }
                     }
                   }
@@ -316,9 +324,9 @@ const DisplayedCardsPage = ({
                   if (filter === "in my country") {
                     if (currentUserMaySeeLocation && f.country === currentUser?.country) {
                       if (
-                        !matches.includes(Methods.getTOtherUserFromTUser(f, currentUser))
+                        !matches.includes(Methods.getTUserSecureFromTUser(f, currentUser))
                       ) {
-                        matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
+                        matches.push(Methods.getTUserSecureFromTUser(f, currentUser));
                       }
                     }
                   }
@@ -329,10 +337,10 @@ const DisplayedCardsPage = ({
                         if (f.interests.includes(interest)) {
                           if (
                             !matches.includes(
-                              Methods.getTOtherUserFromTUser(f, currentUser)
+                              Methods.getTUserSecureFromTUser(f, currentUser)
                             )
                           ) {
-                            matches.push(Methods.getTOtherUserFromTUser(f, currentUser));
+                            matches.push(Methods.getTUserSecureFromTUser(f, currentUser));
                           }
                         }
                       }
@@ -480,7 +488,7 @@ const DisplayedCardsPage = ({
   };
 
   const handleLoadMoreItemsOnScroll = (
-    items: (TOtherUser | TEvent | TBarebonesUser)[],
+    items: (TUserSecure | TEvent | TBarebonesUser)[],
     e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
   ): void => {
     const eHTMLElement = e?.target as HTMLElement;
@@ -494,7 +502,7 @@ const DisplayedCardsPage = ({
         : window.innerHeight + window.scrollY >= document.body.offsetHeight;
 
     if (bottomReached) {
-      const lastItem: TOtherUser | TEvent | TBarebonesUser = items[items.length - 1];
+      const lastItem: TUserSecure | TEvent | TBarebonesUser = items[items.length - 1];
 
       if (lastItem && lastItem.index && searchTerm === "") {
         setFetchStart(lastItem.index + 1);
@@ -554,14 +562,14 @@ const DisplayedCardsPage = ({
                 if (fetchStart === 0) {
                   setDisplayedItems(
                     batchOfPotentialFriends.map((pf) =>
-                      Methods.getTOtherUserFromTUser(pf, currentUser)
+                      Methods.getTUserSecureFromTUser(pf, currentUser)
                     )
                   );
                 } else {
                   setDisplayedItems(
                     displayedItems.concat(
                       batchOfPotentialFriends.map((pf) =>
-                        Methods.getTOtherUserFromTUser(pf, currentUser)
+                        Methods.getTUserSecureFromTUser(pf, currentUser)
                       )
                     )
                   );
@@ -570,7 +578,7 @@ const DisplayedCardsPage = ({
                 if (searchTerm === "") {
                   // scroll handler needs to be called w/ updated potentialFriends
                   window.addEventListener("scroll", () => {
-                    if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
+                    if (displayedItems.every((item) => Methods.isTUserSecure(item))) {
                       handleLoadMoreItemsOnScroll(
                         displayedItems.concat(batchOfPotentialFriends)
                       );
@@ -578,7 +586,7 @@ const DisplayedCardsPage = ({
                   });
                 } else {
                   window.removeEventListener("scroll", () => {
-                    if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
+                    if (displayedItems.every((item) => Methods.isTUserSecure(item))) {
                       handleLoadMoreItemsOnScroll(
                         displayedItems.concat(batchOfPotentialFriends)
                       );
@@ -612,14 +620,14 @@ const DisplayedCardsPage = ({
                 if (fetchStart === 0) {
                   setDisplayedItems(
                     batchOfFriends.map((f) =>
-                      Methods.getTOtherUserFromTUser(f, currentUser)
+                      Methods.getTUserSecureFromTUser(f, currentUser)
                     )
                   );
                 } else {
                   setDisplayedItems(
                     displayedItems.concat(
                       batchOfFriends.map((f) =>
-                        Methods.getTOtherUserFromTUser(f, currentUser)
+                        Methods.getTUserSecureFromTUser(f, currentUser)
                       )
                     )
                   );
@@ -628,13 +636,13 @@ const DisplayedCardsPage = ({
                 if (searchTerm === "") {
                   // scroll handler needs to be called w/ updated potentialFriends
                   window.addEventListener("scroll", () => {
-                    if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
+                    if (displayedItems.every((item) => Methods.isTUserSecure(item))) {
                       handleLoadMoreItemsOnScroll(displayedItems.concat(batchOfFriends));
                     }
                   });
                 } else {
                   window.removeEventListener("scroll", () => {
-                    if (displayedItems.every((item) => Methods.isTOtherUser(item))) {
+                    if (displayedItems.every((item) => Methods.isTUserSecure(item))) {
                       handleLoadMoreItemsOnScroll(displayedItems.concat(batchOfFriends));
                     }
                   });

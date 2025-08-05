@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TChat, TThemeColor, TOtherUser, TUser } from "../../../types";
+import { TChat, TThemeColor, TUserSecure, TUser } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Methods from "../../../methods";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -16,7 +16,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
-  const [chatMembers, setChatMembers] = useState<TOtherUser[] | null>(null);
+  const [chatMembers, setChatMembers] = useState<TUserSecure[] | null>(null);
 
   const [fetchChatMembersIsLoading, setFetchChatMembersIsLoading] =
     useState<boolean>(false);
@@ -46,7 +46,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       .then((members: TUser[]) => {
         if (currentUser) {
           setChatMembers(
-            members.map((m) => Methods.getTOtherUserFromTUser(m, currentUser))
+            members.map((m) => Methods.getTUserSecureFromTUser(m, currentUser))
           );
         }
       })

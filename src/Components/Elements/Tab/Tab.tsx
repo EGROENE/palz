@@ -1,4 +1,4 @@
-import { TBarebonesUser, TOtherUser } from "../../../types";
+import { TBarebonesUser, TUserSecure } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
@@ -16,7 +16,7 @@ const Tab = ({
   userMayNotDelete,
   specialIcon,
 }: {
-  info: TOtherUser | TBarebonesUser | string;
+  info: TUserSecure | TBarebonesUser | string;
   addHandler?: Function;
   addHandlerParams?: any[];
   addHandlerNeedsEventParam?: boolean;
