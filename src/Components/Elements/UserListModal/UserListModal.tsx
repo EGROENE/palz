@@ -82,9 +82,9 @@ const UserListModal = ({
     if (fetchUsers && users) {
       setFetchIsLoading(true);
       const getPromisesForFullUserObjects = (): Promise<TUser>[] => {
-        const promisesToAwait = users.map((id) => {
-          if (typeof id === "string") {
-            return Requests.getUserByID(id).then((res) => {
+        const promisesToAwait = users.map((elem) => {
+          if (typeof elem === "string") {
+            return Requests.getUserByID(elem).then((res) => {
               return res.json().then((user: TUser) => user);
             });
           }
