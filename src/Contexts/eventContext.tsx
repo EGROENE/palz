@@ -52,7 +52,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     useState<boolean>(false);
 
   // State values  pertaining to properties on TEvent, along w/ error values to be used on EventForm:
-  // Initialize these to characteristics of currentEvent if defined; update in useEffect dependent on currentEvent, allEvents, maybe more
   const [eventTitle, setEventTitle] = useState<string>(
     currentEvent ? currentEvent.title : ""
   );
