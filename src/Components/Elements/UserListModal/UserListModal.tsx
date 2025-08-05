@@ -65,7 +65,6 @@ const UserListModal = ({
 
   const {
     currentEvent,
-    fetchAllEventsQuery,
     handleRemoveInvitee,
     interestedUsersCurrentEvent,
     setInterestedUsersCurrentEvent,
@@ -177,11 +176,9 @@ const UserListModal = ({
     return null;
   };
 
-  const noFetchError: boolean =
-    !fetchAllEventsQuery.isError && !isFetchError && !outsideFetchIsError;
+  const noFetchError: boolean = !isFetchError && !outsideFetchIsError;
 
-  const noFetchIsLoading: boolean =
-    !fetchIsLoading && !outsideFetchIsLoading && !fetchAllEventsQuery.isLoading;
+  const noFetchIsLoading: boolean = !fetchIsLoading && !outsideFetchIsLoading;
 
   return (
     <div tabIndex={0} aria-hidden="false" className="modal-background">
