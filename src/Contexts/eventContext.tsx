@@ -1,4 +1,4 @@
-import { useState, createContext, ReactNode, useEffect } from "react";
+import { useState, createContext, ReactNode } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import {
   TEventContext,
@@ -14,24 +14,16 @@ import { useMainContext } from "../Hooks/useMainContext";
 import { useUserContext } from "../Hooks/useUserContext";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 export const EventContext = createContext<TEventContext | null>(null);
 
 export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const { setIsLoading, theme, setSavedInterests, savedInterests } = useMainContext();
-  const { currentUser, userCreatedAccount } = useUserContext();
+  const { currentUser } = useUserContext();
 
   const [allCurrentUserUpcomingEvents, setAllCurrentUserUpcomingEvents] = useState<
     TEvent[]
   >([]);
-
-  const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
-  const fetchAllEventsQuery: UseQueryResult<TEvent[], Error> = useQuery({
-    queryKey: ["allEvents"],
-    queryFn: Requests.getAllEvents,
-    enabled: userHasLoggedIn,
-  });
 
   const [currentEvent, setCurrentEvent] = useLocalStorage<TEvent | undefined>(
     "currentEvent",
@@ -134,33 +126,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     TBarebonesUser[]
   >([]);
   ///////////////////////
-
-  // Update currentEvent, eventImages w/ most recent info after fetchAllEventsQuery.data changes
-  useEffect(() => {
-    if (fetchAllEventsQuery.data && currentEvent && currentUser && currentUser._id) {
-      const updatedEvent = fetchAllEventsQuery.data.filter(
-        (ev) => ev._id === currentEvent._id
-      )[0];
-      setCurrentEvent(updatedEvent);
-      setEventImages(updatedEvent.images);
-      setEventTitle(updatedEvent.title);
-      setEventDescription(updatedEvent.description);
-      setEventAdditionalInfo(updatedEvent.additionalInfo);
-      setEventCity(updatedEvent.city);
-      setEventState(updatedEvent.stateProvince);
-      setEventCountry(updatedEvent.country);
-      setEventStartDateMidnightUTCInMS(updatedEvent.eventStartDateMidnightUTCInMS);
-      setEventStartTimeAfterMidnightUTCInMS(
-        updatedEvent.eventStartTimeAfterMidnightUTCInMS
-      );
-      setEventEndDateMidnightUTCInMS(updatedEvent.eventEndDateMidnightUTCInMS);
-      setEventEndTimeAfterMidnightUTCInMS(updatedEvent.eventEndTimeAfterMidnightUTCInMS);
-      setEventAddress(updatedEvent.address);
-      setMaxParticipants(updatedEvent.maxParticipants);
-      setPublicity(updatedEvent.publicity);
-      setSavedInterests(updatedEvent.relatedInterests);
-    }
-  }, [fetchAllEventsQuery.data]);
 
   const handleAddUserRSVP = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
@@ -748,7 +713,6 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     setInvitees,
     eventImages,
     setEventImages,
-    fetchAllEventsQuery,
     handleAddRemoveUserAsOrganizer,
     handleRemoveInvitee,
     handleDeclineInvitation,
