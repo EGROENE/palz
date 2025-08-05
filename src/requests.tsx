@@ -28,14 +28,14 @@ const getAllUserInterests = (): Promise<Response> => {
 };
 
 const getAllEventInterests = (): Promise<Response> => {
-var myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
 
-return fetch("http://localhost:4000/palz/allEvents/relatedInterests", {
-  method: 'GET',
-  headers: myHeaders,
-  redirect: 'follow'
-})
+  return fetch("http://localhost:4000/palz/allEvents/relatedInterests", {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  });
 };
 
 // Get rid of this eventually, once requests for different types of user groups are made
@@ -262,7 +262,7 @@ const getUpcomingEventsUserRSVPdTo = (username: string) => {
   myHeaders.append("Context-Type", "application/json");
 
   return fetch(
-    `http://localhost:4000/palz/otherUsers/${username}?eventsType=upcomingEventsUserRSVPdTo`,
+    `http://localhost:4000/palz/userEventInfo/${username}?eventsType=upcomingEventsUserRSVPdTo`,
     {
       method: "GET",
       headers: myHeaders,
@@ -276,7 +276,7 @@ const ongoingEvents = (username: string) => {
   myHeaders.append("Context-Type", "application/json");
 
   return fetch(
-    `http://localhost:4000/palz/otherUsers/${username}?eventsType=ongoingEvents`,
+    `http://localhost:4000/palz/userEventInfo/${username}?eventsType=ongoingEvents`,
     {
       method: "GET",
       headers: myHeaders,
@@ -290,7 +290,7 @@ const getUpcomingEventsUserOrganizes = (username: string) => {
   myHeaders.append("Context-Type", "application/json");
 
   return fetch(
-    `http://localhost:4000/palz/otherUsers/${username}?eventsType=upcomingEventsUserOrganizes`,
+    `http://localhost:4000/palz/userEventInfo/${username}?eventsType=upcomingEventsUserOrganizes`,
     {
       method: "GET",
       headers: myHeaders,
@@ -304,7 +304,7 @@ const getUpcomingEventsUserInvitedTo = (username: string) => {
   myHeaders.append("Context-Type", "application/json");
 
   return fetch(
-    `http://localhost:4000/palz/otherUsers/${username}?eventsType=upcomingEventsUserInvitedTo`,
+    `http://localhost:4000/palz/userEventInfo/${username}?eventsType=upcomingEventsUserInvitedTo`,
     {
       method: "GET",
       headers: myHeaders,
@@ -318,7 +318,7 @@ const getEventsUserCreated = (username: string) => {
   myHeaders.append("Context-Type", "application/json");
 
   return fetch(
-    `http://localhost:4000/palz/otherUsers/${username}?eventsType=eventsUserCreated`,
+    `http://localhost:4000/palz/userEventInfo/${username}?eventsType=eventsUserCreated`,
     {
       method: "GET",
       headers: myHeaders,
@@ -332,7 +332,7 @@ const getRecentEventsUserRSVPdTo = (username: string) => {
   myHeaders.append("Context-Type", "application/json");
 
   return fetch(
-    `http://localhost:4000/palz/otherUsers/${username}?eventsType=recentEventsUserRSVPdTo`,
+    `http://localhost:4000/palz/userEventInfo/${username}?eventsType=recentEventsUserRSVPdTo`,
     {
       method: "GET",
       headers: myHeaders,
@@ -346,7 +346,7 @@ const getRecentEventsUserOrganized = (username: string) => {
   myHeaders.append("Context-Type", "application/json");
 
   return fetch(
-    `http://localhost:4000/palz/otherUsers/${username}?eventsType=recentEventsUserOrganized`,
+    `http://localhost:4000/palz/userEventInfo/${username}?eventsType=recentEventsUserOrganized`,
     {
       method: "GET",
       headers: myHeaders,
@@ -360,7 +360,7 @@ const getOngoingEvents = (username: string) => {
   myHeaders.append("Context-Type", "application/json");
 
   return fetch(
-    `http://localhost:4000/palz/otherUsers/${username}?eventsType=ongoingEvents`,
+    `http://localhost:4000/palz/userEventInfo/${username}?eventsType=ongoingEvents`,
     {
       method: "GET",
       headers: myHeaders,
