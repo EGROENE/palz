@@ -78,7 +78,6 @@ const getAllUsers = async (req, res) => {
 
   const allUsers = await User.find({});
 
-  // return array of other users w/ certain fields excluded (each should match TOtherUser)
   res.status(200).json(allUsers);
 };
 
