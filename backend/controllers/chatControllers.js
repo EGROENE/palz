@@ -3,6 +3,13 @@ const mongoose = require("mongoose");
 const Chat = require("../models/chatModel");
 const User = require("../models/userModel");
 
+// get all chats in DB (used when determining if limit for total chats has been reached when attempting to create new chat):
+const getAllChats = async (req, res) => {
+  const chats = await Chat.find({});
+
+  res.status(200).json(chats);
+};
+
 // get all chats in which user is member:
 const getCurrentUserChats = async (req, res) => {
   const { currentUserID } = req.params;
@@ -91,6 +98,7 @@ const updateChat = async (req, res) => {
 };
 
 module.exports = {
+  getAllChats,
   getPotentialChatMembers,
   getCurrentUserChats,
   createChat,
