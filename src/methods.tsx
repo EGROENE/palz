@@ -23,12 +23,8 @@ const isTBarebonesUser = (value: any): value is TBarebonesUser => {
   return value.username ? true : false;
 };
 
-const arraysAreIdentical = (array1: any[], array2: any[]): boolean => {
-  if (array1.sort().join(",") === array2.sort().join(",")) {
-    return true;
-  }
-  return false;
-};
+const arraysAreIdentical = (array1: any[], array2: any[]): boolean =>
+  array1.sort().join(",") === array2.sort().join(",") ? true : false;
 
 const sortEventsSoonestToLatest = (eventArray: TEvent[]): TEvent[] =>
   eventArray.sort((a, b) => a.eventStartDateTimeInMS - b.eventStartDateTimeInMS);
