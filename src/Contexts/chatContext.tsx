@@ -1018,7 +1018,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
       if (!existingChatWithListedChatMember) {
         return handleCreateChat({
-          _id: new mongoose.Types.ObjectId().toString(),
           members: newChatMembers,
           messages: [],
           chatType: "two-member",
