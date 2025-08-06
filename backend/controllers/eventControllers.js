@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const Event = require("../models/eventModel");
 
+const User = require("../models/userModel");
+
 const getAllEvents = async (req, res) => {
   const allEvents = await Event.find({});
 
@@ -115,7 +117,127 @@ const updateEvent = async (req, res) => {
   res.status(200).json(event);
 };
 
+const getUpcomingEventsUserRSVPdTo = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const events = await Event.find({
+    eventStartDateTimeInMS: { $gt: now },
+    eventEndDateTimeInMS: { $gt: now },
+    interestedUsers: { $in: otherUser._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
+const getOngoingEvents = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const events = await Event.find({
+    eventStartDateTimeInMS: { $gte: now },
+    eventEndDateTimeInMS: { $lt: now },
+    $or: [
+      { organizers: { $in: otherUser._id.toString() } },
+      { interestedUsers: { $in: otherUser._id.toString() } },
+    ],
+  });
+
+  res.status(200).json(events);
+};
+
+const getUpcomingEventsUserOrganizes = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const events = await Event.find({
+    eventStartDateTimeInMS: { $gt: now },
+    eventEndDateTimeInMS: { $gt: now },
+    organizers: { $in: otherUser._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
+const getUpcomingEventsUserInvitedTo = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const events = await Event.find({
+    eventStartDateTimeInMS: { $gt: now },
+    eventEndDateTimeInMS: { $gt: now },
+    invitees: { $in: otherUser._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
+const getRecentEventsUserRSVPdTo = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const thirtyoneDaysInMs = 1000 * 60 * 60 * 24 * 31;
+
+  const events = await Event.find({
+    eventEndDateTimeInMS: { $lte: now - thirtyoneDaysInMs },
+    interestedUsers: { $in: otherUser._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
+const getEventsUserCreated = async (req, res) => {
+  const { username } = req.params;
+
+  const user = await User.findOne({ username });
+
+  const events = await Event.find({
+    organizers: { $in: user._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
+const getRecentEventsUserOrganized = async (req, res) => {
+  const { username } = req.params;
+
+  const otherUser = await User.findOne({ username });
+
+  const now = Date.now();
+
+  const thirtyoneDaysInMs = 1000 * 60 * 60 * 24 * 31;
+
+  const events = await Event.find({
+    eventEndDateTimeInMS: { $lte: now - thirtyoneDaysInMs },
+    organizers: { $in: otherUser._id.toString() },
+  });
+
+  res.status(200).json(events);
+};
+
 module.exports = {
+  getUpcomingEventsUserRSVPdTo,
+  getOngoingEvents,
+  getUpcomingEventsUserOrganizes,
+  getUpcomingEventsUserInvitedTo,
+  getRecentEventsUserRSVPdTo,
+  getEventsUserCreated,
+  getRecentEventsUserOrganized,
   createNewEvent,
   getAllEvents,
   getEvent,
