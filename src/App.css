@@ -127,7 +127,7 @@
 }
 
 .page-hero nav {
-  margin-top: 2.5rem;
+  margin-top: 2rem;
   /* margin-left: 3rem;
   margin-bottom: 3rem; */
 }
@@ -1684,8 +1684,8 @@ form textarea {
 .userListContainer {
   background-color: var(--background-color);
   color: black;
-  height: 75%;
-  width: 60%;
+  max-height: 75%;
+  width: 42%;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -1693,7 +1693,8 @@ form textarea {
 }
 
 .userListContainer h2 {
-  font-size: 3rem;
+  font-size: 2rem;
+  margin: 1rem auto;
 }
 
 .userListContainer p {
