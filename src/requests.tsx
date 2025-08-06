@@ -317,8 +317,8 @@ const getPotentialCoOrganizers = (
 ) => {
   const url: string =
     eventType === "new"
-      ? `http://localhost:4000/palz/add-event?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialCoOrganizers`
-      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialCoOrganizers`;
+      ? `http://localhost:4000/palz/events/add-event?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialCoOrganizers`
+      : `http://localhost:4000/palz/events/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialCoOrganizers`;
 
   return fetch(url, {
     method: "GET",
@@ -359,8 +359,8 @@ const getPotentialInvitees = (
 ): Promise<TUser[] | undefined> => {
   const url: string =
     eventType === "new"
-      ? `http://localhost:4000/palz/add-event?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialInvitees`
-      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialInvitees`;
+      ? `http://localhost:4000/palz/events/add-event?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialInvitees`
+      : `http://localhost:4000/palz/events/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialInvitees`;
 
   return fetch(url, {
     method: "GET",
@@ -401,8 +401,8 @@ const getPotentialEventBlockees = (
 ): Promise<TUser[]> => {
   const url: string =
     eventType === "new"
-      ? `http://localhost:4000/palz/add-event?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialEventBlockees`
-      : `http://localhost:4000/palz/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialEventBlockees`;
+      ? `http://localhost:4000/palz/events/add-event/?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialEventBlockees`
+      : `http://localhost:4000/palz/events/edit-event/${eventID}?start=${start}&limit=${limit}&user=${currentUser?.username}&list=potentialEventBlockees`;
 
   return fetch(url, {
     method: "GET",
