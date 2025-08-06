@@ -233,14 +233,6 @@ const getEventsRelatedToCurrentUser = async (req, res) => {
   res.status(200).json(events);
 };
 
-const getAllUserInterests = async (req, res) => {
-  const allUserInterests = await User.find({}, { "interests": 1, "_id": 0 });
-
-  res.status(200).json(allUserInterests);
-};
-
-app.use("/palz/users/interests", getAllUserInterests);
-
 const getAllEventInterests = async (req, res) => {
   const allEventInterests = await Event.find({}, { "relatedInterests": 1, "_id": 0 });
 

@@ -305,8 +305,15 @@ const updateUser = async (req, res) => {
   res.status(200).json(user);
 };
 
+const getAllUserInterests = async (req, res) => {
+  const allUserInterests = await User.find({}, { "interests": 1, "_id": 0 });
+
+  res.status(200).json(allUserInterests);
+};
+
 // export controllers:
 module.exports = {
+  getAllUserInterests,
   getUserByUsername,
   getUserByUsernameOrEmailAddress,
   getUserByUsernamePhoneNumberOrEmailAddress,

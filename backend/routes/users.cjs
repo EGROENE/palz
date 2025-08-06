@@ -10,12 +10,15 @@ const {
   getUserByUsernameOrEmailAddress,
   getUserByUsernamePhoneNumberOrEmailAddress,
   getUserByUsername,
+  getAllUserInterests,
 } = require("../controllers/userControllers.js");
 
 const router = express.Router();
 
 // GET all users
 router.get("/", getAllUsers);
+
+router.use("/interests", getAllUserInterests);
 
 router.get("/add-event", getAllUsers);
 
