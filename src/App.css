@@ -105,7 +105,7 @@
 .standalone-element {
   position: relative;
   top: 44%;
-  flex-direction:column;
+  flex-direction: column;
 }
 
 .page-hero {
@@ -999,8 +999,8 @@ form textarea {
 
 .chat-new {
   position: absolute;
-      top: -2rem;
-    right: -1.75rem;
+  top: -2rem;
+  right: -1.75rem;
   background-color: green;
   padding: 0.5rem;
   border-radius: 50%;
@@ -1592,7 +1592,7 @@ form textarea {
 .listedUser,
 .modal-background .listedUser {
   color: var(--text-color);
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 10px;
   width: 50%;
   border: 2px solid;
