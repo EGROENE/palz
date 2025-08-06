@@ -3,7 +3,7 @@
   top: 3%;
   right: 1rem;
   z-index: 200;
-  min-width: 24rem;
+  min-width: 18rem;
   max-width: 24rem;
   height: 83vh;
   overflow-y: auto;
@@ -12,10 +12,10 @@
 .sidebarIcon,
 .sidebarIconContainer i {
   position: absolute;
-  left: 1rem;
-  font-size: 1.5rem;
+  left: 0.5rem;
+  font-size: 1rem;
   color: white;
-  padding: 0.25rem 0.5rem;
+  padding: 0.4rem 0.4rem;
 }
 
 .sidebarIconContainer {
@@ -27,13 +27,13 @@
 }
 
 .sidebarEditProfileImage {
-  top: 12.5rem;
+  top: 9.5rem;
 }
 
 .sidebarOption {
   padding: 0.25rem 0;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 0.75rem;
   margin: 0.5rem 0;
   width: 100%;
   font-family: var(--text-font);
@@ -51,7 +51,7 @@
 .profileImageSidebar {
   width: 18rem;
   max-height: 15rem;
-  height: 15rem;
+  height: 12rem;
   width: 100%;
   object-fit: cover;
 }
@@ -64,6 +64,7 @@
 }
 
 .sidebarNamesContainer p {
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 3px;
   margin: 0.25rem;
