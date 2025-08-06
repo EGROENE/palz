@@ -14,6 +14,7 @@ const {
   getRecentEventsUserRSVPdTo,
   getEventsUserCreated,
   getRecentEventsUserOrganized,
+  getCurrentUserUpcomingEvents,
 } = require("../controllers/eventControllers");
 
 const router = express.Router();
@@ -32,6 +33,8 @@ router.delete("/:id", deleteEvent);
 
 // PATCH an event:
 router.patch("/:id", updateEvent);
+
+router.use("/userUpcomingEvents/:username", getCurrentUserUpcomingEvents);
 
 router.use("/userEvents/:username", (req, res) => {
   const { eventsType } = req.query;

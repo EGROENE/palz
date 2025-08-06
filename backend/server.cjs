@@ -34,23 +34,6 @@ app.use("/palz/users", userRoutes);
 app.use("/palz/events", eventRoutes);
 app.use("/palz/chats", chatRoutes);
 
-const getCurrentUserUpcomingEvents = async (req, res) => {
-  const { username } = req.params;
-
-  const currentUser = await User.findOne({ username });
-
-  const events = await Event.find({
-    $or: [
-      { organizers: { $in: currentUser._id.toString() } },
-      { invitees: { $in: currentUser._id.toString() } },
-      { interestedUsers: { $in: currentUser._id.toString() } },
-    ],
-  });
-
-  res.status(200).json(events);
-};
-app.get("/palz/homepage/:username", getCurrentUserUpcomingEvents);
-
 // Controller to get friends:
 app.get("/palz/my-palz", async (req, res) => {
   const { user, start, limit } = req.query;
