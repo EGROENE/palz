@@ -334,17 +334,19 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const createChatMutation = useMutation({
     mutationFn: ({ chat }: { chat: TChat }) => Requests.createNewChat(chat),
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       if (data.ok) {
         // set currentChat to chat, open ChatModal w/ it. if no message sent, put 'DRAFT' in chat preview
-        handleOpenChat(variables.chat);
-        setCurrentChat(variables.chat);
-        setShowCreateNewChatModal(false);
-        setShowChatModal(true);
-        setUsersToAddToChat([]);
-        setChatName(undefined);
-        queryClient.invalidateQueries({ queryKey: ["userChats"] });
-        queryClient.refetchQueries({ queryKey: ["userChats"] });
+        data.json().then((newChat: TChat) => {
+          handleOpenChat(newChat);
+          setCurrentChat(newChat);
+          setShowCreateNewChatModal(false);
+          setShowChatModal(true);
+          setUsersToAddToChat([]);
+          setChatName(undefined);
+          queryClient.invalidateQueries({ queryKey: ["userChats"] });
+          queryClient.refetchQueries({ queryKey: ["userChats"] });
+        });
       } else {
         toast.error("Unable to create chat. Please try again.", {
           style: {
