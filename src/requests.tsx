@@ -43,7 +43,7 @@ const getCurrentUserUpcomingEvents = (username: string) => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  return fetch(`http://localhost:4000/palz/homepage/${username}`, {
+  return fetch(`http://localhost:4000/palz/events/userUpcomingEvents/${username}`, {
     method: "GET",
     headers: myHeaders,
     redirect: "follow",
