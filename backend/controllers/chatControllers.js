@@ -62,11 +62,10 @@ const createChat = async (req, res) => {
 const deleteChat = async (req, res) => {
   const { chatID } = req.params;
 
-  /* if (!mongoose.Types.ObjectId.isValid(chatID)) {
+  if (!mongoose.Types.ObjectId.isValid(chatID)) {
     return res.status(400).json({ error: "Bad request (invalid chat id)" });
-  } */
+  }
 
-  console.log(chatID);
   const chat = await Chat.findOneAndDelete({ _id: chatID });
 
   if (!chat) {
