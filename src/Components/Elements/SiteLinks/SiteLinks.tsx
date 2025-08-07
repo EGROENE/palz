@@ -11,7 +11,7 @@ const SiteLinks = () => {
       {currentRoute !== "/add-event" && (
         <Link to={"/add-event"}>
           <div className="theme-element-container">
-            <button>Create Event</button>
+            <button tabIndex={-1}>Create Event</button>
           </div>
         </Link>
       )}
@@ -24,7 +24,7 @@ const SiteLinks = () => {
           to={"/find-events"}
         >
           <div className="theme-element-container">
-            <button>Explore Events</button>
+            <button tabIndex={-1}>Explore Events</button>
           </div>
         </Link>
       )}
@@ -37,14 +37,14 @@ const SiteLinks = () => {
           to="/find-palz"
         >
           <div className="theme-element-container">
-            <button>Find Palz</button>
+            <button tabIndex={-1}>Find Palz</button>
           </div>
         </Link>
       )}
       {currentRoute !== `/${currentUser?.username}/events` && (
         <Link to={`/${currentUser?.username}/events`}>
           <div className="theme-element-container">
-            <button>My Events</button>
+            <button tabIndex={-1}>My Events</button>
           </div>
         </Link>
       )}
@@ -57,7 +57,7 @@ const SiteLinks = () => {
           to={"/my-palz"}
         >
           <div className="theme-element-container">
-            <button>My Palz</button>
+            <button tabIndex={-1}>My Palz</button>
           </div>
         </Link>
       )}
