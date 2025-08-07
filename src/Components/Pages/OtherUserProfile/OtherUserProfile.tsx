@@ -1101,7 +1101,6 @@ const OtherUserProfile = () => {
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <header
                       tabIndex={0}
-                      aria-hidden="false"
                       className={styles.clickableHeader}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {

@@ -149,7 +149,6 @@ const Message = ({
               <p className="message-sent-info">
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       startEditingMessage(message);
@@ -163,7 +162,6 @@ const Message = ({
                 </span>
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setShowAreYouSureYouWantToDeleteMessage(true);

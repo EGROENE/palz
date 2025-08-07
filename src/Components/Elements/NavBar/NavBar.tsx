@@ -55,7 +55,6 @@ const NavBar = () => {
         {userCreatedAccount !== null ? (
           <li
             tabIndex={0}
-            aria-hidden="false"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 logout();
@@ -76,7 +75,6 @@ const NavBar = () => {
         )}
         <li
           tabIndex={0}
-          aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               setShowSidebar(!showSidebar);

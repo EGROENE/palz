@@ -1675,7 +1675,6 @@ const EventForm = ({
                   {resortedCountries.map((country) => (
                     <li
                       tabIndex={0}
-                      aria-hidden="false"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           handleCityStateCountryInput(
@@ -1824,7 +1823,6 @@ const EventForm = ({
                   eventStartTimeAfterMidnightUTCInMS > -1) && (
                   <span
                     tabIndex={0}
-                    aria-hidden="false"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleClearDateTime(true);
@@ -1910,7 +1908,6 @@ const EventForm = ({
                   eventEndTimeAfterMidnightUTCInMS > -1) && (
                   <span
                     tabIndex={0}
-                    aria-hidden="false"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleClearDateTime(false);

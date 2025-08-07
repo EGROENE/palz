@@ -38,7 +38,6 @@ const Sidebar = () => {
 
   return (
     <div
-      aria-hidden="false"
       className={styles.sidebar}
       style={
         theme === "dark"
@@ -51,7 +50,6 @@ const Sidebar = () => {
     >
       <i
         tabIndex={0}
-        aria-hidden="false"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             setShowSidebar(!showSidebar);
@@ -68,7 +66,6 @@ const Sidebar = () => {
       <div className={`${styles.sidebarIconContainer} ${styles.sidebarEditProfileImage}`}>
         <i
           tabIndex={0}
-          aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               setShowUpdateProfileImageInterface(true);

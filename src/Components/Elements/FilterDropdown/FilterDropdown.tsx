@@ -47,7 +47,6 @@ const FilterDropdown = ({
           {filterOptions.map((option) => (
             <label
               tabIndex={0}
-              aria-hidden="false"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleAddDeleteFilter(option);

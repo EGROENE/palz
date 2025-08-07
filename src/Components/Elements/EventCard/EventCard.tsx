@@ -229,10 +229,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
                 </button>
               </div>
             )}
-          <div aria-hidden="false" className={styles.eventCardMainInfo}>
+          <div className={styles.eventCardMainInfo}>
             <i
               tabIndex={0}
-              aria-hidden="false"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   setCurrentEvent(event);
@@ -289,7 +288,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                       </span>
                     </p>
                   )}
-                <div aria-hidden="false" className={styles.eventButtonsContainer}>
+                <div className={styles.eventButtonsContainer}>
                   <Link
                     style={
                       randomColor === "var(--primary-color)"

@@ -1418,7 +1418,6 @@ const EditUserInfoForm = ({
               !isLoading && (
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleDeletePhoneNumber(e);
@@ -1492,7 +1491,6 @@ const EditUserInfoForm = ({
               {resortedCountries.map((country) => (
                 <li
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handlePhoneNumberInput(
@@ -1635,7 +1633,6 @@ const EditUserInfoForm = ({
                 {resortedCountries.map((country) => (
                   <li
                     tabIndex={0}
-                    aria-hidden="false"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleCityStateCountryInput(
@@ -1723,7 +1720,6 @@ const EditUserInfoForm = ({
               {currentUser?.facebook !== "" && !isLoading && (
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleDeleteSocialMedium(e, "facebook");
@@ -1762,7 +1758,6 @@ const EditUserInfoForm = ({
               {currentUser?.instagram !== "" && !isLoading && (
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleDeleteSocialMedium(e, "instagram");
@@ -1802,7 +1797,6 @@ const EditUserInfoForm = ({
               {currentUser?.x !== "" && !isLoading && (
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleDeleteSocialMedium(e, "x");
@@ -1843,7 +1837,6 @@ const EditUserInfoForm = ({
             {currentUser?.about !== "" && !isLoading && (
               <span
                 tabIndex={0}
-                aria-hidden="false"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     handleDeleteUserAbout(e);
@@ -1969,7 +1962,6 @@ const EditUserInfoForm = ({
         )}
         <header
           tabIndex={0}
-          aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               setShowPrivacySettings(!showPrivacySettings);
@@ -1992,7 +1984,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setProfileVisibleTo("anyone");
@@ -2011,7 +2002,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setProfileVisibleTo("friends");
@@ -2031,7 +2021,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setProfileVisibleTo("friends of friends");
@@ -2056,7 +2045,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeLocation("anyone");
@@ -2076,7 +2064,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeLocation("friends");
@@ -2096,7 +2083,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeLocation("friends of friends");
@@ -2116,7 +2102,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeLocation("nobody");
@@ -2141,7 +2126,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanMessage("anyone");
@@ -2160,7 +2144,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanMessage("friends");
@@ -2180,7 +2163,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanMessage("friends of friends");
@@ -2200,7 +2182,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanMessage("nobody");
@@ -2225,7 +2206,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFriendsList("anyone");
@@ -2245,7 +2225,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFriendsList("friends");
@@ -2265,7 +2244,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFriendsList("friends of friends");
@@ -2285,7 +2263,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFriendsList("nobody");
@@ -2310,7 +2287,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeePhoneNumber("anyone");
@@ -2330,7 +2306,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeePhoneNumber("friends");
@@ -2350,7 +2325,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeePhoneNumber("friends of friends");
@@ -2370,7 +2344,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeePhoneNumber("nobody");
@@ -2395,7 +2368,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEmailAddress("anyone");
@@ -2415,7 +2387,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEmailAddress("friends");
@@ -2435,7 +2406,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEmailAddress("friends of friends");
@@ -2455,7 +2425,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEmailAddress("nobody");
@@ -2480,7 +2449,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFacebook("anyone");
@@ -2500,7 +2468,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFacebook("friends");
@@ -2520,7 +2487,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFacebook("friends of friends");
@@ -2540,7 +2506,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFacebook("nobody");
@@ -2565,7 +2530,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeX("anyone");
@@ -2585,7 +2549,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeX("friends");
@@ -2605,7 +2568,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeX("friends of friends");
@@ -2625,7 +2587,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeX("nobody");
@@ -2650,7 +2611,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeInstagram("anyone");
@@ -2670,7 +2630,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeInstagram("friends");
@@ -2690,7 +2649,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeInstagram("friends of friends");
@@ -2710,7 +2668,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeInstagram("nobody");
@@ -2735,7 +2692,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInterestedIn("anyone");
@@ -2755,7 +2711,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInterestedIn("friends");
@@ -2775,7 +2730,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInterestedIn("friends of friends");
@@ -2795,7 +2749,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInterestedIn("nobody");
@@ -2820,7 +2773,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInvitedTo("anyone");
@@ -2840,7 +2792,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInvitedTo("friends");
@@ -2860,7 +2811,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInvitedTo("friends of friends");
@@ -2880,7 +2830,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInvitedTo("nobody");
@@ -2905,7 +2854,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsOrganized("anyone");
@@ -2925,7 +2873,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsOrganized("friends");
@@ -2945,7 +2892,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsOrganized("friends of friends");
@@ -2965,7 +2911,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsOrganized("nobody");
@@ -2990,7 +2935,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanAddUserAsOrganizer("anyone");
@@ -3010,7 +2954,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanAddUserAsOrganizer("friends");
@@ -3030,7 +2973,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanAddUserAsOrganizer("friends of friends");
@@ -3050,7 +2992,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanAddUserAsOrganizer("nobody");
@@ -3075,7 +3016,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanInviteUser("anyone");
@@ -3095,7 +3035,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanInviteUser("friends");
@@ -3115,7 +3054,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanInviteUser("friends");
@@ -3135,7 +3073,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanInviteUser("nobody");

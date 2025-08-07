@@ -50,10 +50,9 @@ const TwoOptionsInterface = ({
   }, []);
 
   return (
-    <div tabIndex={0} aria-hidden="false" className="modal-background">
+    <div tabIndex={0} className="modal-background">
       <i
         tabIndex={0}
-        aria-hidden="false"
         title="Close"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -63,7 +62,7 @@ const TwoOptionsInterface = ({
         onClick={() => closeHandler(false)}
         className="fas fa-times close-module-icon"
       ></i>
-      <div tabIndex={0} aria-hidden="false" className={styles.areYouSureModal}>
+      <div tabIndex={0} className={styles.areYouSureModal}>
         {!isFileUpload ? (
           <>
             <header style={{ color: randomColor }}>{header}</header>

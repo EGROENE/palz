@@ -118,7 +118,6 @@ const DropdownChecklist = ({
       {displayedItemsArray.map((user) => (
         <li
           tabIndex={0}
-          aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               if (actionEventParamNeeded) {
