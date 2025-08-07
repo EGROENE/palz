@@ -105,12 +105,13 @@ function App() {
     }
   }, [showWelcomeMessage, userCreatedAccount, currentUser?.username]);
 
-  const getBaseURLElement = (): JSX.Element | undefined => {
+  const getBaseURLElement = (): JSX.Element => {
     if (userCreatedAccount !== null && showWelcomeMessage) {
       return <Welcome />;
     } else if (userCreatedAccount === null) {
       return <LoginPage type="login" />;
     }
+    return <UserHomepage />;
   };
   const baseURLElement = getBaseURLElement();
 
@@ -120,7 +121,7 @@ function App() {
         className="page-hero"
         onClick={() => (showSidebar ? setShowSidebar(false) : undefined)}
       >
-        {!baseURLElement && currentUser && userCreatedAccount !== null && <NavBar />}
+        {currentUser && userCreatedAccount !== null && !showWelcomeMessage && <NavBar />}
         {showSidebar && <Sidebar />}
         {showUpdateProfileImageInterface && (
           <TwoOptionsInterface
@@ -169,7 +170,7 @@ function App() {
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
-        {!baseURLElement && currentUser && userCreatedAccount !== null && <Footer />}
+        {currentUser && userCreatedAccount !== null && !showWelcomeMessage && <Footer />}
       </div>
     </div>
   );
