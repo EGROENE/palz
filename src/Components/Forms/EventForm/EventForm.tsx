@@ -801,6 +801,9 @@ const EventForm = ({
           );
         } else {
           // If start and end make sense:
+          console.log(nowPlusOneHourMS);
+          console.log(eventDateUTCinMS);
+          console.log(eventStartTimeAfterMidnightUTCInMS);
 
           // If start date/time have both been edited (both are required fields):
           if (eventDateUTCinMS > 0 && eventStartTimeAfterMidnightUTCInMS > -1) {
@@ -893,7 +896,7 @@ const EventForm = ({
         } else if (
           // If start date & time have been edited and start is less than an hour in advance from current moment:
           eventStartDateMidnightUTCInMS > 0 &&
-          eventStartTimeAfterMidnightUTCInMS > -1 &&
+          hoursPlusMinutesInMS > -1 &&
           hoursPlusMinutesInMS + eventStartDateMidnightUTCInMS < nowPlusOneHourMS
         ) {
           setEventStartDateTimeError("Event can only be set at least 1 hour in advance");
@@ -1941,6 +1944,7 @@ const EventForm = ({
               )}
             </div>
           </div>
+
           <label>
             <header className="input-label">
               Maximum Participants: (optional, not including organizers)
