@@ -367,7 +367,9 @@ const EventCard = ({ event }: { event: TEvent }) => {
                     src={event.images[0]}
                   />
                 ) : (
-                  <p style={{ border: `1px solid ${randomColor}` }}>Something fun!</p>
+                  <p style={{ border: `1px solid ${randomColor}` }}>
+                    Pic of something fun!
+                  </p>
                 )}
               </div>
             </div>
