@@ -801,9 +801,6 @@ const EventForm = ({
           );
         } else {
           // If start and end make sense:
-          console.log(nowPlusOneHourMS);
-          console.log(eventDateUTCinMS);
-          console.log(eventStartTimeAfterMidnightUTCInMS);
 
           // If start date/time have both been edited (both are required fields):
           if (eventDateUTCinMS > 0 && eventStartTimeAfterMidnightUTCInMS > -1) {
