@@ -36,7 +36,6 @@ app.use("/palz/chats", chatRoutes);
 
 const getPotentialEventCOsController = async (req, res) => {
   const { user, start, limit } = req.query;
-  console.log(req.query);
 
   const username = user;
   const currentUser = await User.findOne({ username });
