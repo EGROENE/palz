@@ -1151,15 +1151,11 @@ const EventForm = ({
     if (isStartDateTime) {
       setEventStartDateMidnightUTCInMS(0);
       setEventStartTimeAfterMidnightUTCInMS(-1);
-      setEventStartDateTimeError(
-        usedFor === "edit-event" ? "Please specify when event starts" : ""
-      );
+      setEventStartDateTimeError("Please specify when event starts");
     } else {
       setEventEndDateMidnightUTCInMS(0);
       setEventEndTimeAfterMidnightUTCInMS(-1);
-      setEventEndDateTimeError(
-        usedFor === "edit-event" ? "Please specify when event ends" : ""
-      );
+      setEventEndDateTimeError("Please specify when event ends");
     }
   };
 
