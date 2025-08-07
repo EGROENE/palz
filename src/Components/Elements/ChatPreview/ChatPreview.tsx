@@ -119,7 +119,12 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
       {!fetchChatMembersIsLoading && !fetchChatMembersIsError && (
         <>
           {chat.chatName && (
-            <header className="chat-preview-header">{chat.chatName}</header>
+            <header
+              style={{ borderBottom: `2px solid ${randomColor}` }}
+              className="chat-preview-header"
+            >
+              {chat.chatName}
+            </header>
           )}
           {chat._id && (
             <div key={chat._id.toString()} className="chat-preview-body">
