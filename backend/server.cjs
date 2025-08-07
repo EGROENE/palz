@@ -34,6 +34,80 @@ app.use("/palz/users", userRoutes);
 app.use("/palz/events", eventRoutes);
 app.use("/palz/chats", chatRoutes);
 
+const getPotentialEventCOsController = async (req, res) => {
+  const { user, start, limit } = req.query;
+  console.log(req.query);
+
+  const username = user;
+  const currentUser = await User.findOne({ username });
+
+  const potentialCOs = await User.find({
+    index: { $gte: Number(start) },
+    _id: { $ne: currentUser._id.toString() },
+    "blockedUsers._id": { $ne: currentUser._id.toString() },
+    "blockedBy._id": { $ne: currentUser._id.toString() },
+    profileVisibleTo: { $ne: "nobody" },
+    whoCanAddUserAsOrganizer: { $ne: "nobody" },
+  }).limit(Number(limit));
+
+  res.status(200).json(potentialCOs);
+};
+
+const getPotentialInviteesController = async (req, res) => {
+  const { user, start, limit } = req.query;
+
+  const username = user;
+  const currentUser = await User.findOne({ username });
+
+  const potentialInvitees = await User.find({
+    index: { $gte: Number(start) },
+    _id: { $ne: currentUser._id.toString() },
+    "blockedUsers._id": { $ne: currentUser._id.toString() },
+    "blockedBy._id": { $ne: currentUser._id.toString() },
+    profileVisibleTo: { $ne: "nobody" },
+    whoCanInviteUser: { $ne: "nobody" },
+  }).limit(Number(limit));
+
+  res.status(200).json(potentialInvitees);
+};
+
+const getPotentialEventBlockeesController = async (req, res) => {
+  const { user, start, limit } = req.query;
+
+  const username = user;
+  const currentUser = await User.findOne({ username });
+
+  // Should be able to block anyone from event who isn't currentUser and who hasn't blocked currentUser
+  const potentialBlockees = await User.find({
+    index: { $gte: Number(start) },
+    _id: { $ne: currentUser._id.toString() },
+  }).limit(Number(limit));
+
+  res.status(200).json(potentialBlockees);
+};
+
+app.get("/palz/add-event", (req, res) => {
+  const { list } = req.query;
+
+  if (list === "potentialEventBlockees") {
+    return getPotentialEventBlockeesController(req, res);
+  } else if (list === "potentialInvitees") {
+    return getPotentialInviteesController(req, res);
+  }
+  return getPotentialEventCOsController(req, res);
+});
+
+app.use("/edit-event/:id", (req, res) => {
+  const { list } = req.query;
+
+  if (list === "potentialEventBlockees") {
+    return getPotentialEventBlockeesController(req, res);
+  } else if (list === "potentialInvitees") {
+    return getPotentialInviteesController(req, res);
+  }
+  return getPotentialEventCOsController(req, res);
+});
+
 // Controller to get friends:
 app.get("/palz/my-palz", async (req, res) => {
   const { user, start, limit } = req.query;

@@ -15,9 +15,6 @@ const {
   getEventsUserCreated,
   getRecentEventsUserOrganized,
   getCurrentUserUpcomingEvents,
-  getPotentialEventCOsController,
-  getPotentialInviteesController,
-  getPotentialEventBlockeesController,
 } = require("../controllers/eventControllers");
 
 const router = express.Router();
@@ -38,28 +35,6 @@ router.delete("/:id", deleteEvent);
 router.patch("/:id", updateEvent);
 
 router.use("/userUpcomingEvents/:username", getCurrentUserUpcomingEvents);
-
-router.use("/add-event", (req, res) => {
-  const { list } = req.query;
-
-  if (list === "potentialEventBlockees") {
-    return getPotentialEventBlockeesController(req, res);
-  } else if (list === "potentialInvitees") {
-    return getPotentialInviteesController(req, res);
-  }
-  return getPotentialEventCOsController(req, res);
-});
-
-router.use("/edit-event/:id", (req, res) => {
-  const { list } = req.query;
-
-  if (list === "potentialEventBlockees") {
-    return getPotentialEventBlockeesController(req, res);
-  } else if (list === "potentialInvitees") {
-    return getPotentialInviteesController(req, res);
-  }
-  return getPotentialEventCOsController(req, res);
-});
 
 router.use("/userEvents/:username", (req, res) => {
   const { eventsType } = req.query;

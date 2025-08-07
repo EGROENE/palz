@@ -14,7 +14,7 @@ const getEvent = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: "Bad request (invalid id)" });
+    return res.status(400).json({ error: "1Bad request (invalid id)" });
   }
 
   const event = await Event.findById(id);
@@ -89,7 +89,7 @@ const deleteEvent = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: "Bad request (invalid id)" });
+    return res.status(400).json({ error: "2Bad request (invalid id)" });
   }
 
   const event = await Event.findOneAndDelete({ _id: id });
@@ -105,13 +105,13 @@ const updateEvent = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: "Bad request (invalid id)" });
+    return res.status(400).json({ error: "3Bad request (invalid id)" });
   }
 
   const event = await Event.findOneAndUpdate({ _id: id }, { ...req.body }, { new: true });
 
   if (!event) {
-    return res.status(400).json({ error: "Event doesn't exist" });
+    return res.status(404).json({ error: "Event doesn't exist" });
   }
 
   res.status(200).json(event);
@@ -246,61 +246,7 @@ const getCurrentUserUpcomingEvents = async (req, res) => {
   res.status(200).json(events);
 };
 
-const getPotentialEventCOsController = async (req, res) => {
-  const { user, start, limit } = req.query;
-
-  const username = user;
-  const currentUser = await User.findOne({ username });
-
-  const potentialCOs = await User.find({
-    index: { $gte: Number(start) },
-    _id: { $ne: currentUser._id.toString() },
-    "blockedUsers._id": { $ne: currentUser._id.toString() },
-    "blockedBy._id": { $ne: currentUser._id.toString() },
-    profileVisibleTo: { $ne: "nobody" },
-    whoCanAddUserAsOrganizer: { $ne: "nobody" },
-  }).limit(Number(limit));
-
-  res.status(200).json(potentialCOs);
-};
-
-const getPotentialInviteesController = async (req, res) => {
-  const { user, start, limit } = req.query;
-
-  const username = user;
-  const currentUser = await User.findOne({ username });
-
-  const potentialInvitees = await User.find({
-    index: { $gte: Number(start) },
-    _id: { $ne: currentUser._id.toString() },
-    "blockedUsers._id": { $ne: currentUser._id.toString() },
-    "blockedBy._id": { $ne: currentUser._id.toString() },
-    profileVisibleTo: { $ne: "nobody" },
-    whoCanInviteUser: { $ne: "nobody" },
-  }).limit(Number(limit));
-
-  res.status(200).json(potentialInvitees);
-};
-
-const getPotentialEventBlockeesController = async (req, res) => {
-  const { user, start, limit } = req.query;
-
-  const username = user;
-  const currentUser = await User.findOne({ username });
-
-  // Should be able to block anyone from event who isn't currentUser and who hasn't blocked currentUser
-  const potentialBlockees = await User.find({
-    index: { $gte: Number(start) },
-    _id: { $ne: currentUser._id.toString() },
-  }).limit(Number(limit));
-
-  res.status(200).json(potentialBlockees);
-};
-
 module.exports = {
-  getPotentialEventCOsController,
-  getPotentialInviteesController,
-  getPotentialEventBlockeesController,
   getCurrentUserUpcomingEvents,
   getUpcomingEventsUserRSVPdTo,
   getOngoingEvents,
