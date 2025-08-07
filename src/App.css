@@ -1639,7 +1639,7 @@ form textarea {
 .furtherInfoSection header {
   font-weight: 700;
   font-family: var(--header-font);
-  font-size: 2rem;
+  font-size: 1.5rem;
   line-height: 1.5;
   background: linear-gradient(
     80deg,
