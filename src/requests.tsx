@@ -940,7 +940,7 @@ const createEvent = (eventData: TEvent): Promise<Response> => {
     "relatedInterests": eventData.relatedInterests,
   });
 
-  return fetch("http://localhost:4000/palz/events", {
+  return fetch("http://localhost:4000/palz/events/add-event", {
     method: "POST",
     headers: myHeaders,
     body: raw,
