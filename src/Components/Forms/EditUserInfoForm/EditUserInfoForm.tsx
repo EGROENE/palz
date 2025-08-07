@@ -122,6 +122,7 @@ const EditUserInfoForm = ({
     setWhoCanSeeEventsOrganized,
     setWhoCanSeeEventsInterestedIn,
     setWhoCanSeeEventsInvitedTo,
+    confirmationPasswordIsHidden,
   } = useUserContext();
 
   const [showPrivacySettings, setShowPrivacySettings] = useState<boolean>(false);
@@ -360,7 +361,8 @@ const EditUserInfoForm = ({
 
                                 // Hide PW again if unhidden on submit of edit-user-info form
                                 if (!passwordIsHidden) {
-                                  toggleHidePassword();
+                                  toggleHidePassword("confirmation-password");
+                                  toggleHidePassword("password");
                                 }
                               } else {
                                 toast.error(
@@ -1914,9 +1916,9 @@ const EditUserInfoForm = ({
               className={passwordError !== "" ? "erroneous-field" : undefined}
             />
             {!passwordIsHidden ? (
-              <OpenEye toggleHidePassword={toggleHidePassword} />
+              <OpenEye toggleHidePassword={() => toggleHidePassword("password")} />
             ) : (
-              <ClosedEye toggleHidePassword={toggleHidePassword} />
+              <ClosedEye toggleHidePassword={() => toggleHidePassword("password")} />
             )}
           </div>
           {passwordError !== "" && <p className="input-error-message">{passwordError}</p>}
@@ -1943,17 +1945,21 @@ const EditUserInfoForm = ({
                   handleConfirmationPasswordInput(e.target.value, "edit-user-info")
                 }
                 value={confirmationPassword}
-                type={passwordIsHidden ? "password" : "text"}
+                type={confirmationPasswordIsHidden ? "password" : "text"}
                 placeholder="Confirm password"
                 inputMode="text"
                 className={
                   confirmationPasswordError !== "" ? "erroneous-field" : undefined
                 }
               />
-              {!passwordIsHidden ? (
-                <OpenEye toggleHidePassword={toggleHidePassword} />
+              {!confirmationPasswordIsHidden ? (
+                <OpenEye
+                  toggleHidePassword={() => toggleHidePassword("confirmation-password")}
+                />
               ) : (
-                <ClosedEye toggleHidePassword={toggleHidePassword} />
+                <ClosedEye
+                  toggleHidePassword={() => toggleHidePassword("confirmation-password")}
+                />
               )}
             </div>
             {confirmationPasswordError !== "" && (

@@ -10,6 +10,7 @@ import { TThemeColor } from "../../../../types";
 const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
   const { welcomeMessageDisplayTime } = useMainContext();
   const {
+    confirmationPasswordIsHidden,
     processingLoginIsLoading,
     resetLoginOrSignupFormFieldsAndErrors,
     areNoSignupFormErrors,
@@ -235,9 +236,9 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
             className={passwordError !== "" && showErrors ? "erroneous-field" : undefined}
           />
           {!passwordIsHidden ? (
-            <OpenEye toggleHidePassword={toggleHidePassword} />
+            <OpenEye toggleHidePassword={() => toggleHidePassword("password")} />
           ) : (
-            <ClosedEye toggleHidePassword={toggleHidePassword} />
+            <ClosedEye toggleHidePassword={() => toggleHidePassword("password")} />
           )}
         </div>
         {passwordError !== "" && showErrors && (
@@ -262,7 +263,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
             autoComplete="off"
             onChange={(e) => handleConfirmationPasswordInput(e.target.value, "signup")}
             value={confirmationPassword}
-            type={passwordIsHidden ? "password" : "text"}
+            type={confirmationPasswordIsHidden ? "password" : "text"}
             placeholder="Confirm password"
             inputMode="text"
             className={
@@ -271,10 +272,14 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
                 : undefined
             }
           />
-          {!passwordIsHidden ? (
-            <OpenEye toggleHidePassword={toggleHidePassword} />
+          {!confirmationPasswordIsHidden ? (
+            <OpenEye
+              toggleHidePassword={() => toggleHidePassword("confirmation-password")}
+            />
           ) : (
-            <ClosedEye toggleHidePassword={toggleHidePassword} />
+            <ClosedEye
+              toggleHidePassword={() => toggleHidePassword("confirmation-password")}
+            />
           )}
         </div>
         {confirmationPasswordError !== "" && password !== "" && (

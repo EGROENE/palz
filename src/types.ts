@@ -407,8 +407,10 @@ export type TUserContext = {
   setSignupIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   passwordIsHidden: boolean;
   setPasswordIsHidden: React.Dispatch<React.SetStateAction<boolean>>;
+  confirmationPasswordIsHidden: boolean;
+  setConfirmationPasswordIsHidden: React.Dispatch<React.SetStateAction<boolean>>;
   toggleSignupLogin: () => void;
-  toggleHidePassword: () => void;
+  toggleHidePassword: (type: "password" | "confirmation-password") => void;
   firstName: string | undefined;
   setFirstName: React.Dispatch<React.SetStateAction<string | undefined>>;
   firstNameError: string;

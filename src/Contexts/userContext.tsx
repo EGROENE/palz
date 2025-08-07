@@ -55,6 +55,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [blockUserInProgress, setBlockUserInProgress] = useState<boolean>(false);
 
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
+  const [confirmationPasswordIsHidden, setConfirmationPasswordIsHidden] =
+    useState<boolean>(true);
 
   const [updateProfileImageIsLoading, setUpdateProfileImageIsLoading] =
     useState<boolean>(false);
@@ -638,7 +640,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     resetLoginOrSignupFormFieldsAndErrors();
   };
 
-  const toggleHidePassword = (): void => setPasswordIsHidden(!passwordIsHidden);
+  const toggleHidePassword = (type: "password" | "confirmation-password"): void => {
+    if (type === "password") {
+      setPasswordIsHidden(!passwordIsHidden);
+    } else {
+      setConfirmationPasswordIsHidden(!confirmationPasswordIsHidden)
+    }
+  };
 
   // Defined here, not in SignupForm, as it's used in some handlers that are used in multiple components
   const areNoSignupFormErrors: boolean =
@@ -2271,6 +2279,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    confirmationPasswordIsHidden,
+    setConfirmationPasswordIsHidden,
     processingLoginIsLoading,
     setProcessingLoginIsLoading,
     fetchFriendRequestsIsLoading,
