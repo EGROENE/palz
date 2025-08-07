@@ -1164,9 +1164,9 @@ const EventForm = ({
       setShowErrors(true);
     }
     if (areNoErrors) {
-      if (currentEvent) {
-        setIsLoading(true);
-        if (usedFor === "edit-event") {
+      setIsLoading(true);
+      if (usedFor === "edit-event") {
+        if (currentEvent) {
           // When updating an existing event:
           setEventEditIsInProgress(true);
           if (eventValuesToUpdate) {
@@ -1218,81 +1218,72 @@ const EventForm = ({
               })
               .catch((error) => console.log(error));
           }
-        } else {
-          // When adding a newly created event:
-          if (allRequiredFieldsFilled) {
-            setAddEventIsInProgress(true);
-            Requests.getAllEvents()
-              .then((allEvents) => {
-                if (allEvents) {
-                  eventInfos.index = allEvents.length;
-                  if (allEvents.length >= 75) {
-                    setAddEventIsInProgress(false);
-                    setIsLoading(false);
-                    toast.error(
-                      "Sorry, but due to potential spamming douchebags & this only being a portfolio project, only 75 events in total can be created at this time.",
-                      {
-                        style: {
-                          background:
-                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                          color: theme === "dark" ? "black" : "white",
-                          border: "2px solid red",
-                        },
-                      }
-                    );
-                  } else {
-                    Requests.createEvent(eventInfos)
-                      .then((res) => {
-                        if (res.ok) {
-                          toast.success("Event created!", {
-                            style: {
-                              background:
-                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                              color: theme === "dark" ? "black" : "white",
-                              border: "2px solid green",
-                            },
-                          });
-                          navigation(`/${currentUser?.username}/events`);
-                        } else {
-                          toast.error("Could not create event. Please try again.", {
-                            style: {
-                              background:
-                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                              color: theme === "dark" ? "black" : "white",
-                              border: "2px solid red",
-                            },
-                          });
-                        }
-                      })
-                      .catch((error) => console.log(error))
-                      .finally(() => {
-                        setAddEventIsInProgress(false);
-                        setIsLoading(false);
-                      });
-                  }
-                } else {
-                  setAddEventIsInProgress(false);
-                  setIsLoading(false);
-                  toast.error("Couldn't create event; please try again.", {
-                    style: {
-                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                      color: theme === "dark" ? "black" : "white",
-                      border: "2px solid red",
-                    },
-                  });
-                }
-              })
-              .catch((error) => console.log(error));
-          }
         }
       } else {
-        toast.error("Couldn't create event; please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
+        // When adding a newly created event:
+        if (allRequiredFieldsFilled) {
+          setAddEventIsInProgress(true);
+          Requests.getAllEvents()
+            .then((allEvents) => {
+              if (allEvents) {
+                eventInfos.index = allEvents.length;
+                if (allEvents.length >= 75) {
+                  setAddEventIsInProgress(false);
+                  setIsLoading(false);
+                  toast.error(
+                    "Sorry, but due to potential spamming douchebags & this only being a portfolio project, only 75 events in total can be created at this time.",
+                    {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    }
+                  );
+                } else {
+                  Requests.createEvent(eventInfos)
+                    .then((res) => {
+                      if (res.ok) {
+                        toast.success("Event created!", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid green",
+                          },
+                        });
+                        navigation(`/${currentUser?.username}/events`);
+                      } else {
+                        toast.error("Could not create event. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    })
+                    .catch((error) => console.log(error))
+                    .finally(() => {
+                      setAddEventIsInProgress(false);
+                      setIsLoading(false);
+                    });
+                }
+              } else {
+                setAddEventIsInProgress(false);
+                setIsLoading(false);
+                toast.error("Couldn't create event1; please try again.", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
+              }
+            })
+            .catch((error) => console.log(error));
+        }
       }
     } else {
       window.alert(
