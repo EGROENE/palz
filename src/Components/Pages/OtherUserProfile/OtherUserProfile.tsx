@@ -73,6 +73,8 @@ const OtherUserProfile = () => {
   const [showX, setShowX] = useState<boolean>(false);
   const [currentUserCanSeeLocation, setCurrentUserCanSeeLocation] =
     useState<boolean>(false);
+  const [currentUserCanSeeEmailAddress, setCurrentUserCanSeeEmailAddress] =
+    useState<boolean>(false);
   const [currentUserCanSeeFriendsList, setCurrentUserCanSeeFriendsList] =
     useState<boolean>(false);
   const [currentUserIsFriendOfFriend, setCurrentUserIsFriendOfFriend] =
@@ -157,6 +159,7 @@ const OtherUserProfile = () => {
     setShowInstagram(false);
     setShowX(false);
     setCurrentUserCanSeeLocation(false);
+    setCurrentUserCanSeeEmailAddress(false);
     setCurrentUserCanSeeFriendsList(false);
     setCurrentUserIsFriendOfFriend(false);
     setMatchingCountryObject(undefined);
@@ -242,7 +245,11 @@ const OtherUserProfile = () => {
                       currentOtherUser.friends.includes(currentUser._id.toString()) &&
                       currentUser?.friends.includes(currentOtherUser._id.toString())) ||
                     (currentOtherUser.whoCanMessage === "friends of friends" &&
-                      currentUserIsFriendOfFriend))
+                      (currentUserIsFriendOfFriend ||
+                        (currentOtherUser.friends.includes(currentUser._id.toString()) &&
+                          currentUser?.friends.includes(
+                            currentOtherUser._id.toString()
+                          )))))
                 ) {
                   setCurrentUserMayMessage(true);
                 } else {
@@ -255,7 +262,8 @@ const OtherUserProfile = () => {
                   currentOtherUser.whoCanSeeLocation !== "nobody" &&
                   (currentOtherUser.whoCanSeeLocation === "anyone" ||
                     (currentOtherUser.whoCanSeeLocation === "friends of friends" &&
-                      currentUserIsFriendOfFriend) ||
+                      (currentUserIsFriendOfFriend ||
+                        currentOtherUser.friends.includes(currentUser._id.toString()))) ||
                     (currentOtherUser.whoCanSeeLocation === "friends" &&
                       currentOtherUser.friends.includes(currentUser._id.toString()))) &&
                   currentOtherUser.city !== "" &&
@@ -280,12 +288,23 @@ const OtherUserProfile = () => {
                     ? currentOtherUser.friends.includes(currentUser._id.toString())
                     : false;
 
+                // Set currentUserCanSeeEmailAddress:
+                if (
+                  currentOtherUser.whoCanSeeEmailAddress === "anyone" ||
+                  (currentOtherUser.whoCanSeeEmailAddress === "friends" &&
+                    currentUserIsFriend) ||
+                  (currentOtherUser.whoCanSeeEmailAddress === "friends of friends" &&
+                    (currentUserIsFriendOfFriend || currentUserIsFriend))
+                ) {
+                  setCurrentUserCanSeeEmailAddress(true);
+                }
+
                 if (
                   ((currentUserIsFriend &&
                     currentOtherUser.whoCanSeeFriendsList === "friends") ||
                     currentOtherUser.whoCanSeeFriendsList === "anyone" ||
                     (currentOtherUser.whoCanSeeFriendsList === "friends of friends" &&
-                      currentUserIsFriendOfFriend)) &&
+                      (currentUserIsFriendOfFriend || currentUserIsFriend))) &&
                   currentOtherUser.friends.length > 0
                 ) {
                   setCurrentUserCanSeeFriendsList(true);
@@ -441,7 +460,7 @@ const OtherUserProfile = () => {
                     currentUserIsFriend) ||
                   (currentOtherUser.whoCanSeeEventsInterestedIn ===
                     "friends of friends" &&
-                    currentUserIsFriendOfFriend)
+                    (currentUserIsFriendOfFriend || currentUserIsFriend))
                 ) {
                   setInterestedEventsAreVisible(true);
                 }
@@ -451,7 +470,7 @@ const OtherUserProfile = () => {
                   (currentOtherUser.whoCanSeeEventsOrganized === "friends" &&
                     currentUserIsFriend) ||
                   (currentOtherUser.whoCanSeeEventsOrganized === "friends of friends" &&
-                    currentUserIsFriendOfFriend)
+                    (currentUserIsFriendOfFriend || currentUserIsFriend))
                 ) {
                   setOrganizedEventsAreVisible(true);
                 }
@@ -461,7 +480,7 @@ const OtherUserProfile = () => {
                   (currentOtherUser.whoCanSeeEventsInvitedTo === "friends" &&
                     currentUserIsFriend) ||
                   (currentOtherUser.whoCanSeeEventsInvitedTo === "friends of friends" &&
-                    currentUserIsFriendOfFriend)
+                    (currentUserIsFriendOfFriend || currentUserIsFriend))
                 ) {
                   setInvitedEventsAreVisible(true);
                 }
@@ -472,7 +491,7 @@ const OtherUserProfile = () => {
                   (currentOtherUser?.whoCanSeeFacebook === "friends" &&
                     currentUserIsFriend) ||
                   (currentOtherUser?.whoCanSeeFacebook === "friends of friends" &&
-                    currentUserIsFriendOfFriend)
+                    (currentUserIsFriendOfFriend || currentUserIsFriend))
                 ) {
                   setShowFacebook(true);
                 }
@@ -482,7 +501,7 @@ const OtherUserProfile = () => {
                   (currentOtherUser?.whoCanSeeInstagram === "friends" &&
                     currentUserIsFriend) ||
                   (currentOtherUser?.whoCanSeeInstagram === "friends of friends" &&
-                    currentUserIsFriendOfFriend)
+                    (currentUserIsFriendOfFriend || currentUserIsFriend))
                 ) {
                   setShowInstagram(true);
                 }
@@ -491,7 +510,7 @@ const OtherUserProfile = () => {
                   currentOtherUser?.whoCanSeeX === "anyone" ||
                   (currentOtherUser?.whoCanSeeX === "friends" && currentUserIsFriend) ||
                   (currentOtherUser?.whoCanSeeX === "friends of friends" &&
-                    currentUserIsFriendOfFriend)
+                    (currentUserIsFriendOfFriend || currentUserIsFriend))
                 ) {
                   setShowX(true);
                 }
@@ -972,7 +991,13 @@ const OtherUserProfile = () => {
                 <header style={{ color: `${randomColor}` }}>
                   {pageOwner.firstName} {pageOwner.lastName}
                 </header>
+
                 <p style={{ color: randomColor }}>{pageOwner.username}</p>
+                {currentUserCanSeeEmailAddress &&
+                  pageOwner.emailAddress &&
+                  pageOwner.emailAddress !== "" && (
+                    <p style={{ color: randomColor }}>{pageOwner.emailAddress}</p>
+                  )}
                 {currentUserCanSeeLocation &&
                   pageOwner &&
                   pageOwner.city !== "" &&
