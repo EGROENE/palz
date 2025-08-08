@@ -80,7 +80,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TUserSecure }) => {
                   (user.whoCanSeeFriendsList === "friends" &&
                     currentUserAndUserAreFriends) ||
                   (user.whoCanSeeFriendsList === "friends of friends" &&
-                    currentUserIsFriendOfFriend)
+                    (currentUserIsFriendOfFriend || currentUserAndUserAreFriends))
                 ) {
                   setCurrentUserCanSeeFriends(true);
                 }
@@ -91,7 +91,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TUserSecure }) => {
                   (user.whoCanSeeLocation === "friends" &&
                     currentUserAndUserAreFriends) ||
                   (user.whoCanSeeLocation === "friends of friends" &&
-                    currentUserIsFriendOfFriend)
+                    (currentUserIsFriendOfFriend || currentUserAndUserAreFriends))
                 ) {
                   setCurrentUserCanSeeLocation(true);
                 }
@@ -138,7 +138,7 @@ const UserCard = ({ userSECURE }: { userSECURE: TUserSecure }) => {
                     (user.whoCanMessage === "friends" &&
                       user.friends.includes(currentUser._id.toString())) ||
                     (user.whoCanMessage === "friends of friends" &&
-                      currentUserIsFriendOfFriend)
+                      (currentUserIsFriendOfFriend || currentUserAndUserAreFriends))
                   ) {
                     setUserIsMessageable(true);
                   }

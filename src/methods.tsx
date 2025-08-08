@@ -136,42 +136,43 @@ const getTUserSecureFromTUser = (
     userToConvert.whoCanSeeLocation === "anyone" ||
     (userToConvert.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
     (userToConvert.whoCanSeeLocation === "friends of friends" &&
-      currentUserIsFriendOfFriend);
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
 
   const showPhoneNumber: boolean =
     userToConvert.whoCanSeePhoneNumber === "anyone" ||
     (userToConvert.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
     (userToConvert.whoCanSeePhoneNumber === "friends of friends" &&
-      currentUserIsFriendOfFriend);
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
 
   const showEmailAddress: boolean =
     userToConvert.whoCanSeeEmailAddress === "anyone" ||
     (userToConvert.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
     (userToConvert.whoCanSeeEmailAddress === "friends of friends" &&
-      currentUserIsFriendOfFriend);
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
 
   const showInstagram: boolean =
     userToConvert.whoCanSeeInstagram === "anyone" ||
     (userToConvert.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
     (userToConvert.whoCanSeeInstagram === "friends of friends" &&
-      currentUserIsFriendOfFriend);
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
 
   const showFacebook: boolean =
     userToConvert.whoCanSeeFacebook === "anyone" ||
     (userToConvert.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
     (userToConvert.whoCanSeeFacebook === "friends of friends" &&
-      currentUserIsFriendOfFriend);
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
 
   const showX: boolean =
     userToConvert.whoCanSeeX === "anyone" ||
     (userToConvert.whoCanSeeX === "friends" && currentUserIsFriend) ||
-    (userToConvert.whoCanSeeX === "friends of friends" && currentUserIsFriendOfFriend);
+    (userToConvert.whoCanSeeX === "friends of friends" &&
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
 
   const showFriends: boolean =
     userToConvert.whoCanSeeFriendsList === "anyone" ||
     (userToConvert.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
     (userToConvert.whoCanSeeFriendsList === "friends of friends" &&
-      currentUserIsFriendOfFriend);
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
 
   return {
     "_id": userToConvert._id,

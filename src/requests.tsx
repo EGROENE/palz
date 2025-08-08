@@ -339,7 +339,7 @@ const getPotentialCoOrganizers = (
           if (
             user.whoCanAddUserAsOrganizer === "anyone" ||
             (user.whoCanAddUserAsOrganizer === "friends of friends" &&
-              currentUserIsFriendOfFriend) ||
+              (currentUserIsFriendOfFriend || currentUserIsFriend)) ||
             (user.whoCanAddUserAsOrganizer === "friends" && currentUserIsFriend)
           ) {
             return user;
@@ -381,7 +381,7 @@ const getPotentialInvitees = (
           if (
             user.whoCanInviteUser === "anyone" ||
             (user.whoCanInviteUser === "friends of friends" &&
-              currentUserIsFriendOfFriend) ||
+              (currentUserIsFriendOfFriend || currentUserIsFriend)) ||
             (user.whoCanInviteUser === "friends" && currentUserIsFriend)
           ) {
             return user;
@@ -1250,7 +1250,8 @@ const getPotentialChatMembers = async (
         if (
           userIsNotAlreadyInCurrentChat &&
           ((pcm.whoCanMessage === "friends" && currentUserIsFriend) ||
-            (pcm.whoCanMessage === "friends of friends" && currentUserIsFriendOfFriend) ||
+            (pcm.whoCanMessage === "friends of friends" &&
+              (currentUserIsFriendOfFriend || currentUserIsFriend)) ||
             pcm.whoCanMessage === "anyone")
         ) {
           return pcm;

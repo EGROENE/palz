@@ -231,7 +231,7 @@ const EventPage = () => {
                     o.profileVisibleTo === "anyone" ||
                     (o.profileVisibleTo === "friends" && currentUserIsFriend) ||
                     (o.profileVisibleTo === "friends of friends" &&
-                      currentUserIsFriendOfFriend)
+                      (currentUserIsFriendOfFriend || currentUserIsFriend))
                   ) {
                     return Methods.getTBarebonesUser(o);
                   }

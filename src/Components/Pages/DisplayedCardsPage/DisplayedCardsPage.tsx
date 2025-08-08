@@ -148,7 +148,7 @@ const DisplayedCardsPage = ({
                     pf.whoCanSeeLocation === "anyone" ||
                     (pf.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
                     (pf.whoCanSeeLocation === "friends of friends" &&
-                      currentUserIsFriendOfFriend);
+                      (currentUserIsFriendOfFriend || currentUserIsFriend));
 
                   if (filter === "in my city") {
                     if (
@@ -198,7 +198,10 @@ const DisplayedCardsPage = ({
                     }
                   }
 
-                  if (filter === "friends of friends" && currentUserIsFriendOfFriend) {
+                  if (
+                    filter === "friends of friends" &&
+                    (currentUserIsFriendOfFriend || currentUserIsFriend)
+                  ) {
                     if (
                       !matches.includes(Methods.getTUserSecureFromTUser(pf, currentUser))
                     ) {
