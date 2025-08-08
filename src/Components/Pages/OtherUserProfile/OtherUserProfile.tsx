@@ -75,6 +75,8 @@ const OtherUserProfile = () => {
     useState<boolean>(false);
   const [currentUserCanSeeEmailAddress, setCurrentUserCanSeeEmailAddress] =
     useState<boolean>(false);
+  const [currentUserCanSeePhoneNumber, setCurrentUserCanSeePhoneNumber] =
+    useState<boolean>(false);
   const [currentUserCanSeeFriendsList, setCurrentUserCanSeeFriendsList] =
     useState<boolean>(false);
   const [currentUserIsFriendOfFriend, setCurrentUserIsFriendOfFriend] =
@@ -160,6 +162,7 @@ const OtherUserProfile = () => {
     setShowX(false);
     setCurrentUserCanSeeLocation(false);
     setCurrentUserCanSeeEmailAddress(false);
+    setCurrentUserCanSeePhoneNumber(false);
     setCurrentUserCanSeeFriendsList(false);
     setCurrentUserIsFriendOfFriend(false);
     setMatchingCountryObject(undefined);
@@ -288,7 +291,7 @@ const OtherUserProfile = () => {
                     ? currentOtherUser.friends.includes(currentUser._id.toString())
                     : false;
 
-                // Set currentUserCanSeeEmailAddress:
+                // Set currentUserCanSeeEmailAddress to true if conditions are met:
                 if (
                   currentOtherUser.whoCanSeeEmailAddress === "anyone" ||
                   (currentOtherUser.whoCanSeeEmailAddress === "friends" &&
@@ -298,7 +301,18 @@ const OtherUserProfile = () => {
                 ) {
                   setCurrentUserCanSeeEmailAddress(true);
                 }
+                // Set currentUserCanSeePhoneNumber if conditions are met:
+                if (
+                  currentOtherUser.whoCanSeePhoneNumber === "anyone" ||
+                  (currentOtherUser.whoCanSeePhoneNumber === "friends" &&
+                    currentUserIsFriend) ||
+                  (currentOtherUser.whoCanSeePhoneNumber === "friends of friends" &&
+                    (currentUserIsFriendOfFriend || currentUserIsFriend))
+                ) {
+                  setCurrentUserCanSeePhoneNumber(true);
+                }
 
+                // Set currentUserCanSeeFriendsList to true if conditions met:
                 if (
                   ((currentUserIsFriend &&
                     currentOtherUser.whoCanSeeFriendsList === "friends") ||
@@ -997,6 +1011,15 @@ const OtherUserProfile = () => {
                   pageOwner.emailAddress &&
                   pageOwner.emailAddress !== "" && (
                     <p style={{ color: randomColor }}>{pageOwner.emailAddress}</p>
+                  )}
+                {currentUserCanSeePhoneNumber &&
+                  pageOwner.phoneCountryCode &&
+                  pageOwner.phoneCountryCode !== "" &&
+                  pageOwner.phoneNumberWithoutCountryCode &&
+                  pageOwner.phoneNumberWithoutCountryCode !== "" && (
+                    <p
+                      style={{ color: randomColor }}
+                    >{`+${pageOwner.phoneCountryCode} ${pageOwner.phoneNumberWithoutCountryCode}`}</p>
                   )}
                 {currentUserCanSeeLocation &&
                   pageOwner &&
