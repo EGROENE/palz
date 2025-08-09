@@ -453,6 +453,7 @@ const createUser = (newUserData: TUser): Promise<Response> => {
 
   const raw = JSON.stringify({
     "_id": newUserData._id,
+    "lastLogin": newUserData.lastLogin,
     "index": newUserData.index,
     "firstName": newUserData.firstName,
     "lastName": newUserData.lastName,
