@@ -66,6 +66,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   /* Some values on currentUser are kept separately from currentUser. These are initialized to corresponding values from DB. These will be compared to values in DB when user changes these in Settings to render certain form UI. They can also be used for optimistic rendering, in that they update quicker than state values that depend on request to DB going thru, then state values being set after that. Corresponding values in DB are still updated in the background; if these requests fail, then these parallel state values below will reset to what they were before the change.*/
   const [index, setIndex] = useSessionStorage<number | undefined>("index", undefined);
+  const [lastLogin, setLastLogin] = useSessionStorage<number>(
+    "lastLogin",
+    currentUser && currentUser.lastLogin > 0 ? currentUser.lastLogin : 0
+  );
   const [firstName, setFirstName, removeFirstName] = useSessionStorage<
     string | undefined
   >("firstName", "");
@@ -328,6 +332,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const userData: TUser = {
     _id: new mongoose.Types.ObjectId(),
+    lastLogin: Date.now(),
     index: index,
     firstName: Methods.formatHyphensAndSpacesInString(
       Methods.formatCapitalizedName(firstName)
@@ -2094,18 +2099,35 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               });
             } else if (res.ok) {
               res.json().then((json) => {
-                setCurrentUser(json.user);
-                setShowWelcomeMessage(true);
-                setTimeout(() => {
-                  setShowWelcomeMessage(false);
-                  setProcessingLoginIsLoading(false);
-                  navigation(`/homepage/${json.user.username}`);
-                }, welcomeMessageDisplayTime);
-                setUserCreatedAccount(false);
-                navigation("/");
-                setUserCreatedAccount(false);
-                setParallelValuesAfterLogin(json.user);
-                resetErrorMessagesAfterLogin();
+                const now = Date.now();
+                Requests.patchUpdatedUserInfo(json.user, { "lastLogin": now })
+                  .then((res) => {
+                    if (res.ok) {
+                      setCurrentUser(json.user);
+                      setShowWelcomeMessage(true);
+                      setUserCreatedAccount(false);
+                      navigation("/");
+                      setLastLogin(now);
+                      setParallelValuesAfterLogin(json.user);
+                      resetErrorMessagesAfterLogin();
+                      setTimeout(() => {
+                        setShowWelcomeMessage(false);
+                        setProcessingLoginIsLoading(false);
+                        navigation(`/homepage/${json.user.username}`);
+                      }, welcomeMessageDisplayTime);
+                    } else {
+                      setProcessingLoginIsLoading(false);
+                      toast.error("Could not log you in. Please try again.", {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid red",
+                        },
+                      });
+                    }
+                  })
+                  .catch((error) => console.log(error));
               });
             } else {
               setProcessingLoginIsLoading(false);
@@ -2144,18 +2166,35 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               });
             } else if (res.ok) {
               res.json().then((json) => {
-                setCurrentUser(json.user);
-                setShowWelcomeMessage(true);
-                setTimeout(() => {
-                  setShowWelcomeMessage(false);
-                  navigation(`/homepage/${json.user.username}`);
-                  setProcessingLoginIsLoading(false);
-                }, welcomeMessageDisplayTime);
-                setUserCreatedAccount(false);
-                navigation("/");
-                setUserCreatedAccount(false);
-                setParallelValuesAfterLogin(json.user);
-                resetErrorMessagesAfterLogin();
+                const now = Date.now();
+                Requests.patchUpdatedUserInfo(json.user, { "lastLogin": now })
+                  .then((res) => {
+                    if (res.ok) {
+                      setCurrentUser(json.user);
+                      setShowWelcomeMessage(true);
+                      setUserCreatedAccount(false);
+                      navigation("/");
+                      setParallelValuesAfterLogin(json.user);
+                      setLastLogin(now);
+                      resetErrorMessagesAfterLogin();
+                      setTimeout(() => {
+                        setShowWelcomeMessage(false);
+                        navigation(`/homepage/${json.user.username}`);
+                        setProcessingLoginIsLoading(false);
+                      }, welcomeMessageDisplayTime);
+                    } else {
+                      setProcessingLoginIsLoading(false);
+                      toast.error("Could not log you in. Please try again.", {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid red",
+                        },
+                      });
+                    }
+                  })
+                  .catch((error) => console.log(error));
               });
             } else {
               setProcessingLoginIsLoading(false);
@@ -2222,6 +2261,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         navigation("/");
                         setUserCreatedAccount(true);
                         setParallelValuesAfterSignup();
+                        setLastLogin(Date.now);
                         resetErrorMessagesAfterSignup();
                       } else {
                         setUserCreatedAccount(false);
@@ -2271,6 +2311,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const logout = (): void => {
     navigation("/");
     setUserCreatedAccount(null);
+    setLastLogin(0);
     setCurrentUser(null);
     setCurrentOtherUser(null);
     resetLoginOrSignupFormFieldsAndErrors();
@@ -2443,6 +2484,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setUserCreatedAccount,
     blockUserInProgress,
     setBlockUserInProgress,
+    lastLogin,
+    setLastLogin,
   };
 
   return (

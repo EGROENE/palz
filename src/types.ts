@@ -314,6 +314,8 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  lastLogin: number;
+  setLastLogin: React.Dispatch<React.SetStateAction<number>>;
   blockUserInProgress: boolean;
   setBlockUserInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   fetchFriendRequestsIsLoading: boolean;
