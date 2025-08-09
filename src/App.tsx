@@ -42,6 +42,8 @@ function App() {
     updateProfileImageIsLoading,
     removeProfileImageIsLoading,
     blockUserInProgress,
+    logout,
+    lastLogin,
   } = useUserContext();
 
   const {
@@ -96,6 +98,28 @@ function App() {
   /* userCreatedAccount is checked for non-null values, since currentUser may be set before submission of login form, causing user's homepage to display before they actually log in */
   useEffect(() => {
     if (
+      currentUser &&
+      currentUser._id &&
+      currentURL !== "/login" &&
+      currentURL !== "/signup" &&
+      currentURL !== "/"
+    ) {
+      const sevenDays: number = 1000 * 60 * 60 * 24 * 7;
+      const now: number = Date.now();
+
+      if (now - lastLogin >= sevenDays) {
+        toast(`For security reasons, please log in again.`, {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+        setTimeout(() => logout(), 2000);
+      }
+    }
+
+    if (
       userCreatedAccount !== null &&
       !showWelcomeMessage &&
       currentUser &&
@@ -103,7 +127,7 @@ function App() {
     ) {
       navigation(`/homepage/${currentUser?.username}`);
     }
-  }, [showWelcomeMessage, userCreatedAccount, currentUser?.username]);
+  }, [showWelcomeMessage, userCreatedAccount, currentUser?.username, currentURL]);
 
   const getBaseURLElement = (): JSX.Element => {
     if (userCreatedAccount !== null && showWelcomeMessage) {
