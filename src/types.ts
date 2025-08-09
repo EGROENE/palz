@@ -11,6 +11,7 @@ export type TThemeColor =
 
 export type TUser = {
   _id?: string | mongoose.Types.ObjectId;
+  lastLogin: number;
   index: number | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
@@ -188,6 +189,7 @@ export type TChatValuesToUpdate = {
 };
 
 export type TUserValuesToUpdate = {
+  lastLogin?: number;
   friends?: string[] | undefined;
   blockedUsers?: string[] | undefined;
   blockedBy?: string[] | undefined;
