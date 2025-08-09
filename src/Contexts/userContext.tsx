@@ -644,7 +644,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (type === "password") {
       setPasswordIsHidden(!passwordIsHidden);
     } else {
-      setConfirmationPasswordIsHidden(!confirmationPasswordIsHidden)
+      setConfirmationPasswordIsHidden(!confirmationPasswordIsHidden);
     }
   };
 
