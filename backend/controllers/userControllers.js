@@ -154,6 +154,7 @@ const getUserByUsernameOrEmailAddress = async (req, res) => {
 const createNewUser = async (req, res) => {
   let {
     _id,
+    lastLogin,
     index,
     firstName,
     lastName,
@@ -224,6 +225,7 @@ const createNewUser = async (req, res) => {
 
     const user = await User.create({
       _id,
+      lastLogin,
       index,
       firstName,
       lastName,
