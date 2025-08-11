@@ -180,6 +180,7 @@ const UserSettings = () => {
                   promisesToAwait.push(Requests.deleteEvent(event));
                 } else {
                   const eventValuesToUpdate: TEventValuesToUpdate = {
+                    organizers: event.organizers.filter( (o) => o !== currentUser?._id?.toString()),
                     blockedUsersEvent: event.blockedUsersEvent.filter(
                       (u) => u !== currentUser?._id?.toString()
                     ),
