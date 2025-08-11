@@ -171,7 +171,7 @@ const EventPage = () => {
                 },
               });
               if (currentUser && userCreatedAccount !== null) {
-                navigation(`/${currentUser.username}`);
+                navigation(`/homepage/${currentUser.username}`);
               } else {
                 logout();
                 setCurrentEvent(undefined);

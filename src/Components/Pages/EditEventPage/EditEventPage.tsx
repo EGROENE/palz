@@ -37,7 +37,7 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
       currentUser?._id &&
       !currentEvent?.organizers.includes(currentUser._id.toString())
     ) {
-      navigation(`/${currentUser.username}`);
+      navigation(`/homepage/${currentUser.username}`);
       toast.error("You do not have permission to edit this event.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
