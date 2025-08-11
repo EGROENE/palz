@@ -96,7 +96,7 @@ app.get("/palz/add-event", (req, res) => {
   return getPotentialEventCOsController(req, res);
 });
 
-app.use("/edit-event/:id", (req, res) => {
+app.get("/palz/edit-event/:id", (req, res) => {
   const { list } = req.query;
 
   if (list === "potentialEventBlockees") {
