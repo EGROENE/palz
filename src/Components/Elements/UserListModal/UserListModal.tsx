@@ -120,9 +120,14 @@ const UserListModal = ({
         .finally(() => setFetchIsLoading(false));
     } else {
       if (users && !outsideFetchIsError) {
-        if (users.every((u) => Methods.isTBarebonesUser(u))) {
-          setIterableUsers(users);
+        // forced to get var for setIterableUsers by loop due to tsc error when running build
+        let updatedIterableUsers: TBarebonesUser[] = [];
+        for (const u of users) {
+          if (Methods.isTBarebonesUser(u)) {
+            updatedIterableUsers.push(u);
+          }
         }
+        setIterableUsers(updatedIterableUsers);
       }
     }
   }, [
