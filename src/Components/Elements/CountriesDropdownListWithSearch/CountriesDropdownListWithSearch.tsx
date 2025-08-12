@@ -1,9 +1,8 @@
+import { useState } from "react";
+
 const CountriesDropdownListWithSearch = ({
   searchQuery,
   queryHandler,
-  onFocus,
-  onBlur,
-  focusedElement,
   randomColor,
   inputRef,
   list,
@@ -11,9 +10,6 @@ const CountriesDropdownListWithSearch = ({
 }: {
   searchQuery: string;
   queryHandler: Function;
-  onFocus: Function;
-  onBlur: Function;
-  focusedElement: string;
   randomColor: string | undefined;
   inputRef: React.MutableRefObject<HTMLInputElement | null>;
   list: {
@@ -27,6 +23,8 @@ const CountriesDropdownListWithSearch = ({
     phoneCode: string;
   }) => void;
 }) => {
+  const  [isFocused, setIsFocused] = useState<boolean>(false)
+
   return (
     <>
       <div className="dropdown-list-search-input">
@@ -35,10 +33,10 @@ const CountriesDropdownListWithSearch = ({
           onChange={(e) => queryHandler(e.target.value)}
           type="search"
           placeholder="Search countries"
-          onFocus={() => onFocus()}
-          onBlur={() => onBlur()}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           style={
-            focusedElement === "eventCountriesSearch"
+            isFocused
               ? {
                   boxShadow: `0px 0px 10px 2px ${randomColor}`,
                   outline: "none",
