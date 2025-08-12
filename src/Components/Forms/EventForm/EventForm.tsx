@@ -14,6 +14,7 @@ import DropdownChecklist from "../../Elements/DropdownChecklist/DropdownChecklis
 import SearchAndDropdownList from "../../Elements/SearchAndDropdownList/SearchAndDropdownList";
 import Requests from "../../../requests";
 import { useNavigate } from "react-router-dom";
+import CountriesDropdownListWithSearch from "../../Elements/CountriesDropdownListWithSearch/CountriesDropdownListWithSearch";
 
 const EventForm = ({
   randomColor,
@@ -1674,108 +1675,36 @@ const EventForm = ({
                 ></i>
               </button>
               {showEventCountries && (
-                <>
-                  <div className="dropdown-list-search-input">
-                    <input
-                      value={searchEventCountriesQuery}
-                      onChange={(e) => setSearchEventCountriesQuery(e.target.value)}
-                      type="search"
-                      placeholder="Search countries"
-                      onFocus={() => setFocusedElement("eventCountriesSearch")}
-                      onBlur={() => setFocusedElement(undefined)}
-                      style={
-                        focusedElement === "eventCountriesSearch"
-                          ? {
-                              boxShadow: `0px 0px 10px 2px ${randomColor}`,
-                              outline: "none",
-                            }
-                          : undefined
-                      }
-                      ref={searchEventCountriesRef}
-                    />
-                  </div>
-                  <ul className="dropdown-list">
-                    {resortedCountries
-                      .filter(
-                        (c: {
-                          country: string;
-                          abbreviation: string;
-                          phoneCode: string;
-                        }) => {
-                          if (
-                            c.abbreviation
-                              .toLowerCase()
-                              .includes(
-                                searchEventCountriesQuery.replace(/\s/g, "").toLowerCase()
-                              ) ||
-                            c.country
-                              .toLowerCase()
-                              .includes(
-                                searchEventCountriesQuery.replace(/\s/g, "").toLowerCase()
-                              )
-                          ) {
-                            return c;
-                          }
-                        }
-                      )
-                      .map((country) => (
-                        <li
-                          tabIndex={0}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              handleCityStateCountryInput(
-                                {
-                                  city: eventCity,
-                                  state: eventState,
-                                  country: eventCountry,
-                                },
-                                {
-                                  citySetter: undefined,
-                                  stateSetter: undefined,
-                                  countrySetter: setEventCountry,
-                                  errorSetter: setEventLocationError,
-                                  showCountriesSetter: setShowEventCountries,
-                                },
-                                "country",
-                                country.country,
-                                undefined
-                              );
-                            }
-                          }}
-                          style={
-                            country.country === "United States"
-                              ? {
-                                  "borderBottom": "1px dotted white",
-                                }
-                              : undefined
-                          }
-                          key={country.country}
-                          onClick={() =>
-                            handleCityStateCountryInput(
-                              {
-                                city: eventCity,
-                                state: eventState,
-                                country: eventCountry,
-                              },
-                              {
-                                citySetter: undefined,
-                                stateSetter: undefined,
-                                countrySetter: setEventCountry,
-                                errorSetter: setEventLocationError,
-                                showCountriesSetter: setShowEventCountries,
-                              },
-                              "country",
-                              country.country,
-                              undefined
-                            )
-                          }
-                        >
-                          <img src={`/flags/1x1/${country.abbreviation}.svg`} />
-                          <span>{`${country.country}`}</span>
-                        </li>
-                      ))}
-                  </ul>
-                </>
+                <CountriesDropdownListWithSearch
+                  searchQuery={searchEventCountriesQuery}
+                  queryHandler={setSearchEventCountriesQuery}
+                  randomColor={randomColor}
+                  inputRef={searchEventCountriesRef}
+                  list={resortedCountries}
+                  itemClick={(country: {
+                    country: string;
+                    abbreviation: string;
+                    phoneCode: string;
+                  }) =>
+                    handleCityStateCountryInput(
+                      {
+                        city: eventCity,
+                        state: eventState,
+                        country: eventCountry,
+                      },
+                      {
+                        citySetter: undefined,
+                        stateSetter: undefined,
+                        countrySetter: setEventCountry,
+                        errorSetter: setEventLocationError,
+                        showCountriesSetter: setShowEventCountries,
+                      },
+                      "country",
+                      country.country,
+                      undefined
+                    )
+                  }
+                />
               )}
             </label>
           </div>
