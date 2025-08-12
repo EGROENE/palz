@@ -45,7 +45,13 @@ const UserHomepage = () => {
         .then((res) => {
           if (res.ok) {
             res.json().then((events: TEvent[]) => {
-              setAllCurrentUserUpcomingEvents(events);
+              setAllCurrentUserUpcomingEvents(
+                events.filter((ev) => {
+                  if (currentUser && currentUser._id) {
+                    return !ev.disinterestedUsers.includes(currentUser._id.toString());
+                  }
+                })
+              );
             });
           } else {
             setIsFetchError(true);
