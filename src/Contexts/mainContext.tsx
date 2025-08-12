@@ -1,5 +1,5 @@
-import { useState, createContext, ReactNode, useEffect } from "react";
-import { TMainContext, TUser, TEvent } from "../types";
+import { useState, createContext, ReactNode } from "react";
+import { TMainContext, TUserSecure, TEvent, TBarebonesUser } from "../types";
 import useLocalStorage from "use-local-storage";
 import { useLocation } from "react-router-dom";
 
@@ -20,79 +20,33 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
 
   const currentRoute: string = useLocation().pathname;
 
+  const [error, setError] = useState<string | undefined>();
+
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState<boolean>(false);
   const [welcomeMessageDisplayTime, setWelcomeMessageDisplayTime] =
     useState<number>(2500);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [displayedItemsCount, setDisplayedItemsCount] = useState<number | undefined>();
-  const [displayedItemsCountInterval, setDisplayedItemsCountInterval] = useState<
-    number | undefined
-  >();
-  const [displayedItems, setDisplayedItems] = useState<(TEvent | TUser)[]>([]);
-  const [displayedItemsFiltered, setDisplayedItemsFiltered] = useState<
-    (TEvent | TUser)[]
-  >(displayedItems.slice(0, displayedItemsCount));
+  const [displayedItems, setDisplayedItems] = useState<
+    (TEvent | TUserSecure | TBarebonesUser)[]
+  >([]);
   const [showMobileNavOptions, setShowMobileNavOptions] = useState<boolean>(false);
+  // fetchStart is here so that it can be immediately set to 0 when clicking links to DisplayedCards pages
+  const [fetchStart, setFetchStart] = useState<number>(0);
 
-  useEffect(() => {
-    setDisplayedItemsFiltered(displayedItems.slice(0, displayedItemsCount));
-  }, [displayedItems]);
-
-  const handleWelcomeMessage = () => {
-    setShowWelcomeMessage(true);
-    setTimeout(() => setShowWelcomeMessage(false), welcomeMessageDisplayTime);
-  };
-
-  const handleLoadMoreOnScroll = (
-    displayedItemsCount: number | undefined,
-    setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>,
-    displayedItemsArray: any[],
-    displayedItemsArrayFiltered: any[],
-    displayedItemsCountInterval: number | undefined,
-    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
-  ): void => {
-    const eHTMLElement = e?.target as HTMLElement;
-    const scrollTop = e ? eHTMLElement.scrollTop : null;
-    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
-    const clientHeight = e ? eHTMLElement.clientHeight : null;
-
-    const bottomReached =
-      e && scrollTop && clientHeight
-        ? scrollTop + clientHeight === scrollHeight
-        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
-
-    if (displayedItemsCount && displayedItemsCountInterval && setDisplayedItemsCount) {
-      if (bottomReached) {
-        if (
-          displayedItemsArray.length - displayedItemsArrayFiltered.length >=
-          displayedItemsCountInterval
-        ) {
-          const newDisplayCount = displayedItemsCount + displayedItemsCountInterval;
-          setDisplayedItemsCount(newDisplayCount);
-          setDisplayedItemsFiltered(displayedItems.slice(0, newDisplayCount));
-        } else {
-          const newDisplayCount =
-            displayedItemsCount +
-            (displayedItemsArray.length - displayedItemsArrayFiltered.length);
-          setDisplayedItemsCount(newDisplayCount);
-          setDisplayedItemsFiltered(displayedItems.slice(0, newDisplayCount));
-        }
-      }
-    }
-  };
+  // Put here, not in event- or userContext, since it could be used on both
+  const [savedInterests, setSavedInterests] = useState<string[]>([]);
 
   const mainContextValues: TMainContext = {
+    savedInterests,
+    setSavedInterests,
+    fetchStart,
+    setFetchStart,
+    error,
+    setError,
     showMobileNavOptions,
     setShowMobileNavOptions,
     currentRoute,
-    displayedItemsCountInterval,
-    setDisplayedItemsCountInterval,
-    displayedItemsFiltered,
-    setDisplayedItemsFiltered,
-    displayedItemsCount,
-    setDisplayedItemsCount,
-    handleLoadMoreOnScroll,
     displayedItems,
     setDisplayedItems,
     isLoading,
@@ -101,7 +55,6 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
     setShowSidebar,
     theme,
     toggleTheme,
-    handleWelcomeMessage,
     showWelcomeMessage,
     setShowWelcomeMessage,
     welcomeMessageDisplayTime,

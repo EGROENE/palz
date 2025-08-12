@@ -10,7 +10,9 @@ export type TThemeColor =
   | "var(--fifth-color)";
 
 export type TUser = {
-  _id?: string;
+  _id?: string | mongoose.Types.ObjectId;
+  lastLogin: number;
+  index: number | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
   username: string | undefined;
@@ -31,12 +33,18 @@ export type TUser = {
   subscriptionType: "free" | "bronze" | "silver" | "gold" | "platinum";
   hostingCredits: number;
   interests: string[];
-  whoCanAddUserAsOrganizer: "friends" | "anyone" | "nobody" | undefined;
-  whoCanInviteUser: "friends" | "anyone" | "nobody" | undefined;
+  whoCanAddUserAsOrganizer:
+    | "friends"
+    | "friends of friends"
+    | "anyone"
+    | "nobody"
+    | undefined;
+  whoCanInviteUser: "friends" | "friends of friends" | "anyone" | "nobody" | undefined;
   profileVisibleTo: "friends" | "anyone" | "friends of friends" | undefined;
   friendRequestsReceived: string[];
   friendRequestsSent: string[];
   blockedUsers: string[];
+  blockedBy: string[];
   whoCanMessage: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
   whoCanSeeLocation: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
   displayFriendCount: boolean;
@@ -81,8 +89,52 @@ export type TUser = {
     | undefined;
 };
 
+export type TUserSecure = {
+  _id?: string | mongoose.Types.ObjectId;
+  index: number | undefined;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  username: string | undefined;
+  city?: string;
+  stateProvince?: string;
+  country?: string;
+  phoneCountry?: string;
+  phoneCountryCode?: string;
+  phoneNumberWithoutCountryCode?: string;
+  emailAddress?: string | undefined;
+  instagram?: string;
+  facebook?: string;
+  x?: string;
+  profileImage: string;
+  about: string;
+  friends?: string[];
+  interests: string[];
+};
+
+export type TDisplayedCardsFilter =
+  | "in my city"
+  | "in my state"
+  | "in my country"
+  | "friends of friends"
+  | "common interests"
+  | "my interests"
+  | "organized by friends"
+  | "RSVP'd by friends";
+
+// Bare-bones type to give basic info on event invitees & organizers
+export type TBarebonesUser = {
+  _id: string | mongoose.Types.ObjectId | undefined;
+  username: string | undefined;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  profileImage: string | undefined;
+  emailAddress: string | undefined;
+  index: number | undefined;
+};
+
 export type TEvent = {
   _id?: string;
+  index: number | undefined;
   blockedUsersEvent: string[];
   creator: string | undefined;
   title: string;
@@ -109,11 +161,11 @@ export type TEvent = {
 };
 
 export type TChat = {
-  _id: string | mongoose.Types.ObjectId;
+  _id?: string | mongoose.Types.ObjectId | undefined;
   members: string[];
   messages: TMessage[];
   dateCreated: number;
-  chatName: string | undefined;
+  chatName?: string | undefined;
   chatType: "two-member" | "group";
   admins?: string[];
 };
@@ -137,6 +189,12 @@ export type TChatValuesToUpdate = {
 };
 
 export type TUserValuesToUpdate = {
+  lastLogin?: number;
+  friends?: string[] | undefined;
+  blockedUsers?: string[] | undefined;
+  blockedBy?: string[] | undefined;
+  friendRequestsSent?: string[] | undefined;
+  friendRequestsReceived?: string[] | undefined;
   firstName?: string | undefined;
   lastName?: string | undefined;
   profileImage?: string | unknown;
@@ -153,8 +211,13 @@ export type TUserValuesToUpdate = {
   facebook?: string | undefined;
   instagram?: string | undefined;
   x?: string | undefined;
-  whoCanAddUserAsOrganizer?: "anyone" | "friends" | "nobody" | undefined;
-  whoCanInviteUser?: "anyone" | "friends" | "nobody" | undefined;
+  whoCanAddUserAsOrganizer?:
+    | "anyone"
+    | "friends"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
+  whoCanInviteUser?: "anyone" | "friends" | "friends of friends" | "nobody" | undefined;
   profileVisibleTo?: "anyone" | "friends" | "friends of friends" | undefined;
   whoCanMessage?: "anyone" | "friends" | "nobody" | "friends of friends" | undefined;
   whoCanSeeLocation?: "friends" | "anyone" | "nobody" | "friends of friends" | undefined;
@@ -201,7 +264,8 @@ export type TUserValuesToUpdate = {
 };
 
 export type TEventValuesToUpdate = {
-  relatedInterests?: string[] | undefined;
+  interestedUsers?: string[] | undefined;
+  savedInterests?: string[] | undefined;
   blockedUsersEvent?: string[] | undefined;
   images?: string[] | undefined;
   address?: string | undefined;
@@ -224,27 +288,19 @@ export type TEventValuesToUpdate = {
 };
 
 export type TMainContext = {
+  savedInterests: string[];
+  setSavedInterests: React.Dispatch<React.SetStateAction<string[]>>;
+  fetchStart: number;
+  setFetchStart: React.Dispatch<React.SetStateAction<number>>;
+  error: string | undefined;
+  setError: React.Dispatch<React.SetStateAction<string | undefined>>;
   showMobileNavOptions: boolean;
   setShowMobileNavOptions: React.Dispatch<React.SetStateAction<boolean>>;
   currentRoute: string;
-  displayedItemsCount: number | undefined;
-  setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>;
-  displayedItemsCountInterval: number | undefined;
-  setDisplayedItemsCountInterval: React.Dispatch<
-    React.SetStateAction<number | undefined>
+  displayedItems: (TUserSecure | TEvent | TBarebonesUser)[];
+  setDisplayedItems: React.Dispatch<
+    React.SetStateAction<(TEvent | TUserSecure | TBarebonesUser)[]>
   >;
-  displayedItemsFiltered: (TUser | TEvent)[];
-  setDisplayedItemsFiltered: React.Dispatch<React.SetStateAction<(TUser | TEvent)[]>>;
-  handleLoadMoreOnScroll: (
-    displayedItemsCount: number | undefined,
-    setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>,
-    displayedItemsArray: any[],
-    displayedItemsArrayFiltered: any[],
-    displayedItemsCountInterval: number | undefined,
-    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
-  ) => void;
-  displayedItems: (TUser | TEvent)[];
-  setDisplayedItems: React.Dispatch<React.SetStateAction<(TEvent | TUser)[]>>;
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   theme: "dark" | "light";
@@ -253,75 +309,65 @@ export type TMainContext = {
   setShowWelcomeMessage: React.Dispatch<React.SetStateAction<boolean>>;
   welcomeMessageDisplayTime: number;
   setWelcomeMessageDisplayTime: React.Dispatch<React.SetStateAction<number>>;
-  handleWelcomeMessage: () => void;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type TUserContext = {
+  lastLogin: number;
+  setLastLogin: React.Dispatch<React.SetStateAction<number>>;
+  blockUserInProgress: boolean;
+  setBlockUserInProgress: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchFriendRequestsIsLoading: boolean;
+  setFetchFriendRequestsIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchFriendRequestsSentIsError: boolean;
+  setFetchFriendRequestsSentIsError: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchFriendRequestsReceivedIsError: boolean;
+  setFetchFriendRequestsReceivedIsError: React.Dispatch<React.SetStateAction<boolean>>;
   userHasLoggedIn: boolean;
-  allOtherUsers: TUser[];
-  fetchAllUsersQuery: UseQueryResult<TUser[], Error>;
-  friends: string[] | undefined;
-  setFriends: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  friendRequestsSent: string[] | undefined;
-  setFriendRequestsSent: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  friendRequestsReceived: string[] | undefined;
-  setFriendRequestsReceived: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  blockedUsers: string[] | undefined;
-  setBlockedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists: (
-    blocker: TUser,
-    blockee: TUser,
-    blockedUsers?: string[] | undefined,
-    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | undefined>>
-  ) => void;
-  handleUnblockUser: (
-    blocker: TUser,
-    blockee: TUser,
-    blockedUsers?: string[] | undefined,
-    setBlockedUsers?: React.Dispatch<React.SetStateAction<string[] | undefined>>
-  ) => void;
-  currentOtherUser: TUser | null;
-  setCurrentOtherUser: React.Dispatch<React.SetStateAction<TUser | null>>;
+  friendRequestsSent: TBarebonesUser[] | null;
+  setFriendRequestsSent: React.Dispatch<React.SetStateAction<TBarebonesUser[] | null>>;
+  friendRequestsReceived: TBarebonesUser[] | null;
+  setFriendRequestsReceived: React.Dispatch<
+    React.SetStateAction<TBarebonesUser[] | null>
+  >;
+  blockedUsers: TBarebonesUser[] | null;
+  setBlockedUsers: React.Dispatch<React.SetStateAction<TBarebonesUser[] | null>>;
+  fetchBlockedUsersIsLoading: boolean;
+  setFetchBlockedUsersIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchBlockedUsersIsError: boolean;
+  setFetchBlockedUsersIsError: React.Dispatch<React.SetStateAction<boolean>>;
+  handleUnblockUser: (blocker: TBarebonesUser, blockee: TBarebonesUser) => void;
+  currentOtherUser: TUserSecure | null;
+  setCurrentOtherUser: React.Dispatch<React.SetStateAction<TUserSecure | null>>;
+  getOtherUserFriends: (otherUserID: string) => TUser[];
   handleSendFriendRequest: (
-    sender: TUser | undefined,
-    recipient: TUser,
-    friendRequestsSent?: string[],
-    setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    recipient: TUserSecure | TUser | undefined,
+    shouldOptimisticRender?: boolean
   ) => void;
   handleRetractFriendRequest: (
-    sender: TUser,
-    recipient: TUser,
-    friendRequestsSent?: string[],
-    setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    recipient: TUserSecure | TUser,
+    sender: TUserSecure | TUser,
+    event?: "accept-request" | "retract-request" | "reject-request"
   ) => void;
   showFriendRequestResponseOptions: boolean;
   setShowFriendRequestResponseOptions: React.Dispatch<React.SetStateAction<boolean>>;
   handleUnfriending: (
-    user: TUser,
-    friend: TUser,
-    friends?: string[],
-    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    user: TUserSecure | TUser,
+    friend: TUserSecure | TUser,
+    array?: (TUserSecure | TBarebonesUser | TEvent)[],
+    setArray?: React.Dispatch<
+      React.SetStateAction<(TBarebonesUser | TUserSecure | TEvent)[]>
+    >
   ) => void;
   handleAcceptFriendRequest: (
-    sender: TUser,
-    receiver: TUser,
-    friendRequestsReceived?: string[],
-    setFriendRequestsReceived?: React.Dispatch<
-      React.SetStateAction<string[] | undefined>
-    >,
-    friends?: string[],
-    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>,
+    sender: TUserSecure,
+    receiver: TUserSecure,
+    optimisticRender: boolean,
     e?: React.ChangeEvent<HTMLInputElement>
   ) => void;
   handleRejectFriendRequest: (
-    sender: TUser,
-    receiver: TUser,
-    friendRequestsReceived?: string[],
-    setFriendRequestsReceived?: React.Dispatch<
-      React.SetStateAction<string[] | undefined>
-    >,
+    sender: TUserSecure | TBarebonesUser,
     e?: React.ChangeEvent<HTMLInputElement>
   ) => void;
   accountDeletionInProgress: boolean;
@@ -365,8 +411,10 @@ export type TUserContext = {
   setSignupIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   passwordIsHidden: boolean;
   setPasswordIsHidden: React.Dispatch<React.SetStateAction<boolean>>;
+  confirmationPasswordIsHidden: boolean;
+  setConfirmationPasswordIsHidden: React.Dispatch<React.SetStateAction<boolean>>;
   toggleSignupLogin: () => void;
-  toggleHidePassword: () => void;
+  toggleHidePassword: (type: "password" | "confirmation-password") => void;
   firstName: string | undefined;
   setFirstName: React.Dispatch<React.SetStateAction<string | undefined>>;
   firstNameError: string;
@@ -447,13 +495,22 @@ export type TUserContext = {
   setUserAbout: React.Dispatch<React.SetStateAction<string | undefined>>;
   userAboutError: string;
   setUserAboutError: React.Dispatch<React.SetStateAction<string>>;
-  whoCanAddUserAsOrganizer: "anyone" | "friends" | "nobody" | undefined;
+  whoCanAddUserAsOrganizer:
+    | "anyone"
+    | "friends"
+    | "nobody"
+    | "friends of friends"
+    | undefined;
   setWhoCanAddUserAsOrganizer: React.Dispatch<
-    React.SetStateAction<"anyone" | "friends" | "nobody" | undefined>
+    React.SetStateAction<
+      "anyone" | "friends" | "nobody" | "friends of friends" | undefined
+    >
   >;
-  whoCanInviteUser: "anyone" | "friends" | "nobody" | undefined;
+  whoCanInviteUser: "anyone" | "friends" | "friends of friends" | "nobody" | undefined;
   setWhoCanInviteUser: React.Dispatch<
-    React.SetStateAction<"anyone" | "friends" | "nobody" | undefined>
+    React.SetStateAction<
+      "anyone" | "friends" | "friends of friends" | "nobody" | undefined
+    >
   >;
   profileVisibleTo: "anyone" | "friends" | "friends of friends" | undefined;
   setProfileVisibleTo: React.Dispatch<
@@ -559,76 +616,35 @@ export type TUserContext = {
   >;
   userCreatedAccount: null | boolean;
   setUserCreatedAccount: React.Dispatch<React.SetStateAction<boolean | null>>;
-  allUsers: TUser[] | undefined;
   currentUser: TUser | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser | null>>;
-  updateProfileImageMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      currentUser: TUser | null;
-      base64: unknown;
-    },
-    unknown
-  >;
-  removeProfileImageMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      currentUser: TUser | null;
-      placeholder: string;
-    },
-    unknown
-  >;
+  updateProfileImageIsLoading: boolean;
+  setUpdateProfileImageIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  removeProfileImageIsLoading: boolean;
+  setRemoveProfileImageIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  processingLoginIsLoading: boolean;
+  setProcessingLoginIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type TEventContext = {
+  handleRemoveEventInterest: (interest: string) => void;
+  handleAddEventInterest: (interest: string) => void;
+  disinterestedUsersCurrentEvent: string[];
+  setDisinterestedUsersCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;
+  handleRemoveDisinterestedUser: (event: TEvent, user: TBarebonesUser | null) => void;
+  showDeclinedInvitations: boolean;
+  setShowDeclinedInvitations: React.Dispatch<React.SetStateAction<boolean>>;
   handleRemoveOrganizer: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     event: TEvent,
-    user: TUser | null
+    user: TUser | TUserSecure | null
   ) => void;
   showRSVPs: boolean;
   setShowRSVPs: React.Dispatch<React.SetStateAction<boolean>>;
   showInvitees: boolean;
   setShowInvitees: React.Dispatch<React.SetStateAction<boolean>>;
-  displayedPotentialInviteeCount: number | undefined;
-  setDisplayedPotentialInviteeCount: React.Dispatch<
-    React.SetStateAction<number | undefined>
-  >;
-  displayedPotentialBlockeeCount: number | undefined;
-  setDisplayedPotentialBlockeeCount: React.Dispatch<
-    React.SetStateAction<number | undefined>
-  >;
-  displayedPotentialCoOrganizerCount: number | undefined;
-  setDisplayedPotentialCoOrganizerCount: React.Dispatch<
-    React.SetStateAction<number | undefined>
-  >;
-  updateEventMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      event: TEvent;
-      eventValuesToUpdate: TEventValuesToUpdate;
-    },
-    unknown
-  >;
-  createEventMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      eventInfos: TEvent;
-    },
-    unknown
-  >;
-  deleteEventMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      event: TEvent;
-    },
-    unknown
-  >;
+  inviteesORIGINAL: TBarebonesUser[];
+  setInviteesORIGINAL: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   eventValuesToUpdate: TEventValuesToUpdate | undefined;
   eventTitle: string;
   setEventTitle: React.Dispatch<React.SetStateAction<string>>;
@@ -670,81 +686,111 @@ export type TEventContext = {
   setMaxParticipants: React.Dispatch<React.SetStateAction<number | null>>;
   publicity: "public" | "private";
   setPublicity: React.Dispatch<React.SetStateAction<"public" | "private">>;
-  organizers: string[];
-  setOrganizers: React.Dispatch<React.SetStateAction<string[]>>;
-  invitees: string[];
-  setInvitees: React.Dispatch<React.SetStateAction<string[]>>;
-  relatedInterests: string[];
-  setRelatedInterests: React.Dispatch<React.SetStateAction<string[]>>;
-  addEventImageMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      event: TEvent;
-      base64: string;
-    },
-    unknown
-  >;
-  removeEventImageMutation: UseMutationResult<
-    Response,
-    Error,
-    {
-      event: TEvent;
-      imageToBeRemoved: string;
-    },
-    unknown
-  >;
+  organizers: TBarebonesUser[];
+  setOrganizers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
+  organizersORIGINAL: TBarebonesUser[];
+  setOrganizersORIGINAL: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
+  invitees: TBarebonesUser[];
+  setInvitees: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   eventImages: string[];
   setEventImages: React.Dispatch<React.SetStateAction<string[]>>;
-  blockedUsersEvent: string[];
-  setBlockedUsersEvent: React.Dispatch<React.SetStateAction<string[]>>;
-  fetchAllEventsQuery: UseQueryResult<TEvent[], Error>;
+  blockedUsersEvent: TBarebonesUser[];
+  setBlockedUsersEvent: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
+  blockedUsersEventORIGINAL: TBarebonesUser[];
+  setBlockedUsersEventORIGINAL: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   handleAddRemoveUserAsOrganizer: (
-    organizers: string[],
-    setOrganizers: React.Dispatch<React.SetStateAction<string[]>>,
-    user: TUser,
+    organizers: (TBarebonesUser | TUserSecure)[],
+    setOrganizers: React.Dispatch<React.SetStateAction<(TBarebonesUser | TUserSecure)[]>>,
+    user: TBarebonesUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
   handleAddRemoveUserAsInvitee: (
-    invitees: string[],
-    setInvitees: React.Dispatch<React.SetStateAction<string[]>>,
-    user?: TUser
+    invitees: (TBarebonesUser | TUserSecure)[],
+    setInvitees: React.Dispatch<React.SetStateAction<(TBarebonesUser | TUserSecure)[]>>,
+    user?: TBarebonesUser
   ) => void;
   handleRemoveInvitee: (
     event: TEvent,
-    user: TUser | null,
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
+    user: TBarebonesUser | null,
+    userArray?: string[],
+    setUserArray?: React.Dispatch<React.SetStateAction<string[]>>,
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
   handleDeclineInvitation: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
+    event: TEvent,
+    eventsArray?: TEvent[],
+    setEventsArray?: React.Dispatch<React.SetStateAction<TEvent[]>>,
+    optRenderCurrentUserEvents?: boolean
   ) => void;
   eventDeletionIsInProgress: boolean;
   setEventDeletionIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   addEventIsInProgress: boolean;
   setAddEventIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
+
   currentEvent: TEvent | undefined;
   setCurrentEvent: React.Dispatch<React.SetStateAction<TEvent | undefined>>;
   eventEditIsInProgress: boolean;
   setEventEditIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
-  handleAddRemoveBlockedUserOnEvent: (user?: TUser) => void;
+  handleAddRemoveBlockedUserOnEvent: (user?: TBarebonesUser) => void;
   handleAddUserRSVP: (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    event: TEvent
+    event: TEvent,
+    array?: string[],
+    setArray?: React.Dispatch<React.SetStateAction<string[]>>
   ) => void;
   handleDeleteUserRSVP: (
     event: TEvent,
-    user: TUser,
-    e?: React.MouseEvent<HTMLSpanElement, MouseEvent> | undefined
+    user: TBarebonesUser,
+    e?: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    rsvpdUsers?: string[],
+    setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>,
+    optRenderCurrentUserEvents?: boolean
   ) => void;
+  interestedUsersCurrentEvent: string[];
+  setInterestedUsersCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;
+  inviteesCurrentEvent: string[];
+  setInviteesCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;
+  allCurrentUserUpcomingEvents: TEvent[];
+  setAllCurrentUserUpcomingEvents: React.Dispatch<React.SetStateAction<TEvent[]>>;
 };
 
 export type TChatContext = {
+  fetchChatMembersIsError: boolean;
+  setFetchChatMembersIsError: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchChatMembersIsLoading: boolean;
+  setFetchChatMembersIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  handleLoadMoreItemsOnScroll: (
+    items: TBarebonesUser[],
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
+  ) => void;
+  initializePotentialChatMembersSearch: (input: string) => void;
+  handleSearchPotentialChatMembers: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    chat?: TChat | undefined
+  ) => void;
+  handleCancelAddOrEditChat: (
+    e:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.KeyboardEvent<HTMLElement>
+  ) => void;
+  allPotentialChatMembers: TBarebonesUser[];
+  setAllPotentialChatMembers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
+  isFetchError: boolean;
+  setIsFetchError: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchIsLoading: boolean;
+  setFetchIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchStart: number;
+  setFetchStart: React.Dispatch<React.SetStateAction<number>>;
+  displayedPotentialChatMembers: TBarebonesUser[] | null;
+  setDisplayedPotentialChatMembers: React.Dispatch<
+    React.SetStateAction<TBarebonesUser[] | null>
+  >;
   handleUpdateChatName: (chat: TChat) => void;
   showEditChatNameModal: boolean;
   setShowEditChatNameModal: React.Dispatch<React.SetStateAction<boolean>>;
-  startConversation: (otherUser: TUser) => void;
-  getStartOrOpenChatWithUserHandler: (otherUser: TUser) => void;
+  getStartOrOpenChatWithUserHandler: (otherUser: TBarebonesUser | undefined) => void;
   getTotalNumberOfUnreadMessages: (chatArray: TChat[]) => string | number;
   handleSaveEditedMessage: (chat: TChat, editedMessage: TMessage) => void;
   cancelEditingMessage: () => void;
@@ -759,13 +805,13 @@ export type TChatContext = {
     React.SetStateAction<boolean>
   >;
   handleRemoveAdminFromChat: (user: TUser, chat: TChat) => void;
-  handleAddAdminToChat: (user: TUser, chat: TChat) => void;
+  handleAddAdminToChat: (user: TUserSecure, chat: TChat) => void;
   showMembers: boolean;
   setShowMembers: React.Dispatch<React.SetStateAction<boolean>>;
   showAreYouSureYouWantToLeaveChat: boolean;
   setShowAreYouSureYouWantToLeaveChat: React.Dispatch<React.SetStateAction<boolean>>;
-  admins: string[];
-  setAdmins: React.Dispatch<React.SetStateAction<string[]>>;
+  admins: TBarebonesUser[];
+  setAdmins: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   showAddMemberModal: boolean;
   setShowAddMemberModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleAddMultipleUsersToChat: (users: string[], chat: TChat) => void;
@@ -794,29 +840,26 @@ export type TChatContext = {
     e: React.ChangeEvent<HTMLInputElement>,
     showList: boolean,
     setShowList: React.Dispatch<React.SetStateAction<boolean>>,
-    searchArray: TUser[],
+    searchArray: TBarebonesUser[],
     resetFunction: Function
   ) => void;
-  getCurrentOtherUserFriends: (otherUser: TUser) => TUser[];
   showPotentialChatMembers: boolean;
   setShowPotentialChatMembers: React.Dispatch<React.SetStateAction<boolean>>;
-  potentialChatMembers: TUser[];
-  setPotentialChatMembers: React.Dispatch<React.SetStateAction<TUser[]>>;
   chatMembersSearchQuery: string;
   setChatMembersSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   chatName: string | undefined;
   setChatName: React.Dispatch<React.SetStateAction<string | undefined>>;
   chatNameError: string;
   setChatNameError: React.Dispatch<React.SetStateAction<string>>;
-  handleRemoveUserFromChat: (user: TUser, chat: TChat) => void;
+  handleRemoveUserFromChat: (user: TUserSecure, chat: TChat) => void;
   handleAddRemoveUserFromChat: (
-    user: TUser,
-    usersToAddToChat: string[],
-    setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>,
+    user: TBarebonesUser,
+    usersToAddToChat: TBarebonesUser[],
+    setUsersToAddToChat: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>,
     chat?: TChat
   ) => void;
-  usersToAddToChat: string[];
-  setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>;
+  usersToAddToChat: TBarebonesUser[];
+  setUsersToAddToChat: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   numberOfPotentialChatMembersDisplayed: number | undefined;
   setNumberOfPotentialChatMembersDisplayed: React.Dispatch<
     React.SetStateAction<number | undefined>
@@ -825,7 +868,6 @@ export type TChatContext = {
   setCurrentChat: React.Dispatch<React.SetStateAction<TChat | null>>;
   showChatModal: boolean;
   setShowChatModal: React.Dispatch<React.SetStateAction<boolean>>;
-  getChatMembers: (members: string[]) => TUser[];
   fetchChatsQuery: UseQueryResult<TChat[], Error>;
   showCreateNewChatModal: boolean;
   setShowCreateNewChatModal: React.Dispatch<React.SetStateAction<boolean>>;

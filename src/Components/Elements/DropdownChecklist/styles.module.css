@@ -58,6 +58,13 @@
   border-radius: 4px;
 }
 
+.dropdownChecklistLoading {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  font-family: var(--text-font);
+}
+
 .otherUserOption input {
   margin-right: 1.5rem;
   margin-left: 1rem;

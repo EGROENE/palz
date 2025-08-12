@@ -1,9 +1,11 @@
-import { TMessage, TThemeColor, TUser } from "../../../types";
+import { TBarebonesUser, TMessage, TThemeColor, TUser } from "../../../types";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useChatContext } from "../../../Hooks/useChatContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
+import Requests from "../../../requests";
+import Methods from "../../../methods";
 
 const Message = ({
   message,
@@ -13,15 +15,12 @@ const Message = ({
   randomColor?: TThemeColor;
 }) => {
   const { theme } = useMainContext();
-  const { currentUser, allUsers } = useUserContext();
+  const { currentUser } = useUserContext();
+
   const { handleDeleteMessage, currentChat, startEditingMessage } = useChatContext();
 
   const [showAreYouSureYouWantToDeleteMessage, setShowAreYouSureYouWantToDeleteMessage] =
     useState<boolean>(false);
-
-  const sender: TUser | undefined = allUsers
-    ? allUsers.filter((user) => user._id === message.sender)[0]
-    : undefined;
 
   const dateOfSend = new Date(message.timeSent);
 
@@ -31,7 +30,7 @@ const Message = ({
 
   const getComponentInlineStyling = () => {
     if (!showAreYouSureYouWantToDeleteMessage) {
-      if (sender && currentUser && sender._id === currentUser._id) {
+      if (message.sender && currentUser && message.sender === currentUser._id) {
         return {
           backgroundColor: "var(--background-color)",
         };
@@ -49,6 +48,16 @@ const Message = ({
     };
   };
   const componentInlineStyling = getComponentInlineStyling();
+
+  const [sender, setSender] = useState<TBarebonesUser | null>(null);
+
+  useEffect(() => {
+    Requests.getUserByID(message.sender).then((res) => {
+      if (res.ok) {
+        res.json().then((s: TUser) => setSender(Methods.getTBarebonesUser(s)));
+      }
+    });
+  }, []);
 
   return (
     <div
@@ -72,9 +81,9 @@ const Message = ({
                 (randomColor === "var(--primary-color)" &&
                   currentUser &&
                   message.sender !== currentUser._id) ||
-                (sender &&
+                (message.sender &&
                   currentUser &&
-                  sender._id === currentUser._id &&
+                  message.sender === currentUser._id &&
                   theme === "light")
                   ? { color: "black" }
                   : { color: "white" }
@@ -87,8 +96,8 @@ const Message = ({
                 (randomColor === "var(--primary-color)" &&
                   currentUser &&
                   message.sender !== currentUser._id) ||
-                (sender && currentUser && sender._id !== currentUser._id) ||
-                !sender
+                (message.sender && currentUser && message.sender !== currentUser._id) ||
+                !message.sender
                   ? { color: "rgb(68, 67, 67)" }
                   : { color: "darkgray" }
               }
@@ -106,8 +115,8 @@ const Message = ({
                   (randomColor === "var(--primary-color)" &&
                     currentUser &&
                     message.sender !== currentUser._id) ||
-                  (sender && currentUser && sender._id !== currentUser._id) ||
-                  !sender
+                  (message.sender && currentUser && message.sender !== currentUser._id) ||
+                  !message.sender
                     ? { color: "rgb(68, 67, 67)" }
                     : { color: "darkgray" }
                 }
@@ -126,16 +135,13 @@ const Message = ({
                 (randomColor === "var(--primary-color)" &&
                   currentUser &&
                   message.sender !== currentUser._id) ||
-                (sender && currentUser && sender._id !== currentUser._id) ||
-                !sender
+                (message.sender && currentUser && message.sender !== currentUser._id) ||
+                !message.sender
                   ? { color: "rgb(68, 67, 67)" }
                   : { color: "darkgray" }
               }
             >
-              {sender &&
-              sender._id &&
-              currentChat &&
-              currentChat.members.includes(sender._id)
+              {sender && currentChat && currentChat.members.includes(message.sender)
                 ? `${sender.firstName} ${sender.lastName}`
                 : "Deleted User"}
             </p>
@@ -143,7 +149,6 @@ const Message = ({
               <p className="message-sent-info">
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       startEditingMessage(message);
@@ -157,7 +162,6 @@ const Message = ({
                 </span>
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setShowAreYouSureYouWantToDeleteMessage(true);

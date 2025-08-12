@@ -3,11 +3,14 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import { TChat } from "../../../types";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const MobileNavOptions = () => {
-  const { setShowMobileNavOptions, currentRoute } = useMainContext();
+  const { setShowMobileNavOptions, currentRoute, setFetchStart, setDisplayedItems } =
+    useMainContext();
   const { currentUser, userCreatedAccount, logout, friendRequestsReceived } =
     useUserContext();
+  const { setCurrentEvent } = useEventContext();
   const { getTotalNumberOfUnreadMessages, fetchChatsQuery } = useChatContext();
 
   const userChats: TChat[] | undefined = fetchChatsQuery.data;
@@ -37,8 +40,15 @@ const MobileNavOptions = () => {
             My Events
           </Link>
         )}
-        {currentRoute !== "/events" && (
-          <Link onClick={() => setShowMobileNavOptions(false)} to={"/events"}>
+        {currentRoute !== "/find-events" && (
+          <Link
+            onClick={() => {
+              setFetchStart(0);
+              setDisplayedItems([]);
+              setShowMobileNavOptions(false);
+            }}
+            to={"/find-events"}
+          >
             Explore Events
           </Link>
         )}
@@ -60,12 +70,26 @@ const MobileNavOptions = () => {
           </Link>
         )}
         {currentRoute !== "/find-palz" && (
-          <Link onClick={() => setShowMobileNavOptions(false)} to="/find-palz">
+          <Link
+            onClick={() => {
+              setFetchStart(0);
+              setDisplayedItems([]);
+              setShowMobileNavOptions(false);
+            }}
+            to="/find-palz"
+          >
             Find Palz
           </Link>
         )}
         {currentRoute !== "/my-palz" && (
-          <Link onClick={() => setShowMobileNavOptions(false)} to={"/my-palz"}>
+          <Link
+            onClick={() => {
+              setFetchStart(0);
+              setDisplayedItems([]);
+              setShowMobileNavOptions(false);
+            }}
+            to={"/my-palz"}
+          >
             My Palz
           </Link>
         )}
@@ -96,6 +120,7 @@ const MobileNavOptions = () => {
           <div
             onClick={() => {
               logout();
+              setCurrentEvent(undefined);
               setShowMobileNavOptions(false);
             }}
           >

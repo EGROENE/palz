@@ -7,13 +7,12 @@ import EventForm from "../../Forms/EventForm/EventForm";
 import toast from "react-hot-toast";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 
 /* prop currentEvent is only possibly undefined b/c the initial value of currentValue in mainContext is undefined (no default value) */
 const EditEventPage = ({ event }: { event?: TEvent }) => {
   const { isLoading, theme } = useMainContext();
   const { currentUser, userCreatedAccount, logout } = useUserContext();
-  const { currentEvent, fetchAllEventsQuery } = useEventContext();
+  const { currentEvent, setCurrentEvent } = useEventContext();
 
   const navigation = useNavigate();
 
@@ -34,8 +33,11 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
     }
 
     /* If user access event's edit page, but is not an organizer, redirect to their homepage & tell them they don't have permission to edit event */
-    if (currentUser?._id && !currentEvent?.organizers.includes(currentUser._id)) {
-      navigation(`/${currentUser.username}`);
+    if (
+      currentUser?._id &&
+      !currentEvent?.organizers.includes(currentUser._id.toString())
+    ) {
+      navigation(`/homepage/${currentUser.username}`);
       toast.error("You do not have permission to edit this event.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -68,20 +70,17 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
         },
       });
       logout();
+      setCurrentEvent(undefined);
     }
-  }, [event, navigation]);
+
+    window.scrollTo(0, 0);
+  }, [navigation]);
 
   return (
     <>
-      {isLoading && <LoadingModal message="Saving changes..." />}
       <h1>Edit Event</h1>
-      <QueryLoadingOrError
-        query={fetchAllEventsQuery}
-        errorMessage="Error fetching event"
-      />
-      {!fetchAllEventsQuery.isLoading && !fetchAllEventsQuery.isError && (
-        <EventForm randomColor={randomColor} usedFor="edit-event" event={event} />
-      )}
+      {isLoading && <LoadingModal message="Saving changes..." />}
+      <EventForm randomColor={randomColor} usedFor="edit-event" event={event} />
     </>
   );
 };

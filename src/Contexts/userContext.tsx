@@ -1,5 +1,12 @@
-import { createContext, ReactNode, useState, useEffect, SetStateAction } from "react";
-import { TUserContext, TUser, TUserValuesToUpdate } from "../types";
+import { createContext, ReactNode, useState, useEffect } from "react";
+import {
+  TUserContext,
+  TUser,
+  TUserValuesToUpdate,
+  TUserSecure,
+  TBarebonesUser,
+  TEvent,
+} from "../types";
 import { useMainContext } from "../Hooks/useMainContext";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { usernameIsValid, passwordIsValid, emailIsValid } from "../validations";
@@ -7,19 +14,25 @@ import Requests from "../requests";
 import toast from "react-hot-toast";
 import Methods from "../methods";
 import { useNavigate } from "react-router-dom";
-import {
-  useQueryClient,
-  useMutation,
-  useQuery,
-  UseQueryResult,
-} from "@tanstack/react-query";
+import mongoose from "mongoose";
 
 export const UserContext = createContext<TUserContext | null>(null);
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const navigation = useNavigate();
 
-  const { handleWelcomeMessage, theme, setIsLoading } = useMainContext();
+  const {
+    theme,
+    setIsLoading,
+    setError,
+    error,
+    setShowWelcomeMessage,
+    welcomeMessageDisplayTime,
+  } = useMainContext();
+
+  if (error) {
+    throw new Error(error);
+  }
 
   const [currentUser, setCurrentUser] = useLocalStorage<TUser | null>(
     "currentUser",
@@ -38,9 +51,25 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     useState<boolean>(false);
 
   const [signupIsSelected, setSignupIsSelected] = useState<boolean>(false);
+
+  const [blockUserInProgress, setBlockUserInProgress] = useState<boolean>(false);
+
   const [passwordIsHidden, setPasswordIsHidden] = useState<boolean>(true);
+  const [confirmationPasswordIsHidden, setConfirmationPasswordIsHidden] =
+    useState<boolean>(true);
+
+  const [updateProfileImageIsLoading, setUpdateProfileImageIsLoading] =
+    useState<boolean>(false);
+
+  const [removeProfileImageIsLoading, setRemoveProfileImageIsLoading] =
+    useState<boolean>(false);
 
   /* Some values on currentUser are kept separately from currentUser. These are initialized to corresponding values from DB. These will be compared to values in DB when user changes these in Settings to render certain form UI. They can also be used for optimistic rendering, in that they update quicker than state values that depend on request to DB going thru, then state values being set after that. Corresponding values in DB are still updated in the background; if these requests fail, then these parallel state values below will reset to what they were before the change.*/
+  const [index, setIndex] = useSessionStorage<number | undefined>("index", undefined);
+  const [lastLogin, setLastLogin] = useSessionStorage<number>(
+    "lastLogin",
+    currentUser && currentUser.lastLogin > 0 ? currentUser.lastLogin : 0
+  );
   const [firstName, setFirstName, removeFirstName] = useSessionStorage<
     string | undefined
   >("firstName", "");
@@ -96,10 +125,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     string | undefined
   >("userAbout", "");
   const [whoCanAddUserAsOrganizer, setWhoCanAddUserAsOrganizer] = useSessionStorage<
-    "anyone" | "friends" | "nobody" | undefined
+    "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanAddUserAsOrganizer", "anyone");
   const [whoCanInviteUser, setWhoCanInviteUser] = useSessionStorage<
-    "anyone" | "friends" | "nobody" | undefined
+    "anyone" | "friends" | "friends of friends" | "nobody" | undefined
   >("whoCanInviteUser", "anyone");
   const [profileVisibleTo, setProfileVisibleTo] = useSessionStorage<
     "anyone" | "friends" | "friends of friends" | undefined
@@ -140,20 +169,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [whoCanSeeEventsInvitedTo, setWhoCanSeeEventsInvitedTo] = useSessionStorage<
     "anyone" | "friends" | "nobody" | "friends of friends" | undefined
   >("whoCanSeeEventsInvitedTo", "nobody");
-  const [blockedUsers, setBlockedUsers] = useSessionStorage<string[] | undefined>(
-    "blockedUsers",
-    currentUser?.blockedUsers
+  const [blockedUsers, setBlockedUsers] = useState<TBarebonesUser[] | null>(null);
+  const [friendRequestsSent, setFriendRequestsSent] = useState<TBarebonesUser[] | null>(
+    null
   );
-  const [friendRequestsSent, setFriendRequestsSent] = useSessionStorage<
-    string[] | undefined
-  >("friendRequestsSent", currentUser?.friendRequestsSent);
-  const [friendRequestsReceived, setFriendRequestsReceived] = useSessionStorage<
-    string[] | undefined
-  >("friendRequestsReceived", currentUser?.friendRequestsReceived);
-  const [friends, setFriends] = useSessionStorage<string[] | undefined>(
-    "friends",
-    currentUser?.friends
-  );
+  const [friendRequestsReceived, setFriendRequestsReceived] = useState<
+    TBarebonesUser[] | null
+  >(null);
   /////////////////////////////////////////////////////////////////////////////////
 
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username");
@@ -186,7 +208,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
-  const [currentOtherUser, setCurrentOtherUser] = useLocalStorage<TUser | null>(
+  const [currentOtherUser, setCurrentOtherUser] = useLocalStorage<TUserSecure | null>(
     "currentOtherUser",
     null
   );
@@ -201,22 +223,117 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   // /posts?authorId=1 ---> ["posts", {authorId: 1}]
   // /posts/2/comments ---> ["posts", post.id, "comments"]
 
-  const queryClient = useQueryClient();
+  // Values pertaining to fetch of blockedUsers & friendRequestsSent/Received are defined here so they can be optimisically updated throughout the project
+  const [fetchBlockedUsersIsLoading, setFetchBlockedUsersIsLoading] =
+    useState<boolean>(false);
+  const [fetchBlockedUsersIsError, setFetchBlockedUsersIsError] =
+    useState<boolean>(false);
 
-  const fetchAllUsersQuery: UseQueryResult<TUser[], Error> = useQuery({
-    queryKey: ["allUsers"],
-    // queryFn can be a callback that takes an object that can be logged to the console, where queryKey can be seen (put console log in .then() of promise)
-    queryFn: Requests.getAllUsers,
-    // enabled: boolean,
-    // staleTime: number,
-    // refetchInterval: number
-  });
-  let allUsers: TUser[] | undefined = fetchAllUsersQuery.data;
+  const [fetchFriendRequestsIsLoading, setFetchFriendRequestsIsLoading] =
+    useState<boolean>(true);
+
+  const [fetchFriendRequestsSentIsError, setFetchFriendRequestsSentIsError] =
+    useState<boolean>(false);
+
+  const [fetchFriendRequestsReceivedIsError, setFetchFriendRequestsReceivedIsError] =
+    useState<boolean>(false);
+
+  const [processingLoginIsLoading, setProcessingLoginIsLoading] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.blockedUsers.length > 0) {
+        const promisesToAwait = currentUser.blockedUsers.map((id) => {
+          return Requests.getUserByID(id).then((res) => {
+            return res.json().then((user: TUser) => user);
+          });
+        });
+
+        setFetchBlockedUsersIsLoading(true);
+        Promise.all(promisesToAwait)
+          .then((pic: TUser[]) => {
+            setBlockedUsers(pic.map((p) => Methods.getTBarebonesUser(p)));
+          })
+          .catch((error) => {
+            console.log(error);
+            setFetchBlockedUsersIsError(true);
+          })
+          .finally(() => setFetchBlockedUsersIsLoading(false));
+      } else {
+        setBlockedUsers([]);
+      }
+    }
+  }, [currentUser?.blockedUsers]);
+
+  // For each id in FR sent, get full TUser, set friendRequestsSent to TBarebonesUser of sender TUser object
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.friendRequestsSent.length > 0) {
+        const promisesToAwaitFRSent = currentUser.friendRequestsSent.map((id) => {
+          return Requests.getUserByID(id).then((res) => {
+            return res.json().then((user: TUser) => user);
+          });
+        });
+
+        Promise.all(promisesToAwaitFRSent)
+          .then((usersToWhomSentFR: TUser[]) => {
+            setFriendRequestsSent(
+              usersToWhomSentFR.map((u) => Methods.getTBarebonesUser(u))
+            );
+          })
+          .catch((error) => {
+            console.log(error);
+            setFetchFriendRequestsSentIsError(true);
+          })
+          .finally(() => {
+            if (friendRequestsReceived && currentUser) {
+              setFetchFriendRequestsIsLoading(false);
+            }
+          });
+      } else {
+        setFriendRequestsSent([]);
+      }
+    }
+  }, [currentUser?.friendRequestsSent]);
+
+  // For each id in FR receeived, get full TUser, set friendRequestsReceived to TBarebonesUser of receiver TUser object
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.friendRequestsReceived.length > 0) {
+        const promisesToAwaitFRReceived = currentUser.friendRequestsReceived.map((id) => {
+          return Requests.getUserByID(id).then((res) => {
+            return res.json().then((user: TUser) => user);
+          });
+        });
+
+        Promise.all(promisesToAwaitFRReceived)
+          .then((usersFromWhomFRReceived: TUser[]) => {
+            setFriendRequestsReceived(
+              usersFromWhomFRReceived.map((u) => Methods.getTBarebonesUser(u))
+            );
+          })
+          .catch((error) => {
+            console.log(error);
+            setFetchFriendRequestsReceivedIsError(true);
+          })
+          .finally(() => {
+            if (friendRequestsSent && currentUser) {
+              setFetchFriendRequestsIsLoading(false);
+            }
+          });
+      } else {
+        setFriendRequestsReceived([]);
+      }
+    }
+  }, [currentUser?.friendRequestsReceived]);
 
   const userHasLoggedIn = currentUser && userCreatedAccount !== null ? true : false;
 
-  // Rename to 'newUserData'
   const userData: TUser = {
+    _id: new mongoose.Types.ObjectId(),
+    lastLogin: Date.now(),
+    index: index,
     firstName: Methods.formatHyphensAndSpacesInString(
       Methods.formatCapitalizedName(firstName)
     ),
@@ -259,544 +376,236 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     friendRequestsReceived: [],
     friendRequestsSent: [],
     blockedUsers: [],
+    blockedBy: [],
   };
 
-  const newUserMutation = useMutation({
-    mutationFn: (userData: TUser) => Requests.createUser(userData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-      setUserCreatedAccount(true);
-    },
-    onError: () => {
-      setUserCreatedAccount(false);
-      toast.error("Could not create account. Please try again later.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
-  });
-
-  const updateProfileImageMutation = useMutation({
-    mutationFn: ({
-      currentUser,
-      base64,
-    }: {
-      currentUser: TUser | null;
-      base64: unknown;
-    }) => Requests.updateUserProfileImage(currentUser, base64),
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-      if (fetchAllUsersQuery.data && currentUser) {
-        allUsers = fetchAllUsersQuery.data;
-        setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-      }
-      if (data.ok) {
-        setProfileImage(variables.base64);
-        toast.success("Profile image updated", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid green",
-          },
-        });
-      }
-    },
-    onError: (error) => {
-      console.log(error);
-      toast.error(
-        "Could not update profile image. Please make sure the image is 50MB or less & try again.",
-        {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        }
-      );
-    },
-  });
-
-  const removeProfileImageMutation = useMutation({
-    mutationFn: ({
-      currentUser,
-      placeholder,
-    }: {
-      currentUser: TUser | null;
-      placeholder: string;
-    }) => Requests.updateUserProfileImage(currentUser, placeholder),
-    onSuccess: () => {
-      toast("Profile image removed", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-      setProfileImage("");
-      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-      if (fetchAllUsersQuery.data && currentUser) {
-        allUsers = fetchAllUsersQuery.data;
-        setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-      }
-    },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Could not remove profile image. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
-  });
-
   /* 
-  Success of a sent friend request depends on if both of the mutations below are successful, so call second mutation in onSuccess of mutation that runs first. Display toast of send-friend-request success or failure in onSuccess/onError of second mutation that runs. setIsLoading(false) upon settling of second mutation that runs.
+  To be used whenever there is not already access to otherUser's friends list, as request is made to DB in order to access the friends list
   */
-  const sendFriendRequestMutation = useMutation({
-    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
-      Requests.addToFriendRequestsSent(sender, recipient),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        const sender = variables.sender;
-        const recipient = variables.recipient;
-        receiveFriendRequestMutation.mutate({ sender, recipient });
-      }
-    },
-    onError: (error, variables) => {
-      console.log(error);
-      // Optimistic rendering: if request fails, remove recipient from friendRequestsSent
-      if (variables.recipient._id && friendRequestsSent) {
-        setFriendRequestsSent(
-          friendRequestsSent.filter((id) => id !== variables.recipient._id)
-        );
-      }
-      toast.error("Couldn't send request. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
-  });
-
-  const receiveFriendRequestMutation = useMutation({
-    mutationFn: ({ sender, recipient }: { sender: TUser; recipient: TUser }) =>
-      Requests.addToFriendRequestsReceived(sender, recipient),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-      if (fetchAllUsersQuery.data && currentUser) {
-        allUsers = fetchAllUsersQuery.data;
-        setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-      }
-      toast.success("Friend request sent!", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid green",
-        },
-      });
-    },
-    onError: (error, variables) => {
-      console.log(error);
-      if (variables.recipient._id && friendRequestsSent) {
-        // Optimistic rendering: if request fails, remove recipient from friendRequestsSent:
-        setFriendRequestsSent(
-          friendRequestsSent.filter((id) => id !== variables.recipient._id)
-        );
-
-        // If FR was sent, but recipient didn't receive it (request failed), delete sent FR from sender:
-        const removeSentFriendRequest = () =>
-          Requests.removeFromFriendRequestsSent(
-            variables.sender,
-            variables.recipient
-          ).catch((error) => {
-            // If request to remove sent FR fails, keep trying:
-            console.log(error);
-            removeSentFriendRequest();
-          });
-        removeSentFriendRequest();
-      }
-
-      toast.error("Couldn't send request. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
-    onSettled: () => setIsLoading(false),
-  });
-
-  // change both below to "retract...."
-  const retractSentFriendRequestMutation = useMutation({
-    mutationFn: ({
-      sender,
-      recipient,
-      event,
-    }: {
-      sender: TUser;
-      recipient: TUser;
-      event: "accept-request" | "retract-request" | "reject-request";
-    }) => {
-      // Yes, this is stupid logic, but 'event' has to be used to avoid a TS error
-      return event
-        ? Requests.removeFromFriendRequestsSent(sender, recipient)
-        : Requests.removeFromFriendRequestsSent(sender, recipient);
-    },
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        const sender = variables.sender;
-        const recipient = variables.recipient;
-        const event = variables.event;
-        retractReceivedFriendRequestMutation.mutate({ sender, recipient, event });
-      }
-    },
-    onError: (error, variables) => {
-      if (variables.event === "accept-request") {
-        // Remove sender & receiver from each other's 'friends' array, add sender back to receivers FR-received array:
-        Promise.all([
-          Requests.deleteFriendFromFriendsArray(variables.sender, variables.recipient),
-          Requests.deleteFriendFromFriendsArray(variables.recipient, variables.sender),
-          Requests.addToFriendRequestsSent(variables.sender, variables.recipient),
-        ]).catch((error) => console.log(error));
-
-        // Revert surface-level state values (Remove sender from friends, add sender back to receivedFRs):
-        if (friends) {
-          setFriends(friends.filter((friend) => friend !== variables.sender._id));
-        }
-
-        if (variables.sender._id) {
-          setFriendRequestsReceived(friendRequestsReceived?.concat(variables.sender._id));
-        }
-
-        console.log(error);
-
-        toast.error("Could not accept friend request. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-
-      if (variables.event === "retract-request") {
-        const recipient = variables.recipient;
-        // Optimistic rendering: add recipient back to friendRequestsSent if request fails
-        if (setFriendRequestsSent && friendRequestsSent && recipient._id) {
-          setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
-        }
-        console.log(error);
-        toast.error("Couldn't retract request. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-
-      if (variables.event === "reject-request") {
-        if (setFriendRequestsReceived && friendRequestsReceived && variables.sender._id) {
-          setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
-        }
-
-        toast.error("Could not reject friend request. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-    },
-  });
-
-  const retractReceivedFriendRequestMutation = useMutation({
-    mutationFn: ({
-      sender,
-      recipient,
-      event,
-    }: {
-      sender: TUser;
-      recipient: TUser;
-      event: "accept-request" | "retract-request" | "reject-request";
-    }) => {
-      // Yes, this is stupid logic, but 'event' has to be used to avoid a TS error
-      return event
-        ? Requests.removeFromFriendRequestsReceived(sender, recipient)
-        : Requests.removeFromFriendRequestsReceived(sender, recipient);
-    },
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        if (variables.event === "accept-request") {
-          toast.success(
-            `You are now friends with ${variables.sender.firstName} ${variables.sender.lastName}!`,
-            {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid green",
-              },
+  const getOtherUserFriends = (otherUserID: string): TUser[] => {
+    /*
+    First, get TUser object (so that friends list can be accessed) by using getUserByID w/ param otherUserID. Then, loop thru each of otherUser friends, getting access to their friends lists by using getUserByID request w/ otherUser friend's _id. Then, push each of their friends to otherUserFriends, & return this at end of function.
+    */
+    let otherUserFriends: TUser[] = [];
+    Requests.getUserByID(otherUserID)
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((otherUser) => {
+            for (const otherUserFriendID of otherUser.friends) {
+              Requests.getUserByID(otherUserFriendID)
+                .then((response) => {
+                  if (response.ok) {
+                    response.json().then((otherUserFriend) => {
+                      otherUserFriends.push(otherUserFriend);
+                    });
+                  } else {
+                    setError("Error getting other user's friends (TUser[])");
+                  }
+                })
+                .catch((error) => console.log(error));
             }
-          );
-        }
-
-        if (variables.event === "retract-request") {
-          toast("Friend request retracted", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
           });
+        } else {
+          setError("Error getting other user's friends (TUser[])");
         }
+      })
+      .catch((error) => console.log(error));
+    return otherUserFriends;
+  };
 
-        if (variables.event === "reject-request") {
-          toast(
-            `Rejected friend request from ${variables.sender.firstName} ${variables.sender.lastName}.`,
-            {
+  const handleUpdateProfileImageFail = (): void => {
+    toast.error(
+      "Could not update profile image. Please make sure the image is 50MB or less & try again.",
+      {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      }
+    );
+  };
+
+  const handleReceiveFriendRequestFail = (sender: TUser, recipient: TUserSecure) => {
+    if (recipient._id && friendRequestsSent) {
+      // If FR was sent, but recipient didn't receive it (request failed), delete sent FR from sender:
+      Requests.removeFromFriendRequestsSent(sender, recipient)
+        .then((res) => {
+          if (!res.ok) {
+            toast.error("Couldn't send request. Please try again.", {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
                 color: theme === "dark" ? "black" : "white",
                 border: "2px solid red",
               },
-            }
-          );
-        }
-      }
-      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-      if (fetchAllUsersQuery.data && currentUser) {
-        allUsers = fetchAllUsersQuery.data;
-        setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-      }
-    },
-    onError: (error, variables) => {
-      console.log(error);
-      if (variables.event === "accept-request") {
-        // Remove sender & receiver from each other's 'friends' array, add back to 'received' array:
-        Promise.all([
-          Requests.deleteFriendFromFriendsArray(variables.sender, variables.recipient),
-          Requests.deleteFriendFromFriendsArray(variables.recipient, variables.sender),
-          Requests.addToFriendRequestsReceived(variables.sender, variables.recipient),
-        ]).catch((error) => console.log(error));
-
-        toast.error("Could not accept friend request. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-
-        // Revert surface-level state values (remove sender from 'friends', add sender back to friendRequestsReceived):
-        if (friends) {
-          setFriends(friends.filter((friend) => friend !== variables.sender._id));
-        }
-
-        if (friendRequestsReceived && variables.sender._id) {
-          setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
-        }
-      }
-
-      if (variables.event === "retract-request") {
-        const recipient = variables.recipient;
-        // Optimistic rendering: add recipient back to friendRequestsSent if request fails
-        if (setFriendRequestsSent && friendRequestsSent && recipient._id) {
-          setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
-        }
-        toast.error("Could not retract request. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-
-      if (variables.event === "reject-request") {
-        toast.error("Could not reject friend request. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-
-        if (setFriendRequestsReceived && friendRequestsReceived && variables.sender._id) {
-          setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
-        }
-      }
-    },
-    onSettled: () => setIsLoading(false),
-  });
-
-  const addToSenderFriendsMutation = useMutation({
-    mutationFn: ({ sender, receiver }: { sender: TUser; receiver: TUser }) =>
-      Requests.addFriendToFriendsArray(sender, receiver),
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        const receiver = variables.receiver;
-        const sender = variables.sender;
-        addToReceiverFriendsMutation.mutate({ receiver, sender });
-      }
-    },
-    onError: (error, variables) => {
-      console.log(error);
-      toast.error("Could not accept friend request. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-
-      // Revert surface-level states (remove sender from friends, add sender back to friendRequestsReceived):
-      if (friends) {
-        setFriends(friends.filter((friend) => friend !== variables.sender._id));
-      }
-
-      if (friendRequestsReceived && variables.sender._id) {
-        setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
-      }
-    },
-  });
-
-  const addToReceiverFriendsMutation = useMutation({
-    mutationFn: ({ receiver, sender }: { receiver: TUser; sender: TUser }) =>
-      Requests.addFriendToFriendsArray(receiver, sender),
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: "allUsers" }).then(() => {
-        if (allUsers && currentUser) {
-          setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-        }
-      });
-      if (data.ok) {
-        const recipient = variables.receiver;
-        const sender = variables.sender;
-        const event = "accept-request";
-        retractSentFriendRequestMutation.mutate({
-          sender,
-          recipient,
-          event,
-        });
-      }
-    },
-    onError: (error, variables) => {
-      // Make request to delete receiver from sender's friends array:
-      const deleteFromUserFriends = () =>
-        Requests.deleteFriendFromFriendsArray(variables.sender, variables.receiver).catch(
-          (error) => {
-            console.log(error);
-            deleteFromUserFriends();
+            });
           }
-        );
-
-      console.log(error);
-      toast.error("Could not accept friend request. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-
-      // Revert surface-level states (remove sender from friends, add sender back to friendRequestsReceived):
-      if (friends) {
-        setFriends(friends.filter((friend) => friend !== variables.sender._id));
-      }
-
-      if (friendRequestsReceived && variables.sender._id) {
-        setFriendRequestsReceived(friendRequestsReceived.concat(variables.sender._id));
-      }
-    },
-  });
-
-  const blockUserMutation = useMutation({
-    mutationFn: ({
-      blocker,
-      blockee,
-      areFriends,
-      hasSentFriendRequest,
-      hasReceivedFriendRequest,
-    }: {
-      blocker: TUser;
-      blockee: TUser;
-      areFriends: boolean;
-      hasSentFriendRequest: boolean;
-      hasReceivedFriendRequest: boolean;
-    }) => {
-      if (
-        areFriends !== undefined &&
-        hasSentFriendRequest !== undefined &&
-        hasReceivedFriendRequest !== undefined
-      ) {
-        return Requests.addToBlockedUsers(blocker, blockee?._id);
-      }
-      return Requests.addToBlockedUsers(blocker, blockee?._id);
-    },
-    onSuccess: (data, variables) => {
-      if (data.ok) {
-        if (variables.areFriends) {
-          handleUnfriending(variables.blocker, variables.blockee);
-        }
-        if (variables.hasSentFriendRequest) {
-          handleRetractFriendRequest(variables.blocker, variables.blockee);
-        }
-        if (variables.hasReceivedFriendRequest) {
-          handleRetractFriendRequest(variables.blockee, variables.blocker);
-        }
-
-        queryClient.invalidateQueries({ queryKey: "allUsers" });
-        if (allUsers && currentUser) {
-          setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-        }
-
-        toast(`You have blocked ${variables.blockee.username}.`, {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-    },
-    onError: (error, variables) => {
-      if (blockedUsers && setBlockedUsers) {
-        setBlockedUsers(
-          blockedUsers.filter((userID) => userID !== variables.blockee._id)
-        );
-      }
-      console.log(error);
-      toast.error(`Unable to block ${variables.blockee.username}. Please try again.`, {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
-    onSettled: () => setIsLoading(false),
-  });
-
-  useEffect(() => {
-    if (fetchAllUsersQuery.data && currentUser) {
-      const updatedUser = fetchAllUsersQuery.data.filter(
-        (user) => user._id === currentUser._id
-      )[0];
-      setCurrentUser(updatedUser);
-      setFriendRequestsSent(updatedUser?.friendRequestsSent);
-      setFriendRequestsReceived(updatedUser?.friendRequestsReceived);
-      setFriends(updatedUser?.friends);
+        })
+        .catch((error) => console.log(error));
     }
-  }, [currentUser?._id, fetchAllUsersQuery.data]);
+  };
+
+  const handleRemoveFriendRequestFail = (
+    sender: TUserSecure | TBarebonesUser,
+    recipientID: string | undefined,
+    event?: "accept-request" | "retract-request" | "reject-request"
+  ) => {
+    if (recipientID) {
+      Requests.getUserByID(recipientID)
+        .then((res) =>
+          res.json().then((recipient) => {
+            if (sender._id) {
+              Requests.getUserByID(sender._id.toString())
+                .then((res) => {
+                  if (res.ok) {
+                    res.json().then((sender: TUser) => {
+                      if (event === "accept-request") {
+                        // Remove sender & receiver from each other's 'friends' array, add sender back to receivers FR-received array:
+                        Promise.all([
+                          Requests.deleteFriendFromFriendsArray(sender, recipient),
+                          Requests.deleteFriendFromFriendsArray(recipient, sender),
+                          Requests.addToFriendRequestsSent(sender, recipient),
+                          Requests.addToFriendRequestsReceived(sender, recipient),
+                        ])
+                          .then((res) => {
+                            if (res.some((promiseResult) => !promiseResult.ok)) {
+                              handleRemoveFriendRequestFail(
+                                sender,
+                                recipient._id.toString(),
+                                event
+                              );
+                            }
+                          })
+                          .catch((error) => console.log(error));
+
+                        toast.error(
+                          "Could not accept friend request. Please try again.",
+                          {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid red",
+                            },
+                          }
+                        );
+                      } else {
+                        Promise.all([
+                          Requests.addToFriendRequestsSent(sender, recipient),
+                          Requests.addToFriendRequestsReceived(sender, recipient),
+                        ])
+                          .then((res) => {
+                            if (res.some((promiseResult) => !promiseResult.ok)) {
+                              handleRemoveFriendRequestFail(
+                                sender,
+                                recipient._id.toString(),
+                                event
+                              );
+                            }
+                          })
+                          .catch((error) => console.log(error));
+
+                        if (event === "retract-request") {
+                          toast.error("Couldn't retract request. Please try again.", {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid red",
+                            },
+                          });
+                        }
+
+                        if (event === "reject-request") {
+                          toast.error(
+                            "Could not reject friend request. Please try again.",
+                            {
+                              style: {
+                                background:
+                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                                color: theme === "dark" ? "black" : "white",
+                                border: "2px solid red",
+                              },
+                            }
+                          );
+                        }
+                      }
+                    });
+                  } else {
+                    handleRemoveFriendRequestFail(sender, recipientID, event);
+                  }
+                })
+                .catch((error) => console.log(error));
+            }
+          })
+        )
+        .catch((error) => console.log(error));
+    }
+  };
+
+  const resetFriendsAfterFailedAcceptedFriendRequest = (
+    userOne: TUser,
+    userTwo: TUser
+  ): void => {
+    if (userTwo._id && userOne.friends.includes(userTwo._id.toString())) {
+      Requests.deleteFriendFromFriendsArray(userOne, userTwo)
+        .then((res) => {
+          if (!res.ok) {
+            resetFriendsAfterFailedAcceptedFriendRequest(userOne, userTwo);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+
+    if (userOne._id && userTwo.friends.includes(userOne._id.toString())) {
+      Requests.deleteFriendFromFriendsArray(userTwo, userOne)
+        .then((res) => {
+          if (!res.ok) {
+            resetFriendsAfterFailedAcceptedFriendRequest(userTwo, userOne);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+  };
+
+  const resetFriendRequestsAfterFailedAcceptedFriendRequest = (
+    sender: TUser,
+    recipient: TUser
+  ): void => {
+    if (recipient._id && !sender.friendRequestsSent.includes(recipient._id.toString())) {
+      Requests.addToFriendRequestsSent(sender, recipient._id.toString())
+        .then((res) => {
+          if (!res.ok) {
+            resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, recipient);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+
+    if (sender._id && !recipient.friendRequestsReceived.includes(sender._id.toString())) {
+      Requests.addToFriendRequestsReceived(sender, recipient)
+        .then((res) => {
+          if (!res.ok) {
+            resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, recipient);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+  };
+
+  const handleAddToFriendsFail = (receiver: TUser, sender: TUser): void => {
+    toast.error("Could not accept friend request. Please try again.", {
+      style: {
+        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+        color: theme === "dark" ? "black" : "white",
+        border: "2px solid red",
+      },
+    });
+
+    resetFriendsAfterFailedAcceptedFriendRequest(sender, receiver);
+
+    resetFriendRequestsAfterFailedAcceptedFriendRequest(sender, receiver);
+  };
 
   // Called when user switches b/t login & signup forms & when user logs out
   // Only necessary to reset errors for fields on login and/or signup form
@@ -831,11 +640,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const toggleSignupLogin = (): void => {
+    signupIsSelected ? navigation("/login") : navigation("/signup");
     setSignupIsSelected(!signupIsSelected);
     resetLoginOrSignupFormFieldsAndErrors();
   };
 
-  const toggleHidePassword = (): void => setPasswordIsHidden(!passwordIsHidden);
+  const toggleHidePassword = (type: "password" | "confirmation-password"): void => {
+    if (type === "password") {
+      setPasswordIsHidden(!passwordIsHidden);
+    } else {
+      setConfirmationPasswordIsHidden(!confirmationPasswordIsHidden);
+    }
+  };
 
   // Defined here, not in SignupForm, as it's used in some handlers that are used in multiple components
   const areNoSignupFormErrors: boolean =
@@ -853,32 +669,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     isFirstName: boolean,
     formType: "signup" | "edit-user-info"
   ) => {
-    isFirstName
-      ? setFirstName(Methods.nameNoSpecialChars(name))
-      : setLastName(Methods.nameNoSpecialChars(name));
+    const nameNoSpecialCharsCleaned = Methods.nameNoSpecialChars(name).replace(
+      /\s+/g,
+      " "
+    );
 
-    if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
-      setCurrentUser(userData);
-    } else if (
-      !allSignupFormFieldsFilled &&
-      !areNoSignupFormErrors &&
-      formType === "signup"
-    ) {
-      setCurrentUser(null);
-    }
+    isFirstName
+      ? setFirstName(nameNoSpecialCharsCleaned)
+      : setLastName(nameNoSpecialCharsCleaned);
 
     if (formType === "signup") {
       if (name.trim() === "") {
         isFirstName
           ? setFirstNameError("Please fill out this field")
           : setLastNameError("Please fill out this field");
-      } /* else if (!nameIsValid(name.trim())) {
-        isFirstName
-          ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
-          : setLastNameError("Only alphabetical characters & appropriate punctuation");
-      } else if (nameIsValid(name.trim())) {
-        isFirstName ? setFirstNameError("") : setLastNameError("");
-      } */ else {
+      } else {
         isFirstName ? setFirstNameError("") : setLastNameError("");
       }
     } else {
@@ -886,11 +691,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         isFirstName
           ? setFirstNameError("Please fill out this field")
           : setLastNameError("Please fill out this field");
-      } /* else if (!nameIsValid(name.trim()) && name.trim() !== "") {
-        isFirstName
-          ? setFirstNameError("Only alphabetical characters & appropriate punctuation")
-          : setLastNameError("Only alphabetical characters & appropriate punctuation");
-      } */ else {
+      } else {
         isFirstName ? setFirstNameError("") : setLastNameError("");
       }
     }
@@ -904,27 +705,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       setUsername(inputUsername);
     }
 
-    if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
-      setCurrentUser(userData);
-    } else if (
-      !allSignupFormFieldsFilled &&
-      !areNoSignupFormErrors &&
-      formType === "signup"
-    ) {
-      setCurrentUser(null);
-    }
-
-    /* Get most-current version of allUsers (in case another user has changed their username, so username user inputs may become available or in available. Fetching allUsers onChange of username field ensures most-current data on users exists. This is also checked onSubmit of EditUserInfoForm.) */
-    //fetchAllUsers();
-
-    const usernameIsTaken: boolean | null = allUsers
-      ? allUsers.filter((user) => user.username === inputUsername).length > 0
-      : null;
-
     if (formType === "signup") {
-      if (usernameIsTaken) {
-        setUsernameError("Username is already taken");
-      } else if (!inputUsername.length) {
+      if (!inputUsername.length) {
         setUsernameError("Please fill out this field");
       } else if (inputUsername.length < 4) {
         setUsernameError(
@@ -934,9 +716,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         setUsernameError("");
       }
     } else {
-      if (usernameIsTaken && inputUsername !== currentUser?.username) {
-        setUsernameError("Username is already taken");
-      } else if (inputUsername.length < 4) {
+      if (inputUsername.length < 4) {
         setUsernameError(
           "Username must be 4-20 characters long & may only contain alphanumeric characters"
         );
@@ -958,29 +738,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     setEmailAddress(inputEmailAddressNoWhitespaces.toLowerCase());
 
-    if (allSignupFormFieldsFilled && areNoSignupFormErrors && formType === "signup") {
-      setCurrentUser(userData);
-    } else if (
-      !allSignupFormFieldsFilled &&
-      !areNoSignupFormErrors &&
-      formType === "signup"
-    ) {
-      setCurrentUser(null);
-    }
-
-    /* Get most-current version of allUsers (in case another user has changed their email, so email user inputs may become available or in available. Fetching allUsers onChange of email field ensures most-current data on users exists. This is also checked onSubmit of EditUserInfoForm.) */
-    //fetchAllUsers();
-
-    const emailIsTaken: boolean | null = allUsers
-      ? allUsers.filter(
-          (user) => user.emailAddress === inputEmailAddressNoWhitespaces.toLowerCase()
-        ).length > 0
-      : null;
-
     if (formType === "signup") {
-      if (emailIsTaken) {
-        setEmailError("E-mail address is taken");
-      } else if (!inputEmailAddressNoWhitespaces.length) {
+      if (!inputEmailAddressNoWhitespaces.length) {
         setEmailError("Please fill out this field");
       } else if (
         !emailIsValid(inputEmailAddressNoWhitespaces.toLowerCase()) &&
@@ -993,11 +752,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     } else {
       if (inputEmailAddressNoWhitespaces === "") {
         setEmailError("Please fill out this field");
-      } else if (
-        emailIsTaken &&
-        inputEmailAddressNoWhitespaces.toLowerCase() !== currentUser?.emailAddress
-      ) {
-        setEmailError("E-mail address is taken");
       } else if (
         !emailIsValid(inputEmailAddressNoWhitespaces.toLowerCase()) &&
         inputEmailAddressNoWhitespaces !== ""
@@ -1020,41 +774,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     // Handle input pw on login form:
     if (formType === "login") {
-      // Get current user (if username/email has been entered) so that its password can be compared to input pw:
-      const currentUser: TUser | null =
-        loginMethod === "username"
-          ? allUsers
-            ? allUsers.filter((user) => user.username === username)[0]
-            : null
-          : allUsers
-          ? allUsers.filter((user) => user.emailAddress === emailAddress)[0]
-          : null;
-
       // If currentUser exists & there is non-whitespace input in password field:
-      if (currentUser) {
-        // If input pw is empty string...
-        if (inputPWNoWhitespaces === "") {
-          setPasswordError("Please fill out this field");
-          // If input pw isn't empty string & is unequal to current user's pw, and input pw isn't empty string...
-        } else if (
-          currentUser.password !== inputPWNoWhitespaces &&
-          inputPWNoWhitespaces !== ""
-        ) {
-          setPasswordError("Password doesn't match user");
-          // If input pw simply isn't valid...
-        } else if (!passwordIsValid(inputPWNoWhitespaces)) {
-          setPasswordError("Invalid password");
-          // If no error conditions are true, remove error message...
-        } else {
-          setPasswordError("");
-        }
-      }
-
-      // If user enters password w/o first having input username or email (can only check for validity)...
-      if (!currentUser) {
-        !passwordIsValid(inputPWNoWhitespaces)
-          ? setPasswordError("Invalid password")
-          : setPasswordError("");
+      // If input pw is empty string...
+      if (inputPWNoWhitespaces === "") {
+        setPasswordError("Please fill out this field");
+        // If input pw isn't empty string & is unequal to current user's pw, and input pw isn't empty string...
+      } else if (!passwordIsValid(inputPWNoWhitespaces)) {
+        setPasswordError("Invalid password");
+        // If no error conditions are true, remove error message...
+      } else {
+        setPasswordError("");
       }
       // Handle input pw on edit-user-info form:
     } else if (formType === "edit-user-info") {
@@ -1093,10 +822,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       }
       // If used on signup form:
     } else if (formType === "signup") {
-      allSignupFormFieldsFilled && areNoSignupFormErrors
-        ? setCurrentUser(userData)
-        : setCurrentUser(null);
-
       if (inputPWNoWhitespaces !== "") {
         // If pw isn't/is valid...
         if (!passwordIsValid(inputPWNoWhitespaces)) {
@@ -1136,21 +861,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
     /* Condition to set currentUser should be all other errors === "" && allSignupFormFieldsFilled && (confirmationPasswordError === "Passwords don't match" | confirmationPasswordError === ""), b/c, in this handler, setting of this error state value lags. */
     if (formType === "signup") {
-      if (
-        allSignupFormFieldsFilled &&
-        firstNameError === "" &&
-        lastNameError === "" &&
-        usernameError === "" &&
-        emailError === "" &&
-        passwordError === "" &&
-        (confirmationPasswordError === "Passwords don't match" ||
-          confirmationPasswordError === "")
-      ) {
-        setCurrentUser(userData);
-      } else {
-        setCurrentUser(null);
-      }
-
       if (inputConfirmationPWNoWhitespaces !== password && password !== "") {
         if (inputConfirmationPWNoWhitespaces !== "") {
           setConfirmationPasswordError("Passwords don't match");
@@ -1164,28 +874,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // This method is used on login form, where user can input either their username or email to log in
-  const handleUsernameOrEmailInput = (input: string): void => {
+  const handleUsernameOrEmailInput = async (input: string) => {
     const inputNoWhitespaces = input.replace(/\s/g, "");
-    //fetchAllUsers();
-
-    const usernameExists: boolean | null =
-      allUsers && !fetchAllUsersQuery.isLoading
-        ? allUsers.map((user) => user.username).includes(inputNoWhitespaces)
-        : null;
-
-    const emailExists: boolean | null =
-      allUsers && !fetchAllUsersQuery.isLoading
-        ? allUsers
-            .map((user) => user.emailAddress)
-            .includes(inputNoWhitespaces.toLowerCase())
-        : null;
 
     // If input matches pattern for an email:
     if (emailIsValid(inputNoWhitespaces.toLowerCase())) {
-      const currentUser = allUsers
-        ? allUsers.filter((user) => user.emailAddress === inputNoWhitespaces)[0]
-        : null;
-      setCurrentUser(currentUser);
       setUsername("");
       setUsernameError("");
       setLoginMethod("email");
@@ -1193,64 +886,43 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         setEmailError("Please fill out this field");
       }
       setEmailAddress(inputNoWhitespaces);
-      // If email address isn't in database & field isn't empty string:
-      if (!emailExists && inputNoWhitespaces !== "") {
-        setEmailError("E-mail address not recognized");
-        if (password === "") {
-          setPasswordError("Please fill out this field");
-        } else if (!passwordIsValid(password)) {
-          setPasswordError("Invalid password");
-        } else {
-          setPasswordError("");
+      // If field isn't empty string:
+      if (inputNoWhitespaces !== "") {
+        if (emailError !== "") {
+          setEmailError("");
         }
-        // If email is recognized...
-      } else {
-        setEmailError("");
         if (password === "") {
           setPasswordError("Please fill out this field");
         } else if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
-          // If currentUser exists, its pw isn't equal to input pw, and password field isn't empty string...
-        } else if (currentUser?.password !== password && password !== "") {
-          setPasswordError("Password doesn't match user");
         } else {
           setPasswordError("");
         }
       }
-      // When user input is not an email address (aka, it's a username):
     } else {
-      const currentUser = allUsers
-        ? allUsers.filter((user) => user.username === input)[0]
-        : null;
-      setCurrentUser(currentUser);
+      // If input doesn't match pattern of an email address (is a username):
       setEmailAddress("");
       setEmailError("");
       setLoginMethod("username");
       setUsername(inputNoWhitespaces);
       if (inputNoWhitespaces === "") {
-        setEmailError("Please fill out this field");
+        setUsernameError("Please fill out this field");
       }
       // If username doesn't exist & its field contains at least 1 character:
-      if (!usernameExists && inputNoWhitespaces !== "") {
-        setUsernameError("Data not recognized");
+      if (inputNoWhitespaces !== "") {
+        if (usernameError !== "") {
+          setUsernameError("");
+        }
+        if (inputNoWhitespaces.length < 4) {
+          setUsernameError("Username must be at least 4 characters long");
+        } else {
+          setUsernameError("");
+        }
         // If pw isn't valid & isn't empty string...
         if (password === "") {
           setPasswordError("Please fill out this field");
         } else if (!passwordIsValid(password)) {
           setPasswordError("Invalid password");
-        } else {
-          setPasswordError("");
-        }
-        // If username is recognized & at least 1 character has been input...
-      } else {
-        setUsernameError("");
-        if (password === "") {
-          setPasswordError("Please fill out this field");
-        } else if (!passwordIsValid(password)) {
-          setPasswordError("Invalid password");
-          // If currentUser exists, its pw isn't equal to input pw, and pw field isn't empty string...
-        } else if (currentUser && currentUser.password !== password && password !== "") {
-          setPasswordError("Password doesn't match user");
         } else {
           setPasswordError("");
         }
@@ -1334,171 +1006,431 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setShowUpdateProfileImageInterface(false);
     const file = e.target.files && e.target.files[0];
     const base64 = file && (await Methods.convertToBase64(file));
-    updateProfileImageMutation.mutate({ currentUser, base64 });
+    setUpdateProfileImageIsLoading(true);
+    Requests.updateUserProfileImage(currentUser, base64)
+      .then((res) => {
+        if (res.ok) {
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id.toString())
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        setCurrentUser(user);
+                        setProfileImage(base64);
+                        toast.success("Profile image updated", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid green",
+                          },
+                        });
+                      } else {
+                        handleUpdateProfileImageFail();
+                      }
+                    })
+                    .catch((error) => console.log(error))
+                    .finally(() => setUpdateProfileImageIsLoading(false));
+                } else {
+                  setUpdateProfileImageIsLoading(false);
+                  handleUpdateProfileImageFail();
+                }
+              })
+              .catch((error) => console.log(error));
+          }
+        } else {
+          setUpdateProfileImageIsLoading(false);
+          handleUpdateProfileImageFail();
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   const removeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setShowUpdateProfileImageInterface(false);
-    const placeholder = "";
-    removeProfileImageMutation.mutate({ currentUser, placeholder });
+    setRemoveProfileImageIsLoading(true);
+    Requests.updateUserProfileImage(currentUser, "")
+      .then((res) => {
+        if (res.ok) {
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id.toString())
+              .then((res) => {
+                if (res.ok) {
+                  res.json().then((user) => {
+                    setCurrentUser(user);
+                    setProfileImage("");
+                    toast("Profile image removed", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    });
+                  });
+                } else {
+                  toast.error("Could not remove profile image. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                }
+              })
+              .catch((error) => console.log(error))
+              .finally(() => setRemoveProfileImageIsLoading(false));
+          }
+        } else {
+          setRemoveProfileImageIsLoading(false);
+          toast.error("Could not remove profile image. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   const handleSendFriendRequest = (
-    sender: TUser | undefined,
-    recipient: TUser,
-    friendRequestsSent?: string[],
-    setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    recipient: TUserSecure | TUser | undefined,
+    shouldOptimisticRender?: boolean
   ): void => {
-    if (friendRequestsSent && setFriendRequestsSent && recipient._id) {
-      setFriendRequestsSent(friendRequestsSent.concat(recipient._id));
-    }
-
-    if (sender) {
+    if (currentUser && recipient && recipient._id) {
+      if (shouldOptimisticRender && friendRequestsSent && recipient && recipient._id) {
+        setFriendRequestsSent(
+          friendRequestsSent.concat(Methods.getTBarebonesUser(recipient))
+        );
+      }
       setIsLoading(true);
-      sendFriendRequestMutation.mutate({ sender, recipient });
+
+      Requests.getUserByID(recipient._id.toString()).then((res) => {
+        if (res.ok) {
+          res.json().then((rec: TUser) => {
+            if (recipient._id) {
+              Promise.all([
+                Requests.addToFriendRequestsSent(currentUser, recipient._id.toString()),
+                Requests.addToFriendRequestsReceived(currentUser, rec),
+              ]).then((resArray: Response[]) => {
+                if (resArray.every((res) => res.ok) && currentUser._id) {
+                  Requests.getUserByID(currentUser._id.toString()).then((res) => {
+                    if (res.ok) {
+                      res
+                        .json()
+                        .then((cu: TUser) => {
+                          setCurrentUser(cu);
+                          toast.success("Friend request sent!", {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid green",
+                            },
+                          });
+                        })
+                        .catch((error) => console.log(error))
+                        .finally(() => setIsLoading(false));
+                    } else {
+                      if (shouldOptimisticRender && friendRequestsSent) {
+                        friendRequestsSent.filter(
+                          (fr) => fr !== Methods.getTBarebonesUser(recipient)
+                        );
+                      }
+                      handleReceiveFriendRequestFail(currentUser, recipient);
+                    }
+                  });
+                } else {
+                  if (shouldOptimisticRender && friendRequestsSent) {
+                    friendRequestsSent.filter(
+                      (fr) => fr !== Methods.getTBarebonesUser(recipient)
+                    );
+                  }
+                  setIsLoading(false);
+                  handleReceiveFriendRequestFail(currentUser, recipient);
+                }
+              });
+            }
+          });
+        } else {
+          if (shouldOptimisticRender && friendRequestsSent) {
+            friendRequestsSent.filter(
+              (fr) => fr !== Methods.getTBarebonesUser(recipient)
+            );
+          }
+          setIsLoading(false);
+          toast.error("Couldn't send request. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+      });
+    } else {
+      toast.error("Couldn't send request. Please try again.", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
     }
   };
 
   const handleRetractFriendRequest = (
-    sender: TUser,
-    recipient: TUser,
-    friendRequestsSent?: string[],
-    setFriendRequestsSent?: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    recipient: TUserSecure | TUser,
+    sender: TUserSecure | TUser
   ): void => {
     setIsLoading(true);
 
-    if (setFriendRequestsSent && friendRequestsSent) {
-      setFriendRequestsSent(
-        friendRequestsSent.filter((userID) => userID !== recipient._id)
-      );
-    }
+    if (currentUser && recipient && recipient._id) {
+      Requests.getUserByID(recipient._id.toString())
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((rec: TUser) => {
+              Promise.all([
+                Requests.removeFromFriendRequestsSent(currentUser, recipient),
+                Requests.removeFromFriendRequestsReceived(sender, rec),
+              ]).then((resArray: Response[]) => {
+                if (resArray.every((res) => res.ok) && currentUser && currentUser._id) {
+                  Requests.getUserByID(currentUser._id.toString())
+                    .then((res) => {
+                      if (res.ok) {
+                        res.json().then((user) => {
+                          if (user) {
+                            setCurrentUser(user);
 
-    const event = "retract-request";
-    retractSentFriendRequestMutation.mutate({ sender, recipient, event });
+                            toast("Friend request retracted", {
+                              style: {
+                                background:
+                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                                color: theme === "dark" ? "black" : "white",
+                                border: "2px solid red",
+                              },
+                            });
+                          } else {
+                            handleRemoveFriendRequestFail(
+                              sender,
+                              recipient._id?.toString(),
+                              "retract-request"
+                            );
+                          }
+                        });
+                      } else {
+                        handleRemoveFriendRequestFail(
+                          sender,
+                          recipient._id?.toString(),
+                          "retract-request"
+                        );
+                      }
+                    })
+                    .catch((error) => console.log(error))
+                    .finally(() => setIsLoading(false));
+                } else {
+                  setIsLoading(false);
+                  handleRemoveFriendRequestFail(
+                    sender,
+                    recipient._id?.toString(),
+                    "retract-request"
+                  );
+                }
+              });
+            });
+          } else {
+            setIsLoading(false);
+            handleRemoveFriendRequestFail(
+              sender,
+              recipient._id?.toString(),
+              "retract-request"
+            );
+          }
+        })
+        .catch((error) => console.log(error));
+    }
   };
 
   const handleAcceptFriendRequest = (
-    sender: TUser,
-    receiver: TUser,
-    friendRequestsReceived?: string[],
-    setFriendRequestsReceived?: React.Dispatch<
-      React.SetStateAction<string[] | undefined>
-    >,
-    friends?: string[],
-    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>,
+    sender: TUserSecure,
+    receiver: TUserSecure,
+    optimisticRender: boolean,
     e?: React.ChangeEvent<HTMLInputElement>
   ): void => {
     e?.preventDefault();
     setIsLoading(true);
 
-    if (showFriendRequestResponseOptions) {
-      setShowFriendRequestResponseOptions(false);
-    }
-
-    if (friends && setFriends && sender._id) {
-      setFriends(friends.concat(sender._id));
-    }
-
-    if (friendRequestsReceived && setFriendRequestsReceived) {
+    if (optimisticRender && friendRequestsReceived) {
       setFriendRequestsReceived(
-        friendRequestsReceived.filter((userID) => userID !== sender._id)
-      );
-    }
-
-    addToSenderFriendsMutation.mutate({ sender, receiver });
-  };
-
-  const handleRejectFriendRequest = (
-    sender: TUser,
-    receiver: TUser,
-    friendRequestsReceived?: string[],
-    setFriendRequestsReceived?: React.Dispatch<
-      React.SetStateAction<string[] | undefined>
-    >,
-    e?: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    e?.preventDefault();
-
-    setIsLoading(true);
-
-    if (showFriendRequestResponseOptions) {
-      setShowFriendRequestResponseOptions(false);
-    }
-
-    if (setFriendRequestsReceived && friendRequestsReceived) {
-      setFriendRequestsReceived(
-        friendRequestsReceived.filter((userID) => userID !== sender._id)
-      );
-    }
-
-    const event = "reject-request";
-    const recipient = receiver;
-    retractSentFriendRequestMutation.mutate({ sender, recipient, event });
-  };
-
-  const handleUnfriending = (
-    user: TUser,
-    friend: TUser,
-    friends?: string[],
-    setFriends?: React.Dispatch<React.SetStateAction<string[] | undefined>>
-  ): void => {
-    if (friends && setFriends) {
-      setFriends(friends.filter((userID) => userID !== friend._id));
-    }
-
-    const removeUserFromFriendsFriendsArray = friend
-      ? Requests.deleteFriendFromFriendsArray(user, friend)
-      : undefined;
-
-    const removeFriendFromUserFriendsArray = user
-      ? Requests.deleteFriendFromFriendsArray(friend, user)
-      : undefined;
-
-    const promisesToAwait =
-      removeUserFromFriendsFriendsArray && removeFriendFromUserFriendsArray
-        ? [removeUserFromFriendsFriendsArray, removeFriendFromUserFriendsArray]
-        : undefined;
-
-    let allRequestsAreOK = true;
-
-    if (promisesToAwait) {
-      setIsLoading(true);
-      Promise.all(promisesToAwait)
-        .then(() => {
-          for (const promise of promisesToAwait) {
-            promise.then((response) => {
-              if (!response.ok) {
-                allRequestsAreOK = false;
-                if (friends && setFriends) {
-                  setFriends(friends);
-                }
-              }
-            });
+        friendRequestsReceived.filter((r) => {
+          if (r._id && sender._id) {
+            return r._id.toString() !== sender._id.toString();
           }
         })
-        .then(() => {
-          if (!allRequestsAreOK) {
-            toast.error(
-              `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`,
-              {
-                style: {
-                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                  color: theme === "dark" ? "black" : "white",
-                  border: "2px solid red",
-                },
+      );
+    }
+
+    // Also put in handleRejectFR
+    if (showFriendRequestResponseOptions) {
+      setShowFriendRequestResponseOptions(false);
+    }
+
+    if (sender._id) {
+      Requests.getUserByID(sender._id.toString())
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((sender) => {
+              if (receiver._id) {
+                Requests.getUserByID(receiver._id.toString())
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((receiver) => {
+                        Promise.all([
+                          Requests.addFriendToFriendsArray(receiver, sender),
+                          Requests.addFriendToFriendsArray(sender, receiver),
+                          Requests.removeFromFriendRequestsReceived(sender, receiver),
+                          Requests.removeFromFriendRequestsSent(sender, receiver),
+                        ])
+                          .then((resArray) => {
+                            if (resArray.some((res) => !res.ok)) {
+                              if (optimisticRender && friendRequestsReceived) {
+                                setFriendRequestsReceived(
+                                  friendRequestsReceived.concat(
+                                    Methods.getTBarebonesUser(sender)
+                                  )
+                                );
+                              }
+                              handleRemoveFriendRequestFail(
+                                sender,
+                                receiver._id.toString(),
+                                "accept-request"
+                              );
+                            } else {
+                              if (currentUser && currentUser._id) {
+                                Requests.getUserByID(currentUser._id.toString())
+                                  .then((res) => {
+                                    if (res.ok) {
+                                      res
+                                        .json()
+                                        .then((user: TUser) => {
+                                          if (user) {
+                                            setCurrentUser(user);
+                                            toast.success(
+                                              `You are now friends with ${sender.firstName} ${sender.lastName}!`,
+                                              {
+                                                style: {
+                                                  background:
+                                                    theme === "light"
+                                                      ? "#242424"
+                                                      : "rgb(233, 231, 228)",
+                                                  color:
+                                                    theme === "dark" ? "black" : "white",
+                                                  border: "2px solid green",
+                                                },
+                                              }
+                                            );
+                                          } else {
+                                            handleRemoveFriendRequestFail(
+                                              sender,
+                                              receiver?._id?.toString(),
+                                              "accept-request"
+                                            );
+                                          }
+                                        })
+                                        .catch((error) => console.log(error));
+                                    } else {
+                                      handleRemoveFriendRequestFail(
+                                        sender,
+                                        receiver?._id?.toString(),
+                                        "accept-request"
+                                      );
+                                    }
+                                  })
+                                  .catch((error) => console.log(error));
+                              }
+                            }
+                          })
+                          .catch((error) => console.log(error));
+                        Requests.addFriendToFriendsArray(receiver, sender)
+                          .then((res) => {
+                            if (res.ok) {
+                              // Remove FR from sender's sent FRs:
+                              Requests.removeFromFriendRequestsSent(sender, receiver)
+                                .then((res) => {
+                                  if (res.ok) {
+                                    if (receiver._id) {
+                                      if (currentUser && currentUser._id) {
+                                        // Fetch updated version of currentUser, set if successful:
+                                      }
+                                    }
+                                  } else {
+                                    handleRemoveFriendRequestFail(
+                                      sender,
+                                      receiver._id?.toString(),
+                                      "accept-request"
+                                    );
+                                  }
+                                })
+                                .catch((error) => console.log(error))
+                                .finally(() => setIsLoading(false));
+
+                              if (currentUser && currentUser._id) {
+                                Requests.getUserByID(currentUser._id.toString())
+                                  .then((res) => {
+                                    if (res.ok) {
+                                      res
+                                        .json()
+                                        .then((user) => {
+                                          if (user) {
+                                            setCurrentUser(user);
+                                          } else {
+                                            handleAddToFriendsFail(receiver, sender);
+                                          }
+                                        })
+                                        .catch((error) => console.log(error));
+                                    } else {
+                                      handleAddToFriendsFail(receiver, sender);
+                                    }
+                                  })
+                                  .catch((error) => console.log(error));
+                              }
+                            } else {
+                              handleAddToFriendsFail(receiver, sender);
+                            }
+                          })
+                          .catch((error) => console.log(error));
+                      });
+                    } else {
+                      if (optimisticRender && friendRequestsReceived) {
+                        setFriendRequestsReceived(
+                          friendRequestsReceived.concat(Methods.getTBarebonesUser(sender))
+                        );
+                      }
+                      toast.error("Could not accept friend request. Please try again.", {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid red",
+                        },
+                      });
+                    }
+                  })
+                  .catch((error) => console.log(error));
               }
-            );
-            if (friends && setFriends) {
-              setFriends(friends);
-            }
+            });
           } else {
-            queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-            if (fetchAllUsersQuery.data && currentUser) {
-              allUsers = fetchAllUsersQuery.data;
-              setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+            if (optimisticRender && friendRequestsReceived) {
+              setFriendRequestsReceived(
+                friendRequestsReceived.concat(Methods.getTBarebonesUser(sender))
+              );
             }
-            toast(`You have unfriended ${friend.firstName} ${friend.lastName}.`, {
+            toast.error("Could not accept friend request. Please try again.", {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
                 color: theme === "dark" ? "black" : "white",
@@ -1507,89 +1439,405 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             });
           }
         })
-        .catch((error) => console.log(error))
-        .finally(() => setIsLoading(false));
+        .catch((error) => console.log(error));
     }
   };
 
-  // Defined here, since used in DropdownChecklist & EventForm
-
-  // maybe pass in a TUser[] & its setter in order to optimistically render UserCards on FindPalz/MyPalz, FriendRequests
-  const addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists = (
-    blocker: TUser,
-    blockee: TUser,
-    blockedUsers?: string[] | undefined,
-    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
+  // Could pass value to render FR received optimistically
+  const handleRejectFriendRequest = (
+    sender: TUserSecure | TBarebonesUser,
+    e?: React.ChangeEvent<HTMLInputElement>
   ): void => {
-    if (blockedUsers && setBlockedUsers && blockee._id) {
-      setBlockedUsers(blockedUsers.concat(blockee._id));
-    }
+    e?.preventDefault();
+
     setIsLoading(true);
-    const areFriends: boolean =
-      blocker._id &&
-      blockee._id &&
-      (blocker.friends.includes(blockee._id) || blockee.friends.includes(blocker._id))
-        ? true
-        : false;
-    const hasSentFriendRequest: boolean = blockee._id
-      ? blocker.friendRequestsSent.includes(blockee._id)
-      : false;
-    const hasReceivedFriendRequest: boolean = blockee._id
-      ? blocker.friendRequestsReceived.includes(blockee._id)
-      : false;
-    blockUserMutation.mutate({
-      blocker,
-      blockee,
-      areFriends,
-      hasSentFriendRequest,
-      hasReceivedFriendRequest,
+
+    if (sender._id) {
+      Requests.getUserByID(sender._id.toString())
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((sender: TUser) => {
+              if (currentUser) {
+                Promise.all([
+                  Requests.removeFromFriendRequestsSent(sender, currentUser),
+                  Requests.removeFromFriendRequestsReceived(sender, currentUser),
+                ])
+                  .then((resArray: Response[]) => {
+                    if (resArray.every((res) => res.ok) && currentUser._id) {
+                      Requests.getUserByID(currentUser._id.toString())
+                        .then((res) => {
+                          if (res.ok) {
+                            res
+                              .json()
+                              .then((user) => {
+                                if (user) {
+                                  setCurrentUser(user);
+
+                                  toast(
+                                    `Rejected friend request from ${sender.firstName} ${sender.lastName}.`,
+                                    {
+                                      style: {
+                                        background:
+                                          theme === "light"
+                                            ? "#242424"
+                                            : "rgb(233, 231, 228)",
+                                        color: theme === "dark" ? "black" : "white",
+                                        border: "2px solid red",
+                                      },
+                                    }
+                                  );
+                                } else {
+                                  handleRemoveFriendRequestFail(
+                                    sender,
+                                    currentUser._id?.toString(),
+                                    "reject-request"
+                                  );
+                                }
+                              })
+                              .catch((error) => console.log(error));
+                          } else {
+                            handleRemoveFriendRequestFail(
+                              sender,
+                              currentUser._id?.toString(),
+                              "reject-request"
+                            );
+                          }
+                        })
+                        .catch((error) => console.log(error))
+                        .finally(() => setIsLoading(false));
+                    } else {
+                      setIsLoading(false);
+                      handleRemoveFriendRequestFail(
+                        sender,
+                        currentUser._id?.toString(),
+                        "reject-request"
+                      );
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              }
+            });
+          } else {
+            setIsLoading(false);
+            handleRemoveFriendRequestFail(
+              sender,
+              currentUser?._id?.toString(),
+              "reject-request"
+            );
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+  };
+
+  const handleUnfriendingFail = (friend: TUserSecure): void => {
+    setIsLoading(false);
+    toast.error(
+      `Couldn't unfriend ${friend.firstName} ${friend.lastName}. Please try again.`,
+      {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      }
+    );
+  };
+
+  const handleUnfriending = (
+    user: TUserSecure | TUser,
+    friend: TUserSecure | TUser,
+    array?: (TUserSecure | TBarebonesUser | TEvent)[],
+    setArray?: React.Dispatch<
+      React.SetStateAction<(TBarebonesUser | TUserSecure | TEvent)[]>
+    >
+  ): void => {
+    if (user._id) {
+      if (
+        array &&
+        setArray &&
+        array.every(
+          (elem) => Methods.isTBarebonesUser(elem) || Methods.isTUserSecure(elem)
+        )
+      ) {
+        setArray(
+          array.filter((u) => {
+            if (u._id && friend._id) {
+              return u._id.toString() !== friend._id.toString();
+            }
+          })
+        );
+      }
+
+      Requests.getUserByID(user._id.toString())
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((user: TUser) => {
+              if (friend._id) {
+                Requests.getUserByID(friend._id.toString())
+                  .then((res) => {
+                    if (res.ok) {
+                      res.json().then((friend: TUser) => {
+                        setIsLoading(true);
+                        Promise.all([
+                          Requests.deleteFriendFromFriendsArray(user, friend),
+                          Requests.deleteFriendFromFriendsArray(friend, user),
+                        ])
+                          .then((resArray: Response[]) => {
+                            if (
+                              currentUser &&
+                              currentUser._id &&
+                              resArray.every((res) => res.ok)
+                            ) {
+                              Requests.getUserByID(currentUser._id.toString())
+                                .then((res) => {
+                                  if (res.ok) {
+                                    res
+                                      .json()
+                                      .then((user) => {
+                                        if (user) {
+                                          setCurrentUser(user);
+                                          toast(
+                                            `You have unfriended ${friend.firstName} ${friend.lastName}.`,
+                                            {
+                                              style: {
+                                                background:
+                                                  theme === "light"
+                                                    ? "#242424"
+                                                    : "rgb(233, 231, 228)",
+                                                color:
+                                                  theme === "dark" ? "black" : "white",
+                                                border: "2px solid red",
+                                              },
+                                            }
+                                          );
+                                        } else {
+                                          if (
+                                            array &&
+                                            setArray &&
+                                            array.every(
+                                              (elem) =>
+                                                Methods.isTBarebonesUser(elem) ||
+                                                Methods.isTUserSecure(elem)
+                                            )
+                                          ) {
+                                            Methods.isTUser(friend) && currentUser
+                                              ? setArray(
+                                                  array.concat(
+                                                    Methods.getTUserSecureFromTUser(
+                                                      friend,
+                                                      currentUser
+                                                    )
+                                                  )
+                                                )
+                                              : setArray(array.concat(friend));
+                                          }
+                                          handleUnfriendingFail(friend);
+                                        }
+                                      })
+                                      .catch((error) => console.log(error));
+                                  } else {
+                                    if (
+                                      array &&
+                                      setArray &&
+                                      array.every(
+                                        (elem) =>
+                                          Methods.isTBarebonesUser(elem) ||
+                                          Methods.isTUserSecure(elem)
+                                      )
+                                    ) {
+                                      Methods.isTUser(friend) && currentUser
+                                        ? setArray(
+                                            array.concat(
+                                              Methods.getTUserSecureFromTUser(
+                                                friend,
+                                                currentUser
+                                              )
+                                            )
+                                          )
+                                        : setArray(array.concat(friend));
+                                    }
+                                    handleUnfriendingFail(friend);
+                                  }
+                                })
+                                .catch((error) => console.log(error));
+                            } else {
+                              if (
+                                array &&
+                                setArray &&
+                                array.every(
+                                  (elem) =>
+                                    Methods.isTBarebonesUser(elem) ||
+                                    Methods.isTUserSecure(elem)
+                                )
+                              ) {
+                                Methods.isTUser(friend) && currentUser
+                                  ? setArray(
+                                      array.concat(
+                                        Methods.getTUserSecureFromTUser(
+                                          friend,
+                                          currentUser
+                                        )
+                                      )
+                                    )
+                                  : setArray(array.concat(friend));
+                              }
+                              handleUnfriendingFail(friend);
+                            }
+                          })
+                          .catch((error) => console.log(error))
+                          .finally(() => setIsLoading(false));
+                      });
+                    } else {
+                      if (
+                        array &&
+                        setArray &&
+                        array.every(
+                          (elem) =>
+                            Methods.isTBarebonesUser(elem) || Methods.isTUserSecure(elem)
+                        )
+                      ) {
+                        Methods.isTUser(friend) && currentUser
+                          ? setArray(
+                              array.concat(
+                                Methods.getTUserSecureFromTUser(friend, currentUser)
+                              )
+                            )
+                          : setArray(array.concat(friend));
+                      }
+                      handleUnfriendingFail(friend);
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              }
+            });
+          } else {
+            if (
+              array &&
+              setArray &&
+              array.every(
+                (elem) => Methods.isTBarebonesUser(elem) || Methods.isTUserSecure(elem)
+              )
+            ) {
+              Methods.isTUser(friend) && currentUser
+                ? setArray(
+                    array.concat(Methods.getTUserSecureFromTUser(friend, currentUser))
+                  )
+                : setArray(array.concat(friend));
+            }
+            handleUnfriendingFail(friend);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+  };
+
+  const handleUnblockUserFail = (blockee: TBarebonesUser): void => {
+    setIsLoading(false);
+    if (blockedUsers && setBlockedUsers) {
+      setBlockedUsers(blockedUsers);
+    }
+    toast.error(`Unable to unblock ${blockee.username}. Please try again.`, {
+      style: {
+        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+        color: theme === "dark" ? "black" : "white",
+        border: "2px solid red",
+      },
     });
   };
 
   // No mutation needed here, as operation is simpler than blocking
-  const handleUnblockUser = (
-    blocker: TUser,
-    blockee: TUser,
-    blockedUsers?: string[] | undefined,
-    setBlockedUsers?: React.Dispatch<SetStateAction<string[] | undefined>>
-  ): void => {
+  const handleUnblockUser = (blocker: TBarebonesUser, blockee: TBarebonesUser): void => {
     setIsLoading(true);
 
     if (blockedUsers && setBlockedUsers) {
-      setBlockedUsers(blockedUsers.filter((userID) => userID !== blockee._id));
+      setBlockedUsers(blockedUsers.filter((bu) => bu._id !== blockee._id?.toString()));
     }
 
-    if (blockee._id) {
-      Requests.removeFromBlockedUsers(blocker, blockee._id)
-        .then((response) => {
-          if (!response.ok) {
-            if (blockedUsers && setBlockedUsers) {
-              setBlockedUsers(blockedUsers);
-            }
-            toast.error(`Unable to unblock ${blockee.username}. Please try again.`, {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid red",
-              },
-            });
+    if (blocker._id) {
+      Requests.getUserByID(blocker._id.toString())
+        .then((res) => {
+          if (res.ok) {
+            res
+              .json()
+              .then((blocker: TUser) => {
+                if (blockee._id) {
+                  Requests.getUserByID(blockee._id.toString())
+                    .then((res) => {
+                      if (res.ok) {
+                        res
+                          .json()
+                          .then((blockee: TUser) => {
+                            if (blockee._id && blocker._id) {
+                              Promise.all([
+                                Requests.removeFromBlockedUsers(
+                                  blocker,
+                                  blockee._id.toString()
+                                ),
+                                Requests.removeFromBlockedBy(
+                                  blockee,
+                                  blocker._id.toString()
+                                ),
+                              ])
+                                .then((resArray: Response[]) => {
+                                  if (
+                                    resArray.every((res) => res.ok) &&
+                                    currentUser &&
+                                    currentUser._id
+                                  ) {
+                                    Requests.getUserByID(currentUser._id.toString())
+                                      .then((res) => {
+                                        if (res.ok) {
+                                          setIsLoading(false);
+                                          res.json().then((user: TUser) => {
+                                            setCurrentUser(user);
+                                            toast.success(
+                                              `Unblocked ${blockee.username}.`,
+                                              {
+                                                style: {
+                                                  background:
+                                                    theme === "light"
+                                                      ? "#242424"
+                                                      : "rgb(233, 231, 228)",
+                                                  color:
+                                                    theme === "dark" ? "black" : "white",
+                                                  border: "2px solid green",
+                                                },
+                                              }
+                                            );
+                                          });
+                                        } else {
+                                          handleUnblockUserFail(
+                                            Methods.getTBarebonesUser(blockee)
+                                          );
+                                        }
+                                      })
+                                      .catch((error) => console.log(error));
+                                  } else {
+                                    handleUnblockUserFail(
+                                      Methods.getTBarebonesUser(blockee)
+                                    );
+                                  }
+                                })
+                                .catch((error) => console.log(error));
+                            }
+                          })
+                          .catch((error) => console.log(error));
+                      } else {
+                        handleUnblockUserFail(Methods.getTBarebonesUser(blockee));
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                }
+              })
+              .catch((error) => console.log(error));
           } else {
-            queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-            if (fetchAllUsersQuery.data && currentUser) {
-              allUsers = fetchAllUsersQuery.data;
-              setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-            }
-            toast.success(`Unblocked ${blockee.username}.`, {
-              style: {
-                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                color: theme === "dark" ? "black" : "white",
-                border: "2px solid green",
-              },
-            });
+            handleUnblockUserFail(blockee);
           }
         })
-        .catch((error) => console.log(error))
-        .finally(() => setIsLoading(false));
+        .catch((error) => console.log(error));
+    } else {
+      handleUnblockUserFail(Methods.getTBarebonesUser(blockee));
     }
   };
 
@@ -1704,149 +1952,347 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }),
   };
 
-  const handleSignupOrLoginFormSubmission = (
+  const setParallelValuesAfterLogin = (currentUser: TUser): void => {
+    setIndex(currentUser?.index);
+    setFirstName(currentUser?.firstName);
+    setLastName(currentUser?.lastName);
+    setUsername(currentUser?.username);
+    setProfileImage(currentUser?.profileImage);
+    setEmailAddress(currentUser?.emailAddress);
+    setPassword(currentUser?.password);
+    setPhoneCountry(currentUser?.phoneCountry);
+    setPhoneCountryCode(currentUser?.phoneCountryCode);
+    setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
+    setUserCity(currentUser?.city);
+    setUserState(currentUser?.stateProvince);
+    setUserCountry(currentUser?.country);
+    setFacebook(currentUser?.facebook);
+    setInstagram(currentUser?.instagram);
+    setX(currentUser?.x);
+    setUserAbout(currentUser?.about);
+    setWhoCanAddUserAsOrganizer(currentUser?.whoCanAddUserAsOrganizer);
+    setProfileVisibleTo(currentUser?.profileVisibleTo);
+    setWhoCanMessage(currentUser?.whoCanMessage);
+    setDisplayFriendCount(currentUser?.displayFriendCount);
+    setWhoCanSeeLocation(currentUser?.whoCanSeeLocation);
+    setWhoCanSeeFriendsList(currentUser?.whoCanSeeFriendsList);
+    setWhoCanSeePhoneNumber(currentUser?.whoCanSeePhoneNumber);
+    setWhoCanSeeEmailAddress(currentUser?.whoCanSeeEmailAddress);
+    setWhoCanSeeFacebook(currentUser?.whoCanSeeFacebook);
+    setWhoCanSeeX(currentUser?.whoCanSeeX);
+    setWhoCanSeeInstagram(currentUser?.whoCanSeeInstagram);
+    setWhoCanSeeEventsOrganized(currentUser?.whoCanSeeEventsOrganized);
+    setWhoCanSeeEventsInterestedIn(currentUser?.whoCanSeeEventsInterestedIn);
+    setWhoCanSeeEventsInvitedTo(currentUser?.whoCanSeeEventsInvitedTo);
+  };
+
+  const resetErrorMessagesAfterLogin = (): void => {
+    if (usernameError !== "") {
+      setUsernameError("");
+    }
+    if (emailError !== "") {
+      setEmailError("");
+    }
+    if (passwordError !== "") {
+      setPasswordError("");
+    }
+  };
+
+  const setParallelValuesAfterSignup = (): void => {
+    setIndex(userData.index);
+    setFirstName(userData.firstName);
+    setLastName(userData.lastName);
+    setUsername(userData.username);
+    setProfileImage(userData.profileImage);
+    setEmailAddress(userData.emailAddress);
+    setPassword(userData.password);
+    setPhoneCountry(userData.phoneCountry);
+    setPhoneCountryCode(userData.phoneCountryCode);
+    setPhoneNumberWithoutCountryCode(userData.phoneNumberWithoutCountryCode);
+    setUserCity(userData.city);
+    setUserState(userData.stateProvince);
+    setUserCountry(userData.country);
+    setFacebook(userData.facebook);
+    setInstagram(userData.instagram);
+    setX(userData.x);
+    setUserAbout(userData.about);
+    setWhoCanAddUserAsOrganizer(userData.whoCanAddUserAsOrganizer);
+    setWhoCanInviteUser(userData.whoCanInviteUser);
+    setProfileVisibleTo(userData.profileVisibleTo);
+    setWhoCanMessage(userData.whoCanMessage);
+    setDisplayFriendCount(userData.displayFriendCount);
+    setWhoCanSeeLocation(userData.whoCanSeeLocation);
+    setWhoCanSeeFriendsList(userData.whoCanSeeFriendsList);
+    setWhoCanSeePhoneNumber(userData.whoCanSeePhoneNumber);
+    setWhoCanSeeEmailAddress(userData.whoCanSeeEmailAddress);
+    setWhoCanSeeFacebook(userData.whoCanSeeFacebook);
+    setWhoCanSeeX(userData.whoCanSeeX);
+    setWhoCanSeeInstagram(userData.whoCanSeeInstagram);
+    setWhoCanSeeEventsOrganized(userData.whoCanSeeEventsOrganized);
+    setWhoCanSeeEventsInterestedIn(userData.whoCanSeeEventsInterestedIn);
+    setWhoCanSeeEventsInvitedTo(userData.whoCanSeeEventsInvitedTo);
+  };
+
+  const resetErrorMessagesAfterSignup = (): void => {
+    if (firstNameError !== "") {
+      setFirstNameError("");
+    }
+    if (lastNameError !== "") {
+      setLastNameError("");
+    }
+    if (usernameError !== "") {
+      setUsernameError("");
+    }
+    if (emailError !== "") {
+      setEmailError("");
+    }
+    if (passwordError !== "") {
+      setPasswordError("");
+    }
+    if (confirmationPasswordError != "") {
+      setConfirmationPasswordError("");
+    }
+  };
+
+  const handleSignupOrLoginFormSubmission = async (
     isOnSignup: boolean,
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ): void => {
+  ) => {
     e.preventDefault();
+    setShowErrors(true);
     /*
-     Check input data against most-recent allUsers. It will only be necessary to check if username or email address already exist in allUsers, as errors & completion are checked in onClick, and this function is only called if there are no errors and if all forms are complete. If username or email address do exist, alert user & reject submission; else, accept submission.
+     It will only be necessary to check if username or email address already exist on other users in DB, as errors & completion are checked in onClick, and this function is only called if there are no errors and if all forms are complete. If username or email address do exist, alert user & reject submission; else, accept submission.
     */
-    queryClient
-      .invalidateQueries({ queryKey: "allUsers" })
-      .then(() => {
-        /* 
-        When signing up, it's necessary to check username & emailAddress against those already in allUsers. When logging in, it's necessary to check these against all OTHER users in allUsers.
-        */
-        let usernameIsUnique: boolean = false;
-        let emailAddressIsUnique: boolean = false;
-        if (isOnSignup) {
-          if (allUsers) {
-            usernameIsUnique = !allUsers.map((user) => user.username).includes(username);
-            emailAddressIsUnique = !allUsers
-              .map((user) => user.emailAddress)
-              .includes(emailAddress);
-          }
-        } else {
-          if (allUsers) {
-            const allOtherUsers =
-              loginMethod === "email"
-                ? allUsers.filter((user) => user.emailAddress !== emailAddress)
-                : allUsers.filter((user) => user.username !== username);
-            usernameIsUnique = !allOtherUsers
-              .map((user) => user.username)
-              .includes(username);
-            emailAddressIsUnique = !allOtherUsers
-              .map((user) => user.emailAddress)
-              .includes(emailAddress);
-          }
-        }
 
-        if (usernameIsUnique && emailAddressIsUnique) {
-          handleWelcomeMessage();
-          // If user had pw visible when logging in/signing up, hide it again, so it's hidden by default on edit-user-info form in Settings
-          if (!passwordIsHidden) {
-            toggleHidePassword();
-          }
-          if (isOnSignup) {
-            newUserMutation.mutate(userData);
-            setUserCreatedAccount(true);
-            setCurrentUser(userData);
-            setFirstName(userData.firstName);
-            setLastName(userData.lastName);
-            setUsername(userData.username);
-            setFriends(userData.friends);
-            setBlockedUsers(userData.blockedUsers);
-            setProfileImage(userData.profileImage);
-            setEmailAddress(userData.emailAddress);
-            setPassword(userData.password);
-            setPhoneCountry(userData.phoneCountry);
-            setPhoneCountryCode(userData.phoneCountryCode);
-            setPhoneNumberWithoutCountryCode(userData.phoneNumberWithoutCountryCode);
-            setUserCity(userData.city);
-            setUserState(userData.stateProvince);
-            setUserCountry(userData.country);
-            setFacebook(userData.facebook);
-            setInstagram(userData.instagram);
-            setX(userData.x);
-            setUserAbout(userData.about);
-            setWhoCanAddUserAsOrganizer(userData.whoCanAddUserAsOrganizer);
-            setWhoCanInviteUser(userData.whoCanInviteUser);
-            setProfileVisibleTo(userData.profileVisibleTo);
-            setWhoCanMessage(userData.whoCanMessage);
-            setDisplayFriendCount(userData.displayFriendCount);
-            setWhoCanSeeLocation(userData.whoCanSeeLocation);
-            setWhoCanSeeFriendsList(userData.whoCanSeeFriendsList);
-            setWhoCanSeePhoneNumber(userData.whoCanSeePhoneNumber);
-            setWhoCanSeeEmailAddress(userData.whoCanSeeEmailAddress);
-            setWhoCanSeeFacebook(userData.whoCanSeeFacebook);
-            setWhoCanSeeX(userData.whoCanSeeX);
-            setWhoCanSeeInstagram(userData.whoCanSeeInstagram);
-            setWhoCanSeeEventsOrganized(userData.whoCanSeeEventsOrganized);
-            setWhoCanSeeEventsInterestedIn(userData.whoCanSeeEventsInterestedIn);
-            setWhoCanSeeEventsInvitedTo(userData.whoCanSeeEventsInvitedTo);
-          } else {
-            setUserCreatedAccount(false);
-            if (allUsers) {
-              if (emailAddress !== "") {
-                setCurrentUser(
-                  allUsers.filter((user) => user.emailAddress === emailAddress)[0]
-                );
-              } else if (username !== "") {
-                setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
+    // Handle submit of login form:
+    if (!isOnSignup && password) {
+      if (username && username !== "") {
+        setProcessingLoginIsLoading(true);
+        Requests.getUserByUsernameOrEmailAddress(password, username)
+          .then((res) => {
+            if (res.status === 401) {
+              setProcessingLoginIsLoading(false);
+              // Differentiate b/t error on username/email & error on pw
+              if (res.statusText === "User not found") {
+                setUsernameError(res.statusText);
               }
+              if (res.statusText === "Invalid username or password") {
+                setPasswordError(res.statusText);
+              }
+            } else if (res.status === 404) {
+              setProcessingLoginIsLoading(false);
+              toast.error("User doesn't exist", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            } else if (res.status === 500) {
+              setProcessingLoginIsLoading(false);
+              toast.error("Could not log you in. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            } else if (res.ok) {
+              res.json().then((json) => {
+                const now = Date.now();
+                Requests.patchUpdatedUserInfo(json.user, { "lastLogin": now })
+                  .then((res) => {
+                    if (res.ok) {
+                      setCurrentUser(json.user);
+                      setShowWelcomeMessage(true);
+                      setUserCreatedAccount(false);
+                      navigation("/");
+                      setLastLogin(now);
+                      setParallelValuesAfterLogin(json.user);
+                      resetErrorMessagesAfterLogin();
+                      setTimeout(() => {
+                        setShowWelcomeMessage(false);
+                        setProcessingLoginIsLoading(false);
+                        navigation(`/homepage/${json.user.username}`);
+                      }, welcomeMessageDisplayTime);
+                    } else {
+                      setProcessingLoginIsLoading(false);
+                      toast.error("Could not log you in. Please try again.", {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid red",
+                        },
+                      });
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              });
+            } else {
+              setProcessingLoginIsLoading(false);
+              toast.error("Could not log you in. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
             }
-            setFirstName(currentUser?.firstName);
-            setLastName(currentUser?.lastName);
-            setUsername(currentUser?.username);
-            setProfileImage(currentUser?.profileImage);
-            setEmailAddress(currentUser?.emailAddress);
-            setFriends(currentUser?.friends);
-            setBlockedUsers(currentUser?.blockedUsers);
-            setPassword(currentUser?.password);
-            setPhoneCountry(currentUser?.phoneCountry);
-            setPhoneCountryCode(currentUser?.phoneCountryCode);
-            setPhoneNumberWithoutCountryCode(currentUser?.phoneNumberWithoutCountryCode);
-            setUserCity(currentUser?.city);
-            setUserState(currentUser?.stateProvince);
-            setUserCountry(currentUser?.country);
-            setFacebook(currentUser?.facebook);
-            setInstagram(currentUser?.instagram);
-            setX(currentUser?.x);
-            setUserAbout(currentUser?.about);
-            setWhoCanAddUserAsOrganizer(currentUser?.whoCanAddUserAsOrganizer);
-            setProfileVisibleTo(currentUser?.profileVisibleTo);
-            setWhoCanMessage(currentUser?.whoCanMessage);
-            setDisplayFriendCount(currentUser?.displayFriendCount);
-            setWhoCanSeeLocation(currentUser?.whoCanSeeLocation);
-            setWhoCanSeeFriendsList(currentUser?.whoCanSeeFriendsList);
-            setWhoCanSeePhoneNumber(currentUser?.whoCanSeePhoneNumber);
-            setWhoCanSeeEmailAddress(currentUser?.whoCanSeeEmailAddress);
-            setWhoCanSeeFacebook(currentUser?.whoCanSeeFacebook);
-            setWhoCanSeeX(currentUser?.whoCanSeeX);
-            setWhoCanSeeInstagram(currentUser?.whoCanSeeInstagram);
-            setWhoCanSeeEventsOrganized(currentUser?.whoCanSeeEventsOrganized);
-            setWhoCanSeeEventsInterestedIn(currentUser?.whoCanSeeEventsInterestedIn);
-            setWhoCanSeeEventsInvitedTo(currentUser?.whoCanSeeEventsInvitedTo);
-          }
-          setFirstNameError("");
-          setLastNameError("");
-          setUsernameError("");
-          setEmailError("");
-          setPasswordError("");
-          setConfirmationPasswordError("");
-        } else {
-          handleFormRejection(e);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        if (isOnSignup) {
-          window.alert("Could not complete signup; please try again.");
-        } else {
-          window.alert("Could not complete login; please try again.");
-        }
-      });
+          })
+          .catch((error) => console.log(error));
+      }
+
+      if (emailAddress && emailAddress !== "") {
+        setProcessingLoginIsLoading(true);
+        Requests.getUserByUsernameOrEmailAddress(password, undefined, emailAddress)
+          .then((res) => {
+            if (res.status === 401) {
+              setProcessingLoginIsLoading(false);
+              if (res.statusText === "User not found") {
+                setEmailError("User not found");
+              }
+              if (res.statusText === "Invalid e-mail address or password") {
+                setPasswordError(res.statusText);
+              }
+            } else if (res.status === 500) {
+              setProcessingLoginIsLoading(false);
+              toast.error("Could not log you in. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            } else if (res.ok) {
+              res.json().then((json) => {
+                const now = Date.now();
+                Requests.patchUpdatedUserInfo(json.user, { "lastLogin": now })
+                  .then((res) => {
+                    if (res.ok) {
+                      setCurrentUser(json.user);
+                      setShowWelcomeMessage(true);
+                      setUserCreatedAccount(false);
+                      navigation("/");
+                      setParallelValuesAfterLogin(json.user);
+                      setLastLogin(now);
+                      resetErrorMessagesAfterLogin();
+                      setTimeout(() => {
+                        setShowWelcomeMessage(false);
+                        navigation(`/homepage/${json.user.username}`);
+                        setProcessingLoginIsLoading(false);
+                      }, welcomeMessageDisplayTime);
+                    } else {
+                      setProcessingLoginIsLoading(false);
+                      toast.error("Could not log you in. Please try again.", {
+                        style: {
+                          background:
+                            theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                          color: theme === "dark" ? "black" : "white",
+                          border: "2px solid red",
+                        },
+                      });
+                    }
+                  })
+                  .catch((error) => console.log(error));
+              });
+            } else {
+              setProcessingLoginIsLoading(false);
+              toast.error("Could not log you in. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            }
+          })
+          .catch((error) => console.log(error));
+      }
+    }
+
+    // Handle submit of signup form:
+    if (isOnSignup) {
+      if ((username && username !== "") || (emailAddress && emailAddress !== "")) {
+        // run newUserMutation. handle errors there
+        setProcessingLoginIsLoading(true);
+        Requests.getAllUsers()
+          .then((res) => {
+            if (res.ok) {
+              res.json().then((allUsers) => {
+                setIndex(allUsers.length);
+
+                if (allUsers.length >= 50) {
+                  setProcessingLoginIsLoading(false);
+                  setUserCreatedAccount(false);
+                  toast.error(
+                    "Sorry, but due to potential spamming douchebags & this only being a portfolio project, only 50 user accounts in total can be created at this time.",
+                    {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    }
+                  );
+                } else {
+                  Requests.createUser(userData)
+                    .then((res) => {
+                      if (res.status === 409) {
+                        setProcessingLoginIsLoading(false);
+                        if (res.statusText === "USERNAME & EMAIL TAKEN") {
+                          setUsernameError("Username already in use");
+                          setEmailError("E-mail address already in use");
+                        }
+                        if (res.statusText === "USERNAME TAKEN") {
+                          setUsernameError("Username already in use");
+                        }
+                        if (res.statusText === "EMAIL TAKEN") {
+                          setEmailError("E-mail address already in use");
+                        }
+                      } else if (res.ok) {
+                        setShowWelcomeMessage(true);
+                        setTimeout(() => {
+                          setShowWelcomeMessage(false);
+                          navigation(`/homepage/${userData.username}`);
+                          setProcessingLoginIsLoading(false);
+                        }, welcomeMessageDisplayTime);
+                        setCurrentUser(userData);
+                        navigation("/");
+                        setUserCreatedAccount(true);
+                        setParallelValuesAfterSignup();
+                        setLastLogin(Date.now);
+                        resetErrorMessagesAfterSignup();
+                      } else {
+                        setUserCreatedAccount(false);
+                        toast.error("Could not set up your account. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                }
+              });
+            } else {
+              setProcessingLoginIsLoading(false);
+              setUserCreatedAccount(false);
+              toast.error("Could not set up your account. Please try again.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+            }
+          })
+          .catch((error) => console.log(error));
+      }
+    }
   };
 
   const handleFormRejection = (
@@ -1865,24 +2311,34 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const logout = (): void => {
     navigation("/");
     setUserCreatedAccount(null);
+    setLastLogin(0);
     setCurrentUser(null);
     setCurrentOtherUser(null);
     resetLoginOrSignupFormFieldsAndErrors();
     setProfileImage("");
-    window.location.reload(); // reload pg in order to reduce memory usage
+    window.location.reload(); // reload pg in order to give memory a fresh start
   };
 
-  const allOtherUsers: TUser[] =
-    allUsers && currentUser
-      ? allUsers.filter((user) => user._id !== currentUser._id)
-      : [];
-
   const userContextValues: TUserContext = {
-    allOtherUsers,
+    confirmationPasswordIsHidden,
+    setConfirmationPasswordIsHidden,
+    processingLoginIsLoading,
+    setProcessingLoginIsLoading,
+    fetchFriendRequestsIsLoading,
+    setFetchFriendRequestsIsLoading,
+    fetchFriendRequestsSentIsError,
+    setFetchFriendRequestsSentIsError,
+    fetchFriendRequestsReceivedIsError,
+    setFetchFriendRequestsReceivedIsError,
+    removeProfileImageIsLoading,
+    setRemoveProfileImageIsLoading,
+    updateProfileImageIsLoading,
+    setUpdateProfileImageIsLoading,
+    fetchBlockedUsersIsLoading,
+    setFetchBlockedUsersIsLoading,
+    fetchBlockedUsersIsError,
+    setFetchBlockedUsersIsError,
     userHasLoggedIn,
-    removeProfileImageMutation,
-    updateProfileImageMutation,
-    fetchAllUsersQuery,
     displayFriendCount,
     setDisplayFriendCount,
     whoCanSeeLocation,
@@ -1905,8 +2361,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setWhoCanSeeEventsInterestedIn,
     whoCanSeeEventsInvitedTo,
     setWhoCanSeeEventsInvitedTo,
-    friends,
-    setFriends,
     friendRequestsSent,
     setFriendRequestsSent,
     friendRequestsReceived,
@@ -1914,7 +2368,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     blockedUsers,
     setBlockedUsers,
     handleUnblockUser,
-    addToBlockedUsersAndRemoveBothFromFriendRequestsAndFriendsLists,
+    getOtherUserFriends,
     whoCanMessage,
     setWhoCanMessage,
     currentOtherUser,
@@ -2024,11 +2478,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     setProfileVisibleTo,
     showUpdateProfileImageInterface,
     setShowUpdateProfileImageInterface,
-    allUsers,
     currentUser,
     setCurrentUser,
     userCreatedAccount,
     setUserCreatedAccount,
+    blockUserInProgress,
+    setBlockUserInProgress,
+    lastLogin,
+    setLastLogin,
   };
 
   return (

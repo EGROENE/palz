@@ -3,10 +3,6 @@
   color: gray !important;
 }
 
-.listedUserBtnsContainer button {
-  height: 43%;
-}
-
 .listedUserTextsContainer {
   text-align: left;
 }
@@ -24,8 +20,18 @@
   color: var(--text-color);
 }
 
+.listedUserTextsContainer p:first-child {
+  font-size: 1rem;
+}
+
+.listedUserTextsContainer p:nth-child(2) {
+  font-size: 0.75rem;
+}
+
 .listedUserBtnsContainer button {
   margin: 0.5rem;
+  height: 43%;
+  font-size: 0.75rem;
 }
 
 .listedUserBtnsContainer button:first-child {

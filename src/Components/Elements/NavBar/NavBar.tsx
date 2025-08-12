@@ -5,18 +5,21 @@ import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import { TChat } from "../../../types";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const NavBar = () => {
   const { showSidebar, setShowSidebar, currentRoute, setShowMobileNavOptions } =
     useMainContext();
+  const { setCurrentEvent } = useEventContext();
   const { logout, profileImage, currentUser, userCreatedAccount } = useUserContext();
   const { getTotalNumberOfUnreadMessages, fetchChatsQuery } = useChatContext();
 
   const userChats: TChat[] | undefined = fetchChatsQuery.data;
 
-  const totalUnreadUserMessages: string | number | undefined = userChats
-    ? getTotalNumberOfUnreadMessages(userChats)
-    : undefined;
+  const totalUnreadUserMessages: string | number | undefined =
+    userChats && userChats.length > 0
+      ? getTotalNumberOfUnreadMessages(userChats)
+      : undefined;
 
   const screenWidth: number = Number(window.screen.width);
 
@@ -24,17 +27,19 @@ const NavBar = () => {
     <nav>
       <ul className={styles.navbar}>
         <li>
-          <Link className="palz-logo" to={`/${currentUser?.username}`}>
-            <img src="/palz.PNG" />
+          <Link className="palz-logo" to={`/homepage/${currentUser?.username}`}>
+            <img src="../src/assets/palz.png" />
             <header>PALZ</header>
           </Link>
         </li>
         {currentRoute !== "/chats" && (
           <li style={{ display: "flex", alignItems: "center" }}>
             <Link to={"/chats"}>Chats</Link>
-            {totalUnreadUserMessages !== 0 && (
-              <span className="notifications-count">{totalUnreadUserMessages}</span>
-            )}
+            {totalUnreadUserMessages !== undefined &&
+              (typeof totalUnreadUserMessages === "string" ||
+                totalUnreadUserMessages > 0) && (
+                <span className="notifications-count">{totalUnreadUserMessages}</span>
+              )}
           </li>
         )}
         {currentRoute !== "/settings" && (
@@ -50,13 +55,16 @@ const NavBar = () => {
         {userCreatedAccount !== null ? (
           <li
             tabIndex={0}
-            aria-hidden="false"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 logout();
+                setCurrentEvent(undefined);
               }
             }}
-            onClick={() => logout()}
+            onClick={() => {
+              logout();
+              setCurrentEvent(undefined);
+            }}
           >
             Log Out<i className="fas fa-sign-out-alt"></i>
           </li>
@@ -67,7 +75,6 @@ const NavBar = () => {
         )}
         <li
           tabIndex={0}
-          aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               setShowSidebar(!showSidebar);
@@ -90,7 +97,7 @@ const NavBar = () => {
     </nav>
   ) : (
     <div className="hamburger-container">
-      <Link className="palz-logo" to={`/${currentUser?.username}`}>
+      <Link className="palz-logo" to={`/homepage/${currentUser?.username}`}>
         <img src="../src/assets/palz.png" />
         <header>PALZ</header>
       </Link>

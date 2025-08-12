@@ -2,18 +2,86 @@
 
 const mongoose = require("mongoose");
 
+//const bcrypt = require("bcrypt");
+
 const User = require("../models/userModel");
 
-// get all users:
+const getUserByUsernamePhoneNumberOrEmailAddress = async (req, res) => {
+  try {
+    const {
+      emailAddress,
+      phoneCountryCode,
+      username,
+      phoneNumberWithoutCountryCode,
+      _id,
+    } = req.body;
+
+    // Check that id is a valid MongoDB ObjectId:
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({ error: "Bad request (invalid id)" });
+    }
+
+    const currentUser = await User.findById(_id);
+
+    const userWithUsername = await User.findOne({ username });
+
+    const userWithEmail = await User.findOne({ emailAddress });
+
+    const userWithPhoneNumber = await User.findOne({
+      phoneCountryCode: phoneCountryCode,
+      phoneNumberWithoutCountryCode: phoneNumberWithoutCountryCode,
+    });
+
+    if (
+      userWithUsername &&
+      userWithEmail &&
+      userWithPhoneNumber &&
+      userWithUsername._id.toString() !== currentUser._id.toString() &&
+      userWithEmail._id.toString() !== currentUser._id.toString() &&
+      userWithPhoneNumber._id.toString() !== currentUser._id.toString()
+    ) {
+      res.statusMessage = "ALL TAKEN";
+      return res.status(401).end();
+    }
+
+    if (
+      userWithUsername &&
+      userWithUsername._id.toString() !== currentUser._id.toString()
+    ) {
+      res.statusMessage = "USERNAME TAKEN";
+      return res.status(401).end();
+    }
+
+    if (userWithEmail && userWithEmail._id.toString() !== currentUser._id.toString()) {
+      res.statusMessage = "EMAIL TAKEN";
+      return res.status(401).end();
+    }
+
+    if (
+      userWithPhoneNumber &&
+      userWithPhoneNumber._id.toString() !== currentUser._id.toString()
+    ) {
+      res.statusMessage = "PHONE NUMBER TAKEN";
+      return res.status(401).end();
+    }
+
+    return res.status(200).json({ currentUser });
+  } catch (error) {
+    res.statusMessage = "Something went wrong";
+    return res.status(500).end();
+  }
+};
+
+// Used to assign index to new users
 const getAllUsers = async (req, res) => {
-  // leave obj in .find() blank, as all users are being fetched
   // .sort({createdAt: -1}) could be added to sort most recently added to earliest added, for example
+
   const allUsers = await User.find({});
 
   res.status(200).json(allUsers);
 };
 
-// get single user:
+// get single user by id:
 const getUser = async (req, res) => {
   // Get id from request parameters:
   const { id } = req.params;
@@ -23,7 +91,6 @@ const getUser = async (req, res) => {
     return res.status(400).json({ error: "Bad request (invalid id)" });
   }
 
-  // assign user to document in DB that has id that matches the id defined in this method:
   const user = await User.findById(id);
 
   // If no user document matches...
@@ -35,9 +102,60 @@ const getUser = async (req, res) => {
   res.status(200).json(user);
 };
 
+const getUserByUsername = async (req, res) => {
+  // Get id from request parameters:
+  const { username } = req.params;
+
+  const user = await User.findOne({ username });
+
+  // If no user document matches...
+  if (!user) {
+    return res.status(404).json({ error: "User doesn't exist" });
+  }
+
+  // If there is a match...
+  res.status(200).json(user);
+};
+
+// get single user by username or email address:
+const getUserByUsernameOrEmailAddress = async (req, res) => {
+  try {
+    const { username, emailAddress, password } = req.body;
+
+    const user = username
+      ? await User.findOne({ username })
+      : await User.findOne({ emailAddress });
+
+    // If no existing user has input e-mail address or username:
+    if (!user) {
+      return res.status(404).json({ error: "User doesn't exist" });
+    }
+
+    // Check if the provided password matches the stored password
+    if (user.password === password) {
+      return res.status(200).json({ user });
+    } else {
+      if (username) {
+        res.statusMessage = "Invalid username or password";
+        return res.status(401).end();
+      }
+      if (emailAddress) {
+        res.statusMessage = "Invalid e-mail address or password";
+        return res.status(401).end();
+      }
+    }
+  } catch (error) {
+    res.statusMessage = "Something went wrong";
+    res.status(500).end();
+  }
+};
+
 // create new user
 const createNewUser = async (req, res) => {
-  const {
+  let {
+    _id,
+    lastLogin,
+    index,
     firstName,
     lastName,
     password,
@@ -80,7 +198,35 @@ const createNewUser = async (req, res) => {
 
   // add document to DB:
   try {
+    const existingUserWithSameUsername = await User.findOne({ username: username });
+    const existingUserWithSameEmailAddress = await User.findOne({
+      emailAddress: emailAddress,
+    });
+
+    if (existingUserWithSameUsername && existingUserWithSameEmailAddress) {
+      res.statusMessage = "USERNAME & EMAIL TAKEN";
+      return res.status(409).end();
+    }
+
+    if (existingUserWithSameUsername) {
+      res.statusMessage = "USERNAME TAKEN";
+      return res.status(409).end();
+    }
+
+    if (existingUserWithSameEmailAddress) {
+      res.statusMessage = "EMAIL TAKEN";
+      return res.status(409).end();
+    }
+
+    // Encrypt password:
+    /* const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+    password = hashedPassword; */
+
     const user = await User.create({
+      _id,
+      lastLogin,
+      index,
       firstName,
       lastName,
       password,
@@ -161,8 +307,18 @@ const updateUser = async (req, res) => {
   res.status(200).json(user);
 };
 
+const getAllUserInterests = async (req, res) => {
+  const allUserInterests = await User.find({}, { "interests": 1, "_id": 0 });
+
+  res.status(200).json(allUserInterests);
+};
+
 // export controllers:
 module.exports = {
+  getAllUserInterests,
+  getUserByUsername,
+  getUserByUsernameOrEmailAddress,
+  getUserByUsernamePhoneNumberOrEmailAddress,
   createNewUser,
   getAllUsers,
   getUser,

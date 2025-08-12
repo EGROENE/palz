@@ -1,19 +1,26 @@
 import { useState, useEffect, useRef } from "react";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import Message from "../Message/Message";
-import { TThemeColor, TUser } from "../../../types";
+import { TUserSecure, TUser, TThemeColor } from "../../../types";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import Methods from "../../../methods";
+import Requests from "../../../requests";
 import ListedUser from "../ListedUser/ListedUser";
 import ChatModalTwoOptions from "../ChatModalTwoOptions/ChatModalTwoOptions";
 
 const ChatModal = () => {
-  const { allOtherUsers, currentUser, setCurrentOtherUser } = useUserContext();
+  const { currentUser, setCurrentOtherUser } = useUserContext();
+
   const {
-    startConversation,
+    isFetchError,
+    handleSearchPotentialChatMembers,
+    handleLoadMoreItemsOnScroll,
+    fetchIsLoading,
+    displayedPotentialChatMembers,
+    getStartOrOpenChatWithUserHandler,
     setMessageBeingEdited,
     setShowAreYouSureYouWantToLeaveChat,
     showMembers,
@@ -26,27 +33,18 @@ const ChatModal = () => {
     setShowChatModal,
     setCurrentChat,
     currentChat,
-    getChatMembers,
     chatMembersSearchQuery,
     setChatMembersSearchQuery,
     showPotentialChatMembers,
     setShowPotentialChatMembers,
-    getCurrentOtherUserFriends,
-    setPotentialChatMembers,
     usersToAddToChat,
     handleRemoveUserFromChat,
     handleAddRemoveUserFromChat,
-    potentialChatMembers,
     setUsersToAddToChat,
-    numberOfPotentialChatMembersDisplayed,
-    setNumberOfPotentialChatMembersDisplayed,
-    handleSearchChatMembersInput,
     handleChatNameInput,
     chatName,
     chatNameError,
-    setChatName,
     handleSendMessage,
-    setChatNameError,
     inputMessage,
     setInputMessage,
     markMessagesAsRead,
@@ -65,7 +63,51 @@ const ChatModal = () => {
     showAreYouSureYouWantToDeleteChat,
     showAreYouSureYouWantToLeaveChat,
     setShowEditChatNameModal,
+    setDisplayedPotentialChatMembers,
+    setIsFetchError,
+    setFetchIsLoading,
+    fetchStart,
+    handleCancelAddOrEditChat,
   } = useChatContext();
+
+  const fetchLimit = 15;
+
+  const [hoveringOverSendIcon, setHoveringOverSendIcon] = useState<boolean>(false);
+
+  const [chatMembers, setChatMembers] = useState<TUserSecure[] | null>(null);
+
+  const [fetchChatMembersIsLoading, setFetchChatMembersIsLoading] =
+    useState<boolean>(false);
+  const [fetchChatMembersIsError, setFetchChatMembersIsError] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (currentChat) {
+      const promisesToAwaitChatMembers: Promise<TUser>[] = currentChat.members.map(
+        (m) => {
+          return Requests.getUserByID(m).then((res) => {
+            return res.json().then((member: TUser) => member);
+          });
+        }
+      );
+
+      setFetchChatMembersIsLoading(true);
+      Promise.all(promisesToAwaitChatMembers)
+        .then((members: TUser[]) => {
+          if (currentUser) {
+            setChatMembers(
+              members.map((m) => Methods.getTUserSecureFromTUser(m, currentUser))
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          setFetchChatMembersIsError(true);
+        })
+        .finally(() => setFetchChatMembersIsLoading(false));
+    } else {
+      setFetchChatMembersIsError(true);
+    }
+  }, []);
 
   /* 
   Update currentChat whenever fetchChatsQuery.data changes & when chat in userChats w/ matching _id to currentChat is not identical to currentChat:
@@ -89,6 +131,29 @@ const ChatModal = () => {
           ));
       if (chatWasUpdated) {
         setCurrentChat(updatedChat);
+
+        const promisesToAwaitChatMembers: Promise<TUser>[] = updatedChat.members.map(
+          (m) => {
+            return Requests.getUserByID(m).then((res) => {
+              return res.json().then((member: TUser) => member);
+            });
+          }
+        );
+
+        setFetchChatMembersIsLoading(true);
+        Promise.all(promisesToAwaitChatMembers)
+          .then((members: TUser[]) => {
+            if (currentUser) {
+              setChatMembers(
+                members.map((m) => Methods.getTUserSecureFromTUser(m, currentUser))
+              );
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            setFetchChatMembersIsError(true);
+          })
+          .finally(() => setFetchChatMembersIsLoading(false));
       }
     }
   }, [fetchChatsQuery.data]);
@@ -111,75 +176,41 @@ const ChatModal = () => {
     //scrollToLatestMessage();
   }, []);
 
-  const initiatePotentialChatMembers = (): void => {
-    setPotentialChatMembers(
-      allOtherUsers.filter((otherUser) => {
-        const userIsNotAlreadyInCurrentChat: boolean =
-          otherUser._id && currentChat && currentChat.members.includes(otherUser._id)
-            ? false
-            : true;
+  useEffect(() => {
+    if (chatMembersSearchQuery === "" && currentChat) {
+      setFetchIsLoading(true);
+      Requests.getPotentialChatMembers(currentUser, fetchStart, fetchLimit, currentChat)
+        .then((batchOfPotentialCMs) => {
+          if (batchOfPotentialCMs) {
+            if (fetchStart === 0) {
+              setDisplayedPotentialChatMembers(
+                batchOfPotentialCMs.map((pf) => Methods.getTBarebonesUser(pf))
+              );
+            } else {
+              if (displayedPotentialChatMembers) {
+                setDisplayedPotentialChatMembers(
+                  displayedPotentialChatMembers.concat(
+                    batchOfPotentialCMs.map((pf) => Methods.getTBarebonesUser(pf))
+                  )
+                );
+              }
+            }
+          } else {
+            setIsFetchError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    }
+  }, [fetchStart, chatMembersSearchQuery]);
 
-        const currentUserIsBlocked: boolean =
-          currentUser && currentUser._id
-            ? otherUser.blockedUsers.includes(currentUser._id)
-            : false;
-
-        const currentUserIsFriendOfFriend: boolean =
-          currentUser && currentUser._id
-            ? getCurrentOtherUserFriends(otherUser).some(
-                (otherUserFriend) =>
-                  currentUser._id && otherUserFriend.friends.includes(currentUser._id)
-              )
-            : false;
-
-        const currentUserIsFriend: boolean =
-          currentUser && currentUser._id
-            ? otherUser.friends.includes(currentUser._id)
-            : false;
-
-        if (
-          userIsNotAlreadyInCurrentChat &&
-          !currentUserIsBlocked &&
-          (otherUser.whoCanMessage === "anyone" ||
-            (otherUser.whoCanMessage === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanMessage === "friends of friends" &&
-              currentUserIsFriendOfFriend))
-        ) {
-          return otherUser;
-        }
-      })
-    );
-  };
+  const [otherChatMember, setOtherChatMember] = useState<TUserSecure | undefined>(
+    undefined
+  );
 
   useEffect(() => {
-    initiatePotentialChatMembers();
-  }, [usersToAddToChat]);
-
-  const handleCancelAddingChatMembers = (
-    e:
-      | React.MouseEvent<HTMLButtonElement, MouseEvent>
-      | React.MouseEvent<HTMLElement, MouseEvent>
-      | React.KeyboardEvent<HTMLElement>
-  ): void => {
-    e.preventDefault();
-    if (usersToAddToChat.length > 0) {
-      setUsersToAddToChat([]);
-    }
-    if (chatMembersSearchQuery !== "") {
-      setChatMembersSearchQuery("");
-    }
-    if (chatName !== "") {
-      setChatName("");
-    }
-    if (chatNameError !== "") {
-      setChatNameError("");
-    }
-    initiatePotentialChatMembers();
-    setShowAddMemberModal(false);
-    setShowPotentialChatMembers(false);
-  };
-
-  const [otherChatMember, setOtherChatMember] = useState<TUser | undefined>(undefined);
+    scrollToLatestMessage();
+  }, [otherChatMember]);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -217,19 +248,30 @@ const ChatModal = () => {
       currentUser &&
       currentUser._id &&
       currentChat &&
-      currentChat.messages.length > 0 &&
-      currentChat.messages[currentChat.messages.length - 1].sender === currentUser._id
+      currentChat.messages.length > 0
     ) {
       scrollToLatestMessage();
     }
 
-    setOtherChatMember(
-      currentChat && currentUser && currentChat.members.length === 2
-        ? getChatMembers(currentChat.members).filter(
-            (member) => member._id !== currentUser._id
-          )[0]
-        : undefined
-    );
+    if (currentChat && currentUser && currentChat.members.length === 2) {
+      setFetchChatMembersIsLoading(true);
+      Requests.getUserByID(currentChat.members.filter((m) => m !== currentUser._id)[0])
+        .then((res) => {
+          if (res.ok) {
+            res
+              .json()
+              .then((chatMember: TUser) =>
+                setOtherChatMember(
+                  Methods.getTUserSecureFromTUser(chatMember, currentUser)
+                )
+              );
+          } else {
+            setFetchChatMembersIsError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchChatMembersIsLoading(false));
+    }
   }, [currentChat, fetchChatsQuery.data]);
 
   let messagesContainerScrollHeight: number = messagesContainerRef.current
@@ -272,12 +314,12 @@ const ChatModal = () => {
     setMessagesContainerScrollBottom(scrollBottom);
   };
 
-  const getButtonOneHandler = (listedChatMember: TUser) => {
+  const getButtonOneHandler = (listedChatMember: TUserSecure) => {
     const listedChatMemberIsAdmin: boolean =
       currentChat &&
       currentChat.admins &&
       listedChatMember._id &&
-      currentChat.admins.includes(listedChatMember._id)
+      currentChat.admins.includes(listedChatMember._id.toString())
         ? true
         : false;
 
@@ -286,7 +328,7 @@ const ChatModal = () => {
       currentChat.admins &&
       currentUser &&
       currentUser._id &&
-      currentChat.admins.includes(currentUser._id)
+      currentChat.admins.includes(currentUser._id.toString())
         ? true
         : false;
 
@@ -298,7 +340,8 @@ const ChatModal = () => {
       (listedChatMemberIsAdmin && !currentUserIsAdmin) ||
       (!listedChatMemberIsAdmin && !currentUserIsAdmin)
     ) {
-      return () => startConversation(listedChatMember);
+      return () =>
+        getStartOrOpenChatWithUserHandler(Methods.getTBarebonesUser(listedChatMember));
     }
 
     // if currentUser is admin, but LCM isn't, 'add as admin' btn:
@@ -307,12 +350,12 @@ const ChatModal = () => {
     }
   };
 
-  const getButtonOneText = (listedChatMember: TUser): string => {
+  const getButtonOneText = (listedChatMember: TUserSecure): string => {
     const listedChatMemberIsAdmin: boolean =
       currentChat &&
       currentChat.admins &&
       listedChatMember._id &&
-      currentChat.admins.includes(listedChatMember._id)
+      currentChat.admins.includes(listedChatMember._id.toString())
         ? true
         : false;
 
@@ -321,7 +364,7 @@ const ChatModal = () => {
       currentChat.admins &&
       currentUser &&
       currentUser._id &&
-      currentChat.admins.includes(currentUser._id)
+      currentChat.admins.includes(currentUser._id.toString())
         ? true
         : false;
 
@@ -340,22 +383,14 @@ const ChatModal = () => {
     return "Add Admin";
   };
 
-  let usersToAdd: TUser[] = [];
-  for (const userID of usersToAddToChat) {
-    for (const otherUser of allOtherUsers) {
-      if (otherUser._id === userID) {
-        usersToAdd.push(otherUser);
-      }
-    }
-  }
-
   const userMayDeleteChat: boolean =
     currentChat &&
     currentChat.admins &&
     currentUser &&
     currentUser._id &&
-    (currentChat.admins.includes(currentUser._id) ||
-      (currentChat.members.includes(currentUser._id) && currentChat.members.length === 2))
+    (currentChat.admins.includes(currentUser._id.toString()) ||
+      (currentChat.members.includes(currentUser._id.toString()) &&
+        currentChat.members.length === 2))
       ? true
       : false;
 
@@ -364,8 +399,7 @@ const ChatModal = () => {
     otherChatMember._id &&
     currentUser &&
     currentUser._id &&
-    otherChatMember.friends.includes(currentUser._id) &&
-    currentUser.friends.includes(otherChatMember._id)
+    currentUser.friends.includes(otherChatMember._id.toString())
       ? true
       : false;
 
@@ -377,11 +411,12 @@ const ChatModal = () => {
 
   const deleteChatHeaderRef = useRef<HTMLElement | null>(null);
 
+  const initialFetchIsLoading: boolean = displayedPotentialChatMembers === null;
+
   return (
-    <div tabIndex={0} aria-hidden="false" className="modal-background">
+    <div tabIndex={0} className="modal-background">
       <i
         tabIndex={0}
-        aria-hidden="false"
         title="Close"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -396,7 +431,7 @@ const ChatModal = () => {
               setInputMessage("");
             }
             if (showAddMemberModal) {
-              handleCancelAddingChatMembers(e);
+              handleCancelAddOrEditChat(e);
             }
           }
         }}
@@ -412,7 +447,7 @@ const ChatModal = () => {
             setInputMessage("");
           }
           if (showAddMemberModal) {
-            handleCancelAddingChatMembers(e);
+            handleCancelAddOrEditChat(e);
           }
         }}
         className="fas fa-times close-module-icon"
@@ -457,7 +492,7 @@ const ChatModal = () => {
                       {currentChat.admins &&
                         currentUser &&
                         currentUser._id &&
-                        currentChat.admins.includes(currentUser._id) && (
+                        currentChat.admins.includes(currentUser._id.toString()) && (
                           <button
                             style={{ color: randomColor }}
                             onClick={() =>
@@ -487,50 +522,59 @@ const ChatModal = () => {
                       }}
                     />
                   )}
-                  {getChatMembers(currentChat.members).map((member) => (
-                    <ListedUser
-                      key={member._id}
-                      objectLink={`/users/${member?.username}`}
-                      user={member}
-                      title={
-                        currentChat &&
-                        currentChat.admins &&
-                        member._id &&
-                        currentChat.admins.includes(member._id)
-                          ? "Admin"
-                          : undefined
-                      }
-                      renderButtonOne={true}
-                      buttonOneText={getButtonOneText(member)}
-                      buttonOneHandler={getButtonOneHandler(member)}
-                      renderButtonTwo={
-                        currentUser &&
-                        currentUser._id &&
-                        currentChat &&
-                        currentChat.admins &&
-                        member._id &&
-                        !currentChat.admins.includes(member._id) &&
-                        currentChat.admins.includes(currentUser._id)
-                          ? true
-                          : false
-                      }
-                      buttonTwoHandler={
-                        currentUser &&
-                        currentUser._id &&
-                        currentChat &&
-                        currentChat.admins &&
-                        member._id &&
-                        !currentChat.admins.includes(member._id) &&
-                        currentChat.admins.includes(currentUser._id)
-                          ? () => {
-                              setCurrentOtherUser(member);
-                              handleRemoveUserFromChat(member, currentChat);
-                            }
-                          : undefined
-                      }
-                      buttonTwoText="Remove"
-                    />
-                  ))}
+                  {chatMembers &&
+                    currentUser &&
+                    !fetchChatMembersIsLoading &&
+                    chatMembers
+                      .filter((m) => m._id !== currentUser._id)
+                      .map((member) => (
+                        <ListedUser
+                          key={member._id?.toString()}
+                          objectLink={`/otherUsers/${member?.username}`}
+                          user={Methods.getTBarebonesUser(member)}
+                          title={
+                            currentChat &&
+                            currentChat.admins &&
+                            member._id &&
+                            currentChat.admins.includes(member._id.toString())
+                              ? "Admin"
+                              : undefined
+                          }
+                          renderButtonOne={true}
+                          buttonOneText={getButtonOneText(member)}
+                          buttonOneHandler={getButtonOneHandler(member)}
+                          renderButtonTwo={
+                            currentUser &&
+                            currentUser._id &&
+                            currentChat &&
+                            currentChat.admins &&
+                            member._id &&
+                            !currentChat.admins.includes(member._id.toString()) &&
+                            currentChat.admins.includes(currentUser._id.toString())
+                              ? true
+                              : false
+                          }
+                          buttonTwoHandler={
+                            currentUser &&
+                            currentUser._id &&
+                            currentChat &&
+                            currentChat.admins &&
+                            member._id &&
+                            !currentChat.admins.includes(member._id.toString()) &&
+                            currentChat.admins.includes(currentUser._id.toString())
+                              ? () => {
+                                  setCurrentOtherUser(member);
+                                  handleRemoveUserFromChat(member, currentChat);
+                                }
+                              : undefined
+                          }
+                          buttonTwoText="Remove"
+                        />
+                      ))}
+                  {fetchChatMembersIsLoading && <p>Loading...</p>}
+                  {fetchChatMembersIsError && !fetchChatMembersIsLoading && (
+                    <p>Couldn't fetch chat members. Try reloading the page.</p>
+                  )}
                 </div>
               )}
             </div>
@@ -558,7 +602,6 @@ const ChatModal = () => {
                   }}
                   ref={showMembersHeaderRef}
                   tabIndex={0}
-                  aria-hidden="false"
                   onClick={() => setShowMembers(true)}
                 >
                   Show members
@@ -571,14 +614,13 @@ const ChatModal = () => {
                   }}
                   ref={leaveChatHeaderRef}
                   tabIndex={0}
-                  aria-hidden="false"
                   onClick={() => setShowAreYouSureYouWantToLeaveChat(true)}
                 >
                   Leave chat
                 </header>
                 {currentUser &&
                   currentUser._id &&
-                  currentChat.admins?.includes(currentUser._id) &&
+                  currentChat.admins?.includes(currentUser._id.toString()) &&
                   (currentChat.chatName ? (
                     <header
                       onKeyDown={(e) => {
@@ -588,7 +630,6 @@ const ChatModal = () => {
                       }}
                       ref={addOrEditChatNameHeaderRef}
                       tabIndex={0}
-                      aria-hidden="false"
                       onClick={() => setShowEditChatNameModal(true)}
                     >
                       Edit Chat Name
@@ -602,7 +643,6 @@ const ChatModal = () => {
                       }}
                       ref={addOrEditChatNameHeaderRef}
                       tabIndex={0}
-                      aria-hidden="false"
                       onClick={() => setShowEditChatNameModal(true)}
                     >
                       Add Chat Name
@@ -617,7 +657,6 @@ const ChatModal = () => {
                     }}
                     ref={deleteChatHeaderRef}
                     tabIndex={0}
-                    aria-hidden="false"
                     style={{ color: "tomato" }}
                     onClick={() => setShowAreYouSureYouWantToDeleteChat(true)}
                   >
@@ -626,6 +665,9 @@ const ChatModal = () => {
                 )}
               </div>
             </>
+          )}
+          {currentChat?.chatType === "two-member" && !otherChatMember && (
+            <p>Loading...</p>
           )}
           {otherChatMember && (
             <div className="chat-header-single-other-member">
@@ -640,7 +682,6 @@ const ChatModal = () => {
               </div>
               <i
                 tabIndex={0}
-                aria-hidden="false"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     setShowAreYouSureYouWantToDeleteChat(true);
@@ -653,141 +694,159 @@ const ChatModal = () => {
               ></i>
             </div>
           )}
-          {currentChat && (
-            <div
-              style={
-                showAreYouSureYouWantToDeleteChat || showAreYouSureYouWantToLeaveChat
-                  ? {
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "gray",
-                    }
-                  : { backgroundColor: "gray" }
-              }
-              ref={messagesContainerRef}
-              className="messages-container"
-              onScroll={() => handleMessageContainerScroll()}
-            >
-              {(messagesContainerScrollBottom > 0 || areNewMessages) && (
-                <div
-                  style={areNewMessages ? { top: "67%" } : undefined}
-                  className="message-indicators-container"
-                >
-                  {areNewMessages &&
-                    messagesContainerScrollHeight > messagesContainerClientHeight && (
-                      <span
-                        className="new-messages-indicator"
-                        style={
-                          randomColor === "var(--primary-color)"
-                            ? { backgroundColor: `${randomColor}`, color: "black" }
-                            : { backgroundColor: `${randomColor}`, color: "white" }
-                        }
-                      >
-                        New
-                      </span>
+          {currentChat &&
+            ((currentChat?.chatType === "two-member" && otherChatMember) ||
+              currentChat.chatType === "group") && (
+              <div
+                style={
+                  showAreYouSureYouWantToDeleteChat || showAreYouSureYouWantToLeaveChat
+                    ? {
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "gray",
+                      }
+                    : { backgroundColor: "gray" }
+                }
+                ref={messagesContainerRef}
+                className="messages-container"
+                onScroll={() => handleMessageContainerScroll()}
+              >
+                {(messagesContainerScrollBottom > 0 || areNewMessages) && (
+                  <div
+                    style={areNewMessages ? { top: "67%" } : undefined}
+                    className="message-indicators-container"
+                  >
+                    {areNewMessages &&
+                      messagesContainerScrollHeight > messagesContainerClientHeight && (
+                        <span
+                          className="new-messages-indicator"
+                          style={
+                            randomColor === "var(--primary-color)"
+                              ? { backgroundColor: `${randomColor}`, color: "black" }
+                              : { backgroundColor: `${randomColor}`, color: "white" }
+                          }
+                        >
+                          New
+                        </span>
+                      )}
+                    {messagesContainerScrollBottom > 0 && (
+                      <i
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            scrollToLatestMessage();
+                          }
+                        }}
+                        onClick={() => scrollToLatestMessage()}
+                        id="to-latest-message-button"
+                        className="fas fa-chevron-down"
+                      ></i>
                     )}
-                  {messagesContainerScrollBottom > 0 && (
-                    <i
-                      aria-hidden="false"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          scrollToLatestMessage();
-                        }
-                      }}
-                      onClick={() => scrollToLatestMessage()}
-                      id="to-latest-message-button"
-                      className="fas fa-chevron-down"
-                    ></i>
+                  </div>
+                )}
+                {!showAreYouSureYouWantToDeleteChat &&
+                  !showAreYouSureYouWantToLeaveChat &&
+                  currentChat.messages.map((message) => (
+                    <Message
+                      key={message._id.toString()}
+                      message={message}
+                      randomColor={randomColor ? randomColor : undefined}
+                    />
+                  ))}
+                {showAreYouSureYouWantToDeleteChat &&
+                  !showAreYouSureYouWantToLeaveChat && (
+                    <ChatModalTwoOptions
+                      randomColor={randomColor}
+                      header="Are you sure you want to delete this chat?"
+                      subheader="Please understand that all messages will be deleted. This is irreversible."
+                      buttonOneText="Cancel"
+                      buttonOneHandler={() => setShowAreYouSureYouWantToDeleteChat(false)}
+                      buttonTwoText="Delete"
+                      buttonTwoHandler={
+                        currentChat
+                          ? () => {
+                              if (currentChat._id) {
+                                handleDeleteChat(currentChat._id.toString());
+                              }
+                            }
+                          : undefined
+                      }
+                    />
                   )}
-                </div>
-              )}
-              {!showAreYouSureYouWantToDeleteChat &&
-                !showAreYouSureYouWantToLeaveChat &&
-                currentChat.messages.map((message) => (
-                  <Message
-                    key={message._id.toString()}
-                    message={message}
-                    randomColor={randomColor ? randomColor : undefined}
-                  />
-                ))}
-              {showAreYouSureYouWantToDeleteChat && !showAreYouSureYouWantToLeaveChat && (
-                <ChatModalTwoOptions
-                  randomColor={randomColor}
-                  header="Are you sure you want to delete this chat?"
-                  subheader="Please understand that all messages will be deleted. This is irreversible."
-                  buttonOneText="Cancel"
-                  buttonOneHandler={() => setShowAreYouSureYouWantToDeleteChat(false)}
-                  buttonTwoText="Delete"
-                  buttonTwoHandler={
-                    currentChat
-                      ? () => handleDeleteChat(currentChat._id.toString())
-                      : undefined
-                  }
-                />
-              )}
-              {showAreYouSureYouWantToLeaveChat && !showAreYouSureYouWantToDeleteChat && (
-                <ChatModalTwoOptions
-                  randomColor={randomColor}
-                  header="Are you sure you want to leave this chat?"
-                  buttonOneText="Cancel"
-                  buttonOneHandler={() => setShowAreYouSureYouWantToLeaveChat(false)}
-                  buttonTwoText="Leave"
-                  buttonTwoHandler={
-                    currentUser && currentChat
-                      ? () => handleRemoveUserFromChat(currentUser, currentChat)
-                      : undefined
-                  }
-                />
-              )}
-            </div>
-          )}
-          {
-            <div className="message-input-container">
-              <textarea
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Type message"
-                maxLength={10000}
-              ></textarea>
-              {!messageBeingEdited ? (
-                <button
-                  id="send-message-button"
-                  disabled={inputMessage.replace(/\s+/g, "") === ""}
-                  onClick={() =>
-                    currentChat && handleSendMessage(currentChat, inputMessage)
-                  }
-                  style={
-                    randomColor === "var(--primary-color)"
-                      ? { backgroundColor: `${randomColor}`, color: "black" }
-                      : { backgroundColor: `${randomColor}`, color: "white" }
-                  }
-                >
-                  <i className="fas fa-paper-plane"></i>
-                </button>
-              ) : (
-                <div className="edit-message-buttons-container">
+                {showAreYouSureYouWantToLeaveChat &&
+                  !showAreYouSureYouWantToDeleteChat && (
+                    <ChatModalTwoOptions
+                      randomColor={randomColor}
+                      header="Are you sure you want to leave this chat?"
+                      buttonOneText="Cancel"
+                      buttonOneHandler={() => setShowAreYouSureYouWantToLeaveChat(false)}
+                      buttonTwoText="Leave"
+                      buttonTwoHandler={
+                        currentUser && currentChat
+                          ? () => handleRemoveUserFromChat(currentUser, currentChat)
+                          : undefined
+                      }
+                    />
+                  )}
+              </div>
+            )}
+          {currentChat &&
+            ((currentChat?.chatType === "two-member" && otherChatMember) ||
+              currentChat.chatType === "group") && (
+              <div className="message-input-container">
+                <textarea
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  placeholder="Type message"
+                  maxLength={10000}
+                ></textarea>
+                {!messageBeingEdited ? (
                   <button
-                    onClick={
-                      currentChat
-                        ? () => handleSaveEditedMessage(currentChat, messageBeingEdited)
-                        : undefined
+                    id="send-message-button"
+                    disabled={inputMessage.replace(/\s+/g, "") === ""}
+                    onClick={() =>
+                      currentChat && handleSendMessage(currentChat, inputMessage)
                     }
-                    disabled={inputMessage === messageBeingEdited.content}
                     style={
                       randomColor === "var(--primary-color)"
                         ? { backgroundColor: `${randomColor}`, color: "black" }
                         : { backgroundColor: `${randomColor}`, color: "white" }
                     }
                   >
-                    Update
+                    <i
+                      onMouseEnter={() => setHoveringOverSendIcon(true)}
+                      onMouseLeave={() => setHoveringOverSendIcon(false)}
+                      style={
+                        hoveringOverSendIcon && inputMessage.replace(/\s+/g, "") === ""
+                          ? { cursor: "not-allowed" }
+                          : undefined
+                      }
+                      className="fas fa-paper-plane"
+                    ></i>
                   </button>
-                  <button onClick={() => cancelEditingMessage()}>Cancel</button>
-                </div>
-              )}
-            </div>
-          }
+                ) : (
+                  <div className="edit-message-buttons-container">
+                    <button
+                      onClick={
+                        currentChat
+                          ? () => handleSaveEditedMessage(currentChat, messageBeingEdited)
+                          : undefined
+                      }
+                      disabled={inputMessage === messageBeingEdited.content}
+                      style={
+                        randomColor === "var(--primary-color)"
+                          ? { backgroundColor: `${randomColor}`, color: "black" }
+                          : { backgroundColor: `${randomColor}`, color: "white" }
+                      }
+                    >
+                      Update
+                    </button>
+                    <button onClick={() => cancelEditingMessage()}>Cancel</button>
+                  </div>
+                )}
+              </div>
+            )}
         </div>
       )}
       {showAddMemberModal && (
@@ -795,105 +854,110 @@ const ChatModal = () => {
           style={{ border: `3px solid ${randomColor}` }}
           className="add-members-modal-container"
         >
-          <div className="add-members-modal">
-            <header>Add people to chat:</header>
-            {usersToAddToChat.length > 0 && (
-              <div className="added-user-tab-container">
-                {usersToAdd.map((user) => (
-                  <Tab
-                    key={`${user._id}-dropdown-item`}
-                    info={user}
-                    removeHandler={handleAddRemoveUserFromChat}
-                    removeHandlerNeedsEventParam={false}
-                    removeHandlerParams={[
-                      user,
-                      usersToAddToChat,
-                      setUsersToAddToChat,
-                      currentChat,
-                    ]}
-                    randomColor={randomColor}
-                    userMayNotDelete={false}
-                  />
-                ))}
-              </div>
-            )}
-            <SearchAndDropdownList
-              name="add-member-to-chat"
-              id="add-member-to-chat"
-              placeholder="Search users by username, first/last names"
-              query={chatMembersSearchQuery}
-              clearQueryOnClick={() => {
-                setChatMembersSearchQuery("");
-                initiatePotentialChatMembers();
-              }}
-              randomColor={randomColor}
-              showList={showPotentialChatMembers}
-              setShowList={setShowPotentialChatMembers}
-              inputOnChange={(e) =>
-                handleSearchChatMembersInput(
-                  e,
-                  showPotentialChatMembers,
-                  setShowPotentialChatMembers,
-                  allOtherUsers,
-                  initiatePotentialChatMembers
-                )
-              }
-              dropdownChecklist={
-                <DropdownChecklist
-                  usedFor="potential-additional-chat-members"
-                  action={handleAddRemoveUserFromChat}
-                  actionEventParamNeeded={false}
-                  displayedItemsArray={potentialChatMembers}
-                  storageArray={usersToAddToChat}
-                  setStorageArray={setUsersToAddToChat}
-                  displayedItemsCount={numberOfPotentialChatMembersDisplayed}
-                  setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
-                  displayedItemsCountInterval={10}
-                />
-              }
-            />
-            {usersToAddToChat.length > 0 && (
-              <>
-                <header>Choose group name (optional)</header>
-                <input
-                  value={chatName}
-                  onChange={(e) => handleChatNameInput(e)}
-                  type="text"
-                  placeholder="Enter group chat name"
-                  inputMode="text"
-                ></input>
-                {chatNameError !== "" && <p>{chatNameError}</p>}
-              </>
-            )}
-            <div className="create-new-chat-modal-buttons">
-              <button
-                onClick={(e) => {
-                  handleCancelAddingChatMembers(e);
-                }}
-                id="cancel"
-              >
-                Cancel
-              </button>
-              <button
-                disabled={usersToAddToChat.length === 0}
-                style={
-                  randomColor === "var(--primary-color)"
-                    ? { backgroundColor: `${randomColor}`, color: "black" }
-                    : { backgroundColor: `${randomColor}`, color: "white" }
-                }
-                onClick={() => {
-                  if (currentChat) {
-                    handleAddMultipleUsersToChat(
-                      usersToAdd.map((user) => (user && user._id ? user._id : "")),
-                      currentChat
-                    );
+          <h1>Add chat members</h1>
+          {initialFetchIsLoading && (
+            <header style={{ marginTop: "3rem" }} className="query-status-text">
+              Loading...
+            </header>
+          )}
+          {!initialFetchIsLoading && isFetchError && (
+            <p>Error retrieving data; please reload the page.</p>
+          )}
+          {!initialFetchIsLoading && !isFetchError && (
+            <div className="add-members-modal">
+              {usersToAddToChat.length > 0 && (
+                <div className="added-user-tab-container">
+                  {usersToAddToChat.map((user) => (
+                    <Tab
+                      key={`${user._id}-dropdown-item`}
+                      info={user}
+                      removeHandler={handleAddRemoveUserFromChat}
+                      removeHandlerNeedsEventParam={false}
+                      removeHandlerParams={[
+                        user,
+                        usersToAddToChat,
+                        setUsersToAddToChat,
+                        currentChat,
+                      ]}
+                      randomColor={randomColor}
+                      userMayNotDelete={false}
+                    />
+                  ))}
+                </div>
+              )}
+              {displayedPotentialChatMembers && currentChat && (
+                <SearchAndDropdownList
+                  name="add-member-to-chat"
+                  id="add-member-to-chat"
+                  placeholder="Search users by username, first/last names"
+                  query={chatMembersSearchQuery}
+                  clearQueryOnClick={() => {
+                    setChatMembersSearchQuery("");
+                  }}
+                  randomColor={randomColor}
+                  showList={showPotentialChatMembers}
+                  setShowList={setShowPotentialChatMembers}
+                  inputOnChange={(e) => handleSearchPotentialChatMembers(e, currentChat)}
+                  dropdownChecklist={
+                    <DropdownChecklist
+                      usedFor="potential-additional-chat-members"
+                      action={handleAddRemoveUserFromChat}
+                      actionEventParamNeeded={false}
+                      displayedItemsArray={displayedPotentialChatMembers}
+                      storageArray={usersToAddToChat}
+                      setStorageArray={setUsersToAddToChat}
+                      scrollHandler={handleLoadMoreItemsOnScroll}
+                      scrollHandlerParams={[displayedPotentialChatMembers]}
+                      fetchIsLoading={fetchIsLoading}
+                    />
                   }
-                }}
-              >
-                Add
-              </button>
+                />
+              )}
+              {usersToAddToChat.length > 0 && (
+                <>
+                  <header>Choose group name (optional)</header>
+                  <input
+                    value={chatName}
+                    onChange={(e) => handleChatNameInput(e)}
+                    type="text"
+                    placeholder="Enter group chat name"
+                    inputMode="text"
+                  ></input>
+                  {chatNameError !== "" && <p>{chatNameError}</p>}
+                </>
+              )}
+              <div className="create-new-chat-modal-buttons">
+                <button
+                  onClick={(e) => {
+                    handleCancelAddOrEditChat(e);
+                  }}
+                  id="cancel"
+                >
+                  Cancel
+                </button>
+                <button
+                  disabled={usersToAddToChat.length === 0}
+                  style={
+                    randomColor === "var(--primary-color)"
+                      ? { backgroundColor: `${randomColor}`, color: "black" }
+                      : { backgroundColor: `${randomColor}`, color: "white" }
+                  }
+                  onClick={() => {
+                    if (currentChat) {
+                      handleAddMultipleUsersToChat(
+                        usersToAddToChat
+                          .map((u) => u._id?.toString())
+                          .filter((elem) => elem !== undefined),
+                        currentChat
+                      );
+                    }
+                  }}
+                >
+                  Add
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>

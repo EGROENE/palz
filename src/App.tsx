@@ -29,19 +29,9 @@ import TermsAndConditions from "./Components/Pages/TermsAndConditions/TermsAndCo
 import MobileNavOptions from "./Components/Elements/MobileNavOptions/MobileNavOptions";
 
 function App() {
-  const {
-    theme,
-    showWelcomeMessage,
-    showSidebar,
-    handleLoadMoreOnScroll,
-    displayedItemsCount,
-    setDisplayedItemsCount,
-    displayedItems,
-    displayedItemsFiltered,
-    displayedItemsCountInterval,
-    setShowSidebar,
-    showMobileNavOptions,
-  } = useMainContext();
+  const { theme, showWelcomeMessage, showSidebar, setShowSidebar, showMobileNavOptions } =
+    useMainContext();
+
   const {
     userCreatedAccount,
     currentUser,
@@ -49,54 +39,23 @@ function App() {
     setShowUpdateProfileImageInterface,
     removeProfileImage,
     accountDeletionInProgress,
-    updateProfileImageMutation,
-    removeProfileImageMutation,
+    updateProfileImageIsLoading,
+    removeProfileImageIsLoading,
+    blockUserInProgress,
+    logout,
+    lastLogin,
   } = useUserContext();
+
   const {
     currentEvent,
     eventEditIsInProgress,
     addEventIsInProgress,
     eventDeletionIsInProgress,
-    addEventImageMutation,
-    removeEventImageMutation,
   } = useEventContext();
   const { chatCreationInProgress, showChatModal } = useChatContext();
 
   const navigation = useNavigate();
   const currentURL = useLocation().pathname;
-
-  /* 
-  Add/remove event listeners to/from window, which call handleLoadMoreOnScroll, dependent on changes to state values related to items that should be displayed. Allows for controlling how many items display at once on pages like FindPalz, MyPalz, & Explore Events. As user scrolls to bottom of page, a certain amount of new items is loaded.
-  */
-  useEffect(() => {
-    window.addEventListener("scroll", () =>
-      handleLoadMoreOnScroll(
-        displayedItemsCount,
-        setDisplayedItemsCount,
-        displayedItems,
-        displayedItemsFiltered,
-        displayedItemsCountInterval
-      )
-    );
-
-    return () => {
-      window.removeEventListener("scroll", () =>
-        handleLoadMoreOnScroll(
-          displayedItemsCount,
-          setDisplayedItemsCount,
-          displayedItems,
-          displayedItemsFiltered,
-          displayedItemsCountInterval
-        )
-      );
-    };
-  }, [
-    displayedItemsCount,
-    setDisplayedItemsCount,
-    displayedItems,
-    displayedItemsFiltered,
-    displayedItemsCountInterval,
-  ]);
 
   theme === "dark"
     ? (document.body.style.backgroundColor = "#242424")
@@ -139,27 +98,44 @@ function App() {
   /* userCreatedAccount is checked for non-null values, since currentUser may be set before submission of login form, causing user's homepage to display before they actually log in */
   useEffect(() => {
     if (
+      currentUser &&
+      currentUser._id &&
+      currentURL !== "/login" &&
+      currentURL !== "/signup" &&
+      currentURL !== "/"
+    ) {
+      const sevenDays: number = 1000 * 60 * 60 * 24 * 7;
+      const now: number = Date.now();
+
+      if (now - lastLogin >= sevenDays) {
+        toast(`For security reasons, please log in again.`, {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+        setTimeout(() => logout(), 2000);
+      }
+    }
+
+    if (
       userCreatedAccount !== null &&
       !showWelcomeMessage &&
-      currentURL === `/users/${currentUser?.username}`
+      currentUser &&
+      currentURL === `/`
     ) {
-      navigation(`users/${currentUser?.username}`);
+      navigation(`/homepage/${currentUser?.username}`);
     }
-  }, [
-    navigation,
-    showWelcomeMessage,
-    userCreatedAccount,
-    currentUser?.username,
-    currentURL,
-  ]);
+  }, [showWelcomeMessage, userCreatedAccount, currentUser?.username, currentURL]);
 
   const getBaseURLElement = (): JSX.Element => {
     if (userCreatedAccount !== null && showWelcomeMessage) {
       return <Welcome />;
-    } else if (userCreatedAccount !== null && !showWelcomeMessage) {
-      return <UserHomepage />;
+    } else if (userCreatedAccount === null) {
+      return <LoginPage type="login" />;
     }
-    return <LoginPage />;
+    return <UserHomepage />;
   };
   const baseURLElement = getBaseURLElement();
 
@@ -169,7 +145,7 @@ function App() {
         className="page-hero"
         onClick={() => (showSidebar ? setShowSidebar(false) : undefined)}
       >
-        {userCreatedAccount !== null && !showWelcomeMessage && <NavBar />}
+        {currentUser && userCreatedAccount !== null && !showWelcomeMessage && <NavBar />}
         {showSidebar && <Sidebar />}
         {showUpdateProfileImageInterface && (
           <TwoOptionsInterface
@@ -186,30 +162,29 @@ function App() {
         {addEventIsInProgress && <LoadingModal message="Adding event..." />}
         {eventEditIsInProgress && <LoadingModal message="Updating event..." />}
         {eventDeletionIsInProgress && <LoadingModal message="Deleting event..." />}
-        {(updateProfileImageMutation.isPending || addEventImageMutation.isPending) && (
-          <LoadingModal message="Uploading image..." />
-        )}
-        {(removeProfileImageMutation.isPending || removeEventImageMutation.isPending) && (
-          <LoadingModal message="Removing image..." />
-        )}
+        {updateProfileImageIsLoading && <LoadingModal message="Uploading image..." />}
+        {removeProfileImageIsLoading && <LoadingModal message="Removing image..." />}
         {chatCreationInProgress && <LoadingModal message="Creating chat..." />}
+        {blockUserInProgress && <LoadingModal message="Blocking user..." />}
         {showChatModal && <ChatModal />}
         {showMobileNavOptions && <MobileNavOptions />}
 
         <Routes>
           <Route path="/" element={baseURLElement} />
+          <Route path="/login" element={<LoginPage type="login" />} />
+          <Route path="/signup" element={<LoginPage type="signup" />} />
           <Route path="/settings" element={<UserSettings />} />
           <Route path="/add-event" element={<AddEventPage />} />
           <Route
             path="/edit-event/:eventID"
             element={<EditEventPage event={currentEvent} />}
           />
-          <Route path="/events" element={<DisplayedCardsPage usedFor="events" />} />
+          <Route path="/find-events" element={<DisplayedCardsPage usedFor="events" />} />
           <Route path="/events/:eventID" element={<EventPage />} />
           <Route path="/:username/events" element={<UsersEvents />} />
           <Route path="/:username/friend-requests" element={<FriendRequests />} />
-          <Route path="/:username" element={<UserHomepage />} />
-          <Route path="/users/:username" element={<OtherUserProfile />} />
+          <Route path="/homepage/:username" element={<UserHomepage />} />
+          <Route path="/otherUsers/:username" element={<OtherUserProfile />} />
           <Route
             path="/find-palz"
             element={<DisplayedCardsPage usedFor="potential-friends" />}
@@ -219,7 +194,7 @@ function App() {
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
-        {userCreatedAccount !== null && !showWelcomeMessage && <Footer />}
+        {currentUser && userCreatedAccount !== null && !showWelcomeMessage && <Footer />}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { TEvent, TUser, TChat } from "./types";
+import { TEvent, TUser, TChat, TUserSecure, TBarebonesUser } from "./types";
 
 const isTEvent = (value: any): value is TEvent => {
   if (value.eventStartDateTimeInMS) {
@@ -15,12 +15,16 @@ const isTUser = (value: any): value is TUser => {
   return false;
 };
 
-const arraysAreIdentical = (array1: any[], array2: any[]) => {
-  if (array1.sort().join(",") === array2.sort().join(",")) {
-    return true;
-  }
-  return false;
+const isTUserSecure = (value: any): value is TUserSecure => {
+  return value.username ? true : false;
 };
+
+const isTBarebonesUser = (value: any): value is TBarebonesUser => {
+  return value.username ? true : false;
+};
+
+const arraysAreIdentical = (array1: any[], array2: any[]): boolean =>
+  array1.sort().join(",") === array2.sort().join(",") ? true : false;
 
 const sortEventsSoonestToLatest = (eventArray: TEvent[]): TEvent[] =>
   eventArray.sort((a, b) => a.eventStartDateTimeInMS - b.eventStartDateTimeInMS);
@@ -35,16 +39,16 @@ const isValidUrl = (url: string): boolean => {
   }
 };
 
-const nameNoSpecialChars = (input: string) =>
-  input.replace(/[^a-zÄäÖöÜüÑñÉéóÓÍí -']/gi, "");
+const nameNoSpecialChars = (input: string): string =>
+  input.replace(/[^a-zA-ZÄäÖöÜüÑñÉéóÓÍí \-']/gi, "");
 
-const getCapitalizedWord = (word) => {
+const getCapitalizedWord = (word): string => {
   const firstLetterCapitalized = word && word[0].toUpperCase();
   const restOfWord = word.slice(1);
   return firstLetterCapitalized + restOfWord;
 };
 
-const formatCapitalizedName = (name) => {
+const formatCapitalizedName = (name): string => {
   let formattedWordOrWords = "";
 
   if (name !== "") {
@@ -113,12 +117,122 @@ const formatHyphensAndSpacesInString = (name: string): string => {
   return finalChars.join("");
 };
 
-// To avoid BS type errors & keep this method usable w/ arrays of all types, disable type checking
-// @ts-ignore
-function removeDuplicatesFromArray(arr: any[]) {
-  // @ts-ignore
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
+const removeDuplicatesFromArray = (arr: any[]): any[] => [...new Set(arr)];
+
+const getTUserSecureFromTUser = (
+  userToConvert: TUser,
+  currentUser: TUser
+): TUserSecure => {
+  const currentUserIsFriend: boolean =
+    currentUser && currentUser._id
+      ? userToConvert.friends.includes(currentUser._id.toString())
+      : false;
+
+  const currentUserIsFriendOfFriend: boolean = userToConvert.friends.some((pfFriend) =>
+    currentUser.friends.includes(pfFriend)
+  );
+
+  const showLocation: boolean =
+    userToConvert.whoCanSeeLocation === "anyone" ||
+    (userToConvert.whoCanSeeLocation === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeLocation === "friends of friends" &&
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
+
+  const showPhoneNumber: boolean =
+    userToConvert.whoCanSeePhoneNumber === "anyone" ||
+    (userToConvert.whoCanSeePhoneNumber === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeePhoneNumber === "friends of friends" &&
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
+
+  const showEmailAddress: boolean =
+    userToConvert.whoCanSeeEmailAddress === "anyone" ||
+    (userToConvert.whoCanSeeEmailAddress === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeEmailAddress === "friends of friends" &&
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
+
+  const showInstagram: boolean =
+    userToConvert.whoCanSeeInstagram === "anyone" ||
+    (userToConvert.whoCanSeeInstagram === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeInstagram === "friends of friends" &&
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
+
+  const showFacebook: boolean =
+    userToConvert.whoCanSeeFacebook === "anyone" ||
+    (userToConvert.whoCanSeeFacebook === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeFacebook === "friends of friends" &&
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
+
+  const showX: boolean =
+    userToConvert.whoCanSeeX === "anyone" ||
+    (userToConvert.whoCanSeeX === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeX === "friends of friends" &&
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
+
+  const showFriends: boolean =
+    userToConvert.whoCanSeeFriendsList === "anyone" ||
+    (userToConvert.whoCanSeeFriendsList === "friends" && currentUserIsFriend) ||
+    (userToConvert.whoCanSeeFriendsList === "friends of friends" &&
+      (currentUserIsFriendOfFriend || currentUserIsFriend));
+
+  return {
+    "_id": userToConvert._id,
+    "index": userToConvert.index,
+    "firstName": userToConvert.firstName,
+    "lastName": userToConvert.lastName,
+    "username": userToConvert.username,
+    "profileImage": userToConvert.profileImage,
+    "interests": userToConvert.interests,
+    "about": userToConvert.about,
+    ...(showLocation && {
+      city: userToConvert.city,
+    }),
+    ...(showLocation && {
+      stateProvince: userToConvert.stateProvince,
+    }),
+    ...(showLocation && {
+      country: userToConvert.country,
+    }),
+    ...(showPhoneNumber && {
+      phoneCountry: userToConvert.phoneCountry,
+    }),
+    ...(showPhoneNumber && {
+      phoneCountryCode: userToConvert.phoneCountryCode,
+    }),
+    ...(showPhoneNumber && {
+      phoneNumberWithoutCountryCode: userToConvert.phoneNumberWithoutCountryCode,
+    }),
+    ...(showEmailAddress && {
+      emailAddress: userToConvert.emailAddress,
+    }),
+    ...(showInstagram && {
+      instagram: userToConvert.instagram,
+    }),
+    ...(showFacebook && {
+      facebook: userToConvert.facebook,
+    }),
+    ...(showX && {
+      x: userToConvert.x,
+    }),
+    ...(showFriends && {
+      friends: userToConvert.friends,
+    }),
+  };
+};
+
+// TBarebonesUser is only included as param, since a value of type, say TUserSecure | TBarebonesUser could be passed
+const getTBarebonesUser = (
+  user: TUser | TUserSecure | TBarebonesUser | null
+): TBarebonesUser => {
+  return {
+    _id: user?._id,
+    username: user?.username,
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    emailAddress: user?.emailAddress,
+    profileImage: user?.profileImage,
+    index: user?.index,
+  };
+};
 
 const getStringArraySortedAlphabetically = (array: string[]): string[] => {
   return array.sort(function (a, b) {
@@ -224,7 +338,11 @@ const getDateMessageSent = (message: TMessage): string => {
 };
 
 const Methods = {
+  isTBarebonesUser,
+  getTUserSecureFromTUser,
+  getTBarebonesUser,
   getDateMessageSent,
+  isTUserSecure,
   sortChatsByMostRecentMessage,
   isTEvent,
   isTUser,

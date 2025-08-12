@@ -20,6 +20,7 @@
 
 .dateTimeGroupContainer {
   display: flex;
+  flex-direction: column;
 }
 
 .dateTimeGroupContainer:first-child {
@@ -88,6 +89,10 @@
 .eventImageContainer {
   display: flex;
   position: relative;
+}
+
+.eventImagesContainer label {
+  margin: 1rem;
 }
 
 .eventImageContainer i {

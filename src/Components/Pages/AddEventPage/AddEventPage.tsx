@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
-import { useEventContext } from "../../../Hooks/useEventContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import { useNavigate } from "react-router-dom";
 import EventForm from "../../Forms/EventForm/EventForm";
 import { TThemeColor } from "../../../types";
 import toast from "react-hot-toast";
 import LoadingModal from "../../Elements/LoadingModal/LoadingModal";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
+import { useEventContext } from "../../../Hooks/useEventContext";
 
 const AddEventPage = () => {
   const navigation = useNavigate();
   const { isLoading, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, logout, fetchAllUsersQuery } =
-    useUserContext();
-  const { fetchAllEventsQuery } = useEventContext();
+  const { currentUser, userCreatedAccount, logout } = useUserContext();
+  const { setCurrentEvent } = useEventContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
@@ -42,34 +40,15 @@ const AddEventPage = () => {
         },
       });
       logout();
+      setCurrentEvent(undefined);
     }
   }, [currentUser, navigation, userCreatedAccount]);
 
-  const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
-
-  const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
-
-  const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllUsersQuery.isError) {
-      return fetchAllUsersQuery;
-    }
-    return fetchAllEventsQuery;
-  };
-  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
-
   return (
     <>
-      {isLoading && <LoadingModal message="Adding event..." />}
       <h1>Add New Event</h1>
-      <QueryLoadingOrError
-        query={queryForQueryLoadingOrError}
-        errorMessage="Error fetching data."
-      />
-      {!fetchIsLoading && isNoFetchError && (
-        <EventForm randomColor={randomColor} usedFor="add-event" />
-      )}
+      {isLoading && <LoadingModal message="Adding event..." />}
+      <EventForm randomColor={randomColor} usedFor="add-event" />
     </>
   );
 };

@@ -10,7 +10,8 @@ import { TThemeColor } from "../../../../types";
 const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) => {
   const { welcomeMessageDisplayTime } = useMainContext();
   const {
-    //fetchAllUsers,
+    confirmationPasswordIsHidden,
+    processingLoginIsLoading,
     resetLoginOrSignupFormFieldsAndErrors,
     areNoSignupFormErrors,
     passwordIsHidden,
@@ -44,10 +45,6 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
 
   // After a couple seconds after signup, change url to /users/*username*:
   const navigation = useNavigate();
-  const handleSignupFormSubmission = (e: React.FormEvent<HTMLFormElement>) => {
-    handleSignupOrLoginFormSubmission(true, e);
-    setTimeout(() => navigation(`/${username}`), welcomeMessageDisplayTime);
-  };
 
   const [focusedElement, setFocusedElement] = useState<
     | "firstName"
@@ -75,8 +72,10 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
 
   return (
     <form
-      onSubmit={(e) => handleSignupFormSubmission(e)}
-      className="login-signup-edit-form"
+      onSubmit={() => {
+        setTimeout(() => navigation(`${username}`), welcomeMessageDisplayTime);
+      }}
+      className="login-signup-form"
     >
       <div>
         <label>
@@ -133,7 +132,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
         </label>
       </div>
       <label>
-        <p>
+        <header className="input-label">
           Username:{" "}
           <span>
             <i
@@ -142,7 +141,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
               title="Must be 4-20 characters long & contain only alphanumeric characters"
             ></i>
           </span>
-        </p>
+        </header>
         {showUsernameCriteria && (
           <p className="input-criteria">
             Must be 4-20 characters long & contain only alphanumeric characters
@@ -237,9 +236,9 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
             className={passwordError !== "" && showErrors ? "erroneous-field" : undefined}
           />
           {!passwordIsHidden ? (
-            <OpenEye toggleHidePassword={toggleHidePassword} />
+            <OpenEye toggleHidePassword={() => toggleHidePassword("password")} />
           ) : (
-            <ClosedEye toggleHidePassword={toggleHidePassword} />
+            <ClosedEye toggleHidePassword={() => toggleHidePassword("password")} />
           )}
         </div>
         {passwordError !== "" && showErrors && (
@@ -264,7 +263,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
             autoComplete="off"
             onChange={(e) => handleConfirmationPasswordInput(e.target.value, "signup")}
             value={confirmationPassword}
-            type={passwordIsHidden ? "password" : "text"}
+            type={confirmationPasswordIsHidden ? "password" : "text"}
             placeholder="Confirm password"
             inputMode="text"
             className={
@@ -273,29 +272,42 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
                 : undefined
             }
           />
-          {!passwordIsHidden ? (
-            <OpenEye toggleHidePassword={toggleHidePassword} />
+          {!confirmationPasswordIsHidden ? (
+            <OpenEye
+              toggleHidePassword={() => toggleHidePassword("confirmation-password")}
+            />
           ) : (
-            <ClosedEye toggleHidePassword={toggleHidePassword} />
+            <ClosedEye
+              toggleHidePassword={() => toggleHidePassword("confirmation-password")}
+            />
           )}
         </div>
         {confirmationPasswordError !== "" && password !== "" && (
           <p className="input-error-message">{confirmationPasswordError}</p>
         )}
       </label>
-      <div className="theme-element-container">
-        <button
-          className="login-button"
-          type={areNoSignupFormErrors ? "submit" : "button"}
-          onClick={(e) =>
-            areNoSignupFormErrors && allSignupFormFieldsFilled
-              ? undefined
-              : handleFormRejection(e)
-          }
+      {processingLoginIsLoading ? (
+        <header
+          style={{ marginTop: "3rem", textAlign: "center" }}
+          className="query-status-text"
         >
-          Sign Up
-        </button>
-      </div>
+          Processing your info...
+        </header>
+      ) : (
+        <div className="theme-element-container">
+          <button
+            className="login-button"
+            type={areNoSignupFormErrors ? "submit" : "button"}
+            onClick={(e) =>
+              areNoSignupFormErrors && allSignupFormFieldsFilled
+                ? handleSignupOrLoginFormSubmission(true, e)
+                : handleFormRejection(e)
+            }
+          >
+            Sign Up
+          </button>
+        </div>
+      )}
     </form>
   );
 };

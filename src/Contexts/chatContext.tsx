@@ -1,5 +1,13 @@
 import { ReactNode, useState, createContext } from "react";
-import { TChatContext, TChat, TUser, TChatValuesToUpdate, TMessage } from "../types";
+import {
+  TChatContext,
+  TChat,
+  TUser,
+  TChatValuesToUpdate,
+  TMessage,
+  TUserSecure,
+  TBarebonesUser,
+} from "../types";
 import { useUserContext } from "../Hooks/useUserContext";
 import Requests from "../requests";
 import {
@@ -18,16 +26,15 @@ import { useEventContext } from "../Hooks/useEventContext";
 export const ChatContext = createContext<TChatContext | null>(null);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
-  const { theme } = useMainContext();
-  const {
-    currentUser,
-    userHasLoggedIn,
-    allOtherUsers,
-    fetchAllUsersQuery,
-    setCurrentOtherUser,
-    currentOtherUser,
-  } = useUserContext();
-  const allUsers = fetchAllUsersQuery.data;
+  const { theme, error } = useMainContext();
+
+  if (error) {
+    throw new Error(error);
+  }
+
+  const { currentUser, userHasLoggedIn, setCurrentOtherUser, currentOtherUser } =
+    useUserContext();
+
   const { showInvitees, setShowInvitees, showRSVPs, setShowRSVPs } = useEventContext();
 
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
@@ -54,19 +61,28 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showEditChatNameModal, setShowEditChatNameModal] = useState<boolean>(false);
 
-  const [usersToAddToChat, setUsersToAddToChat] = useState<string[]>([]);
+  const [usersToAddToChat, setUsersToAddToChat] = useState<TBarebonesUser[]>([]);
 
   const [chatName, setChatName] = useState<string | undefined>(undefined);
+
   const [chatNameError, setChatNameError] = useState<string>("");
 
-  const [admins, setAdmins] = useState<string[]>([]);
+  const [admins, setAdmins] = useState<TBarebonesUser[]>([]);
 
   const [showPotentialChatMembers, setShowPotentialChatMembers] =
     useState<boolean>(false);
 
-  const [potentialChatMembers, setPotentialChatMembers] = useState<TUser[]>([]);
-
   const [chatMembersSearchQuery, setChatMembersSearchQuery] = useState<string>("");
+
+  const [displayedPotentialChatMembers, setDisplayedPotentialChatMembers] = useState<
+    TBarebonesUser[] | null
+  >(null);
+  const [allPotentialChatMembers, setAllPotentialChatMembers] = useState<
+    TBarebonesUser[]
+  >([]);
+  const [fetchStart, setFetchStart] = useState<number>(0);
+  const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
+  const [isFetchError, setIsFetchError] = useState<boolean>(false);
 
   const [inputMessage, setInputMessage] = useState<string>("");
 
@@ -85,12 +101,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     undefined
   );
 
+  const [fetchChatMembersIsLoading, setFetchChatMembersIsLoading] =
+    useState<boolean>(false);
+
+  const [fetchChatMembersIsError, setFetchChatMembersIsError] = useState<boolean>(false);
+
   const fetchChatsQuery: UseQueryResult<TChat[], Error> = useQuery({
     queryKey: ["userChats"],
-    queryFn: () =>
-      currentUser && currentUser._id
-        ? Requests.getCurrentUserChats(currentUser._id)
-        : undefined,
+    queryFn: () => Requests.getCurrentUserChats(currentUser),
     enabled: userHasLoggedIn,
   });
   const userChats: TChat[] | undefined = fetchChatsQuery.data;
@@ -120,7 +138,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }) => Requests.updateChat(chat, chatValuesToUpdate),
     onSuccess: (data, variables) => {
       if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: "userChats" });
+        queryClient.invalidateQueries({ queryKey: ["userChats"] });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
         setCurrentChat(variables.chat);
         if (inputMessage !== "") {
@@ -212,40 +230,96 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           });
         }
       } else {
-        throw Error;
-      }
-    },
-    onError: (error, variables) => {
-      console.log(error);
-      if (variables.purpose === "send-message") {
-        toast.error("Could not send message. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-      if (variables.purpose === "delete-message") {
-        toast.error("Could not delete message. Please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-      if (variables.purpose === "add-members") {
-        if (usersToAddToChat.length > 1) {
-          toast.error("Could not add users to chat. Please try again.", {
+        if (variables.purpose === "send-message") {
+          toast.error("Could not send message. Please try again.", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
               color: theme === "dark" ? "black" : "white",
               border: "2px solid red",
             },
           });
-        } else {
-          toast.error("Could not add user to chat. Please try again.", {
+        }
+        if (variables.purpose === "delete-message") {
+          toast.error("Could not delete message. Please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+        if (variables.purpose === "add-members") {
+          if (usersToAddToChat.length > 1) {
+            toast.error("Could not add users to chat. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          } else {
+            toast.error("Could not add user to chat. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
+        }
+        if (variables.purpose === "remove-self-from-chat") {
+          toast.error(`Could not remove you from chat. Please try again.`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+        if (variables.purpose === "remove-member") {
+          toast.error(
+            `Could not remove ${currentOtherUser?.username} from chat. Please try again.`,
+            {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            }
+          );
+        }
+        if (variables.purpose === "add-admin") {
+          toast.error(
+            `Could not add ${currentOtherUser?.username} as admin. Please try again.`,
+            {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            }
+          );
+        }
+        if (variables.purpose === "remove-admin") {
+          toast(`Could not remove you as admin; please try again.`, {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+        if (variables.purpose === "edit-message") {
+          toast.error("Could not save edits; please try again.", {
+            style: {
+              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+              color: theme === "dark" ? "black" : "white",
+              border: "2px solid red",
+            },
+          });
+        }
+        if (variables.purpose === "update-chat-name") {
+          toast.error("Could not update chat name; please try again.", {
             style: {
               background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
               color: theme === "dark" ? "black" : "white",
@@ -254,94 +328,36 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           });
         }
       }
-      if (variables.purpose === "remove-self-from-chat") {
-        toast.error(`Could not remove you from chat. Please try again.`, {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-      if (variables.purpose === "remove-member") {
-        toast.error(
-          `Could not remove ${currentOtherUser?.username} from chat. Please try again.`,
-          {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          }
-        );
-      }
-      if (variables.purpose === "add-admin") {
-        toast.error(
-          `Could not add ${currentOtherUser?.username} as admin. Please try again.`,
-          {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          }
-        );
-      }
-      if (variables.purpose === "remove-admin") {
-        toast(`Could not remove you as admin; please try again.`, {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-      if (variables.purpose === "edit-message") {
-        toast.error("Could not save edits; please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
-      if (variables.purpose === "update-chat-name") {
-        toast.error("Could not update chat name; please try again.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-      }
     },
+    onError: (error) => console.log(error),
   });
 
   const createChatMutation = useMutation({
     mutationFn: ({ chat }: { chat: TChat }) => Requests.createNewChat(chat),
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       if (data.ok) {
         // set currentChat to chat, open ChatModal w/ it. if no message sent, put 'DRAFT' in chat preview
-        handleOpenChat(variables.chat);
-        setShowCreateNewChatModal(false);
-        setUsersToAddToChat([]);
-        queryClient.invalidateQueries({ queryKey: "userChats" });
-        queryClient.refetchQueries({ queryKey: ["userChats"] });
+        data.json().then((newChat: TChat) => {
+          handleOpenChat(newChat);
+          setCurrentChat(newChat);
+          setShowCreateNewChatModal(false);
+          setShowChatModal(true);
+          setUsersToAddToChat([]);
+          setChatName(undefined);
+          queryClient.invalidateQueries({ queryKey: ["userChats"] });
+          queryClient.refetchQueries({ queryKey: ["userChats"] });
+        });
       } else {
-        throw Error;
+        toast.error("Unable to create chat. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
     },
-    onError: (error) => {
-      console.log(error);
-      // notify by toast of inability to create chat. allow retry
-      toast.error("Unable to create chat. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
     onSettled: () => setChatCreationInProgress(false),
   });
 
@@ -349,7 +365,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     mutationFn: ({ chatID }: { chatID: string }) => Requests.deleteChat(chatID),
     onSuccess: (data) => {
       if (data.ok) {
-        queryClient.invalidateQueries({ queryKey: "userChats" });
+        queryClient.invalidateQueries({ queryKey: ["userChats"] });
         queryClient.refetchQueries({ queryKey: ["userChats"] });
         setShowAreYouSureYouWantToDeleteChat(false);
         setShowChatModal(false);
@@ -362,29 +378,167 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           },
         });
       } else {
-        throw Error;
+        toast.error("Could not delete chat. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Could not delete chat. Please try again.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    },
+    onError: (error) => console.log(error),
   });
 
-  const getChatMembers = (members: string[]): TUser[] => {
-    let chatMembers: TUser[] = [];
-    for (const user of allOtherUsers) {
-      if (user._id && members.includes(user._id)) {
-        chatMembers.push(user);
+  const handleLoadMoreItemsOnScroll = (
+    items: TBarebonesUser[],
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
+  ): void => {
+    const eHTMLElement = e?.target as HTMLElement;
+    const scrollTop = e ? eHTMLElement.scrollTop : null;
+    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
+    const clientHeight = e ? eHTMLElement.clientHeight : null;
+
+    const bottomReached =
+      e && scrollTop && clientHeight
+        ? scrollTop + clientHeight === scrollHeight
+        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
+
+    if (bottomReached) {
+      const lastItem: TBarebonesUser = items[items.length - 1];
+
+      if (lastItem && lastItem.index && chatMembersSearchQuery === "") {
+        setFetchStart(lastItem.index + 1);
       }
     }
-    return chatMembers;
+  };
+
+  const initializePotentialChatMembersSearch = (
+    input: string,
+    chat?: TChat | undefined
+  ): void => {
+    if (!fetchIsLoading) {
+      setFetchIsLoading(true);
+    }
+    setFetchStart(0);
+    // If a chat is provided, pass to getPotentialChatMembers; if not, don't
+    if (chat) {
+      Requests.getPotentialChatMembers(currentUser, 0, Infinity, chat)
+        .then((batchOfPotentialCMs) => {
+          if (batchOfPotentialCMs) {
+            setAllPotentialChatMembers(
+              batchOfPotentialCMs.map((cm) => Methods.getTBarebonesUser(cm))
+            );
+            let matchingPotentialCOs = [];
+            for (const co of batchOfPotentialCMs) {
+              if (
+                co.username?.includes(input.toLowerCase()) ||
+                co.firstName?.includes(input.toLowerCase()) ||
+                co.lastName?.includes(input.toLowerCase())
+              ) {
+                matchingPotentialCOs.push(Methods.getTBarebonesUser(co));
+              }
+            }
+            setDisplayedPotentialChatMembers(matchingPotentialCOs);
+          } else {
+            setIsFetchError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    } else {
+      Requests.getPotentialChatMembers(currentUser, 0, Infinity)
+        .then((batchOfPotentialCMs) => {
+          if (batchOfPotentialCMs) {
+            setAllPotentialChatMembers(
+              batchOfPotentialCMs.map((cm) => Methods.getTBarebonesUser(cm))
+            );
+            let matchingPotentialCOs = [];
+            for (const co of batchOfPotentialCMs) {
+              if (
+                co.username?.includes(input.toLowerCase()) ||
+                co.firstName?.includes(input.toLowerCase()) ||
+                co.lastName?.includes(input.toLowerCase())
+              ) {
+                matchingPotentialCOs.push(Methods.getTBarebonesUser(co));
+              }
+            }
+            setDisplayedPotentialChatMembers(matchingPotentialCOs);
+          } else {
+            setIsFetchError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    }
+  };
+
+  const handleSearchPotentialChatMembers = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    chat?: TChat | undefined
+  ): void => {
+    e.preventDefault();
+    const inputCleaned = e.target.value.replace(/\s+/g, " ");
+    setChatMembersSearchQuery(inputCleaned);
+    setShowPotentialChatMembers(true);
+    if (inputCleaned.replace(/\s+/g, "") !== "") {
+      if (allPotentialChatMembers.length === 0) {
+        if (chat) {
+          initializePotentialChatMembersSearch(inputCleaned, chat);
+        } else {
+          initializePotentialChatMembersSearch(inputCleaned);
+        }
+      } else {
+        const matchingUsers: TBarebonesUser[] = [];
+        for (const user of allPotentialChatMembers) {
+          if (
+            user?.firstName?.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+            user?.lastName?.toLowerCase().includes(inputCleaned.toLowerCase().trim()) ||
+            user?.username?.includes(inputCleaned.toLowerCase())
+          ) {
+            matchingUsers.push(user);
+          }
+        }
+        setDisplayedPotentialChatMembers(matchingUsers);
+      }
+    } else {
+      setChatMembersSearchQuery("");
+      setAllPotentialChatMembers([]);
+      setFetchStart(0);
+    }
+  };
+
+  const handleCancelAddOrEditChat = (
+    e:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.KeyboardEvent<HTMLElement>
+  ): void => {
+    e.preventDefault();
+    if (usersToAddToChat.length > 0) {
+      setUsersToAddToChat([]);
+    }
+    if (chatMembersSearchQuery !== "") {
+      setChatMembersSearchQuery("");
+    }
+    if (chatName !== "") {
+      setChatName("");
+    }
+    if (chatNameError !== "") {
+      setChatNameError("");
+    }
+    if (showPotentialChatMembers) {
+      setShowPotentialChatMembers(false);
+    }
+    if (showAddMemberModal) {
+      setShowAddMemberModal(false);
+    }
+    if (showCreateNewChatModal) {
+      setShowCreateNewChatModal(false);
+    }
+    if (chatName) {
+      setChatName(undefined);
+    }
   };
 
   // If chat w/ members already exists, do not create new one; set currentChat to input chat, open ChatModal w/ it, and nofify user by toast that chat w/ these members already exists.
@@ -392,115 +546,229 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const handleCreateChat = (chat: TChat): void => {
     setChatCreationInProgress(true);
 
-    const existingChat: TChat | undefined =
-      userChats &&
-      userChats.filter((userChat) =>
-        Methods.arraysAreIdentical(userChat.members, chat.members)
-      )[0];
-
-    if (existingChat) {
-      setCurrentChat(chat);
-      setShowChatModal(true);
-      handleOpenChat(existingChat);
-      setChatCreationInProgress(false);
-      setShowCreateNewChatModal(false);
-      toast.error("Chat already exists.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-    } else {
-      if (chatName !== undefined) {
-        setChatName(undefined);
-      }
-      createChatMutation.mutate({ chat });
-    }
-  };
-
-  const handleDeleteChat = (chatID: string): void => {
-    deleteChatMutation.mutate({ chatID });
-  };
-
-  const handleRemoveUserFromChat = (user: TUser, chat?: TChat): void => {
-    if (chat && chat.admins && user._id && user) {
-      let updatedAdmins: string[] = [];
-      const updatedMembers: string[] = chat.members.filter(
-        (member) => member !== user._id
-      );
-      if (chat.admins.includes(user._id)) {
-        // if user is only admin left, inform by toast that they can't leave until another admin is assigned:
-        if (chat.admins.length - 1 === 0) {
-          toast.error("Please assign another admin before leaving the chat.", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-        } else {
-          // If user isn't only admin left, remove them from chat:
-          updatedAdmins = chat.admins.filter((admin) => admin !== user._id);
-          const chatValuesToUpdate: TChatValuesToUpdate = {
-            admins: updatedAdmins,
-            members: updatedMembers,
-          };
-          const purpose =
-            currentUser && user._id === currentUser._id
-              ? "remove-self-from-chat"
-              : "remove-member";
-          updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
-        }
+    // Make Request to get allChats. If length is 75+, don't create new one; show douchebag message
+    Requests.getAllChats().then((res) => {
+      if (res.ok) {
+        res.json().then((allChats: TChat[]) => {
+          if (allChats.length >= 75) {
+            setChatCreationInProgress(false);
+            toast.error(
+              "Sorry, but due to potential spamming douchebags & this only being a portfolio project, only 75 chats in total can be created at this time.",
+              {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              }
+            );
+          } else {
+            createChatMutation.mutate({ chat });
+          }
+        });
       } else {
-        // Remove non-admin members:
-        const chatValuesToUpdate: TChatValuesToUpdate = { members: updatedMembers };
-        const purpose =
-          currentUser && user._id === currentUser._id
-            ? "remove-self-from-chat"
-            : "remove-member";
-        updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+        setChatCreationInProgress(false);
+        toast.error("Unable to create chat. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
       }
+    });
+  };
+
+  const handleDeleteChat = (chatID: string): void =>
+    deleteChatMutation.mutate({ chatID });
+
+  const handleRemoveUserFromChat = (user: TUserSecure, chat?: TChat): void => {
+    if (chat && chat.admins && user._id && user) {
+      const updatedMembersIDs: string[] = chat.members.filter((member) => {
+        if (user._id) {
+          return member !== user._id.toString();
+        }
+      });
+
+      const promisesToAwaitChatMembers: Promise<TUser>[] = updatedMembersIDs.map((id) => {
+        return Requests.getUserByID(id).then((res) => {
+          return res.json().then((chatMember: TUser) => chatMember);
+        });
+      });
+
+      // For each _id in chat updatedMembersIDs, get TUser object, then pass array of these, converted to TBarebonesUser, to updateChatMutation
+      setFetchChatMembersIsLoading(true);
+      Promise.all(promisesToAwaitChatMembers)
+        .then((chatMembers: TUser[]) => {
+          if (chat.admins && user._id) {
+            if (chat.admins.includes(user._id.toString())) {
+              if (chat.admins.length - 1 === 0) {
+                toast.error("Please assign another admin before leaving the chat.", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
+              } else {
+                // If user isn't only admin left, remove them from chat:
+                const updatedAdmins: string[] = chat.admins.filter(
+                  (admin) => admin !== user._id
+                );
+
+                const promisesToAwaitAdmins = updatedAdmins.map((a) => {
+                  return Requests.getUserByID(a).then((res) => {
+                    return res.json().then((user: TUser) => user);
+                  });
+                });
+
+                Promise.all(promisesToAwaitAdmins)
+                  .then((admins: TUser[]) => {
+                    const chatValuesToUpdate: TChatValuesToUpdate = {
+                      admins: admins
+                        .map((a) => {
+                          if (a._id) {
+                            return a._id.toString();
+                          }
+                        })
+                        .filter((elem) => elem !== undefined),
+                      members: chatMembers
+                        .map((m) => {
+                          if (m._id) {
+                            return m._id.toString();
+                          }
+                        })
+                        .filter((elem) => elem !== undefined),
+                    };
+
+                    const purpose =
+                      currentUser && user._id === currentUser._id
+                        ? "remove-self-from-chat"
+                        : "remove-member";
+                    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                    toast.error("Could not fetch chat members. Please try again.", {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    });
+                  });
+              }
+            } else {
+              // Remove non-admin members:
+              const chatValuesToUpdate: TChatValuesToUpdate = {
+                members: chatMembers
+                  .map((m) => {
+                    if (m._id) {
+                      return m._id.toString();
+                    }
+                  })
+                  .filter((elem) => elem !== undefined),
+              };
+              const purpose =
+                currentUser && user._id === currentUser._id
+                  ? "remove-self-from-chat"
+                  : "remove-member";
+              updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+            }
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchChatMembersIsLoading(false));
     }
 
     if (!chat) {
-      setUsersToAddToChat(usersToAddToChat.filter((userToAdd) => userToAdd !== user._id));
+      setUsersToAddToChat(
+        usersToAddToChat.filter((userToAdd) => userToAdd._id !== user._id)
+      );
     }
   };
 
   const handleAddRemoveUserFromChat = (
-    user: TUser,
-    usersToAddToChat: string[],
-    setUsersToAddToChat: React.Dispatch<React.SetStateAction<string[]>>
+    user: TBarebonesUser,
+    usersToAddToChat: TBarebonesUser[],
+    setUsersToAddToChat: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>
   ): void => {
     if (user._id) {
-      if (usersToAddToChat.includes(user._id)) {
+      if (usersToAddToChat.map((u) => u._id).includes(user._id.toString())) {
         setUsersToAddToChat(
-          usersToAddToChat.filter((userToAdd) => userToAdd !== user._id)
+          usersToAddToChat.filter((userToAdd) => userToAdd._id !== user._id)
         );
       } else {
-        setUsersToAddToChat(usersToAddToChat.concat(user._id));
+        setUsersToAddToChat(usersToAddToChat.concat(user));
       }
     }
   };
 
   const handleAddMultipleUsersToChat = (users: string[], chat: TChat): void => {
-    const updatedChatMembers = chat.members.concat(users);
+    const updatedMembersIDs: string[] = chat.members.concat(users);
 
-    const chatValuesToUpdate: TChatValuesToUpdate = {
-      members: updatedChatMembers,
-    };
+    const promisesToAwaitChatMembers: Promise<TUser>[] = updatedMembersIDs.map((id) => {
+      return Requests.getUserByID(id).then((res) => {
+        return res.json().then((chatMember: TUser) => chatMember);
+      });
+    });
 
-    const purpose = "add-members";
-    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+    // For each _id in chat updatedMembersIDs, get TUser object, then pass array of these, converted to TBarebonesUser, to updateChatMutation
+    setFetchChatMembersIsLoading(true);
+    Promise.all(promisesToAwaitChatMembers)
+      .then((chatMembers: TUser[]) => {
+        const chatValuesToUpdate: TChatValuesToUpdate = {
+          members: chatMembers
+            .map((m) => {
+              if (m._id) {
+                return m._id.toString();
+              }
+            })
+            .filter((elem) => elem !== undefined),
+        };
+
+        const purpose = "add-members";
+        updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setFetchChatMembersIsLoading(false));
   };
 
-  const handleAddAdminToChat = (user: TUser, chat: TChat): void => {
+  const handleAddAdminToChat = (user: TUserSecure, chat: TChat): void => {
     setCurrentOtherUser(user);
-    const updatedAdmins = chat.admins && user._id ? chat.admins.concat(user._id) : [];
-    const chatValuesToUpdate = { admins: updatedAdmins };
-    const purpose = "add-admin";
-    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+    const updatedAdmins =
+      chat.admins && user._id ? chat.admins.concat(user._id.toString()) : [];
+
+    const promisesToAwaitAdmins = updatedAdmins.map((a) => {
+      return Requests.getUserByID(a).then((res) => {
+        return res.json().then((user: TUser) => user);
+      });
+    });
+
+    Promise.all(promisesToAwaitAdmins)
+      .then((admins: TUser[]) => {
+        const chatValuesToUpdate = {
+          admins: admins
+            .map((a) => {
+              if (a._id) {
+                return a._id.toString();
+              }
+            })
+            .filter((elem) => elem !== undefined),
+        };
+        const purpose = "add-admin";
+        updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Could not fetch chat members. Please try again.", {
+          style: {
+            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+            color: theme === "dark" ? "black" : "white",
+            border: "2px solid red",
+          },
+        });
+      });
   };
 
   const handleRemoveAdminFromChat = (user: TUser, chat: TChat): void => {
@@ -516,8 +784,38 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       const purpose = "remove-admin";
       const updatedAdmins =
         chat.admins && chat.admins.filter((admin) => admin !== user._id);
-      const chatValuesToUpdate = { admins: updatedAdmins };
-      updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+
+      const promisesToAwaitAdmins = updatedAdmins?.map((a) => {
+        return Requests.getUserByID(a).then((res) =>
+          res.json().then((user: TUser) => user)
+        );
+      });
+
+      if (promisesToAwaitAdmins) {
+        Promise.all(promisesToAwaitAdmins)
+          .then((admins: TUser[]) => {
+            const chatValuesToUpdate = {
+              admins: admins
+                .map((a) => {
+                  if (a._id) {
+                    return a._id.toString();
+                  }
+                })
+                .filter((elem) => elem !== undefined),
+            };
+            updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+          })
+          .catch((error) => {
+            console.log(error);
+            toast.error("Could not fetch chat members. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          });
+      }
     }
   };
 
@@ -525,21 +823,23 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     const now = Date.now();
     const messageId = new mongoose.Types.ObjectId();
 
-    const newMessage: TMessage = {
-      _id: messageId,
-      sender: currentUser && currentUser._id ? currentUser._id : "",
-      content: content.trim(),
-      image: "",
-      timeSent: now,
-      seenBy: [],
-    };
+    if (currentUser && currentUser._id) {
+      const newMessage: TMessage = {
+        _id: messageId,
+        sender: currentUser._id.toString(),
+        content: content.trim(),
+        image: "",
+        timeSent: now,
+        seenBy: [],
+      };
 
-    const chatValuesToUpdate: TChatValuesToUpdate = {
-      messages: chat.messages.concat(newMessage),
-    };
+      const chatValuesToUpdate: TChatValuesToUpdate = {
+        messages: chat.messages.concat(newMessage),
+      };
 
-    const purpose = "send-message";
-    updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+      const purpose = "send-message";
+      updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
+    }
   };
 
   const startEditingMessage = (message: TMessage): void => {
@@ -593,20 +893,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
   };
 
-  const getCurrentOtherUserFriends = (otherUser: TUser): TUser[] => {
-    if (allUsers) {
-      return allUsers.filter(
-        (user) => user && user._id && otherUser.friends.includes(user._id)
-      );
-    }
-    return [];
-  };
-
   const handleSearchChatMembersInput = (
     e: React.ChangeEvent<HTMLInputElement>,
     showList: boolean,
     setShowList: React.Dispatch<React.SetStateAction<boolean>>,
-    searchArray: TUser[],
+    searchArray: TBarebonesUser[],
     resetFunction: Function
   ): void => {
     e.preventDefault();
@@ -616,7 +907,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     const input = e.target.value.toLowerCase().replace(/s\+/g, " ");
     setChatMembersSearchQuery(input);
 
-    let matchingUsers: TUser[] = [];
+    let matchingUsers: TBarebonesUser[] = [];
     if (input.replace(/\s+/g, "") !== "") {
       for (const user of searchArray) {
         if (user.username && user.firstName && user.lastName) {
@@ -629,7 +920,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           }
         }
       }
-      setPotentialChatMembers(matchingUsers);
+      setDisplayedPotentialChatMembers(matchingUsers);
     } else {
       resetFunction();
     }
@@ -653,10 +944,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       if (
         currentUser &&
         currentUser._id &&
-        message.sender !== currentUser._id &&
-        !usersWhoSawMessage.includes(currentUser._id)
+        message.sender !== currentUser._id.toString() &&
+        !usersWhoSawMessage.includes(currentUser._id.toString())
       ) {
-        message.seenBy.push({ user: currentUser._id, time: now });
+        message.seenBy.push({ user: currentUser._id.toString(), time: now });
       }
       return message;
     });
@@ -688,34 +979,52 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const getStartOrOpenChatWithUserHandler = (otherUser: TUser): void => {
-    const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
-      (chat) =>
-        chat.members.length === 2 &&
-        currentUser &&
-        currentUser._id &&
-        chat.members.includes(currentUser._id) &&
-        otherUser._id &&
-        chat.members.includes(otherUser._id)
-    )[0];
+  const getStartOrOpenChatWithUserHandler = (
+    otherUser: TBarebonesUser | undefined
+  ): void => {
+    if (otherUser) {
+      if (showInvitees) {
+        setShowInvitees(false);
+      }
 
-    if (existingChatWithListedChatMember) {
-      return handleOpenChat(existingChatWithListedChatMember);
+      if (showRSVPs) {
+        setShowRSVPs(false);
+      }
+
+      if (showChatModal) {
+        setShowChatModal(false);
+      }
+
+      const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
+        (chat) => {
+          if (
+            chat.members.length === 2 &&
+            otherUser._id &&
+            chat.members.indexOf(otherUser._id.toString()) !== -1
+          ) {
+            return chat;
+          }
+        }
+      )[0];
+
+      if (existingChatWithListedChatMember !== undefined) {
+        return handleOpenChat(existingChatWithListedChatMember);
+      }
+
+      const newChatMembers: string[] =
+        otherUser._id && currentUser && currentUser._id
+          ? [otherUser._id.toString(), currentUser._id.toString()]
+          : [];
+
+      if (!existingChatWithListedChatMember) {
+        return handleCreateChat({
+          members: newChatMembers,
+          messages: [],
+          chatType: "two-member",
+          dateCreated: Date.now(),
+        });
+      }
     }
-
-    const newChatMembers: string[] =
-      otherUser._id && currentUser && currentUser._id
-        ? [otherUser._id, currentUser._id]
-        : [];
-
-    return handleCreateChat({
-      _id: new mongoose.Types.ObjectId().toString(),
-      members: newChatMembers,
-      messages: [],
-      chatName: "",
-      chatType: "two-member",
-      dateCreated: Date.now(),
-    });
   };
 
   const getNumberOfUnreadMessagesInChat = (chat: TChat): string | number => {
@@ -724,8 +1033,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       for (const message of chat.messages) {
         const usersWhoSawMessage: string[] = message.seenBy.map((obj) => obj.user);
         if (
-          !usersWhoSawMessage.includes(currentUser._id) &&
-          message.sender !== currentUser._id
+          !usersWhoSawMessage.includes(currentUser._id.toString()) &&
+          message.sender !== currentUser._id.toString()
         ) {
           unreadMessages.push(message);
         }
@@ -753,57 +1062,28 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     return unreadMessages > 9 ? "9+" : unreadMessages;
   };
 
-  const startConversation = (otherUser: TUser): void => {
-    const userChats = fetchChatsQuery.data;
-
-    if (showInvitees) {
-      setShowInvitees(false);
-    }
-
-    if (showRSVPs) {
-      setShowRSVPs(false);
-    }
-
-    if (showChatModal) {
-      setShowChatModal(false);
-    }
-
-    const existingChatWithListedChatMember: TChat | undefined = userChats?.filter(
-      (chat) =>
-        chat.members.length === 2 &&
-        currentUser &&
-        currentUser._id &&
-        chat.members.includes(currentUser._id) &&
-        otherUser._id &&
-        chat.members.includes(otherUser._id)
-    )[0];
-
-    if (existingChatWithListedChatMember) {
-      return handleOpenChat(existingChatWithListedChatMember);
-    } else {
-      const newChatMembers: string[] =
-        otherUser._id && currentUser && currentUser._id
-          ? [otherUser._id, currentUser._id]
-          : [];
-      return handleCreateChat({
-        _id: new mongoose.Types.ObjectId().toString(),
-        members: newChatMembers,
-        messages: [],
-        chatName: chatName,
-        chatType: "two-member",
-        dateCreated: Date.now(),
-        ...(usersToAddToChat.length >= 2 &&
-          currentUser &&
-          currentUser._id && { admins: [currentUser._id] }),
-      });
-    }
-  };
-
   const chatContextValues: TChatContext = {
+    fetchChatMembersIsError,
+    setFetchChatMembersIsError,
+    fetchChatMembersIsLoading,
+    setFetchChatMembersIsLoading,
+    handleCancelAddOrEditChat,
+    handleSearchPotentialChatMembers,
+    initializePotentialChatMembersSearch,
+    handleLoadMoreItemsOnScroll,
+    allPotentialChatMembers,
+    setAllPotentialChatMembers,
+    displayedPotentialChatMembers,
+    setDisplayedPotentialChatMembers,
+    fetchStart,
+    setFetchStart,
+    fetchIsLoading,
+    setFetchIsLoading,
+    isFetchError,
+    setIsFetchError,
     handleUpdateChatName,
     showEditChatNameModal,
     setShowEditChatNameModal,
-    startConversation,
     getStartOrOpenChatWithUserHandler,
     getTotalNumberOfUnreadMessages,
     handleSaveEditedMessage,
@@ -842,11 +1122,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     handleOpenChat,
     handleChatNameInput,
     handleSearchChatMembersInput,
-    getCurrentOtherUserFriends,
     showPotentialChatMembers,
     setShowPotentialChatMembers,
-    potentialChatMembers,
-    setPotentialChatMembers,
     chatMembersSearchQuery,
     setChatMembersSearchQuery,
     chatName,
@@ -866,7 +1143,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     fetchChatsQuery,
     showChatModal,
     setShowChatModal,
-    getChatMembers,
   };
 
   return (

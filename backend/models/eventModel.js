@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const eventSchema = new Schema({
+  index: {
+    type: Number,
+    required: true,
+  },
   title: {
     type: String,
     required: true,
@@ -81,18 +85,18 @@ const eventSchema = new Schema({
   },
   images: {
     type: [String],
-    required: false,
+    required: true,
   },
   relatedInterests: {
     type: [String],
-    required: false,
+    required: true,
   },
   address: {
     type: String,
     required: true,
   },
   maxParticipants: {
-    type: Schema.Types.Mixed,
+    type: Number,
     required: false,
   },
 });

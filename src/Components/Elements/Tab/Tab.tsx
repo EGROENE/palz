@@ -1,4 +1,4 @@
-import { TUser } from "../../../types";
+import { TBarebonesUser, TUserSecure } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 
@@ -16,7 +16,7 @@ const Tab = ({
   userMayNotDelete,
   specialIcon,
 }: {
-  info: TUser | string;
+  info: TUserSecure | TBarebonesUser | string;
   addHandler?: Function;
   addHandlerParams?: any[];
   addHandlerNeedsEventParam?: boolean;
@@ -52,9 +52,8 @@ const Tab = ({
   return (
     <div
       tabIndex={0}
-      aria-hidden="false"
       title={typeof info !== "string" ? `${info.firstName} ${info.lastName}` : undefined}
-      key={typeof info === "string" ? info : info._id}
+      key={typeof info === "string" ? info : info._id?.toString()}
       style={
         randomColor === "var(--primary-color)"
           ? { backgroundColor: `${randomColor}`, color: "black" }
@@ -74,7 +73,6 @@ const Tab = ({
       {!userMayNotDelete && (
         <i
           tabIndex={0}
-          aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               getOnClickFunction(e);

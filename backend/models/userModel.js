@@ -3,6 +3,14 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  index: {
+    type: Number,
+    required: true,
+  },
+  lastLogin: {
+    type: Number,
+    required: true,
+  },
   firstName: {
     type: String,
     required: true,
@@ -60,11 +68,11 @@ const userSchema = new Schema({
     required: false,
   },
   friendRequestsReceived: {
-    type: Array,
+    type: [String],
     required: true,
   },
   friendRequestsSent: {
-    type: Array,
+    type: [String],
     required: true,
   },
   hostingCredits: {
@@ -104,7 +112,11 @@ const userSchema = new Schema({
     required: true,
   },
   blockedUsers: {
-    type: Array,
+    type: [String],
+    required: true,
+  },
+  blockedBy: {
+    type: [String],
     required: true,
   },
   emailAddress: {

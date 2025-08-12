@@ -115,9 +115,9 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
             className={passwordError !== "" && showErrors ? "erroneous-field" : undefined}
           />
           {!passwordIsHidden ? (
-            <OpenEye toggleHidePassword={toggleHidePassword} />
+            <OpenEye toggleHidePassword={() => toggleHidePassword("password")} />
           ) : (
-            <ClosedEye toggleHidePassword={toggleHidePassword} />
+            <ClosedEye toggleHidePassword={() => toggleHidePassword("password")} />
           )}
         </div>
         {passwordError !== "" && showErrors && (

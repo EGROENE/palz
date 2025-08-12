@@ -1,19 +1,46 @@
 const mongoose = require("mongoose");
 
 const Chat = require("../models/chatModel");
+const User = require("../models/userModel");
+
+// get all chats in DB (used when determining if limit for total chats has been reached when attempting to create new chat):
+const getAllChats = async (req, res) => {
+  const chats = await Chat.find({});
+
+  res.status(200).json(chats);
+};
 
 // get all chats in which user is member:
 const getCurrentUserChats = async (req, res) => {
   const { currentUserID } = req.params;
 
-  const chats = await Chat.find({ members: currentUserID });
+  const chats = await Chat.find({ "members": { $in: currentUserID } });
 
   res.status(200).json(chats);
 };
 
+// return all users that have an index greater than or equal to passed-in index & who are not currentUser. Filtering based on whether users are already in a chat or based on privacy settings will be done in request.
+const getPotentialChatMembers = async (req, res) => {
+  const { user, start, limit } = req.query;
+
+  const username = user;
+  const currentUser = await User.findOne({ username });
+
+  const potentialCMs = await User.find({
+    index: { $gte: Number(start) },
+    _id: { $ne: currentUser._id.toString() },
+    "blockedUsers._id": { $ne: currentUser._id.toString() },
+    "blockedBy._id": { $ne: currentUser._id.toString() },
+    profileVisibleTo: { $ne: "nobody" },
+    whoCanMessage: { $ne: "nobody" },
+  }).limit(Number(limit));
+
+  res.status(200).json(potentialCMs);
+};
+
 // create new chat:
 const createChat = async (req, res) => {
-  const { _id, members, messages, dateCreated, chatName, chatType, admins } = req.body;
+  const { members, messages, dateCreated, chatName, chatType, admins, _id } = req.body;
 
   try {
     const chat = await Chat.create({
@@ -70,6 +97,8 @@ const updateChat = async (req, res) => {
 };
 
 module.exports = {
+  getAllChats,
+  getPotentialChatMembers,
   getCurrentUserChats,
   createChat,
   deleteChat,

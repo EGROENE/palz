@@ -5,9 +5,17 @@ import { useUserContext } from "../../../Hooks/useUserContext";
 import { TThemeColor } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
+import Methods from "../../../methods";
 
 const Sidebar = () => {
-  const { showSidebar, setShowSidebar, theme, currentRoute } = useMainContext();
+  const {
+    showSidebar,
+    setShowSidebar,
+    theme,
+    currentRoute,
+    setFetchStart,
+    setDisplayedItems,
+  } = useMainContext();
   const {
     profileImage,
     currentUser,
@@ -30,7 +38,6 @@ const Sidebar = () => {
 
   return (
     <div
-      aria-hidden="false"
       className={styles.sidebar}
       style={
         theme === "dark"
@@ -43,7 +50,6 @@ const Sidebar = () => {
     >
       <i
         tabIndex={0}
-        aria-hidden="false"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             setShowSidebar(!showSidebar);
@@ -60,7 +66,6 @@ const Sidebar = () => {
       <div className={`${styles.sidebarIconContainer} ${styles.sidebarEditProfileImage}`}>
         <i
           tabIndex={0}
-          aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               setShowUpdateProfileImageInterface(true);
@@ -115,8 +120,15 @@ const Sidebar = () => {
             My Events
           </Link>
         )}
-        {currentRoute !== "/events" && (
-          <Link className={styles.sidebarOption} to={"/events"}>
+        {currentRoute !== "/find-events" && (
+          <Link
+            onClick={() => {
+              setDisplayedItems([]);
+              setFetchStart(0);
+            }}
+            className={styles.sidebarOption}
+            to={"/find-events"}
+          >
             Explore Events
           </Link>
         )}
@@ -130,7 +142,7 @@ const Sidebar = () => {
                 Friend Requests{" "}
                 {friendRequestsReceived && friendRequestsReceived.length > 0 && (
                   <span className="notifications-count">
-                    {friendRequestsReceived.length}
+                    {Methods.removeDuplicatesFromArray(friendRequestsReceived).length}
                   </span>
                 )}
               </>
@@ -138,12 +150,26 @@ const Sidebar = () => {
           </Link>
         )}
         {currentRoute !== "/find-palz" && (
-          <Link className={styles.sidebarOption} to="/find-palz">
+          <Link
+            onClick={() => {
+              setDisplayedItems([]);
+              setFetchStart(0);
+            }}
+            className={styles.sidebarOption}
+            to="/find-palz"
+          >
             Find Palz
           </Link>
         )}
         {currentRoute !== "/my-palz" && (
-          <Link className={styles.sidebarOption} to={"/my-palz"}>
+          <Link
+            onClick={() => {
+              setDisplayedItems([]);
+              setFetchStart(0);
+            }}
+            className={styles.sidebarOption}
+            to={"/my-palz"}
+          >
             My Palz
           </Link>
         )}

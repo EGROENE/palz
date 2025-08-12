@@ -1,4 +1,4 @@
-import { TThemeColor, TUser, TEvent } from "../../../types";
+import { TThemeColor, TEvent, TBarebonesUser, TUser } from "../../../types";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useUserContext } from "../../../Hooks/useUserContext";
@@ -10,105 +10,70 @@ import UserListModal from "../../Elements/UserListModal/UserListModal";
 import Tab from "../../Elements/Tab/Tab";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useChatContext } from "../../../Hooks/useChatContext";
+import Requests from "../../../requests";
+import Methods from "../../../methods";
 
 const EventPage = () => {
-  const { isLoading, theme } = useMainContext();
+  const { isLoading, theme, error } = useMainContext();
+
+  if (error) {
+    throw new Error(error);
+  }
+
+  const { currentUser, userCreatedAccount, logout } = useUserContext();
+
   const {
-    allUsers,
-    currentUser,
-    userCreatedAccount,
-    setCurrentOtherUser,
-    logout,
-    fetchAllUsersQuery,
-  } = useUserContext();
-  const {
+    setDisinterestedUsersCurrentEvent,
+    disinterestedUsersCurrentEvent,
     handleAddUserRSVP,
     handleDeleteUserRSVP,
     setCurrentEvent,
     handleRemoveInvitee,
-    fetchAllEventsQuery,
     showRSVPs,
     setShowRSVPs,
     showInvitees,
+    showDeclinedInvitations,
     setShowInvitees,
+    setShowDeclinedInvitations,
+    currentEvent,
+    handleRemoveDisinterestedUser,
+    interestedUsersCurrentEvent,
+    setInterestedUsersCurrentEvent,
+    inviteesCurrentEvent,
+    setInviteesCurrentEvent,
   } = useEventContext();
-  const { startConversation } = useChatContext();
-
-  //const [event, setEvent] = useState<TEvent | undefined>();
-  const [refinedInterestedUsers, setRefinedInterestedUsers] = useState<TUser[]>([]);
+  const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
   // Get most current version of event to which this page pertains:
   const { eventID } = useParams();
-  const allEvents = fetchAllEventsQuery.data;
-  const currentEvent: TEvent | undefined = allEvents
-    ? allEvents.filter((ev) => ev._id === eventID)[0]
-    : undefined;
-
-  const userRSVPd: boolean =
-    currentUser && currentUser._id && currentEvent
-      ? currentEvent.interestedUsers.includes(currentUser._id)
-      : false;
 
   const navigation = useNavigate();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
 
-  /* 
-  If event is private & currentUser isn't organizer or invitee, or if currentUser was blocked by one of the organizers, currentUser doesn't have access to event
-  */
-  const getUserDoesNotHaveAccess = (): boolean => {
-    if (currentUser && currentUser._id) {
-      if (currentEvent) {
-        const eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee =
-          currentEvent.publicity === "private" &&
-          (currentEvent.invitees.includes(currentUser._id) ||
-            currentEvent.organizers.includes(currentUser._id));
+  const [fetchEventIsLoading, setFetchEventIsLoading] = useState<boolean>(false);
+  const [fetchEventIsError, setFetchEventIsError] = useState<boolean>(false);
 
-        const eventOrganizersID: string[] = currentEvent.organizers.map((org) => org);
-        const eventOrganizers: TUser[] = [];
-        if (allUsers) {
-          for (const org of eventOrganizersID) {
-            eventOrganizers.push(allUsers?.filter((user) => user._id === org)[0]);
-          }
-        }
+  const [fetchOrganizersIsLoading, setFetchOrganizersIsLoading] =
+    useState<boolean>(false);
 
-        const currentUserHasBeenBlockedByAnOrganizer: boolean = eventOrganizers
-          .map((org) => org.blockedUsers)
-          .flat()
-          .includes(currentUser._id);
+  const [fetchOrganizersIsError, setFetchOrganizersIsError] = useState<boolean>(false);
 
-        if (
-          eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee ||
-          currentUserHasBeenBlockedByAnOrganizer
-        ) {
-          return true;
-        }
-      }
-    }
-    if (!currentUser || userCreatedAccount === null) {
-      return true;
-    }
-    return false;
-  };
-  const userDoesNotHaveAccess = getUserDoesNotHaveAccess();
+  const [currentUserIsFriendOfFriend, setCurrentUserIsFriendOfFriend] =
+    useState<boolean>(false);
+
+  const [
+    organizersWhoHaveNotBlockedUserButHaveHiddenProfile,
+    setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile,
+  ] = useState<TBarebonesUser[]>([]);
+
+  const [organizersWhoseProfileIsVisible, setOrganizersWhoseProfileIsVisible] = useState<
+    TBarebonesUser[]
+  >([]);
+
+  const [userDoesNotHaveAccess, setUserDoesNotHaveAccess] = useState<boolean>(false);
 
   useEffect(() => {
-    // Redirect user to their homepage or to login page if event is private & they are not an invitee or organizer
-    if (userDoesNotHaveAccess) {
-      toast.error("You do not have permission to edit or view this event.", {
-        style: {
-          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-          color: theme === "dark" ? "black" : "white",
-          border: "2px solid red",
-        },
-      });
-      if (currentUser && userCreatedAccount !== null) {
-        navigation(`/${currentUser.username}`);
-      } else {
-        logout();
-      }
-    }
-
     // Set randomColor:
     const themeColors: TThemeColor[] = [
       "var(--primary-color)",
@@ -120,41 +85,184 @@ const EventPage = () => {
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
 
-    setCurrentEvent(currentEvent);
-
     window.scrollTo(0, 0);
+
+    if (showRSVPs) {
+      setShowRSVPs(false);
+    }
+
+    if (showInvitees) {
+      setShowInvitees(false);
+    }
+
+    if (showDeclinedInvitations) {
+      setShowDeclinedInvitations(false);
+    }
+
+    // Set currentEvent based on param:
+    if (eventID) {
+      setFetchEventIsLoading(true);
+      Requests.getEventByID(eventID)
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((event: TEvent) => {
+              setCurrentEvent(event);
+              setInterestedUsersCurrentEvent(event.interestedUsers);
+              setDisinterestedUsersCurrentEvent(event.disinterestedUsers);
+              setInviteesCurrentEvent(event.invitees);
+            });
+          } else {
+            setFetchEventIsError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchEventIsLoading(false));
+    } else {
+      setFetchEventIsError(true);
+    }
+
+    // Set eventOrganizers, other vars:
+    if (currentEvent) {
+      // Redirect user to their homepage or to login page if event is private & they are not an invitee or organizer
+      const promisesToAwaitOrganizers = currentEvent.organizers.map((id) => {
+        return Requests.getUserByID(id).then((res) => {
+          return res.json().then((user: TUser) => user);
+        });
+      });
+
+      if (!fetchOrganizersIsLoading) {
+        setFetchOrganizersIsLoading(true);
+      }
+
+      setDisinterestedUsersCurrentEvent(currentEvent.disinterestedUsers);
+
+      Promise.all(promisesToAwaitOrganizers)
+        .then((organizers: TUser[]) => {
+          if (currentUser && currentUser._id) {
+            const currentUserHasBeenBlockedByAnOrganizer = organizers.some((o) => {
+              if (currentUser && currentUser._id) {
+                return o.blockedUsers.includes(currentUser?._id?.toString());
+              }
+            });
+
+            const eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee =
+              currentEvent &&
+              currentEvent.publicity === "private" &&
+              !currentEvent.invitees.includes(currentUser._id.toString()) &&
+              !currentEvent.organizers.includes(currentUser._id.toString())
+                ? true
+                : false;
+
+            const userDoesNotHaveAccess: boolean =
+              eventIsPrivateAndCurrentUserIsNotOrganizerOrInvitee ||
+              currentUserHasBeenBlockedByAnOrganizer ||
+              currentEvent.blockedUsersEvent.includes(currentUser._id.toString()) ||
+              !currentUser ||
+              userCreatedAccount === null;
+
+            setUserDoesNotHaveAccess(userDoesNotHaveAccess);
+
+            if (userDoesNotHaveAccess) {
+              toast.error("You do not have permission to edit or view this event.", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
+              if (currentUser && userCreatedAccount !== null) {
+                navigation(`/homepage/${currentUser.username}`);
+              } else {
+                logout();
+                setCurrentEvent(undefined);
+              }
+            }
+
+            setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile(
+              organizers
+                .map((o) => {
+                  const currentUserIsFriend = currentUser._id
+                    ? o.friends.includes(currentUser._id.toString())
+                    : false;
+
+                  const promisesToAwaitOrganizerFriends = o.friends.map((id) => {
+                    return Requests.getUserByID(id).then((res) => {
+                      return res.json().then((user: TUser) => user);
+                    });
+                  });
+
+                  Promise.all(promisesToAwaitOrganizerFriends)
+                    .then((organizerFriends: TUser[]) => {
+                      if (
+                        organizerFriends.some((f) => {
+                          if (currentUser._id) {
+                            return f.friends.includes(currentUser._id?.toString());
+                          }
+                        })
+                      ) {
+                        setCurrentUserIsFriendOfFriend(true);
+                      }
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                      setFetchOrganizersIsError(true);
+                    });
+
+                  if (
+                    currentUser._id &&
+                    !o.blockedUsers.includes(currentUser._id.toString()) &&
+                    ((o.profileVisibleTo === "friends" && !currentUserIsFriend) ||
+                      (o.profileVisibleTo === "friends of friends" &&
+                        !currentUserIsFriendOfFriend))
+                  ) {
+                    return Methods.getTBarebonesUser(o);
+                  }
+                })
+                .filter((elem) => elem !== undefined)
+            );
+
+            setOrganizersWhoseProfileIsVisible(
+              organizers
+                .map((o) => {
+                  const currentUserIsFriend = currentUser._id
+                    ? o.friends.includes(currentUser._id.toString())
+                    : false;
+
+                  if (
+                    o.profileVisibleTo === "anyone" ||
+                    (o.profileVisibleTo === "friends" && currentUserIsFriend) ||
+                    (o.profileVisibleTo === "friends of friends" &&
+                      (currentUserIsFriendOfFriend || currentUserIsFriend))
+                  ) {
+                    return Methods.getTBarebonesUser(o);
+                  }
+                })
+                .filter((elem) => elem !== undefined)
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          setFetchOrganizersIsError(true);
+        })
+        .finally(() => setFetchOrganizersIsLoading(false));
+    }
   }, []);
 
-  /* Every time allUsers changes, set refinedInterestedUsers, which checks that the id in event's interestedUsers array exists, so that when a user deletes their account, they won't still be counted as an interested user in a given event. */
-  useEffect(() => {
-    const refIntUsers = [];
-    if (currentEvent && allUsers) {
-      for (const userID of currentEvent.interestedUsers) {
-        for (const user of allUsers) {
-          if (user._id === userID) {
-            refIntUsers.push(user);
-          }
-        }
-      }
-    }
-    setRefinedInterestedUsers(refIntUsers);
-  }, [allUsers, allEvents]);
+  const userRSVPd: boolean =
+    currentUser && currentUser._id && currentEvent && interestedUsersCurrentEvent
+      ? interestedUsersCurrentEvent.includes(currentUser._id.toString())
+      : false;
 
   const nextEventDateTime = currentEvent
     ? new Date(currentEvent.eventStartDateTimeInMS)
     : undefined;
 
-  let organizers: TUser[] = [];
-  if (currentEvent?.organizers && allUsers) {
-    for (const id of currentEvent.organizers) {
-      const organizerUserObject = allUsers.filter((user) => user._id === id)[0];
-      organizers.push(organizerUserObject);
-    }
-  }
-
   // Explicitly return true or false to avoid TS error
   const userIsOrganizer: boolean =
-    currentUser && currentUser._id && currentEvent?.organizers.includes(currentUser._id)
+    currentUser &&
+    currentUser._id &&
+    currentEvent?.organizers.includes(currentUser._id.toString())
       ? true
       : false;
 
@@ -194,225 +302,333 @@ const EventPage = () => {
   };
   const status: string | undefined = getStatus();
 
-  const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
+  const isNoFetchError: boolean = !fetchEventIsError && !fetchOrganizersIsError;
 
-  const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
+  const fetchIsLoading: boolean = fetchEventIsLoading || fetchOrganizersIsLoading;
 
   return (
-    <>
-      {isNoFetchError && !fetchIsLoading && currentEvent && (
-        <>
-          {showInvitees && (
-            <UserListModal
-              listType="invitees"
-              renderButtonOne={true}
-              renderButtonTwo={true}
-              closeModalMethod={setShowInvitees}
-              header="Invitees"
-              userIDArray={currentEvent.invitees}
-              buttonOneText="Message"
-              buttonOneHandler={startConversation}
-              buttonOneHandlerNeedsEventParam={false}
-              buttonTwoText="Remove"
-              buttonTwoHandler={handleRemoveInvitee}
-              buttonTwoHandlerNeedsEventParam={true}
-              randomColor={randomColor}
-            />
-          )}
-          {showRSVPs && (
-            <UserListModal
-              listType="rsvpd-users"
-              renderButtonOne={true}
-              renderButtonTwo={true}
-              closeModalMethod={setShowRSVPs}
-              header="RSVPs"
-              userIDArray={refinedInterestedUsers.map((user) => user._id)}
-              buttonOneText="Message"
-              buttonOneHandler={startConversation}
-              buttonOneHandlerNeedsEventParam={false}
-              buttonTwoText="Remove"
-              buttonTwoHandler={handleDeleteUserRSVP}
-              buttonTwoHandlerNeedsEventParam={false}
-              randomColor={randomColor}
-            />
-          )}
-          <div
-            style={{
-              border: `2px solid ${randomColor}`,
-              boxShadow: `${randomColor} 0px 7px 90px`,
-            }}
-            className="eventMainInfoContainer"
-          >
-            {status && (
-              <p style={{ backgroundColor: randomColor, padding: "0.5rem" }}>{status}</p>
+    !userDoesNotHaveAccess && (
+      <>
+        {isNoFetchError && !fetchIsLoading && currentEvent && (
+          <>
+            {showInvitees && (
+              <UserListModal
+                listType="invitees"
+                renderButtonOne={true}
+                renderButtonTwo={true}
+                closeModalMethod={setShowInvitees}
+                header="Invitees"
+                users={inviteesCurrentEvent}
+                fetchUsers={true}
+                buttonOneText="Message"
+                buttonOneHandler={getStartOrOpenChatWithUserHandler}
+                buttonOneHandlerNeedsEventParam={false}
+                buttonTwoText="Remove"
+                buttonTwoHandler={handleRemoveInvitee}
+                buttonTwoHandlerNeedsEventParam={true}
+                randomColor={randomColor}
+              />
             )}
-            <h1 style={{ "color": randomColor }}>{currentEvent.title}</h1>
-            <div className="event-organizers-container">
-              {currentEvent.organizers.length > 1 ? (
-                <p>Organizers: </p>
-              ) : (
-                <p>Organizer: </p>
-              )}
-              <div className="organizer-tabs-container">
-                {organizers.map((organizer) => (
-                  <Link
-                    key={organizer._id}
-                    to={`/users/${organizer.username}`}
-                    onClick={() => setCurrentOtherUser(organizer)}
-                  >
-                    <Tab
-                      info={organizer}
-                      randomColor={randomColor}
-                      userMayNotDelete={true}
-                    />
-                  </Link>
-                ))}
-              </div>
-            </div>
-            <div>
-              <p>{currentEvent?.description}</p>
-              {currentEvent?.additionalInfo !== "" && (
-                <p>{currentEvent?.additionalInfo}</p>
-              )}
-            </div>
-
-            <div className="eventDetailsContainer">
-              <div
-                style={{ borderColor: randomColor }}
-                className={
-                  currentEvent.images && currentEvent.images.length > 0
-                    ? "eventMainInfoTextContainerWithImage"
-                    : "eventMainInfoTextContainerNoImage"
+            {showRSVPs && (
+              <UserListModal
+                listType="rsvpd-users"
+                renderButtonOne={true}
+                renderButtonTwo={
+                  currentUser?._id &&
+                  currentEvent.organizers.includes(currentUser._id.toString())
+                    ? true
+                    : false
                 }
-              >
-                <div>
-                  <p>
-                    {nextEventDateTime?.toDateString()} at{" "}
-                    {nextEventDateTime?.toLocaleTimeString()}
-                  </p>
-                  <p>{`${currentEvent.address}`}</p>
-                  <p>{`${currentEvent.city}, ${currentEvent.stateProvince}, ${currentEvent.country}`}</p>
+                closeModalMethod={setShowRSVPs}
+                header="RSVPs"
+                users={interestedUsersCurrentEvent}
+                fetchUsers={true}
+                buttonOneText="Message"
+                buttonOneHandler={getStartOrOpenChatWithUserHandler}
+                buttonOneHandlerNeedsEventParam={false}
+                buttonTwoText={
+                  currentUser?._id &&
+                  currentEvent.organizers.includes(currentUser._id.toString())
+                    ? "Remove"
+                    : undefined
+                }
+                buttonTwoHandler={
+                  currentUser?._id &&
+                  currentEvent.organizers.includes(currentUser._id.toString())
+                    ? handleDeleteUserRSVP
+                    : undefined
+                }
+                buttonTwoHandlerNeedsEventParam={
+                  currentUser?._id &&
+                  currentEvent.organizers.includes(currentUser._id.toString())
+                    ? false
+                    : undefined
+                }
+                randomColor={randomColor}
+              />
+            )}
+            {showDeclinedInvitations && (
+              <UserListModal
+                listType="declined-invitations"
+                renderButtonOne={true}
+                renderButtonTwo={false}
+                closeModalMethod={setShowDeclinedInvitations}
+                header="Declined Invitations"
+                users={disinterestedUsersCurrentEvent}
+                fetchUsers={true}
+                buttonOneText="Message"
+                buttonOneHandler={getStartOrOpenChatWithUserHandler}
+                buttonOneHandlerNeedsEventParam={false}
+                randomColor={randomColor}
+              />
+            )}
+            <div
+              style={{
+                border: `2px solid ${randomColor}`,
+                boxShadow: `${randomColor} 0px 7px 90px`,
+              }}
+              className="eventMainInfoContainer"
+            >
+              {status && (
+                <p style={{ backgroundColor: randomColor, padding: "0.5rem" }}>
+                  {status}
+                </p>
+              )}
+              <h1 style={{ "color": randomColor }}>{currentEvent.title}</h1>
+              <div className="event-organizers-container">
+                {currentEvent.organizers.length > 1 ? (
+                  <p>Organizers: </p>
+                ) : (
+                  <p>Organizer: </p>
+                )}
+                <div className="organizer-tabs-container">
+                  {organizersWhoseProfileIsVisible.map((organizer) => (
+                    <Link
+                      key={organizer._id?.toString()}
+                      to={`/otherUsers/${organizer.username}`}
+                    >
+                      <Tab
+                        info={organizer}
+                        randomColor={randomColor}
+                        userMayNotDelete={true}
+                      />
+                    </Link>
+                  ))}
+                  {organizersWhoHaveNotBlockedUserButHaveHiddenProfile.map(
+                    (organizer) => (
+                      <Tab
+                        key={organizer._id?.toString()}
+                        info={organizer}
+                        randomColor={randomColor}
+                        userMayNotDelete={true}
+                      />
+                    )
+                  )}
                 </div>
-                <div>
-                  {currentEvent.invitees.length > 0 && (
+              </div>
+              <div>
+                <p>{currentEvent?.description}</p>
+                {currentEvent?.additionalInfo !== "" && (
+                  <p>{currentEvent?.additionalInfo}</p>
+                )}
+              </div>
+
+              <div className="eventDetailsContainer">
+                <div
+                  style={{ borderColor: randomColor }}
+                  className={
+                    currentEvent.images && currentEvent.images.length > 0
+                      ? "eventMainInfoTextContainerWithImage"
+                      : "eventMainInfoTextContainerNoImage"
+                  }
+                >
+                  <div>
                     <p>
-                      Invitees:{" "}
+                      {nextEventDateTime?.toDateString()} at{" "}
+                      {nextEventDateTime?.toLocaleTimeString()}
+                    </p>
+                    <p>{`${currentEvent.address}`}</p>
+                    <p>{`${currentEvent.city}, ${currentEvent.stateProvince}, ${currentEvent.country}`}</p>
+                  </div>
+                  <div>
+                    {currentUser &&
+                      currentUser._id &&
+                      currentEvent.invitees.length > 0 &&
+                      currentEvent.organizers.includes(currentUser._id.toString()) && (
+                        <p>
+                          Invitees:{" "}
+                          <span
+                            onClick={() => setShowInvitees(true)}
+                            className="show-listed-users-or-invitees"
+                          >{`${
+                            Methods.removeDuplicatesFromArray(currentEvent.invitees)
+                              .length
+                          }`}</span>
+                        </p>
+                      )}
+                    <p>
+                      RSVPs:{" "}
                       <span
                         onClick={() =>
-                          currentUser?._id &&
-                          currentEvent.organizers.includes(currentUser._id) &&
-                          currentEvent.invitees.length > 0
-                            ? setShowInvitees(true)
+                          interestedUsersCurrentEvent.length > 0
+                            ? setShowRSVPs(true)
                             : undefined
                         }
                         className={
-                          currentUser?._id &&
-                          currentEvent.organizers.includes(currentUser._id) &&
-                          currentEvent.invitees.length > 0
+                          interestedUsersCurrentEvent.length > 0
                             ? "show-listed-users-or-invitees"
                             : undefined
                         }
-                      >{`${currentEvent.invitees.length}`}</span>
+                      >{`${
+                        Methods.removeDuplicatesFromArray(interestedUsersCurrentEvent)
+                          .length
+                      }`}</span>
                     </p>
-                  )}
-                  <p>
-                    RSVPs:{" "}
-                    <span
-                      onClick={() =>
-                        currentUser?._id &&
-                        currentEvent.organizers.includes(currentUser._id) &&
-                        refinedInterestedUsers.length > 0
-                          ? setShowRSVPs(true)
-                          : undefined
-                      }
-                      className={
-                        currentUser?._id &&
-                        currentEvent.organizers.includes(currentUser._id) &&
-                        refinedInterestedUsers.length > 0
-                          ? "show-listed-users-or-invitees"
-                          : undefined
-                      }
-                    >{`${refinedInterestedUsers.length}`}</span>
-                  </p>
+                    {currentUser &&
+                      currentUser._id &&
+                      disinterestedUsersCurrentEvent.length > 0 &&
+                      currentEvent.organizers.includes(currentUser._id?.toString()) && (
+                        <p>
+                          Declined invitations:{" "}
+                          <span
+                            onClick={() => setShowDeclinedInvitations(true)}
+                            className="show-listed-users-or-invitees"
+                          >{`${
+                            Methods.removeDuplicatesFromArray(
+                              disinterestedUsersCurrentEvent
+                            ).length
+                          }`}</span>
+                        </p>
+                      )}
+                  </div>
                 </div>
+                {currentEvent.images && currentEvent.images.length > 0 && (
+                  <ImageSlideshow
+                    randomColor={randomColor}
+                    images={currentEvent.images && currentEvent.images}
+                  />
+                )}
               </div>
-              {currentEvent.images && currentEvent.images.length > 0 && (
-                <ImageSlideshow
-                  randomColor={randomColor}
-                  images={currentEvent.images && currentEvent.images}
-                />
+              {userCreatedAccount === null && (
+                <>
+                  <p>
+                    Please log in or sign up to edit RSVP or to make changes to this
+                    event.
+                  </p>
+                  <Link to={`/`}>
+                    <div className="theme-element-container">
+                      <button style={{ "backgroundColor": randomColor }}>
+                        Log in/Sign up
+                      </button>
+                    </div>
+                  </Link>
+                </>
               )}
-            </div>
-            {userCreatedAccount === null && (
-              <>
-                <p>
-                  Please log in or sign up to edit RSVP or to make changes to this event.
-                </p>
-                <Link to={`/`}>
+              {currentEvent.eventEndDateTimeInMS > now &&
+                currentUser &&
+                currentUser._id &&
+                !disinterestedUsersCurrentEvent?.includes(currentUser._id.toString()) &&
+                userCreatedAccount !== null &&
+                !userIsOrganizer && (
                   <div className="theme-element-container">
-                    <button style={{ "backgroundColor": randomColor }}>
-                      Log in/Sign up
+                    <button
+                      disabled={maxInviteesReached || isLoading}
+                      onClick={(e) => {
+                        if (userRSVPd && currentUser && interestedUsersCurrentEvent) {
+                          handleDeleteUserRSVP(
+                            currentEvent,
+                            Methods.getTBarebonesUser(currentUser),
+                            e,
+                            interestedUsersCurrentEvent,
+                            setInterestedUsersCurrentEvent
+                          );
+                        } else if (!userRSVPd) {
+                          handleAddUserRSVP(
+                            e,
+                            currentEvent,
+                            interestedUsersCurrentEvent,
+                            setInterestedUsersCurrentEvent
+                          );
+                          if (
+                            currentUser &&
+                            currentUser._id &&
+                            disinterestedUsersCurrentEvent.includes(
+                              currentUser._id.toString()
+                            )
+                          ) {
+                            handleRemoveDisinterestedUser(
+                              currentEvent,
+                              Methods.getTBarebonesUser(currentUser)
+                            );
+                          }
+                        }
+                      }}
+                    >
+                      {rsvpButtonText}
                     </button>
                   </div>
-                </Link>
-              </>
-            )}
-            {currentEvent.eventEndDateTimeInMS > now &&
-              currentUser &&
-              userCreatedAccount !== null &&
-              (!userIsOrganizer ? (
-                <div className="theme-element-container">
-                  <button
-                    disabled={maxInviteesReached || isLoading}
-                    onClick={(e) => {
-                      if (userRSVPd && currentUser) {
-                        handleDeleteUserRSVP(currentEvent, currentUser, e);
-                      } else if (!userRSVPd) {
-                        handleAddUserRSVP(e, currentEvent);
-                      }
-                    }}
-                  >
-                    {rsvpButtonText}
-                  </button>
-                </div>
-              ) : (
-                <Link to={`/edit-event/${currentEvent._id}`}>
-                  <div className="theme-element-container">
-                    <button onClick={() => setCurrentEvent(currentEvent)}>
-                      Edit Event
-                    </button>
-                  </div>
-                </Link>
-              ))}
-          </div>
-        </>
-      )}
-      {isNoFetchError && !fetchIsLoading && !currentEvent && (
-        <>
-          <h1>Sorry, this event doesn't exist.</h1>
-          <Link to={"/events"}>
-            <div className="theme-element-container">
-              <button>Back to All Events</button>
+                )}
+              {currentEvent.eventEndDateTimeInMS > now &&
+                currentUser &&
+                userCreatedAccount !== null &&
+                userIsOrganizer && (
+                  <Link to={`/edit-event/${currentEvent._id}`}>
+                    <div className="theme-element-container">
+                      <button onClick={() => setCurrentEvent(currentEvent)}>
+                        Edit Event
+                      </button>
+                    </div>
+                  </Link>
+                )}
+              {currentEvent.eventEndDateTimeInMS > now &&
+                currentUser &&
+                currentUser._id &&
+                userCreatedAccount !== null &&
+                disinterestedUsersCurrentEvent?.includes(currentUser._id.toString()) &&
+                currentEvent.invitees.includes(currentUser._id.toString()) && (
+                  <>
+                    <p>
+                      You declined an invitation to this event. Would you like to undo
+                      that?
+                    </p>
+                    <div className="theme-element-container">
+                      <button
+                        disabled={maxInviteesReached || isLoading}
+                        onClick={() =>
+                          handleRemoveDisinterestedUser(
+                            currentEvent,
+                            Methods.getTBarebonesUser(currentUser)
+                          )
+                        }
+                      >
+                        Undo
+                      </button>
+                    </div>
+                  </>
+                )}
             </div>
-          </Link>
-        </>
-      )}
-      {fetchIsLoading && (
-        <header style={{ marginTop: "3rem" }} className="query-status-text">
-          Loading...
-        </header>
-      )}
-      {!isNoFetchError && (
-        <div className="query-error-container">
-          <header className="query-status-text">Couldn't fetch data.</header>
-          <div className="theme-element-container">
-            <button onClick={() => window.location.reload()}>Retry</button>
-          </div>
-        </div>
-      )}
-    </>
+          </>
+        )}
+        {isNoFetchError && !fetchIsLoading && !currentEvent && (
+          <>
+            <h1>Sorry, this event doesn't exist.</h1>
+            <Link to={"/find-events"}>
+              <div className="theme-element-container">
+                <button>See All Events</button>
+              </div>
+            </Link>
+          </>
+        )}
+        {fetchIsLoading && (
+          <header style={{ marginTop: "3rem" }} className="query-status-text">
+            Loading...
+          </header>
+        )}
+        {!isNoFetchError && !fetchIsLoading && (
+          <p>Couldn't fetch data; try reloading the page.</p>
+        )}
+      </>
+    )
   );
 };
 

@@ -3,8 +3,6 @@ import { useMainContext } from "../../../Hooks/useMainContext";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useEventContext } from "../../../Hooks/useEventContext";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
 import ChatPreview from "../../Elements/ChatPreview/ChatPreview";
 import Methods from "../../../methods";
 import { TChat, TThemeColor } from "../../../types";
@@ -15,8 +13,7 @@ import EditChatNameModal from "../../Elements/EditChatNameModal/EditChatNameModa
 
 const ChatsPage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, fetchAllUsersQuery } = useUserContext();
-  const { fetchAllEventsQuery } = useEventContext();
+  const { currentUser, userCreatedAccount } = useUserContext();
   const {
     fetchChatsQuery,
     showCreateNewChatModal,
@@ -52,26 +49,9 @@ const ChatsPage = () => {
 
   const navigation = useNavigate();
 
-  const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError &&
-    !fetchAllUsersQuery.isError &&
-    !fetchChatsQuery.isError;
+  const isFetchError: boolean = fetchChatsQuery.isError;
 
-  const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading ||
-    fetchAllUsersQuery.isLoading ||
-    fetchChatsQuery.isLoading;
-
-  const getQueryForQueryLoadingOrErrorComponent = () => {
-    if (fetchAllUsersQuery.isError) {
-      return fetchAllUsersQuery;
-    }
-    if (fetchChatsQuery.isError) {
-      return fetchChatsQuery;
-    }
-    return fetchAllEventsQuery;
-  };
-  const queryForQueryLoadingOrError = getQueryForQueryLoadingOrErrorComponent();
+  const fetchIsLoading: boolean = fetchChatsQuery.isLoading;
 
   useEffect(() => {
     if (!currentUser || userCreatedAccount === null) {
@@ -108,11 +88,15 @@ const ChatsPage = () => {
       </button>
       {showCreateNewChatModal && <CreateNewChatModal />}
       {showEditChatNameModal && <EditChatNameModal />}
-      <QueryLoadingOrError
-        query={queryForQueryLoadingOrError}
-        errorMessage="Error fetching your chats"
-      />
-      {isNoFetchError && !fetchIsLoading && userChats && (
+      {isFetchError && !fetchIsLoading && (
+        <p>Could not fetch your chats; try reloading the page.</p>
+      )}
+      {fetchIsLoading && (
+        <header style={{ marginTop: "3rem" }} className="query-status-text">
+          Loading...
+        </header>
+      )}
+      {!isFetchError && !fetchIsLoading && userChats && (
         <>
           {userChats.length > 0 ? (
             <>
@@ -132,7 +116,7 @@ const ChatsPage = () => {
               )}
               <div className="chats-container">
                 {userChatsSortedMostRecent.map((chat) => (
-                  <ChatPreview key={chat._id.toString()} chat={chat} />
+                  <ChatPreview key={chat._id?.toString()} chat={chat} />
                 ))}
               </div>
             </>

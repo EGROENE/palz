@@ -7,13 +7,19 @@ import { TEvent } from "../../../types";
 import Methods from "../../../methods";
 import toast from "react-hot-toast";
 import { useEventContext } from "../../../Hooks/useEventContext";
+import { TThemeColor } from "../../../types";
+import Requests from "../../../requests";
 
 const UserHomepage = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
-  const { currentUser, userCreatedAccount, username, fetchAllUsersQuery } =
-    useUserContext();
-  const { fetchAllEventsQuery } = useEventContext();
-  const allEvents = fetchAllEventsQuery.data;
+  const { currentUser, userCreatedAccount } = useUserContext();
+  const { allCurrentUserUpcomingEvents, setAllCurrentUserUpcomingEvents } =
+    useEventContext();
+
+  const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  const [isFetchError, setIsFetchError] = useState<boolean>(false);
+  const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
 
   // On init rendering, hide sidebar, if displayed (better ux when returning to user homepage from Settings, etc.)
   useEffect(() => {
@@ -21,6 +27,35 @@ const UserHomepage = () => {
       setShowSidebar(false);
     }
     /* @ts-ignore: Condition must be checked & Sidebar hidden on init rendering of this component only. If any of the recommended dependencies are included, Sidebar will be hidden immediately after it is displayed. */
+
+    // Set color of event card's border randomly:
+    const themeColors: TThemeColor[] = [
+      "var(--primary-color)",
+      "var(--secondary-color)",
+      "var(--tertiary-color)",
+      "var(--fourth-color)",
+      "var(--fifth-color)",
+    ];
+    const randomNumber = Math.floor(Math.random() * themeColors.length);
+    setRandomColor(themeColors[randomNumber]);
+
+    if (currentUser && currentUser.username) {
+      setFetchIsLoading(true);
+      Requests.getCurrentUserUpcomingEvents(currentUser.username)
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((events: TEvent[]) => {
+              setAllCurrentUserUpcomingEvents(events);
+            });
+          } else {
+            setIsFetchError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
+    } else {
+      setIsFetchError(true);
+    }
   }, []);
 
   const navigation = useNavigate();
@@ -34,77 +69,39 @@ const UserHomepage = () => {
         },
       });
       navigation("/");
-    } else {
-      navigation(`/${username}`);
     }
-  }, [currentUser, navigation, userCreatedAccount]);
-
-  const [allCurrentUserEvents, setAllCurrentUserEvents] = useState<TEvent[]>([]);
-
-  useEffect(() => {
-    if (allEvents && currentUser) {
-      const userRSVPDEvents: TEvent[] = allEvents.filter(
-        (ev) => currentUser._id && ev.interestedUsers.includes(currentUser._id)
-      );
-
-      const userOrganizedEvents: TEvent[] = allEvents.filter(
-        (ev) => currentUser._id && ev.organizers.includes(currentUser._id)
-      );
-
-      const eventsUserIsInvitedTo: TEvent[] = allEvents.filter(
-        (ev) =>
-          currentUser._id &&
-          ev.invitees.includes(currentUser._id) &&
-          !ev.disinterestedUsers.includes(currentUser._id)
-      );
-
-      setAllCurrentUserEvents(
-        Methods.removeDuplicatesFromArray(
-          userRSVPDEvents.concat(userOrganizedEvents).concat(eventsUserIsInvitedTo)
-        )
-      );
-    }
-  }, [fetchAllUsersQuery.data, fetchAllEventsQuery.data, currentUser]);
-
-  const isNoFetchError: boolean =
-    !fetchAllEventsQuery.isError && !fetchAllUsersQuery.isError;
-
-  const fetchIsLoading: boolean =
-    fetchAllEventsQuery.isLoading || fetchAllUsersQuery.isLoading;
+  }, [currentUser, userCreatedAccount]);
 
   return (
     <>
-      {fetchIsLoading && <h1>Upcoming Events</h1>}
       {fetchIsLoading && (
-        <header style={{ marginTop: "3rem" }} className="query-status-text">
-          Loading...
-        </header>
+        <>
+          <h1>Upcoming Events</h1>
+          <header style={{ marginTop: "3rem" }} className="query-status-text">
+            Loading...
+          </header>
+        </>
       )}
-      {fetchAllEventsQuery.isError ||
-        (fetchAllUsersQuery.isError && (
-          <div className="query-error-container">
-            <header className="query-status-text">"Error fetching data.</header>
-            <div className="theme-element-container">
-              <button onClick={() => window.location.reload()}>Retry</button>
-            </div>
-          </div>
-        ))}
-      {allCurrentUserEvents &&
-        allCurrentUserEvents.length > 0 &&
+      {isFetchError && !fetchIsLoading && (
+        <p>Could not fetch your upcoming events; try reloading the page.</p>
+      )}
+      {allCurrentUserUpcomingEvents &&
+        allCurrentUserUpcomingEvents.length > 0 &&
         !fetchIsLoading &&
-        isNoFetchError && (
+        !isFetchError && (
           <>
-            <div aria-hidden="false" className="upcoming-events-hero">
-              <h1>Upcoming Events ({allCurrentUserEvents.length})</h1>
+            <div className="upcoming-events-hero">
+              <h1>Upcoming Events ({allCurrentUserUpcomingEvents.length})</h1>
               <div
                 style={
-                  Methods.sortEventsSoonestToLatest(allCurrentUserEvents).length < 3
+                  Methods.sortEventsSoonestToLatest(allCurrentUserUpcomingEvents).length <
+                  3
                     ? { justifyContent: "center", overflowX: "unset" }
                     : undefined
                 }
                 className="rsvpd-events-container"
               >
-                {Methods.sortEventsSoonestToLatest(allCurrentUserEvents).map(
+                {Methods.sortEventsSoonestToLatest(allCurrentUserUpcomingEvents).map(
                   (event: TEvent) => (
                     <EventCard key={event._id} event={event} />
                   )
@@ -113,15 +110,19 @@ const UserHomepage = () => {
             </div>
           </>
         )}
-      {allCurrentUserEvents &&
-        allCurrentUserEvents.length === 0 &&
+      {allCurrentUserUpcomingEvents &&
+        allCurrentUserUpcomingEvents.length === 0 &&
         !fetchIsLoading &&
-        isNoFetchError && (
+        !isFetchError && (
           <>
             <div className="upcoming-events-hero">
               <h1>No upcoming events</h1>
               <p>
-                Click <Link to={"/events"}>here</Link> to find something fun to do
+                Click{" "}
+                <Link style={{ color: randomColor }} to={"/find-events"}>
+                  here
+                </Link>{" "}
+                to find something fun to do
               </p>
             </div>
           </>

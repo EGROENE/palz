@@ -1,45 +1,52 @@
 import { useState, useEffect } from "react";
-import { TThemeColor, TUser } from "../../../types";
+import { TThemeColor } from "../../../types";
 import { useChatContext } from "../../../Hooks/useChatContext";
 import DropdownChecklist from "../DropdownChecklist/DropdownChecklist";
 import { useUserContext } from "../../../Hooks/useUserContext";
 import Tab from "../Tab/Tab";
 import SearchAndDropdownList from "../SearchAndDropdownList/SearchAndDropdownList";
-import mongoose from "mongoose";
-
-// add members
-// name chat (if over 1 other member)
-// upon click of 'create', make this modal disappear, then render ChatModal (set currentChat to newly created chat)
-// in chat preview, if no messages, show NO MESSAGES YET if no messages exist in chat
+import Methods from "../../../methods";
+import Requests from "../../../requests";
 
 const CreateNewChatModal = () => {
-  const { allOtherUsers, currentUser } = useUserContext();
+  const { currentUser } = useUserContext();
+
   const {
+    setShowCreateNewChatModal,
+    handleOpenChat,
+    fetchChatsQuery,
+    handleSearchPotentialChatMembers,
+    handleLoadMoreItemsOnScroll,
     admins,
     handleCreateChat,
-    setShowCreateNewChatModal,
-    numberOfPotentialChatMembersDisplayed,
-    setNumberOfPotentialChatMembersDisplayed,
     handleAddRemoveUserFromChat,
     usersToAddToChat,
     setUsersToAddToChat,
     handleRemoveUserFromChat,
     chatName,
-    setChatName,
     chatNameError,
-    setChatNameError,
     showPotentialChatMembers,
     setShowPotentialChatMembers,
-    potentialChatMembers,
-    setPotentialChatMembers,
     chatMembersSearchQuery,
     setChatMembersSearchQuery,
-    getCurrentOtherUserFriends,
     handleChatNameInput,
-    handleSearchChatMembersInput,
+    displayedPotentialChatMembers,
+    setDisplayedPotentialChatMembers,
+    fetchStart,
+    fetchIsLoading,
+    setFetchIsLoading,
+    isFetchError,
+    setIsFetchError,
+    handleCancelAddOrEditChat,
   } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  const fetchLimit = 10;
+
+  if (isFetchError) {
+    throw new Error("Couldn't fetch potential chat members.");
+  }
 
   useEffect(() => {
     // Set color of event card's border randomly:
@@ -54,93 +61,49 @@ const CreateNewChatModal = () => {
     setRandomColor(themeColors[randomNumber]);
   }, []);
 
-  const initiatePotentialChatMembers = (): void => {
-    setPotentialChatMembers(
-      allOtherUsers.filter((otherUser) => {
-        const currentUserIsBlocked =
-          currentUser && currentUser._id
-            ? otherUser.blockedUsers.includes(currentUser._id)
-            : false;
-
-        const currentUserIsFriendOfFriend: boolean =
-          currentUser && currentUser._id
-            ? getCurrentOtherUserFriends(otherUser).some(
-                (otherUserFriend) =>
-                  currentUser._id && otherUserFriend.friends.includes(currentUser._id)
-              )
-            : false;
-
-        const currentUserIsFriend: boolean =
-          currentUser && currentUser._id
-            ? otherUser.friends.includes(currentUser._id)
-            : false;
-
-        if (
-          !currentUserIsBlocked &&
-          (otherUser.whoCanMessage === "anyone" ||
-            (otherUser.whoCanMessage === "friends" && currentUserIsFriend) ||
-            (otherUser.whoCanMessage === "friends of friends" &&
-              currentUserIsFriendOfFriend))
-        ) {
-          return otherUser;
-        }
-      })
-    );
-  };
-
   useEffect(() => {
-    initiatePotentialChatMembers();
-  }, [usersToAddToChat]);
-
-  const handleCancelNewChatCreation = (
-    e:
-      | React.MouseEvent<HTMLButtonElement, MouseEvent>
-      | React.MouseEvent<HTMLElement, MouseEvent>
-      | React.KeyboardEvent<HTMLElement>
-  ): void => {
-    e.preventDefault();
-    initiatePotentialChatMembers();
-    if (usersToAddToChat.length > 0) {
-      setUsersToAddToChat([]);
+    if (chatMembersSearchQuery === "") {
+      setFetchIsLoading(true);
+      Requests.getPotentialChatMembers(currentUser, fetchStart, fetchLimit)
+        .then((batchOfPotentialCMs) => {
+          if (batchOfPotentialCMs) {
+            if (fetchStart === 0) {
+              setDisplayedPotentialChatMembers(
+                batchOfPotentialCMs.map((pf) => Methods.getTBarebonesUser(pf))
+              );
+            } else {
+              if (displayedPotentialChatMembers) {
+                setDisplayedPotentialChatMembers(
+                  displayedPotentialChatMembers.concat(
+                    batchOfPotentialCMs.map((pf) => Methods.getTBarebonesUser(pf))
+                  )
+                );
+              }
+            }
+          } else {
+            setIsFetchError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchIsLoading(false));
     }
-    if (chatMembersSearchQuery !== "") {
-      setChatMembersSearchQuery("");
-    }
-    if (chatName !== "") {
-      setChatName("");
-    }
-    if (chatNameError !== "") {
-      setChatNameError("");
-    }
-    if (showPotentialChatMembers) {
-      setShowPotentialChatMembers(false);
-    }
-    setShowCreateNewChatModal(false);
-  };
+  }, [fetchStart, chatMembersSearchQuery]);
 
   const chatCanBeCreated = chatNameError === "" && usersToAddToChat.length > 0;
 
-  let usersToAdd: TUser[] = [];
-  for (const userID of usersToAddToChat) {
-    for (const otherUser of allOtherUsers) {
-      if (otherUser._id === userID) {
-        usersToAdd.push(otherUser);
-      }
-    }
-  }
+  const initialFetchIsLoading: boolean = displayedPotentialChatMembers === null;
 
   return (
-    <div tabIndex={0} aria-hidden="false" className="modal-background">
+    <div tabIndex={0} className="modal-background">
       <i
         tabIndex={0}
-        aria-hidden="false"
         title="Close"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            handleCancelNewChatCreation(e);
+            handleCancelAddOrEditChat(e);
           }
         }}
-        onClick={(e) => handleCancelNewChatCreation(e)}
+        onClick={(e) => handleCancelAddOrEditChat(e)}
         className="fas fa-times close-module-icon"
       ></i>
       <div
@@ -152,101 +115,132 @@ const CreateNewChatModal = () => {
         className="create-new-chat"
       >
         <h1>New Chat</h1>
-        <header>Add people to chat:</header>
-        {usersToAddToChat.length > 0 && (
-          <div className="added-user-tab-container">
-            {usersToAdd.map((user) => (
-              <Tab
-                key={user._id}
-                info={user}
-                removeHandler={handleRemoveUserFromChat}
-                removeHandlerNeedsEventParam={false}
-                removeHandlerParams={[user]}
-                randomColor={randomColor}
-                userMayNotDelete={false}
-              />
-            ))}
-          </div>
+        {!initialFetchIsLoading && isFetchError && (
+          <p>Error retrieving data; please reload the page.</p>
         )}
-        <SearchAndDropdownList
-          name="chat-members-search"
-          id="chat-members-search"
-          randomColor={randomColor}
-          inputOnChange={(e) =>
-            handleSearchChatMembersInput(
-              e,
-              showPotentialChatMembers,
-              setShowPotentialChatMembers,
-              allOtherUsers,
-              initiatePotentialChatMembers
-            )
-          }
-          placeholder="Search users by username, first/last names"
-          query={chatMembersSearchQuery}
-          clearQueryOnClick={() => {
-            setChatMembersSearchQuery("");
-            initiatePotentialChatMembers();
-          }}
-          showList={showPotentialChatMembers}
-          setShowList={setShowPotentialChatMembers}
-          dropdownChecklist={
-            <DropdownChecklist
-              usedFor="potential-chat-members"
-              action={handleAddRemoveUserFromChat}
-              actionEventParamNeeded={false}
-              displayedItemsArray={potentialChatMembers}
-              storageArray={usersToAdd.map((user) => user._id)}
-              setStorageArray={setUsersToAddToChat}
-              displayedItemsCount={numberOfPotentialChatMembersDisplayed}
-              setDisplayedItemsCount={setNumberOfPotentialChatMembersDisplayed}
-              displayedItemsCountInterval={10}
-            />
-          }
-        />
-        {usersToAddToChat.length > 1 && (
+        {initialFetchIsLoading && (
+          <header style={{ marginTop: "3rem" }} className="query-status-text">
+            Loading...
+          </header>
+        )}
+        {!initialFetchIsLoading && !isFetchError && (
           <>
-            <header>Choose group name (optional)</header>
-            <input
-            inputMode="text"
-              value={chatName ? chatName : ""}
-              onChange={(e) => handleChatNameInput(e)}
-              type="text"
-              placeholder="Choose a name for the group chat"
-            ></input>
-            {chatNameError !== "" && <p>{chatNameError}</p>}
+            <header style={{ fontFamily: "var(--text-font" }}>Add people to chat:</header>
+            {usersToAddToChat.length > 0 && (
+              <div className="added-user-tab-container">
+                {usersToAddToChat.map((user) => (
+                  <Tab
+                    key={user._id?.toString()}
+                    info={user}
+                    removeHandler={handleRemoveUserFromChat}
+                    removeHandlerNeedsEventParam={false}
+                    removeHandlerParams={[user]}
+                    randomColor={randomColor}
+                    userMayNotDelete={false}
+                  />
+                ))}
+              </div>
+            )}
+            {displayedPotentialChatMembers && (
+              <SearchAndDropdownList
+                name="chat-members-search"
+                id="chat-members-search"
+                randomColor={randomColor}
+                inputOnChange={(e) => handleSearchPotentialChatMembers(e)}
+                placeholder="Search users by username, first/last names"
+                query={chatMembersSearchQuery}
+                clearQueryOnClick={() => setChatMembersSearchQuery("")}
+                showList={showPotentialChatMembers}
+                setShowList={setShowPotentialChatMembers}
+                dropdownChecklist={
+                  <DropdownChecklist
+                    usedFor="potential-chat-members"
+                    action={handleAddRemoveUserFromChat}
+                    actionEventParamNeeded={false}
+                    displayedItemsArray={displayedPotentialChatMembers}
+                    storageArray={usersToAddToChat}
+                    setStorageArray={setUsersToAddToChat}
+                    fetchIsLoading={fetchIsLoading}
+                    scrollHandler={handleLoadMoreItemsOnScroll}
+                    scrollHandlerParams={[displayedPotentialChatMembers]}
+                  />
+                }
+              />
+            )}
+            {usersToAddToChat.length > 1 && (
+              <>
+                <header>Choose group name (optional)</header>
+                <input
+                  inputMode="text"
+                  value={chatName ? chatName : ""}
+                  onChange={(e) => handleChatNameInput(e)}
+                  type="text"
+                  placeholder="Choose a name for the group chat"
+                ></input>
+                {chatNameError !== "" && <p>{chatNameError}</p>}
+              </>
+            )}
+            <div className="create-new-chat-modal-buttons">
+              <button onClick={(e) => handleCancelAddOrEditChat(e)} id="cancel">
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (currentUser?._id) {
+                    const otherUserToAdd: string = usersToAddToChat
+                      .map((u) => u._id?.toString())
+                      .filter((elem) => elem !== undefined)
+                      .filter((u) => u !== currentUser._id)[0];
+
+                    const existingChatWithOtherUserToAdd = fetchChatsQuery.data?.filter(
+                      (chat) =>
+                        chat.members.length === 2 &&
+                        currentUser._id &&
+                        chat.members.includes(currentUser._id.toString()) &&
+                        chat.members.includes(otherUserToAdd)
+                    )[0];
+
+                    if (existingChatWithOtherUserToAdd) {
+                      handleOpenChat(existingChatWithOtherUserToAdd);
+                      setShowCreateNewChatModal(false);
+                      setUsersToAddToChat([]);
+                    } else {
+                      handleCreateChat({
+                        members: usersToAddToChat
+                          .map((u) => u._id?.toString())
+                          .filter((elem) => elem !== undefined)
+                          .concat(currentUser?._id?.toString()),
+                        messages: [],
+                        ...(chatName &&
+                          chatName.replace(/\s/g, "") !== "" && { chatName: chatName }),
+                        chatType: usersToAddToChat.length > 1 ? "group" : "two-member",
+                        dateCreated: Date.now(),
+                        ...(usersToAddToChat.length >= 2 &&
+                          currentUser &&
+                          currentUser._id && {
+                            admins: [
+                              currentUser._id.toString(),
+                              ...admins
+                                .map((a) => a._id?.toString())
+                                .filter((elem) => elem !== undefined),
+                            ],
+                          }),
+                      });
+                    }
+                  }
+                }}
+                disabled={!chatCanBeCreated}
+                style={
+                  randomColor === "var(--primary-color)"
+                    ? { backgroundColor: `${randomColor}`, color: "black" }
+                    : { backgroundColor: `${randomColor}`, color: "white" }
+                }
+              >
+                Create Chat
+              </button>
+            </div>
           </>
         )}
-        <div className="create-new-chat-modal-buttons">
-          <button onClick={(e) => handleCancelNewChatCreation(e)} id="cancel">
-            Cancel
-          </button>
-          <button
-            onClick={() => {
-              const userIDsToAddToChat = usersToAddToChat.concat(
-                currentUser && currentUser._id ? currentUser._id : ""
-              );
-              handleCreateChat({
-                _id: new mongoose.Types.ObjectId().toString(),
-                members: userIDsToAddToChat,
-                messages: [],
-                chatName: chatName,
-                chatType: userIDsToAddToChat.length > 2 ? "group" : "two-member",
-                dateCreated: Date.now(),
-                ...(usersToAddToChat.length >= 2 &&
-                  currentUser &&
-                  currentUser._id && { admins: [currentUser._id].concat(admins) }),
-              });
-            }}
-            disabled={!chatCanBeCreated}
-            style={
-              randomColor === "var(--primary-color)"
-                ? { backgroundColor: `${randomColor}`, color: "black" }
-                : { backgroundColor: `${randomColor}`, color: "white" }
-            }
-          >
-            Create Chat
-          </button>
-        </div>
       </div>
     </div>
   );

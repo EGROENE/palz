@@ -51,6 +51,7 @@ const SearchAndDropdownList = ({
       />
       {query.replace(/s\+/g, "") !== "" && (
         <i
+          id="clear-searchbox-icon"
           onClick={clearQueryOnClick}
           className="clear-other-users-search-query fas fa-times"
         ></i>
@@ -68,6 +69,7 @@ const SearchAndDropdownList = ({
         >
           Select user:
           <i
+            id="dropdown-list-button-icon"
             style={showList ? { "rotate": "180deg" } : undefined}
             className="fas fa-chevron-down"
           ></i>

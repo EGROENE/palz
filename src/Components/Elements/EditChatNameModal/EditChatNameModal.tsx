@@ -40,10 +40,9 @@ const EditChatNameModal = () => {
   };
 
   return (
-    <div tabIndex={0} aria-hidden="false" className="modal-background">
+    <div tabIndex={0} className="modal-background">
       <i
         tabIndex={0}
-        aria-hidden="false"
         title="Close"
         onKeyDown={(e) => {
           if (e.key === "Enter") {

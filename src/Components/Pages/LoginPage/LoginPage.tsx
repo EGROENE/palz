@@ -4,18 +4,20 @@ import SignupForm from "../../Forms/LoginForms/SignupForm/SignupForm";
 import LoginForm from "../../Forms/LoginForms/LoginForm/LoginForm";
 import { useEffect, useState } from "react";
 import { TThemeColor } from "../../../types";
-import QueryLoadingOrError from "../../Elements/QueryLoadingOrError/QueryLoadingOrError";
+import { useNavigate } from "react-router-dom";
 
-const LoginPage = () => {
+const LoginPage = ({ type }: { type: "login" | "signup" }) => {
   const { theme, toggleTheme } = useMainContext();
   const {
     signupIsSelected,
     toggleSignupLogin,
     resetLoginOrSignupFormFieldsAndErrors,
-    fetchAllUsersQuery,
+    processingLoginIsLoading,
   } = useUserContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
+
+  const navigation = useNavigate();
 
   useEffect(() => {
     resetLoginOrSignupFormFieldsAndErrors();
@@ -35,6 +37,7 @@ const LoginPage = () => {
     ];
     const randomNumber = Math.floor(Math.random() * themeColors.length);
     setRandomColor(themeColors[randomNumber]);
+    type === "login" ? navigation("/login") : navigation("/signup");
   }, []);
 
   return (
@@ -57,9 +60,8 @@ const LoginPage = () => {
           </button>
         </div>
       </div>
-      <QueryLoadingOrError query={fetchAllUsersQuery} errorMessage="Error loading data" />
-      {!fetchAllUsersQuery.isLoading && !fetchAllUsersQuery.isError && (
-        <div className="login-form">
+      <div className="login-form">
+        {!processingLoginIsLoading && (
           <div className="login-options-container">
             <div>
               <header onClick={!signupIsSelected ? () => toggleSignupLogin() : undefined}>
@@ -78,19 +80,25 @@ const LoginPage = () => {
               )}
             </div>
           </div>
-          {signupIsSelected ? (
-            <SignupForm randomColor={randomColor} />
-          ) : (
-            <LoginForm randomColor={randomColor} />
-          )}
+        )}
+        {signupIsSelected && <SignupForm randomColor={randomColor} />}
+        {!signupIsSelected && !processingLoginIsLoading && (
+          <LoginForm randomColor={randomColor} />
+        )}
+        {processingLoginIsLoading && !signupIsSelected && (
+          <header style={{ marginTop: "3rem" }} className="query-status-text">
+            Processing your info...
+          </header>
+        )}
+        {!processingLoginIsLoading && (
           <p>
             {!signupIsSelected ? "Don't have an account?" : "Already have an account?"}
             <span className="link-to-other-form" onClick={() => toggleSignupLogin()}>
               {!signupIsSelected ? " Sign Up" : " Log In"}
             </span>
           </p>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

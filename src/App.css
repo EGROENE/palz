@@ -24,6 +24,14 @@
   align-items: center;
 }
 
+.login-form form {
+  max-width: 50vw;
+}
+
+.login-form form .theme-element-container {
+  width: 102%;
+}
+
 .hamburger-container {
   display: flex;
   width: 83%;
@@ -44,6 +52,7 @@
   color: var(--header-three-color);
   font-size: 2rem;
   font-weight: 700;
+  font-family: var(--header-font);
 }
 
 .palz-logo header,
@@ -96,6 +105,7 @@
 .standalone-element {
   position: relative;
   top: 44%;
+  flex-direction: column;
 }
 
 .page-hero {
@@ -117,7 +127,7 @@
 }
 
 .page-hero nav {
-  margin-top: 2.5rem;
+  margin-top: 2rem;
   /* margin-left: 3rem;
   margin-bottom: 3rem; */
 }
@@ -380,6 +390,7 @@
   display: flex;
   max-width: 100%;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .eventMainInfoContainer {
@@ -426,7 +437,7 @@
 }
 
 .upcoming-events-hero {
-  min-height: 50vh;
+  min-height: 37vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -495,7 +506,7 @@
 }
 
 .eventCardImageContainer {
-  margin-top: 1rem;
+  margin-top: 2.25rem;
   margin-left: 1rem;
   display: flex;
   flex-direction: column;
@@ -605,6 +616,24 @@
   margin-right: 2rem;
 }
 
+.dropdown-list-search-input {
+  margin-top: 1rem;
+  position: relative;
+  width: 11rem;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-list-search-input i {
+  position: absolute;
+  right: 4%;
+  color: white;
+}
+
+.dropdown-list-search-input i:hover {
+  cursor: pointer;
+}
+
 .country-dropdown-button {
   display: flex;
   align-items: center;
@@ -643,6 +672,7 @@
   background-color: gray;
   max-height: 50vh;
   overflow-y: scroll;
+  min-width: 17%;
 }
 
 .dropdown-list li {
@@ -823,6 +853,16 @@ form textarea {
   font-size: 1.25rem;
 }
 
+.page-hero form .form-sub-checkbox {
+  display: flex;
+  flex-direction: row;
+  margin: 0.5rem 0;
+}
+
+.page-hero form .form-sub-checkbox input {
+  width: unset;
+}
+
 .add-members-modal .clear-other-users-search-query {
   position: absolute;
   top: 9px;
@@ -894,16 +934,23 @@ form textarea {
   margin-bottom: 5rem;
 }
 
-.create-new-chat .search-and-dropdown i {
+#dropdown-list-button-icon {
   position: absolute;
   top: 9px;
   left: 72%;
   font-size: 1.25rem;
 }
 
+#clear-searchbox-icon {
+  position: absolute;
+  top: 9px;
+  left: 36%;
+  font-size: 1.25rem;
+}
+
 .create-new-chat header {
-  font-family: var(--text-font);
   margin: 1rem 0;
+  font-family: var(--text-font);
 }
 
 .create-new-chat-modal-buttons {
@@ -933,42 +980,62 @@ form textarea {
 }
 
 .chat-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.chat-preview-header {
+  font-family: var(--text-font);
+  font-size: 1.5rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.chat-preview-body {
   position: relative;
-  padding: 0.75rem 0;
   border-radius: 10px;
   display: flex;
   align-items: center;
   width: 100%;
   justify-content: space-around;
-  margin: 0.75rem 0;
 }
 
-.chat-preview-container i:hover {
+#delete-chat-btn {
+  font-size: 1.25rem;
+  margin: 0 3rem 0 2rem;
+}
+
+.chat-preview-body i:hover {
   cursor: pointer;
   opacity: 0.8;
 }
 
-.chat-preview-container:hover {
+.chat-preview-body:hover {
   cursor: pointer;
 }
 
 .chat-new {
   position: absolute;
-  top: -1rem;
-  right: -0.5rem;
+  top: -2rem;
+  right: -1.75rem;
   background-color: green;
   padding: 0.5rem;
   border-radius: 50%;
   font-family: var(--text-font);
 }
 
-.profile-images-chat-preview-container {
+.profile-images-chat-preview-body {
   position: relative;
   display: flex;
   align-items: flex-end;
 }
 
-.chat-preview-container img {
+.chat-preview-body img {
   width: 5rem;
   height: 5rem;
   border-radius: 50%;
@@ -990,7 +1057,7 @@ form textarea {
   font-weight: 700;
 }
 
-.chat-preview-container-text-container {
+.chat-preview-body-text-container {
   text-align: left;
   width: 60%;
 }
@@ -1000,17 +1067,18 @@ form textarea {
   justify-content: space-between;
 }
 
-.chat-preview-container-text-container header {
+.chat-preview-body-text-container header {
   color: var(--text-color);
   font-size: 1.5rem;
+  font-family: var(--text-font);
 }
 
-.chat-preview-container-text-container span {
+.chat-preview-body-text-container span {
   font-family: var(--text-font);
   color: var(--text-color);
 }
 
-.chat-preview {
+.chat-members-and-last-message {
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -1509,7 +1577,7 @@ form textarea {
 }
 
 .dropdown-search {
-  width: 100%;
+  /* width: 100%; */
   /* height: calc(28px - 0.45rem); */
   /* max-height: calc(28px - 0.45rem); */
   margin-right: 1rem;
@@ -1546,7 +1614,7 @@ form textarea {
 .listedUser,
 .modal-background .listedUser {
   color: var(--text-color);
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 10px;
   width: 50%;
   border: 2px solid;
@@ -1593,7 +1661,7 @@ form textarea {
 .furtherInfoSection header {
   font-weight: 700;
   font-family: var(--header-font);
-  font-size: 2rem;
+  font-size: 1.5rem;
   line-height: 1.5;
   background: linear-gradient(
     80deg,
@@ -1638,8 +1706,8 @@ form textarea {
 .userListContainer {
   background-color: var(--background-color);
   color: black;
-  height: 75%;
-  width: 60%;
+  max-height: 75%;
+  width: 42%;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -1647,18 +1715,14 @@ form textarea {
 }
 
 .userListContainer h2 {
-  font-size: 3rem;
+  font-size: 2rem;
+  margin: 1rem auto;
 }
 
 .userListContainer p {
   color: var(--text-color);
 }
 
-.chat-preview-container i {
-  font-size: 1.25rem;
-  margin: 0 2rem;
-}
-
-.profile-images-chat-preview-container img {
+.profile-images-chat-preview-body img {
   margin-left: -3rem;
 }

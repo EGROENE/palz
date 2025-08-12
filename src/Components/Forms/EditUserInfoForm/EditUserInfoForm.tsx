@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import Methods from "../../../methods";
 import { TThemeColor } from "../../../types";
 import { useMainContext } from "../../../Hooks/useMainContext";
-import { useQueryClient } from "@tanstack/react-query";
+import CountriesDropdownListWithSearch from "../../Elements/CountriesDropdownListWithSearch/CountriesDropdownListWithSearch";
 
 const EditUserInfoForm = ({
   randomColor,
@@ -25,10 +25,8 @@ const EditUserInfoForm = ({
   let {
     whoCanMessage,
     setWhoCanMessage,
-    fetchAllUsersQuery,
     currentUser,
     setCurrentUser,
-    allUsers,
     userValuesToUpdate,
     whoCanAddUserAsOrganizer,
     setWhoCanAddUserAsOrganizer,
@@ -125,6 +123,7 @@ const EditUserInfoForm = ({
     setWhoCanSeeEventsOrganized,
     setWhoCanSeeEventsInterestedIn,
     setWhoCanSeeEventsInvitedTo,
+    confirmationPasswordIsHidden,
   } = useUserContext();
 
   const [showPrivacySettings, setShowPrivacySettings] = useState<boolean>(false);
@@ -143,6 +142,8 @@ const EditUserInfoForm = ({
   const aboutRef = useRef(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const confirmPasswordRef = useRef<HTMLInputElement | null>(null);
+  const searchPhoneCountriesRef = useRef<HTMLInputElement | null>(null);
+  const searchLocationCountriesRef = useRef<HTMLInputElement | null>(null);
   /////////
 
   const [phoneFieldMinLength, setPhoneFieldMinLength] = useState<number>(1);
@@ -151,6 +152,9 @@ const EditUserInfoForm = ({
   const [showCountryPhoneCodes, setShowCountryPhoneCodes] = useState<boolean>(false);
   const [showUserLocationCountries, setShowUserLocationCountries] =
     useState<boolean>(false);
+  const [searchPhoneCountriesQuery, setSearchPhoneCountriesQuery] = useState<string>("");
+  const [searchLocationCountriesQuery, setSearchLocationCountriesQuery] =
+    useState<string>("");
   const [focusedElement, setFocusedElement] = useState<
     | "firstName"
     | "lastName"
@@ -165,45 +169,10 @@ const EditUserInfoForm = ({
     | "about"
     | "password"
     | "confirmPassword"
+    | "phoneCountriesSearch"
+    | "locationCountriesSearch"
     | undefined
   >();
-
-  // If user data has changed, setCurrentUser:
-  // Every item on TUser object that can be changed in this form should be in dependency array
-  useEffect(() => {
-    if (allUsers) {
-      if (username === currentUser?.username) {
-        setCurrentUser(allUsers.filter((user) => user.username === username)[0]);
-      } else {
-        setCurrentUser(allUsers.filter((user) => user.emailAddress === emailAddress)[0]);
-      }
-    }
-  }, [
-    setCurrentUser,
-    allUsers,
-    username,
-    emailAddress,
-    currentUser?.firstName,
-    currentUser?.lastName,
-    currentUser?.emailAddress,
-    currentUser?.username,
-    currentUser?.password,
-    currentUser?.phoneCountry,
-    currentUser?.phoneCountryCode,
-    currentUser?.phoneNumberWithoutCountryCode,
-    currentUser?.city,
-    currentUser?.stateProvince,
-    currentUser?.country,
-    currentUser?.facebook,
-    currentUser?.instagram,
-    currentUser?.x,
-    currentUser?.about,
-    currentUser?.whoCanAddUserAsOrganizer,
-    currentUser?.whoCanInviteUser,
-    currentUser?.profileVisibleTo,
-  ]);
-
-  const queryClient = useQueryClient();
 
   // Function that resets form values to what they are in currentUser
   // Called upon first render of this component or if user cancels changes they made to edit-user-info form
@@ -267,153 +236,188 @@ const EditUserInfoForm = ({
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault(); // prevent page from auto-reloading after submitting edit form
+    // Only if there are no errors & infos that must be unique aren't already in use, patch changes to user data object:
+    if (
+      areNoEditFormErrors &&
+      currentUser &&
+      currentUser._id &&
+      username &&
+      emailAddress
+    ) {
+      Requests.getUserByUsernamePhoneNumberOrEmailAddress(
+        currentUser._id.toString(),
+        username,
+        emailAddress,
+        phoneCountryCode,
+        phoneNumberWithoutCountryCode
+      )
+        .then((res) => {
+          if (res.status === 401) {
+            window.alert(
+              "Could not save your changes. Please fix any form errors, then try again"
+            );
 
-    setIsLoading(true);
+            if (res.statusText === "ALL TAKEN") {
+              setUsernameError("Username already in use");
+              setEmailError("E-mail address already in use");
+              setPhoneNumberError("Phone number already in use");
+            }
 
-    // Get most current allUsers, then check unique values against those in allOtherUsers one last time
-    // If invalidation fails, user is notified of an error, then page is reloaded automatically
-    queryClient
-      .invalidateQueries({ queryKey: ["allUsers"] })
-      .then(() => {
-        const allOtherUsers =
-          allUsers && currentUser
-            ? allUsers.filter((user) => user._id !== currentUser._id)
-            : undefined;
+            if (res.statusText === "USERNAME TAKEN") {
+              setUsernameError("Username already in use");
+            }
 
-        /* If un or email address already exists & doesn't belong to current user, set error for that field saying as much. If not, make patch request w/ updated infos (done below) */
-        const usernameExists = allOtherUsers
-          ? allOtherUsers.map((user) => user.username).includes(username)
-          : false;
+            if (res.statusText === "EMAIL TAKEN") {
+              setEmailError("E-mail address already in use");
+            }
 
-        const emailAddressExists = allOtherUsers
-          ? allOtherUsers.map((user) => user.emailAddress).includes(emailAddress) &&
-            currentUser?.emailAddress !== emailAddress
-          : false;
+            if (res.statusText === "PHONE NUMBER TAKEN") {
+              setPhoneNumberError("Phone number already in use");
+            }
+          }
 
-        const fullPhoneNumber =
-          phoneCountryCode && phoneNumberWithoutCountryCode
-            ? phoneCountryCode + phoneNumberWithoutCountryCode
-            : undefined;
+          if (res.status === 500) {
+            toast.error("Could not save your changes. Please try again.", {
+              style: {
+                background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                color: theme === "dark" ? "black" : "white",
+                border: "2px solid red",
+              },
+            });
+          }
 
-        const phoneNumberExists =
-          fullPhoneNumber && allOtherUsers
-            ? allOtherUsers
-                .map((user) => {
-                  return user.phoneCountryCode + user.phoneNumberWithoutCountryCode;
-                })
-                .includes(fullPhoneNumber)
-            : false;
+          if (res.ok) {
+            setIsLoading(true);
+            Requests.patchUpdatedUserInfo(currentUser, userValuesToUpdate)
+              .then((response) => {
+                if (!response.ok) {
+                  toast.error("Could not update profile info. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                } else {
+                  if (currentUser && currentUser._id) {
+                    Requests.getUserByID(currentUser._id.toString())
+                      .then((res) => {
+                        if (res.ok) {
+                          res
+                            .json()
+                            .then((user) => {
+                              if (user) {
+                                setCurrentUser(user);
+                                toast.success("Profile info updated", {
+                                  style: {
+                                    background:
+                                      theme === "light"
+                                        ? "#242424"
+                                        : "rgb(233, 231, 228)",
+                                    color: theme === "dark" ? "black" : "white",
+                                    border: "2px solid green",
+                                  },
+                                });
 
-        if (usernameExists) {
-          setUsernameError("Username already exists");
-        }
-        if (emailAddressExists) {
-          setEmailError("E-mail address already exists");
-        }
-        if (phoneNumberExists) {
-          setPhoneNumberError("Phone number is already in use");
-        }
+                                /* Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first, which won't happen) */
+                                if (userValuesToUpdate.firstName) {
+                                  setFirstName(userValuesToUpdate.firstName);
+                                }
+                                if (userValuesToUpdate.lastName) {
+                                  setLastName(userValuesToUpdate.lastName);
+                                }
+                                if (userValuesToUpdate.emailAddress) {
+                                  setEmailAddress(userValuesToUpdate.emailAddress);
+                                }
+                                if (userValuesToUpdate.password) {
+                                  setPassword(userValuesToUpdate.password);
+                                }
+                                if (userValuesToUpdate.phoneCountry) {
+                                  setPhoneCountry(userValuesToUpdate.phoneCountry);
+                                }
+                                if (userValuesToUpdate.phoneCountryCode) {
+                                  setPhoneCountryCode(
+                                    userValuesToUpdate.phoneCountryCode
+                                  );
+                                }
+                                if (userValuesToUpdate.phoneNumberWithoutCountryCode) {
+                                  setPhoneNumberWithoutCountryCode(
+                                    userValuesToUpdate.phoneNumberWithoutCountryCode
+                                  );
+                                }
+                                if (userValuesToUpdate.city) {
+                                  setUserCity(userValuesToUpdate.city);
+                                }
+                                if (userValuesToUpdate.stateProvince) {
+                                  setUserState(userValuesToUpdate.stateProvince);
+                                }
+                                if (userValuesToUpdate.country) {
+                                  setUserCountry(userValuesToUpdate.country);
+                                }
+                                if (userValuesToUpdate.facebook) {
+                                  setFacebook(userValuesToUpdate.facebook);
+                                }
+                                if (userValuesToUpdate.instagram) {
+                                  setInstagram(userValuesToUpdate.instagram);
+                                }
+                                if (userValuesToUpdate.x) {
+                                  setX(userValuesToUpdate.x);
+                                }
+                                if (userValuesToUpdate.about) {
+                                  setUserAbout(userValuesToUpdate.about);
+                                }
 
-        // Only if there are no errors & infos that must be unique aren't already in use, patch changes to user data object:
-        if (areNoEditFormErrors && !phoneNumberExists) {
-          Requests.patchUpdatedUserInfo(currentUser, userValuesToUpdate)
-            .then((response) => {
-              if (!response.ok) {
-                toast.error("Could not update profile info. Please try again.", {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid red",
-                  },
-                });
-              } else {
-                queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-                if (fetchAllUsersQuery.data && currentUser) {
-                  allUsers = fetchAllUsersQuery.data;
-                  setCurrentUser(
-                    allUsers.filter((user) => user._id === currentUser._id)[0]
-                  );
+                                // Hide PW again if unhidden on submit of edit-user-info form
+                                if (!passwordIsHidden) {
+                                  toggleHidePassword("confirmation-password");
+                                  toggleHidePassword("password");
+                                }
+                              } else {
+                                toast.error(
+                                  "Could not update profile info. Please try again.",
+                                  {
+                                    style: {
+                                      background:
+                                        theme === "light"
+                                          ? "#242424"
+                                          : "rgb(233, 231, 228)",
+                                      color: theme === "dark" ? "black" : "white",
+                                      border: "2px solid red",
+                                    },
+                                  }
+                                );
+                              }
+                            })
+                            .catch((error) => console.log(error));
+                        } else {
+                          toast.error(
+                            "Could not update profile info. Please try again.",
+                            {
+                              style: {
+                                background:
+                                  theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                                color: theme === "dark" ? "black" : "white",
+                                border: "2px solid red",
+                              },
+                            }
+                          );
+                        }
+                      })
+                      .catch((error) => console.log(error));
+                  }
                 }
-
-                toast.success("Profile info updated", {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid green",
-                  },
-                });
-
-                /* Set values of fields to updated values (done this way so that it's not necessary to wait for these state values to update first, which won't happen) */
-                if (userValuesToUpdate.firstName) {
-                  setFirstName(userValuesToUpdate.firstName);
-                }
-                if (userValuesToUpdate.lastName) {
-                  setLastName(userValuesToUpdate.lastName);
-                }
-                if (userValuesToUpdate.emailAddress) {
-                  setEmailAddress(userValuesToUpdate.emailAddress);
-                }
-                if (userValuesToUpdate.password) {
-                  setPassword(userValuesToUpdate.password);
-                }
-                if (userValuesToUpdate.phoneCountry) {
-                  setPhoneCountry(userValuesToUpdate.phoneCountry);
-                }
-                if (userValuesToUpdate.phoneCountryCode) {
-                  setPhoneCountryCode(userValuesToUpdate.phoneCountryCode);
-                }
-                if (userValuesToUpdate.phoneNumberWithoutCountryCode) {
-                  setPhoneNumberWithoutCountryCode(
-                    userValuesToUpdate.phoneNumberWithoutCountryCode
-                  );
-                }
-                if (userValuesToUpdate.city) {
-                  setUserCity(userValuesToUpdate.city);
-                }
-                if (userValuesToUpdate.stateProvince) {
-                  setUserState(userValuesToUpdate.stateProvince);
-                }
-                if (userValuesToUpdate.country) {
-                  setUserCountry(userValuesToUpdate.country);
-                }
-                if (userValuesToUpdate.facebook) {
-                  setFacebook(userValuesToUpdate.facebook);
-                }
-                if (userValuesToUpdate.instagram) {
-                  setInstagram(userValuesToUpdate.instagram);
-                }
-                if (userValuesToUpdate.x) {
-                  setX(userValuesToUpdate.x);
-                }
-                if (userValuesToUpdate.about) {
-                  setUserAbout(userValuesToUpdate.about);
-                }
-
-                // Hide PW again if unhidden on submit of edit-user-info form
-                if (!passwordIsHidden) {
-                  toggleHidePassword();
-                }
-              }
-            })
-            .catch((error) => console.log(error))
-            .finally(() => setIsLoading(false));
-        } else {
-          window.alert("Please fix any form errors, then try again");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error("Error saving data. Page will reload automatically.", {
-          style: {
-            background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-            color: theme === "dark" ? "black" : "white",
-            border: "2px solid red",
-          },
-        });
-        setTimeout(() => {
-          window.location.reload();
-        }, 3500);
-      });
+              })
+              .catch((error) => console.log(error))
+              .finally(() => setIsLoading(false));
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setIsLoading(false));
+    } else {
+      window.alert(
+        "Could not save your changes. Please fix any form errors, then try again"
+      );
+    }
   };
 
   // INPUT HANDLERS (and methods used in them):
@@ -424,13 +428,6 @@ const EditUserInfoForm = ({
     value: string | undefined,
     countryCode: string // used instead of phoneCountryCode b/c it's more current
   ): void => {
-    //fetchAllUsers();
-    const phoneNumberTaken: boolean | undefined =
-      allUsers &&
-      allUsers
-        .filter((user) => user._id !== currentUser?._id)
-        .map((user) => user.phoneCountryCode + user.phoneNumberWithoutCountryCode)
-        .includes(countryCode + value);
     // If input doesn't meet length req or if it doesn't meet length req and countryCode is blank:
     if (
       !(typeof value === "string" && value?.length >= min && value?.length <= max) ||
@@ -447,8 +444,6 @@ const EditUserInfoForm = ({
       // If input meets length req & countryCode still not selected:
     } else if (countryCode === "") {
       setPhoneNumberError("Please select a country");
-    } else if (phoneNumberTaken) {
-      setPhoneNumberError("Phone number already in use");
     } else {
       setPhoneNumberError("");
     }
@@ -961,23 +956,52 @@ const EditUserInfoForm = ({
             },
           });
         } else {
-          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-          if (fetchAllUsersQuery.data && currentUser) {
-            allUsers = fetchAllUsersQuery.data;
-            setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id.toString())
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        setCurrentUser(user);
+                        toast("Phone number deleted", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                        setPhoneCountry("");
+                        setPhoneCountryCode("");
+                        setPhoneNumberWithoutCountryCode("");
+                        setShowCountryPhoneCodes(false);
+                        setPhoneNumberMinAndMaxLength(1, 13);
+                      } else {
+                        toast.error("Could not delete phone number. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  toast.error("Could not delete phone number. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
           }
-          toast("Phone number deleted", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          setPhoneCountry("");
-          setPhoneCountryCode("");
-          setPhoneNumberWithoutCountryCode("");
-          setShowCountryPhoneCodes(false);
-          setPhoneNumberMinAndMaxLength(1, 13);
         }
       })
       .catch((error) => console.log(error))
@@ -1002,22 +1026,50 @@ const EditUserInfoForm = ({
             },
           });
         } else {
-          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-          if (fetchAllUsersQuery.data && currentUser) {
-            allUsers = fetchAllUsersQuery.data;
-            setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id.toString())
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        toast("Location deleted", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                        setUserCity("");
+                        setUserState("");
+                        setUserCountry("");
+                        setLocationError("");
+                      } else {
+                        toast.error("Could not delete location. Please try again.", {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  toast.error("Could not delete location. Please try again.", {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
           }
-          toast("Location deleted", {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          setUserCity("");
-          setUserState("");
-          setUserCountry("");
-          setLocationError("");
         }
       })
       .catch((error) => console.log(error))
@@ -1046,24 +1098,58 @@ const EditUserInfoForm = ({
             }
           );
         } else {
-          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-          if (fetchAllUsersQuery.data && currentUser) {
-            allUsers = fetchAllUsersQuery.data;
-            setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
-          }
-          toast(`${medium.toUpperCase()} link deleted`, {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          if (medium === "facebook") {
-            setFacebook("");
-          } else if (medium === "instagram") {
-            setInstagram("");
-          } else if (medium === "x") {
-            setX("");
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id.toString())
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        toast(`${medium.toUpperCase()} link deleted`, {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                        if (medium === "facebook") {
+                          setFacebook("");
+                        } else if (medium === "instagram") {
+                          setInstagram("");
+                        } else if (medium === "x") {
+                          setX("");
+                        }
+                      } else {
+                        toast.error(
+                          `Could not delete ${medium.toUpperCase()} link. Please try again.`,
+                          {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid red",
+                            },
+                          }
+                        );
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  toast.error(
+                    `Could not delete ${medium.toUpperCase()} link. Please try again.`,
+                    {
+                      style: {
+                        background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                        color: theme === "dark" ? "black" : "white",
+                        border: "2px solid red",
+                      },
+                    }
+                  );
+                }
+              })
+              .catch((error) => console.log(error));
           }
         }
       })
@@ -1089,19 +1175,50 @@ const EditUserInfoForm = ({
             },
           });
         } else {
-          queryClient.invalidateQueries({ queryKey: ["allUsers"] });
-          if (fetchAllUsersQuery.data && currentUser) {
-            allUsers = fetchAllUsersQuery.data;
-            setCurrentUser(allUsers.filter((user) => user._id === currentUser._id)[0]);
+          if (currentUser && currentUser._id) {
+            Requests.getUserByID(currentUser._id.toString())
+              .then((res) => {
+                if (res.ok) {
+                  res
+                    .json()
+                    .then((user) => {
+                      if (user) {
+                        toast(`'About' section deleted`, {
+                          style: {
+                            background:
+                              theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                            color: theme === "dark" ? "black" : "white",
+                            border: "2px solid red",
+                          },
+                        });
+                        setUserAbout("");
+                      } else {
+                        toast.error(
+                          `Could not delete 'About' section. Please try again.`,
+                          {
+                            style: {
+                              background:
+                                theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                              color: theme === "dark" ? "black" : "white",
+                              border: "2px solid red",
+                            },
+                          }
+                        );
+                      }
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  toast.error(`Could not delete 'About' section. Please try again.`, {
+                    style: {
+                      background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                      color: theme === "dark" ? "black" : "white",
+                      border: "2px solid red",
+                    },
+                  });
+                }
+              })
+              .catch((error) => console.log(error));
           }
-          toast(`'About' section deleted`, {
-            style: {
-              background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-              color: theme === "dark" ? "black" : "white",
-              border: "2px solid red",
-            },
-          });
-          setUserAbout("");
         }
       })
       .catch((error) => console.log(error))
@@ -1309,7 +1426,6 @@ const EditUserInfoForm = ({
               !isLoading && (
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleDeletePhoneNumber(e);
@@ -1379,41 +1495,24 @@ const EditUserInfoForm = ({
             </div>
           </div>
           {showCountryPhoneCodes && (
-            <ul className="dropdown-list">
-              {resortedCountries.map((country) => (
-                <li
-                  tabIndex={0}
-                  aria-hidden="false"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handlePhoneNumberInput(
-                        "country-code",
-                        undefined,
-                        `${country.country} +${country.phoneCode}`
-                      );
-                    }
-                  }}
-                  style={
-                    country.country === "United States"
-                      ? {
-                          "borderBottom": "1px dotted white",
-                        }
-                      : undefined
-                  }
-                  key={country.country}
-                  onClick={() =>
-                    handlePhoneNumberInput(
-                      "country-code",
-                      undefined,
-                      `${country.country} +${country.phoneCode}`
-                    )
-                  }
-                >
-                  <img src={`/flags/1x1/${country.abbreviation}.svg`} />
-                  <span>{`${country.country} +${country.phoneCode}`}</span>
-                </li>
-              ))}
-            </ul>
+            <CountriesDropdownListWithSearch
+              searchQuery={searchPhoneCountriesQuery}
+              queryHandler={setSearchPhoneCountriesQuery}
+              randomColor={randomColor}
+              inputRef={searchPhoneCountriesRef}
+              list={resortedCountries}
+              itemClick={(country: {
+                country: string;
+                abbreviation: string;
+                phoneCode: string;
+              }) =>
+                handlePhoneNumberInput(
+                  "country-code",
+                  undefined,
+                  `${country.country} +${country.phoneCode}`
+                )
+              }
+            />
           )}
         </label>
         <div className="location-inputs">
@@ -1522,57 +1621,32 @@ const EditUserInfoForm = ({
               ></i>
             </button>
             {showUserLocationCountries && (
-              <ul className="dropdown-list">
-                {resortedCountries.map((country) => (
-                  <li
-                    tabIndex={0}
-                    aria-hidden="false"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleCityStateCountryInput(
-                          { city: userCity, state: userState, country: userCountry },
-                          {
-                            citySetter: undefined,
-                            stateSetter: undefined,
-                            countrySetter: setUserCountry,
-                            errorSetter: setLocationError,
-                            showCountriesSetter: setShowUserLocationCountries,
-                          },
-                          "country",
-                          country.country,
-                          undefined
-                        );
-                      }
-                    }}
-                    style={
-                      country.country === "United States"
-                        ? {
-                            "borderBottom": "1px dotted white",
-                          }
-                        : undefined
-                    }
-                    key={country.country}
-                    onClick={() =>
-                      handleCityStateCountryInput(
-                        { city: userCity, state: userState, country: userCountry },
-                        {
-                          citySetter: undefined,
-                          stateSetter: undefined,
-                          countrySetter: setUserCountry,
-                          errorSetter: setLocationError,
-                          showCountriesSetter: setShowUserLocationCountries,
-                        },
-                        "country",
-                        country.country,
-                        undefined
-                      )
-                    }
-                  >
-                    <img src={`/flags/1x1/${country.abbreviation}.svg`} />
-                    <span>{`${country.country}`}</span>
-                  </li>
-                ))}
-              </ul>
+              <CountriesDropdownListWithSearch
+                searchQuery={searchLocationCountriesQuery}
+                queryHandler={setSearchLocationCountriesQuery}
+                randomColor={randomColor}
+                inputRef={searchLocationCountriesRef}
+                list={resortedCountries}
+                itemClick={(country: {
+                  country: string;
+                  abbreviation: string;
+                  phoneCode: string;
+                }) =>
+                  handleCityStateCountryInput(
+                    { city: userCity, state: userState, country: userCountry },
+                    {
+                      citySetter: undefined,
+                      stateSetter: undefined,
+                      countrySetter: setUserCountry,
+                      errorSetter: setLocationError,
+                      showCountriesSetter: setShowUserLocationCountries,
+                    },
+                    "country",
+                    country.country,
+                    undefined
+                  )
+                }
+              />
             )}
           </label>
           {currentUser?.city !== "" &&
@@ -1614,7 +1688,6 @@ const EditUserInfoForm = ({
               {currentUser?.facebook !== "" && !isLoading && (
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleDeleteSocialMedium(e, "facebook");
@@ -1653,7 +1726,6 @@ const EditUserInfoForm = ({
               {currentUser?.instagram !== "" && !isLoading && (
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleDeleteSocialMedium(e, "instagram");
@@ -1693,7 +1765,6 @@ const EditUserInfoForm = ({
               {currentUser?.x !== "" && !isLoading && (
                 <span
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleDeleteSocialMedium(e, "x");
@@ -1734,7 +1805,6 @@ const EditUserInfoForm = ({
             {currentUser?.about !== "" && !isLoading && (
               <span
                 tabIndex={0}
-                aria-hidden="false"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     handleDeleteUserAbout(e);
@@ -1807,9 +1877,9 @@ const EditUserInfoForm = ({
               className={passwordError !== "" ? "erroneous-field" : undefined}
             />
             {!passwordIsHidden ? (
-              <OpenEye toggleHidePassword={toggleHidePassword} />
+              <OpenEye toggleHidePassword={() => toggleHidePassword("password")} />
             ) : (
-              <ClosedEye toggleHidePassword={toggleHidePassword} />
+              <ClosedEye toggleHidePassword={() => toggleHidePassword("password")} />
             )}
           </div>
           {passwordError !== "" && <p className="input-error-message">{passwordError}</p>}
@@ -1836,17 +1906,21 @@ const EditUserInfoForm = ({
                   handleConfirmationPasswordInput(e.target.value, "edit-user-info")
                 }
                 value={confirmationPassword}
-                type={passwordIsHidden ? "password" : "text"}
+                type={confirmationPasswordIsHidden ? "password" : "text"}
                 placeholder="Confirm password"
                 inputMode="text"
                 className={
                   confirmationPasswordError !== "" ? "erroneous-field" : undefined
                 }
               />
-              {!passwordIsHidden ? (
-                <OpenEye toggleHidePassword={toggleHidePassword} />
+              {!confirmationPasswordIsHidden ? (
+                <OpenEye
+                  toggleHidePassword={() => toggleHidePassword("confirmation-password")}
+                />
               ) : (
-                <ClosedEye toggleHidePassword={toggleHidePassword} />
+                <ClosedEye
+                  toggleHidePassword={() => toggleHidePassword("confirmation-password")}
+                />
               )}
             </div>
             {confirmationPasswordError !== "" && (
@@ -1856,7 +1930,6 @@ const EditUserInfoForm = ({
         )}
         <header
           tabIndex={0}
-          aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               setShowPrivacySettings(!showPrivacySettings);
@@ -1879,7 +1952,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setProfileVisibleTo("anyone");
@@ -1898,7 +1970,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setProfileVisibleTo("friends");
@@ -1918,7 +1989,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setProfileVisibleTo("friends of friends");
@@ -1943,7 +2013,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeLocation("anyone");
@@ -1963,7 +2032,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeLocation("friends");
@@ -1983,7 +2051,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeLocation("friends of friends");
@@ -2003,7 +2070,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeLocation("nobody");
@@ -2028,7 +2094,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanMessage("anyone");
@@ -2047,7 +2112,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanMessage("friends");
@@ -2067,7 +2131,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanMessage("friends of friends");
@@ -2087,7 +2150,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanMessage("nobody");
@@ -2112,7 +2174,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFriendsList("anyone");
@@ -2132,7 +2193,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFriendsList("friends");
@@ -2152,7 +2212,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFriendsList("friends of friends");
@@ -2172,7 +2231,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFriendsList("nobody");
@@ -2197,7 +2255,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeePhoneNumber("anyone");
@@ -2217,7 +2274,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeePhoneNumber("friends");
@@ -2237,7 +2293,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeePhoneNumber("friends of friends");
@@ -2257,7 +2312,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeePhoneNumber("nobody");
@@ -2282,7 +2336,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEmailAddress("anyone");
@@ -2302,7 +2355,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEmailAddress("friends");
@@ -2322,7 +2374,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEmailAddress("friends of friends");
@@ -2342,7 +2393,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEmailAddress("nobody");
@@ -2367,7 +2417,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFacebook("anyone");
@@ -2387,7 +2436,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFacebook("friends");
@@ -2407,7 +2455,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFacebook("friends of friends");
@@ -2427,7 +2474,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeFacebook("nobody");
@@ -2452,7 +2498,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeX("anyone");
@@ -2472,7 +2517,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeX("friends");
@@ -2492,7 +2536,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeX("friends of friends");
@@ -2512,7 +2555,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeX("nobody");
@@ -2537,7 +2579,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeInstagram("anyone");
@@ -2557,7 +2598,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeInstagram("friends");
@@ -2577,7 +2617,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeInstagram("friends of friends");
@@ -2597,7 +2636,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeInstagram("nobody");
@@ -2622,7 +2660,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInterestedIn("anyone");
@@ -2642,7 +2679,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInterestedIn("friends");
@@ -2662,7 +2698,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInterestedIn("friends of friends");
@@ -2682,7 +2717,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInterestedIn("nobody");
@@ -2707,7 +2741,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInvitedTo("anyone");
@@ -2727,7 +2760,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInvitedTo("friends");
@@ -2747,7 +2779,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInvitedTo("friends of friends");
@@ -2767,7 +2798,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsInvitedTo("nobody");
@@ -2792,7 +2822,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsOrganized("anyone");
@@ -2812,7 +2841,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsOrganized("friends");
@@ -2832,7 +2860,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsOrganized("friends of friends");
@@ -2852,7 +2879,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanSeeEventsOrganized("nobody");
@@ -2877,7 +2903,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanAddUserAsOrganizer("anyone");
@@ -2897,7 +2922,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanAddUserAsOrganizer("friends");
@@ -2917,7 +2941,25 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanAddUserAsOrganizer("friends of friends");
+                    }
+                  }}
+                >
+                  <input
+                    tabIndex={0}
+                    id="friends-of-friends-can-add-as-organizer"
+                    onChange={() => setWhoCanAddUserAsOrganizer("friends of friends")}
+                    checked={whoCanAddUserAsOrganizer === "friends of friends"}
+                    name="who-can-add-as-co-organizer"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanAddUserAsOrganizer("nobody");
@@ -2942,7 +2984,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanInviteUser("anyone");
@@ -2962,7 +3003,6 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanInviteUser("friends");
@@ -2982,7 +3022,25 @@ const EditUserInfoForm = ({
                 <div
                   className="radio-input-and-label"
                   tabIndex={0}
-                  aria-hidden="false"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setWhoCanInviteUser("friends");
+                    }
+                  }}
+                >
+                  <input
+                    tabIndex={0}
+                    id="friends of friends-can-invite"
+                    onChange={() => setWhoCanInviteUser("friends of friends")}
+                    checked={whoCanInviteUser === "friends of friends"}
+                    name="who-can-invite"
+                    type="radio"
+                  />
+                  <span>Friends of Friends</span>
+                </div>
+                <div
+                  className="radio-input-and-label"
+                  tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setWhoCanInviteUser("nobody");

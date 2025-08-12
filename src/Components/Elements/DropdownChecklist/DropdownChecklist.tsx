@@ -1,12 +1,16 @@
 import React from "react";
 import { useMainContext } from "../../../Hooks/useMainContext";
 import { useEventContext } from "../../../Hooks/useEventContext";
-import { TUser, TEvent } from "../../../types";
+import { TBarebonesUser, TUserSecure } from "../../../types";
 import styles from "./styles.module.css";
 import defaultProfileImage from "../../../assets/default-profile-pic.jpg";
 import { useChatContext } from "../../../Hooks/useChatContext";
+import Methods from "../../../methods";
 
 const DropdownChecklist = ({
+  fetchIsLoading,
+  scrollHandler,
+  scrollHandlerParams,
   usedFor,
   action,
   actionParams,
@@ -14,24 +18,19 @@ const DropdownChecklist = ({
   displayedItemsArray,
   storageArray,
   setStorageArray,
-  displayedItemsCount,
-  setDisplayedItemsCount,
-  displayedItemsCountInterval,
-  event,
 }: {
+  fetchIsLoading: boolean;
+  scrollHandler: Function;
+  scrollHandlerParams: any[];
   usedFor: string;
   action: Function;
   actionParams?: any[];
   actionEventParamNeeded: boolean;
-  displayedItemsArray: TUser[]; // type can be changed later if used for non-user lists
-  storageArray: any[];
+  displayedItemsArray: TBarebonesUser[]; // type can be changed later if used for non-user lists
+  storageArray: TBarebonesUser[] | TUserSecure[];
   setStorageArray: React.Dispatch<React.SetStateAction<any[]>>;
-  displayedItemsCount: number | undefined;
-  setDisplayedItemsCount: React.Dispatch<React.SetStateAction<number | undefined>>;
-  displayedItemsCountInterval?: number;
-  event?: TEvent;
 }) => {
-  const { isLoading, handleLoadMoreOnScroll } = useMainContext();
+  const { isLoading } = useMainContext();
 
   const {
     handleAddRemoveUserAsOrganizer,
@@ -50,19 +49,10 @@ const DropdownChecklist = ({
     handleAddRemoveUserFromChat,
   } = useChatContext();
 
-  let displayedItemsArrayFiltered: TUser[] = [];
-  if (displayedItemsCount && displayedItemsCount <= displayedItemsArray.length) {
-    for (let i = 0; i < displayedItemsCount; i++) {
-      displayedItemsArrayFiltered.push(displayedItemsArray[i]);
-    }
-  } else {
-    displayedItemsArrayFiltered = displayedItemsArray;
-  }
-
-  const getActionParams = (user: TUser): any[] => {
+  const getActionParams = (user: TBarebonesUser): any[] => {
     if (!actionParams) {
       // for handleAddRemoveUserAsOrganizer:
-      if (usedFor === "potential-co-organizers" && user && event) {
+      if (usedFor === "potential-co-organizers") {
         return [organizers, setOrganizers, user];
       }
 
@@ -90,47 +80,44 @@ const DropdownChecklist = ({
     return actionParams;
   };
 
-  const getOnChangeHandler = (user: TUser) => {
+  const getOnChangeHandler = (user: TBarebonesUser) => {
     if (usedFor === "potential-co-organizers") {
-      return () => handleAddRemoveUserAsOrganizer(storageArray, setStorageArray, user);
+      return handleAddRemoveUserAsOrganizer(storageArray, setStorageArray, user);
     }
 
     if (usedFor === "potential-invitees") {
-      return () => handleAddRemoveUserAsInvitee(storageArray, setStorageArray, user);
+      return handleAddRemoveUserAsInvitee(storageArray, setStorageArray, user);
     }
 
     if (usedFor === "potential-additional-chat-members" && currentChat) {
-      return () =>
-        handleAddRemoveUserFromChat(user, storageArray, setStorageArray, currentChat);
+      return handleAddRemoveUserFromChat(
+        user,
+        storageArray.map((elem) => Methods.getTBarebonesUser(elem)),
+        setStorageArray
+      );
     }
 
     if (usedFor === "potential-chat-members") {
-      return () => handleAddRemoveUserFromChat(user, storageArray, setStorageArray);
+      return handleAddRemoveUserFromChat(
+        user,
+        storageArray.map((elem) => Methods.getTBarebonesUser(elem)),
+        setStorageArray
+      );
     }
 
     if (usedFor === "potential-blockees") {
-      return () => handleAddRemoveBlockedUserOnEvent(user);
+      return handleAddRemoveBlockedUserOnEvent(user);
     }
   };
 
   return (
     <ul
-      onScroll={(e) =>
-        handleLoadMoreOnScroll(
-          displayedItemsCount,
-          setDisplayedItemsCount,
-          displayedItemsArray,
-          displayedItemsArrayFiltered,
-          displayedItemsCountInterval,
-          e
-        )
-      }
+      onScroll={(e) => scrollHandler(...scrollHandlerParams, e)}
       className={styles.dropdownChecklist}
     >
-      {displayedItemsArrayFiltered.map((user) => (
+      {displayedItemsArray.map((user) => (
         <li
           tabIndex={0}
-          aria-hidden="false"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               if (actionEventParamNeeded) {
@@ -140,7 +127,7 @@ const DropdownChecklist = ({
               }
             }
           }}
-          key={user._id}
+          key={user._id?.toString()}
           onClick={
             actionEventParamNeeded
               ? (e) => action(...getActionParams(user), e)
@@ -149,11 +136,11 @@ const DropdownChecklist = ({
           className={styles.otherUserOption}
         >
           <input
-            name={`${usedFor}-${user._id}`}
-            id={`${usedFor}-${user._id}`}
+            name={`${usedFor}-${user._id?.toString()}`}
+            id={`${usedFor}-${user._id?.toString()}`}
             disabled={isLoading}
-            onChange={getOnChangeHandler(user)}
-            checked={storageArray.includes(user._id)}
+            onChange={() => getOnChangeHandler(user)}
+            checked={storageArray.map((elem) => elem._id).includes(user._id)}
             type="checkbox"
           />
           <div title={`${user.firstName} ${user.lastName}`}>
@@ -166,6 +153,7 @@ const DropdownChecklist = ({
           </div>
         </li>
       ))}
+      {fetchIsLoading && <li className={styles.dropdownChecklistLoading}>Loading...</li>}
     </ul>
   );
 };

@@ -221,7 +221,7 @@
     width: 4rem;
   }
 
-  .chat-preview-container img {
+  .chat-preview-body img {
     width: 4rem;
     height: 4rem;
   }
@@ -624,7 +624,7 @@
     margin: 0 1rem;
   }
 
-  .chat-preview-container {
+  .chat-preview-body {
     flex-direction: column;
     align-items: flex-end;
   }
@@ -704,28 +704,28 @@
     width: 95%;
   }
 
-  .chat-preview-container-text-container header {
+  .chat-preview-body-text-container header {
     font-size: 1rem;
   }
 
-  .chat-preview-container-text-container span {
+  .chat-preview-body-text-container span {
     font-size: 0.75rem;
   }
 
-  .chat-preview-container i {
+  .chat-preview-body i {
     font-size: 1rem;
     margin: 0 1rem;
   }
 
-  .profile-images-chat-preview-container {
+  .profile-images-chat-preview-body {
     margin-left: 0.75rem;
   }
 
-  .profile-images-chat-preview-container img {
+  .profile-images-chat-preview-body img {
     margin-left: -2rem;
   }
 
-  .chat-preview-container img {
+  .chat-preview-body img {
     width: 3rem;
     height: 3rem;
   }
