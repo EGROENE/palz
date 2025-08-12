@@ -624,21 +624,24 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
                 Promise.all(promisesToAwaitAdmins)
                   .then((admins: TUser[]) => {
+                    // Forced to get vars for admins & members on chatValuesToUpdate w/ loops in order to avoid tsc errors when running build
+                    let updatedAdmins: string[] = [];
+                    for (const a of admins) {
+                      if (a._id) {
+                        updatedAdmins.push(a._id.toString());
+                      }
+                    }
+
+                    let updatedMembers: string[] = [];
+                    for (const a of chatMembers) {
+                      if (a._id) {
+                        updatedMembers.push(a._id.toString());
+                      }
+                    }
+
                     const chatValuesToUpdate: TChatValuesToUpdate = {
-                      admins: admins
-                        .map((a) => {
-                          if (a._id) {
-                            return a._id.toString();
-                          }
-                        })
-                        .filter((elem) => elem !== undefined),
-                      members: chatMembers
-                        .map((m) => {
-                          if (m._id) {
-                            return m._id.toString();
-                          }
-                        })
-                        .filter((elem) => elem !== undefined),
+                      admins: updatedAdmins,
+                      members: updatedMembers,
                     };
 
                     const purpose =
