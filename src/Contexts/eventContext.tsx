@@ -538,6 +538,28 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const getValuesToUpdate = (): TEventValuesToUpdate | undefined => {
     // interestedUsers omitted from type b/c that is not controllable with this form, rather changes depending on other users RSVPing or de-RSVPing.
     if (currentEvent) {
+      // Forced to get updatedOrganizers/Invitees/BlockedUsersEvent w/ loop in order to avoid tsc errors when running build
+      let updatedOrganizers: string[] = [];
+      for (const o of organizers) {
+        if (o._id) {
+          updatedOrganizers.push(o._id.toString());
+        }
+      }
+
+      let updatedInvitees: string[] = [];
+      for (const i of invitees) {
+        if (i._id) {
+          updatedInvitees.push(i._id.toString());
+        }
+      }
+
+      let updatedBlockedUsersEvent: string[] = [];
+      for (const bu of blockedUsersEvent) {
+        if (bu._id) {
+          updatedBlockedUsersEvent.push(bu._id.toString());
+        }
+      }
+
       return {
         ...(!Methods.arraysAreIdentical(currentEvent.images, eventImages) && {
           images: eventImages,
@@ -575,25 +597,19 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           organizers.map((u) => u._id),
           currentEvent.organizers
         ) && {
-          organizers: organizers
-            .map((o) => o._id?.toString())
-            .filter((elem) => elem !== undefined),
+          organizers: updatedOrganizers,
         }),
         ...(!Methods.arraysAreIdentical(
           invitees.map((u) => u._id),
           currentEvent.invitees
         ) && {
-          invitees: invitees
-            .map((i) => i._id?.toString())
-            .filter((elem) => elem !== undefined),
+          invitees: updatedInvitees,
         }),
         ...(!Methods.arraysAreIdentical(
           blockedUsersEvent.map((u) => u._id),
           currentEvent.blockedUsersEvent
         ) && {
-          blockedUsersEvent: blockedUsersEvent
-            .map((bue) => bue._id?.toString())
-            .filter((elem) => elem !== undefined),
+          blockedUsersEvent: updatedBlockedUsersEvent,
         }),
         ...(eventDescription !== "" &&
           eventDescription !== currentEvent.description && {
