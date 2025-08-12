@@ -186,8 +186,8 @@ const CreateNewChatModal = () => {
               </button>
               <button
                 onClick={() => {
-                  // Forced to do it w/ loop in order to pass tsc test when running npm run build
                   if (currentUser?._id) {
+                    // Forced to set otherUserToAdd w/ loop in order to pass tsc test when running npm run build
                     let userIDsToAddToChat: string[] = [];
                     for (const u of usersToAddToChat) {
                       if (u._id && u._id !== currentUser._id) {
@@ -209,11 +209,18 @@ const CreateNewChatModal = () => {
                       setShowCreateNewChatModal(false);
                       setUsersToAddToChat([]);
                     } else {
+                      // Forced to get array for members property w/ loop b/c of tsc error
+                      let updatedMembers: string[] = [];
+                      for (const u of usersToAddToChat) {
+                        if (u._id) {
+                          updatedMembers.push(u._id.toString());
+                        }
+                      }
+                      if (currentUser && currentUser._id) {
+                        updatedMembers.concat(currentUser._id.toString());
+                      }
                       handleCreateChat({
-                        members: usersToAddToChat
-                          .map((u) => u._id?.toString())
-                          .filter((elem) => elem !== undefined)
-                          .concat(currentUser?._id?.toString()),
+                        members: updatedMembers,
                         messages: [],
                         ...(chatName &&
                           chatName.replace(/\s/g, "") !== "" && { chatName: chatName }),
