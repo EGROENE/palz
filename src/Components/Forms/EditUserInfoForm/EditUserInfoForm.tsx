@@ -1624,104 +1624,35 @@ const EditUserInfoForm = ({
               ></i>
             </button>
             {showUserLocationCountries && (
-              <>
-                <div className="dropdown-list-search-input">
-                  <input
-                    value={searchLocationCountriesQuery}
-                    onChange={(e) => setSearchLocationCountriesQuery(e.target.value)}
-                    type="search"
-                    placeholder="Search countries"
-                    onFocus={() => setFocusedElement("locationCountriesSearch")}
-                    onBlur={() => setFocusedElement(undefined)}
-                    style={
-                      focusedElement === "locationCountriesSearch"
-                        ? {
-                            boxShadow: `0px 0px 10px 2px ${randomColor}`,
-                            outline: "none",
-                          }
-                        : undefined
-                    }
-                    ref={searchLocationCountriesRef}
-                  />
-                </div>
-                <ul className="dropdown-list">
-                  {resortedCountries
-                    .filter(
-                      (c: {
-                        country: string;
-                        abbreviation: string;
-                        phoneCode: string;
-                      }) => {
-                        if (
-                          c.abbreviation
-                            .toLowerCase()
-                            .includes(
-                              searchLocationCountriesQuery
-                                .replace(/\s/g, "")
-                                .toLowerCase()
-                            ) ||
-                          c.country
-                            .toLowerCase()
-                            .includes(
-                              searchLocationCountriesQuery
-                                .replace(/\s/g, "")
-                                .toLowerCase()
-                            )
-                        ) {
-                          return c;
-                        }
-                      }
-                    )
-                    .map((country) => (
-                      <li
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleCityStateCountryInput(
-                              { city: userCity, state: userState, country: userCountry },
-                              {
-                                citySetter: undefined,
-                                stateSetter: undefined,
-                                countrySetter: setUserCountry,
-                                errorSetter: setLocationError,
-                                showCountriesSetter: setShowUserLocationCountries,
-                              },
-                              "country",
-                              country.country,
-                              undefined
-                            );
-                          }
-                        }}
-                        style={
-                          country.country === "United States"
-                            ? {
-                                "borderBottom": "1px dotted white",
-                              }
-                            : undefined
-                        }
-                        key={country.country}
-                        onClick={() =>
-                          handleCityStateCountryInput(
-                            { city: userCity, state: userState, country: userCountry },
-                            {
-                              citySetter: undefined,
-                              stateSetter: undefined,
-                              countrySetter: setUserCountry,
-                              errorSetter: setLocationError,
-                              showCountriesSetter: setShowUserLocationCountries,
-                            },
-                            "country",
-                            country.country,
-                            undefined
-                          )
-                        }
-                      >
-                        <img src={`/flags/1x1/${country.abbreviation}.svg`} />
-                        <span>{`${country.country}`}</span>
-                      </li>
-                    ))}
-                </ul>
-              </>
+              <CountriesDropdownListWithSearch
+                searchQuery={searchLocationCountriesQuery}
+                queryHandler={setSearchLocationCountriesQuery}
+                onFocus={() => setFocusedElement("locationCountriesSearch")}
+                onBlur={() => setFocusedElement(undefined)}
+                focusedElement={"locationCountriesSearch"}
+                randomColor={randomColor}
+                inputRef={searchLocationCountriesRef}
+                list={resortedCountries}
+                itemClick={(country: {
+                  country: string;
+                  abbreviation: string;
+                  phoneCode: string;
+                }) =>
+                  handleCityStateCountryInput(
+                    { city: userCity, state: userState, country: userCountry },
+                    {
+                      citySetter: undefined,
+                      stateSetter: undefined,
+                      countrySetter: setUserCountry,
+                      errorSetter: setLocationError,
+                      showCountriesSetter: setShowUserLocationCountries,
+                    },
+                    "country",
+                    country.country,
+                    undefined
+                  )
+                }
+              />
             )}
           </label>
           {currentUser?.city !== "" &&
