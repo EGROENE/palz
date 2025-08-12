@@ -82,14 +82,18 @@ const UserListModal = ({
     if (fetchUsers && users) {
       setFetchIsLoading(true);
       const getPromisesForFullUserObjects = (): Promise<TUser>[] => {
-        const promisesToAwait = users.map((elem) => {
+        // Forced to get promisesToAwait by using loop due to tsc error
+        let promisesToAwait: Promise<TUser>[] = [];
+        for (const elem of users) {
           if (typeof elem === "string") {
-            return Requests.getUserByID(elem).then((res) => {
-              return res.json().then((user: TUser) => user);
-            });
+            promisesToAwait.push(
+              Requests.getUserByID(elem).then((res) => {
+                return res.json().then((user: TUser) => user);
+              })
+            );
           }
-        });
-        return promisesToAwait.filter((elem) => elem !== undefined);
+        }
+        return promisesToAwait;
       };
 
       Promise.all(getPromisesForFullUserObjects())
