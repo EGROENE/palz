@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import Methods from "../../../methods";
 import { TThemeColor } from "../../../types";
 import { useMainContext } from "../../../Hooks/useMainContext";
+import CountriesDropdownListWithSearch from "../../Elements/CountriesDropdownListWithSearch/CountriesDropdownListWithSearch";
 
 const EditUserInfoForm = ({
   randomColor,
@@ -1494,77 +1495,27 @@ const EditUserInfoForm = ({
             </div>
           </div>
           {showCountryPhoneCodes && (
-            <>
-              <div className="dropdown-list-search-input">
-                <input
-                  value={searchPhoneCountriesQuery}
-                  onChange={(e) => setSearchPhoneCountriesQuery(e.target.value)}
-                  type="search"
-                  placeholder="Search countries"
-                  onFocus={() => setFocusedElement("phoneCountriesSearch")}
-                  onBlur={() => setFocusedElement(undefined)}
-                  style={
-                    focusedElement === "phoneCountriesSearch"
-                      ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
-                      : undefined
-                  }
-                  ref={searchPhoneCountriesRef}
-                />
-              </div>
-              <ul className="dropdown-list">
-                {resortedCountries
-                  .filter(
-                    (c: { country: string; abbreviation: string; phoneCode: string }) => {
-                      if (
-                        c.abbreviation
-                          .toLowerCase()
-                          .includes(
-                            searchPhoneCountriesQuery.replace(/\s/g, "").toLowerCase()
-                          ) ||
-                        c.country
-                          .toLowerCase()
-                          .includes(
-                            searchPhoneCountriesQuery.replace(/\s/g, "").toLowerCase()
-                          )
-                      ) {
-                        return c;
-                      }
-                    }
-                  )
-                  .map((country) => (
-                    <li
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handlePhoneNumberInput(
-                            "country-code",
-                            undefined,
-                            `${country.country} +${country.phoneCode}`
-                          );
-                        }
-                      }}
-                      style={
-                        country.country === "United States"
-                          ? {
-                              "borderBottom": "1px dotted white",
-                            }
-                          : undefined
-                      }
-                      key={country.country}
-                      onClick={() =>
-                        handlePhoneNumberInput(
-                          "country-code",
-                          undefined,
-                          `${country.country} +${country.phoneCode}`
-                        )
-                      }
-                    >
-                      <img src={`/flags/1x1/${country.abbreviation}.svg`} />
-                      <span>{`${country.country} +${country.phoneCode}`}</span>
-                    </li>
-                  ))}
-              </ul>
-            </>
+            <CountriesDropdownListWithSearch
+              searchQuery={searchPhoneCountriesQuery}
+              queryHandler={setSearchPhoneCountriesQuery}
+              onFocus={() => setFocusedElement("phoneCountriesSearch")}
+              onBlur={() => setFocusedElement(undefined)}
+              focusedElement={"phoneCountriesSearch"}
+              randomColor={randomColor}
+              inputRef={searchPhoneCountriesRef}
+              list={resortedCountries}
+              itemClick={(country: {
+                country: string;
+                abbreviation: string;
+                phoneCode: string;
+              }) =>
+                handlePhoneNumberInput(
+                  "country-code",
+                  undefined,
+                  `${country.country} +${country.phoneCode}`
+                )
+              }
+            />
           )}
         </label>
         <div className="location-inputs">
