@@ -1498,9 +1498,6 @@ const EditUserInfoForm = ({
             <CountriesDropdownListWithSearch
               searchQuery={searchPhoneCountriesQuery}
               queryHandler={setSearchPhoneCountriesQuery}
-              onFocus={() => setFocusedElement("phoneCountriesSearch")}
-              onBlur={() => setFocusedElement(undefined)}
-              focusedElement={"phoneCountriesSearch"}
               randomColor={randomColor}
               inputRef={searchPhoneCountriesRef}
               list={resortedCountries}
@@ -1627,9 +1624,6 @@ const EditUserInfoForm = ({
               <CountriesDropdownListWithSearch
                 searchQuery={searchLocationCountriesQuery}
                 queryHandler={setSearchLocationCountriesQuery}
-                onFocus={() => setFocusedElement("locationCountriesSearch")}
-                onBlur={() => setFocusedElement(undefined)}
-                focusedElement={"locationCountriesSearch"}
                 randomColor={randomColor}
                 inputRef={searchLocationCountriesRef}
                 list={resortedCountries}
