@@ -141,6 +141,8 @@ const EditUserInfoForm = ({
   const aboutRef = useRef(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const confirmPasswordRef = useRef<HTMLInputElement | null>(null);
+  const searchPhoneCountriesRef = useRef<HTMLInputElement | null>(null);
+  const searchLocationCountriesRef = useRef<HTMLInputElement | null>(null);
   /////////
 
   const [phoneFieldMinLength, setPhoneFieldMinLength] = useState<number>(1);
@@ -149,6 +151,9 @@ const EditUserInfoForm = ({
   const [showCountryPhoneCodes, setShowCountryPhoneCodes] = useState<boolean>(false);
   const [showUserLocationCountries, setShowUserLocationCountries] =
     useState<boolean>(false);
+  const [searchPhoneCountriesQuery, setSearchPhoneCountriesQuery] = useState<string>("");
+  const [searchLocationCountriesQuery, setSearchLocationCountriesQuery] =
+    useState<string>("");
   const [focusedElement, setFocusedElement] = useState<
     | "firstName"
     | "lastName"
@@ -163,6 +168,8 @@ const EditUserInfoForm = ({
     | "about"
     | "password"
     | "confirmPassword"
+    | "phoneCountriesSearch"
+    | "locationCountriesSearch"
     | undefined
   >();
 
@@ -1487,40 +1494,77 @@ const EditUserInfoForm = ({
             </div>
           </div>
           {showCountryPhoneCodes && (
-            <ul className="dropdown-list">
-              {resortedCountries.map((country) => (
-                <li
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handlePhoneNumberInput(
-                        "country-code",
-                        undefined,
-                        `${country.country} +${country.phoneCode}`
-                      );
-                    }
-                  }}
+            <>
+              <div className="dropdown-list-search-input">
+                <input
+                  value={searchPhoneCountriesQuery}
+                  onChange={(e) => setSearchPhoneCountriesQuery(e.target.value)}
+                  type="search"
+                  placeholder="Search countries"
+                  onFocus={() => setFocusedElement("phoneCountriesSearch")}
+                  onBlur={() => setFocusedElement(undefined)}
                   style={
-                    country.country === "United States"
-                      ? {
-                          "borderBottom": "1px dotted white",
-                        }
+                    focusedElement === "phoneCountriesSearch"
+                      ? { boxShadow: `0px 0px 10px 2px ${randomColor}`, outline: "none" }
                       : undefined
                   }
-                  key={country.country}
-                  onClick={() =>
-                    handlePhoneNumberInput(
-                      "country-code",
-                      undefined,
-                      `${country.country} +${country.phoneCode}`
-                    )
-                  }
-                >
-                  <img src={`/flags/1x1/${country.abbreviation}.svg`} />
-                  <span>{`${country.country} +${country.phoneCode}`}</span>
-                </li>
-              ))}
-            </ul>
+                  ref={searchPhoneCountriesRef}
+                />
+              </div>
+              <ul className="dropdown-list">
+                {resortedCountries
+                  .filter(
+                    (c: { country: string; abbreviation: string; phoneCode: string }) => {
+                      if (
+                        c.abbreviation
+                          .toLowerCase()
+                          .includes(
+                            searchPhoneCountriesQuery.replace(/\s/g, "").toLowerCase()
+                          ) ||
+                        c.country
+                          .toLowerCase()
+                          .includes(
+                            searchPhoneCountriesQuery.replace(/\s/g, "").toLowerCase()
+                          )
+                      ) {
+                        return c;
+                      }
+                    }
+                  )
+                  .map((country) => (
+                    <li
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handlePhoneNumberInput(
+                            "country-code",
+                            undefined,
+                            `${country.country} +${country.phoneCode}`
+                          );
+                        }
+                      }}
+                      style={
+                        country.country === "United States"
+                          ? {
+                              "borderBottom": "1px dotted white",
+                            }
+                          : undefined
+                      }
+                      key={country.country}
+                      onClick={() =>
+                        handlePhoneNumberInput(
+                          "country-code",
+                          undefined,
+                          `${country.country} +${country.phoneCode}`
+                        )
+                      }
+                    >
+                      <img src={`/flags/1x1/${country.abbreviation}.svg`} />
+                      <span>{`${country.country} +${country.phoneCode}`}</span>
+                    </li>
+                  ))}
+              </ul>
+            </>
           )}
         </label>
         <div className="location-inputs">
@@ -1629,56 +1673,104 @@ const EditUserInfoForm = ({
               ></i>
             </button>
             {showUserLocationCountries && (
-              <ul className="dropdown-list">
-                {resortedCountries.map((country) => (
-                  <li
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleCityStateCountryInput(
-                          { city: userCity, state: userState, country: userCountry },
-                          {
-                            citySetter: undefined,
-                            stateSetter: undefined,
-                            countrySetter: setUserCountry,
-                            errorSetter: setLocationError,
-                            showCountriesSetter: setShowUserLocationCountries,
-                          },
-                          "country",
-                          country.country,
-                          undefined
-                        );
-                      }
-                    }}
+              <>
+                <div className="dropdown-list-search-input">
+                  <input
+                    value={searchLocationCountriesQuery}
+                    onChange={(e) => setSearchLocationCountriesQuery(e.target.value)}
+                    type="search"
+                    placeholder="Search countries"
+                    onFocus={() => setFocusedElement("locationCountriesSearch")}
+                    onBlur={() => setFocusedElement(undefined)}
                     style={
-                      country.country === "United States"
+                      focusedElement === "locationCountriesSearch"
                         ? {
-                            "borderBottom": "1px dotted white",
+                            boxShadow: `0px 0px 10px 2px ${randomColor}`,
+                            outline: "none",
                           }
                         : undefined
                     }
-                    key={country.country}
-                    onClick={() =>
-                      handleCityStateCountryInput(
-                        { city: userCity, state: userState, country: userCountry },
-                        {
-                          citySetter: undefined,
-                          stateSetter: undefined,
-                          countrySetter: setUserCountry,
-                          errorSetter: setLocationError,
-                          showCountriesSetter: setShowUserLocationCountries,
-                        },
-                        "country",
-                        country.country,
-                        undefined
-                      )
-                    }
-                  >
-                    <img src={`/flags/1x1/${country.abbreviation}.svg`} />
-                    <span>{`${country.country}`}</span>
-                  </li>
-                ))}
-              </ul>
+                    ref={searchLocationCountriesRef}
+                  />
+                </div>
+                <ul className="dropdown-list">
+                  {resortedCountries
+                    .filter(
+                      (c: {
+                        country: string;
+                        abbreviation: string;
+                        phoneCode: string;
+                      }) => {
+                        if (
+                          c.abbreviation
+                            .toLowerCase()
+                            .includes(
+                              searchLocationCountriesQuery
+                                .replace(/\s/g, "")
+                                .toLowerCase()
+                            ) ||
+                          c.country
+                            .toLowerCase()
+                            .includes(
+                              searchLocationCountriesQuery
+                                .replace(/\s/g, "")
+                                .toLowerCase()
+                            )
+                        ) {
+                          return c;
+                        }
+                      }
+                    )
+                    .map((country) => (
+                      <li
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleCityStateCountryInput(
+                              { city: userCity, state: userState, country: userCountry },
+                              {
+                                citySetter: undefined,
+                                stateSetter: undefined,
+                                countrySetter: setUserCountry,
+                                errorSetter: setLocationError,
+                                showCountriesSetter: setShowUserLocationCountries,
+                              },
+                              "country",
+                              country.country,
+                              undefined
+                            );
+                          }
+                        }}
+                        style={
+                          country.country === "United States"
+                            ? {
+                                "borderBottom": "1px dotted white",
+                              }
+                            : undefined
+                        }
+                        key={country.country}
+                        onClick={() =>
+                          handleCityStateCountryInput(
+                            { city: userCity, state: userState, country: userCountry },
+                            {
+                              citySetter: undefined,
+                              stateSetter: undefined,
+                              countrySetter: setUserCountry,
+                              errorSetter: setLocationError,
+                              showCountriesSetter: setShowUserLocationCountries,
+                            },
+                            "country",
+                            country.country,
+                            undefined
+                          )
+                        }
+                      >
+                        <img src={`/flags/1x1/${country.abbreviation}.svg`} />
+                        <span>{`${country.country}`}</span>
+                      </li>
+                    ))}
+                </ul>
+              </>
             )}
           </label>
           {currentUser?.city !== "" &&
