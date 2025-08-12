@@ -178,67 +178,74 @@ const EventPage = () => {
               }
             }
 
-            setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile(
-              organizers
-                .map((o) => {
-                  const currentUserIsFriend = currentUser._id
-                    ? o.friends.includes(currentUser._id.toString())
-                    : false;
+            // Forced to get var for setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile by loop due to tsc error occurring on build otherwise
+            let updatedOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile: TBarebonesUser[] =
+              [];
 
-                  const promisesToAwaitOrganizerFriends = o.friends.map((id) => {
-                    return Requests.getUserByID(id).then((res) => {
-                      return res.json().then((user: TUser) => user);
-                    });
-                  });
+            for (const o of organizers) {
+              const currentUserIsFriend = currentUser._id
+                ? o.friends.includes(currentUser._id.toString())
+                : false;
 
-                  Promise.all(promisesToAwaitOrganizerFriends)
-                    .then((organizerFriends: TUser[]) => {
-                      if (
-                        organizerFriends.some((f) => {
-                          if (currentUser._id) {
-                            return f.friends.includes(currentUser._id?.toString());
-                          }
-                        })
-                      ) {
-                        setCurrentUserIsFriendOfFriend(true);
+              const promisesToAwaitOrganizerFriends = o.friends.map((id) => {
+                return Requests.getUserByID(id).then((res) => {
+                  return res.json().then((user: TUser) => user);
+                });
+              });
+
+              Promise.all(promisesToAwaitOrganizerFriends)
+                .then((organizerFriends: TUser[]) => {
+                  if (
+                    organizerFriends.some((f) => {
+                      if (currentUser._id) {
+                        return f.friends.includes(currentUser._id?.toString());
                       }
                     })
-                    .catch((error) => {
-                      console.log(error);
-                      setFetchOrganizersIsError(true);
-                    });
-
-                  if (
-                    currentUser._id &&
-                    !o.blockedUsers.includes(currentUser._id.toString()) &&
-                    ((o.profileVisibleTo === "friends" && !currentUserIsFriend) ||
-                      (o.profileVisibleTo === "friends of friends" &&
-                        !currentUserIsFriendOfFriend))
                   ) {
-                    return Methods.getTBarebonesUser(o);
+                    setCurrentUserIsFriendOfFriend(true);
                   }
                 })
-                .filter((elem) => elem !== undefined)
+                .catch((error) => {
+                  console.log(error);
+                  setFetchOrganizersIsError(true);
+                });
+
+              if (
+                currentUser._id &&
+                !o.blockedUsers.includes(currentUser._id.toString()) &&
+                ((o.profileVisibleTo === "friends" && !currentUserIsFriend) ||
+                  (o.profileVisibleTo === "friends of friends" &&
+                    !currentUserIsFriendOfFriend))
+              ) {
+                updatedOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile.push(
+                  Methods.getTBarebonesUser(o)
+                );
+              }
+            }
+
+            setOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile(
+              updatedOrganizersWhoHaveNotBlockedUserButHaveHiddenProfile
             );
 
-            setOrganizersWhoseProfileIsVisible(
-              organizers
-                .map((o) => {
-                  const currentUserIsFriend = currentUser._id
-                    ? o.friends.includes(currentUser._id.toString())
-                    : false;
+            // Forced to get var for setOrganizersWhoseProfileIsVisible by loop due to tsc error occurring on build otherwise
+            let updatedOrganizersWhoseProfileIsVisible: TBarebonesUser[] = [];
 
-                  if (
-                    o.profileVisibleTo === "anyone" ||
-                    (o.profileVisibleTo === "friends" && currentUserIsFriend) ||
-                    (o.profileVisibleTo === "friends of friends" &&
-                      (currentUserIsFriendOfFriend || currentUserIsFriend))
-                  ) {
-                    return Methods.getTBarebonesUser(o);
-                  }
-                })
-                .filter((elem) => elem !== undefined)
-            );
+            for (const o of organizers) {
+              const currentUserIsFriend = currentUser._id
+                ? o.friends.includes(currentUser._id.toString())
+                : false;
+
+              if (
+                o.profileVisibleTo === "anyone" ||
+                (o.profileVisibleTo === "friends" && currentUserIsFriend) ||
+                (o.profileVisibleTo === "friends of friends" &&
+                  (currentUserIsFriendOfFriend || currentUserIsFriend))
+              ) {
+                updatedOrganizersWhoseProfileIsVisible.push(Methods.getTBarebonesUser(o));
+              }
+            }
+
+            setOrganizersWhoseProfileIsVisible(updatedOrganizersWhoseProfileIsVisible);
           }
         })
         .catch((error) => {
