@@ -1438,17 +1438,35 @@ const EventForm = ({
   };
   const submitButtonIsDisabled: boolean = getSubmitButtonIsDisabled();
 
+  // Following 3 vars exist in order to avoid tsc error when running build
+  let updatedOrganizers: string[] = [];
+  for (const o of organizers) {
+    if (o._id) {
+      updatedOrganizers.push(o._id.toString());
+    }
+  }
+
+  let updatedInvitees: string[] = [];
+  for (const o of organizers) {
+    if (o._id) {
+      updatedInvitees.push(o._id.toString());
+    }
+  }
+
+  let updatedBlockedUsersEvent: string[] = [];
+  for (const o of organizers) {
+    if (o._id) {
+      updatedBlockedUsersEvent.push(o._id.toString());
+    }
+  }
+
   let eventInfos: TEvent = {
     index: undefined,
     title: eventTitle.trim(),
     creator: currentUser?._id?.toString(),
-    organizers: organizers
-      .map((o) => o._id?.toString())
-      .filter((elem) => elem !== undefined),
-    invitees: invitees.map((i) => i._id?.toString()).filter((elem) => elem !== undefined),
-    blockedUsersEvent: blockedUsersEvent
-      .map((u) => u._id?.toString())
-      .filter((elem) => elem !== undefined),
+    organizers: updatedOrganizers,
+    invitees: updatedInvitees,
+    blockedUsersEvent: updatedBlockedUsersEvent,
     description: eventDescription.trim(),
     additionalInfo: eventAdditionalInfo.trim(),
     city: Methods.formatHyphensAndSpacesInString(
