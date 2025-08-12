@@ -216,9 +216,21 @@ const CreateNewChatModal = () => {
                           updatedMembers.push(u._id.toString());
                         }
                       }
+
+                      const adminsArray: string[] = [currentUser._id.toString()];
+
                       if (currentUser && currentUser._id) {
                         updatedMembers.concat(currentUser._id.toString());
+
+                        if (usersToAddToChat.length >= 2) {
+                          for (const a of admins) {
+                            if (a._id) {
+                              adminsArray.push(a._id.toString());
+                            }
+                          }
+                        }
                       }
+
                       handleCreateChat({
                         members: updatedMembers,
                         messages: [],
@@ -226,16 +238,7 @@ const CreateNewChatModal = () => {
                           chatName.replace(/\s/g, "") !== "" && { chatName: chatName }),
                         chatType: usersToAddToChat.length > 1 ? "group" : "two-member",
                         dateCreated: Date.now(),
-                        ...(usersToAddToChat.length >= 2 &&
-                          currentUser &&
-                          currentUser._id && {
-                            admins: [
-                              currentUser._id.toString(),
-                              ...admins
-                                .map((a) => a._id?.toString())
-                                .filter((elem) => elem !== undefined),
-                            ],
-                          }),
+                        admins: adminsArray,
                       });
                     }
                   }
