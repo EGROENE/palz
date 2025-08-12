@@ -97,23 +97,22 @@ const UserListModal = ({
       };
 
       Promise.all(getPromisesForFullUserObjects())
-        .then((users: TUser[]) =>
-          setIterableUsers(
-            users
-              .map((u) => {
-                if (
-                  currentUser &&
-                  currentUser._id &&
-                  u._id &&
-                  !currentUser.blockedUsers.includes(u._id.toString()) &&
-                  !u.blockedUsers.includes(currentUser._id.toString())
-                ) {
-                  return Methods.getTBarebonesUser(u);
-                }
-              })
-              .filter((elem) => elem !== undefined)
-          )
-        )
+        .then((users: TUser[]) => {
+          // Forced to use loop to get var for setIterableUsers due to tsc error otherwise
+          let updatedIterableUsers: TBarebonesUser[] = [];
+          for (const u of users) {
+            if (
+              currentUser &&
+              currentUser._id &&
+              u._id &&
+              !currentUser.blockedUsers.includes(u._id.toString()) &&
+              !u.blockedUsers.includes(currentUser._id.toString())
+            ) {
+              updatedIterableUsers.push(Methods.getTBarebonesUser(u));
+            }
+          }
+          setIterableUsers(updatedIterableUsers);
+        })
         .catch((error) => {
           console.log(error);
           setIsFetchError(true);
