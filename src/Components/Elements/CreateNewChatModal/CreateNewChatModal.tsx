@@ -186,11 +186,15 @@ const CreateNewChatModal = () => {
               </button>
               <button
                 onClick={() => {
+                  // Forced to do it w/ loop in order to pass tsc test when running npm run build
                   if (currentUser?._id) {
-                    const otherUserToAdd: string = usersToAddToChat
-                      .map((u) => u._id?.toString())
-                      .filter((elem) => elem !== undefined)
-                      .filter((u) => u !== currentUser._id)[0];
+                    let userIDsToAddToChat: string[] = [];
+                    for (const u of usersToAddToChat) {
+                      if (u._id && u._id !== currentUser._id) {
+                        userIDsToAddToChat.push(u._id.toString());
+                      }
+                    }
+                    const otherUserToAdd: string = userIDsToAddToChat[0];
 
                     const existingChatWithOtherUserToAdd = fetchChatsQuery.data?.filter(
                       (chat) =>
