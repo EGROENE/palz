@@ -30,9 +30,9 @@ app.use((req, res, next) => {
 });
 
 // ROUTES
-app.use("/palz/users", userRoutes);
-app.use("/palz/events", eventRoutes);
-app.use("/palz/chats", chatRoutes);
+app.use("/users", userRoutes);
+app.use("/events", eventRoutes);
+app.use("/chats", chatRoutes);
 
 const getPotentialEventCOsController = async (req, res) => {
   const { user, start, limit } = req.query;
@@ -85,7 +85,7 @@ const getPotentialEventBlockeesController = async (req, res) => {
   res.status(200).json(potentialBlockees);
 };
 
-app.get("/palz/add-event", (req, res) => {
+app.get("/add-event", (req, res) => {
   const { list } = req.query;
 
   if (list === "potentialEventBlockees") {
@@ -96,7 +96,7 @@ app.get("/palz/add-event", (req, res) => {
   return getPotentialEventCOsController(req, res);
 });
 
-app.get("/palz/edit-event/:id", (req, res) => {
+app.get("/edit-event/:id", (req, res) => {
   const { list } = req.query;
 
   if (list === "potentialEventBlockees") {
@@ -108,7 +108,7 @@ app.get("/palz/edit-event/:id", (req, res) => {
 });
 
 // Controller to get friends:
-app.get("/palz/my-palz", async (req, res) => {
+app.get("/my-palz", async (req, res) => {
   const { user, start, limit } = req.query;
 
   const username = user;
@@ -128,7 +128,7 @@ app.get("/palz/my-palz", async (req, res) => {
 });
 
 // Controller to get potential friends:
-app.get("/palz/find-palz", async (req, res) => {
+app.get("/find-palz", async (req, res) => {
   const { user, start, limit } = req.query;
 
   const username = user;
@@ -155,7 +155,7 @@ app.get("/palz/find-palz", async (req, res) => {
 });
 
 // Controller to get displayable events:
-app.get("/palz/find-events", async (req, res) => {
+app.get("/find-events", async (req, res) => {
   const { user, start, limit } = req.query;
 
   const username = user;
@@ -222,9 +222,9 @@ const getAllEventInterests = async (req, res) => {
   res.status(200).json(allEventInterests);
 };
 
-app.use("/palz/allEvents/relatedInterests", getAllEventInterests);
+app.use("/allEvents/relatedInterests", getAllEventInterests);
 
-app.get("/palz/settings", async (req, res) => {
+app.get("/settings", async (req, res) => {
   const { retrieve } = req.query;
 
   if (retrieve === "relatedUsers") {
