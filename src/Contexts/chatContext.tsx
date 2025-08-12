@@ -663,14 +663,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
               }
             } else {
               // Remove non-admin members:
+              // Forced to use loop to get var for members on chatValuesToUpdate to avoid tsc errors when running build
+              let updatedMembers: string[] = [];
+              for (const m of chatMembers) {
+                if (m._id) {
+                  updatedMembers.push(m._id.toString());
+                }
+              }
               const chatValuesToUpdate: TChatValuesToUpdate = {
-                members: chatMembers
-                  .map((m) => {
-                    if (m._id) {
-                      return m._id.toString();
-                    }
-                  })
-                  .filter((elem) => elem !== undefined),
+                members: updatedMembers,
               };
               const purpose =
                 currentUser && user._id === currentUser._id
@@ -720,14 +721,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setFetchChatMembersIsLoading(true);
     Promise.all(promisesToAwaitChatMembers)
       .then((chatMembers: TUser[]) => {
+        // Forced to use loop to get var for members on chatValuesToUpdate to avoid tsc errors when running build
+        let updatedMembers: string[] = [];
+        for (const m of chatMembers) {
+          if (m._id) {
+            updatedMembers.push(m._id.toString());
+          }
+        }
         const chatValuesToUpdate: TChatValuesToUpdate = {
-          members: chatMembers
-            .map((m) => {
-              if (m._id) {
-                return m._id.toString();
-              }
-            })
-            .filter((elem) => elem !== undefined),
+          members: updatedMembers,
         };
 
         const purpose = "add-members";
@@ -750,14 +752,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
     Promise.all(promisesToAwaitAdmins)
       .then((admins: TUser[]) => {
+        // Forced to use loop to get var for admins on chatValuesToUpdate to avoid tsc errors when running build
+        let updatedAdmins: string[] = [];
+        for (const m of admins) {
+          if (m._id) {
+            updatedAdmins.push(m._id.toString());
+          }
+        }
         const chatValuesToUpdate = {
-          admins: admins
-            .map((a) => {
-              if (a._id) {
-                return a._id.toString();
-              }
-            })
-            .filter((elem) => elem !== undefined),
+          admins: updatedAdmins,
         };
         const purpose = "add-admin";
         updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
@@ -797,14 +800,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       if (promisesToAwaitAdmins) {
         Promise.all(promisesToAwaitAdmins)
           .then((admins: TUser[]) => {
+            // Forced to use loop to get var for admins on chatValuesToUpdate to avoid tsc errors when running build
+            let updatedAdmins: string[] = [];
+            for (const m of admins) {
+              if (m._id) {
+                updatedAdmins.push(m._id.toString());
+              }
+            }
             const chatValuesToUpdate = {
-              admins: admins
-                .map((a) => {
-                  if (a._id) {
-                    return a._id.toString();
-                  }
-                })
-                .filter((elem) => elem !== undefined),
+              admins: updatedAdmins,
             };
             updateChatMutation.mutate({ chat, chatValuesToUpdate, purpose });
           })
