@@ -180,7 +180,12 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       setRsvpdUsers(rsvpdUsers.filter((u) => u !== user._id));
     }
 
-    if (optRenderCurrentUserEvents) {
+    if (
+      optRenderCurrentUserEvents &&
+      currentUser &&
+      currentUser._id &&
+      !event.invitees.includes(currentUser._id.toString())
+    ) {
       setAllCurrentUserUpcomingEvents(
         allCurrentUserUpcomingEvents.filter((ev) => ev !== event)
       );
