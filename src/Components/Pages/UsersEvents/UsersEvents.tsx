@@ -12,49 +12,49 @@ import Requests from "../../../requests";
 const UsersEvents = () => {
   const { showSidebar, setShowSidebar, theme } = useMainContext();
 
-  const { currentUser, userCreatedAccount, logout } = useUserContext();
+  const {
+    currentUser,
+    userCreatedAccount,
+    logout,
+    ongoingEvents,
+    setOngoingEvents,
+    upcomingEventsUserRSVPdTo,
+    setUpcomingEventsUserRSVPdTo,
+    upcomingEventsUserOrganizes,
+    setUpcomingEventsUserOrganizes,
+    recentEventsUserRSVPdTo,
+    setRecentEventsUserRSVPdTo,
+    upcomingEventsUserInvitedTo,
+    setUpcomingEventsUserInvitedTo,
+    recentEventsUserOrganized,
+    setRecentEventsUserOrganized,
+  } = useUserContext();
 
   const { setCurrentEvent } = useEventContext();
 
-  const [ongoingEvents, setOngoingEvents] = useState<TEvent[] | null>(null);
   const [fetchOngoingEventsIsLoading, setFetchOngoingEventsIsLoading] =
     useState<boolean>(true);
 
-  const [upcomingEventsUserRSVPdTo, setUpcomingEventsUserRSVPdTo] = useState<
-    TEvent[] | null
-  >(null);
   const [
     fetchUpcomingEventsUserRSVPdToIsLoading,
     setFetchUpcomingEventsUserRSVPdToIsLoading,
   ] = useState<boolean>(true);
 
-  const [upcomingEventsUserOrganizes, setUpcomingEventsUserOrganizes] = useState<
-    TEvent[] | null
-  >(null);
   const [
     fetchUpcomingEventsUserOrganizesIsLoading,
     setFetchUpcomingEventsUserOrganizesIsLoading,
   ] = useState<boolean>(true);
 
-  const [recentEventsUserRSVPdTo, setRecentEventsUserRSVPdTo] = useState<TEvent[] | null>(
-    null
-  );
   const [
     fetchRecentEventsUserRSVPdToIsLoading,
     setFetchRecentEventsUserRSVPdToIsLoading,
   ] = useState<boolean>(true);
 
-  const [upcomingEventsUserInvitedTo, setUpcomingEventsUserInvitedTo] = useState<
-    TEvent[] | null
-  >(null);
   const [
     fetchUpcomingEventsUserInvitedToIsLoading,
     setFetchUpcomingEventsUserInvitedToIsLoading,
   ] = useState<boolean>(true);
 
-  const [recentEventsUserOrganized, setRecentEventsUserOrganized] = useState<
-    TEvent[] | null
-  >(null);
   const [
     fetchRecentEventsUserOrganizedIsLoading,
     setFetchRecentEventsUserOrganizedIsLoading,
