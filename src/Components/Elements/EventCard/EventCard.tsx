@@ -12,7 +12,8 @@ import Methods from "../../../methods";
 
 const EventCard = ({ event }: { event: TEvent }) => {
   const { isLoading, theme } = useMainContext();
-  const { currentUser } = useUserContext();
+  const { currentUser, upcomingEventsUserInvitedTo, upcomingEventsUserRSVPdTo } =
+    useUserContext();
 
   const {
     handleAddUserRSVP,
@@ -66,15 +67,35 @@ const EventCard = ({ event }: { event: TEvent }) => {
     }
   }, [interestedUsers]);
 
-  const userRSVPd: boolean =
-    currentUser && currentUser._id && cardEvent
-      ? interestedUsers.includes(currentUser._id.toString())
-      : false;
+  const getUserRSVPd = (): boolean => {
+    if (currentUser && currentUser._id && cardEvent) {
+      if (
+        interestedUsers.includes(currentUser._id.toString()) ||
+        upcomingEventsUserRSVPdTo
+          ?.map((ev) => ev._id?.toString())
+          .includes(cardEvent._id?.toString())
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+  const userRSVPd: boolean = getUserRSVPd();
 
-  const userIsInvitee: boolean =
-    currentUser?._id && cardEvent
-      ? cardEvent.invitees.includes(currentUser._id.toString())
-      : false;
+  const getUserIsInvitee = (): boolean => {
+    if (currentUser?._id && cardEvent) {
+      if (
+        cardEvent.invitees.includes(currentUser._id.toString()) ||
+        upcomingEventsUserInvitedTo
+          ?.map((ev) => ev._id?.toString())
+          .includes(cardEvent._id?.toString())
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+  const userIsInvitee: boolean = getUserIsInvitee();
 
   const userDeclinedInvitation: boolean =
     currentUser?._id && cardEvent
