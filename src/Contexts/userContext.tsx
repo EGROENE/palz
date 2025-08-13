@@ -208,6 +208,23 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showErrors, setShowErrors] = useState<boolean>(false);
 
+  const [ongoingEvents, setOngoingEvents] = useState<TEvent[] | null>(null);
+  const [upcomingEventsUserRSVPdTo, setUpcomingEventsUserRSVPdTo] = useState<
+    TEvent[] | null
+  >(null);
+  const [upcomingEventsUserOrganizes, setUpcomingEventsUserOrganizes] = useState<
+    TEvent[] | null
+  >(null);
+  const [recentEventsUserRSVPdTo, setRecentEventsUserRSVPdTo] = useState<TEvent[] | null>(
+    null
+  );
+  const [upcomingEventsUserInvitedTo, setUpcomingEventsUserInvitedTo] = useState<
+    TEvent[] | null
+  >(null);
+  const [recentEventsUserOrganized, setRecentEventsUserOrganized] = useState<
+    TEvent[] | null
+  >(null);
+
   const [currentOtherUser, setCurrentOtherUser] = useLocalStorage<TUserSecure | null>(
     "currentOtherUser",
     null
@@ -2320,6 +2337,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const userContextValues: TUserContext = {
+    ongoingEvents,
+    setOngoingEvents,
+    upcomingEventsUserRSVPdTo,
+    setUpcomingEventsUserRSVPdTo,
+    upcomingEventsUserOrganizes,
+    setUpcomingEventsUserOrganizes,
+    recentEventsUserRSVPdTo,
+    setRecentEventsUserRSVPdTo,
+    upcomingEventsUserInvitedTo,
+    setUpcomingEventsUserInvitedTo,
+    recentEventsUserOrganized,
+    setRecentEventsUserOrganized,
     confirmationPasswordIsHidden,
     setConfirmationPasswordIsHidden,
     processingLoginIsLoading,

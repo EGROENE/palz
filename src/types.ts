@@ -314,6 +314,24 @@ export type TMainContext = {
 };
 
 export type TUserContext = {
+  ongoingEvents: TEvent[] | null;
+  setOngoingEvents: React.Dispatch<React.SetStateAction<TEvent[] | null>>;
+
+  upcomingEventsUserRSVPdTo: TEvent[] | null;
+  setUpcomingEventsUserRSVPdTo: React.Dispatch<React.SetStateAction<TEvent[] | null>>;
+
+  upcomingEventsUserOrganizes: TEvent[] | null;
+  setUpcomingEventsUserOrganizes: React.Dispatch<React.SetStateAction<TEvent[] | null>>;
+
+  recentEventsUserRSVPdTo: TEvent[] | null;
+  setRecentEventsUserRSVPdTo: React.Dispatch<React.SetStateAction<TEvent[] | null>>;
+
+  upcomingEventsUserInvitedTo: TEvent[] | null;
+  setUpcomingEventsUserInvitedTo: React.Dispatch<React.SetStateAction<TEvent[] | null>>;
+
+  recentEventsUserOrganized: TEvent[] | null;
+  setRecentEventsUserOrganized: React.Dispatch<React.SetStateAction<TEvent[] | null>>;
+
   lastLogin: number;
   setLastLogin: React.Dispatch<React.SetStateAction<number>>;
   blockUserInProgress: boolean;
