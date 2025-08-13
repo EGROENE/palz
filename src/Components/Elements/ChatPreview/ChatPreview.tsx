@@ -12,6 +12,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
     getNumberOfUnreadMessagesInChat,
     setShowAreYouSureYouWantToDeleteChat,
     setCurrentChat,
+    fetchChatsQuery,
   } = useChatContext();
 
   const [randomColor, setRandomColor] = useState<TThemeColor | undefined>();
@@ -55,7 +56,7 @@ const ChatPreview = ({ chat }: { chat: TChat }) => {
         setFetchChatMembersIsError(true);
       })
       .finally(() => setFetchChatMembersIsLoading(false));
-  }, []);
+  }, [fetchChatsQuery.data]);
 
   const getPreviewOfLastMessage = (chat: TChat): string | JSX.Element => {
     const lastMessage: string | undefined =
