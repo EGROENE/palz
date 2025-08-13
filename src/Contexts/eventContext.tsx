@@ -19,7 +19,13 @@ export const EventContext = createContext<TEventContext | null>(null);
 
 export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const { setIsLoading, theme, setSavedInterests, savedInterests } = useMainContext();
-  const { currentUser } = useUserContext();
+  const {
+    currentUser,
+    upcomingEventsUserRSVPdTo,
+    setUpcomingEventsUserRSVPdTo,
+    upcomingEventsUserInvitedTo,
+    setUpcomingEventsUserInvitedTo,
+  } = useUserContext();
 
   const [allCurrentUserUpcomingEvents, setAllCurrentUserUpcomingEvents] = useState<
     TEvent[]
@@ -137,6 +143,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     if (currentUser && currentUser._id && rsvpdUsers && setRsvpdUsers) {
       setRsvpdUsers(rsvpdUsers.concat(currentUser._id.toString()));
     }
+    if (upcomingEventsUserRSVPdTo) {
+      setUpcomingEventsUserRSVPdTo(upcomingEventsUserRSVPdTo.concat(event));
+    }
     Requests.addUserRSVP(currentUser, event)
       .then((res) => {
         if (res.ok) {
@@ -151,6 +160,11 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           if (currentUser && currentUser._id && rsvpdUsers && setRsvpdUsers) {
             setRsvpdUsers(
               rsvpdUsers?.filter((userID) => userID !== currentUser._id?.toString())
+            );
+          }
+          if (upcomingEventsUserRSVPdTo) {
+            setUpcomingEventsUserRSVPdTo(
+              upcomingEventsUserRSVPdTo.filter((ev) => ev !== event)
             );
           }
           toast.error("Could not RSVP to event. Please try again.", {
@@ -191,6 +205,12 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
       );
     }
 
+    if (upcomingEventsUserRSVPdTo) {
+      setUpcomingEventsUserRSVPdTo(
+        upcomingEventsUserRSVPdTo.filter((ev) => ev !== event)
+      );
+    }
+
     setIsLoading(true);
 
     Requests.deleteUserRSVP(Methods.getTBarebonesUser(user), event)
@@ -209,6 +229,10 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           }
           if (optRenderCurrentUserEvents) {
             setAllCurrentUserUpcomingEvents(allCurrentUserUpcomingEvents.concat(event));
+
+            if (upcomingEventsUserRSVPdTo) {
+              setUpcomingEventsUserRSVPdTo(upcomingEventsUserRSVPdTo.concat(event));
+            }
           }
           toast.error("Could not remove RSVP. Please try again.", {
             style: {
@@ -240,6 +264,11 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           allCurrentUserUpcomingEvents.filter((ev) => ev !== event)
         );
       }
+      if (upcomingEventsUserInvitedTo) {
+        setUpcomingEventsUserInvitedTo(
+          upcomingEventsUserInvitedTo.filter((ev) => ev !== event)
+        );
+      }
       setIsLoading(true);
       Requests.addToDisinterestedUsers(currentUser, event)
         .then((res) => {
@@ -257,6 +286,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             }
             if (optRenderCurrentUserEvents) {
               setAllCurrentUserUpcomingEvents(allCurrentUserUpcomingEvents.concat(event));
+            }
+            if (upcomingEventsUserInvitedTo) {
+              setUpcomingEventsUserInvitedTo(upcomingEventsUserInvitedTo.concat(event));
             }
             toast.error("Could not decline invitation. Please try again.", {
               style: {
