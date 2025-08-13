@@ -28,6 +28,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     error,
     setShowWelcomeMessage,
     welcomeMessageDisplayTime,
+    displayedItems,
+    setDisplayedItems,
   } = useMainContext();
 
   if (error) {
@@ -1290,6 +1292,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           }
         })
       );
+
+      setDisplayedItems(
+        displayedItems.filter((item) => item._id?.toString() !== sender._id?.toString())
+      );
     }
 
     // Also put in handleRejectFR
@@ -1322,6 +1328,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                   )
                                 );
                               }
+                              setDisplayedItems(displayedItems.concat(sender));
                               handleRemoveFriendRequestFail(
                                 sender,
                                 receiver._id.toString(),
@@ -1352,6 +1359,19 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                               }
                                             );
                                           } else {
+                                            if (
+                                              optimisticRender &&
+                                              friendRequestsReceived
+                                            ) {
+                                              setFriendRequestsReceived(
+                                                friendRequestsReceived.concat(
+                                                  Methods.getTBarebonesUser(sender)
+                                                )
+                                              );
+                                            }
+                                            setDisplayedItems(
+                                              displayedItems.concat(sender)
+                                            );
                                             handleRemoveFriendRequestFail(
                                               sender,
                                               receiver?._id?.toString(),
@@ -1361,6 +1381,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                         })
                                         .catch((error) => console.log(error));
                                     } else {
+                                      if (optimisticRender && friendRequestsReceived) {
+                                        setFriendRequestsReceived(
+                                          friendRequestsReceived.concat(
+                                            Methods.getTBarebonesUser(sender)
+                                          )
+                                        );
+                                      }
+                                      setDisplayedItems(displayedItems.concat(sender));
                                       handleRemoveFriendRequestFail(
                                         sender,
                                         receiver?._id?.toString(),
@@ -1428,6 +1456,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                           friendRequestsReceived.concat(Methods.getTBarebonesUser(sender))
                         );
                       }
+                      setDisplayedItems(displayedItems.concat(sender));
                       toast.error("Could not accept friend request. Please try again.", {
                         style: {
                           background:
@@ -1447,6 +1476,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                 friendRequestsReceived.concat(Methods.getTBarebonesUser(sender))
               );
             }
+            setDisplayedItems(displayedItems.concat(sender));
             toast.error("Could not accept friend request. Please try again.", {
               style: {
                 background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
@@ -1468,6 +1498,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     e?.preventDefault();
 
     setIsLoading(true);
+
+    setDisplayedItems(
+      displayedItems.filter((item) => item._id?.toString() !== sender._id?.toString())
+    );
 
     if (sender._id) {
       Requests.getUserByID(sender._id.toString())
@@ -1504,6 +1538,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                                     }
                                   );
                                 } else {
+                                  setDisplayedItems(displayedItems.concat(sender));
                                   handleRemoveFriendRequestFail(
                                     sender,
                                     currentUser._id?.toString(),
@@ -1513,6 +1548,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                               })
                               .catch((error) => console.log(error));
                           } else {
+                            setDisplayedItems(displayedItems.concat(sender));
                             handleRemoveFriendRequestFail(
                               sender,
                               currentUser._id?.toString(),
@@ -1524,6 +1560,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         .finally(() => setIsLoading(false));
                     } else {
                       setIsLoading(false);
+                      setDisplayedItems(displayedItems.concat(sender));
                       handleRemoveFriendRequestFail(
                         sender,
                         currentUser._id?.toString(),
@@ -1536,6 +1573,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             });
           } else {
             setIsLoading(false);
+            setDisplayedItems(displayedItems.concat(sender));
             handleRemoveFriendRequestFail(
               sender,
               currentUser?._id?.toString(),
