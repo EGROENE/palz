@@ -232,7 +232,7 @@ const UsersEvents = () => {
           {recentEventsUserOrganized && recentEventsUserOrganized.length > 0 && (
             <UserEventsSection
               eventsArray={recentEventsUserOrganized}
-              header="Upcoming Events You Organized"
+              header="Recent Events You Organized"
             />
           )}
           {recentEventsUserRSVPdTo && recentEventsUserRSVPdTo.length > 0 && (
