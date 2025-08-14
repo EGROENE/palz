@@ -38,24 +38,7 @@ const FriendRequests = () => {
   const [fetchUpdatedCurrentUserIsError, setFetchUpdatedCurrentUserIsError] =
     useState<boolean>(false);
 
-  const [requestsVisible, setRequestsVisible] = useState<"sent" | "received" | null>(
-    null
-  );
-
-  const determineFRType = (): void => {
-    // Determine if sent/received requests should be shown:
-    if (
-      friendRequestsReceived &&
-      friendRequestsSent &&
-      (friendRequestsReceived.length > 0 || friendRequestsSent.length > 0)
-    ) {
-      if (friendRequestsSent.length > 0) {
-        setRequestsVisible("received");
-      } else {
-        setRequestsVisible("sent");
-      }
-    }
-  };
+  const [requestsVisible, setRequestsVisible] = useState<"sent" | "received">("received");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -103,10 +86,6 @@ const FriendRequests = () => {
         });
     }
   }, []);
-
-  useEffect(() => {
-    determineFRType();
-  }, [friendRequestsReceived, friendRequestsSent]);
 
   useEffect(() => {
     if (currentUser && friendRequestsReceived && friendRequestsSent) {
