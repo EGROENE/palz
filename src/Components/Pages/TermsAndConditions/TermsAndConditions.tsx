@@ -8,7 +8,9 @@ const TermsAndConditions = () => {
           PALZ ist kein berechtigtes Unternehmen, denn es ist kein Unternehmen, also diese
           Internetseite dient keinem Unternehmen. Ich erstellte sie mit der einzigen
           Absicht, meine Fähigkeiten bezüglich Webentwicklung zu verbessern und sie soll
-          halt Teil meines Portfolios als Webentwickler werden, nichts mehr.
+          halt Teil meines Portefeuilles als Webentwickler sein, nichts mehr. Naja, genug
+          mitm ganzen rechtlichen Scheiß: jetzt sind einige zufällige Ausschnitte von
+          Goethes ,,Faust" zum Lesen da...
         </p>
         <p>
           So schreitet in dem engen Bretterhaus (Theater, Bühne) Den ganzen Kreis der
