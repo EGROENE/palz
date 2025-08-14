@@ -37,7 +37,14 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   // Put here, not in event- or userContext, since it could be used on both
   const [savedInterests, setSavedInterests] = useState<string[]>([]);
 
+  const maximumNumberOfEventsInDB: number = 75;
+  const maximumNumberOfUsersDB: number = 50;
+  const maximumNumberOfChatsInDB: number = 75;
+
   const mainContextValues: TMainContext = {
+    maximumNumberOfEventsInDB,
+    maximumNumberOfUsersDB,
+    maximumNumberOfChatsInDB,
     savedInterests,
     setSavedInterests,
     fetchStart,

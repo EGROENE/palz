@@ -22,6 +22,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const navigation = useNavigate();
 
   const {
+    maximumNumberOfUsersDB,
     theme,
     setIsLoading,
     setError,
@@ -2277,7 +2278,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
               res.json().then((allUsers) => {
                 setIndex(allUsers.length);
 
-                if (allUsers.length >= 50) {
+                if (allUsers.length >= maximumNumberOfUsersDB) {
                   setProcessingLoginIsLoading(false);
                   setUserCreatedAccount(false);
                   toast.error(

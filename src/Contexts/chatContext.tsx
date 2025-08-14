@@ -26,7 +26,7 @@ import { useEventContext } from "../Hooks/useEventContext";
 export const ChatContext = createContext<TChatContext | null>(null);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
-  const { theme, error } = useMainContext();
+  const { theme, error, maximumNumberOfChatsInDB } = useMainContext();
 
   if (error) {
     throw new Error(error);
@@ -550,7 +550,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     Requests.getAllChats().then((res) => {
       if (res.ok) {
         res.json().then((allChats: TChat[]) => {
-          if (allChats.length >= 75) {
+          if (allChats.length >= maximumNumberOfChatsInDB) {
             setChatCreationInProgress(false);
             toast.error(
               "Sorry, but due to potential spamming douchebags & this only being a portfolio project, only 75 chats in total can be created at this time.",

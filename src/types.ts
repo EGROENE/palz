@@ -311,6 +311,9 @@ export type TMainContext = {
   setWelcomeMessageDisplayTime: React.Dispatch<React.SetStateAction<number>>;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  maximumNumberOfEventsInDB: number;
+  maximumNumberOfUsersDB: number;
+  maximumNumberOfChatsInDB: number;
 };
 
 export type TUserContext = {

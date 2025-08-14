@@ -33,6 +33,7 @@ const EventForm = ({
     theme,
     setSavedInterests,
     savedInterests,
+    maximumNumberOfEventsInDB
   } = useMainContext();
   const { handleCityStateCountryInput, currentUser, blockedUsers } = useUserContext();
 
@@ -1232,7 +1233,7 @@ const EventForm = ({
             .then((allEvents) => {
               if (allEvents) {
                 eventInfos.index = allEvents.length;
-                if (allEvents.length >= 75) {
+                if (allEvents.length >= maximumNumberOfEventsInDB) {
                   setAddEventIsInProgress(false);
                   setIsLoading(false);
                   toast.error(
