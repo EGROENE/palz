@@ -142,6 +142,7 @@ const EventForm = ({
   const inviteesRef = useRef<HTMLInputElement | null>(null);
   const blockeesRef = useRef<HTMLInputElement | null>(null);
   const searchEventCountriesRef = useRef<HTMLInputElement | null>(null);
+  const uploadPhotoRef = useRef<HTMLInputElement | null>(null);
   ///////
   const [searchEventCountriesQuery, setSearchEventCountriesQuery] = useState<string>("");
 
@@ -991,7 +992,7 @@ const EventForm = ({
   };
 
   const handleDeleteEventImage = async (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
+    e: React.MouseEvent<HTMLElement, MouseEvent> | React.KeyboardEvent<HTMLElement>,
     imageToBeRemoved: string
   ): Promise<void> => {
     e.preventDefault();
@@ -2281,6 +2282,12 @@ const EventForm = ({
                     <div className={styles.eventImageContainer} key={img}>
                       <i
                         title="Remove"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleDeleteEventImage(e, img);
+                          }
+                        }}
                         onClick={(e) => handleDeleteEventImage(e, img)}
                         className="fas fa-times"
                       ></i>
@@ -2293,10 +2300,20 @@ const EventForm = ({
                   ))}
                 {eventImages && eventImages.length < 3 && (
                   <label>
-                    <label title="Add Photo" htmlFor="event-image-upload">
+                    <label
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          uploadPhotoRef.current?.click();
+                        }
+                      }}
+                      title="Add Photo"
+                      htmlFor="event-image-upload"
+                    >
                       <i id="add-photo-box" className="fas fa-plus"></i>
                     </label>
                     <input
+                      ref={uploadPhotoRef}
                       id="event-image-upload"
                       name="event-image-upload"
                       onChange={(e) => handleAddEventImage(e)}
