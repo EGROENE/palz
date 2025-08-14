@@ -1,5 +1,5 @@
 .userTitle {
-  font-size: 1rem;
+  font-size: 0.75rem;
   color: gray !important;
 }
 
@@ -8,7 +8,7 @@
 }
 
 .listedUserName {
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 
 .listedUserUsername {
@@ -18,14 +18,6 @@
 .listedUserTextsContainer p {
   margin: 0;
   color: var(--text-color);
-}
-
-.listedUserTextsContainer p:first-child {
-  font-size: 1rem;
-}
-
-.listedUserTextsContainer p:nth-child(2) {
-  font-size: 0.75rem;
 }
 
 .listedUserBtnsContainer button {
