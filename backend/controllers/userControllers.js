@@ -136,11 +136,11 @@ const getUserByUsernameOrEmailAddress = async (req, res) => {
       return res.status(200).json({ user });
     } else {
       if (username) {
-        res.statusMessage = "Invalid username or password";
+        res.statusMessage = "USERNAME OR PASSWORD IS WRONG";
         return res.status(401).end();
       }
       if (emailAddress) {
-        res.statusMessage = "Invalid e-mail address or password";
+        res.statusMessage = "EMAIL OR PASSWORD IS WRONG";
         return res.status(401).end();
       }
     }
