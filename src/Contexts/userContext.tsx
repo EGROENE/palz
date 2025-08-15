@@ -2128,16 +2128,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           .then((res) => {
             if (res.status === 401) {
               setProcessingLoginIsLoading(false);
-              // Differentiate b/t error on username/email & error on pw
-              if (res.statusText === "USERNAME OR PASSWORD IS WRONG") {
-                toast.error("Invalid username or password", {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid red",
-                  },
-                });
-              }
+              toast.error("Invalid credentials", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
             } else if (res.status === 404) {
               setProcessingLoginIsLoading(false);
               toast.error("User doesn't exist", {
@@ -2207,16 +2204,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         Requests.getUserByUsernameOrEmailAddress(password, undefined, emailAddress)
           .then((res) => {
             if (res.status === 401) {
+              toast.error("Invalid credentials", {
+                style: {
+                  background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                  color: theme === "dark" ? "black" : "white",
+                  border: "2px solid red",
+                },
+              });
               setProcessingLoginIsLoading(false);
-              if (res.statusText === "EMAIL OR PASSWORD IS WRONG") {
-                toast.error("Invalid e-mail address or password", {
-                  style: {
-                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
-                    color: theme === "dark" ? "black" : "white",
-                    border: "2px solid red",
-                  },
-                });
-              }
             } else if (res.status === 500) {
               setProcessingLoginIsLoading(false);
               toast.error("Could not log you in. Please try again.", {
