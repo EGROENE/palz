@@ -2129,11 +2129,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
             if (res.status === 401) {
               setProcessingLoginIsLoading(false);
               // Differentiate b/t error on username/email & error on pw
-              if (res.statusText === "User not found") {
-                setUsernameError(res.statusText);
-              }
-              if (res.statusText === "Invalid username or password") {
-                setPasswordError(res.statusText);
+              if (res.statusText === "USERNAME OR PASSWORD IS WRONG") {
+                toast.error("Invalid username or password", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
               }
             } else if (res.status === 404) {
               setProcessingLoginIsLoading(false);
@@ -2205,11 +2208,14 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           .then((res) => {
             if (res.status === 401) {
               setProcessingLoginIsLoading(false);
-              if (res.statusText === "User not found") {
-                setEmailError("User not found");
-              }
-              if (res.statusText === "Invalid e-mail address or password") {
-                setPasswordError(res.statusText);
+              if (res.statusText === "EMAIL OR PASSWORD IS WRONG") {
+                toast.error("Invalid e-mail address or password", {
+                  style: {
+                    background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+                    color: theme === "dark" ? "black" : "white",
+                    border: "2px solid red",
+                  },
+                });
               }
             } else if (res.status === 500) {
               setProcessingLoginIsLoading(false);
@@ -2358,6 +2364,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     e.preventDefault();
+    console.log("hi");
     window.alert(
       "Please ensure all fields have been filled out & fix any form errors. If everything looks right to you, re-enter the info try again."
     );
