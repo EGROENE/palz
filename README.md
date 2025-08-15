@@ -1,3 +1,9 @@
-<h1>PALZ</h1>
-<p>I was sick of feeling like a half-baked developer, having worked exclusively on the frontend side of things until this point, so this is the first-ever project whereby I build not only the frontend, but establish a backend, too. I store data in MongoDB & make it queryable with Express.js & Mongoose. I use TypeScript & React (and several of its technologies, such as Context API, Tanstack's React Query, and React Router) to build out the frontend, along with rawdogging the CSS to style it. The purpose of the application is to give users a place where they can find interesting IRL events & friends. Users of the app will be able to create an account, giving them the ability to input info about themselves, meet & message other users (and block them), find events that match their interests, & organize events.</p>
-<p>This is all still a work in progress, so I will be updating this document as I move along. If you happen to glance at my code & have any feedback on it, I'd love to hear it.</p>
+<h1>PALZ Portfolio Project</h1>
+<p>Sick of feeling like a half-baked developer, having worked exclusively on the frontend side of things until this point, I decided to go rogue with a project originally started as an assignment for a coaching program, and take it much further than that assignment ever called for and turn this into the first-ever full-stack web application I built from scratch.</p>
+<p>I built here a web app in which users can register accounts & use the app to organize IRL events, as well as chat & make friends with other users. There are some privacy settings that users can enable to control who can message them, send them friend requests, see their events, invite them to events, add them as organizers on events, and see their profile. Data is fetched only as needed so that the app runs as efficiently & quickly as possible, at least to the extent of my knowledge.</p>
+<h3>Tooling: Vite</h3>
+<h3>Frontend: React.js, TypeScript, Tanstack Query, React Router, React Context API</h3>
+<h3>Backend/Middleware: MongoDB, Node.js, Mongoose, Express.js</h3>
+<h3>Styling: rawdog CSS</h3>
+<h3>Deployment: Render</h3>
+<h3>Skills Improved: Organization in React, building a database & establishing an API, asynchronous programming</h3>
