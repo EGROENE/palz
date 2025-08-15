@@ -91,7 +91,10 @@ const LoginPage = ({ type }: { type: "login" | "signup" }) => {
           <LoginForm randomColor={randomColor} />
         )}
         {processingLoginIsLoading && !signupIsSelected && (
-          <header style={{ marginTop: "3rem" }} className="query-status-text">
+          <header
+            style={{ marginTop: "3rem" }}
+            className="query-status-text animate__animated animate__headShake animate__infinite	infinite animate__slower-10"
+          >
             Processing your info...
           </header>
         )}

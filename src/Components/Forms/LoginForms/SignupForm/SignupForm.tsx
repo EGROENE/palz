@@ -289,7 +289,7 @@ const SignupForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =
       {processingLoginIsLoading ? (
         <header
           style={{ marginTop: "3rem", textAlign: "center" }}
-          className="query-status-text"
+          className="query-status-text animate__animated animate__headShake animate__infinite	infinite animate__slower-10"
         >
           Processing your info...
         </header>
