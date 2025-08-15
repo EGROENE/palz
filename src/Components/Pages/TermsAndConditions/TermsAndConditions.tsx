@@ -1,4 +1,27 @@
+import { useEffect } from "react";
+import { useUserContext } from "../../../Hooks/useUserContext";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useMainContext } from "../../../Hooks/useMainContext";
+
 const TermsAndConditions = () => {
+  const { theme } = useMainContext();
+  const { logout, currentUser, userCreatedAccount } = useUserContext();
+
+  const navigation = useNavigate();
+  useEffect(() => {
+    if (!currentUser || userCreatedAccount === null) {
+      logout();
+      toast.error("Please log in before accessing this page", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    }
+  }, [currentUser, navigation, userCreatedAccount]);
+
   return (
     <>
       {" "}
