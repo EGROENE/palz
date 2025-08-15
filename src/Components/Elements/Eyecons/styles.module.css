@@ -11,7 +11,7 @@
 
 @media screen and (max-width: 768px) {
   .eye {
-    left: 82%;
+    left: 91%;
   }
 }
 
@@ -24,5 +24,11 @@
 @media screen and (max-width: 500px) {
   .eye {
     top: 30%;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .eye {
+    left: 86%;
   }
 }
