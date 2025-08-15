@@ -254,7 +254,18 @@ const EventPage = () => {
         })
         .finally(() => setFetchOrganizersIsLoading(false));
     }
-  }, []);
+
+    if (!currentUser || userCreatedAccount === null) {
+      logout();
+      toast.error("Please log in before accessing this page", {
+        style: {
+          background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",
+          color: theme === "dark" ? "black" : "white",
+          border: "2px solid red",
+        },
+      });
+    }
+  }, [currentUser, navigation, userCreatedAccount]);
 
   const userRSVPd: boolean =
     currentUser && currentUser._id && currentEvent && interestedUsersCurrentEvent
