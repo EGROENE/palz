@@ -59,6 +59,11 @@ const LoginPage = ({ type }: { type: "login" | "signup" }) => {
             )}
           </button>
         </div>
+        <p style={{ width: "77%" }}>
+          Due to a policy regarding the free tier of the web service this project is
+          deployed to, requests may be delayed by 50 seconds or more due to inactivity. So
+          far, I have seen this only affect login functionality.
+        </p>
       </div>
       <div className="login-form">
         {!processingLoginIsLoading && (
