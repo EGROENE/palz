@@ -22,7 +22,7 @@ const EditEventPage = ({ event }: { event?: TEvent }) => {
     /* Redirect to user homepage if event has ended (no longer editable). Should only happen if user pastes in url of event's edit page, as navigation options won't exist anymore */
     const now = Date.now();
     if (event?.eventEndDateTimeInMS && event.eventEndDateTimeInMS < now) {
-      navigation(`/${currentUser?.username}`);
+      navigation(`/homepage${currentUser?.username}`);
       toast.error("Event is finished, so it's no longer editable.", {
         style: {
           background: theme === "light" ? "#242424" : "rgb(233, 231, 228)",

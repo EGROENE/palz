@@ -232,7 +232,7 @@ const OtherUserProfile = () => {
                     border: "2px solid red",
                   },
                 });
-                navigation(`/${currentUser?.username}`);
+                navigation(`/homepage/${currentUser?.username}`);
               } else {
                 setPageOwner(
                   Methods.getTUserSecureFromTUser(currentOtherUser, currentUser)

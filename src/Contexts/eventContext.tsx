@@ -498,7 +498,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
                   },
                 });
                 // Redirect to currentUser's homepage, as they've lost rights to edit event:
-                navigation(`/${currentUser?.username}`);
+                navigation(`/homepage/${currentUser?.username}`);
               } else {
                 toast.error("Unable to remove you as organizer; please try again.", {
                   style: {

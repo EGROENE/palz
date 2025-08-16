@@ -1316,7 +1316,7 @@ const EventForm = ({
                 border: "2px solid red",
               },
             });
-            navigation(`/${currentUser?.username}`);
+            navigation(`/homepage/${currentUser?.username}`);
           } else {
             toast.error("Could not delete event. Please try again.", {
               style: {
