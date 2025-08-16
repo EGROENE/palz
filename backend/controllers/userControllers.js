@@ -313,8 +313,27 @@ const getAllUserInterests = async (req, res) => {
   res.status(200).json(allUserInterests);
 };
 
+const getInterestUsers = async (req, res) => {
+  const { interest, limit, start, user } = req.query;
+
+  const username = user;
+  const currentUser = await User.findOne({ username });
+
+  const interestUsers = await User.find({
+    index: { $gte: Number(start) },
+    _id: { $ne: currentUser._id.toString() },
+    blockedUsers: { $nin: currentUser._id.toString() },
+    blockedBy: { $nin: currentUser._id.toString() },
+    profileVisibleTo: { $ne: "nobody" },
+    interests: { $in: interest },
+  }).limit(Number(limit));
+
+  res.status(200).json(interestUsers);
+};
+
 // export controllers:
 module.exports = {
+  getInterestUsers,
   getAllUserInterests,
   getUserByUsername,
   getUserByUsernameOrEmailAddress,
