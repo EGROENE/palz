@@ -588,6 +588,30 @@ const EventForm = ({
         })
         .catch((error) => console.log(error))
         .finally(() => setFetchPotentialUsersIsLoading(false));
+    } else {
+      Requests.getPotentialCoOrganizers(undefined, eventType, currentUser, 0, Infinity)
+        .then((batchOfPotentialCOs) => {
+          if (batchOfPotentialCOs) {
+            setAllPotentialCOs(
+              batchOfPotentialCOs.map((co) => Methods.getTBarebonesUser(co))
+            );
+            let matchingPotentialCOs = [];
+            for (const co of batchOfPotentialCOs) {
+              if (
+                co.username?.includes(input.toLowerCase()) ||
+                co.firstName?.includes(input.toLowerCase()) ||
+                co.lastName?.includes(input.toLowerCase())
+              ) {
+                matchingPotentialCOs.push(Methods.getTBarebonesUser(co));
+              }
+            }
+            setPotentialCoOrganizers(matchingPotentialCOs);
+          } else {
+            setIsFetchPotentialUsersError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchPotentialUsersIsLoading(false));
     }
   };
 
@@ -625,6 +649,30 @@ const EventForm = ({
         })
         .catch((error) => console.log(error))
         .finally(() => setFetchPotentialUsersIsLoading(false));
+    } else {
+      Requests.getPotentialInvitees(undefined, eventType, currentUser, 0, Infinity)
+        .then((batchOfPotentialInvitees) => {
+          if (batchOfPotentialInvitees) {
+            setAllPotentialInvitees(
+              batchOfPotentialInvitees.map((pi) => Methods.getTBarebonesUser(pi))
+            );
+            let matchingPotentialInvitees = [];
+            for (const pi of batchOfPotentialInvitees) {
+              if (
+                pi.username?.includes(input.toLowerCase()) ||
+                pi.firstName?.includes(input.toLowerCase()) ||
+                pi.lastName?.includes(input.toLowerCase())
+              ) {
+                matchingPotentialInvitees.push(Methods.getTBarebonesUser(pi));
+              }
+            }
+            setPotentialInvitees(matchingPotentialInvitees);
+          } else {
+            setIsFetchPotentialUsersError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setFetchPotentialUsersIsLoading(false));
     }
   };
 
@@ -640,6 +688,29 @@ const EventForm = ({
         0,
         Infinity
       )
+        .then((batchOfPotentialBlockees) => {
+          setAllPotentialBlockees(
+            batchOfPotentialBlockees.map((pb) => Methods.getTBarebonesUser(pb))
+          );
+          let matchingPotentialBlockees = [];
+          for (const pb of batchOfPotentialBlockees) {
+            if (
+              pb.username?.includes(input.toLowerCase()) ||
+              pb.firstName?.includes(input.toLowerCase()) ||
+              pb.lastName?.includes(input.toLowerCase())
+            ) {
+              matchingPotentialBlockees.push(Methods.getTBarebonesUser(pb));
+            }
+          }
+          setPotentialBlockees(matchingPotentialBlockees);
+        })
+        .catch((error) => {
+          console.log(error);
+          setIsFetchPotentialUsersError(true);
+        })
+        .finally(() => setFetchPotentialUsersIsLoading(false));
+    } else {
+      Requests.getPotentialEventBlockees(undefined, eventType, currentUser, 0, Infinity)
         .then((batchOfPotentialBlockees) => {
           setAllPotentialBlockees(
             batchOfPotentialBlockees.map((pb) => Methods.getTBarebonesUser(pb))
@@ -1003,6 +1074,7 @@ const EventForm = ({
   const handlePublicPrivateBoxChecking = (option: "public" | "private"): void =>
     setPublicity(option);
 
+  // Maybe move to SearchAndDropdownList
   const handleDropdownListSearchQuery = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: "co-organizers" | "invitees" | "blockees"
