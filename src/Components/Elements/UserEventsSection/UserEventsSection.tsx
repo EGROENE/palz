@@ -14,11 +14,11 @@ const UserEventsSection = ({
   const { currentUser } = useUserContext();
 
   // Filter out events from which currentUser has been blocked:
-  const eventsFromWhichCurrentUserNotBlocked: TEvent[] = eventsArray.filter((event) =>
-    currentUser && currentUser._id
-      ? !event.blockedUsersEvent.includes(currentUser._id.toString())
-      : eventsArray
-  );
+  const eventsFromWhichCurrentUserNotBlocked: TEvent[] = eventsArray.filter((event) => {
+    if (currentUser && currentUser._id) {
+      return !event.blockedUsersEvent.includes(currentUser._id.toString());
+    }
+  });
 
   return (
     <section className={styles.userEventsSection}>
