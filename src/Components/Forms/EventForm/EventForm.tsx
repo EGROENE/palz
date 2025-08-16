@@ -33,7 +33,7 @@ const EventForm = ({
     theme,
     setSavedInterests,
     savedInterests,
-    maximumNumberOfEventsInDB
+    maximumNumberOfEventsInDB,
   } = useMainContext();
   const { handleCityStateCountryInput, currentUser, blockedUsers } = useUserContext();
 
@@ -1449,16 +1449,16 @@ const EventForm = ({
   }
 
   let updatedInvitees: string[] = [];
-  for (const o of organizers) {
-    if (o._id) {
-      updatedInvitees.push(o._id.toString());
+  for (const i of invitees) {
+    if (i._id) {
+      updatedInvitees.push(i._id.toString());
     }
   }
 
   let updatedBlockedUsersEvent: string[] = [];
-  for (const o of organizers) {
-    if (o._id) {
-      updatedBlockedUsersEvent.push(o._id.toString());
+  for (const b of blockedUsersEvent) {
+    if (b._id) {
+      updatedBlockedUsersEvent.push(b._id.toString());
     }
   }
 
