@@ -314,6 +314,8 @@ export type TMainContext = {
   maximumNumberOfEventsInDB: number;
   maximumNumberOfUsersDB: number;
   maximumNumberOfChatsInDB: number;
+  showInterestUsers: boolean;
+  setShowInterestUsers: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type TUserContext = {
