@@ -41,11 +41,14 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [interestUsers, setInterestUsers] = useState<TBarebonesUser[]>([]);
 
+  const [currentInterest, setCurrentInterest] = useState<string | null>(null);
+
   const maximumNumberOfEventsInDB: number = 75;
   const maximumNumberOfUsersDB: number = 50;
   const maximumNumberOfChatsInDB: number = 75;
 
   const mainContextValues: TMainContext = {
+    currentInterest, setCurrentInterest,
     interestUsers,
     setInterestUsers,
     showInterestUsers,

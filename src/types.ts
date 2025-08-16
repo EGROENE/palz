@@ -316,8 +316,10 @@ export type TMainContext = {
   maximumNumberOfChatsInDB: number;
   showInterestUsers: boolean;
   setShowInterestUsers: React.Dispatch<React.SetStateAction<boolean>>;
-interestUsers: TBarebonesUser[]
-  setInterestUsers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>
+  interestUsers: TBarebonesUser[];
+  setInterestUsers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
+  currentInterest: string | null;
+  setCurrentInterest: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 export type TUserContext = {
