@@ -352,7 +352,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   const userData: TUser = {
     _id: new mongoose.Types.ObjectId(),
-    lastLogin: Date.now(),
+    lastLogin: lastLogin,
     index: index,
     firstName: Methods.formatHyphensAndSpacesInString(
       Methods.formatCapitalizedName(firstName)
@@ -2293,6 +2293,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                     }
                   );
                 } else {
+                  setLastLogin(Date.now());
                   Requests.createUser(userData)
                     .then((res) => {
                       if (res.status === 409) {
@@ -2318,7 +2319,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         navigation("/");
                         setUserCreatedAccount(true);
                         setParallelValuesAfterSignup();
-                        setLastLogin(Date.now);
                         resetErrorMessagesAfterSignup();
                       } else {
                         setUserCreatedAccount(false);
