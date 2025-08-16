@@ -420,18 +420,26 @@ const EventPage = () => {
                   <p>Organizer: </p>
                 )}
                 <div className="organizer-tabs-container">
-                  {organizersWhoseProfileIsVisible.map((organizer) => (
-                    <Link
-                      key={organizer._id?.toString()}
-                      to={`/otherUsers/${organizer.username}`}
-                    >
+                  {organizersWhoseProfileIsVisible.map((organizer) =>
+                    organizer._id !== currentUser?._id ? (
+                      <Link
+                        key={organizer._id?.toString()}
+                        to={`/otherUsers/${organizer.username}`}
+                      >
+                        <Tab
+                          info={organizer}
+                          randomColor={randomColor}
+                          userMayNotDelete={true}
+                        />
+                      </Link>
+                    ) : (
                       <Tab
                         info={organizer}
                         randomColor={randomColor}
                         userMayNotDelete={true}
                       />
-                    </Link>
-                  ))}
+                    )
+                  )}
                   {organizersWhoHaveNotBlockedUserButHaveHiddenProfile.map(
                     (organizer) => (
                       <Tab
