@@ -28,7 +28,7 @@ const Tab = ({
   userMayNotDelete?: boolean;
   specialIcon?: JSX.Element;
 }) => {
-  const getOnClickFunction = (
+  const getOnIconClickFunction = (
     e: React.MouseEvent<HTMLElement, MouseEvent> | React.KeyboardEvent<HTMLElement>
   ) => {
     if (addHandler && addHandlerParams) {
@@ -75,11 +75,11 @@ const Tab = ({
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              getOnClickFunction(e);
+              getOnIconClickFunction(e);
             }
           }}
           style={addHandler && { "rotate": "45deg" }} // turns X into plus sign
-          onClick={(e) => getOnClickFunction(e)}
+          onClick={(e) => getOnIconClickFunction(e)}
           className="fas fa-times"
           title={addHandler ? "Add" : "Remove"}
         ></i>
