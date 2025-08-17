@@ -322,6 +322,8 @@ export type TMainContext = {
   setCurrentInterest: React.Dispatch<React.SetStateAction<string | null>>;
   interestUserFetchLimit: number;
   setInterestUserFetchLimit: React.Dispatch<React.SetStateAction<number>>;
+  interestUserFetchStart: number;
+  setInterestUserFetchStart: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export type TUserContext = {
