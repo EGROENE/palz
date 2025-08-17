@@ -44,7 +44,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [currentInterest, setCurrentInterest] = useState<string | null>(null);
 
   const [interestUsersFetchLimit, setInterestUsersFetchLimit] = useState<number>(10);
-  const [interestUsersFetchStart, setInterestUsersFetchStart] = useState<number>(10);
+  const [interestUsersFetchStart, setInterestUsersFetchStart] = useState<number>(0);
   const [fetchInterestUsersIsLoading, setFetchInterestUsersIsLoading] =
     useState<boolean>(false);
   const [fetchInterestUsersIsError, setFetchInterestUsersIsError] =
