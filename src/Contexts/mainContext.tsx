@@ -48,7 +48,7 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [fetchInterestUsersIsLoading, setFetchInterestUsersIsLoading] =
     useState<boolean>(false);
   const [fetchInterestUsersIsError, setFetchInterestUsersIsError] =
-    useState<boolean>(true);
+    useState<boolean>(false);
 
   const maximumNumberOfEventsInDB: number = 75;
   const maximumNumberOfUsersDB: number = 50;
