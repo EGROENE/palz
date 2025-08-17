@@ -320,6 +320,8 @@ export type TMainContext = {
   setInterestUsers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   currentInterest: string | null;
   setCurrentInterest: React.Dispatch<React.SetStateAction<string | null>>;
+  interestUserFetchLimit: number;
+  setInterestUserFetchLimit: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export type TUserContext = {
