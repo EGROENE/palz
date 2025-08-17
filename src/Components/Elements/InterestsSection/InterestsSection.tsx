@@ -34,8 +34,8 @@ const InterestsSection = ({
     setCurrentInterest,
     setShowInterestUsers,
     setInterestUsers,
-    interestUserFetchStart,
-    interestUserFetchLimit,
+    interestUsersFetchStart,
+    interestUsersFetchLimit,
     setFetchInterestUsersIsError,
     setFetchInterestUsersIsLoading,
   } = useMainContext();
@@ -161,8 +161,8 @@ const InterestsSection = ({
                         setShowInterestUsers(true);
                         Requests.getInterestUsers(
                           interest,
-                          interestUserFetchStart,
-                          interestUserFetchLimit,
+                          interestUsersFetchStart,
+                          interestUsersFetchLimit,
                           currentUser.username
                         )
                           .then((res) => {

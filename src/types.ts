@@ -320,10 +320,10 @@ export type TMainContext = {
   setInterestUsers: React.Dispatch<React.SetStateAction<TBarebonesUser[]>>;
   currentInterest: string | null;
   setCurrentInterest: React.Dispatch<React.SetStateAction<string | null>>;
-  interestUserFetchLimit: number;
-  setInterestUserFetchLimit: React.Dispatch<React.SetStateAction<number>>;
-  interestUserFetchStart: number;
-  setInterestUserFetchStart: React.Dispatch<React.SetStateAction<number>>;
+  interestUsersFetchLimit: number;
+  setInterestUsersFetchLimit: React.Dispatch<React.SetStateAction<number>>;
+  interestUsersFetchStart: number;
+  setInterestUsersFetchStart: React.Dispatch<React.SetStateAction<number>>;
   fetchInterestUsersIsLoading: boolean;
   setFetchInterestUsersIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   fetchInterestUsersIsError: boolean;
