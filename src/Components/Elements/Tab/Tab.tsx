@@ -15,6 +15,7 @@ const Tab = ({
   isDisabled,
   userMayNotDelete,
   specialIcon,
+  onClick,
 }: {
   info: TUserSecure | TBarebonesUser | string;
   addHandler?: Function;
@@ -27,6 +28,7 @@ const Tab = ({
   isDisabled?: boolean;
   userMayNotDelete?: boolean;
   specialIcon?: JSX.Element;
+  onClick?: Function;
 }) => {
   const getOnIconClickFunction = (
     e: React.MouseEvent<HTMLElement, MouseEvent> | React.KeyboardEvent<HTMLElement>
@@ -60,6 +62,7 @@ const Tab = ({
           : { backgroundColor: `${randomColor}`, color: "white" }
       }
       className={isDisabled ? `${styles.tab} disabled` : `${styles.tab}`}
+      onClick={onClick ? () => onClick() : undefined}
     >
       {typeof info !== "string" && (
         <img
