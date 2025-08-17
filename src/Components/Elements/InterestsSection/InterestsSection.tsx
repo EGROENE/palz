@@ -140,6 +140,9 @@ const InterestsSection = ({
               </span>
             )}
           </header>
+          {savedInterests?.length > 0 && (
+            <p>Click on an interest to see others who share that interest!</p>
+          )}
           <div className={styles.interestsContainer}>
             {savedInterests?.length ? (
               Methods.getStringArraySortedAlphabetically(savedInterests)?.map(
