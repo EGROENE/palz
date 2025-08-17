@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TThemeColor } from "../../../types";
+import { TThemeColor, TUser } from "../../../types";
 import Methods from "../../../methods";
 import InterestsModal from "../InterestsModal/InterestsModal";
 import Tab from "../Tab/Tab";
@@ -27,7 +27,18 @@ const InterestsSection = ({
 }: InterestsSectionProps) => {
   const [showInterestsModal, setShowInterestsModal] = useState<boolean>(false);
 
-  const { theme, savedInterests, setSavedInterests } = useMainContext();
+  const {
+    theme,
+    savedInterests,
+    setSavedInterests,
+    setCurrentInterest,
+    setShowInterestUsers,
+    setInterestUsers,
+    interestUserFetchStart,
+    interestUserFetchLimit,
+    setFetchInterestUsersIsError,
+    setFetchInterestUsersIsLoading,
+  } = useMainContext();
 
   const { currentUser, setCurrentUser } = useUserContext();
 
@@ -141,6 +152,34 @@ const InterestsSection = ({
                     removeHandlerParams={[interest, interestsRelation]}
                     isDisabled={isDisabled}
                     randomColor={randomColor}
+                    onClick={() => {
+                      if (currentUser?.username) {
+                        setFetchInterestUsersIsLoading(true);
+                        setShowInterestUsers(true);
+                        Requests.getInterestUsers(
+                          interest,
+                          interestUserFetchStart,
+                          interestUserFetchLimit,
+                          currentUser.username
+                        )
+                          .then((res) => {
+                            if (res.ok) {
+                              res.json().then((interestUsers: TUser[]) => {
+                                setCurrentInterest(interest);
+                                setInterestUsers(
+                                  interestUsers.map((u) => Methods.getTBarebonesUser(u))
+                                );
+                              });
+                            } else {
+                              setFetchInterestUsersIsError(true);
+                            }
+                          })
+                          .catch((error) => console.log(error))
+                          .finally(() => setFetchInterestUsersIsLoading(false));
+                      } else {
+                        setFetchInterestUsersIsError(true);
+                      }
+                    }}
                   />
                 )
               )

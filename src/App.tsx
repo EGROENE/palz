@@ -27,10 +27,22 @@ import ChatModal from "./Components/Elements/ChatModal/ChatModal";
 import Footer from "./Components/Elements/Footer/Footer";
 import TermsAndConditions from "./Components/Pages/TermsAndConditions/TermsAndConditions";
 import MobileNavOptions from "./Components/Elements/MobileNavOptions/MobileNavOptions";
+import UserListModal from "./Components/Elements/UserListModal/UserListModal";
 
 function App() {
-  const { theme, showWelcomeMessage, showSidebar, setShowSidebar, showMobileNavOptions } =
-    useMainContext();
+  const {
+    theme,
+    showWelcomeMessage,
+    showSidebar,
+    setShowSidebar,
+    showMobileNavOptions,
+    showInterestUsers,
+    setShowInterestUsers,
+    interestUsers,
+    currentInterest,
+    fetchInterestUsersIsLoading,
+    fetchInterestUsersIsError,
+  } = useMainContext();
 
   const {
     userCreatedAccount,
@@ -168,6 +180,20 @@ function App() {
         {blockUserInProgress && <LoadingModal message="Blocking user..." />}
         {showChatModal && <ChatModal />}
         {showMobileNavOptions && <MobileNavOptions />}
+        {showInterestUsers && (
+          <UserListModal
+            listType="interest-users"
+            renderButtonOne={true}
+            buttonOneText="View Profile"
+            renderButtonTwo={false}
+            closeModalMethod={setShowInterestUsers}
+            header={`Users interested in ${currentInterest}`}
+            users={interestUsers}
+            fetchUsers={false}
+            outsideFetchIsLoading={fetchInterestUsersIsLoading}
+            outsideFetchIsError={fetchInterestUsersIsError}
+          />
+        )}
 
         <Routes>
           <Route path="/" element={baseURLElement} />

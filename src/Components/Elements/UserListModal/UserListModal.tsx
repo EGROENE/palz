@@ -30,6 +30,7 @@ const UserListModal = ({
   randomColor,
   outsideFetchIsError,
   outsideFetchIsLoading,
+  displayCount,
 }: {
   listType:
     | "invitees"
@@ -38,7 +39,8 @@ const UserListModal = ({
     | "blocked-users"
     | "blocked-users-event"
     | "mutual-friends"
-    | "declined-invitations";
+    | "declined-invitations"
+    | "interest-users";
   renderButtonOne: boolean;
   renderButtonTwo: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
@@ -59,6 +61,7 @@ const UserListModal = ({
   randomColor?: string;
   outsideFetchIsError?: boolean;
   outsideFetchIsLoading?: boolean;
+  displayCount?: boolean;
 }) => {
   const { isLoading } = useMainContext();
   const { currentUser, blockedUsers, handleUnblockUser } = useUserContext();
@@ -80,6 +83,7 @@ const UserListModal = ({
 
   useEffect(() => {
     if (fetchUsers && users) {
+      console.log(users);
       setFetchIsLoading(true);
       const getPromisesForFullUserObjects = (): Promise<TUser>[] => {
         // Forced to get promisesToAwait by using loop due to tsc error
@@ -178,7 +182,11 @@ const UserListModal = ({
   };
 
   const getButtonOneLink = (user: TBarebonesUser): string | null => {
-    if (listType === "other-user-friends" || listType === "mutual-friends") {
+    if (
+      listType === "other-user-friends" ||
+      listType === "mutual-friends" ||
+      "interest-users"
+    ) {
       return `/otherUsers/${user.username}`;
     }
     return null;
@@ -186,7 +194,8 @@ const UserListModal = ({
 
   const noFetchError: boolean = !isFetchError && !outsideFetchIsError;
 
-  const noFetchIsLoading: boolean = !fetchIsLoading && !outsideFetchIsLoading;
+  const aFetchIsLoading: boolean =
+    outsideFetchIsLoading !== undefined ? fetchIsLoading || outsideFetchIsLoading : false;
 
   return (
     <div tabIndex={0} className="modal-background">
@@ -204,12 +213,12 @@ const UserListModal = ({
       <div style={{ border: `2px solid ${randomColor}` }} className="userListContainer">
         <h2>
           {`${header}`}
-          {iterableUsers !== null && iterableUsers.length > 0 && (
+          {displayCount && iterableUsers !== null && iterableUsers.length > 0 && (
             <span>{` (${iterableUsers.length})`}</span>
           )}
         </h2>
         {noFetchError &&
-          noFetchIsLoading &&
+          !aFetchIsLoading &&
           iterableUsers !== null &&
           (iterableUsers.length > 0 ? (
             iterableUsers.map((user) => (
@@ -244,7 +253,7 @@ const UserListModal = ({
           ) : (
             <p>No users to show</p>
           ))}
-        {!noFetchIsLoading && (
+        {aFetchIsLoading && (
           <header style={{ marginTop: "3rem" }} className="query-status-text">
             Loading...
           </header>
