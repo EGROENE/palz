@@ -105,14 +105,26 @@ const UserListModal = ({
           // Forced to use loop to get var for setIterableUsers due to tsc error otherwise
           let updatedIterableUsers: TBarebonesUser[] = [];
           for (const u of users) {
-            if (
-              currentUser &&
-              currentUser._id &&
-              u._id &&
-              !currentUser.blockedUsers.includes(u._id.toString()) &&
-              !u.blockedUsers.includes(currentUser._id.toString())
-            ) {
-              updatedIterableUsers.push(Methods.getTBarebonesUser(u));
+            if (currentUser?._id) {
+              const currentUserIsFriend: boolean = u.friends.includes(
+                currentUser?._id?.toString()
+              );
+              const currentUserIsFriendOfFriend: boolean = u.friends.some((f) =>
+                currentUser.friends.includes(f)
+              );
+              if (
+                currentUser &&
+                currentUser._id &&
+                u._id &&
+                !currentUser.blockedUsers.includes(u._id.toString()) &&
+                !u.blockedUsers.includes(currentUser._id.toString()) &&
+                (u.profileVisibleTo === "anyone" ||
+                  (u.profileVisibleTo === "friends" && currentUserIsFriend) ||
+                  (u.profileVisibleTo === "friends of friends" &&
+                    currentUserIsFriendOfFriend))
+              ) {
+                updatedIterableUsers.push(Methods.getTBarebonesUser(u));
+              }
             }
           }
           setIterableUsers(updatedIterableUsers);
