@@ -31,6 +31,7 @@ const UserListModal = ({
   outsideFetchIsError,
   outsideFetchIsLoading,
   displayCount,
+  loadMoreOnScroll,
 }: {
   listType:
     | "invitees"
@@ -62,8 +63,16 @@ const UserListModal = ({
   outsideFetchIsError?: boolean;
   outsideFetchIsLoading?: boolean;
   displayCount?: boolean;
+  loadMoreOnScroll?: boolean;
 }) => {
-  const { isLoading } = useMainContext();
+  const {
+    isLoading,
+    setInterestUsersFetchStart,
+    interestUsersFetchLimit,
+    interestUsersFetchStart,
+    currentInterest,
+    setFetchInterestUsersIsError,
+  } = useMainContext();
   const { currentUser, blockedUsers, handleUnblockUser } = useUserContext();
 
   const {
@@ -76,14 +85,15 @@ const UserListModal = ({
   } = useEventContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
-  const [iterableUsers, setIterableUsers] = useState<TBarebonesUser[] | null>(null);
+  const [iterableUsers, setIterableUsers] = useState<TBarebonesUser[]>([]);
 
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
   const [isFetchError, setIsFetchError] = useState<boolean>(false);
 
+  const [moreUsersLoading, setMoreUsersLoading] = useState<boolean>(false);
+
   useEffect(() => {
-    if (fetchUsers && users) {
-      console.log(users);
+    if (fetchUsers && users && !loadMoreOnScroll) {
       setFetchIsLoading(true);
       const getPromisesForFullUserObjects = (): Promise<TUser>[] => {
         // Forced to get promisesToAwait by using loop due to tsc error
@@ -155,6 +165,69 @@ const UserListModal = ({
     inviteesCurrentEvent,
   ]);
 
+  // Call in onScroll of elem
+  // Changes fetch start, which should trigger useEffect that calls .getInterestUsers w/ updated start & limit. In that useEffect,
+  const handleLoadMoreItemsOnScroll = (
+    items: TBarebonesUser[],
+    e?: React.UIEvent<HTMLUListElement, UIEvent> | React.UIEvent<HTMLDivElement, UIEvent>
+  ): void => {
+    const eHTMLElement = e?.target as HTMLElement;
+    const scrollTop = e ? eHTMLElement.scrollTop : null;
+    const scrollHeight = e ? eHTMLElement.scrollHeight : null;
+    const clientHeight = e ? eHTMLElement.clientHeight : null;
+
+    const bottomReached =
+      e && scrollTop && clientHeight
+        ? scrollTop + clientHeight === scrollHeight
+        : window.innerHeight + window.scrollY >= document.body.offsetHeight;
+
+    if (bottomReached) {
+      const lastItem: TBarebonesUser = items[items.length - 1];
+
+      // Only increase start if lastItem.index + 1 isn't an index of an elem already in iterableUsers
+      if (
+        lastItem &&
+        lastItem.index &&
+        !iterableUsers
+          .map((u) => u.index)
+          .some((i) => {
+            if (lastItem?.index) {
+              return i === lastItem.index + 1;
+            }
+          })
+      ) {
+        setInterestUsersFetchStart(lastItem.index + 1);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (loadMoreOnScroll && currentUser?.username && currentInterest) {
+      setMoreUsersLoading(true);
+      Requests.getInterestUsers(
+        currentInterest,
+        interestUsersFetchStart,
+        interestUsersFetchLimit,
+        currentUser.username
+      )
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((batchOfInterestUsers: TUser[]) => {
+              setIterableUsers(
+                iterableUsers.concat(
+                  batchOfInterestUsers.map((u) => Methods.getTBarebonesUser(u))
+                )
+              );
+            });
+          } else {
+            setFetchInterestUsersIsError(true);
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setMoreUsersLoading(false));
+    }
+  }, [interestUsersFetchLimit, interestUsersFetchStart, currentInterest]);
+
   // make every handler & related request accept TBarebonesUser
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
     if (!buttonOneHandlerParams) {
@@ -222,7 +295,11 @@ const UserListModal = ({
         onClick={() => closeModalMethod(false)}
         className="fas fa-times close-module-icon"
       ></i>
-      <div style={{ border: `2px solid ${randomColor}` }} className="userListContainer">
+      <div
+        onScroll={(e) => handleLoadMoreItemsOnScroll(iterableUsers, e)}
+        style={{ border: `2px solid ${randomColor}` }}
+        className="userListContainer"
+      >
         <h2>
           {`${header}`}
           {displayCount && iterableUsers !== null && iterableUsers.length > 0 && (
@@ -232,39 +309,42 @@ const UserListModal = ({
         {noFetchError &&
           !aFetchIsLoading &&
           iterableUsers !== null &&
-          (iterableUsers.length > 0 ? (
-            iterableUsers.map((user) => (
-              <ListedUser
-                key={user._id?.toString()}
-                renderButtonOne={renderButtonOne}
-                renderButtonTwo={renderButtonTwo}
-                user={user}
-                buttonOneText={buttonOneText}
-                buttonOneHandler={buttonOneHandler}
-                buttonOneHandlerNeedsEventParam={buttonOneHandlerNeedsEventParam}
-                buttonOneHandlerParams={
-                  buttonOneHandlerParams
-                    ? buttonOneHandlerParams
-                    : getButtonOneHandlerParams(user)
-                }
-                buttonOneLink={buttonOneLink ? buttonOneLink : getButtonOneLink(user)}
-                buttonOneIsDisabled={isLoading}
-                buttonTwoText={buttonTwoText}
-                buttonTwoIsDisabled={isLoading}
-                buttonTwoHandler={buttonTwoHandler}
-                buttonTwoHandlerNeedsEventParam={buttonTwoHandlerNeedsEventParam}
-                buttonTwoHandlerParams={
-                  buttonTwoHandlerParams
-                    ? buttonTwoHandlerParams
-                    : getButtonTwoHandlerParams(user)
-                }
-                buttonTwoLink={buttonTwoLink ? buttonTwoLink : null}
-                objectLink={`/otherUsers/${user?.username}`}
-              />
-            ))
-          ) : (
-            <p>No users to show</p>
+          iterableUsers.length > 0 &&
+          iterableUsers.map((user) => (
+            <ListedUser
+              key={user._id?.toString()}
+              renderButtonOne={renderButtonOne}
+              renderButtonTwo={renderButtonTwo}
+              user={user}
+              buttonOneText={buttonOneText}
+              buttonOneHandler={buttonOneHandler}
+              buttonOneHandlerNeedsEventParam={buttonOneHandlerNeedsEventParam}
+              buttonOneHandlerParams={
+                buttonOneHandlerParams
+                  ? buttonOneHandlerParams
+                  : getButtonOneHandlerParams(user)
+              }
+              buttonOneLink={buttonOneLink ? buttonOneLink : getButtonOneLink(user)}
+              buttonOneIsDisabled={isLoading}
+              buttonTwoText={buttonTwoText}
+              buttonTwoIsDisabled={isLoading}
+              buttonTwoHandler={buttonTwoHandler}
+              buttonTwoHandlerNeedsEventParam={buttonTwoHandlerNeedsEventParam}
+              buttonTwoHandlerParams={
+                buttonTwoHandlerParams
+                  ? buttonTwoHandlerParams
+                  : getButtonTwoHandlerParams(user)
+              }
+              buttonTwoLink={buttonTwoLink ? buttonTwoLink : null}
+              objectLink={`/otherUsers/${user?.username}`}
+            />
           ))}
+        {noFetchError &&
+          !aFetchIsLoading &&
+          iterableUsers !== null &&
+          iterableUsers.length === 0 &&
+          !moreUsersLoading && <p>No users to show</p>}
+        {moreUsersLoading && <p>Loading...</p>}
         {aFetchIsLoading && (
           <header style={{ marginTop: "3rem" }} className="query-status-text">
             Loading...

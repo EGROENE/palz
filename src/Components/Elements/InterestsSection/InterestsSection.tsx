@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TThemeColor, TUser } from "../../../types";
+import { TThemeColor } from "../../../types";
 import Methods from "../../../methods";
 import InterestsModal from "../InterestsModal/InterestsModal";
 import Tab from "../Tab/Tab";
@@ -33,11 +33,7 @@ const InterestsSection = ({
     setSavedInterests,
     setCurrentInterest,
     setShowInterestUsers,
-    setInterestUsers,
-    interestUsersFetchStart,
-    interestUsersFetchLimit,
     setFetchInterestUsersIsError,
-    setFetchInterestUsersIsLoading,
   } = useMainContext();
 
   const { currentUser, setCurrentUser } = useUserContext();
@@ -157,28 +153,8 @@ const InterestsSection = ({
                     randomColor={randomColor}
                     onClick={() => {
                       if (currentUser?.username) {
-                        setFetchInterestUsersIsLoading(true);
+                        setCurrentInterest(interest);
                         setShowInterestUsers(true);
-                        Requests.getInterestUsers(
-                          interest,
-                          interestUsersFetchStart,
-                          interestUsersFetchLimit,
-                          currentUser.username
-                        )
-                          .then((res) => {
-                            if (res.ok) {
-                              res.json().then((interestUsers: TUser[]) => {
-                                setCurrentInterest(interest);
-                                setInterestUsers(
-                                  interestUsers.map((u) => Methods.getTBarebonesUser(u))
-                                );
-                              });
-                            } else {
-                              setFetchInterestUsersIsError(true);
-                            }
-                          })
-                          .catch((error) => console.log(error))
-                          .finally(() => setFetchInterestUsersIsLoading(false));
                       } else {
                         setFetchInterestUsersIsError(true);
                       }
