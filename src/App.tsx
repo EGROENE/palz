@@ -177,6 +177,8 @@ function App() {
         {blockUserInProgress && <LoadingModal message="Blocking user..." />}
         {showChatModal && <ChatModal />}
         {showMobileNavOptions && <MobileNavOptions />}
+
+        {/* Put here b/c it could render from Settings, Edit Event page, or Event page */}
         {showInterestUsers && (
           <UserListModal
             listType="interest-users"
