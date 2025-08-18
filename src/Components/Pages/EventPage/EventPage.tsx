@@ -39,7 +39,6 @@ const EventPage = () => {
     handleRemoveDisinterestedUser,
     interestedUsersCurrentEvent,
     setInterestedUsersCurrentEvent,
-    inviteesCurrentEvent,
     setInviteesCurrentEvent,
   } = useEventContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
@@ -336,8 +335,6 @@ const EventPage = () => {
                 renderButtonTwo={true}
                 closeModalMethod={setShowInvitees}
                 header="Invitees"
-                users={inviteesCurrentEvent}
-                fetchUsers={true}
                 buttonOneText="Message"
                 buttonOneHandler={getStartOrOpenChatWithUserHandler}
                 buttonOneHandlerNeedsEventParam={false}
@@ -359,8 +356,6 @@ const EventPage = () => {
                 }
                 closeModalMethod={setShowRSVPs}
                 header="RSVPs"
-                users={interestedUsersCurrentEvent}
-                fetchUsers={true}
                 buttonOneText="Message"
                 buttonOneHandler={getStartOrOpenChatWithUserHandler}
                 buttonOneHandlerNeedsEventParam={false}
@@ -392,8 +387,6 @@ const EventPage = () => {
                 renderButtonTwo={false}
                 closeModalMethod={setShowDeclinedInvitations}
                 header="Declined Invitations"
-                users={disinterestedUsersCurrentEvent}
-                fetchUsers={true}
                 buttonOneText="Message"
                 buttonOneHandler={getStartOrOpenChatWithUserHandler}
                 buttonOneHandlerNeedsEventParam={false}

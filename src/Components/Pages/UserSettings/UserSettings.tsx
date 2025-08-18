@@ -81,9 +81,6 @@ const UserSettings = () => {
     handleUnblockUser,
     setCurrentUser,
     userCreatedAccount,
-    blockedUsers,
-    fetchBlockedUsersIsError,
-    fetchBlockedUsersIsLoading,
   } = useUserContext();
 
   useEffect(() => {
@@ -180,7 +177,9 @@ const UserSettings = () => {
                   promisesToAwait.push(Requests.deleteEvent(event));
                 } else {
                   const eventValuesToUpdate: TEventValuesToUpdate = {
-                    organizers: event.organizers.filter( (o) => o !== currentUser?._id?.toString()),
+                    organizers: event.organizers.filter(
+                      (o) => o !== currentUser?._id?.toString()
+                    ),
                     blockedUsersEvent: event.blockedUsersEvent.filter(
                       (u) => u !== currentUser?._id?.toString()
                     ),
@@ -371,14 +370,10 @@ const UserSettings = () => {
           renderButtonTwo={false}
           closeModalMethod={setShowBlockedUsers}
           header="Blocked Users"
-          users={blockedUsers}
-          fetchUsers={false}
           buttonOneText="Unblock"
           buttonOneHandler={handleUnblockUser}
           buttonOneHandlerNeedsEventParam={false}
           randomColor={randomColor}
-          outsideFetchIsError={fetchBlockedUsersIsError}
-          outsideFetchIsLoading={fetchBlockedUsersIsLoading}
         />
       )}
       <InterestsSection

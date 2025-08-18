@@ -38,10 +38,7 @@ function App() {
     showMobileNavOptions,
     showInterestUsers,
     setShowInterestUsers,
-    interestUsers,
     currentInterest,
-    fetchInterestUsersIsLoading,
-    fetchInterestUsersIsError,
   } = useMainContext();
 
   const {
@@ -188,10 +185,6 @@ function App() {
             renderButtonTwo={false}
             closeModalMethod={setShowInterestUsers}
             header={`Users interested in ${currentInterest}`}
-            users={interestUsers}
-            fetchUsers={false}
-            outsideFetchIsLoading={fetchInterestUsersIsLoading}
-            outsideFetchIsError={fetchInterestUsersIsError}
           />
         )}
 
