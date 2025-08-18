@@ -39,34 +39,22 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showInterestUsers, setShowInterestUsers] = useState<boolean>(false);
 
-  const [interestUsers, setInterestUsers] = useState<TBarebonesUser[]>([]);
-
   const [currentInterest, setCurrentInterest] = useState<string | null>(null);
 
   const [interestUsersFetchLimit, setInterestUsersFetchLimit] = useState<number>(10);
   const [interestUsersFetchStart, setInterestUsersFetchStart] = useState<number>(0);
-  const [fetchInterestUsersIsLoading, setFetchInterestUsersIsLoading] =
-    useState<boolean>(false);
-  const [fetchInterestUsersIsError, setFetchInterestUsersIsError] =
-    useState<boolean>(false);
 
   const maximumNumberOfEventsInDB: number = 75;
   const maximumNumberOfUsersDB: number = 50;
   const maximumNumberOfChatsInDB: number = 75;
 
   const mainContextValues: TMainContext = {
-    fetchInterestUsersIsError,
-    setFetchInterestUsersIsError,
-    fetchInterestUsersIsLoading,
-    setFetchInterestUsersIsLoading,
     interestUsersFetchStart,
     setInterestUsersFetchStart,
     interestUsersFetchLimit,
     setInterestUsersFetchLimit,
     currentInterest,
     setCurrentInterest,
-    interestUsers,
-    setInterestUsers,
     showInterestUsers,
     setShowInterestUsers,
     maximumNumberOfEventsInDB,
