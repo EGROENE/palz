@@ -61,10 +61,6 @@ const OtherUserProfile = () => {
   const [showFriends, setShowFriends] = useState<boolean>(false);
   const [fetchUserInfoIsLoading, setUserInfoFetchIsLoading] = useState<boolean>(false);
   const [fetchCommonPalzIsLoading, setFetchCommonPalzIsLoading] = useState<boolean>(true);
-  const [
-    fetchCurrentOtherUserFriendsIsLoading,
-    setFetchCurrentOtherUserFriendsIsLoading,
-  ] = useState<boolean>(false);
   const [isFetchError, setIsFetchError] = useState<boolean>(false);
   const [showMutualFriends, setShowMutualFriends] = useState<boolean>(false);
   const [currentUserMayMessage, setCurrentUserMayMessage] = useState<boolean>(false);
@@ -89,9 +85,6 @@ const OtherUserProfile = () => {
       }
     | undefined
   >(undefined);
-  const [currentOtherUserFriends, setCurrentOtherUserFriends] = useState<
-    TBarebonesUser[] | null
-  >(null);
   const [palzInCommon, setPalzInCommon] = useState<TBarebonesUser[] | null>(null);
   const [palzInCommonText, setPalzInCommonText] = useState<string | undefined>(undefined);
 
@@ -150,7 +143,6 @@ const OtherUserProfile = () => {
   useEffect(() => {
     setPalzInCommonText(undefined);
     setPalzInCommon(null);
-    setCurrentOtherUserFriends(null);
     setUpcomingEventsUserRSVPdTo(null);
     setOngoingEvents(null);
     setUpcomingEventsUserOrganizes(null);
@@ -366,28 +358,6 @@ const OtherUserProfile = () => {
                     setIsFetchError(true);
                   })
                   .finally(() => setFetchCommonPalzIsLoading(false));
-
-                const currentOtherUserPromisesToAwait = currentOtherUser.friends.map(
-                  (f) => {
-                    return Requests.getUserByID(f).then((res) => {
-                      return res.json().then((user: TUser) => user);
-                    });
-                  }
-                );
-
-                setFetchCurrentOtherUserFriendsIsLoading(true);
-
-                Promise.all(currentOtherUserPromisesToAwait)
-                  .then((friends: TUser[]) =>
-                    setCurrentOtherUserFriends(
-                      friends.map((f) => Methods.getTBarebonesUser(f))
-                    )
-                  )
-                  .catch((error) => {
-                    console.log(error);
-                    setIsFetchError(true);
-                  })
-                  .finally(() => setFetchCurrentOtherUserFriendsIsLoading(false));
 
                 // Only fetch type of events if that type is visible to currentUser (remove these conditionals in Render, only rendering those events if they exist)
                 Requests.getUpcomingEventsUserRSVPdTo(username)
@@ -951,7 +921,6 @@ const OtherUserProfile = () => {
 
   const fetchIsLoading: boolean =
     fetchUserInfoIsLoading ||
-    fetchCurrentOtherUserFriendsIsLoading ||
     fetchOngoingEventsIsLoading ||
     fetchUpcomingEventsUserRSVPdToIsLoading ||
     fetchUpcomingEventsUserOrganizesIsLoading ||
@@ -1182,7 +1151,6 @@ const OtherUserProfile = () => {
                   users={palzInCommon}
                   outsideFetchIsError={isFetchError}
                   outsideFetchIsLoading={fetchIsLoading || fetchCommonPalzIsLoading}
-                  fetchUsers={false}
                   randomColor={randomColor}
                 />
               )}
@@ -1193,12 +1161,7 @@ const OtherUserProfile = () => {
                   renderButtonTwo={false}
                   closeModalMethod={setShowFriends}
                   header={`${pageOwner.username} 's palz`}
-                  users={currentOtherUserFriends}
                   outsideFetchIsError={isFetchError}
-                  outsideFetchIsLoading={
-                    fetchIsLoading || fetchCurrentOtherUserFriendsIsLoading
-                  }
-                  fetchUsers={false}
                   buttonOneText="View Profile"
                   randomColor={randomColor}
                 />
