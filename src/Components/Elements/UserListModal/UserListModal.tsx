@@ -31,7 +31,6 @@ const UserListModal = ({
   outsideFetchIsError,
   outsideFetchIsLoading,
   displayCount,
-  loadMoreOnScroll,
 }: {
   listType:
     | "invitees"
@@ -63,7 +62,6 @@ const UserListModal = ({
   outsideFetchIsError?: boolean;
   outsideFetchIsLoading?: boolean;
   displayCount?: boolean;
-  loadMoreOnScroll?: boolean;
 }) => {
   const {
     isLoading,
@@ -91,79 +89,6 @@ const UserListModal = ({
   const [isFetchError, setIsFetchError] = useState<boolean>(false);
 
   const [moreUsersLoading, setMoreUsersLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (fetchUsers && users && !loadMoreOnScroll) {
-      setFetchIsLoading(true);
-      const getPromisesForFullUserObjects = (): Promise<TUser>[] => {
-        // Forced to get promisesToAwait by using loop due to tsc error
-        let promisesToAwait: Promise<TUser>[] = [];
-        for (const elem of users) {
-          if (typeof elem === "string") {
-            promisesToAwait.push(
-              Requests.getUserByID(elem).then((res) => {
-                return res.json().then((user: TUser) => user);
-              })
-            );
-          }
-        }
-        return promisesToAwait;
-      };
-
-      Promise.all(getPromisesForFullUserObjects())
-        .then((users: TUser[]) => {
-          // Forced to use loop to get var for setIterableUsers due to tsc error otherwise
-          let updatedIterableUsers: TBarebonesUser[] = [];
-          for (const u of users) {
-            if (currentUser?._id) {
-              const currentUserIsFriend: boolean = u.friends.includes(
-                currentUser?._id?.toString()
-              );
-              const currentUserIsFriendOfFriend: boolean = u.friends.some((f) =>
-                currentUser.friends.includes(f)
-              );
-              if (
-                currentUser &&
-                currentUser._id &&
-                u._id &&
-                !currentUser.blockedUsers.includes(u._id.toString()) &&
-                !u.blockedUsers.includes(currentUser._id.toString()) &&
-                (u.profileVisibleTo === "anyone" ||
-                  (u.profileVisibleTo === "friends" && currentUserIsFriend) ||
-                  (u.profileVisibleTo === "friends of friends" &&
-                    currentUserIsFriendOfFriend))
-              ) {
-                updatedIterableUsers.push(Methods.getTBarebonesUser(u));
-              }
-            }
-          }
-          setIterableUsers(updatedIterableUsers);
-        })
-        .catch((error) => {
-          console.log(error);
-          setIsFetchError(true);
-        })
-        .finally(() => setFetchIsLoading(false));
-    } else {
-      if (users && !outsideFetchIsError) {
-        // forced to get var for setIterableUsers by loop due to tsc error when running build
-        let updatedIterableUsers: TBarebonesUser[] = [];
-        for (const u of users) {
-          if (Methods.isTBarebonesUser(u)) {
-            updatedIterableUsers.push(u);
-          }
-        }
-        setIterableUsers(updatedIterableUsers);
-      }
-    }
-  }, [
-    listType,
-    currentUser?.blockedUsers,
-    currentEvent?.invitees,
-    currentEvent?.interestedUsers,
-    interestedUsersCurrentEvent,
-    inviteesCurrentEvent,
-  ]);
 
   // Call in onScroll of elem
   // Changes fetch start, which should trigger useEffect that calls .getInterestUsers w/ updated start & limit. In that useEffect,
@@ -196,35 +121,39 @@ const UserListModal = ({
             }
           })
       ) {
-        setInterestUsersFetchStart(lastItem.index + 1);
+        if (listType === "interest-users") {
+          setInterestUsersFetchStart(lastItem.index + 1);
+        }
       }
     }
   };
 
   useEffect(() => {
-    if (loadMoreOnScroll && currentUser?.username && currentInterest) {
-      setMoreUsersLoading(true);
-      Requests.getInterestUsers(
-        currentInterest,
-        interestUsersFetchStart,
-        interestUsersFetchLimit,
-        currentUser.username
-      )
-        .then((res) => {
-          if (res.ok) {
-            res.json().then((batchOfInterestUsers: TUser[]) => {
-              setIterableUsers(
-                iterableUsers.concat(
-                  batchOfInterestUsers.map((u) => Methods.getTBarebonesUser(u))
-                )
-              );
-            });
-          } else {
-            setFetchInterestUsersIsError(true);
-          }
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setMoreUsersLoading(false));
+    if (currentUser?.username && currentInterest) {
+      if (listType === "interest-users") {
+        setMoreUsersLoading(true);
+        Requests.getInterestUsers(
+          currentInterest,
+          interestUsersFetchStart,
+          interestUsersFetchLimit,
+          currentUser.username
+        )
+          .then((res) => {
+            if (res.ok) {
+              res.json().then((batchOfInterestUsers: TUser[]) => {
+                setIterableUsers(
+                  iterableUsers.concat(
+                    batchOfInterestUsers.map((u) => Methods.getTBarebonesUser(u))
+                  )
+                );
+              });
+            } else {
+              setFetchInterestUsersIsError(true);
+            }
+          })
+          .catch((error) => console.log(error))
+          .finally(() => setMoreUsersLoading(false));
+      }
     }
   }, [interestUsersFetchLimit, interestUsersFetchStart, currentInterest]);
 
