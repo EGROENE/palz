@@ -192,7 +192,6 @@ function App() {
             fetchUsers={false}
             outsideFetchIsLoading={fetchInterestUsersIsLoading}
             outsideFetchIsError={fetchInterestUsersIsError}
-            loadMoreOnScroll={true}
           />
         )}
 
