@@ -16,7 +16,6 @@ const UserListModal = ({
   closeModalMethod,
   header,
   users,
-  fetchUsers,
   buttonOneText,
   buttonOneHandler,
   buttonOneHandlerNeedsEventParam,
@@ -45,9 +44,7 @@ const UserListModal = ({
   renderButtonTwo: boolean;
   closeModalMethod: (value: React.SetStateAction<boolean>) => void;
   header: string;
-  users: (string | TBarebonesUser)[] | null;
-  fetchUsers: boolean;
-  setUsers?: React.Dispatch<React.SetStateAction<string[]>>;
+  users?: TBarebonesUser[];
   buttonOneText?: string;
   buttonOneHandler?: Function;
   buttonOneHandlerNeedsEventParam?: boolean;
@@ -69,7 +66,6 @@ const UserListModal = ({
     interestUsersFetchLimit,
     interestUsersFetchStart,
     currentInterest,
-    setFetchInterestUsersIsError,
   } = useMainContext();
   const { currentUser, blockedUsers, handleUnblockUser } = useUserContext();
 
@@ -85,10 +81,11 @@ const UserListModal = ({
 
   const [iterableUsers, setIterableUsers] = useState<TBarebonesUser[]>([]);
 
-  const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false);
-  const [isFetchError, setIsFetchError] = useState<boolean>(false);
+  const [initialFetchIsLoading, setInitialFetchIsLoading] = useState<boolean>(true);
 
   const [moreUsersLoading, setMoreUsersLoading] = useState<boolean>(false);
+
+  const [fetchUsersIsError, setFetchUsersIsError] = useState<boolean>(false);
 
   // Call in onScroll of elem
   // Changes fetch start, which should trigger useEffect that calls .getInterestUsers w/ updated start & limit. In that useEffect,
@@ -128,8 +125,13 @@ const UserListModal = ({
     }
   };
 
+  // Set iterableUsers:
   useEffect(() => {
     if (currentUser?.username && currentInterest) {
+      if (users) {
+        setIterableUsers(users);
+      }
+
       if (listType === "interest-users") {
         setMoreUsersLoading(true);
         Requests.getInterestUsers(
@@ -148,11 +150,16 @@ const UserListModal = ({
                 );
               });
             } else {
-              setFetchInterestUsersIsError(true);
+              setFetchUsersIsError(true);
             }
           })
           .catch((error) => console.log(error))
-          .finally(() => setMoreUsersLoading(false));
+          .finally(() => {
+            setMoreUsersLoading(false);
+            if (initialFetchIsLoading) {
+              setInitialFetchIsLoading(false);
+            }
+          });
       }
     }
   }, [interestUsersFetchLimit, interestUsersFetchStart, currentInterest]);
@@ -206,10 +213,9 @@ const UserListModal = ({
     return null;
   };
 
-  const noFetchError: boolean = !isFetchError && !outsideFetchIsError;
+  const noFetchError: boolean = !fetchUsersIsError && !outsideFetchIsError;
 
-  const aFetchIsLoading: boolean =
-    outsideFetchIsLoading !== undefined ? fetchIsLoading || outsideFetchIsLoading : false;
+  const anInitialFetchIsLoading: boolean = outsideFetchIsLoading || initialFetchIsLoading;
 
   return (
     <div tabIndex={0} className="modal-background">
@@ -236,7 +242,7 @@ const UserListModal = ({
           )}
         </h2>
         {noFetchError &&
-          !aFetchIsLoading &&
+          !anInitialFetchIsLoading &&
           iterableUsers !== null &&
           iterableUsers.length > 0 &&
           iterableUsers.map((user) => (
@@ -269,17 +275,19 @@ const UserListModal = ({
             />
           ))}
         {noFetchError &&
-          !aFetchIsLoading &&
+          !anInitialFetchIsLoading &&
           iterableUsers !== null &&
           iterableUsers.length === 0 &&
           !moreUsersLoading && <p>No users to show</p>}
         {moreUsersLoading && <p>Loading...</p>}
-        {aFetchIsLoading && (
+        {anInitialFetchIsLoading && (
           <header style={{ marginTop: "3rem" }} className="query-status-text">
             Loading...
           </header>
         )}
-        {!noFetchError && <p>Couldn't fetch data; try reloading the page.</p>}
+        {!noFetchError && !anInitialFetchIsLoading && (
+          <p>Couldn't fetch data; try reloading the page.</p>
+        )}
       </div>
     </div>
   );
