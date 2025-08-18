@@ -210,7 +210,7 @@ const CreateNewChatModal = () => {
                       setUsersToAddToChat([]);
                     } else {
                       // Forced to get array for members property w/ loop b/c of tsc error
-                      let updatedMembers: string[] = [];
+                      let updatedMembers: string[] = [currentUser._id.toString()];
                       for (const u of usersToAddToChat) {
                         if (u._id) {
                           updatedMembers.push(u._id.toString());
