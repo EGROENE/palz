@@ -220,6 +220,37 @@ const UserListModal = ({
             });
         }
       }
+
+      if (listType === "declined-invitations") {
+        if (currentEvent?._id) {
+          setMoreUsersLoading(true);
+          Requests.getEventDisinterestedUsers(
+            currentEvent._id.toString(),
+            userListFetchStart,
+            userListFetchLimit
+          )
+            .then((res) => {
+              if (res.ok) {
+                res.json().then((disinterestedUsers: TUser[]) => {
+                  setIterableUsers(
+                    iterableUsers.concat(
+                      disinterestedUsers.map((d) => Methods.getTBarebonesUser(d))
+                    )
+                  );
+                });
+              } else {
+                setFetchUsersIsError(true);
+              }
+            })
+            .catch((error) => console.log(error))
+            .finally(() => {
+              setMoreUsersLoading(false);
+              if (initialFetchIsLoading) {
+                setInitialFetchIsLoading(false);
+              }
+            });
+        }
+      }
     }
   }, [userListFetchLimit, userListFetchStart, currentInterest, currentEvent]);
 
