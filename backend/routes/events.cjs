@@ -27,7 +27,7 @@ router.get("/", getAllEvents);
 router.get("/:id", getEvent);
 
 // Get event invitees:
-router.get("/invitees/:event", getEventInvitees);
+router.get("/invitees/:eventId", getEventInvitees);
 
 // POST new event:
 router.post("/add-event", createNewEvent);
