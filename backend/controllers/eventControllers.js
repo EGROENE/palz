@@ -293,7 +293,31 @@ const getEventRSVPs = async (req, res) => {
   }
 };
 
+const getEventDisinterestedUsers = async (req, res) => {
+  const { eventId } = req.params;
+  const { start, limit } = req.query;
+
+  try {
+    const event = await Event.findById(eventId).populate("disinterestedUsers");
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    const disinterestedUsers = await User.find({
+      _id: { $in: event.disinterestedUsers },
+      index: { $gte: Number(start) },
+    }).limit(limit);
+
+    return res.status(200).json(disinterestedUsers);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
+  getEventDisinterestedUsers,
   getEventRSVPs,
   getEventInvitees,
   getCurrentUserUpcomingEvents,
