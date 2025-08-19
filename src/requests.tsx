@@ -1324,19 +1324,41 @@ const getAllChats = () => {
   });
 };
 
-const getInterestUsers = (interest: string, start: number, limit: number, currentUserUsername: string) => {
+const getInterestUsers = (
+  interest: string,
+  start: number,
+  limit: number,
+  currentUserUsername: string
+) => {
   var myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Content-Type", "application/json");
 
+  return fetch(
+    `https://palz.onrender.com/users/interestUsers?interest=${interest}&start=${start}&limit=${limit}&user=${currentUserUsername}`,
+    {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    }
+  );
+};
 
-return fetch(`https://palz.onrender.com/users/interestUsers?interest=${interest}&start=${start}&limit=${limit}&user=${currentUserUsername}`, {
-  method: 'GET',
-  headers: myHeaders,
-  redirect: 'follow'}
-)
-}
+const getEventInvitees = (eventID: string, start: number, limit: number) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  return fetch(
+    `https://palz.onrender.com/events/invitees/${eventID}?start=${start}&limit=${limit}`,
+    {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    }
+  );
+};
 
 const Requests = {
+  getEventInvitees,
   getInterestUsers,
   getAllChats,
   getAllEventInterests,
