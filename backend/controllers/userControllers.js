@@ -331,8 +331,32 @@ const getInterestUsers = async (req, res) => {
   res.status(200).json(interestUsers);
 };
 
+const getBlockedUsers = async (req, res) => {
+  const { userId } = req.params;
+  const { start, limit } = req.query;
+
+  try {
+    const currentUser = await User.findById(userId).populate("blockedUsers");
+
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const blockedUsers = await User.find({
+      _id: { $in: currentUser.blockedUsers },
+      index: { $gte: Number(start) },
+    }).limit(limit);
+
+    return res.status(200).json(blockedUsers);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 // export controllers:
 module.exports = {
+  getBlockedUsers,
   getInterestUsers,
   getAllUserInterests,
   getUserByUsername,
