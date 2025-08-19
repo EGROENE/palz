@@ -63,10 +63,10 @@ const UserListModal = ({
   const {
     isLoading,
     setInterestUsersFetchStart,
-    interestUsersFetchLimit,
+    userListFetchLimit,
     interestUsersFetchStart,
     currentInterest,
-    setInterestUsersFetchLimit,
+    setUserListFetchLimit,
   } = useMainContext();
   const { currentUser, blockedUsers, handleUnblockUser } = useUserContext();
 
@@ -136,7 +136,7 @@ const UserListModal = ({
         Requests.getInterestUsers(
           currentInterest,
           interestUsersFetchStart,
-          interestUsersFetchLimit,
+          userListFetchLimit,
           currentUser.username
         )
           .then((res) => {
@@ -192,7 +192,7 @@ const UserListModal = ({
         }
       }
     }
-  }, [interestUsersFetchLimit, interestUsersFetchStart, currentInterest, currentEvent]);
+  }, [userListFetchLimit, interestUsersFetchStart, currentInterest, currentEvent]);
 
   // make every handler & related request accept TBarebonesUser
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
@@ -256,13 +256,13 @@ const UserListModal = ({
           if (e.key === "Enter") {
             closeModalMethod(false);
             setInterestUsersFetchStart(0);
-            setInterestUsersFetchLimit(10);
+            setUserListFetchLimit(10);
           }
         }}
         onClick={() => {
           closeModalMethod(false);
           setInterestUsersFetchStart(0);
-          setInterestUsersFetchLimit(10);
+          setUserListFetchLimit(10);
         }}
         className="fas fa-times close-module-icon"
       ></i>
