@@ -66,6 +66,7 @@ const UserListModal = ({
     interestUsersFetchLimit,
     interestUsersFetchStart,
     currentInterest,
+    setInterestUsersFetchLimit,
   } = useMainContext();
   const { currentUser, blockedUsers, handleUnblockUser } = useUserContext();
 
@@ -118,21 +119,19 @@ const UserListModal = ({
             }
           })
       ) {
-        if (listType === "interest-users") {
-          setInterestUsersFetchStart(lastItem.index + 1);
-        }
+        setInterestUsersFetchStart(lastItem.index + 1);
       }
     }
   };
 
   // Set iterableUsers:
   useEffect(() => {
-    if (currentUser?.username && currentInterest) {
+    if (currentUser?.username) {
       if (users) {
         setIterableUsers(users);
       }
 
-      if (listType === "interest-users") {
+      if (listType === "interest-users" && currentInterest) {
         setMoreUsersLoading(true);
         Requests.getInterestUsers(
           currentInterest,
@@ -161,8 +160,39 @@ const UserListModal = ({
             }
           });
       }
+
+      if (listType === "invitees") {
+        if (currentEvent?._id) {
+          setMoreUsersLoading(true);
+          Requests.getEventInvitees(
+            currentEvent?._id?.toString(),
+            interestUsersFetchStart,
+            4
+          )
+            .then((res) => {
+              if (res.ok) {
+                res.json().then((invitees: TUser[]) => {
+                  setIterableUsers(
+                    iterableUsers.concat(
+                      invitees.map((i) => Methods.getTBarebonesUser(i))
+                    )
+                  );
+                });
+              } else {
+                setFetchUsersIsError(true);
+              }
+            })
+            .catch((error) => console.log(error))
+            .finally(() => {
+              setMoreUsersLoading(false);
+              if (initialFetchIsLoading) {
+                setInitialFetchIsLoading(false);
+              }
+            });
+        }
+      }
     }
-  }, [interestUsersFetchLimit, interestUsersFetchStart, currentInterest]);
+  }, [interestUsersFetchLimit, interestUsersFetchStart, currentInterest, currentEvent]);
 
   // make every handler & related request accept TBarebonesUser
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
@@ -225,9 +255,15 @@ const UserListModal = ({
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             closeModalMethod(false);
+            setInterestUsersFetchStart(0);
+            setInterestUsersFetchLimit(10);
           }
         }}
-        onClick={() => closeModalMethod(false)}
+        onClick={() => {
+          closeModalMethod(false);
+          setInterestUsersFetchStart(0);
+          setInterestUsersFetchLimit(10);
+        }}
         className="fas fa-times close-module-icon"
       ></i>
       <div
@@ -279,7 +315,7 @@ const UserListModal = ({
           iterableUsers !== null &&
           iterableUsers.length === 0 &&
           !moreUsersLoading && <p>No users to show</p>}
-        {moreUsersLoading && <p>Loading...</p>}
+        {moreUsersLoading && !anInitialFetchIsLoading && <p>Loading...</p>}
         {anInitialFetchIsLoading && (
           <header style={{ marginTop: "3rem" }} className="query-status-text">
             Loading...
