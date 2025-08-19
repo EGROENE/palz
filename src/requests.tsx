@@ -1371,7 +1371,22 @@ const getEventRSVPs = (eventID: string, start: number, limit: number) => {
   );
 };
 
+const getEventDisinterestedUsers = (eventID: string, start: number, limit: number) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  return fetch(
+    `https://palz.onrender.com/events/disinterested-users/${eventID}?start=${start}&limit=${limit}`,
+    {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    }
+  );
+};
+
 const Requests = {
+  getEventDisinterestedUsers,
   getEventRSVPs,
   getEventInvitees,
   getInterestUsers,
