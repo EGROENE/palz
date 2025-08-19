@@ -16,6 +16,7 @@ const {
   getRecentEventsUserOrganized,
   getCurrentUserUpcomingEvents,
   getEventInvitees,
+  getEventRSVPs,
 } = require("../controllers/eventControllers");
 
 const router = express.Router();
@@ -28,6 +29,9 @@ router.get("/:id", getEvent);
 
 // Get event invitees:
 router.get("/invitees/:eventId", getEventInvitees);
+
+// Get event RSVPs:
+router.get("/rsvps/:eventId", getEventRSVPs);
 
 // POST new event:
 router.post("/add-event", createNewEvent);
