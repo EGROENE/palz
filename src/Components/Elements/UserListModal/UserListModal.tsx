@@ -164,7 +164,11 @@ const UserListModal = ({
       if (listType === "invitees") {
         if (currentEvent?._id) {
           setMoreUsersLoading(true);
-          Requests.getEventInvitees(currentEvent?._id?.toString(), userListFetchStart, 4)
+          Requests.getEventInvitees(
+            currentEvent?._id?.toString(),
+            userListFetchStart,
+            userListFetchLimit
+          )
             .then((res) => {
               if (res.ok) {
                 res.json().then((invitees: TUser[]) => {
