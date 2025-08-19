@@ -251,6 +251,35 @@ const UserListModal = ({
             });
         }
       }
+
+      if (listType === "blocked-users") {
+        if (currentUser?._id) {
+          setMoreUsersLoading(true);
+          Requests.getBlockedUsers(
+            currentUser._id.toString(),
+            userListFetchStart,
+            userListFetchLimit
+          )
+            .then((res) => {
+              if (res.ok) {
+                res.json().then((rsvps: TUser[]) => {
+                  setIterableUsers(
+                    iterableUsers.concat(rsvps.map((r) => Methods.getTBarebonesUser(r)))
+                  );
+                });
+              } else {
+                setFetchUsersIsError(true);
+              }
+            })
+            .catch((error) => console.log(error))
+            .finally(() => {
+              setMoreUsersLoading(false);
+              if (initialFetchIsLoading) {
+                setInitialFetchIsLoading(false);
+              }
+            });
+        }
+      }
     }
   }, [userListFetchLimit, userListFetchStart, currentInterest, currentEvent]);
 
