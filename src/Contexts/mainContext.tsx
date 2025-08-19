@@ -42,15 +42,15 @@ export const MainContextProvider = ({ children }: { children: ReactNode }) => {
   const [currentInterest, setCurrentInterest] = useState<string | null>(null);
 
   const [userListFetchLimit, setUserListFetchLimit] = useState<number>(10);
-  const [interestUsersFetchStart, setInterestUsersFetchStart] = useState<number>(0);
+  const [userListFetchStart, setUserListFetchStart] = useState<number>(0);
 
   const maximumNumberOfEventsInDB: number = 75;
   const maximumNumberOfUsersDB: number = 50;
   const maximumNumberOfChatsInDB: number = 75;
 
   const mainContextValues: TMainContext = {
-    interestUsersFetchStart,
-    setInterestUsersFetchStart,
+    userListFetchStart,
+    setUserListFetchStart,
     userListFetchLimit,
     setUserListFetchLimit,
     currentInterest,

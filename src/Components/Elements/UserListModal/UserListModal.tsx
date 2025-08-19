@@ -62,9 +62,9 @@ const UserListModal = ({
 }) => {
   const {
     isLoading,
-    setInterestUsersFetchStart,
+    setUserListFetchStart,
     userListFetchLimit,
-    interestUsersFetchStart,
+    userListFetchStart,
     currentInterest,
     setUserListFetchLimit,
   } = useMainContext();
@@ -119,7 +119,7 @@ const UserListModal = ({
             }
           })
       ) {
-        setInterestUsersFetchStart(lastItem.index + 1);
+        setUserListFetchStart(lastItem.index + 1);
       }
     }
   };
@@ -135,7 +135,7 @@ const UserListModal = ({
         setMoreUsersLoading(true);
         Requests.getInterestUsers(
           currentInterest,
-          interestUsersFetchStart,
+          userListFetchStart,
           userListFetchLimit,
           currentUser.username
         )
@@ -164,11 +164,7 @@ const UserListModal = ({
       if (listType === "invitees") {
         if (currentEvent?._id) {
           setMoreUsersLoading(true);
-          Requests.getEventInvitees(
-            currentEvent?._id?.toString(),
-            interestUsersFetchStart,
-            4
-          )
+          Requests.getEventInvitees(currentEvent?._id?.toString(), userListFetchStart, 4)
             .then((res) => {
               if (res.ok) {
                 res.json().then((invitees: TUser[]) => {
@@ -192,7 +188,7 @@ const UserListModal = ({
         }
       }
     }
-  }, [userListFetchLimit, interestUsersFetchStart, currentInterest, currentEvent]);
+  }, [userListFetchLimit, userListFetchStart, currentInterest, currentEvent]);
 
   // make every handler & related request accept TBarebonesUser
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
@@ -255,13 +251,13 @@ const UserListModal = ({
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             closeModalMethod(false);
-            setInterestUsersFetchStart(0);
+            setUserListFetchStart(0);
             setUserListFetchLimit(10);
           }
         }}
         onClick={() => {
           closeModalMethod(false);
-          setInterestUsersFetchStart(0);
+          setUserListFetchStart(0);
           setUserListFetchLimit(10);
         }}
         className="fas fa-times close-module-icon"
