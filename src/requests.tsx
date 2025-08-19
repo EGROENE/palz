@@ -1399,7 +1399,50 @@ const getBlockedUsers = (userID: string, start: number, limit: number) => {
   );
 };
 
+const getOtherUserFriends = (
+  otherUser: TUser,
+  currentUser: TUser,
+  start: number,
+  limit: number
+) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  return fetch(
+    `https://palz.onrender.com/users/other-user-friends/${otherUser._id?.toString()}?currentUserId=${currentUser._id?.toString()}&start=${start}&limit=${limit}`,
+    {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    }
+  ).then((response) => {
+    return response.json().then((otherUserFriends: TUser[]) => {
+      if (currentUser._id) {
+        return otherUserFriends.filter((user: TUser) => {
+          const currentUserIsFriendOfFriend: boolean = user.friends.some((f) =>
+            currentUser.friends.includes(f)
+          );
+
+          const currentUserIsFriend: boolean = currentUser._id
+            ? user.friends.includes(currentUser._id.toString())
+            : false;
+
+          if (
+            user.profileVisibleTo === "anyone" ||
+            (user.profileVisibleTo === "friends of friends" &&
+              currentUserIsFriendOfFriend) ||
+            (user.profileVisibleTo === "friends" && currentUserIsFriend)
+          ) {
+            return user;
+          }
+        });
+      }
+    });
+  });
+};
+
 const Requests = {
+  getOtherUserFriends,
   getBlockedUsers,
   getEventDisinterestedUsers,
   getEventRSVPs,
