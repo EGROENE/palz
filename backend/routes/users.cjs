@@ -13,6 +13,7 @@ const {
   getAllUserInterests,
   getInterestUsers,
   getBlockedUsers,
+  getOtherUserFriends,
 } = require("../controllers/userControllers.js");
 
 const router = express.Router();
@@ -50,5 +51,8 @@ router.get("/interestUsers", getInterestUsers);
 
 // Get user's blockedUsers:
 router.get("/blocked-users/:userId", getBlockedUsers);
+
+// Get other user's friends:
+router.get("/other-user-friends/:userId", getOtherUserFriends);
 
 module.exports = router;
