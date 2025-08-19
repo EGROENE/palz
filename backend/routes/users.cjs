@@ -12,6 +12,7 @@ const {
   getUserByUsername,
   getAllUserInterests,
   getInterestUsers,
+  getBlockedUsers,
 } = require("../controllers/userControllers.js");
 
 const router = express.Router();
@@ -46,5 +47,8 @@ router.patch("/:id", updateUser);
 
 // Get users who are interested in a given interest:
 router.get("/interestUsers", getInterestUsers);
+
+// Get user's blockedUsers:
+router.get("/blocked-users/:userId", getBlockedUsers);
 
 module.exports = router;
