@@ -165,7 +165,7 @@ const UserListModal = ({
         if (currentEvent?._id) {
           setMoreUsersLoading(true);
           Requests.getEventInvitees(
-            currentEvent?._id?.toString(),
+            currentEvent._id.toString(),
             userListFetchStart,
             userListFetchLimit
           )
@@ -176,6 +176,35 @@ const UserListModal = ({
                     iterableUsers.concat(
                       invitees.map((i) => Methods.getTBarebonesUser(i))
                     )
+                  );
+                });
+              } else {
+                setFetchUsersIsError(true);
+              }
+            })
+            .catch((error) => console.log(error))
+            .finally(() => {
+              setMoreUsersLoading(false);
+              if (initialFetchIsLoading) {
+                setInitialFetchIsLoading(false);
+              }
+            });
+        }
+      }
+
+      if (listType === "rsvpd-users") {
+        if (currentEvent?._id) {
+          setMoreUsersLoading(true);
+          Requests.getEventRSVPs(
+            currentEvent._id.toString(),
+            userListFetchStart,
+            userListFetchLimit
+          )
+            .then((res) => {
+              if (res.ok) {
+                res.json().then((rsvps: TUser[]) => {
+                  setIterableUsers(
+                    iterableUsers.concat(rsvps.map((r) => Methods.getTBarebonesUser(r)))
                   );
                 });
               } else {
