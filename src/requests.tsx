@@ -1385,7 +1385,22 @@ const getEventDisinterestedUsers = (eventID: string, start: number, limit: numbe
   );
 };
 
+const getBlockedUsers = (userID: string, start: number, limit: number) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  return fetch(
+    `https://palz.onrender.com/users/blocked-users/${userID}?start=${start}&limit=${limit}`,
+    {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    }
+  );
+};
+
 const Requests = {
+  getBlockedUsers,
   getEventDisinterestedUsers,
   getEventRSVPs,
   getEventInvitees,
