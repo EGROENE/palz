@@ -354,8 +354,43 @@ const getBlockedUsers = async (req, res) => {
   }
 };
 
+// Get user friends, but only those who don't have a blocking relationship w/ currentUser:
+const getOtherUserFriends = async (req, res) => {
+  const { userId } = req.params;
+  const { currentUserId, start, limit } = req.query;
+
+  try {
+    const currentUser = await User.findById(currentUserId);
+
+    const otherUser = await User.findById(userId).populate("friends");
+
+    if (!currentUser) {
+      return res.status(404).json({ message: "currentUser not found" });
+    }
+
+    if (!otherUser) {
+      return res.status(404).json({ message: "otherUser not found" });
+    }
+
+    const otherUserFriends = await User.find({
+      $and: [
+        { _id: { $in: otherUser.friends } },
+        { _id: { $ne: currentUser._id.toString() } },
+      ],
+      index: { $gte: Number(start) },
+      blockedUsers: { $nin: currentUser._id.toString() },
+    }).limit(limit);
+
+    return res.status(200).json(otherUserFriends);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 // export controllers:
 module.exports = {
+  getOtherUserFriends,
   getBlockedUsers,
   getInterestUsers,
   getAllUserInterests,
