@@ -248,12 +248,26 @@ const getCurrentUserUpcomingEvents = async (req, res) => {
 
 // Implement start, limit
 const getEventInvitees = async (req, res) => {
-  const { event } = req.params;
+  const { eventId } = req.params;
   const { start, limit } = req.query;
 
-  const matchingEvent = await Event.findById(event);
+  try {
+    const event = await Event.findById(eventId).populate("invitees");
 
-  res.status(200).json(matchingEvent.invitees.slice(start, start + limit));
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    const invitees = await User.find({
+      _id: { $in: event.invitees },
+      index: { $gte: Number(start) },
+    });
+
+    return res.status(200).json(invitees).limit(limit);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
 };
 
 module.exports = {
