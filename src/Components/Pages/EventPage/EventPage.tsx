@@ -427,6 +427,7 @@ const EventPage = () => {
                       </Link>
                     ) : (
                       <Tab
+                        key={organizer._id?.toString()}
                         info={organizer}
                         randomColor={randomColor}
                         userMayNotDelete={true}
