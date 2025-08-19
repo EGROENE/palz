@@ -33,7 +33,6 @@ const InterestsSection = ({
     setSavedInterests,
     setCurrentInterest,
     setShowInterestUsers,
-    setFetchInterestUsersIsError,
   } = useMainContext();
 
   const { currentUser, setCurrentUser } = useUserContext();
@@ -155,8 +154,6 @@ const InterestsSection = ({
                       if (currentUser?.username) {
                         setCurrentInterest(interest);
                         setShowInterestUsers(true);
-                      } else {
-                        setFetchInterestUsersIsError(true);
                       }
                     }}
                   />
