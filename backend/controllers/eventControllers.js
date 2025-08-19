@@ -246,12 +246,14 @@ const getCurrentUserUpcomingEvents = async (req, res) => {
   res.status(200).json(events);
 };
 
+// Implement start, limit
 const getEventInvitees = async (req, res) => {
   const { event } = req.params;
+  const { start, limit } = req.query;
 
   const matchingEvent = await Event.findById(event);
 
-  res.status(200).json(matchingEvent.invitees);
+  res.status(200).json(matchingEvent.invitees.slice(start, start + limit));
 };
 
 module.exports = {
