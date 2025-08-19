@@ -261,9 +261,9 @@ const getEventInvitees = async (req, res) => {
     const invitees = await User.find({
       _id: { $in: event.invitees },
       index: { $gte: Number(start) },
-    });
+    }).limit(limit);
 
-    return res.status(200).json(invitees).limit(limit);
+    return res.status(200).json(invitees);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
