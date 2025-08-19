@@ -270,7 +270,31 @@ const getEventInvitees = async (req, res) => {
   }
 };
 
+const getEventRSVPs = async (req, res) => {
+  const { eventId } = req.params;
+  const { start, limit } = req.query;
+
+  try {
+    const event = await Event.findById(eventId).populate("interestedUsers");
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    const interestedUsers = await User.find({
+      _id: { $in: event.interestedUsers },
+      index: { $gte: Number(start) },
+    }).limit(limit);
+
+    return res.status(200).json(interestedUsers);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
+  getEventRSVPs,
   getEventInvitees,
   getCurrentUserUpcomingEvents,
   getUpcomingEventsUserRSVPdTo,
