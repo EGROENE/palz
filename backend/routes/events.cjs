@@ -15,6 +15,7 @@ const {
   getEventsUserCreated,
   getRecentEventsUserOrganized,
   getCurrentUserUpcomingEvents,
+  getEventInvitees,
 } = require("../controllers/eventControllers");
 
 const router = express.Router();
@@ -24,6 +25,9 @@ router.get("/", getAllEvents);
 
 // GET single event:
 router.get("/:id", getEvent);
+
+// Get event invitees:
+router.get("/invitees/:event", getEventInvitees);
 
 // POST new event:
 router.post("/add-event", createNewEvent);
