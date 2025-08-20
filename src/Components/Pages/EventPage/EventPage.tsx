@@ -23,6 +23,7 @@ const EventPage = () => {
   const { currentUser, userCreatedAccount, logout } = useUserContext();
 
   const {
+    inviteesCurrentEvent,
     setDisinterestedUsersCurrentEvent,
     disinterestedUsersCurrentEvent,
     handleAddUserRSVP,
@@ -481,8 +482,7 @@ const EventPage = () => {
                             onClick={() => setShowInvitees(true)}
                             className="show-listed-users-or-invitees"
                           >{`${
-                            Methods.removeDuplicatesFromArray(currentEvent.invitees)
-                              .length
+                            Methods.removeDuplicatesFromArray(inviteesCurrentEvent).length
                           }`}</span>
                         </p>
                       )}
