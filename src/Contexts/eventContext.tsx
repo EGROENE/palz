@@ -322,6 +322,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     e?.preventDefault();
 
     if (user) {
+      setInviteesCurrentEvent(inviteesCurrentEvent.filter((i) => i !== user._id));
       if (userArray && setUserArray) {
         if (userArray.every((u) => Methods.isTBarebonesUser(u))) {
           setUserArray(userArray.filter((u) => u._id !== user._id));
@@ -342,6 +343,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
               },
             });
           } else {
+            if (user._id) {
+              setInviteesCurrentEvent(inviteesCurrentEvent.concat(user._id.toString()));
+            }
             if (userArray && setUserArray && user._id) {
               if (userArray.every((u) => Methods.isTBarebonesUser(u))) {
                 setUserArray(userArray.concat(user));
