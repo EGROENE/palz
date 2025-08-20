@@ -76,8 +76,6 @@ const UserListModal = ({
     handleRemoveInvitee,
     interestedUsersCurrentEvent,
     setInterestedUsersCurrentEvent,
-    inviteesCurrentEvent,
-    setInviteesCurrentEvent,
   } = useEventContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
@@ -330,15 +328,7 @@ const UserListModal = ({
         }
       }
     }
-    console.log(inviteesCurrentEvent);
-  }, [
-    userListFetchLimit,
-    userListFetchStart,
-    currentInterest,
-    currentEvent,
-    interestedUsersCurrentEvent,
-    inviteesCurrentEvent,
-  ]);
+  }, [userListFetchLimit, userListFetchStart, currentInterest, currentEvent]);
 
   // make every handler & related request accept TBarebonesUser
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
@@ -362,7 +352,7 @@ const UserListModal = ({
   const getButtonTwoHandlerParams = (user: TBarebonesUser) => {
     if (!buttonTwoHandlerParams) {
       if (listType === "invitees" && buttonTwoHandler === handleRemoveInvitee) {
-        return [currentEvent, user, inviteesCurrentEvent, setInviteesCurrentEvent];
+        return [currentEvent, user, iterableUsers, setIterableUsers];
       }
 
       if (listType === "rsvpd-users") {
