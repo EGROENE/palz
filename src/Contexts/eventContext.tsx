@@ -190,7 +190,9 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   ): void => {
     e?.preventDefault();
 
-    // AUTO OPT RENDER interestedUsersCurrentEvent
+    setInterestedUsersCurrentEvent(
+      interestedUsersCurrentEvent.filter((u) => u !== user._id?.toString())
+    );
 
     if (rsvpdUsers && setRsvpdUsers) {
       if (rsvpdUsers.every((u) => Methods.isTBarebonesUser(u))) {
@@ -231,6 +233,11 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             },
           });
         } else {
+          if (user._id) {
+            setInterestedUsersCurrentEvent(
+              interestedUsersCurrentEvent.concat(user._id.toString())
+            );
+          }
           if (rsvpdUsers && setRsvpdUsers && currentUser && currentUser._id) {
             if (rsvpdUsers.every((u) => Methods.isTBarebonesUser(u))) {
               setRsvpdUsers(rsvpdUsers.filter((u) => u._id !== user._id));
