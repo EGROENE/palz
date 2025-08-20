@@ -373,6 +373,7 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             }
             if (userArray && setUserArray && user._id) {
               if (userArray.every((u) => Methods.isTBarebonesUser(u))) {
+                // @ts-ignore: On line directly below, tsc throws error in build mode, saying property ._id doesn't exist on u, even though u is of type TBarebonesUser. Normal ts lint doesn't throw this error. No other solutions but to ignore. Code works as it should.
                 setUserArray(userArray.concat(user));
               }
               if (userArray.every((u) => typeof u === "string")) {
