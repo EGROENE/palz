@@ -71,12 +71,7 @@ const UserListModal = ({
   const { currentUser, blockedUsers, handleUnblockUser, currentOtherUser } =
     useUserContext();
 
-  const {
-    currentEvent,
-    handleRemoveInvitee,
-    interestedUsersCurrentEvent,
-    setInterestedUsersCurrentEvent,
-  } = useEventContext();
+  const { currentEvent, handleRemoveInvitee } = useEventContext();
   const { getStartOrOpenChatWithUserHandler } = useChatContext();
 
   const [iterableUsers, setIterableUsers] = useState<TBarebonesUser[]>([]);
@@ -355,14 +350,9 @@ const UserListModal = ({
         return [currentEvent, user, iterableUsers, setIterableUsers];
       }
 
+      // For handleDeleteUserRSVP
       if (listType === "rsvpd-users") {
-        return [
-          currentEvent,
-          user,
-          undefined,
-          interestedUsersCurrentEvent,
-          setInterestedUsersCurrentEvent,
-        ];
+        return [currentEvent, user, undefined, iterableUsers, setIterableUsers, true];
       }
     }
     return undefined;
