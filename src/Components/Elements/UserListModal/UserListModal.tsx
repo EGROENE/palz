@@ -125,6 +125,11 @@ const UserListModal = ({
     }
   };
 
+  useEffect(() => {
+    setUserListFetchStart(0);
+    setUserListFetchLimit(10);
+  }, []);
+
   // Set iterableUsers:
   useEffect(() => {
     if (currentUser?.username) {
@@ -325,7 +330,15 @@ const UserListModal = ({
         }
       }
     }
-  }, [userListFetchLimit, userListFetchStart, currentInterest, currentEvent]);
+    console.log(inviteesCurrentEvent);
+  }, [
+    userListFetchLimit,
+    userListFetchStart,
+    currentInterest,
+    currentEvent,
+    interestedUsersCurrentEvent,
+    inviteesCurrentEvent,
+  ]);
 
   // make every handler & related request accept TBarebonesUser
   const getButtonOneHandlerParams = (user: TBarebonesUser) => {
