@@ -68,7 +68,8 @@ const UserListModal = ({
     currentInterest,
     setUserListFetchLimit,
   } = useMainContext();
-  const { currentUser, blockedUsers, handleUnblockUser } = useUserContext();
+  const { currentUser, blockedUsers, handleUnblockUser, currentOtherUser } =
+    useUserContext();
 
   const {
     currentEvent,
@@ -267,6 +268,49 @@ const UserListModal = ({
                     iterableUsers.concat(rsvps.map((r) => Methods.getTBarebonesUser(r)))
                   );
                 });
+              } else {
+                setFetchUsersIsError(true);
+              }
+            })
+            .catch((error) => console.log(error))
+            .finally(() => {
+              setMoreUsersLoading(false);
+              if (initialFetchIsLoading) {
+                setInitialFetchIsLoading(false);
+              }
+            });
+        }
+      }
+
+      if (listType === "other-user-friends") {
+        if (currentUser?._id && currentOtherUser?._id) {
+          setMoreUsersLoading(true);
+          Requests.getUserByID(currentOtherUser._id.toString())
+            .then((res) => {
+              if (res.ok) {
+                res
+                  .json()
+                  .then((otherUser: TUser) => {
+                    Requests.getOtherUserFriends(
+                      otherUser,
+                      currentUser,
+                      userListFetchStart,
+                      userListFetchLimit
+                    )
+                      .then((otherUserFriends: TUser[] | undefined) => {
+                        if (otherUserFriends) {
+                          setIterableUsers(
+                            iterableUsers.concat(
+                              otherUserFriends.map((u) => Methods.getTBarebonesUser(u))
+                            )
+                          );
+                        } else {
+                          setFetchUsersIsError(true);
+                        }
+                      })
+                      .catch((error) => console.log(error));
+                  })
+                  .catch((error) => console.log(error));
               } else {
                 setFetchUsersIsError(true);
               }
