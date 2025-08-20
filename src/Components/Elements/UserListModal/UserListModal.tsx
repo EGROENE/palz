@@ -127,6 +127,7 @@ const UserListModal = ({
   useEffect(() => {
     if (currentUser?.username) {
       if (users) {
+        setInitialFetchIsLoading(false);
         setIterableUsers(users);
       }
 
