@@ -772,11 +772,11 @@ export type TEventContext = {
     event: TEvent,
     user: TBarebonesUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    rsvpdUsers?: string[],
-    setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>,
+    rsvpdUsers?: string[] | TBarebonesUser[],
+    setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[] | TBarebonesUser[]>>,
     optRenderCurrentUserEvents?: boolean
   ) => void;
-  interestedUsersCurrentEvent: string[];
+  interestedUsersCurrentEvent: string[] | TBarebonesUser[];
   setInterestedUsersCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;
   inviteesCurrentEvent: string[];
   setInviteesCurrentEvent: React.Dispatch<React.SetStateAction<string[]>>;

@@ -184,14 +184,21 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
     event: TEvent,
     user: TBarebonesUser,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    rsvpdUsers?: string[],
-    setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[]>>,
+    rsvpdUsers?: string[] | TBarebonesUser[],
+    setRsvpdUsers?: React.Dispatch<React.SetStateAction<string[] | TBarebonesUser[]>>,
     optRenderCurrentUserEvents?: boolean
   ): void => {
     e?.preventDefault();
 
+    // AUTO OPT RENDER interestedUsersCurrentEvent
+
     if (rsvpdUsers && setRsvpdUsers) {
-      setRsvpdUsers(rsvpdUsers.filter((u) => u !== user._id));
+      if (rsvpdUsers.every((u) => Methods.isTBarebonesUser(u))) {
+        setRsvpdUsers(rsvpdUsers.filter((u) => u._id !== user._id));
+      }
+      if (rsvpdUsers.every((u) => typeof u === "string")) {
+        setRsvpdUsers(rsvpdUsers.filter((u) => u !== user._id));
+      }
     }
 
     if (
@@ -225,7 +232,12 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
           });
         } else {
           if (rsvpdUsers && setRsvpdUsers && currentUser && currentUser._id) {
-            setRsvpdUsers(rsvpdUsers.concat(currentUser._id.toString()));
+            if (rsvpdUsers.every((u) => Methods.isTBarebonesUser(u))) {
+              setRsvpdUsers(rsvpdUsers.filter((u) => u._id !== user._id));
+            }
+            if (rsvpdUsers.every((u) => typeof u === "string")) {
+              setRsvpdUsers(rsvpdUsers.filter((u) => u !== user._id));
+            }
           }
           if (optRenderCurrentUserEvents) {
             setAllCurrentUserUpcomingEvents(allCurrentUserUpcomingEvents.concat(event));
