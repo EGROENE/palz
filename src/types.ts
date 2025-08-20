@@ -741,8 +741,8 @@ export type TEventContext = {
   handleRemoveInvitee: (
     event: TEvent,
     user: TBarebonesUser | null,
-    userArray?: string[],
-    setUserArray?: React.Dispatch<React.SetStateAction<string[]>>,
+    userArray?: string[] | TBarebonesUser[],
+    setUserArray?: React.Dispatch<React.SetStateAction<string[] | TBarebonesUser[]>>,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => void;
   handleDeclineInvitation: (

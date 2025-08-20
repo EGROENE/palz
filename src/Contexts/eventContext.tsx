@@ -315,15 +315,20 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const handleRemoveInvitee = (
     event: TEvent,
     user: TBarebonesUser | null,
-    userArray?: string[],
-    setUserArray?: React.Dispatch<React.SetStateAction<string[]>>,
+    userArray?: string[] | TBarebonesUser[],
+    setUserArray?: React.Dispatch<React.SetStateAction<string[] | TBarebonesUser[]>>,
     e?: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
     e?.preventDefault();
 
     if (user) {
       if (userArray && setUserArray) {
-        setUserArray(userArray.filter((u) => u !== user._id));
+        if (userArray.every((u) => Methods.isTBarebonesUser(u))) {
+          setUserArray(userArray.filter((u) => u._id !== user._id));
+        }
+        if (userArray.every((u) => typeof u === "string")) {
+          setUserArray(userArray.filter((u) => u !== user._id));
+        }
       }
       setIsLoading(true);
       Requests.removeInvitee(event, user)
@@ -338,7 +343,12 @@ export const EventContextProvider = ({ children }: { children: ReactNode }) => {
             });
           } else {
             if (userArray && setUserArray && user._id) {
-              setUserArray(userArray.concat(user._id.toString()));
+              if (userArray.every((u) => Methods.isTBarebonesUser(u))) {
+                setUserArray(userArray.concat(user));
+              }
+              if (userArray.every((u) => typeof u === "string")) {
+                setUserArray(userArray.concat(user._id.toString()));
+              }
             }
             toast.error("Could not remove invitee. Please try again.", {
               style: {
