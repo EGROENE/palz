@@ -572,6 +572,7 @@ const EventPage = () => {
                           handleAddUserRSVP(
                             e,
                             currentEvent,
+                            // @ts-ignore
                             interestedUsersCurrentEvent,
                             setInterestedUsersCurrentEvent
                           );
