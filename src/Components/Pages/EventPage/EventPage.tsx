@@ -268,11 +268,10 @@ const EventPage = () => {
   }, [currentUser, navigation, userCreatedAccount]);
 
   const userRSVPd: boolean =
-    currentUser &&
-    currentUser._id &&
-    currentEvent &&
-    interestedUsersCurrentEvent.every((u) => typeof u === "string")
-      ? interestedUsersCurrentEvent.includes(currentUser._id.toString())
+    currentUser && currentUser._id && currentEvent && interestedUsersCurrentEvent
+      ? interestedUsersCurrentEvent
+          .filter((u) => typeof u === "string")
+          .includes(currentUser._id.toString())
       : false;
 
   const nextEventDateTime = currentEvent
