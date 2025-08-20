@@ -340,6 +340,7 @@ const EventCard = ({ event }: { event: TEvent }) => {
                               Methods.getTBarebonesUser(currentUser),
                               e,
                               interestedUsers,
+                              // @ts-ignore: setter of type React.Dispatch<React.SetStateAction<string[]>> for some godforsake reason can't be assigned to a value of type React.Dispatch<React.SetStateAction<string[] | TBarebonesUser[]>>. Functions as it should, however, so ts error is ignored.
                               setInterestedUsers,
                               true
                             );

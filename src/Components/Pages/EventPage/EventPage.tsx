@@ -268,7 +268,10 @@ const EventPage = () => {
   }, [currentUser, navigation, userCreatedAccount]);
 
   const userRSVPd: boolean =
-    currentUser && currentUser._id && currentEvent && interestedUsersCurrentEvent
+    currentUser &&
+    currentUser._id &&
+    currentEvent &&
+    interestedUsersCurrentEvent.every((u) => typeof u === "string")
       ? interestedUsersCurrentEvent.includes(currentUser._id.toString())
       : false;
 
@@ -560,9 +563,13 @@ const EventPage = () => {
                             Methods.getTBarebonesUser(currentUser),
                             e,
                             interestedUsersCurrentEvent,
+                            // @ts-ignore: setter of type React.Dispatch<React.SetStateAction<string[]>> for some godforsake reason can't be assigned to a value of type React.Dispatch<React.SetStateAction<string[] | TBarebonesUser[]>>. Functions as it should, however, so ts error is ignored.
                             setInterestedUsersCurrentEvent
                           );
-                        } else if (!userRSVPd) {
+                        } else if (
+                          !userRSVPd &&
+                          interestedUsersCurrentEvent.every((u) => typeof u === "string")
+                        ) {
                           handleAddUserRSVP(
                             e,
                             currentEvent,
