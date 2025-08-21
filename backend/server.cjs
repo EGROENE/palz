@@ -43,8 +43,8 @@ const getPotentialEventCOsController = async (req, res) => {
   const potentialCOs = await User.find({
     index: { $gte: Number(start) },
     _id: { $ne: currentUser._id.toString() },
-    "blockedUsers._id": { $ne: currentUser._id.toString() },
-    "blockedBy._id": { $ne: currentUser._id.toString() },
+    blockedUsers: { $nin: currentUser._id.toString() },
+    blockedBy: { $nin: currentUser._id.toString() },
     profileVisibleTo: { $ne: "nobody" },
     whoCanAddUserAsOrganizer: { $ne: "nobody" },
   }).limit(Number(limit));
@@ -61,8 +61,8 @@ const getPotentialInviteesController = async (req, res) => {
   const potentialInvitees = await User.find({
     index: { $gte: Number(start) },
     _id: { $ne: currentUser._id.toString() },
-    "blockedUsers._id": { $ne: currentUser._id.toString() },
-    "blockedBy._id": { $ne: currentUser._id.toString() },
+    blockedUsers: { $nin: currentUser._id.toString() },
+    blockedBy: { $nin: currentUser._id.toString() },
     profileVisibleTo: { $ne: "nobody" },
     whoCanInviteUser: { $ne: "nobody" },
   }).limit(Number(limit));
