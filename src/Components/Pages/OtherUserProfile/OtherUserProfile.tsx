@@ -27,7 +27,8 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const OtherUserProfile = () => {
   const navigation = useNavigate();
-  const { theme, isLoading, error, setError } = useMainContext();
+  const { theme, isLoading, error, setError, setShowInterestUsers, showInterestUsers } =
+    useMainContext();
   const {
     logout,
     currentUser,
@@ -141,6 +142,9 @@ const OtherUserProfile = () => {
   const [invitedEventsAreVisible, setInvitedEventsAreVisible] = useState<boolean>(false);
 
   useEffect(() => {
+    if (showInterestUsers) {
+      setShowInterestUsers(false);
+    }
     setPalzInCommonText(undefined);
     setPalzInCommon(null);
     setUpcomingEventsUserRSVPdTo(null);
