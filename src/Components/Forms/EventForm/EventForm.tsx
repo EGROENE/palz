@@ -1304,7 +1304,9 @@ const EventForm = ({
           Requests.getAllEvents()
             .then((allEvents) => {
               if (allEvents) {
-                eventInfos.index = allEvents.length;
+                if (allEvents[allEvents.length - 1].index ) {
+                  eventInfos.index = allEvents[allEvents.length - 1].index
+                }
                 if (allEvents.length >= maximumNumberOfEventsInDB) {
                   setAddEventIsInProgress(false);
                   setIsLoading(false);

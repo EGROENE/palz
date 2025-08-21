@@ -2277,8 +2277,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           .then((res) => {
             if (res.ok) {
               res.json().then((allUsers) => {
-                setIndex(allUsers.length);
-
+                setIndex(allUsers[allUsers.length - 1].index + 1);
                 if (allUsers.length >= maximumNumberOfUsersDB) {
                   setProcessingLoginIsLoading(false);
                   setUserCreatedAccount(false);
@@ -2322,6 +2321,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
                         resetErrorMessagesAfterSignup();
                       } else {
                         setUserCreatedAccount(false);
+                        setProcessingLoginIsLoading(false);
                         toast.error("Could not set up your account. Please try again.", {
                           style: {
                             background:
