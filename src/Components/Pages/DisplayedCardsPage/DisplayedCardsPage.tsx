@@ -507,7 +507,18 @@ const DisplayedCardsPage = ({
     if (bottomReached) {
       const lastItem: TUserSecure | TEvent | TBarebonesUser = items[items.length - 1];
 
-      if (lastItem && lastItem.index && searchTerm === "") {
+      if (
+        lastItem &&
+        lastItem.index &&
+        searchTerm === "" &&
+        !displayedItems
+          .map((i) => i.index)
+          .some((i) => {
+            if (lastItem.index) {
+              return i === lastItem.index + 1;
+            }
+          })
+      ) {
         setFetchStart(lastItem.index + 1);
       }
     }
