@@ -98,6 +98,7 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
           <input
             name="password-login"
             id="password-login"
+            aria-label="password-login"
             ref={passwordRef}
             onFocus={() => setFocusedElement("password")}
             onBlur={() => setFocusedElement(undefined)}
@@ -124,7 +125,7 @@ const LoginForm = ({ randomColor }: { randomColor: TThemeColor | undefined }) =>
           <p className="input-error-message">{passwordError}</p>
         )}
       </label>
-      <div className="theme-element-container">
+      <div tabIndex={-1} className="theme-element-container">
         <button
           className="login-button"
           type={areNoLoginErrors ? "submit" : "button"}
