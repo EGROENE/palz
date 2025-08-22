@@ -3,6 +3,8 @@ import styles from "../styles.module.css";
 const OpenEye = ({ toggleHidePassword }: { toggleHidePassword: () => void }) => {
   return (
     <button
+      aria-hidden={false}
+      aria-label="Hide password"
       onKeyDown={(e) => {
         if (e.key === "Enter") {
           toggleHidePassword();
