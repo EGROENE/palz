@@ -2,8 +2,7 @@ import styles from "../styles.module.css";
 
 const OpenEye = ({ toggleHidePassword }: { toggleHidePassword: () => void }) => {
   return (
-    <i
-      tabIndex={0}
+    <button
       onKeyDown={(e) => {
         if (e.key === "Enter") {
           toggleHidePassword();
@@ -12,7 +11,7 @@ const OpenEye = ({ toggleHidePassword }: { toggleHidePassword: () => void }) => 
       onClick={() => toggleHidePassword()}
       className={`${styles.eye} fas fa-eye-slash`}
       title="Hide Password"
-    ></i>
+    ></button>
   );
 };
 export default OpenEye;

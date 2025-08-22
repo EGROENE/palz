@@ -1,8 +1,9 @@
 .eye {
   position: absolute;
-  top: 34%;
-  left: 94%;
+  top: 2%;
+  left: 92%;
   color: white;
+  background-color: transparent;
 }
 
 .eye:hover {
