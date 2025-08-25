@@ -518,7 +518,7 @@ const EventForm = ({
     const clientHeight = e ? eHTMLElement.clientHeight : null;
 
     const bottomReached =
-      e && scrollTop && clientHeight
+      e !== undefined && scrollTop !== null && clientHeight !== null
         ? scrollTop + clientHeight === scrollHeight
         : window.innerHeight + window.scrollY >= document.body.offsetHeight;
 
@@ -1304,8 +1304,8 @@ const EventForm = ({
           Requests.getAllEvents()
             .then((allEvents) => {
               if (allEvents) {
-                if (allEvents[allEvents.length - 1].index ) {
-                  eventInfos.index = allEvents[allEvents.length - 1].index
+                if (allEvents[allEvents.length - 1].index) {
+                  eventInfos.index = allEvents[allEvents.length - 1].index;
                 }
                 if (allEvents.length >= maximumNumberOfEventsInDB) {
                   setAddEventIsInProgress(false);
