@@ -432,10 +432,6 @@
     font-size: 1rem;
   }
 
-  .page-hero form input {
-    width: 100%;
-  }
-
   .settings-theme-and-delete-account-container div .theme-element-container {
     width: 45%;
   }
@@ -768,6 +764,14 @@
 
   .eventDetailsContainer .slideshowContainer {
     width: 124%;
+  }
+
+  .socials-inputs-container label input {
+    width: 80%;
+  }
+
+  .settings-theme-and-delete-account-container div .theme-element-container {
+    width: 57%;
   }
 }
 

@@ -18,18 +18,28 @@
 
 @media screen and (max-width: 540px) {
   .eye {
-    top: 0.7rem;
+    left: 86%;
+  }
+
+  .socials-inputs-container label {
+    width: unset;
   }
 }
 
 @media screen and (max-width: 500px) {
   .eye {
-    top: 30%;
+    top: 3%;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .eye {
+    left: 81%;
   }
 }
 
 @media screen and (max-width: 320px) {
   .eye {
-    left: 86%;
+    left: 81%;
   }
 }

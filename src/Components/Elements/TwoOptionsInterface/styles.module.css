@@ -52,3 +52,9 @@
   background-color: white;
   color: black;
 }
+
+@media screen and (max-width: 540px) {
+  .areYouSureModal {
+    width: 73%;
+  }
+}
