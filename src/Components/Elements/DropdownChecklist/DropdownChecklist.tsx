@@ -112,6 +112,7 @@ const DropdownChecklist = ({
 
   return (
     <ul
+      onTouchMove={(e) => scrollHandler(...scrollHandlerParams, e)}
       onScroll={(e) => scrollHandler(...scrollHandlerParams, e)}
       className={styles.dropdownChecklist}
     >
